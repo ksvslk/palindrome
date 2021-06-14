@@ -1,15 +1,25 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <style name="Theme.OC" parent="Base.Theme.OC">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <!-- Secondary brand color. -->
+        <item name="colorPrimary">@color/sandal</item>
+        <item name="colorPrimaryVariant">@color/dallas</item>
+        <item name="colorOnPrimary">@color/zeus</item>
+
+        <!-- Secondary brand color.
         <item name="colorSecondary">@color/teal_200</item>
         <item name="colorSecondaryVariant">@color/teal_700</item>
-        <item name="colorOnSecondary">@color/black</item>
+        <item name="colorOnSecondary">@color/black</item> -->
+
+        <item name="android:colorBackground">@color/wafer</item>
+        <item name="colorOnBackground">@color/wafer</item>
+        <item name="colorSurface">@color/wafer</item>
+        <item name="colorOnSurface">@color/wafer</item>
+        <item name="colorError">@color/red_500</item>
+        <item name="colorOnError">@color/red_500</item>
+
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+
         <!-- Customize your theme here. -->
     </style>
 
