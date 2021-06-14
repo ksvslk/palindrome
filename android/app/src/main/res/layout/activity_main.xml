@@ -10,10 +10,16 @@
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/play_button"
+        android:layout_width="145dp"
+        android:layout_height="189dp"
+        android:fontFamily="sans-serif-black"
+        android:insetLeft="0dp"
+        android:rotationX="0"
+        android:rotationY="0"
         android:text="@string/play_button_text"
+        android:textSize="20sp"
+        app:cornerRadius="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
