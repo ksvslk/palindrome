@@ -49,11 +49,6 @@ class Letter : TextView {
         TAG = "Letter$id"
         text = letter
         setOnTouchListener(touchListen)
-        swapp
-        swappyAutoSwapInterval(false);
-        swappyAutoPipelineMode(false);
-        swappyEnableStats(false);
-        swappySwapIntervalNS(1000000000L/yourPreferredFrameRateInHz);
     }
 
     override fun onDraw(canvas: Canvas?) {
