@@ -5,13 +5,14 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.LinearLayout
+import android.widget.TableRow
 import androidx.annotation.RequiresApi
-import androidx.constraintlayout.widget.ConstraintLayout
 import com.indest.oc.util.Util
 
 class GameActivity : AppCompatActivity() {
     private val TAG = "GameActivity"
-    private lateinit var gameContainer: ConstraintLayout
+    private lateinit var gameContainer: LinearLayout
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     @SuppressLint("ClickableViewAccessibility")
@@ -20,8 +21,10 @@ class GameActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
 
-        gameContainer = findViewById(R.id.game_container)
+        gameContainer = findViewById(R.id.temp_letter_container)
         Util.activateFullscreen(this, gameContainer)
+
+        gameContainer.addView(Letter(this, "I"))
     }
 
     override fun onResume() {
