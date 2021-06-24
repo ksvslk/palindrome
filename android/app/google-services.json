@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "352128725047",
+    "project_id": "operation-caerus",
+    "storage_bucket": "operation-caerus.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:352128725047:android:e7636dc38a7520ff4f8fb2",
+        "android_client_info": {
+          "package_name": "com.indest.oc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "352128725047-cohtoi2j8op4dqokhmkkpjvtb1f82qus.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "REMOVED_OLD_FIREBASE_KEY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "352128725047-cohtoi2j8op4dqokhmkkpjvtb1f82qus.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

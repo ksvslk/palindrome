@@ -12,6 +12,7 @@ import android.view.Window
 import android.widget.Button
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.indest.oc.util.Util
 
 class MainActivity : AppCompatActivity() {
@@ -19,6 +20,7 @@ class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
     private lateinit var mainContainer: ConstraintLayout
     private lateinit var playButton: Button
+    private lateinit var analytics: FirebaseAnalytics
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     @SuppressLint("ClickableViewAccessibility")
@@ -44,6 +46,9 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         }
+
+        analytics = FirebaseAnalytics.getInstance(this)
+        analytics.logEvent("MainActivity_onCreated_finished", null)
     }
 
     override fun onResume() {
