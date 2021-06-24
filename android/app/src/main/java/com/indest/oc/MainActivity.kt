@@ -12,6 +12,7 @@ import android.view.Window
 import android.widget.Button
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.google.android.gms.ads.MobileAds
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.indest.oc.util.Util
 
@@ -49,6 +50,8 @@ class MainActivity : AppCompatActivity() {
 
         analytics = FirebaseAnalytics.getInstance(this)
         analytics.logEvent("MainActivity_onCreated_finished", null)
+
+        MobileAds.initialize(this)
     }
 
     override fun onResume() {
