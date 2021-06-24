@@ -1,30 +1,34 @@
 package com.indest.oc
 
 import android.annotation.SuppressLint
+import android.graphics.Paint
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.LinearLayout
-import android.widget.TableRow
 import androidx.annotation.RequiresApi
+import androidx.gridlayout.widget.GridLayout
 import com.indest.oc.util.Util
 
 class GameActivity : AppCompatActivity() {
     private val TAG = "GameActivity"
-    private lateinit var gameContainer: LinearLayout
+    private lateinit var gameContainer: GridLayout
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG,"onCreate")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
 
-        gameContainer = findViewById(R.id.temp_letter_container)
+        gameContainer = findViewById(R.id.grid_layout)
         Util.activateFullscreen(this, gameContainer)
 
-        gameContainer.addView(Letter(this, "I"))
+        for (l in "INDREK LUTS")
+        {
+            gameContainer.addView(Letter(this, l.toString()))
+        }
+
     }
 
     override fun onResume() {

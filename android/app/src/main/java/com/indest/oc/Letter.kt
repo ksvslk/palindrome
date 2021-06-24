@@ -2,21 +2,26 @@ package com.indest.oc
 
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
-import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Paint
 import android.graphics.Rect
 import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.view.View.OnTouchListener
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.ViewCompat
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import kotlin.math.log2
 import kotlin.math.pow
 import kotlin.math.sqrt
+import android.content.Context
+import android.media.SoundPool
+
 
 @SuppressLint("ViewConstructor", "AppCompatCustomView")
 class Letter : TextView {
@@ -33,22 +38,23 @@ class Letter : TextView {
     private val viewEndColor: Int = ResourcesCompat.getColor(resources, R.color.sandstone, null)
     private val textStartColor: Int = ResourcesCompat.getColor(resources, R.color.zeus, null)
     private val textEndColor: Int = ResourcesCompat.getColor(resources, R.color.wafer, null)
+    private val paint = Paint()
+    private val vibrator = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+    private val soundPool: SoundPool = SoundPool.Builder().build()
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    @RequiresApi(Build.VERSION_CODES.O)
     constructor(
         context: Context?,
         letter: String?,
         defStyleRes: Int = R.style.LetterView
     ) : super(context, null, 0, defStyleRes) {
+        Log.d(TAG,"constructor")
         id =
-            if (Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                View.generateViewId()
-            } else {
-                ViewCompat.generateViewId()
-            }
+            View.generateViewId()
         TAG = "Letter$id"
         text = letter
         setOnTouchListener(touchListen)
+        paint.color = ResourcesCompat.getColor(resources, R.color.zeus, null)
     }
 
     override fun onDraw(canvas: Canvas?) {
@@ -59,11 +65,16 @@ class Letter : TextView {
         super.onDraw(canvas)
     }
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("ClickableViewAccessibility")
     private val touchListen = OnTouchListener { v, e ->
         when (e.action) {
             MotionEvent.ACTION_DOWN -> {
+                addShortVibration()
+                val id = soundPool.load(context, R.raw.start_drag, 1)
+                Log.d(TAG, id.toString())
+                soundPool.play(id, 1.0f, 1.0f, 1, 0, 1.0f)
+                z = 1.0f
                 ObjectAnimator.ofArgb(this, "backgroundColor", viewStartColor, viewEndColor).apply {
                     duration = onClickColorChangeDuration
                     start()
@@ -98,9 +109,11 @@ class Letter : TextView {
                     .y(oriY)
                     .setInterpolator(FastOutSlowInInterpolator())
                     .setDuration(distance.toLong() * animateToHomeDurationMultiplier)
+                    .withEndAction { z = 0.0f }
                     .start()
             }
         }
+
         true
     }
 
@@ -109,8 +122,16 @@ class Letter : TextView {
         val r2 = Rect()
         v1.getHitRect(r1)
         v2.getHitRect(r2)
-        Log.i(TAG, r1.flattenToString())
-        Log.i(TAG, r2.flattenToString())
+        //Log.i(TAG, r1.flattenToString())
+        //Log.i(TAG, r2.flattenToString())
         return r1.intersect(r2)
+    }
+
+    private fun addShortVibration(length: Long = 20) {
+        if (Build.VERSION.SDK_INT >= 26) {
+            vibrator.vibrate(VibrationEffect.createOneShot(length, VibrationEffect.DEFAULT_AMPLITUDE))
+        } else {
+            vibrator.vibrate(length)
+        }
     }
 }
