@@ -13,6 +13,7 @@ import android.widget.Button
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.RequestConfiguration
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.indest.oc.util.Util
 
@@ -52,6 +53,9 @@ class MainActivity : AppCompatActivity() {
         analytics.logEvent("MainActivity_onCreated_finished", null)
 
         MobileAds.initialize(this)
+        val testDeviceIds = listOf("6423719AD54122E0D92F7F6B44825877")
+        val configuration = RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build()
+        MobileAds.setRequestConfiguration(configuration)
     }
 
     override fun onResume() {

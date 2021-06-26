@@ -18,6 +18,7 @@ import com.google.android.gms.ads.nativead.NativeAdOptions
 import com.google.android.gms.ads.nativead.NativeAdView
 import com.indest.oc.util.Util
 import kotlinx.android.synthetic.main.activity_game.*
+import java.util.*
 
 
 class GameActivity : AppCompatActivity() {
@@ -43,7 +44,7 @@ class GameActivity : AppCompatActivity() {
             }
         }
 
-        val builder = AdLoader.Builder(this, "ca-app-pub-3940256099942544/2247696110")
+        val builder = AdLoader.Builder(this, "ca-app-pub-5386053272091445/8861866959")
             .forNativeAd { nativeAd : NativeAd ->
                 val adView = layoutInflater
                     .inflate(R.layout.native_ad_layout, null) as NativeAdView
