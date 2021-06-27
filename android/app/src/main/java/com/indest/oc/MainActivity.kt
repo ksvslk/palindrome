@@ -1,5 +1,6 @@
 package com.indest.oc
 
+import androidx.appcompat.app.AppCompatActivity
 import android.annotation.SuppressLint
 import android.app.ActivityOptions
 import android.content.Intent
@@ -10,17 +11,18 @@ import android.util.Log
 import android.view.Window
 import android.widget.Button
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.DialogFragment
+import com.indest.oc.fragments.ExitGameDialogFragment
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.ump.*
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.indest.oc.util.Util
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogListener {
 
-    private val TAG = "com.indest.oc.MainActivity"
+    private val TAG = "MainActivity"
     private lateinit var mainContainer: ConstraintLayout
     private lateinit var playButton: Button
     private lateinit var analytics: FirebaseAnalytics
@@ -122,6 +124,24 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         Util.activateFullscreen(this, mainContainer)
+    }
+
+    override fun onBackPressed() {
+        showExitDialog()
+    }
+
+    private fun showExitDialog() {
+        // Create an instance of the dialog fragment and show it
+        val dialog = ExitGameDialogFragment()
+        dialog.show(supportFragmentManager, "ExitGameDialogFragment")
+    }
+
+    override fun onDialogPositiveClick(dialog: DialogFragment) {
+        finish()
+    }
+
+    override fun onDialogNegativeClick(dialog: DialogFragment) {
+        dialog.dismiss()
     }
 }
 
