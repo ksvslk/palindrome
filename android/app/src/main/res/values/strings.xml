@@ -2,4 +2,7 @@
     <string name="app_name">OC</string>
     <string name="title_activity_main">OC</string>
     <string name="play_button_text">PLAY</string>
+    <string name="exit_game">Exit game?</string>
+    <string name="cancel">Cancel</string>
+    <string name="yes">Yes</string>
 </resources>

@@ -9,5 +9,4 @@
         <item name="android:fontFamily">@font/yantramanav_medium</item>
         <!---<item name="fontFamily">sans-serif-medium</item>-->
    </style>
-
 </resources>
