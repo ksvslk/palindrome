@@ -34,11 +34,10 @@ class Letter : TextView {
     private val onClickColorChangeDuration: Long = 300L
     private val onReleaseColorChangeDuration: Long = 500L
     private val animateToHomeDurationMultiplier = 50
-    private val viewStartColor: Int = ResourcesCompat.getColor(resources, R.color.sandal, null)
-    private val viewEndColor: Int = ResourcesCompat.getColor(resources, R.color.sandstone, null)
-    private val textStartColor: Int = ResourcesCompat.getColor(resources, R.color.zeus, null)
-    private val textEndColor: Int = ResourcesCompat.getColor(resources, R.color.wafer, null)
-    private val paint = Paint()
+    private val viewStartColor: Int = ResourcesCompat.getColor(resources, R.color.colorPrimary, null)
+    private val viewEndColor: Int = ResourcesCompat.getColor(resources, R.color.colorSecondary, null)
+    private val textStartColor: Int = ResourcesCompat.getColor(resources, R.color.colorOnPrimary, null)
+    private val textEndColor: Int = ResourcesCompat.getColor(resources, R.color.colorOnSecondary, null)
     private val vibrator = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
     private val soundPool: SoundPool = SoundPool.Builder().build()
 
@@ -54,7 +53,6 @@ class Letter : TextView {
         TAG = "Letter$id"
         text = letter
         setOnTouchListener(touchListen)
-        paint.color = ResourcesCompat.getColor(resources, R.color.zeus, null)
     }
 
     override fun onDraw(canvas: Canvas?) {
