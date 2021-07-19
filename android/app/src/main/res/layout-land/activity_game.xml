@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/game_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:layout_marginStart="8dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginBottom="8dp"
+    android:clipChildren="false"
+    android:orientation="vertical"
+    tools:context=".GameActivity">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:clipChildren="false"
+        android:gravity="center">
+
+        <androidx.gridlayout.widget.GridLayout
+            android:id="@+id/letters_gridlayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:addStatesFromChildren="false"
+            app:columnCount="12"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:useDefaultMargins="true">
+
+            <!--<com.indest.oc.Letter
+                android:id="@+id/letter"
+                style="@style/LetterView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="A" />
+
+            <com.indest.oc.Letter
+                android:id="@+id/letter1"
+                style="@style/LetterView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="A" />
+
+            <com.indest.oc.Letter
+                android:id="@+id/letter2"
+                style="@style/LetterView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="A" />
+
+            <com.indest.oc.Letter
+                android:id="@+id/letter3"
+                style="@style/LetterView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="A" />
+
+            <com.indest.oc.Letter
+                android:id="@+id/letter4"
+                style="@style/LetterView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="A" />
+
+            <com.indest.oc.Letter
+                android:id="@+id/letter5"
+                style="@style/LetterView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="A" />
+
+            <com.indest.oc.Letter
+                android:id="@+id/letter6"
+                style="@style/LetterView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="A" />
+
+            <com.indest.oc.Letter
+                android:id="@+id/letter7"
+                style="@style/LetterView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="A" />
+
+            <com.indest.oc.Letter
+                android:id="@+id/letter8"
+                style="@style/LetterView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="C" />
+
+            <com.indest.oc.Letter
+                android:id="@+id/letter9"
+                style="@style/LetterView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="X" />-->
+        </androidx.gridlayout.widget.GridLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+    <Space
+        android:layout_width="@dimen/default_gap"
+        android:layout_height="@dimen/default_gap">
+    </Space>
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:clipChildren="false"
+        android:gravity="center">
+
+        <androidx.gridlayout.widget.GridLayout
+            android:id="@+id/solution_gridlayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            app:columnCount="12"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:useDefaultMargins="true" >
+
+        </androidx.gridlayout.widget.GridLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</androidx.appcompat.widget.LinearLayoutCompat>
