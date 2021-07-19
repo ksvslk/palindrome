@@ -1,4 +1,4 @@
-package com.indest.oc
+package com.indest.oc.letter
 
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
@@ -6,56 +6,44 @@ import android.graphics.Canvas
 import android.graphics.Rect
 import android.os.Build
 import android.os.VibrationEffect
-import android.os.Vibrator
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnTouchListener
 import android.widget.TextView
 import androidx.annotation.RequiresApi
-import androidx.core.content.res.ResourcesCompat
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import kotlin.math.log2
 import kotlin.math.pow
 import kotlin.math.sqrt
 import android.content.Context
 import android.media.AudioManager
-import android.media.SoundPool
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.view.ViewCompat
+import com.indest.oc.R
+import com.indest.oc.mediator.IBoxDirector
 
 @SuppressLint("ViewConstructor", "AppCompatCustomView")
-class Letter : TextView {
+class Letter : TextView, IBox {
 
     private var TAG: String = "Letter"
     private var dX: Float = 0.0f
     private var dY: Float = 0.0f
     private var oriX: Float = Float.NaN
     private var oriY: Float = Float.NaN
-    private val onClickColorChangeDuration: Long = 200L
-    private val onReleaseColorChangeDuration: Long = 200L
-    private val animateToHomeDurationMultiplier = 50
-    private val viewStartColor: Int =
-        ResourcesCompat.getColor(resources, R.color.colorPrimary, null)
-    private val viewEndColor: Int =
-        ResourcesCompat.getColor(resources, R.color.colorSecondary, null)
-    private val textStartColor: Int =
-        ResourcesCompat.getColor(resources, R.color.colorOnPrimary, null)
-    private val textEndColor: Int =
-        ResourcesCompat.getColor(resources, R.color.colorOnSecondary, null)
-    private val vibrator = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-    private val soundPool: SoundPool = SoundPool.Builder().build()
-    private var am: AudioManager = context?.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+    private lateinit var director: IBoxDirector
+    private lateinit var lr: LetterResources
 
     @RequiresApi(Build.VERSION_CODES.O)
     constructor(
         context: Context?,
         letter: String?,
+        letterResources: LetterResources,
+        boxDirector: IBoxDirector,
         defStyleRes: Int = R.style.LetterView
     ) : super(context, null, 0, defStyleRes) {
-        Log.d(TAG, "constructor")
-        id =
-            View.generateViewId()
+        lr = letterResources
+        director = boxDirector
+        id = View.generateViewId()
         TAG = "Letter$id"
         text = letter
         setOnTouchListener(touchListen)
@@ -74,50 +62,58 @@ class Letter : TextView {
     private val touchListen = OnTouchListener { v, e ->
         when (e.action) {
             MotionEvent.ACTION_DOWN -> {
-
-                ViewCompat.setTranslationZ((parent.parent as LinearLayoutCompat), 1.0f)
-
-                addShortVibration()
-                val id = soundPool.load(context, R.raw.start_drag, 1)
-                soundPool.play(id, 1.0f, 1.0f, 1, 0, 1.0f)
-                z = 1.0f
-                ObjectAnimator.ofArgb(this, "backgroundColor", viewStartColor, viewEndColor).apply {
-                    duration = onClickColorChangeDuration
-                    start()
-                }
-                ObjectAnimator.ofArgb(this, "textColor", textStartColor, textEndColor).apply {
-                    duration = onClickColorChangeDuration
-                    start()
-                }
+                // Calculate the distance moved
                 dX = v.x - e.rawX
                 dY = v.y - e.rawY
+
+                // Draggable view and its parents parent should be always on top
+                ViewCompat.setTranslationZ((parent.parent as LinearLayoutCompat), 1.0f)
+                z = 1.0f
+
+                // Sound effects
+                addShortVibration()
+                val id = lr.soundPool.load(context, R.raw.start_drag, 1)
+                lr.soundPool.play(id, 1.0f, 1.0f, 1, 0, 1.0f)
+
+                // Color effects
+                ObjectAnimator.ofArgb(this, "backgroundColor", lr.viewStartColor, lr.viewEndColor).apply {
+                    duration = lr.onClickColorChangeDuration
+                    start()
+                }
+                ObjectAnimator.ofArgb(this, "textColor", lr.textStartColor, lr.textEndColor).apply {
+                    duration = lr.onClickColorChangeDuration
+                    start()
+                }
             }
             MotionEvent.ACTION_MOVE -> {
+                // Calculate the distance moved
                 v.x = e.rawX + dX
                 v.y = e.rawY + dY
             }
             MotionEvent.ACTION_UP -> {
+                director.handleCollisions(this)
+                // Logarithm (to get some value that represents how much was moved ignoring the
+                // actual physical distance) applied to Euclidean distance between start point
+                // and end point
                 val distance = log2(sqrt((dX - oriX).pow(2) + (dY - oriY).pow(2)))
 
-                ObjectAnimator.ofArgb(this, "backgroundColor", viewEndColor, viewStartColor).apply {
-                    duration = onReleaseColorChangeDuration
+                // Color effects
+                ObjectAnimator.ofArgb(this, "backgroundColor", lr.viewEndColor, lr.viewStartColor).apply {
+                    duration = lr.onReleaseColorChangeDuration
                     start()
                 }
-                ObjectAnimator.ofArgb(this, "textColor", textEndColor, textStartColor).apply {
-                    duration = onReleaseColorChangeDuration
+                ObjectAnimator.ofArgb(this, "textColor", lr.textEndColor, lr.textStartColor).apply {
+                    duration = lr.onReleaseColorChangeDuration
                     start()
-                }
-                val result = collision(this, v)
-                if (result.first)
-                {
-                    Log.i(TAG, "${result.second} intersects with ${result.third}!")
                 }
 
+                // Here we use the log-distance to calculate the duration of the animation
+                // longer distance should be only slightly longer animation and vice-versa
                 v.animate()
                     .x(oriX)
                     .y(oriY)
                     .setInterpolator(FastOutSlowInInterpolator())
-                    .setDuration(distance.toLong() * animateToHomeDurationMultiplier)
+                    .setDuration(distance.toLong() * lr.animateToHomeDurationMultiplier)
                     .withEndAction { z = 0.0f }
                     .start()
             }
@@ -139,16 +135,16 @@ class Letter : TextView {
     }
 
     private fun addShortVibration(length: Long = 20) {
-        if (am.ringerMode != AudioManager.RINGER_MODE_SILENT) {
+        if (lr.am.ringerMode != AudioManager.RINGER_MODE_SILENT) {
             if (Build.VERSION.SDK_INT >= 26) {
-                vibrator.vibrate(
+                lr.vibrator.vibrate(
                     VibrationEffect.createOneShot(
                         length,
                         VibrationEffect.DEFAULT_AMPLITUDE
                     )
                 )
             } else {
-                vibrator.vibrate(length)
+                lr.vibrator.vibrate(length)
             }
         }
     }

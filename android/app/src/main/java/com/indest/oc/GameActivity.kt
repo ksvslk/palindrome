@@ -10,6 +10,9 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.gridlayout.widget.GridLayout
+import com.indest.oc.letter.Letter
+import com.indest.oc.letter.LetterResources
+import com.indest.oc.mediator.BoxDirector
 import com.indest.oc.util.Util
 
 class GameActivity : AppCompatActivity() {
@@ -29,6 +32,7 @@ class GameActivity : AppCompatActivity() {
         letters = findViewById(R.id.letters_gridlayout)
         solution = findViewById(R.id.solution_gridlayout)
 
+        val letterDirector = BoxDirector
         Util.activateFullscreen(this, gameContainer)
 
         val puzzle = "BOB".uppercase()
@@ -36,13 +40,17 @@ class GameActivity : AppCompatActivity() {
         if (puzzle.length > 25) {
             this.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
         }
+        val data = LetterResources(applicationContext, resources)
 
         for (l in puzzle)
         {
-            letters.addView(Letter(this, l.toString()))
+            letters.addView(
+                Letter(this, l.toString(), data, letterDirector)
+                    .also {
+                        letterDirector.boxes.add(it)
+                    })
             solution.addView(TextView(this, null, 0, R.style.EmptyBoxView))
         }
-
     }
 
     override fun onResume() {
