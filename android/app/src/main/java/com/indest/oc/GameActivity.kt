@@ -14,12 +14,14 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.RatingBar
 import androidx.gridlayout.widget.GridLayout
+import com.indest.oc.letter.Letter
+import com.indest.oc.letter.LetterResources
+import com.indest.oc.mediator.BoxDirector
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdOptions
 import com.google.android.gms.ads.nativead.NativeAdOptions.ADCHOICES_TOP_RIGHT
 import com.google.android.gms.ads.nativead.NativeAdView
-import com.indest.oc.letter.Letter
 import com.indest.oc.util.Util
 import kotlinx.android.synthetic.main.activity_game.*
 
@@ -40,6 +42,7 @@ class GameActivity : AppCompatActivity() {
         letters = findViewById(R.id.letters_gridlayout)
         solution = findViewById(R.id.solution_gridlayout)
 
+        val letterDirector = BoxDirector
         Util.activateFullscreen(this, gameContainer)
 
         val puzzle = "BOB".uppercase()
@@ -47,10 +50,15 @@ class GameActivity : AppCompatActivity() {
         if (puzzle.length > 25) {
             this.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
         }
+        val data = LetterResources(applicationContext, resources)
 
         for (l in puzzle)
         {
-            letters.addView(Letter(this, l.toString()))
+            letters.addView(
+                Letter(this, l.toString(), data, letterDirector)
+                    .also {
+                        letterDirector.boxes.add(it)
+                    })
             solution.addView(TextView(this, null, 0, R.style.EmptyBoxView))
         }
 

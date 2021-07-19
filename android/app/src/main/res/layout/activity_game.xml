@@ -34,6 +34,76 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:useDefaultMargins="true">
+
+           <!-- <com.indest.oc.Letter
+                android:id="@+id/letter"
+                style="@style/LetterView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="A" />
+
+            <com.indest.oc.Letter
+                android:id="@+id/letter1"
+                style="@style/LetterView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="A" />
+
+            <com.indest.oc.Letter
+                android:id="@+id/letter2"
+                style="@style/LetterView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="A" />
+
+            <com.indest.oc.Letter
+                android:id="@+id/letter3"
+                style="@style/LetterView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="A" />
+
+            <com.indest.oc.Letter
+                android:id="@+id/letter4"
+                style="@style/LetterView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="A" />
+
+            <com.indest.oc.Letter
+                android:id="@+id/letter5"
+                style="@style/LetterView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="A" />
+
+            <com.indest.oc.Letter
+                android:id="@+id/letter6"
+                style="@style/LetterView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="A" />
+
+            <com.indest.oc.Letter
+                android:id="@+id/letter7"
+                style="@style/LetterView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="A" />
+
+            <com.indest.oc.Letter
+                android:id="@+id/letter8"
+                style="@style/LetterView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="C" />
+
+            <com.indest.oc.Letter
+                android:id="@+id/letter9"
+                style="@style/LetterView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="X" />-->
         </androidx.gridlayout.widget.GridLayout>
     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -62,6 +132,76 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:useDefaultMargins="true">
+
+            <!--<com.indest.oc.Letter
+                android:id="@+id/letter11"
+                style="@style/LetterView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="A" />
+
+            <com.indest.oc.Letter
+                android:id="@+id/letter12"
+                style="@style/LetterView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="A" />
+
+            <com.indest.oc.Letter
+                android:id="@+id/letter23"
+                style="@style/LetterView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="A" />
+
+            <com.indest.oc.Letter
+                android:id="@+id/letter34"
+                style="@style/LetterView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="A" />
+
+            <com.indest.oc.Letter
+                android:id="@+id/letter45"
+                style="@style/LetterView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="A" />
+
+            <com.indest.oc.Letter
+                android:id="@+id/letter56"
+                style="@style/LetterView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="A" />
+
+            <com.indest.oc.Letter
+                android:id="@+id/letter67"
+                style="@style/LetterView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="A" />
+
+            <com.indest.oc.Letter
+                android:id="@+id/letter78"
+                style="@style/LetterView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="A" />
+
+            <com.indest.oc.Letter
+                android:id="@+id/letter89"
+                style="@style/LetterView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="C" />
+
+            <com.indest.oc.Letter
+                android:id="@+id/letter91"
+                style="@style/LetterView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="X" />-->
 
         </androidx.gridlayout.widget.GridLayout>
     </androidx.appcompat.widget.LinearLayoutCompat>
