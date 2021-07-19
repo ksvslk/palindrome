@@ -3,7 +3,6 @@ package com.indest.oc.letter
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.graphics.Canvas
-import android.graphics.Rect
 import android.os.Build
 import android.os.VibrationEffect
 import android.view.MotionEvent
@@ -28,10 +27,10 @@ class Letter : TextView, IBox {
     private var TAG: String = "Letter"
     private var dX: Float = 0.0f
     private var dY: Float = 0.0f
-    private var oriX: Float = Float.NaN
-    private var oriY: Float = Float.NaN
     private lateinit var director: IBoxDirector
     private lateinit var lr: LetterResources
+    var oriX: Float = Float.NaN
+    var oriY: Float = Float.NaN
 
     @RequiresApi(Build.VERSION_CODES.O)
     constructor(
@@ -76,62 +75,59 @@ class Letter : TextView, IBox {
                 lr.soundPool.play(id, 1.0f, 1.0f, 1, 0, 1.0f)
 
                 // Color effects
-                ObjectAnimator.ofArgb(this, "backgroundColor", lr.viewStartColor, lr.viewEndColor).apply {
-                    duration = lr.onClickColorChangeDuration
-                    start()
-                }
-                ObjectAnimator.ofArgb(this, "textColor", lr.textStartColor, lr.textEndColor).apply {
-                    duration = lr.onClickColorChangeDuration
-                    start()
+                ObjectAnimator.ofArgb(this, "backgroundColor", lr.viewStartColor, lr.viewEndColor)
+                    .apply {
+                        duration = lr.onClickColorChangeDuration
+                        start()
+                    }
+                ObjectAnimator.ofArgb(this, "textColor", lr.textStartColor, lr.textEndColor)
+                    .apply {
+                        duration = lr.onClickColorChangeDuration
+                        start()
                 }
             }
             MotionEvent.ACTION_MOVE -> {
-                // Calculate the distance moved
+                // Move distance
                 v.x = e.rawX + dX
                 v.y = e.rawY + dY
             }
             MotionEvent.ACTION_UP -> {
-                director.handleCollisions(this)
-                // Logarithm (to get some value that represents how much was moved ignoring the
-                // actual physical distance) applied to Euclidean distance between start point
-                // and end point
-                val distance = log2(sqrt((dX - oriX).pow(2) + (dY - oriY).pow(2)))
 
                 // Color effects
-                ObjectAnimator.ofArgb(this, "backgroundColor", lr.viewEndColor, lr.viewStartColor).apply {
-                    duration = lr.onReleaseColorChangeDuration
-                    start()
-                }
+                ObjectAnimator.ofArgb(this, "backgroundColor", lr.viewEndColor, lr.viewStartColor)
+                    .apply {
+                        duration = lr.onReleaseColorChangeDuration
+                        start()
+                    }
                 ObjectAnimator.ofArgb(this, "textColor", lr.textEndColor, lr.textStartColor).apply {
                     duration = lr.onReleaseColorChangeDuration
                     start()
                 }
-
-                // Here we use the log-distance to calculate the duration of the animation
-                // longer distance should be only slightly longer animation and vice-versa
-                v.animate()
-                    .x(oriX)
-                    .y(oriY)
-                    .setInterpolator(FastOutSlowInInterpolator())
-                    .setDuration(distance.toLong() * lr.animateToHomeDurationMultiplier)
-                    .withEndAction { z = 0.0f }
-                    .start()
+              if (!director.handleCollisions(this)) {
+                    // send home because no collisions
+                    sendToNewPosition()
+              }
             }
         }
 
         true
     }
 
-    private fun collision(v1: View, v2: View): Triple<Boolean, String, String> {
-        val r1 = Rect()
-        val r2 = Rect()
-        v1.getHitRect(r1)
-        v2.getHitRect(r2)
-        return Triple(
-            r1.intersect(r2),
-            (v1 as Letter).text.toString(),
-            (v2 as Letter).text.toString()
-        )
+    fun sendToNewPosition() {
+        // Logarithm (to get some value that represents how much was moved ignoring the
+        // actual physical distance) applied to Euclidean distance between start point
+        // and end point
+        val distance = log2(sqrt((dX - oriX).pow(2) + (dY - oriY).pow(2)))
+
+        // Here we use the log-distance to calculate the duration of the animation
+        // longer distance should be only slightly longer animation and vice-versa
+        animate()
+            .x(oriX)
+            .y(oriY)
+            .setInterpolator(FastOutSlowInInterpolator())
+            .setDuration(distance.toLong() * lr.animateToHomeDurationMultiplier)
+            .withEndAction { z = 0.0f }
+            .start()
     }
 
     private fun addShortVibration(length: Long = 20) {
