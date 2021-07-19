@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/game_container"
@@ -10,21 +10,61 @@
     android:layout_marginEnd="8dp"
     android:layout_marginBottom="8dp"
     android:clipChildren="false"
+    android:weightSum="2"
+    android:orientation="vertical"
     tools:context=".GameActivity">
 
-    <androidx.gridlayout.widget.GridLayout
-        android:id="@+id/grid_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/top_llc"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
         android:clipChildren="false"
-        android:visibility="visible"
-        app:columnCount="7"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:useDefaultMargins="true" />
+        android:gravity="center_horizontal">
 
+        <androidx.gridlayout.widget.GridLayout
+            android:id="@+id/letters_gridlayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            android:layout_gravity="bottom"
+            app:columnCount="5"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:useDefaultMargins="true">
+        </androidx.gridlayout.widget.GridLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <android.widget.Space
+        android:layout_width="@dimen/default_gap"
+        android:layout_height="@dimen/default_gap">
+    </android.widget.Space>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/bottom_llc"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:clipChildren="false">
+
+        <androidx.gridlayout.widget.GridLayout
+            android:id="@+id/solution_gridlayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            android:layout_gravity="top"
+            app:columnCount="5"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:useDefaultMargins="true">
+
+        </androidx.gridlayout.widget.GridLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
     <FrameLayout
         android:id="@+id/ad_frame"
         android:layout_width="match_parent"
@@ -33,4 +73,4 @@
         android:layout_alignParentBottom="true"
         tools:ignore="MissingConstraints" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.appcompat.widget.LinearLayoutCompat>

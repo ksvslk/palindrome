@@ -3,7 +3,6 @@ package com.indest.oc
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.graphics.Canvas
-import android.graphics.Paint
 import android.graphics.Rect
 import android.os.Build
 import android.os.VibrationEffect
@@ -20,8 +19,10 @@ import kotlin.math.log2
 import kotlin.math.pow
 import kotlin.math.sqrt
 import android.content.Context
+import android.media.AudioManager
 import android.media.SoundPool
-
+import androidx.appcompat.widget.LinearLayoutCompat
+import androidx.core.view.ViewCompat
 
 @SuppressLint("ViewConstructor", "AppCompatCustomView")
 class Letter : TextView {
@@ -31,15 +32,20 @@ class Letter : TextView {
     private var dY: Float = 0.0f
     private var oriX: Float = Float.NaN
     private var oriY: Float = Float.NaN
-    private val onClickColorChangeDuration: Long = 300L
-    private val onReleaseColorChangeDuration: Long = 500L
+    private val onClickColorChangeDuration: Long = 200L
+    private val onReleaseColorChangeDuration: Long = 200L
     private val animateToHomeDurationMultiplier = 50
-    private val viewStartColor: Int = ResourcesCompat.getColor(resources, R.color.colorPrimary, null)
-    private val viewEndColor: Int = ResourcesCompat.getColor(resources, R.color.colorSecondary, null)
-    private val textStartColor: Int = ResourcesCompat.getColor(resources, R.color.colorOnPrimary, null)
-    private val textEndColor: Int = ResourcesCompat.getColor(resources, R.color.colorOnSecondary, null)
+    private val viewStartColor: Int =
+        ResourcesCompat.getColor(resources, R.color.colorPrimary, null)
+    private val viewEndColor: Int =
+        ResourcesCompat.getColor(resources, R.color.colorSecondary, null)
+    private val textStartColor: Int =
+        ResourcesCompat.getColor(resources, R.color.colorOnPrimary, null)
+    private val textEndColor: Int =
+        ResourcesCompat.getColor(resources, R.color.colorOnSecondary, null)
     private val vibrator = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
     private val soundPool: SoundPool = SoundPool.Builder().build()
+    private var am: AudioManager = context?.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
     @RequiresApi(Build.VERSION_CODES.O)
     constructor(
@@ -47,7 +53,7 @@ class Letter : TextView {
         letter: String?,
         defStyleRes: Int = R.style.LetterView
     ) : super(context, null, 0, defStyleRes) {
-        Log.d(TAG,"constructor")
+        Log.d(TAG, "constructor")
         id =
             View.generateViewId()
         TAG = "Letter$id"
@@ -68,9 +74,11 @@ class Letter : TextView {
     private val touchListen = OnTouchListener { v, e ->
         when (e.action) {
             MotionEvent.ACTION_DOWN -> {
+
+                ViewCompat.setTranslationZ((parent.parent as LinearLayoutCompat), 1.0f)
+
                 addShortVibration()
                 val id = soundPool.load(context, R.raw.start_drag, 1)
-                Log.d(TAG, id.toString())
                 soundPool.play(id, 1.0f, 1.0f, 1, 0, 1.0f)
                 z = 1.0f
                 ObjectAnimator.ofArgb(this, "backgroundColor", viewStartColor, viewEndColor).apply {
@@ -99,8 +107,11 @@ class Letter : TextView {
                     duration = onReleaseColorChangeDuration
                     start()
                 }
-                val intersects = collision(this, v)
-                Log.i(TAG, "Intersects: $intersects, with ${(v as Letter).TAG}")
+                val result = collision(this, v)
+                if (result.first)
+                {
+                    Log.i(TAG, "${result.second} intersects with ${result.third}!")
+                }
 
                 v.animate()
                     .x(oriX)
@@ -115,21 +126,30 @@ class Letter : TextView {
         true
     }
 
-    private fun collision(v1: View, v2: View): Boolean {
+    private fun collision(v1: View, v2: View): Triple<Boolean, String, String> {
         val r1 = Rect()
         val r2 = Rect()
         v1.getHitRect(r1)
         v2.getHitRect(r2)
-        //Log.i(TAG, r1.flattenToString())
-        //Log.i(TAG, r2.flattenToString())
-        return r1.intersect(r2)
+        return Triple(
+            r1.intersect(r2),
+            (v1 as Letter).text.toString(),
+            (v2 as Letter).text.toString()
+        )
     }
 
     private fun addShortVibration(length: Long = 20) {
-        if (Build.VERSION.SDK_INT >= 26) {
-            vibrator.vibrate(VibrationEffect.createOneShot(length, VibrationEffect.DEFAULT_AMPLITUDE))
-        } else {
-            vibrator.vibrate(length)
+        if (am.ringerMode != AudioManager.RINGER_MODE_SILENT) {
+            if (Build.VERSION.SDK_INT >= 26) {
+                vibrator.vibrate(
+                    VibrationEffect.createOneShot(
+                        length,
+                        VibrationEffect.DEFAULT_AMPLITUDE
+                    )
+                )
+            } else {
+                vibrator.vibrate(length)
+            }
         }
     }
 }

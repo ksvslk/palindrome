@@ -1,45 +1,57 @@
 package com.indest.oc
 
 import android.annotation.SuppressLint
+import android.content.pm.ActivityInfo
 import android.os.Build
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.TextView
+import androidx.annotation.RequiresApi
+import androidx.appcompat.widget.LinearLayoutCompat
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.RatingBar
-import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.gridlayout.widget.GridLayout
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdOptions
 import com.google.android.gms.ads.nativead.NativeAdOptions.ADCHOICES_TOP_RIGHT
 import com.google.android.gms.ads.nativead.NativeAdView
+import com.indest.oc.letter.Letter
 import com.indest.oc.util.Util
 import kotlinx.android.synthetic.main.activity_game.*
 
 class GameActivity : AppCompatActivity() {
     private val TAG = "GameActivity"
-    private lateinit var gameContainer: GridLayout
+    private lateinit var gameContainer: LinearLayoutCompat
+    private lateinit var letters: GridLayout
+    private lateinit var solution: GridLayout
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG,"onCreate")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
 
-        gameContainer = findViewById(R.id.grid_layout)
+        gameContainer = findViewById(R.id.game_container)
+        letters = findViewById(R.id.letters_gridlayout)
+        solution = findViewById(R.id.solution_gridlayout)
+
         Util.activateFullscreen(this, gameContainer)
 
-        for (l in "INDREK LUTS")
+        val puzzle = "BOB".uppercase()
+
+        if (puzzle.length > 25) {
+            this.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+        }
+
+        for (l in puzzle)
         {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                gameContainer.addView(Letter(this, l.toString()))
-            }
-            else {
-                throw NotImplementedError("Creating Letter views is not implemented with SDKs lower than 26 (O)")
-            }
+            letters.addView(Letter(this, l.toString()))
+            solution.addView(TextView(this, null, 0, R.style.EmptyBoxView))
         }
 
         val builder = AdLoader.Builder(this, "ca-app-pub-5386053272091445/8861866959")
