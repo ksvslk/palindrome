@@ -13,8 +13,8 @@ object BoxDirector : IBoxDirector {
         println("BoxDirector was notified by $released. to handle collisions!")
 
         var result = false
-        var candidateBoxes = mutableListOf<Letter>()
-        var rel = released as Letter
+        val candidateBoxes = mutableListOf<Letter>()
+        val rel = released as Letter
 
         for (droppedTo in boxes) {
             if (droppedTo is Letter) {
