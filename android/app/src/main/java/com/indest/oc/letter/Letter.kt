@@ -92,7 +92,6 @@ class Letter : TextView, IBox {
                 v.y = e.rawY + dY
             }
             MotionEvent.ACTION_UP -> {
-
                 // Color effects
                 ObjectAnimator.ofArgb(this, "backgroundColor", lr.viewEndColor, lr.viewStartColor)
                     .apply {

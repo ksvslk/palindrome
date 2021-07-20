@@ -45,7 +45,7 @@ class GameActivity : AppCompatActivity() {
         val letterDirector = BoxDirector
         Util.activateFullscreen(this, gameContainer)
 
-        val puzzle = "BOB".uppercase()
+        val puzzle = "XYZ".uppercase()
 
         if (puzzle.length > 25) {
             this.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
