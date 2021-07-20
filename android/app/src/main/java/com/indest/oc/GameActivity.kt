@@ -2,6 +2,7 @@ package com.indest.oc
 
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -51,6 +52,7 @@ class GameActivity : AppCompatActivity() {
                     })
             solution.addView(TextView(this, null, 0, R.style.EmptyBoxView))
         }
+
     }
 
     override fun onResume() {
