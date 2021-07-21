@@ -18,7 +18,6 @@ import com.google.android.ump.*
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.indest.oc.util.Util
 
-
 class MainActivity : AppCompatActivity() {
 
     private val TAG = "MainActivity"
@@ -44,8 +43,8 @@ class MainActivity : AppCompatActivity() {
             .setConsentDebugSettings(debugSettings)
             .build()
 
-        consentInformation = UserMessagingPlatform.getConsentInformation(this);
-        consentInformation.reset();
+        consentInformation = UserMessagingPlatform.getConsentInformation(this)
+        consentInformation.reset()
 
         consentInformation.requestConsentInfoUpdate(
             this,
@@ -54,11 +53,12 @@ class MainActivity : AppCompatActivity() {
                 // The consent information state was updated.
                 // You are now ready to check if a form is available.
                 if (consentInformation.isConsentFormAvailable) {
-                    loadForm();
+                    loadForm()
                 }
             }
         ) {
-            // Handle the error.
+            Log.e(TAG, "Consent info update failed.")
+
         }
 
         with(window) {
@@ -72,14 +72,7 @@ class MainActivity : AppCompatActivity() {
         Util.activateFullscreen(this, mainContainer)
 
         playButton = findViewById(R.id.play_button)
-        playButton.setOnClickListener{
-            val intent = Intent(this, GameActivity::class.java)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle())
-            } else {
-                startActivity(intent)
-            }
-        }
+        playButton.alpha = 0.5f
 
         analytics = FirebaseAnalytics.getInstance(this)
         analytics.logEvent("MainActivity_onCreated_finished", null)
@@ -88,6 +81,19 @@ class MainActivity : AppCompatActivity() {
         val testDeviceIds = listOf("6423719AD54122E0D92F7F6B44825877")
         val configuration = RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build()
         MobileAds.setRequestConfiguration(configuration)
+    }
+
+    private fun enabledPlayButton()
+    {
+        playButton.alpha = 1.0f
+        playButton.setOnClickListener {
+            val intent = Intent(this, GameActivity::class.java)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle())
+            } else {
+                startActivity(intent)
+            }
+        }
     }
 
     private fun loadForm() {
@@ -102,9 +108,14 @@ class MainActivity : AppCompatActivity() {
                         loadForm()
                     }
                 }
+                else
+                {
+                  enabledPlayButton()
+                }
             }
         ) {
-            /// Handle Error.
+            Log.e(TAG, "Consent form loading failed.")
+            enabledPlayButton()
         }
     }
 

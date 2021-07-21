@@ -7,7 +7,5 @@
         <item name="android:textColor">@color/zeus</item>
         <item name="android:textSize">26sp</item>
         <item name="android:fontFamily">@font/yantramanav_medium</item>
-        <!---<item name="fontFamily">sans-serif-medium</item>-->
    </style>
-
 </resources>

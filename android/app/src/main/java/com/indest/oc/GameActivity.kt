@@ -12,14 +12,12 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.gridlayout.widget.GridLayout
 import com.google.android.gms.ads.*
-import com.google.android.gms.ads.formats.NativeAdOptions.ADCHOICES_TOP_RIGHT
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdOptions
+import com.google.android.gms.ads.nativead.NativeAdOptions.ADCHOICES_TOP_RIGHT
 import com.google.android.gms.ads.nativead.NativeAdView
 import com.indest.oc.util.Util
 import kotlinx.android.synthetic.main.activity_game.*
-import java.util.*
-
 
 class GameActivity : AppCompatActivity() {
     private val TAG = "GameActivity"
@@ -87,26 +85,26 @@ class GameActivity : AppCompatActivity() {
         (adView.headlineView as TextView).text = nativeAd.headline
 
         if (nativeAd.callToAction == null) {
-            adView.callToActionView.visibility = View.INVISIBLE
+            adView.callToActionView?.visibility = View.INVISIBLE
         } else {
-            adView.callToActionView.visibility = View.VISIBLE
+            adView.callToActionView?.visibility = View.VISIBLE
             (adView.callToActionView as Button).text = nativeAd.callToAction
         }
 
         if (nativeAd.icon == null) {
-            adView.iconView.visibility = View.GONE
+            adView.iconView?.visibility = View.GONE
         } else {
             (adView.iconView as ImageView).setImageDrawable(
-                nativeAd.icon.drawable
+                nativeAd.icon?.drawable
             )
-            adView.iconView.visibility = View.VISIBLE
+            adView.iconView?.visibility = View.VISIBLE
         }
 
         if (nativeAd.starRating == null) {
-            adView.starRatingView.visibility = View.GONE
+            adView.starRatingView?.visibility = View.GONE
         } else {
             (adView.starRatingView as RatingBar).rating = nativeAd.starRating!!.toFloat()
-            adView.starRatingView.visibility = View.VISIBLE
+            adView.starRatingView?.visibility = View.VISIBLE
         }
 
         // This method tells the Google Mobile Ads SDK that you have finished populating your
