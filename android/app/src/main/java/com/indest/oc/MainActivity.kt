@@ -12,9 +12,11 @@ import android.view.Window
 import android.widget.Button
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.DialogFragment
+import com.indest.oc.fragments.ExitGameDialogFragment
 import com.indest.oc.util.Util
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogListener {
 
     private val TAG = "com.indest.oc.MainActivity"
     private lateinit var mainContainer: ConstraintLayout
@@ -49,6 +51,24 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         Util.activateFullscreen(this, mainContainer)
+    }
+
+    override fun onBackPressed() {
+        showExitDialog()
+    }
+
+    private fun showExitDialog() {
+        // Create an instance of the dialog fragment and show it
+        val dialog = ExitGameDialogFragment()
+        dialog.show(supportFragmentManager, "ExitGameDialogFragment")
+    }
+
+    override fun onDialogPositiveClick(dialog: DialogFragment) {
+        finish()
+    }
+
+    override fun onDialogNegativeClick(dialog: DialogFragment) {
+        dialog.dismiss()
     }
 }
 
