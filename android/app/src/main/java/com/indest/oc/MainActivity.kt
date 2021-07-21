@@ -20,7 +20,7 @@ import com.indest.oc.util.Util
 
 class MainActivity : AppCompatActivity() {
 
-    private val TAG = "MainActivity"
+    private val TAG = "com.indest.oc.MainActivity"
     private lateinit var mainContainer: ConstraintLayout
     private lateinit var playButton: Button
     private lateinit var analytics: FirebaseAnalytics
