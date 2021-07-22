@@ -2,7 +2,6 @@ package com.indest.oc
 
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
-import android.content.res.Configuration
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -23,6 +22,7 @@ import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdOptions
 import com.google.android.gms.ads.nativead.NativeAdOptions.ADCHOICES_TOP_RIGHT
 import com.google.android.gms.ads.nativead.NativeAdView
+import com.indest.oc.letter.Slot
 import com.indest.oc.util.Util
 import kotlinx.android.synthetic.main.activity_game.*
 
@@ -43,7 +43,7 @@ class GameActivity : AppCompatActivity() {
         letters = findViewById(R.id.letters_gridlayout)
         solution = findViewById(R.id.solution_gridlayout)
 
-        val letterDirector = BoxDirector
+        val boxDirector = BoxDirector
         Util.activateFullscreen(this, gameContainer)
 
         val puzzle = "XYZ".uppercase()
@@ -56,11 +56,14 @@ class GameActivity : AppCompatActivity() {
         for (l in puzzle)
         {
             letters.addView(
-                Letter(this, l.toString(), data, letterDirector)
+                Letter(this, l.toString(), data, boxDirector)
                     .also {
-                        letterDirector.boxes.add(it)
+                        boxDirector.boxes.add(it)
                     })
-            solution.addView(TextView(this, null, 0, R.style.EmptyBoxView))
+            solution.addView(Slot(this, boxDirector, R.style.EmptyBoxView)
+                .also {
+                    boxDirector.boxes.add(it)
+                })
         }
 
 
@@ -88,7 +91,11 @@ class GameActivity : AppCompatActivity() {
                 .build())
             .build()
 
-        builder.loadAd(AdRequest.Builder().build())
+        //builder.loadAd(AdRequest.Builder().build()) TODO("Uncomment before merging with develop")
+    }
+
+    private fun initAds(){
+
     }
 
     override fun onResume() {

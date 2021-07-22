@@ -23,8 +23,7 @@ import com.indest.oc.mediator.IBoxDirector
 
 @SuppressLint("ViewConstructor", "AppCompatCustomView")
 class Letter : TextView, IBox {
-
-    private var TAG: String = "Letter"
+    private var TAG: String
     private var dX: Float = 0.0f
     private var dY: Float = 0.0f
     private lateinit var director: IBoxDirector
@@ -42,8 +41,7 @@ class Letter : TextView, IBox {
     ) : super(context, null, 0, defStyleRes) {
         lr = letterResources
         director = boxDirector
-        id = View.generateViewId()
-        TAG = "Letter$id"
+        TAG = "Letter $letter"
         text = letter
         setOnTouchListener(touchListen)
     }
@@ -142,5 +140,17 @@ class Letter : TextView, IBox {
                 lr.vibrator.vibrate(length)
             }
         }
+    }
+
+    override var posX: Float
+        get() = x
+        set(value) {x = value}
+
+    override var posY: Float
+        get() = y
+        set(value) {y = value}
+
+    override fun toString(): String {
+        return TAG
     }
 }

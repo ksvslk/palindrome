@@ -7,7 +7,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/sandal"
+        android:background="@color/colorPrimary"
         android:orientation="vertical">
 
         <ImageView
@@ -48,7 +48,7 @@
                     android:fontFamily="@font/yantramanav_medium"
                     android:text="headline"
                     android:layout_marginBottom="5dp"
-                    android:textColor="@color/wafer" />
+                    android:textColor="@color/colorOnPrimary" />
 
                 <RatingBar
                     android:id="@+id/ad_rating"
@@ -57,9 +57,9 @@
                     android:layout_height="wrap_content"
                     android:isIndicator="true"
                     android:numStars="5"
-                    android:progressBackgroundTint="@color/dallas"
-                    android:progressTint="@color/eternity"
-                    android:secondaryProgressTint="@color/dallas"
+                    android:progressBackgroundTint="@color/colorSecondaryVariant"
+                    android:progressTint="@color/colorOnBackground"
+                    android:secondaryProgressTint="@color/colorSecondaryVariant"
                     android:stepSize="0.5" />
             </LinearLayout>
 
@@ -67,12 +67,12 @@
                 android:id="@+id/ad_call_to_action"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1.5"
-                android:backgroundTint="@color/sandstone"
+                android:layout_weight="1"
+                android:backgroundTint="@color/colorPrimaryVariant"
                 android:backgroundTintMode="src_over"
                 android:fontFamily="@font/yantramanav_medium"
                 android:gravity="center"
-                android:textColor="@color/wafer"
+                android:textColor="@color/colorOnBackground"
                 android:textSize="12sp" />
 
         </LinearLayout>
