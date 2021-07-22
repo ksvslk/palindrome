@@ -1,6 +1,8 @@
 package com.indest.oc.letter
 
+import android.graphics.Rect
+
 sealed interface IBox {
-    var posX: Float
-    var posY: Float
+    fun coords(): Pair<Int, Int>
+    fun rect(): Rect
 }

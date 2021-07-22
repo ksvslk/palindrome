@@ -1,8 +1,8 @@
 package com.indest.oc.mediator
 
-import android.graphics.Rect
 import android.util.Log
-import android.widget.TextView
+import androidx.appcompat.widget.LinearLayoutCompat
+import androidx.core.view.ViewCompat
 import com.indest.oc.letter.IBox
 import com.indest.oc.letter.Letter
 import com.indest.oc.letter.Slot
@@ -17,26 +17,26 @@ object BoxDirector : IBoxDirector {
         var result = false
         val candidateBoxes = mutableListOf<IBox>()
 
-
         for (droppedTo in boxes) {
-                val r2 = Rect()
-                val r1 = Rect()
-                released.getGlobalVisibleRect(r1)
-                (droppedTo as TextView).getGlobalVisibleRect(r2)
-                if (r1.intersect(r2) && released != droppedTo) {
+                if (released.rect().intersect(droppedTo.rect())&& released != droppedTo) {
                     Log.i(TAG, "Adding $droppedTo to candidateBoxes list. Apparently $released hit it!")
                     candidateBoxes.add(droppedTo)
                 }
         }
 
-        candidateBoxes.sortedBy {
-            abs(released.posX - it.posX) + abs(released.posY - it.posY)
+        var closest = candidateBoxes.minByOrNull {
+            abs(released.coords().first - it.coords().first) +
+            abs(released.coords().second - it.coords().second)
         }
+
+        candidateBoxes.forEach { m -> Log.i(TAG, (abs(released.coords().first - m.coords().first) +
+                abs(released.coords().second - m.coords().second)).toString()) }
+
         Log.i(TAG, candidateBoxes.toString())
 
-        when (val first = candidateBoxes.first()) {
+        when (closest) {
                 is Letter -> {
-                    switchPositions(released, first)
+                    switchPositions(released, closest)
                     result = true
                 }
                 is Slot -> {
@@ -57,6 +57,10 @@ object BoxDirector : IBoxDirector {
         released.oriY = droppedTo.oriY
         droppedTo.oriX = tempX
         droppedTo.oriY = tempY
+        ViewCompat.setTranslationZ((droppedTo.parent.parent as LinearLayoutCompat), 0.5f)
+        droppedTo.z = 0.5f
+        ViewCompat.setTranslationZ((released.parent.parent as LinearLayoutCompat), 1f)
+        released.z = 1f
         released.sendToNewPosition()
         droppedTo.sendToNewPosition()
     }

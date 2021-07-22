@@ -15,6 +15,7 @@ import kotlin.math.log2
 import kotlin.math.pow
 import kotlin.math.sqrt
 import android.content.Context
+import android.graphics.Rect
 import android.media.AudioManager
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.view.ViewCompat
@@ -123,7 +124,10 @@ class Letter : TextView, IBox {
             .y(oriY)
             .setInterpolator(FastOutSlowInInterpolator())
             .setDuration(distance.toLong() * lr.animateToHomeDurationMultiplier)
-            .withEndAction { z = 0.0f }
+            .withEndAction {
+                ViewCompat.setTranslationZ((parent.parent as LinearLayoutCompat), 0.0f)
+                z = 0.0f
+            }
             .start()
     }
 
@@ -142,13 +146,19 @@ class Letter : TextView, IBox {
         }
     }
 
-    override var posX: Float
-        get() = x
-        set(value) {x = value}
+    override fun coords(): Pair<Int, Int> {
+        val coords = IntArray(2)
+        getLocationOnScreen(coords)
+        val centerX = coords[0] + width / 2
+        val centerY = coords[0] + height / 2
+        return Pair(centerX, centerY)
+    }
 
-    override var posY: Float
-        get() = y
-        set(value) {y = value}
+    override fun rect(): Rect {
+        val rect = Rect()
+        getGlobalVisibleRect(rect)
+        return rect
+    }
 
     override fun toString(): String {
         return TAG
