@@ -3,36 +3,63 @@ package com.indest.oc.letter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Rect
-import android.nfc.Tag
 import android.os.Build
+import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import com.indest.oc.util.C
 import com.indest.oc.R
-import com.indest.oc.mediator.IBoxDirector
-import java.lang.System.out
 
-@SuppressLint("ViewConstructor", "AppCompatCustomView")
+@SuppressLint( "AppCompatCustomView", "ViewConstructor")
 class Slot @RequiresApi(Build.VERSION_CODES.O) constructor(
     context: Context?,
-    boxDirector: IBoxDirector,
     defStyleRes: Int = R.style.EmptyBoxView
 ) : TextView(context, null, 0, defStyleRes), IBox {
 
-    private var TAG: String
-    private var director: IBoxDirector = boxDirector
+    lateinit var filler:Letter
+    var slotState: Boolean = false
+    private var TAG: String = "Slot ${View.generateViewId()}"
 
-    init {
-        TAG = "Slot ${View.generateViewId()}"
-        text = TAG
+    private val touchListen = OnTouchListener { v, e ->
+        if (slotState) {
+        when (e.action) {
+            MotionEvent.ACTION_DOWN -> {
+                filler.state = State.DRAGGING
+                filler.state.executeActionDownBehaviour(filler, filler, e)
+            }
+            MotionEvent.ACTION_MOVE -> {
+                filler.state.executeActionMoveBehaviour(filler, filler, e)
+            }
+            MotionEvent.ACTION_UP -> {
+                filler.state = State.RESOLVING
+                filler.state.executeActionUpBehaviour(filler, this)
+            }
+            else -> {
+                performClick()
+            }
+        }
+            true
+        } else {
+            false
+
+        }
+
     }
 
-    override fun coords(): Pair<Int, Int> {
-        val coords = IntArray(2)
-        getLocationOnScreen(coords)
-        val centerX = coords[0] + width / 2
-        val centerY = coords[0] + height / 2
-        return Pair(centerX, centerY)
+    init {
+        text = TAG
+        z = C.BOTTOM_LAYER
+        setOnTouchListener(touchListen)
+    }
+
+    override fun pos(): GlobalPosition {
+        val coordinates = IntArray(2)
+        getLocationOnScreen(coordinates)
+        return GlobalPosition(
+            coordinates[0] + width / 2,
+            coordinates[1] + height / 2
+        )
     }
 
     override fun rect(): Rect {

@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
             }
         ) {
             Log.e(TAG, "Consent info update failed.")
-
+            enabledPlayButton()
         }
 
         with(window) {
@@ -103,7 +103,9 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
             this,
             { consentForm ->
                 this@MainActivity.consentForm = consentForm
-                if (consentInformation.consentStatus == ConsentInformation.ConsentStatus.REQUIRED) {
+                enabledPlayButton()
+                TODO("change this back")
+                if (consentInformation.consentStatus == ConsentInformation.ConsentStatus.NOT_REQUIRED)  {
                     consentForm.show(
                         this@MainActivity
                     ) { // Handle dismissal by reloading form.

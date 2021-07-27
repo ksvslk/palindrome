@@ -1,67 +1,92 @@
 package com.indest.oc.mediator
 
 import android.util.Log
-import androidx.appcompat.widget.LinearLayoutCompat
+import android.widget.TableLayout
 import androidx.core.view.ViewCompat
 import com.indest.oc.letter.IBox
+import com.indest.oc.util.C
 import com.indest.oc.letter.Letter
 import com.indest.oc.letter.Slot
+import com.indest.oc.letter.State
 import kotlin.math.abs
 
 object BoxDirector : IBoxDirector {
-    private val TAG = "BoxDirector"
+    private const val TAG = "BoxDirector"
     override val boxes: MutableList<IBox> = mutableListOf()
-    override fun handleCollisions(released: Letter): Boolean {
-
-        println("BoxDirector was notified by $released. to handle collisions!")
+    override fun handleCollisions(box: Letter): Boolean {
+        Log.i(TAG, "$box called handleCollisions.")
         var result = false
         val candidateBoxes = mutableListOf<IBox>()
 
         for (droppedTo in boxes) {
-                if (released.rect().intersect(droppedTo.rect())&& released != droppedTo) {
-                    Log.i(TAG, "Adding $droppedTo to candidateBoxes list. Apparently $released hit it!")
-                    candidateBoxes.add(droppedTo)
+                if (box.rect().intersect(droppedTo.rect()) && box != droppedTo) {
+                    if ((droppedTo is Letter) && droppedTo.state == State.HOME)
+                    {
+                        candidateBoxes.add(droppedTo)
+                    }
+                    else if (droppedTo is Slot){
+                        candidateBoxes.add(droppedTo)
+                    }
                 }
         }
+        Log.i(TAG, "Candidate boxes: $candidateBoxes")
 
-        var closest = candidateBoxes.minByOrNull {
-            abs(released.coords().first - it.coords().first) +
-            abs(released.coords().second - it.coords().second)
-        }
+        val closest = candidateBoxes.minByOrNull {
+            abs(box.pos().gX - it.pos().gX) +
+            abs(box.pos().gY - it.pos().gY)
+        }.also { if (it == null) return result }
 
-        candidateBoxes.forEach { m -> Log.i(TAG, (abs(released.coords().first - m.coords().first) +
-                abs(released.coords().second - m.coords().second)).toString()) }
+        Log.i(TAG, "$closest was chosen!")
 
-        Log.i(TAG, candidateBoxes.toString())
-
-        when (closest) {
-                is Letter -> {
-                    switchPositions(released, closest)
+        when(closest)
+        {
+            is Letter -> {
+                if (closest.state == State.HOME)
+                {
+                    switchLetterPositions(box, closest)
                     result = true
                 }
-                is Slot -> {
-                    TODO("Method for placing letter in empty slot")
+            }
+            is Slot -> {
+                if (!closest.slotState) {
+                    placeLetterInEmptyBox(box, closest)
+                    result = true
                 }
+            }
         }
 
-        candidateBoxes.clear()
         return result
-        TODO("Handle dropping onto empty box")
     }
 
-    private fun switchPositions(released: Letter, droppedTo: Letter) {
-        Log.i(TAG, "Switching ${released.text} home position with ${droppedTo.text}!")
-        val tempX = released.oriX
-        val tempY = released.oriY
-        released.oriX = droppedTo.oriX
-        released.oriY = droppedTo.oriY
-        droppedTo.oriX = tempX
-        droppedTo.oriY = tempY
-        ViewCompat.setTranslationZ((droppedTo.parent.parent as LinearLayoutCompat), 0.5f)
-        droppedTo.z = 0.5f
-        ViewCompat.setTranslationZ((released.parent.parent as LinearLayoutCompat), 1f)
-        released.z = 1f
-        released.sendToNewPosition()
-        droppedTo.sendToNewPosition()
+    private fun placeLetterInEmptyBox(letter: Letter, slot: Slot) {
+        Log.i(TAG, "Placing $letter to empty $slot!")
+        val distanceToMoveX = slot.pos().gX - letter.pos().gX
+        val distanceToMoveY = slot.pos().gY - letter.pos().gY
+        ViewCompat.setTranslationZ((letter.parent.parent as TableLayout), C.TOP_LAYER)
+        letter.z = C.TOP_LAYER
+        letter.state = State.ANIMATION_TO_SLOT
+        letter.state.executeAnimationBehaviour(letter, slot, distanceToMoveX, distanceToMoveY)
+    }
+
+    private fun switchLetterPositions(top: Letter, bottom: Letter) {
+        Log.i(TAG, "Switching $top home position with $bottom!")
+        val distanceToMoveX = bottom.pos().gX - top.pos().gX
+        val distanceToMoveY = bottom.pos().gY - top.pos().gY
+        val droppedToMoveX = top.homeX - bottom.homeX
+        val droppedToMoveY = top.homeY - bottom.homeY
+        val tempX = bottom.homeX
+        val tempY = bottom.homeY
+        bottom.homeX = top.homeX
+        bottom.homeY = top.homeY
+        top.homeX = tempX
+        top.homeY = tempY
+        ViewCompat.setTranslationZ((bottom.parent.parent as TableLayout), C.MIDDLE_LAYER)
+        bottom.z = C.MIDDLE_LAYER
+        ViewCompat.setTranslationZ((top.parent.parent as TableLayout), C.TOP_LAYER)
+        top.z = C.TOP_LAYER
+        top.state = State.ANIMATION
+        top.state.executeAnimationBehaviour(top, null, distanceToMoveX, distanceToMoveY)
+        bottom.state = State.ANIMATION
+        bottom.state.executeAnimationBehaviour(bottom, null, droppedToMoveX, droppedToMoveY)
     }
 }

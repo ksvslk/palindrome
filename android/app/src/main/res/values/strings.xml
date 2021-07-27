@@ -5,4 +5,5 @@
     <string name="exit_game">Exit game?</string>
     <string name="cancel">Cancel</string>
     <string name="yes">Yes</string>
+    <string name="options">Options</string>
 </resources>

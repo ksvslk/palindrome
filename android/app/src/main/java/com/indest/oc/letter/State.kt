@@ -1,0 +1,147 @@
+package com.indest.oc.letter
+
+import android.animation.ObjectAnimator
+import android.util.Log
+import android.view.MotionEvent
+import android.view.View
+import android.widget.TableLayout
+import androidx.core.view.ViewCompat
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import com.indest.oc.R
+import com.indest.oc.util.C
+import kotlin.math.log2
+
+
+const val TAG = "State"
+
+enum class State : IState {
+    HOME {
+        override fun draw(l: Letter) {
+            if (l.homeX == Int.MAX_VALUE && l.homeY == Int.MAX_VALUE) {
+                l.homeX = l.pos().gX
+                l.homeY = l.pos().gY
+            }
+        }
+
+        override fun executeActionDownBehaviour(l: Letter, v: View, e: MotionEvent) {}
+        override fun executeActionMoveBehaviour(l: Letter, v: View, e: MotionEvent) {}
+        override fun executeActionUpBehaviour(l: Letter, s: Slot?) {}
+        override fun executeAnimationBehaviour(l: Letter, s: Slot?, moveByX: Int, moveByY: Int) {}
+    },
+    DRAGGING {
+        override fun draw(l: Letter) {}
+        override fun executeActionDownBehaviour(l: Letter, v: View, e: MotionEvent) {
+            // Calculate the distance moved
+            l.dX = v.x - e.rawX
+            l.dY = v.y - e.rawY
+
+            // Draggable view and its parents parent should be always on top
+            ViewCompat.setTranslationZ((l.parent.parent as TableLayout), C.TOP_LAYER)
+            l.z = C.TOP_LAYER
+
+            // Sound effects
+            l.addShortVibration()
+            val id = l.lr.soundPool.load(l.context, R.raw.start_drag, 1)
+            l.lr.soundPool.play(id, 1.0f, 1.0f, 1, 0, 1.0f)
+
+            // Color effects
+            ObjectAnimator.ofArgb(l, "backgroundColor", l.lr.viewStartColor, l.lr.viewEndColor)
+                .apply {
+                    duration = l.lr.onClickColorChangeDuration
+                    start()
+                }
+            ObjectAnimator.ofArgb(l, "textColor", l.lr.textStartColor, l.lr.textEndColor)
+                .apply {
+                    duration = l.lr.onClickColorChangeDuration
+                    start()
+                }
+        }
+
+        override fun executeActionMoveBehaviour(l: Letter, v: View, e: MotionEvent) {
+            v.x = e.rawX + l.dX
+            v.y = e.rawY + l.dY
+        }
+
+        override fun executeActionUpBehaviour(l: Letter, s: Slot?) {}
+        override fun executeAnimationBehaviour(l: Letter, s: Slot?, moveByX: Int, moveByY: Int) {}
+    },
+    RESOLVING {
+        override fun draw(l: Letter) {}
+        override fun executeActionDownBehaviour(l: Letter, v: View, e: MotionEvent) {}
+        override fun executeActionMoveBehaviour(l: Letter, v: View, e: MotionEvent) {}
+        override fun executeActionUpBehaviour(l: Letter, s: Slot?) {
+            // Color effects
+            ObjectAnimator.ofArgb(l, "backgroundColor", l.lr.viewEndColor, l.lr.viewStartColor)
+                .apply {
+                    duration = l.lr.onReleaseColorChangeDuration
+                    start()
+                }
+            ObjectAnimator.ofArgb(l, "textColor", l.lr.textEndColor, l.lr.textStartColor).apply {
+                duration = l.lr.onReleaseColorChangeDuration
+                start()
+            }
+            if (!l.director.handleCollisions(l)) {
+                // send home because no collisions
+                l.state = ANIMATION
+                l.state.executeAnimationBehaviour(l, s,(l.homeX - l.pos().gX), (l.homeY - l.pos().gY))
+            }
+        }
+
+        override fun executeAnimationBehaviour(l: Letter, s: Slot?, moveByX: Int, moveByY: Int) {}
+    },
+    ANIMATION {
+        override fun draw(l: Letter) {}
+        override fun executeActionDownBehaviour(l: Letter, v: View, e: MotionEvent) {}
+        override fun executeActionMoveBehaviour(l: Letter, v: View, e: MotionEvent) {}
+        override fun executeActionUpBehaviour(l: Letter, s: Slot?) {}
+        override fun executeAnimationBehaviour(l: Letter, s: Slot?, moveByX: Int, moveByY: Int) {
+            // Logarithm (to get some value that represents how much was moved ignoring the
+            // actual physical distance) applied to Euclidean distance between start point
+            // and end point
+            val distance = log2((Math.abs(moveByX) + Math.abs(moveByY)).toDouble())
+            // Here we use the log-distance to calculate the duration of the animation
+            // longer distance should be only slightly longer animation and vice-versa
+            l.animate()
+                .translationXBy(moveByX.toFloat())
+                .translationYBy(moveByY.toFloat())
+                .setInterpolator(FastOutSlowInInterpolator())
+                .setDuration(distance.toLong() * l.lr.animateToHomeDurationMultiplier)
+                .withEndAction {
+                    ViewCompat.setTranslationZ((l.parent.parent as TableLayout), C.MIDDLE_LAYER)
+                    l.z = C.MIDDLE_LAYER
+                    l.state = HOME
+                    s?.slotState = false
+                }
+                .start()
+        }
+    },
+    ANIMATION_TO_SLOT {
+        override fun draw(l: Letter) {}
+        override fun executeActionDownBehaviour(l: Letter, v: View, e: MotionEvent) {}
+        override fun executeActionMoveBehaviour(l: Letter, v: View, e: MotionEvent) {}
+        override fun executeActionUpBehaviour(l: Letter, s: Slot?) {}
+        override fun executeAnimationBehaviour(l: Letter, s: Slot?, moveByX: Int, moveByY: Int) {
+            // Logarithm (to get some value that represents how much was moved ignoring the
+            // actual physical distance) applied to Euclidean distance between start point
+            // and end point
+            val distance = log2((Math.abs(moveByX) + Math.abs(moveByY)).toDouble())
+            // Here we use the log-distance to calculate the duration of the animation
+            // longer distance should be only slightly longer animation and vice-versa
+            l.animate()
+                .translationXBy(moveByX.toFloat())
+                .translationYBy(moveByY.toFloat())
+                .setInterpolator(FastOutSlowInInterpolator())
+                .setDuration(distance.toLong() * l.lr.animateToHomeDurationMultiplier)
+                .withEndAction {
+                    ViewCompat.setTranslationZ((l.parent.parent as TableLayout), C.MIDDLE_LAYER)
+                    l.z = C.MIDDLE_LAYER
+                    l.state = HOME
+                    s?.filler = l
+                    s?.slotState = true
+                }
+                .start()
+        }
+    },
+}
+
+
