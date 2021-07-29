@@ -22,8 +22,8 @@ enum class State : IState {
 
         override fun executeActionDownBehaviour(l: Letter, v: View, e: MotionEvent) {}
         override fun executeActionMoveBehaviour(l: Letter, v: View, e: MotionEvent) {}
-        override fun executeActionUpBehaviour(l: Letter, s: Slot?) {}
-        override fun executeAnimationBehaviour(l: Letter,other:Letter?, s: Slot?, moveByX: Int, moveByY: Int) {}
+        override fun executeActionUpBehaviour(l: Letter) {}
+        override fun executeAnimationBehaviour(l: Letter, moveByX: Int, moveByY: Int) {}
     },
     DRAGGING {
         override fun draw(l: Letter) {}
@@ -59,14 +59,14 @@ enum class State : IState {
             v.y = e.rawY + l.dY
         }
 
-        override fun executeActionUpBehaviour(l: Letter, s: Slot?) {}
-        override fun executeAnimationBehaviour(l: Letter,other:Letter?,  s: Slot?, moveByX: Int, moveByY: Int) {}
+        override fun executeActionUpBehaviour(l: Letter) {}
+        override fun executeAnimationBehaviour(l: Letter, moveByX: Int, moveByY: Int) {}
     },
     RESOLVING {
         override fun draw(l: Letter) {}
         override fun executeActionDownBehaviour(l: Letter, v: View, e: MotionEvent) {}
         override fun executeActionMoveBehaviour(l: Letter, v: View, e: MotionEvent) {}
-        override fun executeActionUpBehaviour(l: Letter, s: Slot?) {
+        override fun executeActionUpBehaviour(l: Letter) {
             // Color effects
             ObjectAnimator.ofArgb(l, "backgroundColor", l.lr.viewEndColor, l.lr.viewStartColor)
                 .apply {
@@ -80,18 +80,18 @@ enum class State : IState {
             if (!l.director.handleCollisions(l)) {
                 // send home because no collisions
                 l.state = ANIMATION
-                l.state.executeAnimationBehaviour(l, null, s,(l.homeX - l.pos().gX), (l.homeY - l.pos().gY))
+                l.state.executeAnimationBehaviour(l, (l.homeX - l.pos().gX), (l.homeY - l.pos().gY))
             }
         }
 
-        override fun executeAnimationBehaviour(l: Letter,other:Letter?,  s: Slot?, moveByX: Int, moveByY: Int) {}
+        override fun executeAnimationBehaviour(l: Letter, moveByX: Int, moveByY: Int) {}
     },
     ANIMATION {
         override fun draw(l: Letter) {}
         override fun executeActionDownBehaviour(l: Letter, v: View, e: MotionEvent) {}
         override fun executeActionMoveBehaviour(l: Letter, v: View, e: MotionEvent) {}
-        override fun executeActionUpBehaviour(l: Letter, s: Slot?) {}
-        override fun executeAnimationBehaviour(l: Letter,other:Letter?, s: Slot?, moveByX: Int, moveByY: Int) {
+        override fun executeActionUpBehaviour(l: Letter) {}
+        override fun executeAnimationBehaviour(l: Letter, moveByX: Int, moveByY: Int) {
             // Logarithm (to get some value that represents how much was moved ignoring the
             // actual physical distance) applied to Euclidean distance between start point
             // and end point
@@ -99,32 +99,6 @@ enum class State : IState {
             // Here we use the log-distance to calculate the duration of the animation
             // longer distance should be only slightly longer animation and vice-versa
 
-
-            l.animate()
-                .xBy(moveByX.toFloat())
-                .yBy(moveByY.toFloat())
-                .setInterpolator(FastOutSlowInInterpolator())
-                .setDuration(distance.toLong() * l.lr.animateToHomeDurationMultiplier)
-                .withEndAction {
-                    ViewCompat.setTranslationZ((l.parent as androidx.gridlayout.widget.GridLayout), C.MIDDLE_LAYER)
-                    l.z = C.MIDDLE_LAYER
-                    l.state = HOME
-                }
-                .start()
-        }
-    },
-    ANIMATION_TO_SLOT {
-        override fun draw(l: Letter) {}
-        override fun executeActionDownBehaviour(l: Letter, v: View, e: MotionEvent) {}
-        override fun executeActionMoveBehaviour(l: Letter, v: View, e: MotionEvent) {}
-        override fun executeActionUpBehaviour(l: Letter, s: Slot?) {}
-        override fun executeAnimationBehaviour(l: Letter, other: Letter?, s: Slot?, moveByX: Int, moveByY: Int) {
-            // Logarithm (to get some value that represents how much was moved ignoring the
-            // actual physical distance) applied to Euclidean distance between start point
-            // and end point
-            val distance = log2((Math.abs(moveByX) + Math.abs(moveByY)).toDouble())
-            // Here we use the log-distance to calculate the duration of the animation
-            // longer distance should be only slightly longer animation and vice-versa
             l.animate()
                 .xBy(moveByX.toFloat())
                 .yBy(moveByY.toFloat())

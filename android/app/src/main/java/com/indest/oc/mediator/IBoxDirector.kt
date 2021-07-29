@@ -5,7 +5,5 @@ import com.indest.oc.letter.Letter
 
 sealed interface IBoxDirector {
     val boxes: MutableList<IBox>
-
-    // Handle only cases where Letter is released
     fun handleCollisions(box: Letter) : Boolean
 }

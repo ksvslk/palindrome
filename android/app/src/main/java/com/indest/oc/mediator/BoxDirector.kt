@@ -1,6 +1,5 @@
 package com.indest.oc.mediator
 
-import android.graphics.Rect
 import android.util.Log
 import androidx.core.view.ViewCompat
 import com.indest.oc.letter.IBox
@@ -13,6 +12,8 @@ import kotlin.math.abs
 object BoxDirector : IBoxDirector {
     private const val TAG = "BoxDirector"
     override val boxes: MutableList<IBox> = mutableListOf()
+    var pairs:MutableMap<Slot, Letter> = mutableMapOf()
+
     override fun handleCollisions(box: Letter): Boolean {
         Log.i(TAG, "$box called handleCollisions.")
         var result = false
@@ -34,9 +35,12 @@ object BoxDirector : IBoxDirector {
         val closest = candidateBoxes.minByOrNull {
             abs(box.pos().gX - it.pos().gX) +
             abs(box.pos().gY - it.pos().gY)
-        }.also { if (it == null) return result }
+        }.also { if (it == null) {
+                animateLetterHome(box)
+            }
+        }
 
-        Log.i(TAG, "$closest was chosen!")
+        Log.i(TAG, "${closest ?: "No letter was touching so nothing"} was chosen!")
 
         when(closest)
         {
@@ -48,7 +52,9 @@ object BoxDirector : IBoxDirector {
                 }
             }
             is Slot -> {
-                if (closest.friend != null) {
+                if(!pairs.containsKey(closest))
+                {
+                    pairs[closest] = box
                     placeLetterInEmptyBox(box, closest)
                     result = true
                 }
@@ -56,6 +62,16 @@ object BoxDirector : IBoxDirector {
         }
 
         return result
+    }
+    private fun animateLetterHome(l: Letter)
+    {
+        Log.i(TAG, "Animating $l to home position!")
+        if (pairs.containsValue(l)) {
+            Log.i(TAG, "Deleting $l from pairs!")
+            pairs.keys.find { s -> pairs[s] == l }.also { pairs.remove(it) }
+        }
+        l.state = State.ANIMATION
+        l.state.executeAnimationBehaviour(l, (l.homeX - l.pos().gX), (l.homeY - l.pos().gY))
     }
 
     private fun placeLetterInEmptyBox(letter: Letter, slot: Slot) {
@@ -65,20 +81,13 @@ object BoxDirector : IBoxDirector {
         ViewCompat.setTranslationZ((letter.parent as androidx.gridlayout.widget.GridLayout), C.TOP_LAYER)
         letter.z = C.TOP_LAYER
         slot.friend = letter
-        letter.state = State.ANIMATION_TO_SLOT
-        letter.state.executeAnimationBehaviour(letter, null, slot, distanceToMoveX, distanceToMoveY)
+        letter.state = State.ANIMATION
+        letter.state.executeAnimationBehaviour(letter, distanceToMoveX, distanceToMoveY)
     }
 
     private fun switchLetterPositions(top: Letter, bottom: Letter) {
-
-        val hit1 = Rect()
-        val hit2 = Rect()
-        top.getHitRect(hit1)
-        bottom.getHitRect(hit2)
-        Log.i(TAG, "${top.text} hit rect (before): ${hit1.toShortString()}")
-        Log.i(TAG, "${bottom.text} hit rect (before): ${hit2.toShortString()}")
-
         Log.i(TAG, "Switching $top home position with $bottom!")
+
         val distanceToMoveX = bottom.pos().gX - top.pos().gX
         val distanceToMoveY = bottom.pos().gY - top.pos().gY
         val droppedToMoveX = top.homeX - bottom.homeX
@@ -95,9 +104,8 @@ object BoxDirector : IBoxDirector {
         ViewCompat.setTranslationZ((top.parent as androidx.gridlayout.widget.GridLayout), C.TOP_LAYER)
         top.z = C.TOP_LAYER
         top.state = State.ANIMATION
-        top.state.executeAnimationBehaviour(top, bottom,null, distanceToMoveX, distanceToMoveY)
+        top.state.executeAnimationBehaviour(top,distanceToMoveX, distanceToMoveY)
         bottom.state = State.ANIMATION
-        bottom.state.executeAnimationBehaviour(bottom, null,null, droppedToMoveX, droppedToMoveY)
+        bottom.state.executeAnimationBehaviour(bottom, droppedToMoveX, droppedToMoveY)
     }
-
 }
