@@ -1,13 +1,13 @@
 package com.indest.oc.mediator
 
+import android.graphics.Rect
 import android.util.Log
-import android.widget.TableLayout
 import androidx.core.view.ViewCompat
 import com.indest.oc.letter.IBox
-import com.indest.oc.util.C
 import com.indest.oc.letter.Letter
 import com.indest.oc.letter.Slot
 import com.indest.oc.letter.State
+import com.indest.oc.util.C
 import kotlin.math.abs
 
 object BoxDirector : IBoxDirector {
@@ -48,7 +48,7 @@ object BoxDirector : IBoxDirector {
                 }
             }
             is Slot -> {
-                if (!closest.slotState) {
+                if (closest.friend != null) {
                     placeLetterInEmptyBox(box, closest)
                     result = true
                 }
@@ -62,13 +62,22 @@ object BoxDirector : IBoxDirector {
         Log.i(TAG, "Placing $letter to empty $slot!")
         val distanceToMoveX = slot.pos().gX - letter.pos().gX
         val distanceToMoveY = slot.pos().gY - letter.pos().gY
-        ViewCompat.setTranslationZ((letter.parent.parent as TableLayout), C.TOP_LAYER)
+        ViewCompat.setTranslationZ((letter.parent as androidx.gridlayout.widget.GridLayout), C.TOP_LAYER)
         letter.z = C.TOP_LAYER
+        slot.friend = letter
         letter.state = State.ANIMATION_TO_SLOT
-        letter.state.executeAnimationBehaviour(letter, slot, distanceToMoveX, distanceToMoveY)
+        letter.state.executeAnimationBehaviour(letter, null, slot, distanceToMoveX, distanceToMoveY)
     }
 
     private fun switchLetterPositions(top: Letter, bottom: Letter) {
+
+        val hit1 = Rect()
+        val hit2 = Rect()
+        top.getHitRect(hit1)
+        bottom.getHitRect(hit2)
+        Log.i(TAG, "${top.text} hit rect (before): ${hit1.toShortString()}")
+        Log.i(TAG, "${bottom.text} hit rect (before): ${hit2.toShortString()}")
+
         Log.i(TAG, "Switching $top home position with $bottom!")
         val distanceToMoveX = bottom.pos().gX - top.pos().gX
         val distanceToMoveY = bottom.pos().gY - top.pos().gY
@@ -80,13 +89,15 @@ object BoxDirector : IBoxDirector {
         bottom.homeY = top.homeY
         top.homeX = tempX
         top.homeY = tempY
-        ViewCompat.setTranslationZ((bottom.parent.parent as TableLayout), C.MIDDLE_LAYER)
+
+        ViewCompat.setTranslationZ((bottom.parent as androidx.gridlayout.widget.GridLayout), C.MIDDLE_LAYER)
         bottom.z = C.MIDDLE_LAYER
-        ViewCompat.setTranslationZ((top.parent.parent as TableLayout), C.TOP_LAYER)
+        ViewCompat.setTranslationZ((top.parent as androidx.gridlayout.widget.GridLayout), C.TOP_LAYER)
         top.z = C.TOP_LAYER
         top.state = State.ANIMATION
-        top.state.executeAnimationBehaviour(top, null, distanceToMoveX, distanceToMoveY)
+        top.state.executeAnimationBehaviour(top, bottom,null, distanceToMoveX, distanceToMoveY)
         bottom.state = State.ANIMATION
-        bottom.state.executeAnimationBehaviour(bottom, null, droppedToMoveX, droppedToMoveY)
+        bottom.state.executeAnimationBehaviour(bottom, null,null, droppedToMoveX, droppedToMoveY)
     }
+
 }

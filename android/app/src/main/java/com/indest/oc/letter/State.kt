@@ -1,16 +1,13 @@
 package com.indest.oc.letter
 
 import android.animation.ObjectAnimator
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
-import android.widget.TableLayout
 import androidx.core.view.ViewCompat
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.indest.oc.R
 import com.indest.oc.util.C
 import kotlin.math.log2
-
 
 const val TAG = "State"
 
@@ -26,7 +23,7 @@ enum class State : IState {
         override fun executeActionDownBehaviour(l: Letter, v: View, e: MotionEvent) {}
         override fun executeActionMoveBehaviour(l: Letter, v: View, e: MotionEvent) {}
         override fun executeActionUpBehaviour(l: Letter, s: Slot?) {}
-        override fun executeAnimationBehaviour(l: Letter, s: Slot?, moveByX: Int, moveByY: Int) {}
+        override fun executeAnimationBehaviour(l: Letter,other:Letter?, s: Slot?, moveByX: Int, moveByY: Int) {}
     },
     DRAGGING {
         override fun draw(l: Letter) {}
@@ -36,7 +33,7 @@ enum class State : IState {
             l.dY = v.y - e.rawY
 
             // Draggable view and its parents parent should be always on top
-            ViewCompat.setTranslationZ((l.parent.parent as TableLayout), C.TOP_LAYER)
+            ViewCompat.setTranslationZ((l.parent as androidx.gridlayout.widget.GridLayout), C.TOP_LAYER)
             l.z = C.TOP_LAYER
 
             // Sound effects
@@ -63,7 +60,7 @@ enum class State : IState {
         }
 
         override fun executeActionUpBehaviour(l: Letter, s: Slot?) {}
-        override fun executeAnimationBehaviour(l: Letter, s: Slot?, moveByX: Int, moveByY: Int) {}
+        override fun executeAnimationBehaviour(l: Letter,other:Letter?,  s: Slot?, moveByX: Int, moveByY: Int) {}
     },
     RESOLVING {
         override fun draw(l: Letter) {}
@@ -83,34 +80,35 @@ enum class State : IState {
             if (!l.director.handleCollisions(l)) {
                 // send home because no collisions
                 l.state = ANIMATION
-                l.state.executeAnimationBehaviour(l, s,(l.homeX - l.pos().gX), (l.homeY - l.pos().gY))
+                l.state.executeAnimationBehaviour(l, null, s,(l.homeX - l.pos().gX), (l.homeY - l.pos().gY))
             }
         }
 
-        override fun executeAnimationBehaviour(l: Letter, s: Slot?, moveByX: Int, moveByY: Int) {}
+        override fun executeAnimationBehaviour(l: Letter,other:Letter?,  s: Slot?, moveByX: Int, moveByY: Int) {}
     },
     ANIMATION {
         override fun draw(l: Letter) {}
         override fun executeActionDownBehaviour(l: Letter, v: View, e: MotionEvent) {}
         override fun executeActionMoveBehaviour(l: Letter, v: View, e: MotionEvent) {}
         override fun executeActionUpBehaviour(l: Letter, s: Slot?) {}
-        override fun executeAnimationBehaviour(l: Letter, s: Slot?, moveByX: Int, moveByY: Int) {
+        override fun executeAnimationBehaviour(l: Letter,other:Letter?, s: Slot?, moveByX: Int, moveByY: Int) {
             // Logarithm (to get some value that represents how much was moved ignoring the
             // actual physical distance) applied to Euclidean distance between start point
             // and end point
             val distance = log2((Math.abs(moveByX) + Math.abs(moveByY)).toDouble())
             // Here we use the log-distance to calculate the duration of the animation
             // longer distance should be only slightly longer animation and vice-versa
+
+
             l.animate()
-                .translationXBy(moveByX.toFloat())
-                .translationYBy(moveByY.toFloat())
+                .xBy(moveByX.toFloat())
+                .yBy(moveByY.toFloat())
                 .setInterpolator(FastOutSlowInInterpolator())
                 .setDuration(distance.toLong() * l.lr.animateToHomeDurationMultiplier)
                 .withEndAction {
-                    ViewCompat.setTranslationZ((l.parent.parent as TableLayout), C.MIDDLE_LAYER)
+                    ViewCompat.setTranslationZ((l.parent as androidx.gridlayout.widget.GridLayout), C.MIDDLE_LAYER)
                     l.z = C.MIDDLE_LAYER
                     l.state = HOME
-                    s?.slotState = false
                 }
                 .start()
         }
@@ -120,7 +118,7 @@ enum class State : IState {
         override fun executeActionDownBehaviour(l: Letter, v: View, e: MotionEvent) {}
         override fun executeActionMoveBehaviour(l: Letter, v: View, e: MotionEvent) {}
         override fun executeActionUpBehaviour(l: Letter, s: Slot?) {}
-        override fun executeAnimationBehaviour(l: Letter, s: Slot?, moveByX: Int, moveByY: Int) {
+        override fun executeAnimationBehaviour(l: Letter, other: Letter?, s: Slot?, moveByX: Int, moveByY: Int) {
             // Logarithm (to get some value that represents how much was moved ignoring the
             // actual physical distance) applied to Euclidean distance between start point
             // and end point
@@ -128,16 +126,14 @@ enum class State : IState {
             // Here we use the log-distance to calculate the duration of the animation
             // longer distance should be only slightly longer animation and vice-versa
             l.animate()
-                .translationXBy(moveByX.toFloat())
-                .translationYBy(moveByY.toFloat())
+                .xBy(moveByX.toFloat())
+                .yBy(moveByY.toFloat())
                 .setInterpolator(FastOutSlowInInterpolator())
                 .setDuration(distance.toLong() * l.lr.animateToHomeDurationMultiplier)
                 .withEndAction {
-                    ViewCompat.setTranslationZ((l.parent.parent as TableLayout), C.MIDDLE_LAYER)
+                    ViewCompat.setTranslationZ((l.parent as androidx.gridlayout.widget.GridLayout), C.MIDDLE_LAYER)
                     l.z = C.MIDDLE_LAYER
                     l.state = HOME
-                    s?.filler = l
-                    s?.slotState = true
                 }
                 .start()
         }

@@ -6,4 +6,6 @@
     <string name="cancel">Cancel</string>
     <string name="yes">Yes</string>
     <string name="options">Options</string>
+    <string name="score">Score:</string>
+    <string name="level">Level:</string>
 </resources>

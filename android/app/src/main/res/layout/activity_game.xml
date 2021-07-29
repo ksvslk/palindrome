@@ -5,78 +5,97 @@
     android:id="@+id/game_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginStart="8dp"
-    android:layout_marginTop="8dp"
-    android:layout_marginEnd="8dp"
-    android:layout_marginBottom="8dp"
     android:clipChildren="false"
-    android:weightSum="2"
     android:orientation="vertical"
     tools:context=".GameActivity">
 
-    <FrameLayout
-        android:id="@+id/ad_frame"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/game_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_alignParentBottom="true"
-        tools:ignore="MissingConstraints" />
+        android:background="@color/colorSecondary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme">
+
+        <ImageButton
+            android:id="@+id/options_button"
+            style="@style/Widget.AppCompat.ImageButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginHorizontal="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/options"
+            android:hapticFeedbackEnabled="true"
+            app:srcCompat="@drawable/settings"
+            app:tint="@color/colorOnPrimary" />
+
+        <ImageButton
+            android:id="@+id/hints_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginHorizontal="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/options"
+            app:srcCompat="@drawable/lightbulb"
+            app:tint="@color/colorOnPrimary" />
+
+        <ImageButton
+            android:id="@+id/leaderboard_button"
+            style="@style/Widget.AppCompat.ImageButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginHorizontal="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/options"
+            android:hapticFeedbackEnabled="true"
+            app:srcCompat="@drawable/leaderboard"
+            app:tint="@color/colorOnPrimary" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/level_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:text="Level 1"
+                android:textAlignment="textEnd"
+                android:textColor="@color/colorOnPrimary"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/score_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:text="Score: 200"
+                android:textAlignment="textEnd"
+                android:textColor="@color/colorOnPrimary" />
+        </LinearLayout>
+
+    </androidx.appcompat.widget.Toolbar>
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/top_llc"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
         android:clipChildren="false"
         android:gravity="center_horizontal">
 
         <androidx.gridlayout.widget.GridLayout
-            android:id="@+id/letters_gridlayout"
+            android:id="@+id/boxes_gridlayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="visible"
             android:clipChildren="false"
-            android:layout_gravity="bottom"
+            android:layout_gravity="center"
             app:columnCount="5"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             app:useDefaultMargins="true">
 
         </androidx.gridlayout.widget.GridLayout>
     </androidx.appcompat.widget.LinearLayoutCompat>
-
-    <android.widget.Space
-        android:layout_width="@dimen/default_gap"
-        android:layout_height="@dimen/default_gap">
-    </android.widget.Space>
-
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/bottom_llc"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:clipChildren="false"
-        android:gravity="center_horizontal">
-
-        <androidx.gridlayout.widget.GridLayout
-            android:id="@+id/solution_gridlayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:clipChildren="false"
-            android:visibility="visible"
-            app:columnCount="5"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:useDefaultMargins="true">
-
-
-        </androidx.gridlayout.widget.GridLayout>
-    </androidx.appcompat.widget.LinearLayoutCompat>
-
 
 </androidx.appcompat.widget.LinearLayoutCompat>

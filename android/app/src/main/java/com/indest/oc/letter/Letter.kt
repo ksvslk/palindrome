@@ -11,7 +11,6 @@ import android.util.Log
 import android.view.MotionEvent
 import android.widget.TextView
 import androidx.annotation.RequiresApi
-import com.indest.oc.GameActivity
 import com.indest.oc.R
 import com.indest.oc.mediator.IBoxDirector
 import com.indest.oc.util.C
@@ -22,7 +21,6 @@ class Letter @RequiresApi(Build.VERSION_CODES.O) constructor(
     context: Context?,
     letter: String?,
     letterResources: LetterResources,
-    gameActivity:GameActivity,
     boxDirector: IBoxDirector,
     initialState: State,
     defStyleRes: Int = R.style.LetterView

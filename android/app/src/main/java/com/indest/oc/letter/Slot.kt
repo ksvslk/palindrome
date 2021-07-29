@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Rect
 import android.os.Build
-import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
 import androidx.annotation.RequiresApi
@@ -17,40 +16,12 @@ class Slot @RequiresApi(Build.VERSION_CODES.O) constructor(
     defStyleRes: Int = R.style.EmptyBoxView
 ) : TextView(context, null, 0, defStyleRes), IBox {
 
-    lateinit var filler:Letter
-    var slotState: Boolean = false
+    var friend:Letter? = null
     private var TAG: String = "Slot ${View.generateViewId()}"
-
-    private val touchListen = OnTouchListener { v, e ->
-        if (slotState) {
-        when (e.action) {
-            MotionEvent.ACTION_DOWN -> {
-                filler.state = State.DRAGGING
-                filler.state.executeActionDownBehaviour(filler, filler, e)
-            }
-            MotionEvent.ACTION_MOVE -> {
-                filler.state.executeActionMoveBehaviour(filler, filler, e)
-            }
-            MotionEvent.ACTION_UP -> {
-                filler.state = State.RESOLVING
-                filler.state.executeActionUpBehaviour(filler, this)
-            }
-            else -> {
-                performClick()
-            }
-        }
-            true
-        } else {
-            false
-
-        }
-
-    }
 
     init {
         text = TAG
         z = C.BOTTOM_LAYER
-        setOnTouchListener(touchListen)
     }
 
     override fun pos(): GlobalPosition {
