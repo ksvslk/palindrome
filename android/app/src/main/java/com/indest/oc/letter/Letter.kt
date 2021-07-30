@@ -44,6 +44,7 @@ class Letter @RequiresApi(Build.VERSION_CODES.O) constructor(
     }
 
     private val touchListen = OnTouchListener { v, e ->
+        Log.i(TAG, "Action: ${e.action}")
         when (e.action) {
             MotionEvent.ACTION_DOWN -> {
                 state = State.DRAGGING

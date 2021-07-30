@@ -16,7 +16,6 @@ class Slot @RequiresApi(Build.VERSION_CODES.O) constructor(
     defStyleRes: Int = R.style.EmptyBoxView
 ) : TextView(context, null, 0, defStyleRes), IBox {
 
-    var friend:Letter? = null
     private var TAG: String = "Slot ${View.generateViewId()}"
 
     init {

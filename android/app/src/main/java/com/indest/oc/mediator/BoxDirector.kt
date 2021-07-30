@@ -54,7 +54,7 @@ object BoxDirector : IBoxDirector {
             is Slot -> {
                 if(!pairs.containsKey(closest))
                 {
-                    pairs[closest] = box
+                    addLetterSlotPair(box, closest)
                     placeLetterInEmptyBox(box, closest)
                     result = true
                 }
@@ -63,24 +63,43 @@ object BoxDirector : IBoxDirector {
 
         return result
     }
-    private fun animateLetterHome(l: Letter)
+
+    private fun addLetterSlotPair(letter: Letter, slot: Slot)
     {
-        Log.i(TAG, "Animating $l to home position!")
+        Log.i(TAG, "Add pair $slot -> $letter")
+        pairs[slot] = letter
+    }
+
+    private fun clearPairsOfLetter(l: Letter)
+    {
         if (pairs.containsValue(l)) {
             Log.i(TAG, "Deleting $l from pairs!")
             pairs.keys.find { s -> pairs[s] == l }.also { pairs.remove(it) }
         }
+    }
+
+    private fun animateLetterHome(l: Letter)
+    {
+        Log.i(TAG, "Animating $l to home position!")
+        clearPairsOfLetter(l)
         l.state = State.ANIMATION
         l.state.executeAnimationBehaviour(l, (l.homeX - l.pos().gX), (l.homeY - l.pos().gY))
     }
 
     private fun placeLetterInEmptyBox(letter: Letter, slot: Slot) {
         Log.i(TAG, "Placing $letter to empty $slot!")
+
+        val MINI_TAG ="placeLetter begin"
+        Log.i(MINI_TAG, "$letter home position: ${letter.homeX},${letter.homeY}")
+        Log.i(MINI_TAG, "$slot position: ${slot.pos()}")
+        Log.i(MINI_TAG, "$letter position: ${letter.pos()}")
+        letter.homeX = slot.pos().gX
+        letter.homeY = slot.pos().gY
+
         val distanceToMoveX = slot.pos().gX - letter.pos().gX
         val distanceToMoveY = slot.pos().gY - letter.pos().gY
         ViewCompat.setTranslationZ((letter.parent as androidx.gridlayout.widget.GridLayout), C.TOP_LAYER)
         letter.z = C.TOP_LAYER
-        slot.friend = letter
         letter.state = State.ANIMATION
         letter.state.executeAnimationBehaviour(letter, distanceToMoveX, distanceToMoveY)
     }
@@ -99,6 +118,13 @@ object BoxDirector : IBoxDirector {
         top.homeX = tempX
         top.homeY = tempY
 
+        val slot = pairs.keys.find { s -> pairs[s] == bottom }
+        if (slot != null)
+        {
+            clearPairsOfLetter(bottom)
+            addLetterSlotPair(top, slot)
+        }
+
         ViewCompat.setTranslationZ((bottom.parent as androidx.gridlayout.widget.GridLayout), C.MIDDLE_LAYER)
         bottom.z = C.MIDDLE_LAYER
         ViewCompat.setTranslationZ((top.parent as androidx.gridlayout.widget.GridLayout), C.TOP_LAYER)
@@ -108,4 +134,5 @@ object BoxDirector : IBoxDirector {
         bottom.state = State.ANIMATION
         bottom.state.executeAnimationBehaviour(bottom, droppedToMoveX, droppedToMoveY)
     }
+
 }

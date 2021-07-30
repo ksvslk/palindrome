@@ -92,6 +92,7 @@
             android:visibility="visible"
             android:clipChildren="false"
             android:layout_gravity="center"
+            android:splitMotionEvents="false"
             app:columnCount="5"
             app:useDefaultMargins="true">
 
