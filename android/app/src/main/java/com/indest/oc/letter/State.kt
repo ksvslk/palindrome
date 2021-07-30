@@ -16,7 +16,10 @@ const val TAG = "State"
 enum class State : IState {
     HOME {
         override fun draw(l: Letter) {
-            if (l.homeX == Int.MAX_VALUE && l.homeY == Int.MAX_VALUE) {
+            if (l.currentX == Int.MAX_VALUE && l.currentY == Int.MAX_VALUE) {
+                Log.i("$l", "WHAT IS THIS STUFF!!!????")
+                l.currentX = l.pos().gX
+                l.currentY = l.pos().gY
                 l.homeX = l.pos().gX
                 l.homeY = l.pos().gY
             }
@@ -89,7 +92,7 @@ enum class State : IState {
             // Otherwise we just send the Letter home.
             if (!l.director.handleCollisions(l)) {
                 l.state = ANIMATION
-                l.state.executeAnimationBehaviour(l, (l.homeX - l.pos().gX), (l.homeY - l.pos().gY))
+                l.state.executeAnimationBehaviour(l, (l.currentX - l.pos().gX), (l.currentY - l.pos().gY))
             }
         }
 
@@ -118,6 +121,7 @@ enum class State : IState {
                     l.z = C.MIDDLE_LAYER
                     l.state = HOME
                     Log.i("withEndAction", "$l position: ${l.pos()}")
+                    Log.i("withEndAction", "$l current position: ${l.currentX},${l.currentY}")
                     Log.i("withEndAction", "$l home position: ${l.homeX},${l.homeY}")
                     Log.i("withEndAction", "Pairs: ${(l.director as BoxDirector).pairs}")
                 }

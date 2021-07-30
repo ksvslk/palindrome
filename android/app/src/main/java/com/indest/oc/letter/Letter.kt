@@ -35,8 +35,10 @@ class Letter @RequiresApi(Build.VERSION_CODES.O) constructor(
             _, oldValue, newValue ->
             Log.i(TAG, "$oldValue -> $newValue")
     }
-    var homeX: Int = Int.MAX_VALUE
-    var homeY: Int = Int.MAX_VALUE
+    var currentX: Int = Int.MAX_VALUE
+    var currentY: Int = Int.MAX_VALUE
+    var homeX: Int = 0
+    var homeY: Int = 0
 
     override fun onDraw(canvas: Canvas?) {
         state.draw(this)
@@ -44,7 +46,6 @@ class Letter @RequiresApi(Build.VERSION_CODES.O) constructor(
     }
 
     private val touchListen = OnTouchListener { v, e ->
-        Log.i(TAG, "Action: ${e.action}")
         when (e.action) {
             MotionEvent.ACTION_DOWN -> {
                 state = State.DRAGGING

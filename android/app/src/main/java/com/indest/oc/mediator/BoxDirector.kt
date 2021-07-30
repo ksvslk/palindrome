@@ -36,11 +36,12 @@ object BoxDirector : IBoxDirector {
             abs(box.pos().gX - it.pos().gX) +
             abs(box.pos().gY - it.pos().gY)
         }.also { if (it == null) {
-                animateLetterHome(box)
+            Log.i(TAG, "${it ?: "No letter was touching so nothing"} was chosen!")
+            animateLetterHome(box)
+            result = true
             }
         }
 
-        Log.i(TAG, "${closest ?: "No letter was touching so nothing"} was chosen!")
 
         when(closest)
         {
@@ -90,11 +91,12 @@ object BoxDirector : IBoxDirector {
         Log.i(TAG, "Placing $letter to empty $slot!")
 
         val MINI_TAG ="placeLetter begin"
+        Log.i(MINI_TAG, "$letter current position: ${letter.currentX},${letter.currentY}")
         Log.i(MINI_TAG, "$letter home position: ${letter.homeX},${letter.homeY}")
         Log.i(MINI_TAG, "$slot position: ${slot.pos()}")
         Log.i(MINI_TAG, "$letter position: ${letter.pos()}")
-        letter.homeX = slot.pos().gX
-        letter.homeY = slot.pos().gY
+        letter.currentX = slot.pos().gX
+        letter.currentY = slot.pos().gY
 
         val distanceToMoveX = slot.pos().gX - letter.pos().gX
         val distanceToMoveY = slot.pos().gY - letter.pos().gY
@@ -109,14 +111,14 @@ object BoxDirector : IBoxDirector {
 
         val distanceToMoveX = bottom.pos().gX - top.pos().gX
         val distanceToMoveY = bottom.pos().gY - top.pos().gY
-        val droppedToMoveX = top.homeX - bottom.homeX
-        val droppedToMoveY = top.homeY - bottom.homeY
-        val tempX = bottom.homeX
-        val tempY = bottom.homeY
-        bottom.homeX = top.homeX
-        bottom.homeY = top.homeY
-        top.homeX = tempX
-        top.homeY = tempY
+        val droppedToMoveX = top.currentX - bottom.currentX
+        val droppedToMoveY = top.currentY - bottom.currentY
+        val tempX = bottom.currentX
+        val tempY = bottom.currentY
+        bottom.currentX = top.currentX
+        bottom.currentY = top.currentY
+        top.currentX = tempX
+        top.currentY = tempY
 
         val slot = pairs.keys.find { s -> pairs[s] == bottom }
         if (slot != null)
