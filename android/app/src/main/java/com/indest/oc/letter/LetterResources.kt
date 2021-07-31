@@ -24,6 +24,8 @@ data class LetterResources(val context: Context, val resources: Resources)
         ResourcesCompat.getColor(resources, R.color.colorOnPrimary, null)
     val textEndColor: Int =
         ResourcesCompat.getColor(resources, R.color.colorOnSecondary, null)
+    val textEndColorInSlot: Int =
+        ResourcesCompat.getColor(resources, R.color.colorOnPrimary, null)
 
     // Audio, sound and vibration
     val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator

@@ -1,7 +1,6 @@
 package com.indest.oc
 
 import android.annotation.SuppressLint
-import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -38,7 +37,7 @@ class GameActivity : AppCompatActivity() {
         val puzzle = "A nut for a jar of tuna".uppercase()
         Log.i(TAG, puzzle.length.toString())
 
-     /*   if (puzzle.length > 25) {
+        /*if (puzzle.length > 25) {
             this.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
             colCount = 12
         }*/
@@ -49,9 +48,9 @@ class GameActivity : AppCompatActivity() {
         for (l in puzzle)
         {
             if (l.isWhitespace()) {
-                letters.addView(
+           /*     letters.addView(
                     Space(this, null, R.layout.blank)
-                )
+                )*/
                 continue
             }
             letters.addView(
@@ -60,8 +59,9 @@ class GameActivity : AppCompatActivity() {
                         boxDirector.boxes.add(it)
                     })
         }
+        val puzzleWithoutWhitespace = puzzle.replace("\\s".toRegex(), "")
         if (puzzle.length > colCount) {
-            for (i in 1..colCount - (puzzle.length - (puzzle.length / colCount) * colCount)) {
+            for (i in 1..colCount - (puzzleWithoutWhitespace.length - (puzzleWithoutWhitespace.length / colCount) * colCount)) {
                 letters.addView(
                     Space(this, null, R.layout.blank)
                 )
@@ -75,13 +75,6 @@ class GameActivity : AppCompatActivity() {
             }
         }
 
-        for (i in 1..colCount)
-        {
-            Log.i(TAG, "TERE")
-            letters.addView(
-                Space(this, null, R.layout.blank)
-            )
-        }
 
         for (l in puzzle)
         {

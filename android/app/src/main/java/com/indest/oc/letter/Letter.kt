@@ -8,6 +8,7 @@ import android.media.AudioManager
 import android.os.Build
 import android.os.VibrationEffect
 import android.util.Log
+import android.view.KeyEvent
 import android.view.MotionEvent
 import android.widget.TextView
 import androidx.annotation.RequiresApi
@@ -27,6 +28,8 @@ class Letter @RequiresApi(Build.VERSION_CODES.O) constructor(
 ) : TextView(context, null, 0, defStyleRes), IBox {
 
     private var TAG: String = "Letter $letter"
+    private var friend: Slot? = null
+
     var director: BoxDirector = boxDirector
     var dX: Float = 0.0f
     var dY: Float = 0.0f
@@ -35,11 +38,8 @@ class Letter @RequiresApi(Build.VERSION_CODES.O) constructor(
             _, oldValue, newValue ->
             Log.i(TAG, "$oldValue -> $newValue")
     }
-    var currentX: Int = Int.MAX_VALUE
-    var currentY: Int = Int.MAX_VALUE
-    var homeX: Int = 0
-    var homeY: Int = 0
-    private var friend: Slot? = null
+    var currentPos: GlobalPosition = GlobalPosition(Int.MAX_VALUE, Int.MAX_VALUE)
+    var homePos: GlobalPosition = GlobalPosition(0, 0)
 
     override fun onDraw(canvas: Canvas?) {
         state.draw(this)

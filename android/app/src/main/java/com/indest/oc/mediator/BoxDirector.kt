@@ -1,11 +1,7 @@
 package com.indest.oc.mediator
 
 import android.util.Log
-import androidx.core.view.ViewCompat
-import com.indest.oc.letter.IBox
-import com.indest.oc.letter.Letter
-import com.indest.oc.letter.Slot
-import com.indest.oc.letter.State
+import com.indest.oc.letter.*
 import com.indest.oc.util.C
 import kotlin.math.abs
 
@@ -13,138 +9,142 @@ object BoxDirector {
     private const val TAG = "BoxDirector"
     val boxes: MutableList<IBox> = mutableListOf()
 
-    fun handleCollisions(box: Letter): Boolean {
+    fun handleCollisions(box: Letter) {
         Log.i(TAG, "$box called handleCollisions.")
-        Log.i(TAG, "??")
-        val candidateBoxes = mutableListOf<IBox>()
 
-        for (droppedTo in boxes) {
-                if (box.rect().intersect(droppedTo.rect()) && box != droppedTo) {
-                    if ((droppedTo is Letter) && droppedTo.state == State.HOME)
-                    {
-                        candidateBoxes.add(droppedTo)
-                    }
-                    else if (droppedTo is Slot){
-                        candidateBoxes.add(droppedTo)
-                    }
-                }
-        }
-        Log.i(TAG, "Candidate boxes: $candidateBoxes")
-
-        val closest = candidateBoxes.minByOrNull {
-            abs(box.pos().gX - it.pos().gX) +
-            abs(box.pos().gY - it.pos().gY)
-        }.also { if (it == null) {
-                Log.i(TAG, "${it ?: "No letter was touching so nothing"} was chosen!")
-                if (box.hasFriend())
-                {
-                    box.getFriend()?.setFriend(null)
-                    box.setFriend(null)
-                }
-                box.state = State.ANIMATION
-                box.state.executeAnimationBehaviour(box, (box.homeX - box.pos().gX), (box.homeY - box.pos().gY))
-                return true
-            }
-        }
-
-        when(closest)
-        {
+        when (val closestBox = getClosestBox(to=box, from=getCandidateBoxes(box))) {
             is Letter -> {
-                Log.i(TAG, "Closest is Letter!")
-                if (closest.state == State.HOME)
-                {
-                    switchLetterPositions(box, closest)
-                    return true
+                Log.i(TAG, "Closest is $closestBox and its friend is ${closestBox.getFriend()}!")
+                if (closestBox.state == State.HOME) {
+                    switchLetterPositions(box, closestBox)
+                    return
                 }
             }
             is Slot -> {
-                Log.i(TAG, "Closest is $closest and its friend is ${closest.getFriend()}!")
-                if(!closest.hasFriend())
-                {
-                    placeLetterInEmptyBox(box, closest)
-                    return true
+                Log.i(TAG, "Closest is $closestBox and its friend is ${closestBox.getFriend()}!")
+                if (!closestBox.hasFriend()) {
+                    placeLetterInEmptyBox(box, closestBox)
+                    return
                 }
-            }
-            else -> {
-                Log.i(TAG, "Closest is Unknown: $closest!")
             }
         }
 
-        return false
+        // If there were no collisions
+        sendLetterHome(box)
     }
 
-    private fun placeLetterInEmptyBox(letter: Letter, slot: Slot) {
-        Log.i(TAG, "Placing $letter to empty $slot!")
+    private fun getCandidateBoxes(box: Letter): MutableList<IBox> {
+        val candidateBoxes = mutableListOf<IBox>()
 
-        letter.getFriend()?.setFriend(null)
-        slot.setFriend(letter)
-        letter.setFriend(slot)
-
-        val MINI_TAG ="placeLetter begin"
-        Log.i(MINI_TAG, "$letter current position: ${letter.currentX},${letter.currentY}")
-        Log.i(MINI_TAG, "$letter home position: ${letter.homeX},${letter.homeY}")
-        Log.i(MINI_TAG, "$slot position: ${slot.pos()}")
-        Log.i(MINI_TAG, "$letter position: ${letter.pos()}")
-        letter.currentX = slot.pos().gX
-        letter.currentY = slot.pos().gY
-
-        val distanceToMoveX = slot.pos().gX - letter.pos().gX
-        val distanceToMoveY = slot.pos().gY - letter.pos().gY
-        ViewCompat.setTranslationZ((letter.parent as androidx.gridlayout.widget.GridLayout), C.TOP_LAYER)
-        letter.z = C.TOP_LAYER
-        letter.state = State.ANIMATION
-        letter.state.executeAnimationBehaviour(letter, distanceToMoveX, distanceToMoveY)
+        for (droppedTo in boxes) {
+            if (box.rect().intersect(droppedTo.rect()) && box != droppedTo) {
+                if ((droppedTo is Letter) && droppedTo.state == State.HOME) {
+                    candidateBoxes.add(droppedTo)
+                } else if (droppedTo is Slot) {
+                    candidateBoxes.add(droppedTo)
+                }
+            }
+        }
+        Log.i(TAG, "Candidate boxes: $candidateBoxes")
+        return candidateBoxes
     }
 
     private fun switchLetterPositions(top: Letter, bottom: Letter) {
         Log.i(TAG, "Switching $top home position with $bottom!")
 
-        val distanceToMoveX = bottom.pos().gX - top.pos().gX
-        val distanceToMoveY = bottom.pos().gY - top.pos().gY
-        val droppedToMoveX = top.currentX - bottom.currentX
-        val droppedToMoveY = top.currentY - bottom.currentY
+        // Calculate distance for animation
+        val distanceToMoveX = bottom.pos().x - top.pos().x
+        val distanceToMoveY = bottom.pos().y - top.pos().y
+        val droppedToMoveX = top.currentPos.x - bottom.currentPos.x
+        val droppedToMoveY = top.currentPos.y - bottom.currentPos.y
 
-        val tempX = bottom.currentX
-        val tempY = bottom.currentY
-        bottom.currentX = top.currentX
-        bottom.currentY = top.currentY
-        top.currentX = tempX
-        top.currentY = tempY
+        // Switch info
+        switchCoordinates(bottom.currentPos, top.currentPos)
+        switchCoordinates(bottom.homePos, top.homePos)
+        switchFriends(bottom, top)
 
-        val tempHomeX = bottom.homeX
-        val tempHomeY = bottom.homeY
-        val bottomFriend = bottom.getFriend()
-        val topFriend = top.getFriend()
-
-        bottom.homeX = top.homeX
-        bottom.homeY = top.homeY
-        top.homeX = tempHomeX
-        top.homeY = tempHomeY
-
-        if (bottom.hasFriend() && top.hasFriend())
-        {
-            bottom.setFriend(topFriend)
-            top.setFriend(bottomFriend)
-        }
-        else if (bottom.hasFriend() && !top.hasFriend())
-        {
-            top.setFriend(bottomFriend)
-            bottom.setFriend(null)
-        }
-        else if (top.hasFriend() && !bottom.hasFriend())
-        {
-            bottom.setFriend(topFriend)
-            top.setFriend(null)
-        }
-
-        ViewCompat.setTranslationZ((bottom.parent as androidx.gridlayout.widget.GridLayout), C.MIDDLE_LAYER)
+        // Set the layers accordingly - which letter is FRONT and which is BEHIND
         bottom.z = C.MIDDLE_LAYER
-        ViewCompat.setTranslationZ((top.parent as androidx.gridlayout.widget.GridLayout), C.TOP_LAYER)
         top.z = C.TOP_LAYER
+
+        // Change state to animation
         top.state = State.ANIMATION
         bottom.state = State.ANIMATION
-        top.state.executeAnimationBehaviour(top,distanceToMoveX, distanceToMoveY)
+
+        // Execute animation
+        top.state.executeAnimationBehaviour(top, distanceToMoveX, distanceToMoveY)
         bottom.state.executeAnimationBehaviour(bottom, droppedToMoveX, droppedToMoveY)
     }
 
+    private fun placeLetterInEmptyBox(letter: Letter, slot: Slot) {
+        Log.i(TAG, "Placing $letter to empty $slot!")
+        letter.getFriend()?.setFriend(null)
+        slot.setFriend(letter)
+        letter.setFriend(slot)
+        letter.currentPos.x = slot.pos().x
+        letter.currentPos.y = slot.pos().y
+        letter.z = C.TOP_LAYER
+        letter.state = State.ANIMATION
+        letter.state.executeAnimationBehaviour(
+            letter,
+            (slot.pos().x - letter.pos().x),
+            (slot.pos().y - letter.pos().y)
+        )
+    }
+
+    private fun sendLetterHome(letter: Letter) {
+        if (letter.hasFriend()) {
+            Log.i(TAG, "Going to real home!")
+            letter.getFriend()?.setFriend(null)
+            letter.setFriend(null)
+
+            letter.state = State.ANIMATION
+            letter.state.executeAnimationBehaviour(
+                letter,
+                (letter.homePos.x - letter.pos().x),
+                (letter.homePos.y - letter.pos().y)
+            )
+        } else{
+            Log.i(TAG, "No collisions detected (or Letter/Slot not good) - going to current home!")
+            letter.state = State.ANIMATION
+            letter.state.executeAnimationBehaviour(
+                letter,
+                (letter.currentPos.x - letter.pos().x),
+                (letter.currentPos.y - letter.pos().y)
+            )
+        }
+    }
+
+    private fun getClosestBox(to: Letter, from: MutableList<IBox>): IBox? {
+        return from.minByOrNull {
+            abs(to.pos().x - it.pos().x) +
+                    abs(to.pos().y - it.pos().y)
+        }
+    }
+
+    private fun switchCoordinates(bottomPos: GlobalPosition, topPos: GlobalPosition)
+    {
+        val tempHomeX = bottomPos.x
+        val tempHomeY = bottomPos.y
+        bottomPos.x = topPos.x
+        bottomPos.y = topPos.y
+        topPos.x = tempHomeX
+        topPos.y = tempHomeY
+    }
+
+    private fun switchFriends(bottom: Letter, top: Letter)
+    {
+        val bottomFriend = bottom.getFriend()
+        val topFriend = top.getFriend()
+        if (bottom.hasFriend() && top.hasFriend()) {
+            bottom.setFriend(topFriend)
+            top.setFriend(bottomFriend)
+        } else if (bottom.hasFriend() && !top.hasFriend()) {
+            top.setFriend(bottomFriend)
+            bottom.setFriend(null)
+        } else if (top.hasFriend() && !bottom.hasFriend()) {
+            bottom.setFriend(topFriend)
+            top.setFriend(null)
+        }
+    }
 }

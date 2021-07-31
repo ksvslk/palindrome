@@ -1,13 +1,10 @@
 package com.indest.oc.letter
 
 import android.animation.ObjectAnimator
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
-import androidx.core.view.ViewCompat
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.indest.oc.R
-import com.indest.oc.mediator.BoxDirector
 import com.indest.oc.util.C
 import kotlin.math.log2
 
@@ -16,12 +13,11 @@ const val TAG = "State"
 enum class State : IState {
     HOME {
         override fun draw(l: Letter) {
-            if (l.currentX == Int.MAX_VALUE && l.currentY == Int.MAX_VALUE) {
-                Log.i("$l", "WHAT IS THIS STUFF!!!????")
-                l.currentX = l.pos().gX
-                l.currentY = l.pos().gY
-                l.homeX = l.pos().gX
-                l.homeY = l.pos().gY
+            if (l.currentPos.x == Int.MAX_VALUE && l.currentPos.y == Int.MAX_VALUE) {
+                l.currentPos.x = l.pos().x
+                l.currentPos.y = l.pos().y
+                l.homePos.x = l.pos().x
+                l.homePos.y = l.pos().y
             }
         }
         override fun executeActionDownBehaviour(l: Letter, v: View, e: MotionEvent) {}
@@ -38,7 +34,6 @@ enum class State : IState {
             l.dY = v.y - e.rawY
 
             // View and its parent should be always on top when dragging
-            ViewCompat.setTranslationZ((l.parent as androidx.gridlayout.widget.GridLayout), C.TOP_LAYER)
             l.z = C.TOP_LAYER
 
             // Sound/vibration effects
@@ -74,29 +69,8 @@ enum class State : IState {
         override fun executeActionDownBehaviour(l: Letter, v: View, e: MotionEvent) {}
         override fun executeActionMoveBehaviour(l: Letter, v: View, e: MotionEvent) {}
         override fun executeActionUpBehaviour(l: Letter) {
-
-            // Reset background color with animation
-            ObjectAnimator.ofArgb(l, "backgroundColor", l.lr.viewEndColor, l.lr.viewStartColor)
-                .apply {
-                    duration = l.lr.onReleaseColorChangeDuration
-                    start()
-                }
-
-            // Reset text color with animation
-            ObjectAnimator.ofArgb(l, "textColor", l.lr.textEndColor, l.lr.textStartColor).apply {
-                duration = l.lr.onReleaseColorChangeDuration
-                start()
-            }
-
-            // If collisions are detected BoxDirector will handle it.
-            // Otherwise we just send the Letter home.
-            if (!l.director.handleCollisions(l)) {
-                Log.i(TAG, "No collisions detected - going home!")
-                l.state = ANIMATION
-                l.state.executeAnimationBehaviour(l, (l.currentX - l.pos().gX), (l.currentY - l.pos().gY))
-            }
+            l.director.handleCollisions(l)
         }
-
         override fun executeAnimationBehaviour(l: Letter, moveByX: Int, moveByY: Int) {}
     },
     ANIMATION {
@@ -105,6 +79,30 @@ enum class State : IState {
         override fun executeActionMoveBehaviour(l: Letter, v: View, e: MotionEvent) {}
         override fun executeActionUpBehaviour(l: Letter) {}
         override fun executeAnimationBehaviour(l: Letter, moveByX: Int, moveByY: Int) {
+
+            var viewEndColor = l.lr.viewEndColor
+            var viewStartColor = l.lr.viewStartColor
+            var textEndColor = l.lr.textEndColor
+            var textStartColor = l.lr.textStartColor
+
+            if (l.hasFriend())
+            {
+                viewStartColor = viewEndColor
+                textStartColor = l.lr.textEndColorInSlot
+            }
+            // Reset background color with animation
+            ObjectAnimator.ofArgb(l, "backgroundColor", viewEndColor, viewStartColor)
+                .apply {
+                    duration = l.lr.onReleaseColorChangeDuration
+                    start()
+                }
+
+            // Reset text color with animation
+            ObjectAnimator.ofArgb(l, "textColor", textEndColor, textStartColor).apply {
+                duration = l.lr.onReleaseColorChangeDuration
+                start()
+            }
+
             // Get some value that represents how much was moved ignoring the actual physical
             // distance. Log applied to Euclidean distance to make it very small.
             val distance = log2((Math.abs(moveByX) + Math.abs(moveByY)).toDouble())
@@ -117,44 +115,30 @@ enum class State : IState {
                 // Longer distance should be only slightly longer animation and vice-versa
                 .setDuration(distance.toLong() * l.lr.animateToHomeDurationMultiplier)
                 .withEndAction {
-                    ViewCompat.setTranslationZ((l.parent as androidx.gridlayout.widget.GridLayout), C.MIDDLE_LAYER)
                     l.z = C.MIDDLE_LAYER
                     l.state = HOME
-                    l.currentX = l.pos().gX
-                    l.currentY = l.pos().gY
-
-                    val byLetterToString = mutableMapOf<IBox, String>()
-                    val letters = mutableMapOf<IBox, String>()
-                    val slots = mutableMapOf<IBox, String>()
-                    val homePosits = mutableMapOf<IBox, String>()
-                    val byLetterToPos = l.director.boxes
-                        .filterIsInstance<Letter>()
-                        .associateWithTo(byLetterToString) {
-                            "${it.pos().gX},${it.pos().gY}"
-                        }
-                    val slotFriends = l.director.boxes
-                        .filterIsInstance<Slot>()
-                        .associateWithTo(letters) {
-                            it.getFriend().toString()
-                    }
-                    val letterFriends = l.director.boxes
-                        .filterIsInstance<Letter>()
-                        .associateWithTo(slots) {
-                            it.getFriend().toString()
-                        }
-                    val hompos = l.director.boxes
-                        .filterIsInstance<Letter>()
-                        .associateWithTo(homePosits) {
-                            "${it.homeX};${it.homeY} "
-                        }
-                    val sameElements = byLetterToPos.values.toSet().size < byLetterToPos.values.size
-
-                    //assert((l.hasFriend() && l.getFriend()?.getFriend() == l) || !l.hasFriend()) { "Friends are both ways: ${l.getFriend()?.getFriend()} should be $l"}
-                    assert(!sameElements) { "Identical positions for objects not allowed: ${byLetterToPos}. Letter homes: $hompos" }
-                    Log.i(TAG, byLetterToPos.toString())
-
+                    l.currentPos.x = l.pos().x
+                    l.currentPos.y = l.pos().y
+                    assertIdenticalPositions(l)
                 }
                 .start()
+        }
+        private fun assertIdenticalPositions(l:Letter)
+        {
+            val byLetterToString = mutableMapOf<IBox, String>()
+            val homePosits = mutableMapOf<IBox, String>()
+            val byLetterToPos = l.director.boxes
+                .filterIsInstance<Letter>()
+                .associateWithTo(byLetterToString) {
+                    "${it.pos().x},${it.pos().y}"
+                }
+            val hompos = l.director.boxes
+                .filterIsInstance<Letter>()
+                .associateWithTo(homePosits) {
+                    "${it.homePos.x};${it.homePos.y} "
+                }
+            val sameElements = byLetterToPos.values.toSet().size < byLetterToPos.values.size
+            assert(!sameElements) { "Identical positions for objects not allowed: ${byLetterToPos}. Letter homes: $hompos" }
         }
     },
 }
