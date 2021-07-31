@@ -91,6 +91,7 @@ enum class State : IState {
             // If collisions are detected BoxDirector will handle it.
             // Otherwise we just send the Letter home.
             if (!l.director.handleCollisions(l)) {
+                Log.i(TAG, "No collisions detected - going home!")
                 l.state = ANIMATION
                 l.state.executeAnimationBehaviour(l, (l.currentX - l.pos().gX), (l.currentY - l.pos().gY))
             }
@@ -104,7 +105,6 @@ enum class State : IState {
         override fun executeActionMoveBehaviour(l: Letter, v: View, e: MotionEvent) {}
         override fun executeActionUpBehaviour(l: Letter) {}
         override fun executeAnimationBehaviour(l: Letter, moveByX: Int, moveByY: Int) {
-
             // Get some value that represents how much was moved ignoring the actual physical
             // distance. Log applied to Euclidean distance to make it very small.
             val distance = log2((Math.abs(moveByX) + Math.abs(moveByY)).toDouble())
@@ -120,10 +120,39 @@ enum class State : IState {
                     ViewCompat.setTranslationZ((l.parent as androidx.gridlayout.widget.GridLayout), C.MIDDLE_LAYER)
                     l.z = C.MIDDLE_LAYER
                     l.state = HOME
-                    Log.i("withEndAction", "$l position: ${l.pos()}")
-                    Log.i("withEndAction", "$l current position: ${l.currentX},${l.currentY}")
-                    Log.i("withEndAction", "$l home position: ${l.homeX},${l.homeY}")
-                    Log.i("withEndAction", "Pairs: ${(l.director as BoxDirector).pairs}")
+                    l.currentX = l.pos().gX
+                    l.currentY = l.pos().gY
+
+                    val byLetterToString = mutableMapOf<IBox, String>()
+                    val letters = mutableMapOf<IBox, String>()
+                    val slots = mutableMapOf<IBox, String>()
+                    val homePosits = mutableMapOf<IBox, String>()
+                    val byLetterToPos = l.director.boxes
+                        .filterIsInstance<Letter>()
+                        .associateWithTo(byLetterToString) {
+                            "${it.pos().gX},${it.pos().gY}"
+                        }
+                    val slotFriends = l.director.boxes
+                        .filterIsInstance<Slot>()
+                        .associateWithTo(letters) {
+                            it.getFriend().toString()
+                    }
+                    val letterFriends = l.director.boxes
+                        .filterIsInstance<Letter>()
+                        .associateWithTo(slots) {
+                            it.getFriend().toString()
+                        }
+                    val hompos = l.director.boxes
+                        .filterIsInstance<Letter>()
+                        .associateWithTo(homePosits) {
+                            "${it.homeX};${it.homeY} "
+                        }
+                    val sameElements = byLetterToPos.values.toSet().size < byLetterToPos.values.size
+
+                    //assert((l.hasFriend() && l.getFriend()?.getFriend() == l) || !l.hasFriend()) { "Friends are both ways: ${l.getFriend()?.getFriend()} should be $l"}
+                    assert(!sameElements) { "Identical positions for objects not allowed: ${byLetterToPos}. Letter homes: $hompos" }
+                    Log.i(TAG, byLetterToPos.toString())
+
                 }
                 .start()
         }

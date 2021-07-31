@@ -12,7 +12,7 @@ import android.view.MotionEvent
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import com.indest.oc.R
-import com.indest.oc.mediator.IBoxDirector
+import com.indest.oc.mediator.BoxDirector
 import com.indest.oc.util.C
 import kotlin.properties.Delegates
 
@@ -21,13 +21,13 @@ class Letter @RequiresApi(Build.VERSION_CODES.O) constructor(
     context: Context?,
     letter: String?,
     letterResources: LetterResources,
-    boxDirector: IBoxDirector,
+    boxDirector: BoxDirector,
     initialState: State,
     defStyleRes: Int = R.style.LetterView
 ) : TextView(context, null, 0, defStyleRes), IBox {
 
     private var TAG: String = "Letter $letter"
-    var director: IBoxDirector = boxDirector
+    var director: BoxDirector = boxDirector
     var dX: Float = 0.0f
     var dY: Float = 0.0f
     var lr: LetterResources = letterResources
@@ -39,6 +39,7 @@ class Letter @RequiresApi(Build.VERSION_CODES.O) constructor(
     var currentY: Int = Int.MAX_VALUE
     var homeX: Int = 0
     var homeY: Int = 0
+    private var friend: Slot? = null
 
     override fun onDraw(canvas: Canvas?) {
         state.draw(this)
@@ -78,6 +79,19 @@ class Letter @RequiresApi(Build.VERSION_CODES.O) constructor(
                 lr.vibrator.vibrate(length)
             }
         }
+    }
+
+    override fun hasFriend(): Boolean {
+        return friend != null
+    }
+
+    override fun getFriend(): Slot? {
+        return if (hasFriend()) friend
+        else null
+    }
+
+    override fun setFriend(box: IBox?) {
+        friend = box as Slot?
     }
 
     override fun pos(): GlobalPosition {

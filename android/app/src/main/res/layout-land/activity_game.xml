@@ -5,203 +5,95 @@
     android:id="@+id/game_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginStart="8dp"
-    android:layout_marginTop="8dp"
-    android:layout_marginEnd="8dp"
-    android:layout_marginBottom="8dp"
     android:clipChildren="false"
-    android:weightSum="2"
     android:orientation="vertical"
     tools:context=".GameActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/game_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorSecondary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme">
+
+        <ImageButton
+            android:id="@+id/options_button"
+            style="@style/Widget.AppCompat.ImageButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginHorizontal="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/options"
+            android:hapticFeedbackEnabled="true"
+            app:srcCompat="@drawable/settings"
+            app:tint="@color/colorOnPrimary" />
+
+        <ImageButton
+            android:id="@+id/hints_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginHorizontal="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/options"
+            app:srcCompat="@drawable/lightbulb"
+            app:tint="@color/colorOnPrimary" />
+
+        <ImageButton
+            android:id="@+id/leaderboard_button"
+            style="@style/Widget.AppCompat.ImageButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginHorizontal="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/options"
+            android:hapticFeedbackEnabled="true"
+            app:srcCompat="@drawable/leaderboard"
+            app:tint="@color/colorOnPrimary" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/level_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:text="Level 1"
+                android:textAlignment="textEnd"
+                android:textColor="@color/colorOnPrimary"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/score_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:text="Score: 200"
+                android:textAlignment="textEnd"
+                android:textColor="@color/colorOnPrimary" />
+        </LinearLayout>
+
+    </androidx.appcompat.widget.Toolbar>
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/top_llc"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
         android:clipChildren="false"
         android:gravity="center_horizontal">
 
         <androidx.gridlayout.widget.GridLayout
-            android:id="@+id/letters_gridlayout"
+            android:id="@+id/boxes_gridlayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="visible"
-            android:layout_gravity="bottom"
-            app:columnCount="11"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            android:clipChildren="false"
+            android:layout_gravity="center"
+            android:splitMotionEvents="false"
             app:useDefaultMargins="true">
-
-  <!--           <com.indest.oc.letter.Letter
-                 android:id="@+id/letter"
-                 style="@style/LetterView"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:text="A" />
-
-             <com.indest.oc.letter.Letter
-                 android:id="@+id/letter1"
-                 style="@style/LetterView"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:text="A" />
-
-             <com.indest.oc.letter.Letter
-                 android:id="@+id/letter2"
-                 style="@style/LetterView"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:text="A" />
-
-             <com.indest.oc.letter.Letter
-                 android:id="@+id/letter3"
-                 style="@style/LetterView"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:text="A" />
-
-             <com.indest.oc.letter.Letter
-                 android:id="@+id/letter4"
-                 style="@style/LetterView"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:text="A" />
-
-             <com.indest.oc.letter.Letter
-                 android:id="@+id/letter5"
-                 style="@style/LetterView"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:text="A" />
-
-             <com.indest.oc.letter.Letter
-                 android:id="@+id/letter6"
-                 style="@style/LetterView"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:text="A" />
-
-             <com.indest.oc.letter.Letter
-                 android:id="@+id/letter7"
-                 style="@style/LetterView"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:text="A" />
-
-             <com.indest.oc.letter.Letter
-                 android:id="@+id/letter8"
-                 style="@style/LetterView"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:text="C" />
-
-             <com.indest.oc.letter.Letter
-                 android:id="@+id/letter9"
-                 style="@style/LetterView"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:text="X" />-->
-        </androidx.gridlayout.widget.GridLayout>
-    </androidx.appcompat.widget.LinearLayoutCompat>
-
-    <android.widget.Space
-        android:layout_width="@dimen/default_gap"
-        android:layout_height="@dimen/default_gap">
-    </android.widget.Space>
-
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/bottom_llc"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:gravity="center_horizontal"
-        android:clipChildren="false">
-
-        <androidx.gridlayout.widget.GridLayout
-            android:id="@+id/solution_gridlayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="visible"
-            android:layout_gravity="top"
-            app:columnCount="11"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:useDefaultMargins="true">
-
-           <!-- <com.indest.oc.letter.Letter
-                android:id="@+id/letter11"
-                style="@style/LetterView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="A" />
-
-            <com.indest.oc.letter.Letter
-                android:id="@+id/letter12"
-                style="@style/LetterView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="A" />
-
-            <com.indest.oc.letter.Letter
-                android:id="@+id/letter23"
-                style="@style/LetterView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="A" />
-
-            <com.indest.oc.letter.Letter
-                android:id="@+id/letter34"
-                style="@style/LetterView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="A" />
-
-            <com.indest.oc.letter.Letter
-                android:id="@+id/letter45"
-                style="@style/LetterView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="A" />
-
-            <com.indest.oc.letter.Letter
-                android:id="@+id/letter56"
-                style="@style/LetterView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="A" />
-
-            <com.indest.oc.letter.Letter
-                android:id="@+id/letter67"
-                style="@style/LetterView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="A" />
-
-            <com.indest.oc.letter.Letter
-                android:id="@+id/letter78"
-                style="@style/LetterView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="A" />
-
-            <com.indest.oc.letter.Letter
-                android:id="@+id/letter89"
-                style="@style/LetterView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="C" />
-
-            <com.indest.oc.letter.Letter
-                android:id="@+id/letter91"
-                style="@style/LetterView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="X" />-->
 
         </androidx.gridlayout.widget.GridLayout>
     </androidx.appcompat.widget.LinearLayoutCompat>

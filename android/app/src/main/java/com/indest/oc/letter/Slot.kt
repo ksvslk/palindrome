@@ -17,6 +17,7 @@ class Slot @RequiresApi(Build.VERSION_CODES.O) constructor(
 ) : TextView(context, null, 0, defStyleRes), IBox {
 
     private var TAG: String = "Slot ${View.generateViewId()}"
+    private var friend: Letter? = null
 
     init {
         text = TAG
@@ -30,6 +31,19 @@ class Slot @RequiresApi(Build.VERSION_CODES.O) constructor(
             coordinates[0] + width / 2,
             coordinates[1] + height / 2
         )
+    }
+
+    override fun hasFriend(): Boolean {
+        return friend != null
+    }
+
+    override fun getFriend(): Letter? {
+        return if (hasFriend()) friend
+        else null
+    }
+
+    override fun setFriend(box: IBox?) {
+        friend = box as Letter?
     }
 
     override fun rect(): Rect {

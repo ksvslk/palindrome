@@ -5,8 +5,6 @@ import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.MotionEvent
-import android.view.View
 import android.widget.Space
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -22,7 +20,7 @@ class GameActivity : AppCompatActivity() {
     private val TAG = "GameActivity"
     private lateinit var gameLayout: LinearLayoutCompat
     private lateinit var letters: androidx.gridlayout.widget.GridLayout
-    private val colCount = 5
+    private var colCount = 5
 
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("ClickableViewAccessibility")
@@ -33,33 +31,66 @@ class GameActivity : AppCompatActivity() {
 
         gameLayout = findViewById(R.id.game_container)
         letters = findViewById(R.id.boxes_gridlayout)
-        letters.columnCount = colCount
 
         val boxDirector = BoxDirector
         Util.activateFullscreen(this, gameLayout)
 
-        val puzzle = "INDREK".uppercase()
+        val puzzle = "A nut for a jar of tuna".uppercase()
+        Log.i(TAG, puzzle.length.toString())
 
-        if (puzzle.length > 25) {
+     /*   if (puzzle.length > 25) {
             this.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-        }
+            colCount = 12
+        }*/
+        letters.columnCount = colCount
+
         val data = LetterResources(applicationContext, resources)
 
         for (l in puzzle)
         {
+            if (l.isWhitespace()) {
+                letters.addView(
+                    Space(this, null, R.layout.blank)
+                )
+                continue
+            }
             letters.addView(
                 Letter(this, l.toString(), data, boxDirector, State.HOME, R.style.LetterView)
                     .also {
                         boxDirector.boxes.add(it)
                     })
         }
-        for (i in 1..colCount - (puzzle.length / colCount)) {
+        if (puzzle.length > colCount) {
+            for (i in 1..colCount - (puzzle.length - (puzzle.length / colCount) * colCount)) {
+                letters.addView(
+                    Space(this, null, R.layout.blank)
+                )
+            }
+        }
+        else {
+            for (i in 1..colCount - puzzle.length) {
+                letters.addView(
+                    Space(this, null, R.layout.blank)
+                )
+            }
+        }
+
+        for (i in 1..colCount)
+        {
+            Log.i(TAG, "TERE")
             letters.addView(
                 Space(this, null, R.layout.blank)
             )
         }
+
         for (l in puzzle)
         {
+            if (l.isWhitespace()) {
+                letters.addView(
+                    Space(this, null, R.layout.blank)
+                )
+                continue
+            }
             letters.addView(
                 Slot(this).also {
                     boxDirector.boxes.add(it)

@@ -9,14 +9,13 @@ import com.indest.oc.letter.State
 import com.indest.oc.util.C
 import kotlin.math.abs
 
-object BoxDirector : IBoxDirector {
+object BoxDirector {
     private const val TAG = "BoxDirector"
-    override val boxes: MutableList<IBox> = mutableListOf()
-    var pairs:MutableMap<Slot, Letter> = mutableMapOf()
+    val boxes: MutableList<IBox> = mutableListOf()
 
-    override fun handleCollisions(box: Letter): Boolean {
+    fun handleCollisions(box: Letter): Boolean {
         Log.i(TAG, "$box called handleCollisions.")
-        var result = false
+        Log.i(TAG, "??")
         val candidateBoxes = mutableListOf<IBox>()
 
         for (droppedTo in boxes) {
@@ -36,59 +35,50 @@ object BoxDirector : IBoxDirector {
             abs(box.pos().gX - it.pos().gX) +
             abs(box.pos().gY - it.pos().gY)
         }.also { if (it == null) {
-            Log.i(TAG, "${it ?: "No letter was touching so nothing"} was chosen!")
-            animateLetterHome(box)
-            result = true
+                Log.i(TAG, "${it ?: "No letter was touching so nothing"} was chosen!")
+                if (box.hasFriend())
+                {
+                    box.getFriend()?.setFriend(null)
+                    box.setFriend(null)
+                }
+                box.state = State.ANIMATION
+                box.state.executeAnimationBehaviour(box, (box.homeX - box.pos().gX), (box.homeY - box.pos().gY))
+                return true
             }
         }
-
 
         when(closest)
         {
             is Letter -> {
+                Log.i(TAG, "Closest is Letter!")
                 if (closest.state == State.HOME)
                 {
                     switchLetterPositions(box, closest)
-                    result = true
+                    return true
                 }
             }
             is Slot -> {
-                if(!pairs.containsKey(closest))
+                Log.i(TAG, "Closest is $closest and its friend is ${closest.getFriend()}!")
+                if(!closest.hasFriend())
                 {
-                    addLetterSlotPair(box, closest)
                     placeLetterInEmptyBox(box, closest)
-                    result = true
+                    return true
                 }
+            }
+            else -> {
+                Log.i(TAG, "Closest is Unknown: $closest!")
             }
         }
 
-        return result
-    }
-
-    private fun addLetterSlotPair(letter: Letter, slot: Slot)
-    {
-        Log.i(TAG, "Add pair $slot -> $letter")
-        pairs[slot] = letter
-    }
-
-    private fun clearPairsOfLetter(l: Letter)
-    {
-        if (pairs.containsValue(l)) {
-            Log.i(TAG, "Deleting $l from pairs!")
-            pairs.keys.find { s -> pairs[s] == l }.also { pairs.remove(it) }
-        }
-    }
-
-    private fun animateLetterHome(l: Letter)
-    {
-        Log.i(TAG, "Animating $l to home position!")
-        clearPairsOfLetter(l)
-        l.state = State.ANIMATION
-        l.state.executeAnimationBehaviour(l, (l.homeX - l.pos().gX), (l.homeY - l.pos().gY))
+        return false
     }
 
     private fun placeLetterInEmptyBox(letter: Letter, slot: Slot) {
         Log.i(TAG, "Placing $letter to empty $slot!")
+
+        letter.getFriend()?.setFriend(null)
+        slot.setFriend(letter)
+        letter.setFriend(slot)
 
         val MINI_TAG ="placeLetter begin"
         Log.i(MINI_TAG, "$letter current position: ${letter.currentX},${letter.currentY}")
@@ -113,6 +103,7 @@ object BoxDirector : IBoxDirector {
         val distanceToMoveY = bottom.pos().gY - top.pos().gY
         val droppedToMoveX = top.currentX - bottom.currentX
         val droppedToMoveY = top.currentY - bottom.currentY
+
         val tempX = bottom.currentX
         val tempY = bottom.currentY
         bottom.currentX = top.currentX
@@ -120,11 +111,30 @@ object BoxDirector : IBoxDirector {
         top.currentX = tempX
         top.currentY = tempY
 
-        val slot = pairs.keys.find { s -> pairs[s] == bottom }
-        if (slot != null)
+        val tempHomeX = bottom.homeX
+        val tempHomeY = bottom.homeY
+        val bottomFriend = bottom.getFriend()
+        val topFriend = top.getFriend()
+
+        bottom.homeX = top.homeX
+        bottom.homeY = top.homeY
+        top.homeX = tempHomeX
+        top.homeY = tempHomeY
+
+        if (bottom.hasFriend() && top.hasFriend())
         {
-            clearPairsOfLetter(bottom)
-            addLetterSlotPair(top, slot)
+            bottom.setFriend(topFriend)
+            top.setFriend(bottomFriend)
+        }
+        else if (bottom.hasFriend() && !top.hasFriend())
+        {
+            top.setFriend(bottomFriend)
+            bottom.setFriend(null)
+        }
+        else if (top.hasFriend() && !bottom.hasFriend())
+        {
+            bottom.setFriend(topFriend)
+            top.setFriend(null)
         }
 
         ViewCompat.setTranslationZ((bottom.parent as androidx.gridlayout.widget.GridLayout), C.MIDDLE_LAYER)
@@ -132,8 +142,8 @@ object BoxDirector : IBoxDirector {
         ViewCompat.setTranslationZ((top.parent as androidx.gridlayout.widget.GridLayout), C.TOP_LAYER)
         top.z = C.TOP_LAYER
         top.state = State.ANIMATION
-        top.state.executeAnimationBehaviour(top,distanceToMoveX, distanceToMoveY)
         bottom.state = State.ANIMATION
+        top.state.executeAnimationBehaviour(top,distanceToMoveX, distanceToMoveY)
         bottom.state.executeAnimationBehaviour(bottom, droppedToMoveX, droppedToMoveY)
     }
 
