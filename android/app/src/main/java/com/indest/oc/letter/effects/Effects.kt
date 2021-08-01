@@ -1,4 +1,4 @@
-package com.indest.oc.letter
+package com.indest.oc.letter.effects
 
 import android.content.Context
 import android.content.res.Resources
@@ -7,10 +7,10 @@ import android.media.SoundPool
 import android.os.Vibrator
 import androidx.core.content.res.ResourcesCompat
 import com.indest.oc.R
-import com.indest.oc.letter.ColorSelector.ACTION_DOWN_NO_FRIEND
-import com.indest.oc.letter.ColorSelector.ACTION_UP_FRIEND
-import com.indest.oc.letter.ColorSelector.ACTION_UP_NO_FRIEND
-import com.indest.oc.letter.ColorSelector.ACTION_DOWN_FRIEND
+import com.indest.oc.letter.effects.ColorSelector.ACTION_DOWN_NO_FRIEND
+import com.indest.oc.letter.effects.ColorSelector.ACTION_UP_FRIEND
+import com.indest.oc.letter.effects.ColorSelector.ACTION_UP_NO_FRIEND
+import com.indest.oc.letter.effects.ColorSelector.ACTION_DOWN_FRIEND
 
 data class Effects(val context: Context, val resources: Resources) {
 

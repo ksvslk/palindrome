@@ -1,4 +1,4 @@
-package com.indest.oc.letter
+package com.indest.oc.letter.effects
 
 data class AnimationColor(
     val viewStart: Int,

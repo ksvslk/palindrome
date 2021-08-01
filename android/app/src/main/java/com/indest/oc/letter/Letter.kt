@@ -12,6 +12,7 @@ import android.view.MotionEvent
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import com.indest.oc.R
+import com.indest.oc.letter.effects.Effects
 import com.indest.oc.mediator.BoxDirector
 import com.indest.oc.util.C
 import kotlin.properties.Delegates

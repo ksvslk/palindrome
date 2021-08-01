@@ -5,6 +5,7 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.indest.oc.R
+import com.indest.oc.letter.effects.ColorSelector
 import com.indest.oc.util.C
 import kotlin.math.log2
 

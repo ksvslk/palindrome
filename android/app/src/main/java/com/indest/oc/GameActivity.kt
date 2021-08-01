@@ -9,7 +9,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.LinearLayoutCompat
 import com.indest.oc.letter.Letter
-import com.indest.oc.letter.Effects
+import com.indest.oc.letter.effects.Effects
 import com.indest.oc.letter.Slot
 import com.indest.oc.letter.State
 import com.indest.oc.mediator.BoxDirector
