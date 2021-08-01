@@ -8,7 +8,6 @@ import android.media.AudioManager
 import android.os.Build
 import android.os.VibrationEffect
 import android.util.Log
-import android.view.KeyEvent
 import android.view.MotionEvent
 import android.widget.TextView
 import androidx.annotation.RequiresApi
@@ -21,25 +20,39 @@ import kotlin.properties.Delegates
 class Letter @RequiresApi(Build.VERSION_CODES.O) constructor(
     context: Context?,
     letter: String?,
-    letterResources: LetterResources,
+    fx: Effects,
     boxDirector: BoxDirector,
     initialState: State,
     defStyleRes: Int = R.style.LetterView
 ) : TextView(context, null, 0, defStyleRes), IBox {
 
     private var TAG: String = "Letter $letter"
-    private var friend: Slot? = null
-
     var director: BoxDirector = boxDirector
     var dX: Float = 0.0f
     var dY: Float = 0.0f
-    var lr: LetterResources = letterResources
+    var effects: Effects = fx
     var state: State by Delegates.observable(initialState) {
             _, oldValue, newValue ->
             Log.i(TAG, "$oldValue -> $newValue")
     }
     var currentPos: GlobalPosition = GlobalPosition(Int.MAX_VALUE, Int.MAX_VALUE)
     var homePos: GlobalPosition = GlobalPosition(0, 0)
+    private var friend: Slot? = null
+
+    override val pos: GlobalPosition
+        get() {
+            val coordinates = IntArray(2)
+            getLocationOnScreen(coordinates)
+            return GlobalPosition(
+                coordinates[0] + width / 2,
+                coordinates[1] + height / 2)
+        }
+    override val rect: Rect
+        get() {
+            val rect = Rect()
+            getGlobalVisibleRect(rect)
+            return rect
+        }
 
     override fun onDraw(canvas: Canvas?) {
         state.draw(this)
@@ -67,16 +80,16 @@ class Letter @RequiresApi(Build.VERSION_CODES.O) constructor(
     }
 
     fun addShortVibration(length: Long = 20) {
-        if (lr.am.ringerMode != AudioManager.RINGER_MODE_SILENT) {
+        if (effects.am.ringerMode != AudioManager.RINGER_MODE_SILENT) {
             if (Build.VERSION.SDK_INT >= 26) {
-                lr.vibrator.vibrate(
+                effects.vibrator.vibrate(
                     VibrationEffect.createOneShot(
                         length,
                         VibrationEffect.DEFAULT_AMPLITUDE
                     )
                 )
             } else {
-                lr.vibrator.vibrate(length)
+                effects.vibrator.vibrate(length)
             }
         }
     }
@@ -92,21 +105,6 @@ class Letter @RequiresApi(Build.VERSION_CODES.O) constructor(
 
     override fun setFriend(box: IBox?) {
         friend = box as Slot?
-    }
-
-    override fun pos(): GlobalPosition {
-        val coordinates = IntArray(2)
-        getLocationOnScreen(coordinates)
-        return GlobalPosition(
-            coordinates[0] + width / 2,
-            coordinates[1] + height / 2
-        )
-    }
-
-    override fun rect(): Rect {
-        val rect = Rect()
-        getGlobalVisibleRect(rect)
-        return rect
     }
 
     override fun toString(): String {

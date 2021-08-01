@@ -29,7 +29,6 @@ object BoxDirector {
             }
         }
 
-        // If there were no collisions
         sendLetterHome(box)
     }
 
@@ -37,7 +36,7 @@ object BoxDirector {
         val candidateBoxes = mutableListOf<IBox>()
 
         for (droppedTo in boxes) {
-            if (box.rect().intersect(droppedTo.rect()) && box != droppedTo) {
+            if (box.rect.intersect(droppedTo.rect) && box != droppedTo) {
                 if ((droppedTo is Letter) && droppedTo.state == State.HOME) {
                     candidateBoxes.add(droppedTo)
                 } else if (droppedTo is Slot) {
@@ -53,8 +52,8 @@ object BoxDirector {
         Log.i(TAG, "Switching $top home position with $bottom!")
 
         // Calculate distance for animation
-        val distanceToMoveX = bottom.pos().x - top.pos().x
-        val distanceToMoveY = bottom.pos().y - top.pos().y
+        val distanceToMoveX = bottom.pos.x - top.pos.x
+        val distanceToMoveY = bottom.pos.y - top.pos.y
         val droppedToMoveX = top.currentPos.x - bottom.currentPos.x
         val droppedToMoveY = top.currentPos.y - bottom.currentPos.y
 
@@ -81,14 +80,14 @@ object BoxDirector {
         letter.getFriend()?.setFriend(null)
         slot.setFriend(letter)
         letter.setFriend(slot)
-        letter.currentPos.x = slot.pos().x
-        letter.currentPos.y = slot.pos().y
+        letter.currentPos.x = slot.pos.x
+        letter.currentPos.y = slot.pos.y
         letter.z = C.TOP_LAYER
         letter.state = State.ANIMATION
         letter.state.executeAnimationBehaviour(
             letter,
-            (slot.pos().x - letter.pos().x),
-            (slot.pos().y - letter.pos().y)
+            (slot.pos.x - letter.pos.x),
+            (slot.pos.y - letter.pos.y)
         )
     }
 
@@ -101,24 +100,24 @@ object BoxDirector {
             letter.state = State.ANIMATION
             letter.state.executeAnimationBehaviour(
                 letter,
-                (letter.homePos.x - letter.pos().x),
-                (letter.homePos.y - letter.pos().y)
+                (letter.homePos.x - letter.pos.x),
+                (letter.homePos.y - letter.pos.y)
             )
         } else{
             Log.i(TAG, "No collisions detected (or Letter/Slot not good) - going to current home!")
             letter.state = State.ANIMATION
             letter.state.executeAnimationBehaviour(
                 letter,
-                (letter.currentPos.x - letter.pos().x),
-                (letter.currentPos.y - letter.pos().y)
+                (letter.currentPos.x - letter.pos.x),
+                (letter.currentPos.y - letter.pos.y)
             )
         }
     }
 
     private fun getClosestBox(to: Letter, from: MutableList<IBox>): IBox? {
         return from.minByOrNull {
-            abs(to.pos().x - it.pos().x) +
-                    abs(to.pos().y - it.pos().y)
+            abs(to.pos.x - it.pos.x) +
+                    abs(to.pos.y - it.pos.y)
         }
     }
 

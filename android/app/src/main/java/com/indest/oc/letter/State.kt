@@ -14,10 +14,10 @@ enum class State : IState {
     HOME {
         override fun draw(l: Letter) {
             if (l.currentPos.x == Int.MAX_VALUE && l.currentPos.y == Int.MAX_VALUE) {
-                l.currentPos.x = l.pos().x
-                l.currentPos.y = l.pos().y
-                l.homePos.x = l.pos().x
-                l.homePos.y = l.pos().y
+                l.currentPos.x = l.pos.x
+                l.currentPos.y = l.pos.y
+                l.homePos.x = l.pos.x
+                l.homePos.y = l.pos.y
             }
         }
         override fun executeActionDownBehaviour(l: Letter, v: View, e: MotionEvent) {}
@@ -38,20 +38,27 @@ enum class State : IState {
 
             // Sound/vibration effects
             l.addShortVibration()
-            val id = l.lr.soundPool.load(l.context, R.raw.start_drag, 1)
-            l.lr.soundPool.play(id, 1.0f, 1.0f, 1, 0, 1.0f)
+            val id = l.effects.soundPool.load(l.context, R.raw.start_drag, 1)
+            l.effects.soundPool.play(id, 1.0f, 1.0f, 1, 0, 1.0f)
+
+
+            val color = if (l.hasFriend()) {
+                l.effects.getColors(ColorSelector.ACTION_DOWN_FRIEND)
+            } else {
+                l.effects.getColors(ColorSelector.ACTION_DOWN_NO_FRIEND)
+            }
 
             // Animate background color when starting to drag
-            ObjectAnimator.ofArgb(l, "backgroundColor", l.lr.viewStartColor, l.lr.viewEndColor)
+            ObjectAnimator.ofArgb(l, "backgroundColor", color.viewStart, color.viewEnd)
                 .apply {
-                    duration = l.lr.onClickColorChangeDuration
+                    duration = l.effects.onClickColorChangeDuration
                     start()
                 }
 
             // Animate text color when starting to drag
-            ObjectAnimator.ofArgb(l, "textColor", l.lr.textStartColor, l.lr.textEndColor)
+            ObjectAnimator.ofArgb(l, "textColor", color.textStart, color.textEnd)
                 .apply {
-                    duration = l.lr.onClickColorChangeDuration
+                    duration = l.effects.onClickColorChangeDuration
                     start()
                 }
         }
@@ -80,26 +87,22 @@ enum class State : IState {
         override fun executeActionUpBehaviour(l: Letter) {}
         override fun executeAnimationBehaviour(l: Letter, moveByX: Int, moveByY: Int) {
 
-            var viewEndColor = l.lr.viewEndColor
-            var viewStartColor = l.lr.viewStartColor
-            var textEndColor = l.lr.textEndColor
-            var textStartColor = l.lr.textStartColor
-
-            if (l.hasFriend())
-            {
-                viewStartColor = viewEndColor
-                textStartColor = l.lr.textEndColorInSlot
+            val color = if (l.hasFriend()) {
+                l.effects.getColors(ColorSelector.ACTION_UP_FRIEND)
+            } else {
+                l.effects.getColors(ColorSelector.ACTION_UP_NO_FRIEND)
             }
+
             // Reset background color with animation
-            ObjectAnimator.ofArgb(l, "backgroundColor", viewEndColor, viewStartColor)
+            ObjectAnimator.ofArgb(l, "backgroundColor", color.viewStart, color.viewEnd)
                 .apply {
-                    duration = l.lr.onReleaseColorChangeDuration
+                    duration = l.effects.onReleaseColorChangeDuration
                     start()
                 }
 
             // Reset text color with animation
-            ObjectAnimator.ofArgb(l, "textColor", textEndColor, textStartColor).apply {
-                duration = l.lr.onReleaseColorChangeDuration
+            ObjectAnimator.ofArgb(l, "textColor", color.textStart, color.textEnd).apply {
+                duration = l.effects.onReleaseColorChangeDuration
                 start()
             }
 
@@ -113,12 +116,12 @@ enum class State : IState {
                 .setInterpolator(FastOutSlowInInterpolator())
                 // Here we use the log-distance to calculate the duration of the animation.
                 // Longer distance should be only slightly longer animation and vice-versa
-                .setDuration(distance.toLong() * l.lr.animateToHomeDurationMultiplier)
+                .setDuration(distance.toLong() * l.effects.animateToHomeDurationMultiplier)
                 .withEndAction {
                     l.z = C.MIDDLE_LAYER
                     l.state = HOME
-                    l.currentPos.x = l.pos().x
-                    l.currentPos.y = l.pos().y
+                    l.currentPos.x = l.pos.x
+                    l.currentPos.y = l.pos.y
                     assertIdenticalPositions(l)
                 }
                 .start()
@@ -130,7 +133,7 @@ enum class State : IState {
             val byLetterToPos = l.director.boxes
                 .filterIsInstance<Letter>()
                 .associateWithTo(byLetterToString) {
-                    "${it.pos().x},${it.pos().y}"
+                    "${it.pos.x},${it.pos.y}"
                 }
             val hompos = l.director.boxes
                 .filterIsInstance<Letter>()
@@ -140,7 +143,8 @@ enum class State : IState {
             val sameElements = byLetterToPos.values.toSet().size < byLetterToPos.values.size
             assert(!sameElements) { "Identical positions for objects not allowed: ${byLetterToPos}. Letter homes: $hompos" }
         }
-    },
+    };
 }
+
 
 

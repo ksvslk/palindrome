@@ -24,14 +24,20 @@ class Slot @RequiresApi(Build.VERSION_CODES.O) constructor(
         z = C.BOTTOM_LAYER
     }
 
-    override fun pos(): GlobalPosition {
-        val coordinates = IntArray(2)
-        getLocationOnScreen(coordinates)
-        return GlobalPosition(
-            coordinates[0] + width / 2,
-            coordinates[1] + height / 2
-        )
-    }
+    override val pos: GlobalPosition
+        get() {
+            val coordinates = IntArray(2)
+            getLocationOnScreen(coordinates)
+            return GlobalPosition(
+                coordinates[0] + width / 2,
+                coordinates[1] + height / 2)
+        }
+    override val rect: Rect
+        get() {
+            val rect = Rect()
+            getGlobalVisibleRect(rect)
+            return rect
+        }
 
     override fun hasFriend(): Boolean {
         return friend != null
@@ -44,12 +50,6 @@ class Slot @RequiresApi(Build.VERSION_CODES.O) constructor(
 
     override fun setFriend(box: IBox?) {
         friend = box as Letter?
-    }
-
-    override fun rect(): Rect {
-        val rect = Rect()
-        getGlobalVisibleRect(rect)
-        return rect
     }
 
     override fun toString(): String {

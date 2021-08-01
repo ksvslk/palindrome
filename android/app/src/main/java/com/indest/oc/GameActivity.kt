@@ -9,7 +9,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.LinearLayoutCompat
 import com.indest.oc.letter.Letter
-import com.indest.oc.letter.LetterResources
+import com.indest.oc.letter.Effects
 import com.indest.oc.letter.Slot
 import com.indest.oc.letter.State
 import com.indest.oc.mediator.BoxDirector
@@ -19,7 +19,7 @@ class GameActivity : AppCompatActivity() {
     private val TAG = "GameActivity"
     private lateinit var gameLayout: LinearLayoutCompat
     private lateinit var letters: androidx.gridlayout.widget.GridLayout
-    private var colCount = 5
+    private var colCount = 6
 
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("ClickableViewAccessibility")
@@ -43,7 +43,7 @@ class GameActivity : AppCompatActivity() {
         }*/
         letters.columnCount = colCount
 
-        val data = LetterResources(applicationContext, resources)
+        val data = Effects(applicationContext, resources)
 
         for (l in puzzle)
         {
