@@ -1,6 +1,7 @@
 package com.indest.oc.letter
 
 import android.animation.ObjectAnimator
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
@@ -123,6 +124,7 @@ enum class State : IState {
                     l.state = HOME
                     l.currentPos.x = l.pos.x
                     l.currentPos.y = l.pos.y
+                    Log.i(TAG, "$l friend is ${l.getFriend()}")
                     assertIdenticalPositions(l)
                 }
                 .start()

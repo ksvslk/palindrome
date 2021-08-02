@@ -4,22 +4,28 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
+import android.view.View
 import android.widget.Space
+import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.LinearLayoutCompat
 import com.indest.oc.letter.Letter
-import com.indest.oc.letter.effects.Effects
 import com.indest.oc.letter.Slot
 import com.indest.oc.letter.State
+import com.indest.oc.letter.effects.Effects
 import com.indest.oc.mediator.BoxDirector
 import com.indest.oc.util.Util
+
 
 class GameActivity : AppCompatActivity() {
     private val TAG = "GameActivity"
     private lateinit var gameLayout: LinearLayoutCompat
     private lateinit var letters: androidx.gridlayout.widget.GridLayout
     private var colCount = 6
+    private val defaultBoxSize = 50f
+    private val defaultTextSize = 12f
 
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("ClickableViewAccessibility")
@@ -41,52 +47,74 @@ class GameActivity : AppCompatActivity() {
             this.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
             colCount = 12
         }*/
+
         letters.columnCount = colCount
+
+        val scale: Float = resources.displayMetrics.density
+        val scaledDensity: Float = resources.displayMetrics.scaledDensity
+
+        // Convert the dps to pixels, based on density scale
+        val boxSize = (defaultBoxSize * scale + 0.5f).toInt()
+        val textSize = defaultTextSize * scaledDensity
 
         val data = Effects(applicationContext, resources)
 
         for (l in puzzle)
         {
             if (l.isWhitespace()) {
-           /*     letters.addView(
-                    Space(this, null, R.layout.blank)
-                )*/
                 continue
             }
             letters.addView(
                 Letter(this, l.toString(), data, boxDirector, State.HOME, R.style.LetterView)
                     .also {
                         boxDirector.boxes.add(it)
+                        it.width = boxSize
+                        it.height = boxSize
+                        it.textSize = textSize
                     })
         }
         val puzzleWithoutWhitespace = puzzle.replace("\\s".toRegex(), "")
         if (puzzle.length > colCount) {
             for (i in 1..colCount - (puzzleWithoutWhitespace.length - (puzzleWithoutWhitespace.length / colCount) * colCount)) {
                 letters.addView(
-                    Space(this, null, R.layout.blank)
+                    TextView(this).also {
+                        it.width = boxSize
+                        it.height = boxSize
+                        it.textSize = textSize
+                    }
                 )
             }
         }
         else {
             for (i in 1..colCount - puzzle.length) {
                 letters.addView(
-                    Space(this, null, R.layout.blank)
+                    TextView(this).also {
+                        it.width = boxSize
+                        it.height = boxSize
+                        it.textSize = textSize
+                    }
                 )
             }
         }
-
 
         for (l in puzzle)
         {
             if (l.isWhitespace()) {
                 letters.addView(
-                    Space(this, null, R.layout.blank)
+                    TextView(this).also {
+                        it.width = boxSize
+                        it.height = boxSize
+                        it.textSize = textSize
+                    }
                 )
                 continue
             }
             letters.addView(
                 Slot(this).also {
                     boxDirector.boxes.add(it)
+                    it.textSize = textSize
+                    it.width = boxSize
+                    it.height = boxSize
                     it.text = " "
                 })
         }

@@ -63,15 +63,21 @@ class Letter @RequiresApi(Build.VERSION_CODES.O) constructor(
     private val touchListen = OnTouchListener { v, e ->
         when (e.action) {
             MotionEvent.ACTION_DOWN -> {
-                state = State.DRAGGING
-                state.executeActionDownBehaviour(this, v, e)
+                if (state == State.HOME) {
+                    state = State.DRAGGING
+                    state.executeActionDownBehaviour(this, v, e)
+                }
             }
             MotionEvent.ACTION_MOVE -> {
-                state.executeActionMoveBehaviour(this, v, e)
+                if (state == State.DRAGGING) {
+                    state.executeActionMoveBehaviour(this, v, e)
+                }
             }
             MotionEvent.ACTION_UP -> {
-                state = State.RESOLVING
-                state.executeActionUpBehaviour(this)
+                if (state == State.DRAGGING) {
+                    state = State.RESOLVING
+                    state.executeActionUpBehaviour(this)
+                }
             }
             else -> {
                 performClick()

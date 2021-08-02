@@ -1,20 +1,14 @@
 <resources>
     <style name="LetterView" parent="Widget.AppCompat.TextView">
-        <item name="android:width">50dp</item>
-        <item name="android:height">50dp</item>
         <item name="android:background">?colorPrimary</item>
         <item name="android:gravity">center</item>
         <item name="android:textColor">?colorOnPrimary</item>
-        <item name="android:textSize">30sp</item>
         <item name="android:fontFamily">@font/yantramanav_bold</item>
    </style>
     <style name="EmptyBoxView" parent="Widget.AppCompat.TextView">
-        <item name="android:width">50dp</item>
-        <item name="android:height">50dp</item>
         <item name="android:background">?colorOnPrimary</item>
         <item name="android:gravity">center</item>
         <item name="android:textColor">?colorOnPrimary</item>
-        <item name="android:textSize">30sp</item>
         <item name="android:fontFamily">@font/yantramanav_bold</item>
     </style>
 </resources>
