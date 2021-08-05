@@ -64,7 +64,9 @@ object BoxDirector {
 
         // Set the layers accordingly - which letter is FRONT and which is BEHIND
         bottom.z = C.MIDDLE_LAYER
+        bottom.elevation = C.MIDDLE_LAYER
         top.z = C.TOP_LAYER
+        top.elevation = C.TOP_LAYER
 
         // Change state to animation
         top.state = State.ANIMATION
@@ -83,6 +85,7 @@ object BoxDirector {
         letter.currentPos.x = slot.pos.x
         letter.currentPos.y = slot.pos.y
         letter.z = C.TOP_LAYER
+        letter.elevation = C.TOP_LAYER
         letter.state = State.ANIMATION
         letter.state.executeAnimationBehaviour(
             letter,

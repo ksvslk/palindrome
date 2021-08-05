@@ -8,4 +8,7 @@
     <string name="options">Options</string>
     <string name="score">Score:</string>
     <string name="level">Level:</string>
+    <string name="hints">Hints</string>
+    <string name="leaderboard">Leaderboard</string>
+    <string name="level_select">Level Select</string>
 </resources>

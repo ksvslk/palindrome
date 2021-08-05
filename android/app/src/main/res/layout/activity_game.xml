@@ -22,7 +22,7 @@
             style="@style/Widget.AppCompat.ImageButton"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_marginHorizontal="16dp"
+            android:layout_marginHorizontal="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/options"
             android:hapticFeedbackEnabled="true"
@@ -33,9 +33,9 @@
             android:id="@+id/hints_button"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_marginHorizontal="16dp"
+            android:layout_marginHorizontal="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/options"
+            android:contentDescription="@string/hints"
             app:srcCompat="@drawable/lightbulb"
             app:tint="@color/colorOnPrimary" />
 
@@ -44,12 +44,23 @@
             style="@style/Widget.AppCompat.ImageButton"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_marginHorizontal="16dp"
+            android:layout_marginHorizontal="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/options"
+            android:contentDescription="@string/leaderboard"
             android:hapticFeedbackEnabled="true"
             app:srcCompat="@drawable/leaderboard"
             app:tint="@color/colorOnPrimary" />
+
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/action_bar_spinner"
+            android:contentDescription="@string/level_select"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:spinnerMode="dialog"
+            android:backgroundTint="@color/colorOnPrimary"
+            android:layout_marginHorizontal="8dp">
+
+        </androidx.appcompat.widget.AppCompatSpinner>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -73,7 +84,7 @@
                 android:layout_marginHorizontal="16dp"
                 android:text="Score: 200"
                 android:textAlignment="textEnd"
-                android:textColor="@color/colorOnPrimary" />
+                android:textColor="@color/colorOnBackground" />
         </LinearLayout>
 
     </androidx.appcompat.widget.Toolbar>
@@ -95,6 +106,8 @@
             android:splitMotionEvents="false"
             app:useDefaultMargins="true">
         </androidx.gridlayout.widget.GridLayout>
+
+
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 </androidx.appcompat.widget.LinearLayoutCompat>

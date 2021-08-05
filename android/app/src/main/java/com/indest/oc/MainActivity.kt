@@ -10,11 +10,11 @@ import android.transition.ChangeTransform
 import android.util.Log
 import android.view.Window
 import android.widget.Button
-import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.DialogFragment
 import com.indest.oc.fragments.ExitGameDialogFragment
-import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.ump.*
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -29,11 +29,19 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
     private lateinit var consentInformation: ConsentInformation
     private lateinit var consentForm: ConsentForm
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG,"onCreate")
         super.onCreate(savedInstanceState)
+
+        with(window) {
+            requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
+            enterTransition = ChangeTransform()
+            exitTransition = ChangeTransform()
+        }
+        setContentView(R.layout.activity_main)
+
+        Util.activateFullScreen(window, findViewById(R.id.main_container))
 
         val debugSettings = ConsentDebugSettings.Builder(this)
             .setDebugGeography(ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_EEA)
@@ -48,6 +56,7 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
         consentInformation = UserMessagingPlatform.getConsentInformation(this)
         consentInformation.reset()
 
+        /*
         consentInformation.requestConsentInfoUpdate(
             this,
             params,
@@ -62,27 +71,23 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
             Log.e(TAG, "Consent info update failed.")
             enabledPlayButton()
         }
+        */
 
-        with(window) {
-            requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
-            enterTransition = ChangeTransform()
-            exitTransition = ChangeTransform()
-        }
-        setContentView(R.layout.activity_main)
+
 
         mainContainer = findViewById(R.id.main_container)
-        Util.activateFullscreen(this, mainContainer)
 
         playButton = findViewById(R.id.play_button)
         playButton.alpha = 0.5f
+        enabledPlayButton()
 
-        analytics = FirebaseAnalytics.getInstance(this)
-        analytics.logEvent("MainActivity_onCreated_finished", null)
+        //analytics = FirebaseAnalytics.getInstance(this)
+        //analytics.logEvent("MainActivity_onCreated_finished", null)
 
-        MobileAds.initialize(this)
+        //MobileAds.initialize(this)
         val testDeviceIds = listOf("6423719AD54122E0D92F7F6B44825877")
         val configuration = RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build()
-        MobileAds.setRequestConfiguration(configuration)
+        //MobileAds.setRequestConfiguration(configuration)
     }
 
     private fun enabledPlayButton()
@@ -124,8 +129,8 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
     }
 
     override fun onResume() {
+        Util.activateFullScreen(window, findViewById(R.id.main_container))
         super.onResume()
-        Util.activateFullscreen(this, mainContainer)
     }
 
     override fun onBackPressed() {

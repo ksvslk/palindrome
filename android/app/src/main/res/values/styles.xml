@@ -11,4 +11,16 @@
         <item name="android:textColor">?colorOnPrimary</item>
         <item name="android:fontFamily">@font/yantramanav_bold</item>
     </style>
+    <style name="TransparentBoxView" parent="Widget.AppCompat.TextView">
+        <item name="android:background">@color/colorError</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">?backgroundColor</item>
+        <item name="android:fontFamily">@font/yantramanav_bold</item>
+    </style>
+    <style name="SpaceBox">
+        <item name="android:background">@color/colorError</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">?backgroundColor</item>
+        <item name="android:fontFamily">@font/yantramanav_bold</item>
+    </style>
 </resources>

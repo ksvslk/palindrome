@@ -20,7 +20,7 @@ class Slot @RequiresApi(Build.VERSION_CODES.O) constructor(
     private var friend: Letter? = null
 
     init {
-        text = TAG
+        //text = TAG
         z = C.BOTTOM_LAYER
     }
 

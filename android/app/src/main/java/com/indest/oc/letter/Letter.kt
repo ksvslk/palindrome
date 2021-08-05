@@ -1,5 +1,6 @@
 package com.indest.oc.letter
 
+import android.animation.StateListAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
@@ -36,8 +37,8 @@ class Letter @RequiresApi(Build.VERSION_CODES.O) constructor(
             _, oldValue, newValue ->
             Log.i(TAG, "$oldValue -> $newValue")
     }
-    var currentPos: GlobalPosition = GlobalPosition(Int.MAX_VALUE, Int.MAX_VALUE)
-    var homePos: GlobalPosition = GlobalPosition(0, 0)
+    lateinit var currentPos: GlobalPosition
+    lateinit var homePos: GlobalPosition
     private var friend: Slot? = null
 
     override val pos: GlobalPosition
@@ -120,7 +121,7 @@ class Letter @RequiresApi(Build.VERSION_CODES.O) constructor(
 
     init {
         setOnTouchListener(touchListen)
-        z = C.MIDDLE_LAYER
+        z = C.NEUTRAL_LAYER
         text = letter
     }
 }
