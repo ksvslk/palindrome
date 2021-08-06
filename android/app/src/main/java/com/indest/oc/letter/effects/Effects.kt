@@ -1,7 +1,6 @@
 package com.indest.oc.letter.effects
 
 import android.content.Context
-import android.content.res.Resources
 import android.media.AudioManager
 import android.media.SoundPool
 import android.os.Vibrator
@@ -11,8 +10,10 @@ import com.indest.oc.letter.effects.ColorSelector.ACTION_DOWN_NO_FRIEND
 import com.indest.oc.letter.effects.ColorSelector.ACTION_UP_FRIEND
 import com.indest.oc.letter.effects.ColorSelector.ACTION_UP_NO_FRIEND
 import com.indest.oc.letter.effects.ColorSelector.ACTION_DOWN_FRIEND
+import dagger.hilt.android.qualifiers.ActivityContext
+import javax.inject.Inject
 
-data class Effects(val context: Context, val resources: Resources) {
+class Effects @Inject constructor(@ActivityContext val context: Context) {
 
     // Transition durations
     val onClickColorChangeDuration: Long = 200L
@@ -26,31 +27,31 @@ data class Effects(val context: Context, val resources: Resources) {
 
     // Colors
     private val actionDownNoFriend = AnimationColor(
-        viewStart = ResourcesCompat.getColor(resources, R.color.colorPrimary, null),
-        viewEnd = ResourcesCompat.getColor(resources, R.color.colorSecondary, null),
-        textStart = ResourcesCompat.getColor(resources, R.color.colorOnPrimary, null),
-        textEnd = ResourcesCompat.getColor(resources, R.color.colorOnSecondary, null)
+        viewStart = ResourcesCompat.getColor(context.resources, R.color.colorPrimary, null),
+        viewEnd = ResourcesCompat.getColor(context.resources, R.color.colorSecondary, null),
+        textStart = ResourcesCompat.getColor(context.resources, R.color.colorOnPrimary, null),
+        textEnd = ResourcesCompat.getColor(context.resources, R.color.colorOnSecondary, null)
     )
 
     private val actionDownFriend = AnimationColor(
-        viewStart = ResourcesCompat.getColor(resources, R.color.colorSecondary, null),
-        viewEnd = ResourcesCompat.getColor(resources, R.color.colorSecondary, null),
-        textStart = ResourcesCompat.getColor(resources, R.color.colorOnPrimary, null),
-        textEnd = ResourcesCompat.getColor(resources, R.color.colorOnSecondary, null)
+        viewStart = ResourcesCompat.getColor(context.resources, R.color.colorSecondary, null),
+        viewEnd = ResourcesCompat.getColor(context.resources, R.color.colorSecondary, null),
+        textStart = ResourcesCompat.getColor(context.resources, R.color.colorOnPrimary, null),
+        textEnd = ResourcesCompat.getColor(context.resources, R.color.colorOnSecondary, null)
     )
 
     private val actionUpNoFriend = AnimationColor(
-        viewStart = ResourcesCompat.getColor(resources, R.color.colorSecondary, null),
-        viewEnd = ResourcesCompat.getColor(resources, R.color.colorPrimary, null),
-        textStart = ResourcesCompat.getColor(resources, R.color.colorOnSecondary, null),
-        textEnd = ResourcesCompat.getColor(resources, R.color.colorOnPrimary, null)
+        viewStart = ResourcesCompat.getColor(context.resources, R.color.colorSecondary, null),
+        viewEnd = ResourcesCompat.getColor(context.resources, R.color.colorPrimary, null),
+        textStart = ResourcesCompat.getColor(context.resources, R.color.colorOnSecondary, null),
+        textEnd = ResourcesCompat.getColor(context.resources, R.color.colorOnPrimary, null)
     )
 
     private val actionUpFriend = AnimationColor(
-        viewStart = ResourcesCompat.getColor(resources, R.color.colorSecondary, null),
-        viewEnd = ResourcesCompat.getColor(resources, R.color.colorSecondary, null),
-        textStart = ResourcesCompat.getColor(resources, R.color.colorOnSecondary, null),
-        textEnd = ResourcesCompat.getColor(resources, R.color.colorOnPrimary, null)
+        viewStart = ResourcesCompat.getColor(context.resources, R.color.colorSecondary, null),
+        viewEnd = ResourcesCompat.getColor(context.resources, R.color.colorSecondary, null),
+        textStart = ResourcesCompat.getColor(context.resources, R.color.colorOnSecondary, null),
+        textEnd = ResourcesCompat.getColor(context.resources, R.color.colorOnPrimary, null)
     )
 
     fun getColors(colorSelector: ColorSelector): AnimationColor {

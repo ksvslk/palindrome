@@ -13,79 +13,100 @@
         android:id="@+id/game_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingHorizontal="8dp"
         android:background="@color/colorSecondary"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme">
 
-        <ImageButton
-            android:id="@+id/options_button"
-            style="@style/Widget.AppCompat.ImageButton"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginHorizontal="8dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/options"
-            android:hapticFeedbackEnabled="true"
-            app:srcCompat="@drawable/settings"
-            app:tint="@color/colorOnPrimary" />
+        <TextSwitcher
+            android:id="@+id/level_nr_switcher"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
-        <ImageButton
-            android:id="@+id/hints_button"
+            <TextView
+                android:id="@+id/level_text1"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginHorizontal="8dp"
+                android:fontFamily="@font/yantramanav_bold"
+                android:gravity="center"
+                android:text="1"
+                android:textAlignment="center"
+                android:textColor="@color/colorOnSecondary"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/level_text2"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginHorizontal="8dp"
+                android:fontFamily="@font/yantramanav_bold"
+                android:gravity="center"
+                android:text="1"
+                android:textAlignment="center"
+                android:textColor="@color/colorOnSecondary"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+        </TextSwitcher>
+
+        <TextView
+            android:id="@+id/score_text"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_marginHorizontal="8dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/hints"
-            app:srcCompat="@drawable/lightbulb"
-            app:tint="@color/colorOnPrimary" />
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="16dp"
+            android:fontFamily="@font/yantramanav_bold"
+            android:gravity="center"
+            android:text="00000"
+            android:textAlignment="center"
+            android:textColor="@color/colorOnSecondary"
+            android:textSize="15sp" />
 
         <ImageButton
             android:id="@+id/leaderboard_button"
             style="@style/Widget.AppCompat.ImageButton"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_marginHorizontal="8dp"
+            android:layout_marginHorizontal="4dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/leaderboard"
             android:hapticFeedbackEnabled="true"
             app:srcCompat="@drawable/leaderboard"
             app:tint="@color/colorOnPrimary" />
 
-        <androidx.appcompat.widget.AppCompatSpinner
-            android:id="@+id/action_bar_spinner"
-            android:contentDescription="@string/level_select"
+        <ImageButton
+            android:id="@+id/hints_button"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:spinnerMode="dialog"
+            android:layout_marginHorizontal="4dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/hints"
+            app:srcCompat="@drawable/lightbulb"
+            app:tint="@color/colorOnPrimary" />
+
+        <ImageButton
+            android:id="@+id/options_button"
+            style="@style/Widget.AppCompat.ImageButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginHorizontal="4dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/options"
+            android:hapticFeedbackEnabled="true"
+            app:srcCompat="@drawable/settings"
+            app:tint="@color/colorOnPrimary" />
+
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/action_bar_spinner"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginHorizontal="4dp"
             android:backgroundTint="@color/colorOnPrimary"
-            android:layout_marginHorizontal="8dp">
+            android:contentDescription="@string/level_select"
+            android:dropDownWidth="50dp"
+            android:spinnerMode="dropdown">
 
         </androidx.appcompat.widget.AppCompatSpinner>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/level_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:text="Level 1"
-                android:textAlignment="textEnd"
-                android:textColor="@color/colorOnPrimary"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/score_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:text="Score: 200"
-                android:textAlignment="textEnd"
-                android:textColor="@color/colorOnBackground" />
-        </LinearLayout>
 
     </androidx.appcompat.widget.Toolbar>
 
@@ -100,12 +121,11 @@
             android:id="@+id/boxes_gridlayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="visible"
-            android:clipChildren="false"
             android:layout_gravity="center"
+            android:clipChildren="false"
             android:splitMotionEvents="false"
-            app:useDefaultMargins="true">
-        </androidx.gridlayout.widget.GridLayout>
+            android:visibility="visible"
+            app:useDefaultMargins="true" />
 
 
     </androidx.appcompat.widget.LinearLayoutCompat>

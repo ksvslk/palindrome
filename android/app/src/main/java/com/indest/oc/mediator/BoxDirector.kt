@@ -3,16 +3,17 @@ package com.indest.oc.mediator
 import android.util.Log
 import com.indest.oc.letter.*
 import com.indest.oc.util.C
+import javax.inject.Inject
 import kotlin.math.abs
 
-object BoxDirector {
-    private const val TAG = "BoxDirector"
+class BoxDirector @Inject constructor() {
+    private val TAG = "BoxDirector"
     val boxes: MutableList<IBox> = mutableListOf()
 
     fun handleCollisions(box: Letter) {
         Log.i(TAG, "$box called handleCollisions.")
 
-        when (val closestBox = getClosestBox(to=box, from=getCandidateBoxes(box))) {
+        when (val closestBox = getClosestBox(to = box, from = getCandidateBoxes(box))) {
             is Letter -> {
                 Log.i(TAG, "Closest is $closestBox and its friend is ${closestBox.getFriend()}!")
                 if (closestBox.state == State.HOME) {
@@ -106,7 +107,7 @@ object BoxDirector {
                 (letter.homePos.x - letter.pos.x),
                 (letter.homePos.y - letter.pos.y)
             )
-        } else{
+        } else {
             Log.i(TAG, "No collisions detected (or Letter/Slot not good) - going to current home!")
             letter.state = State.ANIMATION
             letter.state.executeAnimationBehaviour(
@@ -124,8 +125,7 @@ object BoxDirector {
         }
     }
 
-    private fun switchCoordinates(bottomPos: GlobalPosition, topPos: GlobalPosition)
-    {
+    private fun switchCoordinates(bottomPos: GlobalPosition, topPos: GlobalPosition) {
         val tempHomeX = bottomPos.x
         val tempHomeY = bottomPos.y
         bottomPos.x = topPos.x
@@ -134,8 +134,7 @@ object BoxDirector {
         topPos.y = tempHomeY
     }
 
-    private fun switchFriends(bottom: Letter, top: Letter)
-    {
+    private fun switchFriends(bottom: Letter, top: Letter) {
         val bottomFriend = bottom.getFriend()
         val topFriend = top.getFriend()
         if (bottom.hasFriend() && top.hasFriend()) {

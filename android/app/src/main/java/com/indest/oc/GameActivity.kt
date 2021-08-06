@@ -16,19 +16,26 @@ import com.indest.oc.letter.State
 import com.indest.oc.letter.effects.Effects
 import com.indest.oc.mediator.BoxDirector
 import com.indest.oc.util.Util
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
+import javax.inject.Inject
 import kotlin.random.Random
+import android.animation.ValueAnimator
 
+
+@AndroidEntryPoint
 class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private val TAG = "GameActivity"
     private lateinit var gameLayout: LinearLayoutCompat
     private lateinit var letters: androidx.gridlayout.widget.GridLayout
     private lateinit var spinner: Spinner
-    private lateinit var data: Effects
-    private val boxDirector = BoxDirector
+    private lateinit var textSwitcher: TextSwitcher
+    private lateinit var scoreView: TextView
     private lateinit var puzzles: List<*>
     private lateinit var result: List<*>
     private lateinit var insetsController: WindowInsetsControllerCompat
+    @Inject lateinit var data: Effects
+    @Inject lateinit var boxDirector:BoxDirector
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,36 +50,23 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         letters = findViewById(R.id.boxes_gridlayout)
         spinner = findViewById(R.id.action_bar_spinner)
 
-        data = Effects(applicationContext, resources)
         puzzles = application.assets.open("sorteeritud.txt").bufferedReader().lineSequence().filter { it.length < 25 }.toList()
+        textSwitcher = findViewById(R.id.level_nr_switcher)
+        scoreView = findViewById(R.id.score_text)
+        textSwitcher.setInAnimation(this, R.anim.slide_in_bottom)
+        textSwitcher.setOutAnimation(this, R.anim.slide_out_top)
 
-        fun countSentencesWith(from:Int, to:Int, doesNotContain:Regex) = puzzles.filter {
-            (it as String)
-                .splitToSequence(" ")
-                .filterNot { it.contains(doesNotContain) }
-                .toList()
-                .maxWithOrNull { o1, o2 ->
-                    when {
-                        o1 == null && o2 == null -> 0
-                        o1 == null && o2 != null -> -1
-                        o1 != null && o2 == null -> 1
-                        o1 != null && o2 != null && o1.length < o2.length -> -1
-                        o1 != null && o2 != null && o1.length > o2.length -> 1
-                        o1?.length == o2?.length -> 0
-                        else -> 0
-                    }
-            }!!.length in from..to
-        }
 
         val from = 1
         val to = 6
         val doesNotContain = "[@]".toRegex()
 
-        result = countSentencesWith(from,to, doesNotContain) as List<*>
+        result = countSentencesWith(from, to, doesNotContain) as List<*>
 
         Log.i(TAG, "There are ${result.size} puzzles which have a word with length in range $from to $to (and does not contain $doesNotContain)")
         Log.i(TAG, "${result.count {(it as String).length < 25}}")
         Log.i(TAG, "${result.filter { (it as String).length < 25 }}")
+
         val arrayAdapter = ArrayAdapter(
             this,
             android.R.layout.simple_spinner_item,
@@ -83,6 +77,40 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         spinner.adapter = arrayAdapter
         spinner.onItemSelectedListener = this
         Log.i(TAG, "Scale factor (density): ${resources.displayMetrics.density}")
+
+        scoreView.setOnClickListener {
+            startCountAnimation(scoreView)
+        }
+
+    }
+
+    private fun startCountAnimation(scoreView:TextView) {
+        val currentValue = scoreView.text.toString().toInt()
+        val animator = ValueAnimator.ofInt(currentValue, currentValue + 1529)
+        animator.duration = 1000
+        animator.addUpdateListener {
+                animation ->
+            scoreView.text = animation.animatedValue.toString().padStart(5, '0')
+        }
+        animator.start()
+    }
+
+    fun countSentencesWith(from:Int, to:Int, doesNotContain:Regex) = puzzles.filter {
+        (it as String)
+            .splitToSequence(" ")
+            .filterNot { it.contains(doesNotContain) }
+            .toList()
+            .maxWithOrNull { o1, o2 ->
+                when {
+                    o1 == null && o2 == null -> 0
+                    o1 == null && o2 != null -> -1
+                    o1 != null && o2 == null -> 1
+                    o1 != null && o2 != null && o1.length < o2.length -> -1
+                    o1 != null && o2 != null && o1.length > o2.length -> 1
+                    o1?.length == o2?.length -> 0
+                    else -> 0
+                }
+            }!!.length in from..to
     }
 
     private fun populateGridWithLetters(p: String) {
@@ -213,8 +241,8 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private fun changeToNextLevel(levelNr: Int)
     {
         val puzzle = (result[levelNr] as String).uppercase()
-        val levelTextView = findViewById<TextView>(R.id.level_text)
-        levelTextView.text = "Level ${levelNr+1}"
+        Log.i(TAG, "TextSwitcher is $textSwitcher")
+        textSwitcher.setText("${levelNr+1}")
         populateGridWithLetters(puzzle)
     }
 

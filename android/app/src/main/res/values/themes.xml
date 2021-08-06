@@ -30,6 +30,9 @@
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowTranslucentNavigation">true</item>
+
+        <item name="android:transitionName">@transition/level_number_transition</item>
+
     </style>
 
     <style name="ThemeOverlay.App.MaterialAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
