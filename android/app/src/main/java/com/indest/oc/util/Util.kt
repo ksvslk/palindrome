@@ -2,21 +2,8 @@ package com.indest.oc.util
 
 import android.content.res.Configuration.ORIENTATION_PORTRAIT
 import android.util.Log
-import android.view.View
-import android.view.Window
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 
 object Util {
-
-    fun activateFullScreen(window: Window, view: View): Boolean {
-        val insetsController = WindowInsetsControllerCompat(window, view)
-        insetsController.systemBarsBehavior =
-            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-        insetsController.hide(WindowInsetsCompat.Type.systemBars())
-        return true
-    }
-
     fun getDensitySettings(
         density: Float,
         scaledDensity: Float,

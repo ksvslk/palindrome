@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.annotation.SuppressLint
 import android.app.ActivityOptions
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.transition.ChangeTransform
 import android.util.Log
@@ -18,7 +17,6 @@ import com.indest.oc.fragments.ExitGameDialogFragment
 import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.ump.*
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.indest.oc.util.Util
 
 class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogListener {
 
@@ -28,6 +26,7 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
     private lateinit var analytics: FirebaseAnalytics
     private lateinit var consentInformation: ConsentInformation
     private lateinit var consentForm: ConsentForm
+    private lateinit var insetsController: WindowInsetsControllerCompat
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,8 +39,11 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
             exitTransition = ChangeTransform()
         }
         setContentView(R.layout.activity_main)
+        mainContainer = findViewById(R.id.main_container)
 
-        Util.activateFullScreen(window, findViewById(R.id.main_container))
+        insetsController = WindowInsetsControllerCompat(window, mainContainer)
+        insetsController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        insetsController.hide(WindowInsetsCompat.Type.systemBars())
 
         val debugSettings = ConsentDebugSettings.Builder(this)
             .setDebugGeography(ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_EEA)
@@ -73,10 +75,6 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
         }
         */
 
-
-
-        mainContainer = findViewById(R.id.main_container)
-
         playButton = findViewById(R.id.play_button)
         playButton.alpha = 0.5f
         enabledPlayButton()
@@ -95,11 +93,7 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
         playButton.alpha = 1.0f
         playButton.setOnClickListener {
             val intent = Intent(this, GameActivity::class.java)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle())
-            } else {
-                startActivity(intent)
-            }
+            startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle())
         }
     }
 
@@ -129,7 +123,7 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
     }
 
     override fun onResume() {
-        Util.activateFullScreen(window, findViewById(R.id.main_container))
+        insetsController.hide(WindowInsetsCompat.Type.systemBars())
         super.onResume()
     }
 

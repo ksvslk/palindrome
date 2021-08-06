@@ -1,6 +1,5 @@
 package com.indest.oc.letter
 
-import android.animation.StateListAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
@@ -11,7 +10,6 @@ import android.os.VibrationEffect
 import android.util.Log
 import android.view.MotionEvent
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import com.indest.oc.R
 import com.indest.oc.letter.effects.Effects
 import com.indest.oc.mediator.BoxDirector
@@ -19,7 +17,7 @@ import com.indest.oc.util.C
 import kotlin.properties.Delegates
 
 @SuppressLint("AppCompatCustomView", "ViewConstructor")
-class Letter @RequiresApi(Build.VERSION_CODES.O) constructor(
+class Letter constructor(
     context: Context?,
     letter: String?,
     fx: Effects,

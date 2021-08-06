@@ -1,14 +1,14 @@
 package com.indest.oc
 
 import android.annotation.SuppressLint
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.*
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.LinearLayoutCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.transition.*
 import com.indest.oc.letter.Letter
 import com.indest.oc.letter.Slot
@@ -16,8 +16,7 @@ import com.indest.oc.letter.State
 import com.indest.oc.letter.effects.Effects
 import com.indest.oc.mediator.BoxDirector
 import com.indest.oc.util.Util
-import com.indest.oc.util.Util.activateFullScreen
-import java.time.LocalDateTime
+import java.util.*
 import kotlin.random.Random
 
 class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
@@ -27,22 +26,25 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var spinner: Spinner
     private lateinit var data: Effects
     private val boxDirector = BoxDirector
-    private lateinit var puzzles: Array<*>
+    private lateinit var puzzles: List<*>
     private lateinit var result: List<*>
+    private lateinit var insetsController: WindowInsetsControllerCompat
 
-    @RequiresApi(Build.VERSION_CODES.R)
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.i(TAG, "onCreate")
+        Log.i(TAG, "onCreate game")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
         gameLayout = findViewById(R.id.game_container)
+        insetsController = WindowInsetsControllerCompat(window, gameLayout)
+        insetsController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        insetsController.hide(WindowInsetsCompat.Type.systemBars())
+
         letters = findViewById(R.id.boxes_gridlayout)
         spinner = findViewById(R.id.action_bar_spinner)
 
         data = Effects(applicationContext, resources)
-        puzzles = application.assets.open("sorteeritud.txt").bufferedReader().lines().filter { it.length < 25 }
-            .toArray() as Array<*>
+        puzzles = application.assets.open("sorteeritud.txt").bufferedReader().lineSequence().filter { it.length < 25 }.toList()
 
         fun countSentencesWith(from:Int, to:Int, doesNotContain:Regex) = puzzles.filter {
             (it as String)
@@ -74,19 +76,18 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         val arrayAdapter = ArrayAdapter(
             this,
             android.R.layout.simple_spinner_item,
-            (0..result.size-1).toList()
+            (result.indices).toList()
         )
 
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = arrayAdapter
         spinner.onItemSelectedListener = this
         Log.i(TAG, "Scale factor (density): ${resources.displayMetrics.density}")
-        activateFullScreen(window, findViewById(R.id.game_container))
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun populateGridWithLetters(p: String) {
-        val random = Random(LocalDateTime.now().nano.toLong())
+        val timeNow = Date().time
+        val random = Random(timeNow)
         val listOfWords = p.splitToSequence(" ").toList()
         val shuffledChars = p.toCharArray()
         while (shuffledChars.concatToString() == p) shuffledChars.shuffle(random)
@@ -200,16 +201,15 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
     override fun onResume() {
         Log.i(TAG, "onResume")
-        activateFullScreen(window, findViewById(R.id.game_container))
+        insetsController.hide(WindowInsetsCompat.Type.systemBars())
         super.onResume()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        insetsController.hide(WindowInsetsCompat.Type.systemBars())
         changeToNextLevel(position)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun changeToNextLevel(levelNr: Int)
     {
         val puzzle = (result[levelNr] as String).uppercase()

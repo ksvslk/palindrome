@@ -3,15 +3,13 @@ package com.indest.oc.letter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Rect
-import android.os.Build
 import android.view.View
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import com.indest.oc.util.C
 import com.indest.oc.R
 
 @SuppressLint( "AppCompatCustomView", "ViewConstructor")
-class Slot @RequiresApi(Build.VERSION_CODES.O) constructor(
+class Slot constructor(
     context: Context?,
     defStyleRes: Int = R.style.EmptyBoxView
 ) : TextView(context, null, 0, defStyleRes), IBox {

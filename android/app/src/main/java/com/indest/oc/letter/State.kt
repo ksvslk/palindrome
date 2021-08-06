@@ -1,7 +1,6 @@
 package com.indest.oc.letter
 
 import android.animation.ObjectAnimator
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
