@@ -10,10 +10,12 @@ import com.indest.oc.letter.effects.ColorSelector.ACTION_DOWN_NO_FRIEND
 import com.indest.oc.letter.effects.ColorSelector.ACTION_UP_FRIEND
 import com.indest.oc.letter.effects.ColorSelector.ACTION_UP_NO_FRIEND
 import com.indest.oc.letter.effects.ColorSelector.ACTION_DOWN_FRIEND
-import dagger.hilt.android.qualifiers.ActivityContext
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
+import javax.inject.Singleton
 
-class Effects @Inject constructor(@ActivityContext val context: Context) {
+@Singleton
+class Effects @Inject constructor(@ApplicationContext val context: Context) {
 
     // Transition durations
     val onClickColorChangeDuration: Long = 200L

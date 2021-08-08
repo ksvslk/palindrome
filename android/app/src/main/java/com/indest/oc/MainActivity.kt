@@ -17,6 +17,7 @@ import com.indest.oc.fragments.ExitGameDialogFragment
 import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.ump.*
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.indest.oc.declarations.getInsetsController
 
 class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogListener {
 
@@ -41,8 +42,7 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
         setContentView(R.layout.activity_main)
         mainContainer = findViewById(R.id.main_container)
 
-        insetsController = WindowInsetsControllerCompat(window, mainContainer)
-        insetsController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        insetsController = getInsetsController(mainContainer)
         insetsController.hide(WindowInsetsCompat.Type.systemBars())
 
         val debugSettings = ConsentDebugSettings.Builder(this)

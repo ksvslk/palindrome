@@ -14,23 +14,24 @@ import com.indest.oc.R
 import com.indest.oc.letter.effects.Effects
 import com.indest.oc.mediator.BoxDirector
 import com.indest.oc.util.C
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import kotlin.properties.Delegates
 
+@AndroidEntryPoint
 @SuppressLint("AppCompatCustomView", "ViewConstructor")
-class Letter constructor(
+class Letter @Inject constructor(
     context: Context?,
     letter: String?,
-    fx: Effects,
-    boxDirector: BoxDirector,
     initialState: State,
     defStyleRes: Int = R.style.LetterView
 ) : TextView(context, null, 0, defStyleRes), IBox {
 
     private var TAG: String = "Letter $letter"
-    var director: BoxDirector = boxDirector
+    @Inject lateinit var director: BoxDirector
+    @Inject lateinit var  effects: Effects
     var dX: Float = 0.0f
     var dY: Float = 0.0f
-    var effects: Effects = fx
     var state: State by Delegates.observable(initialState) {
             _, oldValue, newValue ->
             Log.i(TAG, "$oldValue -> $newValue")

@@ -4,15 +4,17 @@ import android.util.Log
 import com.indest.oc.letter.*
 import com.indest.oc.util.C
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlin.math.abs
 
+@Singleton
 class BoxDirector @Inject constructor() {
     private val TAG = "BoxDirector"
     val boxes: MutableList<IBox> = mutableListOf()
 
     fun handleCollisions(box: Letter) {
         Log.i(TAG, "$box called handleCollisions.")
-
+        Log.i(TAG, "$boxes")
         when (val closestBox = getClosestBox(to = box, from = getCandidateBoxes(box))) {
             is Letter -> {
                 Log.i(TAG, "Closest is $closestBox and its friend is ${closestBox.getFriend()}!")
