@@ -6,9 +6,9 @@
         <item name="android:fontFamily">@font/yantramanav_bold</item>
    </style>
     <style name="EmptyBoxView" parent="Widget.AppCompat.TextView">
-        <item name="android:background">?colorOnPrimary</item>
+        <item name="android:background">?colorSecondaryVariant</item>
         <item name="android:gravity">center</item>
-        <item name="android:textColor">?colorOnPrimary</item>
+        <item name="android:textColor">?colorSecondaryVariant</item>
         <item name="android:fontFamily">@font/yantramanav_bold</item>
     </style>
     <style name="TransparentBoxView" parent="Widget.AppCompat.TextView">

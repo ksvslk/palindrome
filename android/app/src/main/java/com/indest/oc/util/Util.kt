@@ -37,25 +37,25 @@ object Util {
 
         Log.i("UTIL", "Longest word was $longestWord")
         when (density) {
-            in 1.51f..2.0f ->
+            in 1.50f..1.9f ->
                 return DensitySettings(
                     colCount,
                     (boxSize * density + 0.5).toInt(),
                     textSize * scaledDensity / 2,
                     ORIENTATION_PORTRAIT
                 )
-            in 2.01f..3.0f ->
+            in 2.00f..2.9f ->
                 return DensitySettings(
                     colCount,
                     (boxSize * density + 0.5).toInt(),
                     textSize * scaledDensity / 1.5f,
                     ORIENTATION_PORTRAIT
                 )
-            in 3.01f..Float.MAX_VALUE ->
+            in 3.0f..Float.MAX_VALUE ->
                 return DensitySettings(
                     colCount,
-                    (boxSize * density + 0.5).toInt(),
-                    densitySettings.textSize * scaledDensity / 2,
+                    ((boxSize - 5f) * density + 0.5).toInt(),
+                    textSize * scaledDensity / 1.5f,
                     ORIENTATION_PORTRAIT
                 )
         }
