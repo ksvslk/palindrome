@@ -7,7 +7,6 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.LinearLayoutCompat
-import androidx.transition.*
 import com.indest.oc.letter.Letter
 import com.indest.oc.letter.Slot
 import com.indest.oc.letter.State
@@ -18,15 +17,20 @@ import java.util.*
 import javax.inject.Inject
 import kotlin.random.Random
 import android.animation.ValueAnimator
+import android.view.Gravity
+import android.view.animation.AnimationUtils
+import androidx.constraintlayout.widget.Guideline
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.*
 import com.indest.oc.declarations.getInsetsController
-import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
 class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private val TAG = "GameActivity"
     private lateinit var gameLayout: LinearLayoutCompat
-    private lateinit var letters: androidx.gridlayout.widget.GridLayout
+    private lateinit var gridContainer: LinearLayoutCompat
+    //private lateinit var letters: androidx.gridlayout.widget.GridLayout
     private lateinit var spinner: Spinner
     private lateinit var textSwitcher: TextSwitcher
     private lateinit var scoreView: TextView
@@ -43,10 +47,11 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
         gameLayout = findViewById(R.id.game_container)
+        gridContainer = findViewById(R.id.top_llc)
         insetsController = getInsetsController(gameLayout)
         insetsController.hide(WindowInsetsCompat.Type.systemBars())
 
-        letters = findViewById(R.id.boxes_gridlayout)
+        //letters = findViewById(R.id.boxes_gridlayout)
         spinner = findViewById(R.id.action_bar_spinner)
 
         textSwitcher = findViewById(R.id.level_nr_switcher)
@@ -59,7 +64,7 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         val from = 1
         val to = 6
         val doesNotContain = "[@]".toRegex()
-        result = countSentencesWith(from, to, doesNotContain) as List<*>
+        result = countSentencesWith(from, to, doesNotContain)
         Log.i(
             TAG,
             "There are ${result.size} puzzles which have a word with length in range $from to $to (and does not contain $doesNotContain)"
@@ -69,7 +74,7 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         val arrayAdapter = ArrayAdapter(
             this,
             android.R.layout.simple_spinner_item,
-            (result.indices).toList()
+            (1..96).toList()
         )
 
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -80,7 +85,6 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         scoreView.setOnClickListener {
             increaseScore(scoreView, 1234)
         }
-
     }
 
     private fun increaseScore(scoreView: TextView, plus: Int) {
@@ -125,43 +129,13 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             resources.displayMetrics.density,
             resources.displayMetrics.scaledDensity, puzzle, listOfWords
         )
+        val ls = gridContainer.getChildAt(0) as? androidx.gridlayout.widget.GridLayout
+        ls?.startAnimation(AnimationUtils.loadAnimation(this, android.R.anim.slide_out_right))
 
-        val transition =
-            TransitionInflater.from(this).inflateTransition(R.transition.letters_transition)
-
-        transition.addListener(object : Transition.TransitionListener {
-            override fun onTransitionStart(transition: Transition) {
-            }
-
-            override fun onTransitionEnd(transition: Transition) {
-                boxDirector.boxes.forEach { b ->
-                    if (b is Letter) {
-                        b.homePos = b.pos
-                        b.currentPos = b.pos
-                        b.state = State.HOME
-                    }
-                }
-            }
-
-            override fun onTransitionCancel(transition: Transition) {
-            }
-
-            override fun onTransitionPause(transition: Transition) {
-            }
-
-            override fun onTransitionResume(transition: Transition) {
-            }
-        })
         boxDirector.boxes.clear()
-        letters.forEachIndexed { index, view ->
-            if (view is Slot) {
-                letters.removeViewAt(index)
-                letters.addView(Space(this), index)
-            }
-        }
-        letters.removeAllViews()
-        TransitionManager.beginDelayedTransition(letters, transition)
-
+        gridContainer.removeAllViews()
+        layoutInflater.inflate(R.layout.grid, gridContainer) as LinearLayoutCompat
+        val letters = gridContainer.getChildAt(0) as androidx.gridlayout.widget.GridLayout
 
         val puzzleWithoutWhitespace = puzzle.replace("\\s".toRegex(), "")
         letters.columnCount = ds.colCount
@@ -183,23 +157,28 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                         it.width = ds.boxSize
                         it.height = ds.boxSize
                         it.textSize = ds.textSize
+                        it.typeface = ResourcesCompat.getFont(this, R.font.yantramanav_bold)
+                        it.gravity = Gravity.CENTER
+                        it.setBackgroundColor(ContextCompat.getColor(this, R.color.colorOnSecondary))
+                        it.setTextColor(ContextCompat.getColor(this, R.color.colorOnPrimary))
                     })
         }
-        if (puzzle.length > ds.colCount) {
-            for (i in 1..ds.colCount - (puzzleWithoutWhitespace.length - (puzzleWithoutWhitespace.length / ds.colCount) * ds.colCount)) {
-                letters.addView(Space(this))
-            }
-        } else {
-            for (i in 1..ds.colCount - puzzle.length) {
-                letters.addView(Space(this))
-            }
+
+        val someValue = puzzleWithoutWhitespace.length - (puzzleWithoutWhitespace.length / ds.colCount) * ds.colCount
+        for (i in 1..ds.colCount - someValue) {
+            letters.addView(Space(this))
+        }
+
+        for (i in 1..ds.colCount)
+        {
+            layoutInflater.inflate(R.layout.space, letters)
         }
 
         val solutionRows = getSolutionRows(p, ds.colCount)
         assert(solutionRows.all { it.length <= ds.colCount }) {
             "Solution rows had a string that is longer than ${ds.colCount}: $solutionRows"
         }
-        Log.i(TAG, solutionRows.toString())
+        Log.i(TAG, "Solution rows: $solutionRows")
         for (row in solutionRows) {
             for (char in row) {
                 when (char) {
@@ -209,53 +188,23 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                         it.textSize = ds.textSize
                         it.width = ds.boxSize
                         it.height = ds.boxSize
+                        it.typeface = ResourcesCompat.getFont(this, R.font.yantramanav_bold)
+                        it.gravity = Gravity.CENTER
+                        it.setBackgroundColor(ContextCompat.getColor(this, R.color.colorSecondaryVariant))
+                        it.setTextColor(ContextCompat.getColor(this, R.color.colorSecondaryVariant))
                         it.text = " "
                     })
                 }
             }
         }
-        // Solution grid
-        /*
-        var charsLeftInRow = ds.colCount
-        for (word in listOfWords) {
-            if ((charsLeftInRow - word.length) > 0) {
 
-                for (char in word) {
-                    letters.addView(
-                        Slot(this).also {
-                            boxDirector.boxes.add(it)
-                            it.textSize = ds.textSize
-                            it.width = ds.boxSize
-                            it.height = ds.boxSize
-                            it.text = " "
-                        })
-                    charsLeftInRow -= 1
-                }
+        letters.startAnimation(AnimationUtils.loadAnimation(this, android.R.anim.slide_in_left))
 
-            } else {
-                for (i in 1..charsLeftInRow) {
-                    letters.addView(Space(this))
-                }
-                charsLeftInRow = ds.colCount
-
-                for (char in word) {
-                    letters.addView(
-                        Slot(this).also {
-                            boxDirector.boxes.add(it)
-                            it.textSize = ds.textSize
-                            it.width = ds.boxSize
-                            it.height = ds.boxSize
-                            it.text = " "
-                        })
-                }
-                charsLeftInRow -= word.length
-            }
-        }
-         */
     }
 
     private fun getSolutionRows(puzzle: String, cols: Int): List<String> {
-        return puzzle.split(' ').fold(mutableListOf(), { acc: List<String>, s: String ->
+        val puzzleWords = puzzle.split(' ')
+        return puzzleWords.fold(mutableListOf(), { acc: List<String>, s: String ->
             when {
                 acc.isEmpty() -> acc + s
                 acc.last().length.plus(1) + s.length <= cols -> {
@@ -295,5 +244,6 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     }
 
 }
+
 
 

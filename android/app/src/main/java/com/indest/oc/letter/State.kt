@@ -53,8 +53,10 @@ enum class State : IState {
 
             // Sound/vibration effects
             l.addShortVibration()
-            val id = l.effects.soundPool.load(l.context, R.raw.start_drag, 1)
-            l.effects.soundPool.play(id, 1.0f, 1.0f, 1, 0, 1.0f)
+
+            // TODO: didn't pass monkey
+            //val id = l.effects.soundPool.load(l.context, R.raw.start_drag, 1)
+            //l.effects.soundPool.play(id, 1.0f, 1.0f, 1, 0, 1.0f)
 
             val color = if (l.hasFriend()) {
                 l.effects.getColors(ColorSelector.ACTION_DOWN_FRIEND)

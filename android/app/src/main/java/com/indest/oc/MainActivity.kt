@@ -2,6 +2,7 @@ package com.indest.oc
 
 import androidx.appcompat.app.AppCompatActivity
 import android.annotation.SuppressLint
+import android.app.ActivityManager
 import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle

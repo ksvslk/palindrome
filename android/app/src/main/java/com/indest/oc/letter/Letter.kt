@@ -9,7 +9,7 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.util.Log
 import android.view.MotionEvent
-import android.widget.TextView
+import androidx.appcompat.widget.AppCompatTextView
 import com.indest.oc.R
 import com.indest.oc.letter.effects.Effects
 import com.indest.oc.mediator.BoxDirector
@@ -18,14 +18,14 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlin.properties.Delegates
 
+@SuppressLint("ViewConstructor")
 @AndroidEntryPoint
-@SuppressLint("AppCompatCustomView", "ViewConstructor")
 class Letter @Inject constructor(
     context: Context?,
     letter: String?,
     initialState: State,
     defStyleRes: Int = R.style.LetterView
-) : TextView(context, null, 0, defStyleRes), IBox {
+) : AppCompatTextView(context!!), IBox {
 
     private var TAG: String = "Letter $letter"
     @Inject lateinit var director: BoxDirector
@@ -61,6 +61,7 @@ class Letter @Inject constructor(
     }
 
     private val touchListen = OnTouchListener { v, e ->
+        Log.i(TAG, "ACTION: ${e.action}; INDEX: ${e.actionIndex}")
         when (e.action) {
             MotionEvent.ACTION_DOWN -> {
                 if (state == State.HOME) {
@@ -73,13 +74,11 @@ class Letter @Inject constructor(
                     state.executeActionMoveBehaviour(this, v, e)
                 }
             }
-            MotionEvent.ACTION_UP -> {
+            else -> {
                 if (state == State.DRAGGING) {
                     state = State.RESOLVING
                     state.executeActionUpBehaviour(this)
                 }
-            }
-            else -> {
                 performClick()
             }
         }
@@ -99,6 +98,14 @@ class Letter @Inject constructor(
                 effects.vibrator.vibrate(length)
             }
         }
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        Log.i(TAG, "onSizeChanged")
+        homePos = pos
+        currentPos = pos
+        state = State.HOME
+        super.onSizeChanged(w, h, oldw, oldh)
     }
 
     override fun hasFriend(): Boolean {

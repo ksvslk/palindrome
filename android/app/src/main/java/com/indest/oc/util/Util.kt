@@ -55,7 +55,7 @@ object Util {
                 return DensitySettings(
                     colCount,
                     ((boxSize - 5f) * density + 0.5).toInt(),
-                    textSize * scaledDensity / 1.5f,
+                    textSize * scaledDensity / 1.8f,
                     ORIENTATION_PORTRAIT
                 )
         }

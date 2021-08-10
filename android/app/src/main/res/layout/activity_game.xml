@@ -14,6 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingHorizontal="8dp"
+        android:elevation="3dp"
         android:background="@color/colorSecondary"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme">
@@ -28,7 +29,6 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_marginHorizontal="8dp"
-                android:fontFamily="@font/yantramanav_bold"
                 android:gravity="center"
                 android:text="1"
                 android:textAlignment="center"
@@ -40,7 +40,6 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_marginHorizontal="8dp"
-                android:fontFamily="@font/yantramanav_bold"
                 android:gravity="center"
                 android:text="1"
                 android:textAlignment="center"
@@ -55,7 +54,6 @@
             android:layout_height="50dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="16dp"
-            android:fontFamily="@font/yantramanav_bold"
             android:gravity="center"
             android:text="00000"
             android:textAlignment="center"
@@ -117,17 +115,5 @@
         android:clipChildren="false"
         android:gravity="center_horizontal">
 
-        <androidx.gridlayout.widget.GridLayout
-            android:id="@+id/boxes_gridlayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:clipChildren="false"
-            app:columnCount="3"
-            android:animateLayoutChanges="true"
-            android:splitMotionEvents="false"
-            android:visibility="visible"
-            app:useDefaultMargins="true" >
-        </androidx.gridlayout.widget.GridLayout>
     </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.appcompat.widget.LinearLayoutCompat>
