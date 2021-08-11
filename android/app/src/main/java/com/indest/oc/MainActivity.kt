@@ -2,14 +2,9 @@ package com.indest.oc
 
 import androidx.appcompat.app.AppCompatActivity
 import android.annotation.SuppressLint
-import android.app.ActivityManager
-import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
-import android.transition.ChangeBounds
-import android.transition.ChangeTransform
 import android.transition.Fade
-import android.transition.Slide
 import android.util.Log
 import android.view.Window
 import android.widget.Button
@@ -34,7 +29,6 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
     private lateinit var consentForm: ConsentForm
     private lateinit var insetsController: WindowInsetsControllerCompat
 
-    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG,"onCreate")
         super.onCreate(savedInstanceState)

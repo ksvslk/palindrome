@@ -1,6 +1,5 @@
 package com.indest.oc
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -23,6 +22,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.*
 import com.indest.oc.declarations.getInsetsController
+import com.google.gson.Gson
+import com.indest.oc.util.Level
+
 
 @AndroidEntryPoint
 class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
@@ -32,14 +34,12 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var spinner: Spinner
     private lateinit var textSwitcher: TextSwitcher
     private lateinit var scoreView: TextView
-    private lateinit var puzzles: List<*>
-    private lateinit var result: List<*>
+    private lateinit var puzzles: Array<Level>
     private lateinit var insetsController: WindowInsetsControllerCompat
 
     @Inject
     lateinit var boxDirector: BoxDirector
 
-    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate game")
         super.onCreate(savedInstanceState)
@@ -49,7 +49,6 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         insetsController = getInsetsController(gameLayout)
         insetsController.hide(WindowInsetsCompat.Type.systemBars())
 
-        //letters = findViewById(R.id.boxes_gridlayout)
         spinner = findViewById(R.id.action_bar_spinner)
 
         textSwitcher = findViewById(R.id.level_nr_switcher)
@@ -57,18 +56,11 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         textSwitcher.setInAnimation(this, R.anim.slide_in_bottom)
         textSwitcher.setOutAnimation(this, R.anim.slide_out_top)
 
-        puzzles = application.assets.open("sorteeritud.txt").bufferedReader().lineSequence()
-            .filter { it.length < 25 }.toList()
-        val from = 1
-        val to = 6
-        val doesNotContain = "[@]".toRegex()
-        result = countSentencesWith(from, to, doesNotContain)
-        Log.i(
-            TAG,
-            "There are ${result.size} puzzles which have a word with length in range $from to $to (and does not contain $doesNotContain)"
-        )
-        Log.i(TAG, "${result.count { (it as String).length < 25 }}")
-        Log.i(TAG, "${result.filter { (it as String).length < 25 }}")
+        val pz = application.assets.open("puzzles.json").bufferedReader().use { it.readText() }
+
+        val gson = Gson()
+        puzzles = gson.fromJson(pz, Array<Level>::class.java)
+
         val arrayAdapter = ArrayAdapter(
             this,
             android.R.layout.simple_spinner_item,
@@ -94,25 +86,6 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         }
         animator.start()
     }
-
-    private fun countSentencesWith(from: Int, to: Int, doesNotContain: Regex) =
-        puzzles.filter { it ->
-            (it as String)
-                .splitToSequence(" ")
-                .filterNot { it.contains(doesNotContain) }
-                .toList()
-                .maxWithOrNull { o1, o2 ->
-                    when {
-                        o1 == null && o2 == null -> 0
-                        o1 == null && o2 != null -> -1
-                        o1 != null && o2 == null -> 1
-                        o1 != null && o2 != null && o1.length < o2.length -> -1
-                        o1 != null && o2 != null && o1.length > o2.length -> 1
-                        o1?.length == o2?.length -> 0
-                        else -> 0
-                    }
-                }!!.length in from..to
-        }
 
     // TODO: use chunk
     private fun populateGridWithLetters(p: String) {
@@ -230,7 +203,7 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     }
 
     private fun changeToNextLevel(levelNr: Int) {
-        val puzzle = (result[levelNr] as String).uppercase()
+        val puzzle = puzzles[levelNr].puzzle
         Log.i(TAG, "TextSwitcher is $textSwitcher")
         textSwitcher.setText("${levelNr + 1}")
         populateGridWithLetters(puzzle)
