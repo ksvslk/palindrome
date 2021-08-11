@@ -19,7 +19,6 @@ import kotlin.random.Random
 import android.animation.ValueAnimator
 import android.view.Gravity
 import android.view.animation.AnimationUtils
-import androidx.constraintlayout.widget.Guideline
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.*
@@ -30,7 +29,6 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private val TAG = "GameActivity"
     private lateinit var gameLayout: LinearLayoutCompat
     private lateinit var gridContainer: LinearLayoutCompat
-    //private lateinit var letters: androidx.gridlayout.widget.GridLayout
     private lateinit var spinner: Spinner
     private lateinit var textSwitcher: TextSwitcher
     private lateinit var scoreView: TextView
@@ -152,15 +150,15 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                     State.INITIALIZING,
                     R.style.LetterView
                 )
-                    .also {
-                        boxDirector.boxes.add(it)
-                        it.width = ds.boxSize
-                        it.height = ds.boxSize
-                        it.textSize = ds.textSize
-                        it.typeface = ResourcesCompat.getFont(this, R.font.yantramanav_bold)
-                        it.gravity = Gravity.CENTER
-                        it.setBackgroundColor(ContextCompat.getColor(this, R.color.colorOnSecondary))
-                        it.setTextColor(ContextCompat.getColor(this, R.color.colorOnPrimary))
+                    .apply {
+                        boxDirector.boxes.add(this)
+                        width = ds.boxSize
+                        height = ds.boxSize
+                        textSize = ds.textSize
+                        typeface = ResourcesCompat.getFont(context, R.font.yantramanav_bold)
+                        gravity = Gravity.CENTER
+                        setBackgroundColor(ContextCompat.getColor(context, R.color.colorOnSecondary))
+                        setTextColor(ContextCompat.getColor(context, R.color.colorOnPrimary))
                     })
         }
 
@@ -183,16 +181,16 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             for (char in row) {
                 when (char) {
                     ' ' -> letters.addView(Space(this))
-                    else -> letters.addView(Slot(this).also {
-                        boxDirector.boxes.add(it)
-                        it.textSize = ds.textSize
-                        it.width = ds.boxSize
-                        it.height = ds.boxSize
-                        it.typeface = ResourcesCompat.getFont(this, R.font.yantramanav_bold)
-                        it.gravity = Gravity.CENTER
-                        it.setBackgroundColor(ContextCompat.getColor(this, R.color.colorSecondaryVariant))
-                        it.setTextColor(ContextCompat.getColor(this, R.color.colorSecondaryVariant))
-                        it.text = " "
+                    else -> letters.addView(Slot(this).apply {
+                        boxDirector.boxes.add(this)
+                        textSize = ds.textSize
+                        width = ds.boxSize
+                        height = ds.boxSize
+                        typeface = ResourcesCompat.getFont(context, R.font.yantramanav_bold)
+                        gravity = Gravity.CENTER
+                        setBackgroundColor(ContextCompat.getColor(context, R.color.colorSecondaryVariant))
+                        setTextColor(ContextCompat.getColor(context, R.color.colorSecondaryVariant))
+                        text = " "
                     })
                 }
             }
@@ -211,8 +209,7 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                     val last = acc.last().plus(' ')
                     acc.subList(0, acc.lastIndex) + last.plus(s)
                 }
-                else -> {
-                    // uus rida, aga täienda eelmist
+                else -> { // New line
                     val blankCount = cols - acc.last().length
                     val last = acc.last().plus(" ".repeat(blankCount))
                     acc.subList(0, acc.lastIndex) + last + s
