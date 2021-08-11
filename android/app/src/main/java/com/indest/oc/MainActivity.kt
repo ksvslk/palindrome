@@ -6,11 +6,15 @@ import android.app.ActivityManager
 import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
+import android.transition.ChangeBounds
 import android.transition.ChangeTransform
+import android.transition.Fade
+import android.transition.Slide
 import android.util.Log
 import android.view.Window
 import android.widget.Button
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.DialogFragment
@@ -37,8 +41,8 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
 
         with(window) {
             requestFeature(Window.FEATURE_ACTIVITY_TRANSITIONS)
-            enterTransition = ChangeTransform()
-            exitTransition = ChangeTransform()
+            enterTransition = Fade()
+            exitTransition = Fade()
         }
         setContentView(R.layout.activity_main)
         mainContainer = findViewById(R.id.main_container)
@@ -94,7 +98,7 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
         playButton.alpha = 1.0f
         playButton.setOnClickListener {
             val intent = Intent(this, GameActivity::class.java)
-            startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle())
+            startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle())
         }
     }
 
