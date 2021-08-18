@@ -1,25 +1,19 @@
 package com.indest.oc.letter
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Rect
 import android.view.View
-import android.widget.TextView
 import androidx.appcompat.widget.AppCompatTextView
 import com.indest.oc.util.C
-import com.indest.oc.R
 
-@SuppressLint( "AppCompatCustomView", "ViewConstructor")
 class Slot constructor(
-    context: Context?,
-    defStyleRes: Int = R.style.EmptyBoxView
-) : AppCompatTextView(context!!, null, defStyleRes), IBox {
+    context: Context?
+) : AppCompatTextView(context!!, null), IBox {
 
     private var TAG: String = "Slot ${View.generateViewId()}"
     private var friend: Letter? = null
 
     init {
-        //text = TAG
         z = C.BOTTOM_LAYER
     }
 

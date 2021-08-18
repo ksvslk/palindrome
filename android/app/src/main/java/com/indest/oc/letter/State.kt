@@ -4,7 +4,6 @@ import android.animation.ObjectAnimator
 import android.view.MotionEvent
 import android.view.View
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
-import com.indest.oc.R
 import com.indest.oc.letter.effects.ColorSelector
 import com.indest.oc.util.C
 import kotlin.math.log2
@@ -12,6 +11,19 @@ import kotlin.math.log2
 const val TAG = "State"
 
 enum class State : IState {
+
+    DISABLED {
+        override fun draw(l: Letter) {}
+        override fun executeActionDownBehaviour(l: Letter, v: View, e: MotionEvent) {}
+        override fun executeActionMoveBehaviour(l: Letter, v: View, e: MotionEvent) {}
+        override fun executeActionUpBehaviour(l: Letter) {}
+        override fun executeAnimationBehaviour(
+            l: Letter,
+            moveByX: Int,
+            moveByY: Int
+        ) {
+        }
+    },
     INITIALIZING {
         override fun draw(l: Letter) {}
         override fun executeActionDownBehaviour(l: Letter, v: View, e: MotionEvent) {}
@@ -50,13 +62,6 @@ enum class State : IState {
             // View and its parent should be always on top when dragging
             l.z = C.TOP_LAYER
             //l.elevation = C.TOP_LAYER
-
-            // Sound/vibration effects
-            l.addShortVibration()
-
-            // TODO: didn't pass monkey
-            //val id = l.effects.soundPool.load(l.context, R.raw.start_drag, 1)
-            //l.effects.soundPool.play(id, 1.0f, 1.0f, 1, 0, 1.0f)
 
             val color = if (l.hasFriend()) {
                 l.effects.getColors(ColorSelector.ACTION_DOWN_FRIEND)
@@ -128,7 +133,6 @@ enum class State : IState {
             } else {
                 l.effects.getColors(ColorSelector.ACTION_UP_NO_FRIEND)
             }
-
 
             // Reset background color with animation
             ObjectAnimator.ofArgb(l, "backgroundColor", color.viewStart, color.viewEnd)

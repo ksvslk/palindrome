@@ -1,7 +1,6 @@
 package com.indest.oc
 
 import androidx.appcompat.app.AppCompatActivity
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.transition.Fade
@@ -17,7 +16,7 @@ import com.indest.oc.fragments.ExitGameDialogFragment
 import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.ump.*
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.indest.oc.declarations.getInsetsController
+import com.indest.oc.declarations.initInsetsController
 
 class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogListener {
 
@@ -41,7 +40,7 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
         setContentView(R.layout.activity_main)
         mainContainer = findViewById(R.id.main_container)
 
-        insetsController = getInsetsController(mainContainer)
+        insetsController = initInsetsController(mainContainer)
         insetsController.hide(WindowInsetsCompat.Type.systemBars())
 
         val debugSettings = ConsentDebugSettings.Builder(this)

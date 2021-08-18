@@ -1,12 +1,3 @@
 <resources>
-    <style name="LetterView" parent="Widget.AppCompat.TextView">
-        <item name="android:background">?colorPrimary</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textColor">?colorOnPrimary</item>
-   </style>
-    <style name="EmptyBoxView" parent="Widget.AppCompat.TextView">
-        <item name="android:background">?colorSecondaryVariant</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textColor">?colorSecondaryVariant</item>
-    </style>
+
 </resources>

@@ -15,103 +15,146 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 import javax.inject.Inject
 import kotlin.random.Random
-import android.animation.ValueAnimator
 import android.view.Gravity
 import android.view.animation.AnimationUtils
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.*
-import com.indest.oc.declarations.getInsetsController
+import androidx.gridlayout.widget.GridLayout
+import com.indest.oc.declarations.initInsetsController
 import com.google.gson.Gson
+import com.indest.oc.databinding.ActivityGameBinding
+import com.indest.oc.util.DensitySettings
 import com.indest.oc.util.Level
-
 
 @AndroidEntryPoint
 class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private val TAG = "GameActivity"
-    private lateinit var gameLayout: LinearLayoutCompat
-    private lateinit var gridContainer: LinearLayoutCompat
-    private lateinit var spinner: Spinner
-    private lateinit var textSwitcher: TextSwitcher
-    private lateinit var scoreView: TextView
+    private lateinit var binding: ActivityGameBinding
     private lateinit var puzzles: Array<Level>
     private lateinit var insetsController: WindowInsetsControllerCompat
-
     @Inject
     lateinit var boxDirector: BoxDirector
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.i(TAG, "onCreate game")
+        Log.i(TAG, "onCreate")
+        Log.i(TAG, "Scale factor (density): ${resources.displayMetrics.density}")
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_game)
-        gameLayout = findViewById(R.id.game_container)
-        gridContainer = findViewById(R.id.top_llc)
-        insetsController = getInsetsController(gameLayout)
-        insetsController.hide(WindowInsetsCompat.Type.systemBars())
+        binding = ActivityGameBinding.inflate(layoutInflater)
+        val rootView = binding.root
+        setContentView(rootView)
+        insetsController = initInsetsController(rootView)
 
-        spinner = findViewById(R.id.action_bar_spinner)
+        // Set text switcher animations
+        binding.levelNrSwitcher?.setInAnimation(this, R.anim.slide_in_bottom)
+        binding.levelNrSwitcher?.setOutAnimation(this, R.anim.slide_out_top)
 
-        textSwitcher = findViewById(R.id.level_nr_switcher)
-        scoreView = findViewById(R.id.score_text)
-        textSwitcher.setInAnimation(this, R.anim.slide_in_bottom)
-        textSwitcher.setOutAnimation(this, R.anim.slide_out_top)
+        val pz = application.assets.open("puzzles.json").bufferedReader().use {
+            it.readText()
+        }
+        puzzles = Gson().fromJson(pz, Array<Level>::class.java)
 
-        val pz = application.assets.open("puzzles.json").bufferedReader().use { it.readText() }
+        setUpLevelSelect()
+    }
 
-        val gson = Gson()
-        puzzles = gson.fromJson(pz, Array<Level>::class.java)
-
+    private fun setUpLevelSelect()
+    {
         val arrayAdapter = ArrayAdapter(
             this,
             android.R.layout.simple_spinner_item,
             (1..96).toList()
         )
-
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinner.adapter = arrayAdapter
-        spinner.onItemSelectedListener = this
-        Log.i(TAG, "Scale factor (density): ${resources.displayMetrics.density}")
+        binding.actionBarSpinner.adapter = arrayAdapter
+        binding.actionBarSpinner.onItemSelectedListener = this
 
-        scoreView.setOnClickListener {
-            increaseScore(scoreView, 1234)
+        binding.scoreText.setOnClickListener {
+            increaseScore(binding.scoreText, 1234)
         }
     }
 
     private fun increaseScore(scoreView: TextView, plus: Int) {
+        val puzzle = "WOW"
+        val letters = binding.gridContainer.getChildAt(0) as androidx.gridlayout.widget.GridLayout
+        letters.removeAllViews()
+
+        val ds = Util.getDensitySettings(
+            resources.displayMetrics.density,
+            resources.displayMetrics.scaledDensity,
+            puzzle
+        )
+        addLetters(puzzle, letters, ds, true)
+      /*  boxDirector.checkSolution()
         val currentValue = scoreView.text.toString().toInt()
         val animator = ValueAnimator.ofInt(currentValue, currentValue + plus)
         animator.duration = 1000
         animator.addUpdateListener { animation ->
             scoreView.text = animation.animatedValue.toString().padStart(5, '0')
         }
-        animator.start()
+        animator.start()*/
     }
 
-    // TODO: use chunk
-    private fun populateGridWithLetters(p: String) {
-        val timeNow = Date().time
-        val random = Random(timeNow)
-        val listOfWords = p.splitToSequence(" ").toList()
-        val shuffledChars = p.toCharArray()
-        while (shuffledChars.concatToString() == p) shuffledChars.shuffle(random)
-        val puzzle = shuffledChars.concatToString()
+    private fun initializeLevel(originalPuzzle: String) {
 
+        val shuffledPuzzle = getShuffledPuzzle(originalPuzzle)
+        val lettersGrid = binding.gridContainer.getChildAt(0) as? GridLayout
+
+        // Level disappears to the left
+        lettersGrid?.startAnimation(
+            AnimationUtils.loadAnimation(this, android.R.anim.slide_out_right))
+
+        resetLevel()
+
+        val letters = binding.gridContainer.getChildAt(0) as GridLayout
         val ds = Util.getDensitySettings(
             resources.displayMetrics.density,
-            resources.displayMetrics.scaledDensity, puzzle, listOfWords
+            resources.displayMetrics.scaledDensity,
+            shuffledPuzzle
         )
-        val ls = gridContainer.getChildAt(0) as? androidx.gridlayout.widget.GridLayout
-        ls?.startAnimation(AnimationUtils.loadAnimation(this, android.R.anim.slide_out_right))
-
-        boxDirector.boxes.clear()
-        gridContainer.removeAllViews()
-        layoutInflater.inflate(R.layout.grid, gridContainer) as LinearLayoutCompat
-        val letters = gridContainer.getChildAt(0) as androidx.gridlayout.widget.GridLayout
-
-        val puzzleWithoutWhitespace = puzzle.replace("\\s".toRegex(), "")
         letters.columnCount = ds.colCount
 
-        // Letters grid
+        // Add letters to grid
+        addLetters(shuffledPuzzle, letters, ds)
+
+        // Add separating blank spaces (in between letters and slots)
+        for (i in 1..ds.colCount) layoutInflater.inflate(R.layout.space, letters)
+
+        // Add solution slots to grid
+        addSlots(originalPuzzle, letters, ds)
+
+        // Level appears from the left
+        letters.startAnimation(AnimationUtils.loadAnimation(this, android.R.anim.slide_in_left))
+    }
+
+    private fun resetLevel()
+    {
+        boxDirector.boxes.clear()
+        binding.gridContainer.removeAllViews()
+        layoutInflater.inflate(R.layout.grid, binding.gridContainer) as LinearLayoutCompat
+    }
+
+    private fun getShuffledPuzzle(originalPuzzle: String): String
+    {
+        val timeNow = Date().time
+        val random = Random(timeNow)
+        val shuffledChars = originalPuzzle.toCharArray()
+        while (shuffledChars.concatToString() == originalPuzzle) {
+            shuffledChars.shuffle(random)
+        }
+        return shuffledChars.concatToString()
+    }
+
+    private fun addLetters(
+        puzzle: String,
+        letters: GridLayout,
+        ds: DensitySettings,
+        levelComplete:Boolean = false
+    )
+    {
+        val backgroundColor = if (levelComplete) R.color.colorSecondary else R.color.colorOnSecondary
+        val state = if (levelComplete) State.DISABLED else State.INITIALIZING
+
+        // Add letters
         for (l in puzzle) {
             if (l.isWhitespace()) {
                 continue
@@ -120,8 +163,7 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                 Letter(
                     this,
                     l.toString(),
-                    State.INITIALIZING,
-                    R.style.LetterView
+                    state
                 )
                     .apply {
                         boxDirector.boxes.add(this)
@@ -130,26 +172,26 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                         textSize = ds.textSize
                         typeface = ResourcesCompat.getFont(context, R.font.yantramanav_bold)
                         gravity = Gravity.CENTER
-                        setBackgroundColor(ContextCompat.getColor(context, R.color.colorOnSecondary))
+                        setBackgroundColor(ContextCompat.getColor(context, backgroundColor))
                         setTextColor(ContextCompat.getColor(context, R.color.colorOnPrimary))
                     })
         }
 
-        val someValue = puzzleWithoutWhitespace.length - (puzzleWithoutWhitespace.length / ds.colCount) * ds.colCount
-        for (i in 1..ds.colCount - someValue) {
-            letters.addView(Space(this))
-        }
-
-        for (i in 1..ds.colCount)
+        // Add blanks
+        if (!levelComplete)
         {
-            layoutInflater.inflate(R.layout.space, letters)
+            val puzzleWithoutWhitespace = puzzle.replace("\\s".toRegex(), "")
+            val someValue = puzzleWithoutWhitespace.length - (puzzleWithoutWhitespace.length / ds.colCount) * ds.colCount
+            for (i in 1..ds.colCount - someValue) {
+                letters.addView(Space(this))
+            }
         }
+    }
 
-        val solutionRows = getSolutionRows(p, ds.colCount)
-        assert(solutionRows.all { it.length <= ds.colCount }) {
-            "Solution rows had a string that is longer than ${ds.colCount}: $solutionRows"
-        }
-        Log.i(TAG, "Solution rows: $solutionRows")
+    private fun addSlots(originalPuzzle: String, letters: GridLayout, ds: DensitySettings)
+    {
+        val solutionRows = getSolutionRows(originalPuzzle, ds.colCount)
+
         for (row in solutionRows) {
             for (char in row) {
                 when (char) {
@@ -168,9 +210,6 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                 }
             }
         }
-
-        letters.startAnimation(AnimationUtils.loadAnimation(this, android.R.anim.slide_in_left))
-
     }
 
     private fun getSolutionRows(puzzle: String, cols: Int): List<String> {
@@ -204,15 +243,14 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
     private fun changeToNextLevel(levelNr: Int) {
         val puzzle = puzzles[levelNr].puzzle
-        Log.i(TAG, "TextSwitcher is $textSwitcher")
-        textSwitcher.setText("${levelNr + 1}")
-        populateGridWithLetters(puzzle)
+        Log.i(TAG, "TextSwitcher is ${binding.levelNrSwitcher}")
+        binding.levelNrSwitcher?.setText("${levelNr + 1}")
+        initializeLevel(puzzle)
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
         Log.i(TAG, "onNothingSelected")
     }
-
 }
 
 

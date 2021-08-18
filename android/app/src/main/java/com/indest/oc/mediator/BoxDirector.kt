@@ -1,8 +1,19 @@
 package com.indest.oc.mediator
 
+import android.animation.Animator
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
+import android.graphics.Color
 import android.util.Log
+import android.view.animation.Interpolator
+import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import com.indest.oc.letter.*
+import com.indest.oc.letter.effects.ColorSelector
+import com.indest.oc.letter.effects.SoundSelector
 import com.indest.oc.util.C
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.NonCancellable.start
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.math.abs
@@ -54,6 +65,8 @@ class BoxDirector @Inject constructor() {
     private fun switchLetterPositions(top: Letter, bottom: Letter) {
         Log.i(TAG, "Switching $top home position with $bottom!")
 
+        top.effects.playSound(SoundSelector.SWITCH_LETTERS)
+
         // Calculate distance for animation
         val distanceToMoveX = bottom.pos.x - top.pos.x
         val distanceToMoveY = bottom.pos.y - top.pos.y
@@ -82,6 +95,7 @@ class BoxDirector @Inject constructor() {
 
     private fun placeLetterInEmptyBox(letter: Letter, slot: Slot) {
         Log.i(TAG, "Placing $letter to empty $slot!")
+        letter.effects.playSound(SoundSelector.PLACE_LETTER_IN_EMPTY_BOX)
         letter.getFriend()?.setFriend(null)
         slot.setFriend(letter)
         letter.setFriend(slot)
@@ -95,6 +109,55 @@ class BoxDirector @Inject constructor() {
             (slot.pos.x - letter.pos.x),
             (slot.pos.y - letter.pos.y)
         )
+    }
+
+    fun checkSolution()
+    {
+        val letters = boxes.filterIsInstance<Slot>().mapNotNull {
+            if (it.getFriend()?.text?.contains("^([?!.,’])".toRegex()) == false) it.getFriend()
+            else null
+        }
+        val odd = letters.size % 2 != 0
+        val pairs = letters.foldIndexed(mutableListOf(), {
+                index: Int,
+                acc: List<Pair<Letter,Any>>,
+                l: Letter ->
+            if (index < letters.size / 2) acc + Pair(l, letters[letters.size - 1 - index])
+            else if (index == letters.size / 2 && odd) acc + Pair(l, "*")
+            else acc
+        })
+
+        val animatorSet = AnimatorSet()
+        for (p in pairs) {
+            val colorCurrent = p.first.effects.getColors(ColorSelector.ACTION_DOWN_FRIEND).viewStart
+            val textColorCurrent = p.first.effects.getColors(ColorSelector.ACTION_DOWN_FRIEND).textStart
+            val animations = animatorSet.childAnimations
+            if (p.second is Letter) {
+                val color = if (p.first.text == (p.second as Letter).text) Color.GREEN else Color.BLACK
+                val textColor = if (p.first.text == (p.second as Letter).text) textColorCurrent else Color.WHITE
+                val a1 = ObjectAnimator.ofArgb(p.first, "backgroundColor", colorCurrent, color).apply {
+                    interpolator = FastOutLinearInInterpolator()
+                    duration = 350 }
+                val a2 = ObjectAnimator.ofArgb(p.second, "backgroundColor", colorCurrent, color).apply {   interpolator = FastOutLinearInInterpolator()
+                    duration = 350 }
+                val a1t = ObjectAnimator.ofArgb(p.first, "textColor", textColorCurrent, textColor).apply {   interpolator = FastOutLinearInInterpolator()
+                    duration = 350 }
+                val a2t = ObjectAnimator.ofArgb(p.second, "textColor", textColorCurrent, textColor).apply {   interpolator = FastOutLinearInInterpolator()
+                    duration = 350 }
+                if (animations.size > 0) animatorSet.play(a1).with(a2).with(a1t).with(a2t).after(animations.last())
+                else animatorSet.playTogether(a1, a2, a1t, a2t)
+                if (color == Color.BLACK) break
+            }
+            else {
+                val a = ObjectAnimator.ofArgb(p.first, "backgroundColor", colorCurrent, Color.GREEN).apply {   interpolator = FastOutLinearInInterpolator()
+                    duration = 350 }
+                if (animations.size > 0) animatorSet.play(a).after(animations.last())
+                else animatorSet.playTogether(a)
+            }
+        }
+
+        Log.i(TAG, "Animations: ${animatorSet.childAnimations}")
+        animatorSet.start()
     }
 
     private fun sendLetterHome(letter: Letter) {

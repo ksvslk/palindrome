@@ -109,7 +109,7 @@
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/top_llc"
+        android:id="@+id/grid_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipChildren="false"

@@ -4,13 +4,9 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Rect
-import android.media.AudioManager
-import android.os.Build
-import android.os.VibrationEffect
 import android.util.Log
 import android.view.MotionEvent
 import androidx.appcompat.widget.AppCompatTextView
-import com.indest.oc.R
 import com.indest.oc.letter.effects.Effects
 import com.indest.oc.mediator.BoxDirector
 import com.indest.oc.util.C
@@ -21,11 +17,10 @@ import kotlin.properties.Delegates
 @SuppressLint("ViewConstructor")
 @AndroidEntryPoint
 class Letter @Inject constructor(
-    context: Context?,
+    context: Context,
     letter: String?,
     initialState: State,
-    defStyleRes: Int = R.style.LetterView
-) : AppCompatTextView(context!!), IBox {
+) : AppCompatTextView(context), IBox {
 
     private var TAG: String = "Letter $letter"
     @Inject lateinit var director: BoxDirector
@@ -65,6 +60,7 @@ class Letter @Inject constructor(
         when (e.action) {
             MotionEvent.ACTION_DOWN -> {
                 if (state == State.HOME) {
+                    effects.addShortVibration()
                     state = State.DRAGGING
                     state.executeActionDownBehaviour(this, v, e)
                 }
@@ -85,26 +81,11 @@ class Letter @Inject constructor(
         true
     }
 
-    fun addShortVibration(length: Long = 20) {
-        if (effects.am.ringerMode != AudioManager.RINGER_MODE_SILENT) {
-            if (Build.VERSION.SDK_INT >= 26) {
-                effects.vibrator.vibrate(
-                    VibrationEffect.createOneShot(
-                        length,
-                        VibrationEffect.DEFAULT_AMPLITUDE
-                    )
-                )
-            } else {
-                effects.vibrator.vibrate(length)
-            }
-        }
-    }
-
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         Log.i(TAG, "onSizeChanged")
         homePos = pos
         currentPos = pos
-        state = State.HOME
+        if (state == State.INITIALIZING) state = State.HOME
         super.onSizeChanged(w, h, oldw, oldh)
     }
 
