@@ -11,21 +11,27 @@ import com.indest.oc.util.Util
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import androidx.core.view.*
+import androidx.fragment.app.DialogFragment
+import androidx.transition.Transition
+import androidx.transition.TransitionInflater
+import androidx.transition.TransitionManager
 import com.indest.oc.declarations.initInsetsController
 import com.indest.oc.databinding.ActivityGameBinding
+import com.indest.oc.fragments.ExitGameDialogFragment
 import com.indest.oc.game.GameState
 import com.indest.oc.game.LevelFactory
 import com.indest.oc.game.Level
 import com.indest.oc.letter.IBox
 
 @AndroidEntryPoint
-class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
+class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener,
+    ExitGameDialogFragment.ExitGameDialogListener {
     private val TAG = "GameActivity"
     private var gameState: GameState = GameState.PLAYING // TODO: Move to BLL
     private lateinit var binding: ActivityGameBinding
-    private lateinit var puzzles: Array<Level> // TODO: Move to BLL
     private lateinit var insetsController: WindowInsetsControllerCompat
-    @Inject lateinit var boxDirector: BoxDirector // TODO: Move to BLL
+    @Inject
+    lateinit var boxDirector: BoxDirector // TODO: Move to BLL
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate")
@@ -48,10 +54,9 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
         return gameState == GameState.PLAYING
     }
-     */
+    */
 
-    private fun setUpLevelSelect()
-    {
+    private fun setUpLevelSelect() {
         val arrayAdapter = ArrayAdapter(
             this,
             android.R.layout.simple_spinner_item,
@@ -97,13 +102,36 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             binding.gridContainer,
             layoutInflater
         )
-        boxDirector.boxes = level.grid.children.filterIsInstance<IBox>().toMutableList() // TODO: Move to BLL
+        boxDirector.boxes =
+            level.grid.children.filterIsInstance<IBox>().toMutableList() // TODO: Move to BLL
+
+        val slideStart: Transition =
+            TransitionInflater.from(this).inflateTransition(R.transition.letters_transition)
+        TransitionManager.beginDelayedTransition(binding.gridContainer, slideStart)
         binding.gridContainer.removeAllViewsInLayout()
         binding.gridContainer.addView(level.grid)
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
         Log.i(TAG, "onNothingSelected")
+    }
+
+    override fun onBackPressed() {
+        showExitDialog()
+    }
+
+    private fun showExitDialog() {
+        // Create an instance of the dialog fragment and show it
+        val dialog = ExitGameDialogFragment()
+        dialog.show(supportFragmentManager, "ExitGameDialogFragment")
+    }
+
+    override fun onDialogPositiveClick(dialog: DialogFragment) {
+        finish()
+    }
+
+    override fun onDialogNegativeClick(dialog: DialogFragment) {
+        dialog.dismiss()
     }
 }
 
