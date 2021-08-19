@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.MotionEvent
 import androidx.appcompat.widget.AppCompatTextView
 import com.indest.oc.letter.effects.Effects
+import com.indest.oc.letter.effects.SoundSelector
 import com.indest.oc.mediator.BoxDirector
 import com.indest.oc.util.C
 import dagger.hilt.android.AndroidEntryPoint
@@ -19,7 +20,7 @@ import kotlin.properties.Delegates
 class Letter @Inject constructor(
     context: Context,
     letter: String?,
-    initialState: State,
+    initialState: LetterState,
 ) : AppCompatTextView(context), IBox {
 
     private var TAG: String = "Letter $letter"
@@ -27,7 +28,7 @@ class Letter @Inject constructor(
     @Inject lateinit var  effects: Effects
     var dX: Float = 0.0f
     var dY: Float = 0.0f
-    var state: State by Delegates.observable(initialState) {
+    var state: LetterState by Delegates.observable(initialState) {
             _, oldValue, newValue ->
             Log.i(TAG, "$oldValue -> $newValue")
     }
@@ -56,23 +57,24 @@ class Letter @Inject constructor(
     }
 
     private val touchListen = OnTouchListener { v, e ->
-        Log.i(TAG, "ACTION: ${e.action}; INDEX: ${e.actionIndex}")
         when (e.action) {
             MotionEvent.ACTION_DOWN -> {
-                if (state == State.HOME) {
+                if (state == LetterState.HOME) {
                     effects.addShortVibration()
-                    state = State.DRAGGING
+                    effects.playSound(SoundSelector.DRAGGING_LETTER)
+                    state = LetterState.DRAGGING
                     state.executeActionDownBehaviour(this, v, e)
                 }
             }
             MotionEvent.ACTION_MOVE -> {
-                if (state == State.DRAGGING) {
+                if (state == LetterState.DRAGGING) {
                     state.executeActionMoveBehaviour(this, v, e)
                 }
             }
             else -> {
-                if (state == State.DRAGGING) {
-                    state = State.RESOLVING
+                if (state == LetterState.DRAGGING) {
+                    effects.stopInifinteLoop(SoundSelector.DRAGGING_LETTER)
+                    state = LetterState.RESOLVING
                     state.executeActionUpBehaviour(this)
                 }
                 performClick()
@@ -85,7 +87,7 @@ class Letter @Inject constructor(
         Log.i(TAG, "onSizeChanged")
         homePos = pos
         currentPos = pos
-        if (state == State.INITIALIZING) state = State.HOME
+        if (state == LetterState.INITIALIZING) state = LetterState.HOME
         super.onSizeChanged(w, h, oldw, oldh)
     }
 

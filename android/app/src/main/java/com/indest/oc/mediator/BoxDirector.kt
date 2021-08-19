@@ -1,19 +1,15 @@
 package com.indest.oc.mediator
 
-import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.graphics.Color
 import android.util.Log
-import android.view.animation.Interpolator
+import androidx.core.view.forEach
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import com.indest.oc.letter.*
 import com.indest.oc.letter.effects.ColorSelector
 import com.indest.oc.letter.effects.SoundSelector
 import com.indest.oc.util.C
-import kotlinx.coroutines.NonCancellable
-import kotlinx.coroutines.NonCancellable.start
-import kotlinx.coroutines.delay
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.math.abs
@@ -21,7 +17,7 @@ import kotlin.math.abs
 @Singleton
 class BoxDirector @Inject constructor() {
     private val TAG = "BoxDirector"
-    val boxes: MutableList<IBox> = mutableListOf()
+    var boxes: MutableList<IBox> = ArrayList()
 
     fun handleCollisions(box: Letter) {
         Log.i(TAG, "$box called handleCollisions.")
@@ -29,7 +25,7 @@ class BoxDirector @Inject constructor() {
         when (val closestBox = getClosestBox(to = box, from = getCandidateBoxes(box))) {
             is Letter -> {
                 Log.i(TAG, "Closest is $closestBox and its friend is ${closestBox.getFriend()}!")
-                if (closestBox.state == State.HOME) {
+                if (closestBox.state == LetterState.HOME) {
                     switchLetterPositions(box, closestBox)
                     return
                 }
@@ -51,7 +47,7 @@ class BoxDirector @Inject constructor() {
 
         for (droppedTo in boxes) {
             if (box.rect.intersect(droppedTo.rect) && box != droppedTo) {
-                if ((droppedTo is Letter) && droppedTo.state == State.HOME) {
+                if ((droppedTo is Letter) && droppedTo.state == LetterState.HOME) {
                     candidateBoxes.add(droppedTo)
                 } else if (droppedTo is Slot) {
                     candidateBoxes.add(droppedTo)
@@ -85,8 +81,8 @@ class BoxDirector @Inject constructor() {
         top.elevation = C.TOP_LAYER
 
         // Change state to animation
-        top.state = State.ANIMATION
-        bottom.state = State.ANIMATION
+        top.state = LetterState.ANIMATION
+        bottom.state = LetterState.ANIMATION
 
         // Execute animation
         top.state.executeAnimationBehaviour(top, distanceToMoveX, distanceToMoveY)
@@ -103,7 +99,7 @@ class BoxDirector @Inject constructor() {
         letter.currentPos.y = slot.pos.y
         letter.z = C.TOP_LAYER
         letter.elevation = C.TOP_LAYER
-        letter.state = State.ANIMATION
+        letter.state = LetterState.ANIMATION
         letter.state.executeAnimationBehaviour(
             letter,
             (slot.pos.x - letter.pos.x),
@@ -166,7 +162,7 @@ class BoxDirector @Inject constructor() {
             letter.getFriend()?.setFriend(null)
             letter.setFriend(null)
 
-            letter.state = State.ANIMATION
+            letter.state = LetterState.ANIMATION
             letter.state.executeAnimationBehaviour(
                 letter,
                 (letter.homePos.x - letter.pos.x),
@@ -174,7 +170,7 @@ class BoxDirector @Inject constructor() {
             )
         } else {
             Log.i(TAG, "No collisions detected (or Letter/Slot not good) - going to current home!")
-            letter.state = State.ANIMATION
+            letter.state = LetterState.ANIMATION
             letter.state.executeAnimationBehaviour(
                 letter,
                 (letter.currentPos.x - letter.pos.x),

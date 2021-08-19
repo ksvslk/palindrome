@@ -19,12 +19,6 @@
         android:theme="@style/Theme.OC">
         <activity
             android:name=".GameActivity"
-            android:immersive="true"
-            android:hardwareAccelerated="true"
-            android:screenOrientation="portrait">
-        </activity>
-        <activity
-            android:name=".MainActivity"
             android:screenOrientation="portrait"
             android:hardwareAccelerated="true"
             android:immersive="true"
@@ -33,7 +27,6 @@
             android:theme="@style/Theme.OC">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -42,7 +35,6 @@
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-5386053272091445~3163937278"/>
-
     </application>
 
 </manifest>

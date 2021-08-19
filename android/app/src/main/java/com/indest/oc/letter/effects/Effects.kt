@@ -36,6 +36,10 @@ class Effects @Inject constructor(@ApplicationContext val context: Context) {
     private val placeLetterSoundId = soundPool.load(context, R.raw.positive_beep, 1)
     private val actionDownSoundId = soundPool.load(context, R.raw.action_down, 1)
     private val actionUpSoundId = soundPool.load(context, R.raw.action_up, 1)
+    private val draggingSoundId = soundPool.load(context, R.raw.drums, 1)
+
+    // Dragging loop id
+    private var draggingLoopStream = -1
 
     // Colors
     private val actionDownNoFriend = AnimationColor(
@@ -80,6 +84,19 @@ class Effects @Inject constructor(@ApplicationContext val context: Context) {
             }
             SoundSelector.ACTION_UP_LETTER -> {
                 soundPool.play(actionUpSoundId,1.0f, 1.0f, 1, 0, 1.0f)
+            }
+            SoundSelector.DRAGGING_LETTER -> {
+                draggingLoopStream = soundPool.play(draggingSoundId,1.0f, 1.0f, 1, -1, 1.0f)
+            }
+        }
+    }
+
+    fun stopInifinteLoop(soundSelector: SoundSelector)
+    {
+        if (audioManager.ringerMode != AudioManager.RINGER_MODE_NORMAL) return
+        when (soundSelector) {
+            SoundSelector.DRAGGING_LETTER -> {
+                soundPool.stop(draggingLoopStream)
             }
         }
     }

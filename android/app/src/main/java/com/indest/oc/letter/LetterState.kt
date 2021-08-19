@@ -8,9 +8,9 @@ import com.indest.oc.letter.effects.ColorSelector
 import com.indest.oc.util.C
 import kotlin.math.log2
 
-const val TAG = "State"
+const val TAG = "LetterState"
 
-enum class State : IState {
+enum class LetterState : ILetterState {
 
     DISABLED {
         override fun draw(l: Letter) {}
