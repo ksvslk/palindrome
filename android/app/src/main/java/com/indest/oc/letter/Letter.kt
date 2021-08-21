@@ -35,6 +35,7 @@ class Letter @Inject constructor(
     lateinit var currentPos: GlobalPosition
     lateinit var homePos: GlobalPosition
     private var friend: Slot? = null
+    var currentIndex: Int = -1
 
     override val pos: GlobalPosition
         get() {
@@ -87,6 +88,7 @@ class Letter @Inject constructor(
         Log.i(TAG, "onSizeChanged")
         homePos = pos
         currentPos = pos
+        currentIndex = (parent as androidx.gridlayout.widget.GridLayout).indexOfChild(this)
         if (state == LetterState.INITIALIZING) state = LetterState.HOME
         super.onSizeChanged(w, h, oldw, oldh)
     }
@@ -105,7 +107,7 @@ class Letter @Inject constructor(
     }
 
     override fun toString(): String {
-        return TAG
+        return "$TAG ($currentIndex)"
     }
 
     init {

@@ -1,10 +1,11 @@
 package com.indest.oc
 
-import android.animation.ValueAnimator
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.*
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.indest.oc.mediator.BoxDirector
 import com.indest.oc.util.Util
@@ -12,22 +13,24 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import androidx.core.view.*
 import androidx.fragment.app.DialogFragment
-import androidx.transition.Transition
 import androidx.transition.TransitionInflater
 import androidx.transition.TransitionManager
 import com.indest.oc.declarations.initInsetsController
 import com.indest.oc.databinding.ActivityGameBinding
 import com.indest.oc.fragments.ExitGameDialogFragment
 import com.indest.oc.game.GameState
-import com.indest.oc.game.LevelFactory
 import com.indest.oc.game.Level
+import com.indest.oc.game.LevelFactory
 import com.indest.oc.letter.IBox
+import com.indest.oc.persistance.LevelViewModel
 
 @AndroidEntryPoint
 class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener,
     ExitGameDialogFragment.ExitGameDialogListener {
     private val TAG = "GameActivity"
     private var gameState: GameState = GameState.PLAYING // TODO: Move to BLL
+    private val viewModel:LevelViewModel by viewModels()
+    private var level: Level? = null
     private lateinit var binding: ActivityGameBinding
     private lateinit var insetsController: WindowInsetsControllerCompat
     @Inject
@@ -46,7 +49,6 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener,
         binding.levelNrSwitcher.setInAnimation(this, R.anim.slide_in_bottom)
         binding.levelNrSwitcher.setOutAnimation(this, R.anim.slide_out_top)
 
-        LevelFactory.puzzles = Util.getPuzzles(application)
         setUpLevelSelect()
     }
 
@@ -71,14 +73,22 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener,
         }
     }
 
+    // TODO: Move to BLL
     private fun increaseScore(scoreView: TextView, plus: Int) {
-        val currentValue = scoreView.text.toString().toInt()
+        val g = binding.gridContainer.getChildAt(0) as androidx.gridlayout.widget.GridLayout
+        g.children.forEach { Log.i(TAG, "$it") }
+/*        val currentValue = scoreView.text.toString().toInt()
         val animator = ValueAnimator.ofInt(currentValue, currentValue + plus)
         animator.duration = 1000
         animator.addUpdateListener { animation ->
             scoreView.text = animation.animatedValue.toString().padStart(5, '0')
         }
-        animator.start()
+        animator.start()*/
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        newConfig.uiMode
+        super.onConfigurationChanged(newConfig)
     }
 
     override fun onResume() {
@@ -95,21 +105,26 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener,
     private fun changeToNextLevel(levelNr: Int) {
         Log.i(TAG, "TextSwitcher is ${binding.levelNrSwitcher}")
         binding.levelNrSwitcher.setText("${levelNr + 1}")
-        val level = LevelFactory.getFreshLevel(
+        level?.grid?.removeAllViewsInLayout()
+        level = null
+        level = LevelFactory.getFreshLevel(
             levelNr,
             resources,
             this,
             binding.gridContainer,
-            layoutInflater
+            layoutInflater,
+            Util.getPuzzlesFromJson(application)
         )
+        boxDirector.boxes.clear()
         boxDirector.boxes =
-            level.grid.children.filterIsInstance<IBox>().toMutableList() // TODO: Move to BLL
+            level!!.grid.children.filterIsInstance<IBox>().toMutableList() // TODO: Move to BLL
 
-        val slideStart: Transition =
+        val lettersTransition =
             TransitionInflater.from(this).inflateTransition(R.transition.letters_transition)
-        TransitionManager.beginDelayedTransition(binding.gridContainer, slideStart)
+
+        TransitionManager.beginDelayedTransition(binding.gridContainer, lettersTransition)
         binding.gridContainer.removeAllViewsInLayout()
-        binding.gridContainer.addView(level.grid)
+        binding.gridContainer.addView(level!!.grid)
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -121,7 +136,6 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener,
     }
 
     private fun showExitDialog() {
-        // Create an instance of the dialog fragment and show it
         val dialog = ExitGameDialogFragment()
         dialog.show(supportFragmentManager, "ExitGameDialogFragment")
     }

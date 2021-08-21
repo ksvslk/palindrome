@@ -21,14 +21,14 @@ import kotlin.random.Random
 
 object LevelFactory {
 
-    lateinit var puzzles: ArrayList<Level>
-
     fun getFreshLevel(
         nr:Int, resources: Resources,
         context: Context,
         container: LinearLayoutCompat,
-        layoutInflater: LayoutInflater): Level
+        layoutInflater: LayoutInflater,
+        puzzles: ArrayList<Level>): Level
     {
+
         val level = puzzles[nr]
         val shuffledPuzzle = getShuffledPuzzle(level.puzzle)
         val densitySettings = Util.getDensitySettings(
@@ -119,9 +119,9 @@ object LevelFactory {
                         textSize = ds.textSize
                         width = ds.boxSize
                         height = ds.boxSize
+                        background = ResourcesCompat.getDrawable(resources, R.drawable.slot_edge_fade, null)
                         typeface = ResourcesCompat.getFont(context, R.font.yantramanav_bold)
                         gravity = Gravity.CENTER
-                        setBackgroundColor(ContextCompat.getColor(context, R.color.colorSecondaryVariant))
                         setTextColor(ContextCompat.getColor(context, R.color.colorSecondaryVariant))
                         text = " "
                     })

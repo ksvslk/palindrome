@@ -1,8 +1,11 @@
 package com.indest.oc.letter
 
 import android.animation.ObjectAnimator
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import androidx.core.view.children
+import androidx.gridlayout.widget.GridLayout
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.indest.oc.letter.effects.ColorSelector
 import com.indest.oc.util.C

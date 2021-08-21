@@ -4,17 +4,16 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.graphics.Color
 import android.util.Log
-import androidx.core.view.forEach
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import com.indest.oc.letter.*
 import com.indest.oc.letter.effects.ColorSelector
 import com.indest.oc.letter.effects.SoundSelector
 import com.indest.oc.util.C
 import javax.inject.Inject
-import javax.inject.Singleton
 import kotlin.math.abs
+import dagger.hilt.android.scopes.ActivityScoped
 
-@Singleton
+@ActivityScoped
 class BoxDirector @Inject constructor() {
     private val TAG = "BoxDirector"
     var boxes: MutableList<IBox> = ArrayList()
@@ -73,6 +72,7 @@ class BoxDirector @Inject constructor() {
         switchCoordinates(bottom.currentPos, top.currentPos)
         switchCoordinates(bottom.homePos, top.homePos)
         switchFriends(bottom, top)
+        switchIndex(bottom, top)
 
         // Set the layers accordingly - which letter is FRONT and which is BEHIND
         bottom.z = C.MIDDLE_LAYER
@@ -184,6 +184,12 @@ class BoxDirector @Inject constructor() {
             abs(to.pos.x - it.pos.x) +
                     abs(to.pos.y - it.pos.y)
         }
+    }
+
+    private fun switchIndex(bottom: Letter, top: Letter) {
+        val bottomIndex = bottom.currentIndex
+        bottom.currentIndex = top.currentIndex
+        top.currentIndex = bottomIndex
     }
 
     private fun switchCoordinates(bottomPos: GlobalPosition, topPos: GlobalPosition) {

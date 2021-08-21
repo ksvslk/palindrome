@@ -6,19 +6,19 @@ import android.media.SoundPool
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
-import androidx.core.content.res.ResourcesCompat
+import androidx.core.content.ContextCompat
 import com.indest.oc.R
 import com.indest.oc.letter.effects.ColorSelector.ACTION_DOWN_NO_FRIEND
 import com.indest.oc.letter.effects.ColorSelector.ACTION_UP_FRIEND
 import com.indest.oc.letter.effects.ColorSelector.ACTION_UP_NO_FRIEND
 import com.indest.oc.letter.effects.ColorSelector.ACTION_DOWN_FRIEND
-import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.android.qualifiers.ActivityContext
+import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class Effects @Inject constructor(@ApplicationContext val context: Context) {
-    //
+@ActivityScoped
+class Effects @Inject constructor(@ActivityContext val context: Context) {
+
     val audioManager: AudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
     // Transition durations
@@ -43,31 +43,31 @@ class Effects @Inject constructor(@ApplicationContext val context: Context) {
 
     // Colors
     private val actionDownNoFriend = AnimationColor(
-        viewStart = ResourcesCompat.getColor(context.resources, R.color.colorPrimary, null),
-        viewEnd = ResourcesCompat.getColor(context.resources, R.color.colorSecondary, null),
-        textStart = ResourcesCompat.getColor(context.resources, R.color.colorOnPrimary, null),
-        textEnd = ResourcesCompat.getColor(context.resources, R.color.colorOnSecondary, null)
+        viewStart = ContextCompat.getColor(context, R.color.colorPrimary),
+        viewEnd = ContextCompat.getColor(context, R.color.colorSecondary),
+        textStart = ContextCompat.getColor(context, R.color.colorOnPrimary),
+        textEnd = ContextCompat.getColor(context, R.color.colorOnSecondary)
     )
 
     private val actionDownFriend = AnimationColor(
-        viewStart = ResourcesCompat.getColor(context.resources, R.color.colorSecondary, null),
-        viewEnd = ResourcesCompat.getColor(context.resources, R.color.colorSecondary, null),
-        textStart = ResourcesCompat.getColor(context.resources, R.color.colorOnPrimary, null),
-        textEnd = ResourcesCompat.getColor(context.resources, R.color.colorOnSecondary, null)
+        viewStart = ContextCompat.getColor(context, R.color.colorSecondary),
+        viewEnd = ContextCompat.getColor(context, R.color.colorSecondary),
+        textStart = ContextCompat.getColor(context, R.color.colorOnPrimary),
+        textEnd = ContextCompat.getColor(context, R.color.colorOnSecondary)
     )
 
     private val actionUpNoFriend = AnimationColor(
-        viewStart = ResourcesCompat.getColor(context.resources, R.color.colorSecondary, null),
-        viewEnd = ResourcesCompat.getColor(context.resources, R.color.colorPrimary, null),
-        textStart = ResourcesCompat.getColor(context.resources, R.color.colorOnSecondary, null),
-        textEnd = ResourcesCompat.getColor(context.resources, R.color.colorOnPrimary, null)
+        viewStart = ContextCompat.getColor(context, R.color.colorSecondary),
+        viewEnd = ContextCompat.getColor(context, R.color.colorPrimary),
+        textStart = ContextCompat.getColor(context, R.color.colorOnSecondary),
+        textEnd = ContextCompat.getColor(context, R.color.colorOnPrimary)
     )
 
     private val actionUpFriend = AnimationColor(
-        viewStart = ResourcesCompat.getColor(context.resources, R.color.colorSecondary, null),
-        viewEnd = ResourcesCompat.getColor(context.resources, R.color.colorSecondary, null),
-        textStart = ResourcesCompat.getColor(context.resources, R.color.colorOnSecondary, null),
-        textEnd = ResourcesCompat.getColor(context.resources, R.color.colorOnPrimary, null)
+        viewStart = ContextCompat.getColor(context, R.color.colorSecondary),
+        viewEnd = ContextCompat.getColor(context, R.color.colorSecondary),
+        textStart = ContextCompat.getColor(context, R.color.colorOnSecondary),
+        textEnd = ContextCompat.getColor(context, R.color.colorOnPrimary)
     )
 
     fun playSound(soundSelector: SoundSelector) {

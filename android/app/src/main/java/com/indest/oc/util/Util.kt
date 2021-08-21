@@ -19,6 +19,13 @@ object Util {
         }
 
         when (density) {
+            in Float.MIN_VALUE..1.49f ->
+                return DensitySettings(
+                    ds.columnCount,
+                    (ds.boxSize * density + 0.5).toInt(),
+                    ds.textSize * scaledDensity / 0.5f,
+                    ORIENTATION_PORTRAIT
+                )
             in 1.50f..1.9f ->
                 return DensitySettings(
                     ds.columnCount,
@@ -30,7 +37,7 @@ object Util {
                 return DensitySettings(
                     ds.columnCount,
                     (ds.boxSize * density + 0.5).toInt(),
-                    ds.textSize * scaledDensity / 1.5f,
+                    ds.textSize * scaledDensity,
                     ORIENTATION_PORTRAIT
                 )
             in 3.0f..Float.MAX_VALUE ->
@@ -44,7 +51,7 @@ object Util {
         return ds
     }
 
-    fun getPuzzles(application: Application): ArrayList<Level> {
+    fun getPuzzlesFromJson(application: Application): ArrayList<Level> {
         val puzzleString = application.assets.open("puzzles.json").bufferedReader().use {
             it.readText()
         }

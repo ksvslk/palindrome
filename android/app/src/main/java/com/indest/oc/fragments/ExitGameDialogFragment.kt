@@ -3,8 +3,8 @@ package com.indest.oc.fragments
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.indest.oc.R
 
 class ExitGameDialogFragment : DialogFragment() {
@@ -36,7 +36,7 @@ class ExitGameDialogFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
             // Use the Builder class for convenient dialog construction
-            val builder = AlertDialog.Builder(it)
+            val builder = MaterialAlertDialogBuilder(it)
             builder.setMessage(R.string.exit_game)
                 .setPositiveButton(R.string.yes)
                 { _, _ ->
