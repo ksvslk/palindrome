@@ -4,7 +4,8 @@ import android.app.Application
 import android.content.res.Configuration.ORIENTATION_PORTRAIT
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.indest.oc.game.Level
+import java.util.*
+import kotlin.random.Random
 
 object Util {
     fun getDensitySettings(
@@ -51,7 +52,35 @@ object Util {
         return ds
     }
 
-    fun getPuzzlesFromJson(application: Application): ArrayList<Level> {
+    fun getSolutionRows(puzzle: String, cols: Int): List<String> {
+        val puzzleWords = puzzle.split(' ')
+        return puzzleWords.fold(mutableListOf(), { acc: List<String>, s: String ->
+            when {
+                acc.isEmpty() -> acc + s
+                acc.last().length.plus(1) + s.length <= cols -> {
+                    val last = acc.last().plus(' ')
+                    acc.subList(0, acc.lastIndex) + last.plus(s)
+                }
+                else -> { // New line
+                    val blankCount = cols - acc.last().length
+                    val last = acc.last().plus(" ".repeat(blankCount))
+                    acc.subList(0, acc.lastIndex) + last + s
+                }
+            }
+        })
+    }
+
+    fun getShuffledPuzzle(originalPuzzle: String): String {
+        val timeNow = Date().time
+        val random = Random(timeNow)
+        val shuffledChars = originalPuzzle.toCharArray()
+        while (shuffledChars.concatToString() == originalPuzzle) {
+            shuffledChars.shuffle(random)
+        }
+        return shuffledChars.concatToString()
+    }
+
+/*    fun getPuzzlesFromJson(application: Application): ArrayList<Level> {
         val puzzleString = application.assets.open("puzzles.json").bufferedReader().use {
             it.readText()
         }
@@ -62,5 +91,5 @@ object Util {
             .excludeFieldsWithoutExposeAnnotation()
             .create()
             .fromJson(puzzleString, type)
-    }
+    }*/
 }

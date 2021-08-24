@@ -14,22 +14,21 @@ import com.indest.oc.letter.Letter
 import com.indest.oc.letter.LetterState
 import com.indest.oc.letter.Slot
 import com.indest.oc.util.DensitySettings
-import com.indest.oc.util.Util
 import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.random.Random
 
 object LevelFactory {
 
     fun getFreshLevel(
-        nr:Int, resources: Resources,
+        nr:Int,
+        resources: Resources,
         context: Context,
         container: LinearLayoutCompat,
         layoutInflater: LayoutInflater,
-        puzzles: ArrayList<Level>): Level
+        /*puzzles: ArrayList<Level>): Level */): Int
     {
 
-        val level = puzzles[nr]
+     /*   val level = puzzles[nr]
         val shuffledPuzzle = getShuffledPuzzle(level.puzzle)
         val densitySettings = Util.getDensitySettings(
             resources.displayMetrics.density,
@@ -41,9 +40,9 @@ object LevelFactory {
         addLetters(shuffledPuzzle, level.grid, densitySettings, false, context)
         addBlanks(densitySettings.columnCount, level.grid, layoutInflater)
         addSlots(level.puzzle, level.grid, densitySettings, context)
-        return level
+        return level*/
+        return 0
     }
-
 
     private fun getShuffledPuzzle(originalPuzzle: String): String
     {

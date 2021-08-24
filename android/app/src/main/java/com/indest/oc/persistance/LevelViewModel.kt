@@ -1,9 +1,30 @@
 package com.indest.oc.persistance
 
-import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class LevelViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel() {
-    val nr:Int = savedStateHandle["nr"] ?:
-        throw IllegalArgumentException("missing level nr")
+@HiltViewModel
+class LevelViewModel @Inject constructor(
+        private val levelRepository: LevelRepository
+    ): ViewModel() {
+
+    val level = MutableLiveData<Level>()
+
+    init {
+        viewModelScope.launch {
+            level.value = levelRepository.getLastLevel()
+        }
+    }
+
+    fun updateShuffledPuzzle(shuffled: String)
+    {
+        level.value!!.shuffledPuzzle = shuffled
+        viewModelScope.launch {
+            levelRepository.saveLevel(level.value!!)
+        }
+    }
 }
