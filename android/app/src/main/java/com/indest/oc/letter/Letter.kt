@@ -20,9 +20,10 @@ import kotlin.properties.Delegates
 class Letter @Inject constructor(
     context: Context,
     letter: String?,
-    initialState: LetterState,
+    initialState: LetterState
 ) : AppCompatTextView(context), IBox {
 
+    override var currentIndex: Int = -1
     private var TAG: String = "Letter $letter"
     @Inject lateinit var director: BoxDirector
     @Inject lateinit var  effects: Effects
@@ -35,7 +36,6 @@ class Letter @Inject constructor(
     lateinit var currentPos: GlobalPosition
     lateinit var homePos: GlobalPosition
     private var friend: Slot? = null
-    var currentIndex: Int = -1
 
     override val pos: GlobalPosition
         get() {

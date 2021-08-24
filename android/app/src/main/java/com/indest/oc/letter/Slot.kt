@@ -2,6 +2,7 @@ package com.indest.oc.letter
 
 import android.content.Context
 import android.graphics.Rect
+import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
 import com.indest.oc.util.C
@@ -10,11 +11,18 @@ class Slot constructor(
     context: Context?
 ) : AppCompatTextView(context!!, null), IBox {
 
+    override var currentIndex: Int = -1
     private var TAG: String = "Slot ${View.generateViewId()}"
     private var friend: Letter? = null
 
     init {
         z = C.BOTTOM_LAYER
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        Log.i(TAG, "onSizeChanged")
+        currentIndex = (parent as androidx.gridlayout.widget.GridLayout).indexOfChild(this)
+        super.onSizeChanged(w, h, oldw, oldh)
     }
 
     override val pos: GlobalPosition
