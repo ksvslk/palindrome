@@ -35,21 +35,12 @@ class ExitGameDialogFragment : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
-            // Use the Builder class for convenient dialog construction
             val builder = MaterialAlertDialogBuilder(it)
             builder.setMessage(R.string.exit_game)
                 .setPositiveButton(R.string.yes)
-                { _, _ ->
-                    // Send the positive button event back to the host activity
-                    listener.onDialogPositiveClick(this)
-                }
+                { _, _ ->listener.onDialogPositiveClick(this) }
                 .setNegativeButton(R.string.cancel)
-                { _, _ ->
-                    // Send the negative button event back to the host activity
-                    listener.onDialogNegativeClick(this)
-                }
-
-            // Create the AlertDialog object and return it
+                { _, _ -> listener.onDialogNegativeClick(this)}
             builder.create()
         } ?: throw IllegalStateException("Activity cannot be null")
     }
