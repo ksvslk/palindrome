@@ -30,8 +30,8 @@ override val pos: GlobalPosition
             val coordinates = IntArray(2)
             getLocationOnScreen(coordinates)
             return GlobalPosition(
-                x.toInt() + width / 2,
-                y.toInt() + height / 2)
+                coordinates[0] + width / 2,
+                coordinates[1] + height / 2)
         }
 
     override val rect: Rect

@@ -62,7 +62,6 @@ enum class LetterState : ILetterState {
 
             // View and its parent should be always on top when dragging
             l.z = TOP_LAYER
-            //l.elevation = C.TOP_LAYER
 
             val color = if (l.hasFriend()) {
                 l.effects.getColors(ColorSelector.ACTION_DOWN_FRIEND)
@@ -70,24 +69,12 @@ enum class LetterState : ILetterState {
                 l.effects.getColors(ColorSelector.ACTION_DOWN_NO_FRIEND)
             }
 
-            // Animate background color when starting to drag
-            ObjectAnimator.ofArgb(l, "backgroundColor", color.viewStart, color.viewEnd)
-                .apply {
-                    duration = l.effects.onClickColorChangeDuration
-                    start()
-                }
-
-            // Animate text color when starting to drag
-            ObjectAnimator.ofArgb(l, "textColor", color.textStart, color.textEnd)
-                .apply {
-                    duration = l.effects.onClickColorChangeDuration
-                    start()
-                }
+            animateNow(l, "backgroundColor", color.viewStart, color.viewEnd, l.effects.onClickColorChangeDuration)
+            animateNow(l, "textColor", color.textStart, color.textEnd, l.effects.onClickColorChangeDuration)
 
             l.animate()
                 .z(TOP_LAYER)
                 .start()
-
         }
 
         override fun executeActionMoveBehaviour(l: Letter, v: View, e: MotionEvent) {
@@ -135,18 +122,9 @@ enum class LetterState : ILetterState {
                 l.effects.getColors(ColorSelector.ACTION_UP_NO_FRIEND)
             }
 
-            // Reset background color with animation
-            ObjectAnimator.ofArgb(l, "backgroundColor", color.viewStart, color.viewEnd)
-                .apply {
-                    duration = l.effects.onReleaseColorChangeDuration
-                    start()
-                }
+            animateNow(l, "backgroundColor", color.viewStart, color.viewEnd, l.effects.onReleaseColorChangeDuration)
+            animateNow(l, "textColor", color.textStart, color.textEnd, l.effects.onReleaseColorChangeDuration)
 
-            // Reset text color with animation
-            ObjectAnimator.ofArgb(l, "textColor", color.textStart, color.textEnd).apply {
-                duration = l.effects.onReleaseColorChangeDuration
-                start()
-            }
             // Get some value that represents how much was moved ignoring the actual physical
             // distance. Log applied to Euclidean distance to make it very small.
             val distance = log2((Math.abs(moveByX) + Math.abs(moveByY)).toDouble())
@@ -167,7 +145,19 @@ enum class LetterState : ILetterState {
                 }
                 .start()
         }
+
+
     };
+
+    fun animateNow(letter: Letter, property: String, startColor:Int, endColor:Int, aDuration:Long)
+    {
+        ObjectAnimator.ofArgb(letter, property, startColor, endColor)
+            .apply {
+                duration = aDuration
+                start()
+            }
+    }
+
 }
 
 

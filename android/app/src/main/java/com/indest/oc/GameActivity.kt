@@ -106,7 +106,6 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener,
         var currentPuzzle = bd.currentLevel.puzzle
         if (currentPuzzle.isEmpty()) {
             currentPuzzle = Util.getShuffledPuzzle(bd.currentLevel.solution)
-
             lifecycleScope.launch {
                 bd.levelRepository.updateLevelPuzzle(bd.currentLevel.levelId, currentPuzzle)
             }
