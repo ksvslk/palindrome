@@ -13,6 +13,7 @@ import com.indest.oc.mediator.BoxDirector
 import com.indest.oc.util.NEUTRAL_LAYER
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlin.math.roundToInt
 import kotlin.properties.Delegates
 
 @SuppressLint("ViewConstructor")
@@ -25,8 +26,10 @@ class Letter @Inject constructor(
     var friendIndex: Int = -666
     override var homeIndex: Int = -666
     private var TAG: String = "Letter $letter"
+
     @Inject
     lateinit var director: BoxDirector
+
     @Inject
     lateinit var effects: Effects
     var dX: Float = 0.0f
@@ -40,14 +43,13 @@ class Letter @Inject constructor(
 
     override val pos: GlobalPosition
         get() {
-            val coordinates = IntArray(2)
-            getLocationOnScreen(coordinates)
             return GlobalPosition(
-                coordinates[0] + width / 2,
-                coordinates[1] + height / 2
+                (x + width / 2).roundToInt(),
+                (y + height / 2).roundToInt()
             )
 
         }
+
     override val rect: Rect
         get() {
             val rect = Rect()
@@ -108,8 +110,7 @@ class Letter @Inject constructor(
         if (box != null) {
             friend = box as Slot?
             friendIndex = box.homeIndex
-        }
-        else {
+        } else {
             friend = box
             friendIndex = -666
         }

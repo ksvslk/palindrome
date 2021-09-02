@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
 import com.indest.oc.util.BOTTOM_LAYER
+import kotlin.math.roundToInt
 
 class Slot constructor(
     context: Context?
@@ -27,11 +28,10 @@ class Slot constructor(
 
 override val pos: GlobalPosition
         get() {
-            val coordinates = IntArray(2)
-            getLocationOnScreen(coordinates)
             return GlobalPosition(
-                coordinates[0] + width / 2,
-                coordinates[1] + height / 2)
+                (x + width / 2).roundToInt(),
+                (y + height / 2).roundToInt()
+            )
         }
 
     override val rect: Rect
