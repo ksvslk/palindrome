@@ -1,4 +1,4 @@
-package com.indest.oc.mediator
+package com.indest.oc.letter
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
@@ -8,7 +8,6 @@ import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.coroutineScope
-import com.indest.oc.letter.*
 import com.indest.oc.letter.effects.ColorSelector
 import com.indest.oc.letter.effects.SoundSelector
 import com.indest.oc.persistance.Level
@@ -21,6 +20,12 @@ import dagger.hilt.android.scopes.ActivityScoped
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+/**
+ * BoxDirector is kind of a mediator object that will manage the interaction between
+ * all the Letter and Slot objects. It will handle the collisions between the objects and the
+ * following position (and other important info) changes.
+ * State persistence to database is also handled from here (high level calls).
+ */
 @ActivityScoped
 class BoxDirector @Inject constructor(
     val levelRepository: LevelRepository

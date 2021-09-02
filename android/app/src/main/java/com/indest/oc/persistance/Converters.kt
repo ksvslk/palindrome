@@ -4,7 +4,6 @@ import androidx.room.TypeConverter
 import com.google.gson.Gson
 
 import com.google.gson.reflect.TypeToken
-import com.indest.oc.game.LevelProgress
 import java.lang.reflect.Type
 
 class Converters {

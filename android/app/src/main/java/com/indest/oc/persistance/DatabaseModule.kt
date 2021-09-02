@@ -1,8 +1,6 @@
-package com.indest.oc.di
+package com.indest.oc.persistance
 
 import android.content.Context
-import com.indest.oc.persistance.LevelDao
-import com.indest.oc.persistance.LevelDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

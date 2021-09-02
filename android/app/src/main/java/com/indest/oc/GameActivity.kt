@@ -10,7 +10,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
-import com.indest.oc.mediator.BoxDirector
+import com.indest.oc.letter.BoxDirector
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import androidx.core.view.*
@@ -19,10 +19,10 @@ import androidx.gridlayout.widget.GridLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.TransitionInflater
 import androidx.transition.TransitionManager
-import com.indest.oc.declarations.initInsetsController
+import com.indest.oc.util.initInsetsController
 import com.indest.oc.databinding.ActivityGameBinding
 import com.indest.oc.fragments.ExitGameDialogFragment
-import com.indest.oc.game.LevelProgress
+import com.indest.oc.persistance.LevelProgress
 import com.indest.oc.letter.IBox
 import com.indest.oc.letter.Letter
 import com.indest.oc.letter.LetterState

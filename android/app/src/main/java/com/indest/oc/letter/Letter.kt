@@ -9,7 +9,6 @@ import android.view.MotionEvent
 import androidx.appcompat.widget.AppCompatTextView
 import com.indest.oc.letter.effects.Effects
 import com.indest.oc.letter.effects.SoundSelector
-import com.indest.oc.mediator.BoxDirector
 import com.indest.oc.util.NEUTRAL_LAYER
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject

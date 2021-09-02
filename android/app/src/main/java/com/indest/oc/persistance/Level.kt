@@ -2,9 +2,7 @@ package com.indest.oc.persistance
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
-import com.indest.oc.game.LevelProgress
 
 @Entity(tableName = "level_info_table")
 data class Level(

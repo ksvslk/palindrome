@@ -19,7 +19,7 @@ import javax.inject.Inject
 @ActivityScoped
 class Effects @Inject constructor(@ActivityContext val context: Context) {
 
-    val audioManager: AudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+    private val audioManager: AudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
     // Transition durations
     val onClickColorChangeDuration: Long = 200L
@@ -27,7 +27,7 @@ class Effects @Inject constructor(@ActivityContext val context: Context) {
     val animateToHomeDurationMultiplier = 50
 
     // Audio, sound and vibration
-    val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+    private val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
     private val soundPool: SoundPool = SoundPool.Builder().build()
     val am: AudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 

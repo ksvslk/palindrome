@@ -11,6 +11,10 @@ import kotlin.math.log2
 
 const val TAG = "LetterState"
 
+/**
+ * State of Letter objects and all the behaviour they can execute in each state
+ * is restricted with this special enum class.
+ */
 enum class LetterState : ILetterState {
 
     DISABLED {
@@ -41,7 +45,6 @@ enum class LetterState : ILetterState {
         override fun draw(l: Letter) {
 
         }
-
         override fun executeActionDownBehaviour(l: Letter, v: View, e: MotionEvent) {}
         override fun executeActionMoveBehaviour(l: Letter, v: View, e: MotionEvent) {}
         override fun executeActionUpBehaviour(l: Letter) {}

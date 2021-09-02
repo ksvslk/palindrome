@@ -16,7 +16,7 @@ import com.indest.oc.fragments.ExitGameDialogFragment
 import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.ump.*
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.indest.oc.declarations.initInsetsController
+import com.indest.oc.util.initInsetsController
 
 class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogListener {
 

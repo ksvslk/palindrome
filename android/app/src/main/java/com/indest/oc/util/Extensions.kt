@@ -1,4 +1,4 @@
-package com.indest.oc.declarations
+package com.indest.oc.util
 
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
