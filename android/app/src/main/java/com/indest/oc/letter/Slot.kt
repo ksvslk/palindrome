@@ -5,34 +5,35 @@ import android.graphics.Rect
 import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
-import com.indest.oc.util.C
+import com.indest.oc.util.BOTTOM_LAYER
 
 class Slot constructor(
     context: Context?
 ) : AppCompatTextView(context!!, null), IBox {
+    override var homeIndex: Int = -666
 
-    override var currentIndex: Int = -1
     private var TAG: String = "Slot ${View.generateViewId()}"
     private var friend: Letter? = null
 
     init {
-        z = C.BOTTOM_LAYER
+        z = BOTTOM_LAYER
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         Log.i(TAG, "onSizeChanged")
-        currentIndex = (parent as androidx.gridlayout.widget.GridLayout).indexOfChild(this)
+        homeIndex = (parent as androidx.gridlayout.widget.GridLayout).indexOfChild(this)
         super.onSizeChanged(w, h, oldw, oldh)
     }
 
-    override val pos: GlobalPosition
+override val pos: GlobalPosition
         get() {
             val coordinates = IntArray(2)
             getLocationOnScreen(coordinates)
             return GlobalPosition(
-                coordinates[0] + width / 2,
-                coordinates[1] + height / 2)
+                x.toInt() + width / 2,
+                y.toInt() + height / 2)
         }
+
     override val rect: Rect
         get() {
             val rect = Rect()

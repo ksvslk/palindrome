@@ -1,9 +1,9 @@
 package com.indest.oc.util
 
-import android.app.Application
 import android.content.res.Configuration.ORIENTATION_PORTRAIT
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import androidx.core.view.children
+import androidx.gridlayout.widget.GridLayout
+import com.indest.oc.letter.Letter
 import java.util.*
 import kotlin.random.Random
 
@@ -78,6 +78,16 @@ object Util {
             shuffledChars.shuffle(random)
         }
         return shuffledChars.concatToString()
+    }
+
+    fun gridToPuzzleMapper(gridLayout: GridLayout): String
+    {
+        var puzzle = ""
+        gridLayout.children
+            .filterIsInstance<Letter>()
+            .sortedBy { it.homeIndex }
+            .forEachIndexed { index, t -> puzzle += t.text }
+        return puzzle
     }
 
 /*    fun getPuzzlesFromJson(application: Application): ArrayList<Level> {

@@ -5,18 +5,36 @@ import android.animation.ObjectAnimator
 import android.graphics.Color
 import android.util.Log
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.coroutineScope
 import com.indest.oc.letter.*
 import com.indest.oc.letter.effects.ColorSelector
 import com.indest.oc.letter.effects.SoundSelector
-import com.indest.oc.util.C
+import com.indest.oc.persistance.Level
+import com.indest.oc.persistance.LevelRepository
+import com.indest.oc.util.MIDDLE_LAYER
+import com.indest.oc.util.TOP_LAYER
 import javax.inject.Inject
 import kotlin.math.abs
 import dagger.hilt.android.scopes.ActivityScoped
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @ActivityScoped
-class BoxDirector @Inject constructor() {
+class BoxDirector @Inject constructor(
+    val levelRepository: LevelRepository
+): LifecycleObserver {
     private val TAG = "BoxDirector"
     var boxes: MutableList<IBox> = ArrayList()
+    lateinit var currentLevel: Level
+    lateinit var scope: CoroutineScope
+
+    fun registerLifeCycleOwner(lifecycle: Lifecycle)
+    {
+        lifecycle.addObserver(this)
+        scope = lifecycle.coroutineScope
+    }
 
     fun handleCollisions(box: Letter) {
         Log.i(TAG, "$box called handleCollisions.")
@@ -71,14 +89,33 @@ class BoxDirector @Inject constructor() {
         // Switch info
         switchCoordinates(bottom.currentPos, top.currentPos)
         switchCoordinates(bottom.homePos, top.homePos)
+
+        val topIndex = top.homeIndex
+        val bottomIndex = bottom.homeIndex
+        val topLetter = top.text.first()
+        val bottomLetter = bottom.text.first()
+
+        scope.launch {
+            levelRepository.updateLetter(
+                homeIndex = topIndex,
+                letter = bottomLetter,
+                level = currentLevel.levelId
+            )
+            levelRepository.updateLetter(
+                homeIndex = bottomIndex,
+                letter = topLetter,
+                level = currentLevel.levelId
+            )
+        }
+
         switchFriends(bottom, top)
         switchIndex(bottom, top)
 
         // Set the layers accordingly - which letter is FRONT and which is BEHIND
-        bottom.z = C.MIDDLE_LAYER
-        bottom.elevation = C.MIDDLE_LAYER
-        top.z = C.TOP_LAYER
-        top.elevation = C.TOP_LAYER
+        bottom.z = MIDDLE_LAYER
+        bottom.elevation = MIDDLE_LAYER
+        top.z = TOP_LAYER
+        top.elevation = TOP_LAYER
 
         // Change state to animation
         top.state = LetterState.ANIMATION
@@ -97,14 +134,21 @@ class BoxDirector @Inject constructor() {
         letter.setFriend(slot)
         letter.currentPos.x = slot.pos.x
         letter.currentPos.y = slot.pos.y
-        letter.z = C.TOP_LAYER
-        letter.elevation = C.TOP_LAYER
+        letter.z = TOP_LAYER
+        letter.elevation = TOP_LAYER
         letter.state = LetterState.ANIMATION
         letter.state.executeAnimationBehaviour(
             letter,
             (slot.pos.x - letter.pos.x),
             (slot.pos.y - letter.pos.y)
         )
+        scope.launch {
+            levelRepository.updateFriendIndex(
+                homeIndex = letter.homeIndex,
+                newFriendIndex = slot.homeIndex,
+                level = currentLevel.levelId
+            )
+        }
     }
 
     fun checkSolution()
@@ -162,6 +206,14 @@ class BoxDirector @Inject constructor() {
             letter.getFriend()?.setFriend(null)
             letter.setFriend(null)
 
+            scope.launch {
+                levelRepository.updateFriendIndex(
+                    homeIndex = letter.homeIndex,
+                    newFriendIndex = -666,
+                    level = currentLevel.levelId
+                )
+            }
+
             letter.state = LetterState.ANIMATION
             letter.state.executeAnimationBehaviour(
                 letter,
@@ -187,9 +239,9 @@ class BoxDirector @Inject constructor() {
     }
 
     private fun switchIndex(bottom: Letter, top: Letter) {
-        val bottomIndex = bottom.currentIndex
-        bottom.currentIndex = top.currentIndex
-        top.currentIndex = bottomIndex
+        val bottomIndex = bottom.homeIndex
+        bottom.homeIndex = top.homeIndex
+        top.homeIndex = bottomIndex
     }
 
     private fun switchCoordinates(bottomPos: GlobalPosition, topPos: GlobalPosition) {

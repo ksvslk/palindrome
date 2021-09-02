@@ -3,7 +3,7 @@ package com.indest.oc.letter
 import android.graphics.Rect
 
 sealed interface IBox {
-    var currentIndex: Int
+    var homeIndex: Int
     val pos: GlobalPosition
     val rect: Rect
     fun hasFriend(): Boolean

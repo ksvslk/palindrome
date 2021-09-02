@@ -10,7 +10,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import com.indest.oc.letter.effects.Effects
 import com.indest.oc.letter.effects.SoundSelector
 import com.indest.oc.mediator.BoxDirector
-import com.indest.oc.util.C
+import com.indest.oc.util.NEUTRAL_LAYER
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlin.properties.Delegates
@@ -22,16 +22,17 @@ class Letter @Inject constructor(
     letter: String?,
     initialState: LetterState
 ) : AppCompatTextView(context), IBox {
-
-    override var currentIndex: Int = -1
+    var friendIndex: Int = -666
+    override var homeIndex: Int = -666
     private var TAG: String = "Letter $letter"
-    @Inject lateinit var director: BoxDirector
-    @Inject lateinit var  effects: Effects
+    @Inject
+    lateinit var director: BoxDirector
+    @Inject
+    lateinit var effects: Effects
     var dX: Float = 0.0f
     var dY: Float = 0.0f
-    var state: LetterState by Delegates.observable(initialState) {
-            _, oldValue, newValue ->
-            Log.i(TAG, "$oldValue -> $newValue")
+    var state: LetterState by Delegates.observable(initialState) { _, oldValue, newValue ->
+        Log.i(TAG, "$oldValue -> $newValue")
     }
     lateinit var currentPos: GlobalPosition
     lateinit var homePos: GlobalPosition
@@ -42,8 +43,10 @@ class Letter @Inject constructor(
             val coordinates = IntArray(2)
             getLocationOnScreen(coordinates)
             return GlobalPosition(
-                coordinates[0] + width / 2,
-                coordinates[1] + height / 2)
+                x.toInt() + width / 2,
+                y.toInt() + height / 2
+            )
+
         }
     override val rect: Rect
         get() {
@@ -88,8 +91,7 @@ class Letter @Inject constructor(
         Log.i(TAG, "onSizeChanged")
         homePos = pos
         currentPos = pos
-        currentIndex = (parent as androidx.gridlayout.widget.GridLayout).indexOfChild(this)
-        if (state == LetterState.INITIALIZING) state = LetterState.HOME
+        homeIndex = (parent as androidx.gridlayout.widget.GridLayout).indexOfChild(this)
         super.onSizeChanged(w, h, oldw, oldh)
     }
 
@@ -103,16 +105,23 @@ class Letter @Inject constructor(
     }
 
     override fun setFriend(box: IBox?) {
-        friend = box as Slot?
+        if (box != null) {
+            friend = box as Slot?
+            friendIndex = box.homeIndex
+        }
+        else {
+            friend = box
+            friendIndex = -666
+        }
     }
 
     override fun toString(): String {
-        return "$TAG ($currentIndex)"
+        return TAG
     }
 
     init {
         setOnTouchListener(touchListen)
-        z = C.NEUTRAL_LAYER
+        z = NEUTRAL_LAYER
         text = letter
     }
 }

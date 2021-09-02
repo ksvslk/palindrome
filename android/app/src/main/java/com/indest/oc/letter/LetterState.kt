@@ -1,14 +1,12 @@
 package com.indest.oc.letter
 
 import android.animation.ObjectAnimator
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
-import androidx.core.view.children
-import androidx.gridlayout.widget.GridLayout
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.indest.oc.letter.effects.ColorSelector
-import com.indest.oc.util.C
+import com.indest.oc.util.NEUTRAL_LAYER
+import com.indest.oc.util.TOP_LAYER
 import kotlin.math.log2
 
 const val TAG = "LetterState"
@@ -63,7 +61,7 @@ enum class LetterState : ILetterState {
             l.dY = v.y - e.rawY
 
             // View and its parent should be always on top when dragging
-            l.z = C.TOP_LAYER
+            l.z = TOP_LAYER
             //l.elevation = C.TOP_LAYER
 
             val color = if (l.hasFriend()) {
@@ -87,7 +85,7 @@ enum class LetterState : ILetterState {
                 }
 
             l.animate()
-                .z(C.TOP_LAYER)
+                .z(TOP_LAYER)
                 .start()
 
         }
@@ -156,14 +154,14 @@ enum class LetterState : ILetterState {
             l.animate()
                 .xBy(moveByX.toFloat())
                 .yBy(moveByY.toFloat())
-                .z(C.NEUTRAL_LAYER)
+                .z(NEUTRAL_LAYER)
                 .setInterpolator(FastOutSlowInInterpolator())
                 // Here we use the log-distance to calculate the duration of the animation.
                 // Longer distance should be only slightly longer animation and vice-versa
                 .setDuration(distance.toLong() * l.effects.animateToHomeDurationMultiplier)
                 .withEndAction {
                     l.state = HOME
-                    l.z = C.NEUTRAL_LAYER
+                    l.z = NEUTRAL_LAYER
                     l.currentPos.x = l.pos.x
                     l.currentPos.y = l.pos.y
                 }
