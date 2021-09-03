@@ -7,6 +7,7 @@ import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.indest.oc.letter.effects.ColorSelector
 import com.indest.oc.util.NEUTRAL_LAYER
 import com.indest.oc.util.TOP_LAYER
+import kotlin.math.abs
 import kotlin.math.log2
 
 const val TAG = "LetterState"
@@ -125,12 +126,14 @@ enum class LetterState : ILetterState {
                 l.effects.getColors(ColorSelector.ACTION_UP_NO_FRIEND)
             }
 
-            animateNow(l, "backgroundColor", color.viewStart, color.viewEnd, l.effects.onReleaseColorChangeDuration)
-            animateNow(l, "textColor", color.textStart, color.textEnd, l.effects.onReleaseColorChangeDuration)
+            animateNow(l, "backgroundColor", color.viewStart,
+                color.viewEnd, l.effects.onReleaseColorChangeDuration)
+            animateNow(l, "textColor", color.textStart,
+                color.textEnd, l.effects.onReleaseColorChangeDuration)
 
             // Get some value that represents how much was moved ignoring the actual physical
             // distance. Log applied to Euclidean distance to make it very small.
-            val distance = log2((Math.abs(moveByX) + Math.abs(moveByY)).toDouble())
+            val distance = log2((abs(moveByX) + abs(moveByY)).toDouble())
 
             l.animate()
                 .xBy(moveByX.toFloat())

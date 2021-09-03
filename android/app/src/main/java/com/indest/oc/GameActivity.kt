@@ -191,6 +191,7 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener,
             LetterState.INITIALIZING
         }
 
+        // Also part of restoring the state
         val puzzle = if (info.lettersInfo.isEmpty()) bd.currentLevel.puzzle
         else {
             info.lettersInfo
@@ -198,8 +199,6 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener,
                 .fold("", { acc, li -> acc + li.letter }
                 )
         }
-
-        Log.i(TAG, "PUZZLE: $puzzle")
 
         // Add letters
         for ((index,l) in puzzle.withIndex()) {
