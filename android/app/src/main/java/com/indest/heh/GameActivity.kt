@@ -19,6 +19,7 @@ import androidx.gridlayout.widget.GridLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.TransitionInflater
 import androidx.transition.TransitionManager
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.indest.oc.util.initInsetsController
 import com.indest.oc.databinding.ActivityGameBinding
 import com.indest.oc.fragments.ExitGameDialogFragment
@@ -33,6 +34,18 @@ import com.indest.oc.persistance.LevelAndLetterInfo
 import com.indest.oc.util.DensitySettings
 import com.indest.oc.util.Util
 import kotlinx.coroutines.launch
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+
+import com.google.android.gms.tasks.Task
+
+import androidx.annotation.NonNull
+
+import com.google.android.gms.tasks.OnCompleteListener
+
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.common.api.CommonStatusCodes
+
 
 @AndroidEntryPoint
 class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener,
@@ -41,17 +54,19 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener,
     private lateinit var binding: ActivityGameBinding
     private lateinit var insetsController: WindowInsetsControllerCompat
     @Inject
-    lateinit var bd: BoxDirector // TODO: Move to BLL
+    lateinit var bd: BoxDirector
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate")
         Log.i(TAG, "Scale factor (density): ${resources.displayMetrics.density}")
         super.onCreate(savedInstanceState)
+
+        signInSilently()
+
         binding = ActivityGameBinding.inflate(layoutInflater)
         val rootView = binding.root
         setContentView(rootView)
         insetsController = initInsetsController(rootView)
-
         // Set text switcher animations
         binding.levelNrSwitcher.setInAnimation(this, R.anim.slide_in_bottom)
         binding.levelNrSwitcher.setOutAnimation(this, R.anim.slide_out_top)
@@ -88,6 +103,37 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener,
         }
 
     }
+
+    private fun signInSilently() {
+        val signInOptions = GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN
+        val account = GoogleSignIn.getLastSignedInAccount(this)
+        if (GoogleSignIn.hasPermissions(account, *signInOptions.scopeArray)) {
+            // Already signed in.
+            // The signed in account is stored in the 'account' variable.
+            val signedInAccount = account
+        } else {
+            // Haven't been signed-in before. Try the silent sign-in first.
+            val signInClient = GoogleSignIn.getClient(this, signInOptions)
+            signInClient
+                .silentSignIn()
+                .addOnCompleteListener(
+                    this
+                ) { task ->
+                    if (task.isSuccessful) {
+                        // The signed in account is stored in the task's result.
+                        val signedInAccount = task.result
+                        Log.i(TAG, "Sign in successful for ${signedInAccount.displayName}")
+                    } else {
+                        Log.i(TAG, "Player will need to sign-in explicitly using via UI: ${task.exception}")
+                        // Player will need to sign-in explicitly using via UI.
+                        // See [sign-in best practices](http://developers.google.com/games/services/checklist) for guidance on how and when to implement Interactive Sign-in,
+                        // and [Performing Interactive Sign-in](http://developers.google.com/games/services/android/signin#performing_interactive_sign-in) for details on how to implement
+                        // Interactive Sign-in.
+                    }
+                }
+        }
+    }
+
 
     /*
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
@@ -297,6 +343,7 @@ class GameActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener,
 
     override fun onResume() {
         Log.i(TAG, "onResume")
+        signInSilently()
         insetsController.hide(WindowInsetsCompat.Type.systemBars())
         super.onResume()
     }
