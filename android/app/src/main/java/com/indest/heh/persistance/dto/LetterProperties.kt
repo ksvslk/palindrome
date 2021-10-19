@@ -1,11 +1,11 @@
-package com.indest.oc.persistance
+package com.indest.heh.persistance
 
 import androidx.room.*
 
 @Entity(
     foreignKeys = [
         ForeignKey(
-            entity = Level::class,
+            entity = LevelData::class,
             childColumns = ["owner_id"],
             parentColumns = ["level_id"]
         )

@@ -1,11 +1,11 @@
-package com.indest.oc
+package com.indest.heh
 
 import androidx.room.Room
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.indest.oc.persistance.Level
-import com.indest.oc.persistance.LevelDatabase
-import com.indest.oc.persistance.LevelDao
+import com.indest.heh.persistance.Level
+import com.indest.heh.persistance.LevelDatabase
+import com.indest.heh.persistance.LevelDao
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.test.TestCoroutineDispatcher

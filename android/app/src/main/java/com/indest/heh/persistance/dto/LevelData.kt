@@ -1,11 +1,11 @@
-package com.indest.oc.persistance
+package com.indest.heh.persistance
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "level_info_table")
-data class Level(
+data class LevelData(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "level_id")
     val levelId: Int,
