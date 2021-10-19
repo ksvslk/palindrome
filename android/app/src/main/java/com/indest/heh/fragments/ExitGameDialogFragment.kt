@@ -1,11 +1,12 @@
-package com.indest.oc.fragments
+package com.indest.heh.fragments
 
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.indest.oc.R
+import com.indest.heh.R
 
 class ExitGameDialogFragment : DialogFragment() {
 
@@ -36,7 +37,10 @@ class ExitGameDialogFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
             val builder = MaterialAlertDialogBuilder(it)
-            builder.setMessage(R.string.exit_game)
+            builder
+                .setBackground(ContextCompat.getDrawable(requireActivity(), R.drawable.round_rectangle))
+                .setTitle(R.string.exit_game_title)
+                .setMessage(R.string.exit_game_message)
                 .setPositiveButton(R.string.yes)
                 { _, _ ->listener.onDialogPositiveClick(this) }
                 .setNegativeButton(R.string.cancel)

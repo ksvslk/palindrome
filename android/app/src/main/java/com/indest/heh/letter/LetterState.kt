@@ -1,12 +1,12 @@
-package com.indest.oc.letter
+package com.indest.heh.letter
 
 import android.animation.ObjectAnimator
 import android.view.MotionEvent
 import android.view.View
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
-import com.indest.oc.letter.effects.ColorSelector
-import com.indest.oc.util.NEUTRAL_LAYER
-import com.indest.oc.util.TOP_LAYER
+import com.indest.heh.letter.effects.ColorSelector
+import com.indest.heh.util.C.NEUTRAL_LAYER
+import com.indest.heh.util.C.TOP_LAYER
 import kotlin.math.abs
 import kotlin.math.log2
 

@@ -1,29 +1,31 @@
-package com.indest.oc.persistance
+package com.indest.heh.persistance
 
+import android.util.Log
 import androidx.room.*
+import com.indest.heh.persistance.dto.LetterProperties
+import com.indest.heh.persistance.dto.Level
+import com.indest.heh.persistance.dto.LevelData
 
 @Dao
 interface LevelDao {
 
-    @Delete
-    suspend fun delete(level: Level)
-
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(level: Level)
+    suspend fun insert(levelInfo: LevelData)
 
-    @Query("select * from level_info_table where level_id = :key")
-    suspend fun get(key: Int): Level
+    @Transaction
+    @Query("select * from level_info_table where level_id = :nr")
+    suspend fun getLevel(nr: Int): Level
 
     // TODO: change progress to 1
     @Transaction
     @Query("select * from level_info_table where progress = 0 order by level_id asc limit 1")
-    suspend fun getLastLevel(): LevelAndLetterInfo
+    suspend fun getLastLevel(): Level
 
     @Query("update level_info_table set puzzle = :newPuzzle where level_id = :level")
     suspend fun updateLevelPuzzle(level: Int, newPuzzle: String)
 
     @Query("insert into letter_info_table (owner_id, home_index, friend_index, letter) values(:level, :homeIndex, :friendIndex, :letter)")
-    suspend fun insertLetterInfo(level: Int, homeIndex:Int, friendIndex:Int, letter:Char)
+    suspend fun insertLetterData(level: Int, homeIndex:Int, friendIndex:Int, letter:Char)
 
     @Query("update letter_info_table set home_index = :newIndex where home_index = :oldIndex and owner_id = :level")
     suspend fun updateHomeIndex(oldIndex:Int, newIndex:Int, level: Int)
@@ -42,6 +44,26 @@ interface LevelDao {
         updateHomeIndex(-420, index2, level)
     }
 
-    @Query("delete from letter_info_table")
-    suspend fun deleteLetterInfo()
+    @Update
+    suspend fun updateLevelData(levelInfo: LevelData)
+
+    @Update
+    suspend fun updateLettersProperties(level: List<LetterProperties>)
+
+    @Transaction
+    suspend fun updateLevels(levels: List<Level>)
+    {
+        levels.forEach {
+            updateLevelData(it.levelInfo)
+            updateLettersProperties(it.lettersProperties)
+        }
+    }
+
+    @Transaction
+    @Query("select * from level_info_table")
+    suspend fun getAllLevels(): List<Level>
+
+    @Query("select last_modified_timestamp from meta_data limit 1")
+    suspend fun getLocalLastModifiedTimestamp(): Long
+
 }

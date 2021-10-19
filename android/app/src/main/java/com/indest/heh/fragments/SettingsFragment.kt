@@ -10,12 +10,12 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.gms.common.SignInButton
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.indest.heh.databinding.SettingsMenuDialogBinding
+import com.indest.heh.databinding.SettingsFragmentBinding
 
-class SettingsDialogFragment : BottomSheetDialogFragment() {
-    private val TAG = "SettingsDialogFragment"
+class SettingsFragment : BottomSheetDialogFragment() {
+    private val TAG = "SettingsFragment"
     private val startActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
-    private lateinit var binding: SettingsMenuDialogBinding
+    private lateinit var binding: SettingsFragmentBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -23,7 +23,7 @@ class SettingsDialogFragment : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         Log.i(TAG, "onCreateView")
-        binding = SettingsMenuDialogBinding.inflate(layoutInflater, container, false)
+        binding = SettingsFragmentBinding.inflate(layoutInflater, container, false)
         binding.soundButton.setOnClickListener {
             Toast.makeText(requireContext(), "Turn sound ON/OFF", Toast.LENGTH_LONG).show()
         }

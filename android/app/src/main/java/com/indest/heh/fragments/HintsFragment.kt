@@ -9,12 +9,12 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.indest.heh.databinding.HintsMenuDialogBinding
+import com.indest.heh.databinding.HintsFragmentBinding
 
-class HintsDialogFragment : BottomSheetDialogFragment() {
-    private val TAG = "HintsDialogFragment"
+class HintsFragment : BottomSheetDialogFragment() {
+    private val TAG = "HintsFragment"
     private val startActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
-    private lateinit var binding: HintsMenuDialogBinding
+    private lateinit var binding: HintsFragmentBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -23,7 +23,7 @@ class HintsDialogFragment : BottomSheetDialogFragment() {
     ): View {
 
         Log.i(TAG, "onCreateView")
-        binding = HintsMenuDialogBinding.inflate(layoutInflater, container, false)
+        binding = HintsFragmentBinding.inflate(layoutInflater, container, false)
         binding.categoryRevealButton.setOnClickListener {
             Toast.makeText(requireContext(), "Reveal category rewarded.", Toast.LENGTH_LONG).show()
         }

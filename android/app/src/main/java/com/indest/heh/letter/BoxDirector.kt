@@ -1,4 +1,4 @@
-package com.indest.oc.letter
+package com.indest.heh.letter
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
@@ -8,12 +8,13 @@ import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.coroutineScope
-import com.indest.oc.letter.effects.ColorSelector
-import com.indest.oc.letter.effects.SoundSelector
-import com.indest.oc.persistance.Level
-import com.indest.oc.persistance.LevelRepository
-import com.indest.oc.util.MIDDLE_LAYER
-import com.indest.oc.util.TOP_LAYER
+import com.indest.heh.letter.effects.ColorSelector
+import com.indest.heh.letter.effects.SoundSelector
+import com.indest.heh.persistance.dto.LevelData
+import com.indest.heh.persistance.LevelRepository
+import com.indest.heh.persistance.dto.Level
+import com.indest.heh.util.C.MIDDLE_LAYER
+import com.indest.heh.util.C.TOP_LAYER
 import javax.inject.Inject
 import kotlin.math.abs
 import dagger.hilt.android.scopes.ActivityScoped
@@ -32,7 +33,7 @@ class BoxDirector @Inject constructor(
 ): LifecycleObserver {
     private val TAG = "BoxDirector"
     var boxes: MutableList<IBox> = ArrayList()
-    lateinit var currentLevel: Level
+    lateinit var currentLevelInfo: LevelData
     lateinit var scope: CoroutineScope
 
     fun registerLifeCycleOwner(lifecycle: Lifecycle)
@@ -104,12 +105,12 @@ class BoxDirector @Inject constructor(
             levelRepository.updateLetter(
                 homeIndex = topIndex,
                 letter = bottomLetter,
-                level = currentLevel.levelId
+                level = currentLevelInfo.levelId
             )
             levelRepository.updateLetter(
                 homeIndex = bottomIndex,
                 letter = topLetter,
-                level = currentLevel.levelId
+                level = currentLevelInfo.levelId
             )
         }
 
@@ -151,7 +152,7 @@ class BoxDirector @Inject constructor(
             levelRepository.updateFriendIndex(
                 homeIndex = letter.homeIndex,
                 newFriendIndex = slot.homeIndex,
-                level = currentLevel.levelId
+                level = currentLevelInfo.levelId
             )
         }
     }
@@ -215,7 +216,7 @@ class BoxDirector @Inject constructor(
                 levelRepository.updateFriendIndex(
                     homeIndex = letter.homeIndex,
                     newFriendIndex = -666,
-                    level = currentLevel.levelId
+                    level = currentLevelInfo.levelId
                 )
             }
 
@@ -270,6 +271,33 @@ class BoxDirector @Inject constructor(
         } else if (top.hasFriend() && !bottom.hasFriend()) {
             bottom.setFriend(topFriend)
             top.setFriend(null)
+        }
+    }
+
+    fun restoreSlotPlacements(info: Level) {
+        Log.i(TAG, "restoreSlotPlacements")
+        when {
+            info.lettersProperties.isNotEmpty() -> {
+                info.lettersProperties.forEach { li ->
+                    if (li.friendIndex != -666) {
+                        val slot = boxes.find { it.homeIndex == li.friendIndex } as Slot
+                        val letter = boxes.filterIsInstance<Letter>()
+                            .find { it.homeIndex == li.homeIndex } as Letter
+                        letter.x = slot.x
+                        letter.y = slot.y
+                        letter.setFriend(slot)
+                        slot.setFriend(letter)
+                        letter.friendIndex = slot.homeIndex
+                        letter.currentPos = slot.pos
+                        val colors = letter.effects.getColors(ColorSelector.ACTION_DOWN_FRIEND)
+                        letter.setBackgroundColor(colors.viewEnd)
+                    }
+                }
+            }
+        }
+
+        boxes.filterIsInstance<Letter>().forEach {
+            it.state = LetterState.HOME
         }
     }
 }

@@ -7,8 +7,8 @@
     android:layout_gravity="center"
     android:clipChildren="false"
     app:columnCount="3"
+    android:background="@color/colorBackground"
     android:animateLayoutChanges="true"
     android:splitMotionEvents="false"
     android:visibility="visible"
-    app:useDefaultMargins="true">
-</androidx.gridlayout.widget.GridLayout>
+    app:useDefaultMargins="true"/>

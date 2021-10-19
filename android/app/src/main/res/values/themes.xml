@@ -15,27 +15,47 @@
         <item name="colorError">@color/colorError</item>
         <item name="colorOnError">@color/colorOnError</item>
 
+        <item name="android:navigationBarColor">@color/navigationBarColor</item>
     </style>
 
     <!-- Base application theme. -->
     <style name="Base.Theme.OC" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:windowActionBar">false</item>
+       <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowActionBarOverlay">true</item>
         <item name="fontFamily">@font/yantramanav_bold</item>
         <item name="android:transitionName">@transition/level_number_transition</item>
-
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <item name="materialAlertDialogTheme">@style/ThemeOverlay.App.MaterialAlertDialog</item>
-        <item name="android:windowActionBarOverlay">true</item>
+        <item name="bottomSheetDialogTheme">@style/HehBottomSheetDialogTheme</item>
+        <item name="bottomNavigationStyle">@style/Widget.MaterialComponents.BottomNavigationView</item>
+    </style>
 
+    <style name="HehBottomSheetDialogTheme" parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/HehCustomBottomSheet</item>
+    </style>
+
+    <style name="HehCustomBottomSheet" parent="Widget.MaterialComponents.BottomSheet">
+        <item name="shapeAppearanceOverlay">@style/CustomShapeAppearanceBottomSheetDialog</item>
+    </style>
+
+    <style name="CustomShapeAppearanceBottomSheetDialog">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopRight">@dimen/default_large_margin</item>
+        <item name="cornerSizeTopLeft">@dimen/default_large_margin</item>
+        <item name="android:layout_margin">@dimen/default_large_margin</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
     </style>
 
     <style name="ThemeOverlay.App.MaterialAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
         <item name="colorPrimary">@color/colorOnPrimary</item>
+        <item name="colorSecondary">@color/colorSecondary</item>
         <item name="colorSurface">@color/colorSurface</item>
         <item name="colorOnSurface">@color/colorOnPrimary</item>
+        <item name="android:backgroundTint">@color/colorSurface</item>
+        <item name="titleTextColor">@color/colorSurface</item>
     </style>
+
 </resources>

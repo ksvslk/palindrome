@@ -1,6 +1,67 @@
-<?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:app="http://schemas.android.com/apk/res-auto"
-             android:id="@+id/navigation_graph">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_graph"
+    app:startDestination="@id/navigation_home">
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="com.indest.heh.fragments.HomeFragment"
+        android:label="Loading"
+        tools:layout="@layout/home_fragment" >
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_google_games"
+            app:destination="@id/navigation_google_games" />
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_hints"
+            app:destination="@id/navigation_hints" />
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_settings"
+            app:destination="@id/navigation_settings" />
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_gameplay"
+            app:destination="@id/navigation_gameplay"
+            app:enterAnim="@anim/slide_in_bottom"
+            app:exitAnim="@anim/slide_out_top"
+            app:popEnterAnim="@anim/fade_in_short"
+            app:popExitAnim="@anim/fade_out_short" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_gameplay"
+        android:name="com.indest.heh.fragments.GamePlayFragment"
+        android:label="GamePlayFragment"
+        tools:layout="@layout/gameplay_fragment"/>
+
+    <dialog
+        android:id="@+id/navigation_hints"
+        android:name="com.indest.heh.fragments.HintsFragment"
+        android:label="@string/hints"
+        tools:layout="@layout/hints_fragment" >
+        <action
+            android:id="@+id/action_navigation_hints_to_navigation_home"
+            app:destination="@id/navigation_home" />
+    </dialog>
+
+    <dialog
+        android:id="@+id/navigation_google_games"
+        android:name="com.indest.heh.fragments.GoogleGamesFragment"
+        android:label="@string/google"
+        tools:layout="@layout/google_games_fragment" >
+        <action
+            android:id="@+id/action_navigation_google_games_to_navigation_home"
+            app:destination="@id/navigation_home" />
+    </dialog>
+    <dialog
+        android:id="@+id/navigation_settings"
+        android:name="com.indest.heh.fragments.SettingsFragment"
+        android:label="@string/settings"
+        tools:layout="@layout/settings_fragment" >
+        <action
+            android:id="@+id/action_navigation_settings_to_navigation_home"
+            app:destination="@id/navigation_home" />
+    </dialog>
+
+
 
 </navigation>

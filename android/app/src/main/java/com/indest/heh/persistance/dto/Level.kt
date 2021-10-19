@@ -1,4 +1,4 @@
-package com.indest.heh.persistance
+package com.indest.heh.persistance.dto
 
 import androidx.room.Embedded
 import androidx.room.Relation
@@ -9,5 +9,5 @@ class Level(
         parentColumn = "level_id",
         entityColumn = "owner_id"
     )
-    val lettersInfo: List<LetterInfo>,
+    val lettersProperties: List<LetterProperties>,
 )

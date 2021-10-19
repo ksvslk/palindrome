@@ -1,4 +1,4 @@
-package com.indest.oc.persistance
+package com.indest.heh.persistance
 
 import androidx.room.TypeConverter
 import com.google.gson.Gson

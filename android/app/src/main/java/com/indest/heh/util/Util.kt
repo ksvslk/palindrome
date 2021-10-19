@@ -1,9 +1,9 @@
-package com.indest.oc.util
+package com.indest.heh.util
 
 import android.content.res.Configuration.ORIENTATION_PORTRAIT
 import androidx.core.view.children
 import androidx.gridlayout.widget.GridLayout
-import com.indest.oc.letter.Letter
+import com.indest.heh.letter.Letter
 import java.util.*
 import kotlin.random.Random
 
@@ -38,7 +38,7 @@ object Util {
                 return DensitySettings(
                     ds.columnCount,
                     (ds.boxSize * density + 0.5).toInt(),
-                    ds.textSize * scaledDensity,
+                    ds.textSize * scaledDensity / 1.2f,
                     ORIENTATION_PORTRAIT
                 )
             in 3.0f..Float.MAX_VALUE ->

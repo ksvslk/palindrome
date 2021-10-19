@@ -1,4 +1,4 @@
-package com.indest.heh.persistance
+package com.indest.heh.persistance.dto
 
 import androidx.room.*
 
@@ -13,7 +13,7 @@ import androidx.room.*
     tableName = "letter_info_table",
     indices = [Index(value = ["owner_id"])]
 )
-data class LetterInfo(
+data class LetterProperties(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "info_id")
     val infoId: Int,
@@ -24,5 +24,5 @@ data class LetterInfo(
     @ColumnInfo(name = "friend_index")
     val friendIndex: Int,
     @ColumnInfo(name = "letter")
-    val letter: Char,
+    val letter: Char
 )

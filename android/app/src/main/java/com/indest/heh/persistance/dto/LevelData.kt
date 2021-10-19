@@ -1,8 +1,9 @@
-package com.indest.heh.persistance
+package com.indest.heh.persistance.dto
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.indest.heh.persistance.LevelProgress
 
 @Entity(tableName = "level_info_table")
 data class LevelData(

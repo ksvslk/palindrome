@@ -1,13 +1,19 @@
-package com.indest.oc.util
+package com.indest.heh.util
 
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.fragment.app.Fragment
 
-fun AppCompatActivity.initInsetsController(viewGroup: ViewGroup) : WindowInsetsControllerCompat {
+fun AppCompatActivity.hideSystemBars(viewGroup: ViewGroup) {
     val insetsController = WindowInsetsControllerCompat(window, viewGroup)
     insetsController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
     insetsController.hide(WindowInsetsCompat.Type.systemBars())
-    return insetsController
+}
+
+fun Fragment.hideSystemBars(viewGroup: ViewGroup) {
+    val insetsController = WindowInsetsControllerCompat(requireActivity().window, viewGroup)
+    insetsController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+    insetsController.hide(WindowInsetsCompat.Type.navigationBars())
 }

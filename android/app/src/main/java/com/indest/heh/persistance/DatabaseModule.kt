@@ -1,4 +1,4 @@
-package com.indest.oc.persistance
+package com.indest.heh.persistance
 
 import android.content.Context
 import dagger.Module

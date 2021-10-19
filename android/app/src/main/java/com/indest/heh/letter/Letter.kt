@@ -1,4 +1,4 @@
-package com.indest.oc.letter
+package com.indest.heh.letter
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -7,9 +7,9 @@ import android.graphics.Rect
 import android.util.Log
 import android.view.MotionEvent
 import androidx.appcompat.widget.AppCompatTextView
-import com.indest.oc.letter.effects.Effects
-import com.indest.oc.letter.effects.SoundSelector
-import com.indest.oc.util.NEUTRAL_LAYER
+import com.indest.heh.letter.effects.Effects
+import com.indest.heh.letter.effects.SoundSelector
+import com.indest.heh.util.C.NEUTRAL_LAYER
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlin.math.roundToInt

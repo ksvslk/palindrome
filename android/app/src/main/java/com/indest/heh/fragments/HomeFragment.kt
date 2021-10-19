@@ -1,7 +1,6 @@
 package com.indest.heh.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -12,13 +11,13 @@ import com.indest.heh.R
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class LoadingFragment : Fragment(R.layout.loading_fragment) {
+class HomeFragment : Fragment(R.layout.home_fragment) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.i("LoadingFragment", "WE GO THROUGH LOADING FRAGMETN")
         super.onCreate(savedInstanceState)
         //TODO: Load level from cloud/persistence and pass along
-        val result = "result"
+
+        val result = 2
         // Use the Kotlin extension in the fragment-ktx artifact
         setFragmentResult("requestKey", bundleOf("bundleKey" to result))
     }

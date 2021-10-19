@@ -1,4 +1,4 @@
-package com.indest.oc.letter.effects
+package com.indest.heh.letter.effects
 
 import android.content.Context
 import android.media.AudioManager
@@ -7,11 +7,11 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import androidx.core.content.ContextCompat
-import com.indest.oc.R
-import com.indest.oc.letter.effects.ColorSelector.ACTION_DOWN_NO_FRIEND
-import com.indest.oc.letter.effects.ColorSelector.ACTION_UP_FRIEND
-import com.indest.oc.letter.effects.ColorSelector.ACTION_UP_NO_FRIEND
-import com.indest.oc.letter.effects.ColorSelector.ACTION_DOWN_FRIEND
+import com.indest.heh.R
+import com.indest.heh.letter.effects.ColorSelector.ACTION_DOWN_NO_FRIEND
+import com.indest.heh.letter.effects.ColorSelector.ACTION_UP_FRIEND
+import com.indest.heh.letter.effects.ColorSelector.ACTION_UP_NO_FRIEND
+import com.indest.heh.letter.effects.ColorSelector.ACTION_DOWN_FRIEND
 import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Inject
@@ -38,7 +38,7 @@ class Effects @Inject constructor(@ActivityContext val context: Context) {
     private val actionUpSoundId = soundPool.load(context, R.raw.action_up, 1)
     private val draggingSoundId = soundPool.load(context, R.raw.drums, 1)
 
-    // Dragging loop id
+    // Dragging loop idmm
     private var draggingLoopStream = -1
 
     // Colors
@@ -46,27 +46,27 @@ class Effects @Inject constructor(@ActivityContext val context: Context) {
         viewStart = ContextCompat.getColor(context, R.color.colorPrimary),
         viewEnd = ContextCompat.getColor(context, R.color.colorSecondary),
         textStart = ContextCompat.getColor(context, R.color.colorOnPrimary),
-        textEnd = ContextCompat.getColor(context, R.color.colorOnSecondary)
+        textEnd = ContextCompat.getColor(context, R.color.colorOnPrimary)
     )
 
     private val actionDownFriend = AnimationColor(
         viewStart = ContextCompat.getColor(context, R.color.colorSecondary),
         viewEnd = ContextCompat.getColor(context, R.color.colorSecondary),
         textStart = ContextCompat.getColor(context, R.color.colorOnPrimary),
-        textEnd = ContextCompat.getColor(context, R.color.colorOnSecondary)
+        textEnd = ContextCompat.getColor(context, R.color.colorOnPrimary)
     )
 
     private val actionUpNoFriend = AnimationColor(
         viewStart = ContextCompat.getColor(context, R.color.colorSecondary),
         viewEnd = ContextCompat.getColor(context, R.color.colorPrimary),
-        textStart = ContextCompat.getColor(context, R.color.colorOnSecondary),
+        textStart = ContextCompat.getColor(context, R.color.colorOnPrimary),
         textEnd = ContextCompat.getColor(context, R.color.colorOnPrimary)
     )
 
     private val actionUpFriend = AnimationColor(
         viewStart = ContextCompat.getColor(context, R.color.colorSecondary),
         viewEnd = ContextCompat.getColor(context, R.color.colorSecondary),
-        textStart = ContextCompat.getColor(context, R.color.colorOnSecondary),
+        textStart = ContextCompat.getColor(context, R.color.colorOnPrimary),
         textEnd = ContextCompat.getColor(context, R.color.colorOnPrimary)
     )
 

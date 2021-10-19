@@ -1,12 +1,14 @@
-package com.indest.oc.persistance
+package com.indest.heh.persistance
 
+import android.content.ContentValues
 import android.content.Context
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
+import androidx.room.*
+import androidx.sqlite.db.SupportSQLiteDatabase
+import com.indest.heh.persistance.dto.LetterProperties
+import com.indest.heh.persistance.dto.LevelData
+import com.indest.heh.persistance.dto.MetaData
 
-@Database(entities = [Level::class, LetterInfo::class], version = 1, exportSchema = true)
+@Database(entities = [LevelData::class, LetterProperties::class, MetaData::class], version = 1, exportSchema = true)
 @TypeConverters(Converters::class)
 abstract class LevelDatabase : RoomDatabase() {
 
@@ -29,6 +31,20 @@ abstract class LevelDatabase : RoomDatabase() {
                     )
                         //.createFromAsset("level_info_database.db")
                         .fallbackToDestructiveMigration()
+                        .addCallback(object: RoomDatabase.Callback() {
+                            override fun onCreate(db: SupportSQLiteDatabase) {
+                                super.onCreate(db)
+                                val trigger = "create trigger level_updated\n" +
+                                        "after update on letter_info_table\n" +
+                                        "begin\n" +
+                                        "update meta_data set last_modified_timestamp = (CAST((julianday('now') - 2440587.5)*86400000 AS INTEGER));\n" +
+                                        "end;"
+                                db.execSQL(trigger)
+                                val contentValues = ContentValues()
+                                contentValues.put("last_modified_timestamp", 0)
+                                db.insert("meta_data", OnConflictStrategy.IGNORE, contentValues)
+                            }
+                        })
                         .build()
                     INSTANCE = instance
                 }

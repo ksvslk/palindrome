@@ -8,21 +8,21 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.indest.heh.databinding.TestActivityLayoutBinding
+import com.indest.heh.databinding.ActivityGameBinding
 import com.indest.heh.util.hideSystemBars
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class TestActivity : AppCompatActivity(){
+class GameActivity : AppCompatActivity(){
 
-    private val TAG = "TestActivity"
-    private lateinit var binding: TestActivityLayoutBinding
+    private val TAG = "GameActivity"
+    private lateinit var binding: ActivityGameBinding
     private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate")
         super.onCreate(savedInstanceState)
-        binding = TestActivityLayoutBinding.inflate(layoutInflater)
+        binding = ActivityGameBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         val navView: BottomNavigationView = binding.navView

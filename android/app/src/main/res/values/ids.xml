@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--Google Play game services IDs. Save this file as res/values/games-ids.xml in your project.-->
+<!--Google Play game services IDs. Save this file as res/values/ids.xml in your project.-->
 <resources>
     <!--app_id-->
     <string name="app_id" translatable="false">1055106104525</string>
@@ -7,4 +7,6 @@
     <string name="package_name" translatable="false">com.indest.heh</string>
     <!--achievement Test-->
     <string name="achievement_test" translatable="false">CgkIzfnlydoeEAIQAQ</string>
+    <!--achievement Test 2-->
+    <string name="achievement_test_2" translatable="false">CgkIzfnlydoeEAIQAg</string>
 </resources>

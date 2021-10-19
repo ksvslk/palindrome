@@ -18,4 +18,7 @@
     <color name="colorError">#EE3502</color>
     <color name="colorOnError">#00171f</color>
 
+    <color name="navigationBarColor">#BF00171F</color>
+    <color name="itemDividerColor">#242E32</color>
+
 </resources>

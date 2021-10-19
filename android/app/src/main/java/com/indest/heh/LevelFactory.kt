@@ -2,19 +2,58 @@ package com.indest.heh;
 
 import android.content.Context
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.widget.Space
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.children
+import androidx.core.view.doOnPreDraw
 import androidx.gridlayout.widget.GridLayout
-import com.indest.heh.letter.BoxDirector
-import com.indest.heh.letter.Letter
-import com.indest.heh.letter.LetterState
+import androidx.lifecycle.LifecycleCoroutineScope
+import com.indest.heh.letter.*
 import com.indest.heh.persistance.dto.Level
 import com.indest.heh.util.DensitySettings
+import com.indest.heh.util.Util
+import kotlinx.coroutines.launch
 
-object B {
+object LevelFactory {
 
-    fun addLetters(grid: GridLayout, ds: DensitySettings, info: Level, boxDirector: BoxDirector, context:Context): GridLayout {
+    /*
+    Creates a new level and restores box positions based on the level info and context.
+    If level is created the first time persists letters positions to database.
+    Returned view is ready to be added into the container in GamePlayFragment.
+     */
+    fun getLevel(info: Level,
+                 boxDirector: BoxDirector,
+                 context: Context,
+                 layoutInflater: LayoutInflater,
+                 container: LinearLayoutCompat,
+                 scope: LifecycleCoroutineScope
+    ): GridLayout
+    {
+        val puzzle = info.levelInfo.puzzle
+        val densitySettings = Util.getDensitySettings(
+            context.resources.displayMetrics.density,
+            context.resources.displayMetrics.scaledDensity,
+            puzzle
+        )
+        val level = layoutInflater.inflate(R.layout.grid, container, false) as GridLayout
+        level.columnCount = densitySettings.columnCount
+        addLetters(level, densitySettings, info, boxDirector, context)
+        addBlanks(densitySettings.columnCount, level, layoutInflater)
+        addSlots(puzzle, level, densitySettings, context)
+
+        boxDirector.boxes = level.children.filterIsInstance<IBox>().toMutableList()
+        level.doOnPreDraw {
+            boxDirector.restoreSlotPlacements(info)
+            if (info.lettersProperties.isEmpty()) persistInitialLettersInfo(scope, boxDirector)
+        }
+
+        return level
+    }
+
+    private fun addLetters(grid: GridLayout, ds: DensitySettings, info: Level, boxDirector: BoxDirector, context:Context) {
         // Also part of restoring the state
         val puzzle = if (info.lettersProperties.isEmpty()) boxDirector.currentLevelInfo.puzzle
         else {
@@ -58,8 +97,47 @@ object B {
         for (i in 1..ds.columnCount - someValue) {
             grid.addView(Space(context))
         }
+    }
 
-        return grid
+    private fun addSlots(puzzle: String, grid: GridLayout, ds: DensitySettings, context: Context) {
+        val solutionRows = Util.getSolutionRows(puzzle, ds.columnCount)
+        for (row in solutionRows) {
+            for (char in row) {
+                when (char) {
+                    ' ' -> grid.addView(Space(context))
+                    else -> grid.addView(Slot(context).apply {
+                        textSize = ds.textSize
+                        width = ds.boxSize
+                        height = ds.boxSize
+                        background =
+                            ResourcesCompat.getDrawable(resources, R.drawable.slot_edge_fade, null)
+                        typeface = ResourcesCompat.getFont(context, R.font.yantramanav_bold)
+                        gravity = Gravity.CENTER
+                        setTextColor(ContextCompat.getColor(context, R.color.colorSecondaryVariant))
+                        text = " "
+                    })
+                }
+            }
+        }
+    }
+
+    private fun addBlanks(columnCount: Int, grid: GridLayout, layoutInflater: LayoutInflater) {
+        for (i in 1..columnCount) {
+            layoutInflater.inflate(R.layout.space, grid)
+        }
+    }
+
+    private fun persistInitialLettersInfo(scope:LifecycleCoroutineScope, boxDirector: BoxDirector) {
+        scope.launch {
+            boxDirector.boxes.filterIsInstance<Letter>().forEach {
+                boxDirector.levelRepository.insertLetterInfo(
+                    level = boxDirector.currentLevelInfo.levelId,
+                    homeIndex = it.homeIndex,
+                    friendIndex = it.friendIndex,
+                    letter = it.text.first()
+                )
+            }
+        }
     }
 
 }

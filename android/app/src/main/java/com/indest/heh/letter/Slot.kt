@@ -1,11 +1,11 @@
-package com.indest.oc.letter
+package com.indest.heh.letter
 
 import android.content.Context
 import android.graphics.Rect
 import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
-import com.indest.oc.util.BOTTOM_LAYER
+import com.indest.heh.util.C.BOTTOM_LAYER
 import kotlin.math.roundToInt
 
 class Slot constructor(

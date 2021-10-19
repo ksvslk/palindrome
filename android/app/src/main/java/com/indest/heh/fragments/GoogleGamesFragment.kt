@@ -11,13 +11,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.games.Games
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.indest.heh.databinding.GamesDialogFragmentBinding
+import com.indest.heh.databinding.GoogleGamesFragmentBinding
 
-class GamesDialogFragment : BottomSheetDialogFragment() {
+class GoogleGamesFragment : BottomSheetDialogFragment() {
 
-    private val TAG = "GamesDialogFragment"
+    private val TAG = "GoogleGamesFragment"
     private val startActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
-    private lateinit var binding: GamesDialogFragmentBinding
+    private lateinit var binding: GoogleGamesFragmentBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -26,7 +26,7 @@ class GamesDialogFragment : BottomSheetDialogFragment() {
     ): View {
 
         Log.i(TAG, "onCreateView")
-        binding = GamesDialogFragmentBinding.inflate(layoutInflater, container, false)
+        binding = GoogleGamesFragmentBinding.inflate(layoutInflater, container, false)
         binding.achievementsButton.setOnClickListener {
             showAchievements()
         }
