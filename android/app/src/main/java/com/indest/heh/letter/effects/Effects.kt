@@ -86,7 +86,7 @@ class Effects @Inject constructor(@ActivityContext val context: Context) {
                 soundPool.play(actionUpSoundId,1.0f, 1.0f, 1, 0, 1.0f)
             }
             SoundSelector.DRAGGING_LETTER -> {
-                draggingLoopStream = soundPool.play(draggingSoundId,1.0f, 1.0f, 1, -1, 1.0f)
+                //draggingLoopStream = soundPool.play(draggingSoundId,1.0f, 1.0f, 1, -1, 1.0f)
             }
         }
     }
@@ -95,9 +95,8 @@ class Effects @Inject constructor(@ActivityContext val context: Context) {
     {
         if (audioManager.ringerMode != AudioManager.RINGER_MODE_NORMAL) return
         when (soundSelector) {
-            SoundSelector.DRAGGING_LETTER -> {
-                soundPool.stop(draggingLoopStream)
-            }
+            SoundSelector.DRAGGING_LETTER -> {}
+            else -> {}
         }
     }
 

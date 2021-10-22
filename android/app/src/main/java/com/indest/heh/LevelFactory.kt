@@ -4,13 +4,13 @@ import android.content.Context
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.widget.Space
-import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.children
 import androidx.core.view.doOnPreDraw
 import androidx.gridlayout.widget.GridLayout
 import androidx.lifecycle.LifecycleCoroutineScope
+import com.indest.heh.game.CellContainer
 import com.indest.heh.letter.*
 import com.indest.heh.persistance.dto.Level
 import com.indest.heh.util.DensitySettings
@@ -25,10 +25,9 @@ object LevelFactory {
     Returned view is ready to be added into the container in GamePlayFragment.
      */
     fun getLevel(info: Level,
-                 boxDirector: BoxDirector,
                  context: Context,
                  layoutInflater: LayoutInflater,
-                 container: LinearLayoutCompat,
+                 container: CellContainer,
                  scope: LifecycleCoroutineScope
     ): GridLayout
     {
@@ -40,22 +39,16 @@ object LevelFactory {
         )
         val level = layoutInflater.inflate(R.layout.grid, container, false) as GridLayout
         level.columnCount = densitySettings.columnCount
-        addLetters(level, densitySettings, info, boxDirector, context)
+        addLetters(level, densitySettings, info, context)
         addBlanks(densitySettings.columnCount, level, layoutInflater)
         addSlots(puzzle, level, densitySettings, context)
-
-        boxDirector.boxes = level.children.filterIsInstance<IBox>().toMutableList()
-        level.doOnPreDraw {
-            boxDirector.restoreSlotPlacements(info)
-            if (info.lettersProperties.isEmpty()) persistInitialLettersInfo(scope, boxDirector)
-        }
 
         return level
     }
 
-    private fun addLetters(grid: GridLayout, ds: DensitySettings, info: Level, boxDirector: BoxDirector, context:Context) {
+    private fun addLetters(grid: GridLayout, ds: DensitySettings, info: Level, context:Context) {
         // Also part of restoring the state
-        val puzzle = if (info.lettersProperties.isEmpty()) boxDirector.currentLevelInfo.puzzle
+        val puzzle = if (info.lettersProperties.isEmpty()) info.levelInfo.puzzle
         else {
             info.lettersProperties
                     .sortedBy { it.homeIndex }
@@ -73,7 +66,7 @@ object LevelFactory {
                     Letter(
                             context,
             char,
-            LetterState.INITIALIZING
+            LetterState.HOME
                     )
                         .apply {
                 width = ds.boxSize
@@ -124,19 +117,6 @@ object LevelFactory {
     private fun addBlanks(columnCount: Int, grid: GridLayout, layoutInflater: LayoutInflater) {
         for (i in 1..columnCount) {
             layoutInflater.inflate(R.layout.space, grid)
-        }
-    }
-
-    private fun persistInitialLettersInfo(scope:LifecycleCoroutineScope, boxDirector: BoxDirector) {
-        scope.launch {
-            boxDirector.boxes.filterIsInstance<Letter>().forEach {
-                boxDirector.levelRepository.insertLetterInfo(
-                    level = boxDirector.currentLevelInfo.levelId,
-                    homeIndex = it.homeIndex,
-                    friendIndex = it.friendIndex,
-                    letter = it.text.first()
-                )
-            }
         }
     }
 

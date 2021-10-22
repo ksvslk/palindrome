@@ -1,20 +1,15 @@
 package com.indest.heh.letter
 
 import android.content.Context
-import android.graphics.Rect
 import android.util.Log
 import android.view.View
-import androidx.appcompat.widget.AppCompatTextView
 import com.indest.heh.util.C.BOTTOM_LAYER
-import kotlin.math.roundToInt
 
 class Slot constructor(
     context: Context?
-) : AppCompatTextView(context!!, null), IBox {
-    override var homeIndex: Int = -666
+) : Cell<Slot,Letter>(context!!) {
 
     private var TAG: String = "Slot ${View.generateViewId()}"
-    private var friend: Letter? = null
 
     init {
         z = BOTTOM_LAYER
@@ -26,32 +21,8 @@ class Slot constructor(
         super.onSizeChanged(w, h, oldw, oldh)
     }
 
-override val pos: GlobalPosition
-        get() {
-            return GlobalPosition(
-                (x + width / 2).roundToInt(),
-                (y + height / 2).roundToInt()
-            )
-        }
-
-    override val rect: Rect
-        get() {
-            val rect = Rect()
-            getGlobalVisibleRect(rect)
-            return rect
-        }
-
-    override fun hasFriend(): Boolean {
-        return friend != null
-    }
-
-    override fun getFriend(): Letter? {
-        return if (hasFriend()) friend
-        else null
-    }
-
-    override fun setFriend(box: IBox?) {
-        friend = box as Letter?
+    override fun setFriend(cell: Cell<Letter, Slot>?) {
+        friend = cell as Letter?
     }
 
     override fun toString(): String {

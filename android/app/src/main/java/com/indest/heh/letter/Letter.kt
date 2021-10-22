@@ -3,17 +3,13 @@ package com.indest.heh.letter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Rect
 import android.util.Log
 import android.view.MotionEvent
-import androidx.appcompat.widget.AppCompatTextView
 import com.indest.heh.letter.effects.Effects
 import com.indest.heh.letter.effects.SoundSelector
 import com.indest.heh.util.C.NEUTRAL_LAYER
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-import kotlin.math.roundToInt
-import kotlin.properties.Delegates
 
 @SuppressLint("ViewConstructor")
 @AndroidEntryPoint
@@ -21,40 +17,16 @@ class Letter @Inject constructor(
     context: Context,
     letter: String?,
     initialState: LetterState
-) : AppCompatTextView(context), IBox {
-    var friendIndex: Int = -666
-    override var homeIndex: Int = -666
-    private var TAG: String = "Letter $letter"
-
-    @Inject
-    lateinit var director: BoxDirector
+) : Cell<Letter, Slot>(context) {
 
     @Inject
     lateinit var effects: Effects
-    var dX: Float = 0.0f
-    var dY: Float = 0.0f
-    var state: LetterState by Delegates.observable(initialState) { _, oldValue, newValue ->
-        Log.i(TAG, "$oldValue -> $newValue")
-    }
     lateinit var currentPos: GlobalPosition
     lateinit var homePos: GlobalPosition
-    private var friend: Slot? = null
-
-    override val pos: GlobalPosition
-        get() {
-            return GlobalPosition(
-                (x + width / 2).roundToInt(),
-                (y + height / 2).roundToInt()
-            )
-
-        }
-
-    override val rect: Rect
-        get() {
-            val rect = Rect()
-            getGlobalVisibleRect(rect)
-            return rect
-        }
+    var dX: Float = 0.0f
+    var dY: Float = 0.0f
+    var friendIndex: Int = -666
+    var state: LetterState = initialState
 
     override fun onDraw(canvas: Canvas?) {
         state.draw(this)
@@ -96,27 +68,14 @@ class Letter @Inject constructor(
         super.onSizeChanged(w, h, oldw, oldh)
     }
 
-    override fun hasFriend(): Boolean {
-        return friend != null
-    }
-
-    override fun getFriend(): Slot? {
-        return if (hasFriend()) friend
-        else null
-    }
-
-    override fun setFriend(box: IBox?) {
-        if (box != null) {
-            friend = box as Slot?
-            friendIndex = box.homeIndex
+    override fun setFriend(cell: Cell<Slot,Letter>?) {
+        if (cell != null) {
+            friend = cell as Slot?
+            friendIndex = cell.homeIndex
         } else {
-            friend = box
+            friend = cell
             friendIndex = -666
         }
-    }
-
-    override fun toString(): String {
-        return TAG
     }
 
     init {

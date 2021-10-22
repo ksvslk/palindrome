@@ -2,6 +2,7 @@ package com.indest.heh
 
 import android.os.Bundle
 import android.util.Log
+import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.forEach
 import androidx.navigation.NavController

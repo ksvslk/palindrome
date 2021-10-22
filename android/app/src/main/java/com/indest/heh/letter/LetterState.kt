@@ -3,7 +3,9 @@ package com.indest.heh.letter
 import android.animation.ObjectAnimator
 import android.view.MotionEvent
 import android.view.View
+import androidx.fragment.app.findFragment
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import com.indest.heh.fragments.GamePlayFragment
 import com.indest.heh.letter.effects.ColorSelector
 import com.indest.heh.util.C.NEUTRAL_LAYER
 import com.indest.heh.util.C.TOP_LAYER
@@ -17,31 +19,6 @@ const val TAG = "LetterState"
  * is restricted with this special enum class.
  */
 enum class LetterState : ILetterState {
-
-    DISABLED {
-        override fun draw(l: Letter) {}
-        override fun executeActionDownBehaviour(l: Letter, v: View, e: MotionEvent) {}
-        override fun executeActionMoveBehaviour(l: Letter, v: View, e: MotionEvent) {}
-        override fun executeActionUpBehaviour(l: Letter) {}
-        override fun executeAnimationBehaviour(
-            l: Letter,
-            moveByX: Int,
-            moveByY: Int
-        ) {
-        }
-    },
-    INITIALIZING {
-        override fun draw(l: Letter) {}
-        override fun executeActionDownBehaviour(l: Letter, v: View, e: MotionEvent) {}
-        override fun executeActionMoveBehaviour(l: Letter, v: View, e: MotionEvent) {}
-        override fun executeActionUpBehaviour(l: Letter) {}
-        override fun executeAnimationBehaviour(
-            l: Letter,
-            moveByX: Int,
-            moveByY: Int
-        ) {
-        }
-    },
     HOME {
         override fun draw(l: Letter) {
 
@@ -99,7 +76,7 @@ enum class LetterState : ILetterState {
         override fun executeActionDownBehaviour(l: Letter, v: View, e: MotionEvent) {}
         override fun executeActionMoveBehaviour(l: Letter, v: View, e: MotionEvent) {}
         override fun executeActionUpBehaviour(l: Letter) {
-            l.director.handleCollisions(l)
+            l.findFragment<GamePlayFragment>().cellDirector.handleCollisions(l)
         }
 
         override fun executeAnimationBehaviour(
