@@ -24,4 +24,7 @@
     <color name="navigationBarColor">#80797D88</color>
     <color name="itemDividerColor">#DAD8D8</color>
 
+    <color name="successTextColor">#01A698</color>
+    <color name="successBoxColor">#D8FAF3</color>
+
 </resources>

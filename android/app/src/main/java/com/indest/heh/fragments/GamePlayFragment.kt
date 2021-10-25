@@ -3,29 +3,30 @@ package com.indest.heh.fragments
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Context
-import android.graphics.Color
+import android.media.AudioManager
+import android.media.SoundPool
+import android.os.Build
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.util.Log
 import android.view.*
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.children
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
-import androidx.interpolator.view.animation.FastOutLinearInInterpolator
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
 import com.indest.heh.LevelFactory
 import com.indest.heh.R
 import com.indest.heh.databinding.GameplayFragmentBinding
 import com.indest.heh.game.GameState
 import com.indest.heh.game.GameViewModel
 import com.indest.heh.letter.*
-import com.indest.heh.letter.effects.ColorSelector
-import com.indest.heh.persistance.dto.Level
+import com.indest.heh.game.AnimationFactory
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.properties.Delegates
 
 @AndroidEntryPoint
 class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
@@ -35,6 +36,16 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     var cellDirector: CellDirector = CellDirector(this)
     val gameViewModel: GameViewModel by viewModels()
     var gameState: GameState = GameState.BUSY
+    private lateinit var soundPool: SoundPool
+    private var levelCompleteSound by Delegates.notNull<Int>()
+    private lateinit var audioManager:AudioManager
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        audioManager = requireContext().getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        soundPool = SoundPool.Builder().build()
+        levelCompleteSound = soundPool.load(requireContext(), R.raw.level_complete, 1)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,10 +66,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     }
 
     private fun loadLevel(levelNr: Int) {
-        Log.i(TAG, viewLifecycleOwner.lifecycle.currentState.toString())
         gameViewModel.level
             .observe(viewLifecycleOwner, { levelAndLettersInfo ->
-                Log.i(TAG, levelAndLettersInfo.toString())
                 val level = LevelFactory.getLevel(
                     levelAndLettersInfo,
                     requireContext(),
@@ -75,72 +84,92 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 }
                 binding.gameplayFragment.addView(level)
                 gameState = GameState.READY
+                handleGameSolutions()
             })
     }
 
-    fun checkSolution() {
-        val boxes = cellDirector.cells
-        val letters = boxes.filterIsInstance<Slot>().mapNotNull {
-            if (it.getTheFriend()?.text?.contains("^([?!.,’])".toRegex()) == false) it.getTheFriend()
-            else null
-        }
-        val odd = letters.size % 2 != 0
-        val pairs = letters.foldIndexed(mutableListOf(), { index: Int,
-                                                           acc: List<Pair<Letter, Any>>,
-                                                           l: Letter ->
-            if (index < letters.size / 2) acc + Pair(l, letters[letters.size - 1 - index])
-            else if (index == letters.size / 2 && odd) acc + Pair(l, "*")
-            else acc
+    private fun handleGameSolutions() {
+        gameViewModel.realSolutionAndGuess.observe(viewLifecycleOwner, {
+            Log.i(TAG, it.toString())
+            if (it.first?.length == it.second?.length) {
+                when {
+                    it.first == it.second -> {
+                        Log.i(TAG, "Solution is correct! ${it.first}, ${it.second}")
+                        playCorrectSolutionAnimation()
+                    }
+                    it.second?.reversed() == it.second -> {
+                        Log.i(
+                            TAG,
+                            "It is a palindrome, but not the correct one :( ${it.first}, ${it.second}"
+                        )
+                        playWrongSolutionAnimation(isPalindrome = true)
+                    }
+                    else -> {
+                        Log.i(TAG, "It is not the correct solution ${it.first}, ${it.second}")
+                        playWrongSolutionAnimation(isPalindrome = false)
+                    }
+                }
+            }
         })
+    }
 
+    private fun playCorrectSolutionAnimation() {
+        val successTextColor =
+            ResourcesCompat.getColor(resources, R.color.successTextColor, requireContext().theme)
+        val currentBoxColor =
+            ResourcesCompat.getColor(resources, R.color.colorSecondary, requireContext().theme)
+        val boxSuccessColor =
+            ResourcesCompat.getColor(resources, R.color.successBoxColor, requireContext().theme)
+
+        val animatorSet = AnimationFactory.getCorrectSolutionAnimation(
+            successTextColor,
+            currentBoxColor,
+            boxSuccessColor,
+            cellDirector.cells
+        )
+
+        if (audioManager.ringerMode == AudioManager.RINGER_MODE_NORMAL) {
+            soundPool.play(levelCompleteSound, 1.0f, 1.0f, 1, 0, 1.0f)
+        }
+        animatorSet.start()
+    }
+
+    private fun playWrongSolutionAnimation(isPalindrome: Boolean = false) {
         val animatorSet = AnimatorSet()
-        for (p in pairs) {
-            val colorCurrent = p.first.effects.getColors(ColorSelector.ACTION_DOWN_FRIEND).viewStart
-            val textColorCurrent =
-                p.first.effects.getColors(ColorSelector.ACTION_DOWN_FRIEND).textStart
-            val animations = animatorSet.childAnimations
-            if (p.second is Letter) {
-                val color =
-                    if (p.first.text == (p.second as Letter).text) Color.GREEN else Color.BLACK
-                val textColor =
-                    if (p.first.text == (p.second as Letter).text) textColorCurrent else Color.WHITE
-                val a1 =
-                    ObjectAnimator.ofArgb(p.first, "backgroundColor", colorCurrent, color).apply {
-                        interpolator = FastOutLinearInInterpolator()
-                        duration = 350
-                    }
-                val a2 =
-                    ObjectAnimator.ofArgb(p.second, "backgroundColor", colorCurrent, color).apply {
-                        interpolator = FastOutLinearInInterpolator()
-                        duration = 350
-                    }
-                val a1t =
-                    ObjectAnimator.ofArgb(p.first, "textColor", textColorCurrent, textColor).apply {
-                        interpolator = FastOutLinearInInterpolator()
-                        duration = 350
-                    }
-                val a2t = ObjectAnimator.ofArgb(p.second, "textColor", textColorCurrent, textColor)
-                    .apply {
-                        interpolator = FastOutLinearInInterpolator()
-                        duration = 350
-                    }
-                if (animations.size > 0) animatorSet.play(a1).with(a2).with(a1t).with(a2t)
-                    .after(animations.last())
-                else animatorSet.playTogether(a1, a2, a1t, a2t)
-                if (color == Color.BLACK) break
-            } else {
-                val a = ObjectAnimator.ofArgb(p.first, "backgroundColor", colorCurrent, Color.GREEN)
-                    .apply {
-                        interpolator = FastOutLinearInInterpolator()
-                        duration = 350
-                    }
-                if (animations.size > 0) animatorSet.play(a).after(animations.last())
-                else animatorSet.playTogether(a)
+        val shakeX = ObjectAnimator
+            .ofFloat(
+                binding.gameplayFragment,
+                "translationX",
+                0f, 25f, -25f, 25f, -25f, 15f, -15f, 6f, -6f, 0f
+            ).apply {
+                duration = 1000
+            }
+        animatorSet.play(shakeX)
+        animatorSet.start()
+        doubleClickVibration()
+        if (isPalindrome) {
+            MessageDialogFragment(
+                title = getString(R.string.palindrome_found),
+                message = getString(R.string.palindrome_but_not_correct)
+            ).show(childFragmentManager, MessageDialogFragment.TAG)
+        }
+    }
+
+    private fun doubleClickVibration() {
+        val doubleClickPattern = longArrayOf(0, 50, 50, 50)
+        val vibrator = requireContext().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        if (audioManager.ringerMode != AudioManager.RINGER_MODE_SILENT) {
+            when {
+                Build.VERSION.SDK_INT >= 26 -> {
+                    vibrator.vibrate(
+                        VibrationEffect.createWaveform(doubleClickPattern, -1)
+                    )
+                }
+                else -> {
+                    vibrator.vibrate(doubleClickPattern, -1)
+                }
             }
         }
-
-        Log.i(TAG, "Animations: ${animatorSet.childAnimations}")
-        animatorSet.start()
     }
 
 }

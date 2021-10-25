@@ -1,6 +1,5 @@
 package com.indest.heh.persistance
 
-import android.util.Log
 import androidx.room.*
 import com.indest.heh.persistance.dto.LetterProperties
 import com.indest.heh.persistance.dto.Level
@@ -35,6 +34,9 @@ interface LevelDao {
 
     @Query("update letter_info_table set letter = :letter where home_index = :homeIndex and owner_id = :level")
     suspend fun updateLetter(homeIndex:Int, letter:Char, level: Int)
+
+    @Query("select letter from letter_info_table where owner_id=:levelNr and friend_index!=-666 order by friend_index asc")
+    suspend fun currentSolution(levelNr: Int): List<Char>
 
     @Transaction
     suspend fun switchHomeIndexes(index1:Int, index2:Int, level:Int)

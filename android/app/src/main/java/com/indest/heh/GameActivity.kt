@@ -14,7 +14,7 @@ import com.indest.heh.util.hideSystemBars
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class GameActivity : AppCompatActivity(){
+class GameActivity : AppCompatActivity() {
 
     private val TAG = "GameActivity"
     private lateinit var binding: ActivityGameBinding

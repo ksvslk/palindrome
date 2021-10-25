@@ -18,7 +18,6 @@ import com.indest.heh.util.Util
 import kotlinx.coroutines.launch
 
 object LevelFactory {
-
     /*
     Creates a new level and restores box positions based on the level info and context.
     If level is created the first time persists letters positions to database.
@@ -74,6 +73,7 @@ object LevelFactory {
                 textSize = ds.textSize
                 typeface = ResourcesCompat.getFont(context, R.font.yantramanav_bold)
                 gravity = Gravity.CENTER
+
                 setBackgroundColor(
                         ContextCompat.getColor(
                                 context,

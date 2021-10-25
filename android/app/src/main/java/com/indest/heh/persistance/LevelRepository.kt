@@ -46,7 +46,7 @@ class LevelRepository @Inject constructor(
         levelDao.insert(levelInfo)
     }
 
-    suspend fun getAllLevels(): List<Level> = levelDao.getAllLevels()
+    private suspend fun getAllLevels(): List<Level> = levelDao.getAllLevels()
 
     suspend fun updateFriendIndex(homeIndex: Int, newFriendIndex: Int, level: Int) {
         levelDao.updateFriendIndex(homeIndex, newFriendIndex, level)
@@ -58,6 +58,14 @@ class LevelRepository @Inject constructor(
 
     private suspend fun updateLevels(levels: List<Level>) {
         levelDao.updateLevels(levels)
+    }
+
+    suspend fun currentSolution(levelNr: Int?): String {
+        if (levelNr != null)
+        {
+            return levelDao.currentSolution(levelNr).joinToString("")
+        }
+        return ""
     }
 
     // Cloud

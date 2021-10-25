@@ -1,12 +1,17 @@
 package com.indest.heh.letter
 
+import android.util.Log
 import com.indest.heh.fragments.GamePlayFragment
 import com.indest.heh.letter.effects.ColorSelector
 import com.indest.heh.letter.effects.SoundSelector
 import com.indest.heh.persistance.dto.Level
 import com.indest.heh.util.C.MIDDLE_LAYER
+import com.indest.heh.util.C.NEUTRAL_LAYER
 import com.indest.heh.util.C.TOP_LAYER
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.math.abs
+import kotlin.properties.Delegates
 
 /**
  * CellDirector is kind of a mediator object that will manage the interaction between
@@ -72,14 +77,11 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
         val topLetter = top.text.first()
         val bottomLetter = bottom.text.first()
 
-        gf.gameViewModel.updateLetter(
-            index = topIndex,
-            letter = bottomLetter
-        )
-
-        gf.gameViewModel.updateLetter(
-            index = bottomIndex,
-            letter = topLetter
+        gf.gameViewModel.updateLetters(
+            topIndex = topIndex,
+            bottomLetter = bottomLetter,
+            bottomIndex = bottomIndex,
+            topLetter = topLetter
         )
 
         switchFriends(bottom, top)
@@ -107,8 +109,8 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
         letter.setFriend(slot)
         letter.currentPos.x = slot.pos.x
         letter.currentPos.y = slot.pos.y
-        letter.z = TOP_LAYER
-        letter.elevation = TOP_LAYER
+        letter.z = NEUTRAL_LAYER
+        letter.elevation = NEUTRAL_LAYER
         letter.state = LetterState.ANIMATION
         letter.state.executeAnimationBehaviour(
             letter,
@@ -120,6 +122,7 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
             index = letter.homeIndex,
             newIndex = slot.homeIndex
         )
+        Log.i(TAG, cells.toString())
     }
 
     private fun sendLetterHome(letter: Letter) {
@@ -138,6 +141,7 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
                 (letter.homePos.x - letter.pos.x),
                 (letter.homePos.y - letter.pos.y)
             )
+            Log.i(TAG, cells.toString())
         } else {
             letter.state = LetterState.ANIMATION
             letter.state.executeAnimationBehaviour(

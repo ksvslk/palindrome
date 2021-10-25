@@ -32,14 +32,8 @@ class Effects @Inject constructor(@ActivityContext val context: Context) {
     val am: AudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
     // Sound effect IDs
-    private val switchLettersSoundId = soundPool.load(context, R.raw.swish, 1)
-    private val placeLetterSoundId = soundPool.load(context, R.raw.positive_beep, 1)
-    private val actionDownSoundId = soundPool.load(context, R.raw.action_down, 1)
-    private val actionUpSoundId = soundPool.load(context, R.raw.action_up, 1)
-    private val draggingSoundId = soundPool.load(context, R.raw.drums, 1)
-
-    // Dragging loop idmm
-    private var draggingLoopStream = -1
+    private val switchLettersSoundId = soundPool.load(context, R.raw.double_finger, 1)
+    private val placeLetterSoundId = soundPool.load(context, R.raw.block_hit, 1)
 
     // Colors
     private val actionDownNoFriend = AnimationColor(
@@ -79,15 +73,7 @@ class Effects @Inject constructor(@ActivityContext val context: Context) {
             SoundSelector.SWITCH_LETTERS -> {
                 soundPool.play(switchLettersSoundId,1.0f, 1.0f, 1, 0, 1.0f)
             }
-            SoundSelector.ACTION_DOWN_LETTER -> {
-                soundPool.play(actionDownSoundId,1.0f, 1.0f, 1, 0, 1.0f)
-            }
-            SoundSelector.ACTION_UP_LETTER -> {
-                soundPool.play(actionUpSoundId,1.0f, 1.0f, 1, 0, 1.0f)
-            }
-            SoundSelector.DRAGGING_LETTER -> {
-                //draggingLoopStream = soundPool.play(draggingSoundId,1.0f, 1.0f, 1, -1, 1.0f)
-            }
+            else -> {}
         }
     }
 
@@ -123,4 +109,5 @@ class Effects @Inject constructor(@ActivityContext val context: Context) {
             }
         }
     }
+
 }

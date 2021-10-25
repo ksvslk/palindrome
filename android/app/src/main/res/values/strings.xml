@@ -30,4 +30,7 @@
     <string name="vibration_on">Vibration ON</string>
     <string name="vibration_off">Vibration OFF</string>'
     <string name="google">Google</string>
+    <string name="palindrome_found">Palindrome! But…</string>
+    <string name="i_can_do_better">Sure</string>
+    <string name="palindrome_but_not_correct">It is a palindrome, but can you also find the correct solution?</string>
 </resources>
