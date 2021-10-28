@@ -61,11 +61,13 @@ interface LevelDao {
         }
     }
 
-    @Transaction
     @Query("select * from level_info_table")
     suspend fun getAllLevels(): List<Level>
 
     @Query("select last_modified_timestamp from meta_data limit 1")
     suspend fun getLocalLastModifiedTimestamp(): Long
+
+    @Query("select count(*) from level_info_table")
+    suspend fun rowCount():Int
 
 }

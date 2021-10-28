@@ -27,14 +27,13 @@ abstract class LevelDatabase : RoomDatabase() {
                     instance = Room.databaseBuilder(
                         context.applicationContext,
                         LevelDatabase::class.java,
-                        "level_info_database.db"
+                        "uus.db"
                     )
-                        //.createFromAsset("level_info_database.db")
                         .fallbackToDestructiveMigration()
                         .addCallback(object: RoomDatabase.Callback() {
                             override fun onCreate(db: SupportSQLiteDatabase) {
                                 super.onCreate(db)
-                                val trigger = "create trigger level_updated\n" +
+                               val trigger = "create trigger level_updated\n" +
                                         "after update on letter_info_table\n" +
                                         "begin\n" +
                                         "update meta_data set last_modified_timestamp = (CAST((julianday('now') - 2440587.5)*86400000 AS INTEGER));\n" +

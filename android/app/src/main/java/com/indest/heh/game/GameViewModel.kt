@@ -1,6 +1,8 @@
 package com.indest.heh.game
 
+import android.app.Application
 import androidx.lifecycle.*
+import com.google.gson.Gson
 import com.indest.heh.letter.Cell
 import com.indest.heh.letter.Letter
 import com.indest.heh.persistance.LevelProgress
@@ -9,37 +11,74 @@ import com.indest.heh.persistance.dto.Level
 import com.indest.heh.persistance.dto.LevelData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
 class GameViewModel @Inject constructor(
-    private val levelRepository: LevelRepository
+    private val levelRepository: LevelRepository,
+    application: Application
 ) :
-    ViewModel() {
+    AndroidViewModel(application) {
 
-    val level = MutableLiveData<Level>()
+    val levels = MutableLiveData<List<LevelData>>()
+    val level = MutableLiveData<Level?>()
     val realSolutionAndGuess = MutableLiveData<Pair<String?, String?>>()
 
     init {
+        val isEmpty = runBlocking { levelRepository.isDatabaseEmpty() }
+        val string = if (isEmpty) {
+            application.assets.open("puzzles.json").bufferedReader().use {
+                it.readText()
+            }
+        } else ""
         viewModelScope.launch {
-            levelRepository.insertLevel(
-                LevelData(4, "RADAR", "RRAAD", "Surprise", LevelProgress.TODO, 0)
-            )
-            levelRepository.insertLevel(
-                LevelData(3, "WOW", "WWO", "Surprise", LevelProgress.TODO, 0)
-            )
-            levelRepository.insertLevel(
-                LevelData(2, "DAD", "ADD", "Parent", LevelProgress.TODO, 0)
-            )
-            levelRepository.insertLevel(
-                LevelData(1, "A NUT FOR A JAR OF TUNA.", "O ARN UOF T RFN JA AAU.T", "Fly", LevelProgress.TODO, 0)
-            )
+            if (isEmpty) {
+                val gson = Gson()
+                val puzzles = gson.fromJson(string, Array<LevelData>::class.java)
+                insertLevels(puzzles)
+            }
             level.value = levelRepository.getLevel(1)
+            levels.value = levelRepository.getAllLevels()
         }
     }
 
-    fun updateLetters(topIndex:Int, bottomLetter:Char, bottomIndex:Int, topLetter:Char)
+    fun changeLevel(nr:Int)
     {
+        viewModelScope.launch {
+            level.value = levelRepository.getLevel(nr)
+        }
+    }
+
+    private fun insertLevels(levels: Array<LevelData>) {
+        viewModelScope.launch {
+
+            for (i in levels.indices) {
+                val sol = levels[i].solution.replace(" ", "")
+                val shuffledChars = sol.toCharArray()
+                while (shuffledChars.concatToString() == sol) shuffledChars.shuffle()
+                val puzzle = shuffledChars.concatToString()
+
+                val category = levels[i].category
+                val progress = LevelProgress.TODO
+                val score = 0
+
+                levelRepository.insertLevel(
+                    LevelData(
+                        levelId = i + 1,
+                        solution = levels[i].solution,
+                        puzzle = puzzle,
+                        category = category,
+                        progress = progress,
+                        score = score
+                    )
+                )
+            }
+
+        }
+    }
+
+    fun updateLetters(topIndex: Int, bottomLetter: Char, bottomIndex: Int, topLetter: Char) {
         viewModelScope.launch {
             levelRepository.updateLetter(
                 homeIndex = topIndex,
@@ -59,8 +98,7 @@ class GameViewModel @Inject constructor(
     }
 
 
-    fun updateFriendIndex(index:Int, newIndex:Int)
-    {
+    fun updateFriendIndex(index: Int, newIndex: Int) {
         viewModelScope.launch {
             levelRepository.updateFriendIndex(
                 homeIndex = index,

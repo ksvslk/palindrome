@@ -13,7 +13,6 @@ import com.indest.heh.databinding.HintsFragmentBinding
 
 class HintsFragment : BottomSheetDialogFragment() {
     private val TAG = "HintsFragment"
-    private val startActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
     private lateinit var binding: HintsFragmentBinding
 
     override fun onCreateView(

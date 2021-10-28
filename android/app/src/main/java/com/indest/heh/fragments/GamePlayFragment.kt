@@ -10,23 +10,28 @@ import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.children
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResultListener
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
+import androidx.fragment.app.activityViewModels
 import com.indest.heh.LevelFactory
 import com.indest.heh.R
 import com.indest.heh.databinding.GameplayFragmentBinding
+import com.indest.heh.game.AnimationFactory
 import com.indest.heh.game.GameState
 import com.indest.heh.game.GameViewModel
-import com.indest.heh.letter.*
-import com.indest.heh.game.AnimationFactory
+import com.indest.heh.letter.Cell
+import com.indest.heh.letter.CellDirector
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.properties.Delegates
+import androidx.fragment.app.commit
+import androidx.fragment.app.replace
+
 
 @AndroidEntryPoint
 class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
@@ -34,7 +39,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     private val TAG = "GamePlayFragment"
     private lateinit var binding: GameplayFragmentBinding
     var cellDirector: CellDirector = CellDirector(this)
-    val gameViewModel: GameViewModel by viewModels()
+    val gameViewModel: GameViewModel by activityViewModels()
     var gameState: GameState = GameState.BUSY
     private lateinit var soundPool: SoundPool
     private var levelCompleteSound by Delegates.notNull<Int>()
@@ -58,46 +63,58 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             startPostponedEnterTransition()
         }
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-        setFragmentResultListener("requestKey") { _, bundle ->
-            val levelNr = bundle.getInt("bundleKey")
-            loadLevel(levelNr)
-        }
+        loadLevel()
         return binding.root
     }
 
-    private fun loadLevel(levelNr: Int) {
+    private fun loadLevel() {
+
+        if(binding.gameplayFragment.childCount > 0) {
+            parentFragmentManager.commit {
+                setReorderingAllowed(true)
+                replace<GamePlayFragment>(R.id.fragments_container)
+            }
+        }
+
         gameViewModel.level
             .observe(viewLifecycleOwner, { levelAndLettersInfo ->
-                val level = LevelFactory.getLevel(
-                    levelAndLettersInfo,
-                    requireContext(),
-                    layoutInflater,
-                    binding.gameplayFragment,
-                    lifecycleScope
-                )
-                cellDirector.cells = level.children.filterIsInstance<Cell<*, *>>().toMutableList()
-                level.doOnPreDraw {
-                    cellDirector.restoreSlotPlacements(levelAndLettersInfo)
-                    if (levelAndLettersInfo.lettersProperties.isEmpty()) gameViewModel.persistInitialLettersInfo(
-                        cellDirector.cells
+                if(levelAndLettersInfo != null)
+                {
+                    val level = LevelFactory.getLevel(
+                        levelAndLettersInfo,
+                        requireContext(),
+                        layoutInflater,
+                        binding.gameplayFragment
                     )
+                    cellDirector.cells = level.children.filterIsInstance<Cell<*, *>>().toMutableList()
+                    level.doOnPreDraw {
+                        cellDirector.restoreSlotPlacements(levelAndLettersInfo)
+                        if (levelAndLettersInfo.lettersProperties.isEmpty()) gameViewModel.persistInitialLettersInfo(
+                            cellDirector.cells
+                        )
+                    }
+                    binding.gameplayFragment.addView(level)
+                    gameState = GameState.READY
+                    handleGameSolutions()
                 }
-                binding.gameplayFragment.addView(level)
-                gameState = GameState.READY
-                handleGameSolutions()
+
             })
     }
 
     private fun handleGameSolutions() {
-        gameViewModel.realSolutionAndGuess.observe(viewLifecycleOwner, {
+        gameViewModel.realSolutionAndGuess.observe(viewLifecycleOwner, { it ->
             Log.i(TAG, it.toString())
             if (it.first?.length == it.second?.length) {
+                val playerSolution = it.second?.map {
+                        char -> if("^([?!.,’])".contains(char)) "" else char
+                }?.joinToString("")
+                Log.i(TAG, playerSolution.toString())
                 when {
                     it.first == it.second -> {
                         Log.i(TAG, "Solution is correct! ${it.first}, ${it.second}")
                         playCorrectSolutionAnimation()
                     }
-                    it.second?.reversed() == it.second -> {
+                    playerSolution?.reversed() == playerSolution -> {
                         Log.i(
                             TAG,
                             "It is a palindrome, but not the correct one :( ${it.first}, ${it.second}"

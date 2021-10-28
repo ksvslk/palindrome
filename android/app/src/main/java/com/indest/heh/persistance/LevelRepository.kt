@@ -29,6 +29,7 @@ class LevelRepository @Inject constructor(
     private val TAG = "LevelRepository"
     lateinit var coverImage: Bitmap
 
+    suspend fun isDatabaseEmpty() = levelDao.rowCount() == 0
     // Local
     suspend fun getLevel(nr: Int) = levelDao.getLevel(nr)
 
@@ -46,7 +47,9 @@ class LevelRepository @Inject constructor(
         levelDao.insert(levelInfo)
     }
 
-    private suspend fun getAllLevels(): List<Level> = levelDao.getAllLevels()
+    suspend fun getAllLevels(): List<LevelData> = levelDao.getAllLevels().map {
+        it.levelInfo
+    }
 
     suspend fun updateFriendIndex(homeIndex: Int, newFriendIndex: Int, level: Int) {
         levelDao.updateFriendIndex(homeIndex, newFriendIndex, level)

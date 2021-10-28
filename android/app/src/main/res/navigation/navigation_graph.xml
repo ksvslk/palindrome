@@ -62,6 +62,16 @@
             app:destination="@id/navigation_home" />
     </dialog>
 
+    <dialog
+        android:id="@+id/navigation_level_select"
+        android:name="com.indest.heh.fragments.LevelSelectFragment"
+        android:label="@string/level_select"
+        tools:layout="@layout/level_select_fragment" >
+        <action
+            android:id="@+id/action_navigation_level_select_to_navigation_home"
+            app:popUpTo=""
+            app:destination="@id/navigation_home" />
+    </dialog>
 
 
 </navigation>

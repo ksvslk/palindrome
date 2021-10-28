@@ -26,8 +26,7 @@ object LevelFactory {
     fun getLevel(info: Level,
                  context: Context,
                  layoutInflater: LayoutInflater,
-                 container: CellContainer,
-                 scope: LifecycleCoroutineScope
+                 container: CellContainer
     ): GridLayout
     {
         val puzzle = info.levelInfo.puzzle

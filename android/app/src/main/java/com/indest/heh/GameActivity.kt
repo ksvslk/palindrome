@@ -2,7 +2,6 @@ package com.indest.heh
 
 import android.os.Bundle
 import android.util.Log
-import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.forEach
 import androidx.navigation.NavController
@@ -11,6 +10,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.indest.heh.databinding.ActivityGameBinding
 import com.indest.heh.util.hideSystemBars
+import dagger.Provides
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
