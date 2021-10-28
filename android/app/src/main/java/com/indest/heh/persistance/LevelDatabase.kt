@@ -29,6 +29,7 @@ abstract class LevelDatabase : RoomDatabase() {
                         LevelDatabase::class.java,
                         "uus.db"
                     )
+                        .createFromAsset("uus.db")
                         .fallbackToDestructiveMigration()
                         .addCallback(object: RoomDatabase.Callback() {
                             override fun onCreate(db: SupportSQLiteDatabase) {

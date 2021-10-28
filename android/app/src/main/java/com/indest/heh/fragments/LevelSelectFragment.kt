@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.commit
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.heh.adapters.LevelItemAdapter
@@ -33,9 +33,9 @@ class LevelSelectFragment : BottomSheetDialogFragment() {
             if (levels != null)
             {
                 binding.levelSelectRecyclerview.adapter = LevelItemAdapter(levels) {
-                    activity?.supportFragmentManager?.popBackStack()
-                    activity?.supportFragmentManager?.popBackStack()
-                   // gameViewModel.changeLevel(requireNotNull(it).levelId)
+                    requireActivity().onBackPressed()
+                    requireActivity().onBackPressed()
+                    it?.levelId?.let { it1 -> gameViewModel.changeLevel(it1) }
                 }
             }
         })

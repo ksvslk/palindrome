@@ -61,6 +61,7 @@
             android:id="@+id/action_navigation_settings_to_navigation_home"
             app:destination="@id/navigation_home" />
     </dialog>
+<!--
 
     <dialog
         android:id="@+id/navigation_level_select"
@@ -69,9 +70,11 @@
         tools:layout="@layout/level_select_fragment" >
         <action
             android:id="@+id/action_navigation_level_select_to_navigation_home"
-            app:popUpTo=""
-            app:destination="@id/navigation_home" />
+            app:popUpTo="@+id/navigation_gameplay"
+            app:popUpToInclusive="true"
+            app:destination="@id/navigation_gameplay" />
     </dialog>
+-->
 
 
 </navigation>
