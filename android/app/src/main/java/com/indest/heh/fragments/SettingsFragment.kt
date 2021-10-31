@@ -7,11 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.commit
 import com.google.android.gms.common.SignInButton
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.indest.heh.R
 import com.indest.heh.databinding.SettingsFragmentBinding
 
 class SettingsFragment : BottomSheetDialogFragment() {

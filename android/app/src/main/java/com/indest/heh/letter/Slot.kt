@@ -1,7 +1,6 @@
 package com.indest.heh.letter
 
 import android.content.Context
-import android.util.Log
 import android.view.View
 import com.indest.heh.util.C.BOTTOM_LAYER
 
@@ -16,7 +15,6 @@ class Slot constructor(
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        Log.i(TAG, "onSizeChanged")
         homeIndex = (parent as androidx.gridlayout.widget.GridLayout).indexOfChild(this)
         super.onSizeChanged(w, h, oldw, oldh)
     }

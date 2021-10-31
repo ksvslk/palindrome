@@ -16,9 +16,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.children
 import androidx.core.view.doOnPreDraw
+import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
@@ -30,7 +33,7 @@ import com.indest.heh.game.AnimationFactory
 import com.indest.heh.game.GameState
 import com.indest.heh.game.GameViewModel
 import com.indest.heh.letter.Cell
-import com.indest.heh.letter.CellDirector
+import com.indest.heh.game.CellDirector
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.properties.Delegates
 
@@ -146,7 +149,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             val playerSolution = it.second?.map { char ->
                 if ("^([?!.,’])".contains(char)) "" else char
             }?.joinToString("")
-            Log.i(TAG, playerSolution.toString())
+
             when {
                 it.first == it.second -> {
                     Log.i(TAG, "Solution is correct! ${it.first}, ${it.second}")
@@ -159,6 +162,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                         "It is a palindrome, but not the correct one :( ${it.first}, ${it.second}"
                     )
                     playWrongSolutionAnimation(isPalindrome = true)
+
                 }
                 else -> {
                     Log.i(TAG, "It is not the correct solution ${it.first}, ${it.second}")

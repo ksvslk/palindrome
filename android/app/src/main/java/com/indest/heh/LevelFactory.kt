@@ -6,16 +6,14 @@ import android.view.LayoutInflater
 import android.widget.Space
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.children
-import androidx.core.view.doOnPreDraw
 import androidx.gridlayout.widget.GridLayout
-import androidx.lifecycle.LifecycleCoroutineScope
 import com.indest.heh.game.CellContainer
-import com.indest.heh.letter.*
+import com.indest.heh.letter.Letter
+import com.indest.heh.letter.LetterState
+import com.indest.heh.letter.Slot
 import com.indest.heh.persistance.dto.Level
 import com.indest.heh.util.DensitySettings
 import com.indest.heh.util.Util
-import kotlinx.coroutines.launch
 
 object LevelFactory {
     /*

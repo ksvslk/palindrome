@@ -3,8 +3,8 @@ package com.indest.heh.letter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
-import android.util.Log
 import android.view.MotionEvent
+import android.view.View.OnTouchListener
 import com.indest.heh.letter.effects.Effects
 import com.indest.heh.letter.effects.SoundSelector
 import com.indest.heh.util.C.NEUTRAL_LAYER
@@ -60,7 +60,6 @@ class Letter @Inject constructor(
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        Log.i(TAG, "onSizeChanged")
         homePos = pos
         currentPos = pos
         homeIndex = (parent as androidx.gridlayout.widget.GridLayout).indexOfChild(this)

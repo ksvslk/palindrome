@@ -3,14 +3,9 @@ package com.indest.heh.game
 import android.animation.*
 import android.media.AudioManager
 import android.media.SoundPool
-import android.util.Log
 import android.view.animation.AccelerateInterpolator
 import com.indest.heh.letter.Cell
 import com.indest.heh.letter.Letter
-import java.lang.Math.abs
-import java.lang.Math.log
-import kotlin.math.ln
-import kotlin.math.log10
 
 object AnimationFactory {
 

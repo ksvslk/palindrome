@@ -8,10 +8,7 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import androidx.core.content.ContextCompat
 import com.indest.heh.R
-import com.indest.heh.letter.effects.ColorSelector.ACTION_DOWN_NO_FRIEND
-import com.indest.heh.letter.effects.ColorSelector.ACTION_UP_FRIEND
-import com.indest.heh.letter.effects.ColorSelector.ACTION_UP_NO_FRIEND
-import com.indest.heh.letter.effects.ColorSelector.ACTION_DOWN_FRIEND
+import com.indest.heh.letter.effects.ColorSelector.*
 import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Inject
