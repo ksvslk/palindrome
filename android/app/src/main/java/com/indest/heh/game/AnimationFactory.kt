@@ -1,11 +1,16 @@
 package com.indest.heh.game
 
-import android.animation.AnimatorSet
-import android.animation.ArgbEvaluator
-import android.animation.ObjectAnimator
+import android.animation.*
+import android.media.AudioManager
+import android.media.SoundPool
+import android.util.Log
 import android.view.animation.AccelerateInterpolator
 import com.indest.heh.letter.Cell
 import com.indest.heh.letter.Letter
+import java.lang.Math.abs
+import java.lang.Math.log
+import kotlin.math.ln
+import kotlin.math.log10
 
 object AnimationFactory {
 
@@ -13,7 +18,10 @@ object AnimationFactory {
         letter: Letter,
         currentColor: Int,
         successColor: Int,
-        aDuration: Long
+        aDuration: Long,
+        index:Int,
+        audioManager: AudioManager,
+        soundPool: SoundPool
     ): ObjectAnimator {
         return ObjectAnimator.ofArgb(
             letter,
@@ -23,13 +31,23 @@ object AnimationFactory {
         ).apply {
             setEvaluator(ArgbEvaluator())
             duration = aDuration
+            if (audioManager.ringerMode == AudioManager.RINGER_MODE_NORMAL) {
+                this.addListener(object : AnimatorListenerAdapter() {
+                    override fun onAnimationStart(animation: Animator?) {
+                        soundPool.play(index, 1.0f, 1.0f, 1, 0, 1.0f)
+                    }
+                })
+            }
         }
     }
 
     private fun getTextColorAnimation(
         letter: Letter,
         successTextColor: Int,
-        aDuration: Long
+        aDuration: Long,
+        index:Int,
+        audioManager: AudioManager,
+        soundPool: SoundPool
     ): ObjectAnimator {
         return ObjectAnimator.ofInt(
             letter,
@@ -40,6 +58,13 @@ object AnimationFactory {
             setEvaluator(ArgbEvaluator())
             interpolator = AccelerateInterpolator()
             duration = aDuration
+            if (audioManager.ringerMode == AudioManager.RINGER_MODE_NORMAL) {
+                this.addListener(object : AnimatorListenerAdapter() {
+                    override fun onAnimationStart(animation: Animator?) {
+                        soundPool.play(index, 1.0f, 1.0f, 1, 0, 1.0f)
+                    }
+                })
+            }
         }
     }
 
@@ -47,7 +72,10 @@ object AnimationFactory {
         successTextColor: Int,
         currentBoxColor: Int,
         boxSuccessColor: Int,
-        cells: MutableList<Cell<*, *>>
+        cells: MutableList<Cell<*, *>>,
+        audioManager: AudioManager,
+        soundPool: SoundPool,
+        noteSounds: List<Int>
     ): AnimatorSet {
         val animatorSet = AnimatorSet()
         val specialChars = ArrayList<Letter>()
@@ -65,7 +93,8 @@ object AnimationFactory {
 
         val odd = letters.size % 2 != 0
         val count = letters.size / 2
-        val animationDuration = 3000L / (letters.size + specialChars.size) * 2
+        val animationDuration = (
+                kotlin.math.log( 50000.0,letters.size.toDouble())*100).toLong()
 
         for (i in 0 until count) {
             val animations = animatorSet.childAnimations
@@ -75,24 +104,36 @@ object AnimationFactory {
             val letterAheadTextColorAnimation = getTextColorAnimation(
                 letterAhead,
                 successTextColor,
-                animationDuration
+                animationDuration,
+                noteSounds[i],
+                audioManager,
+                soundPool
             )
             val letterAheadBoxColorAnimation = getCellColorAnimation(
                 letterAhead,
                 currentBoxColor,
                 boxSuccessColor,
-                animationDuration
+                animationDuration,
+                noteSounds[i],
+                audioManager,
+                soundPool
             )
             val letterBehindTextColorAnimation = getTextColorAnimation(
                 letterBehind,
                 successTextColor,
-                animationDuration
+                animationDuration,
+                noteSounds[i],
+                audioManager,
+                soundPool
             )
             val letterBehindBoxColorAnimation = getCellColorAnimation(
                 letterBehind,
                 currentBoxColor,
                 boxSuccessColor,
-                animationDuration
+                animationDuration,
+                noteSounds[i],
+                audioManager,
+                soundPool
             )
 
             if (animations.size > 0) {
@@ -118,13 +159,19 @@ object AnimationFactory {
             val letterTextColorAnimation = getTextColorAnimation(
                 letter,
                 successTextColor,
-                animationDuration
+                animationDuration,
+                noteSounds[count],
+                audioManager,
+                soundPool
             )
             val letterBoxColorAnimation = getCellColorAnimation(
                 letter,
                 currentBoxColor,
                 boxSuccessColor,
-                animationDuration
+                animationDuration,
+                noteSounds[count],
+                audioManager,
+                soundPool
             )
 
             if (animations.size > 0) {
@@ -143,22 +190,27 @@ object AnimationFactory {
             val letterTextAnimation = getTextColorAnimation(
                 letter,
                 successTextColor,
-                animationDuration
+                animationDuration,
+                noteSounds[count+1],
+                audioManager,
+                soundPool
             )
             val letterAnimation = getCellColorAnimation(
                 letter,
                 currentBoxColor,
                 boxSuccessColor,
-                animationDuration
+                animationDuration,
+                noteSounds[count+1],
+                audioManager,
+                soundPool
             )
             animatorSet
                 .play(letterTextAnimation)
                 .with(letterAnimation)
-                .after(animations.last())
+                .with(animations.last())
         }
 
         return animatorSet
     }
-
 
 }

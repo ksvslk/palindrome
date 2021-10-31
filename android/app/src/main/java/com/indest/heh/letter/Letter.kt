@@ -50,7 +50,6 @@ class Letter @Inject constructor(
             }
             else -> {
                 if (state == LetterState.DRAGGING) {
-                    effects.stopInifinteLoop(SoundSelector.DRAGGING_LETTER)
                     state = LetterState.RESOLVING
                     state.executeActionUpBehaviour(this)
                 }

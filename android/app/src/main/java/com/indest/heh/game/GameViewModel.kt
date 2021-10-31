@@ -41,13 +41,17 @@ class GameViewModel @Inject constructor(
             level.value = levelRepository.getLevel(1)
             levels.value = levelRepository.getAllLevels()
         }
+
     }
 
-    fun changeLevel(nr:Int)
-    {
+    fun changeLevel(nr: Int) {
         viewModelScope.launch {
             level.value = levelRepository.getLevel(nr)
         }
+    }
+
+    fun isLastLevel():Boolean {
+       return level.value?.levelInfo?.levelId == levels.value?.size
     }
 
     private fun insertLevels(levels: Array<LevelData>) {
@@ -97,7 +101,6 @@ class GameViewModel @Inject constructor(
         }
     }
 
-
     fun updateFriendIndex(index: Int, newIndex: Int) {
         viewModelScope.launch {
             levelRepository.updateFriendIndex(
@@ -124,5 +127,4 @@ class GameViewModel @Inject constructor(
             }
         }
     }
-
 }

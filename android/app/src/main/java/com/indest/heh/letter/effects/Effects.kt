@@ -29,7 +29,6 @@ class Effects @Inject constructor(@ActivityContext val context: Context) {
     // Audio, sound and vibration
     private val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
     private val soundPool: SoundPool = SoundPool.Builder().build()
-    val am: AudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
     // Sound effect IDs
     private val switchLettersSoundId = soundPool.load(context, R.raw.double_finger, 1)
@@ -73,15 +72,6 @@ class Effects @Inject constructor(@ActivityContext val context: Context) {
             SoundSelector.SWITCH_LETTERS -> {
                 soundPool.play(switchLettersSoundId,1.0f, 1.0f, 1, 0, 1.0f)
             }
-            else -> {}
-        }
-    }
-
-    fun stopInifinteLoop(soundSelector: SoundSelector)
-    {
-        if (audioManager.ringerMode != AudioManager.RINGER_MODE_NORMAL) return
-        when (soundSelector) {
-            SoundSelector.DRAGGING_LETTER -> {}
             else -> {}
         }
     }

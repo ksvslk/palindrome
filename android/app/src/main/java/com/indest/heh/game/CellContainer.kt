@@ -20,7 +20,8 @@ class CellContainer : LinearLayoutCompat {
     )
 
     override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
-        if (findFragment<GamePlayFragment>().gameState == GameState.BUSY)
+        val state = findFragment<GamePlayFragment>().gameState
+        if (state == GameState.BUSY || state == GameState.COMPLETED)
         {
             return true
         }

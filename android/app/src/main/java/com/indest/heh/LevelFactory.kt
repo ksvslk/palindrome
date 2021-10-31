@@ -23,12 +23,12 @@ object LevelFactory {
     If level is created the first time persists letters positions to database.
     Returned view is ready to be added into the container in GamePlayFragment.
      */
-    fun getLevel(info: Level,
-                 context: Context,
-                 layoutInflater: LayoutInflater,
-                 container: CellContainer
-    ): GridLayout
-    {
+    fun getLevel(
+        info: Level,
+        context: Context,
+        layoutInflater: LayoutInflater,
+        container: CellContainer
+    ): GridLayout {
         val puzzle = info.levelInfo.puzzle
         val densitySettings = Util.getDensitySettings(
             context.resources.displayMetrics.density,
@@ -39,53 +39,52 @@ object LevelFactory {
         level.columnCount = densitySettings.columnCount
         addLetters(level, densitySettings, info, context)
         addBlanks(densitySettings.columnCount, level, layoutInflater)
-        addSlots(puzzle, level, densitySettings, context)
-
+        addSlots(info.levelInfo.solution, level, densitySettings, context)
         return level
     }
 
-    private fun addLetters(grid: GridLayout, ds: DensitySettings, info: Level, context:Context) {
+    private fun addLetters(grid: GridLayout, ds: DensitySettings, info: Level, context: Context) {
         // Also part of restoring the state
         val puzzle = if (info.lettersProperties.isEmpty()) info.levelInfo.puzzle
         else {
             info.lettersProperties
-                    .sortedBy { it.homeIndex }
+                .sortedBy { it.homeIndex }
                 .fold("", { acc, li -> acc + li.letter }
-            )
+                )
         }
 
         for ((_, l) in puzzle.withIndex()) {
             if (l.isWhitespace()) {
                 continue
             }
-            val char =  l.toString()
+            val char = l.toString()
 
             grid.addView(
-                    Letter(
-                            context,
-            char,
-            LetterState.HOME
-                    )
-                        .apply {
-                width = ds.boxSize
-                height = ds.boxSize
-                textSize = ds.textSize
-                typeface = ResourcesCompat.getFont(context, R.font.yantramanav_bold)
-                gravity = Gravity.CENTER
+                Letter(
+                    context,
+                    char,
+                    LetterState.HOME
+                )
+                    .apply {
+                        width = ds.boxSize
+                        height = ds.boxSize
+                        textSize = ds.textSize
+                        typeface = ResourcesCompat.getFont(context, R.font.yantramanav_bold)
+                        gravity = Gravity.CENTER
 
-                setBackgroundColor(
-                        ContextCompat.getColor(
+                        setBackgroundColor(
+                            ContextCompat.getColor(
                                 context,
                                 R.color.colorPrimary
+                            )
                         )
-                )
-                setTextColor(ContextCompat.getColor(context, R.color.colorOnPrimary))
-            })
+                        setTextColor(ContextCompat.getColor(context, R.color.colorOnPrimary))
+                    })
         }
 
         val puzzleWithoutWhitespace = puzzle.replace("\\s".toRegex(), "")
         val someValue =
-                puzzleWithoutWhitespace.length - (puzzleWithoutWhitespace.length / ds.columnCount) * ds.columnCount
+            puzzleWithoutWhitespace.length - (puzzleWithoutWhitespace.length / ds.columnCount) * ds.columnCount
         for (i in 1..ds.columnCount - someValue) {
             grid.addView(Space(context))
         }
