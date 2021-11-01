@@ -23,7 +23,7 @@ class GameViewModel @Inject constructor(
 
     val levels = MutableLiveData<List<LevelData>>()
     val level = MutableLiveData<Level?>()
-    val realSolutionAndGuess = MutableLiveData<Pair<String?, String?>>()
+    val realSolutionAndGuess = MutableLiveData<Triple<String?, String?, Int?>>()
 
     init {
         val isEmpty = runBlocking { levelRepository.isDatabaseEmpty() }
@@ -94,9 +94,10 @@ class GameViewModel @Inject constructor(
                 letter = topLetter,
                 level = level.value!!.levelInfo.levelId
             )
-            realSolutionAndGuess.value = Pair(
+            realSolutionAndGuess.value = Triple(
                 level.value?.levelInfo?.solution?.replace(" ", ""),
-                levelRepository.currentSolution(level.value?.levelInfo?.levelId)
+                levelRepository.currentSolution(level.value?.levelInfo?.levelId),
+                topIndex
             )
         }
     }
@@ -108,9 +109,10 @@ class GameViewModel @Inject constructor(
                 newFriendIndex = newIndex,
                 level = level.value!!.levelInfo.levelId
             )
-            realSolutionAndGuess.value = Pair(
+            realSolutionAndGuess.value = Triple(
                 level.value?.levelInfo?.solution?.replace(" ", ""),
-                levelRepository.currentSolution(level.value?.levelInfo?.levelId)
+                levelRepository.currentSolution(level.value?.levelInfo?.levelId),
+                index
             )
         }
     }

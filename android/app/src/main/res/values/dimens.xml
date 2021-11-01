@@ -8,6 +8,9 @@
     <dimen name="simple_dialog_icon_height">40dp</dimen>
     <dimen name="simple_dialog_left_margin">24dp</dimen>
     <dimen name="simple_dialog_divider_margin">20dp</dimen>
-
     <dimen name="list_item_height">40dp</dimen>
+
+    <dimen name="score_text_size">20dp</dimen>
+    <dimen name="message_text_size">15dp</dimen>
+    <dimen name="wrong_palindrome_text_size">12dp</dimen>
 </resources>

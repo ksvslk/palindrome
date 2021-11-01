@@ -1,9 +1,6 @@
 package com.indest.heh.fragments
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
-import android.animation.AnimatorSet
-import android.animation.ObjectAnimator
+import android.animation.*
 import android.content.Context
 import android.media.AudioManager
 import android.media.SoundPool
@@ -16,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.animation.AnimationUtils
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -26,14 +24,15 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
+import com.google.android.material.snackbar.BaseTransientBottomBar
+
 import com.indest.heh.LevelFactory
 import com.indest.heh.R
 import com.indest.heh.databinding.GameplayFragmentBinding
-import com.indest.heh.game.AnimationFactory
-import com.indest.heh.game.GameState
-import com.indest.heh.game.GameViewModel
+import com.indest.heh.game.*
 import com.indest.heh.letter.Cell
-import com.indest.heh.game.CellDirector
+import com.indest.heh.letter.Letter
+import com.indest.heh.letter.Slot
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.properties.Delegates
 
@@ -50,7 +49,9 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     val gameViewModel: GameViewModel by activityViewModels()
     var gameState: GameState by Delegates.observable(GameState.BUSY) { _, old, new ->
         Log.i(TAG, "$old -> $new")
-        if (old == GameState.ANIMATING && new == GameState.READY) {
+        val allLettersPlaced = cellDirector.cells.filterIsInstance<Slot>().all { it.hasFriend() }
+        if (old == GameState.ANIMATING && new == GameState.READY && allLettersPlaced) {
+            gameState = GameState.BUSY
             handleGameSolutions()
         }
     }
@@ -131,7 +132,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
     private fun clearPreviousLevel() {
         Log.i(TAG, "clearPreviousLevel")
-        gameViewModel.realSolutionAndGuess.postValue(Pair("", "2"))
+        gameViewModel.realSolutionAndGuess.postValue(Triple("", "2", null))
         parentFragmentManager.commit {
             setCustomAnimations(
                 R.anim.slide_in_bottom,
@@ -145,28 +146,39 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     private fun handleGameSolutions() {
         Log.i(TAG, "handleGameSolutions")
         val it = gameViewModel.realSolutionAndGuess.value
-        if (it != null && gameState == GameState.READY && it.first?.length == it.second?.length) {
+        if (it != null && it.first?.length == it.second?.length) {
             val playerSolution = it.second?.map { char ->
                 if ("^([?!.,’])".contains(char)) "" else char
             }?.joinToString("")
 
             when {
                 it.first == it.second -> {
-                    Log.i(TAG, "Solution is correct! ${it.first}, ${it.second}")
                     gameState = GameState.COMPLETED
                     playCorrectSolutionAnimation()
                 }
                 playerSolution?.reversed() == playerSolution -> {
-                    Log.i(
-                        TAG,
-                        "It is a palindrome, but not the correct one :( ${it.first}, ${it.second}"
+                    playWrongSolutionAnimation()
+                    val lastLetter = cellDirector.cells.find { p -> p.homeIndex == it.third } as Letter
+                    cellDirector.sendLetterHome(lastLetter)
+                    val message = MessageSnackBar.make(
+                        binding.gameplayFragment,
+                        getString(R.string.not_quite_solution),
+                        2000,
+                        resources.getDimension(R.dimen.wrong_palindrome_text_size)
                     )
-                    playWrongSolutionAnimation(isPalindrome = true)
-
+                    message.show()
                 }
                 else -> {
-                    Log.i(TAG, "It is not the correct solution ${it.first}, ${it.second}")
-                    playWrongSolutionAnimation(isPalindrome = false)
+                    playWrongSolutionAnimation()
+                    val lastLetter = cellDirector.cells.find { p -> p.homeIndex == it.third } as Letter
+                    cellDirector.sendLetterHome(lastLetter)
+                    val message = MessageSnackBar.make(
+                        binding.gameplayFragment,
+                        getString(R.string.wrong_solution),
+                        2000,
+                        resources.getDimension(R.dimen.message_text_size)
+                    )
+                    message.show()
                 }
             }
         }
@@ -198,14 +210,55 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                         noteSounds[11], 1.0f, 1.0f, 2, 0, 1.0f
                     )
                 }
-                val nextLevel = gameViewModel.level.value?.levelInfo?.levelId?.plus(1)
-                nextLevel?.let { gameViewModel.changeLevel(it) }
+                showWinningMessages()
             }
         })
         animatorSet.start()
     }
 
-    private fun playWrongSolutionAnimation(isPalindrome: Boolean = false) {
+    private fun showWinningMessages()
+    {
+        val winningMessage = MessageSnackBar.make(
+            binding.gameplayFragment,
+            getString(R.string.correct_solution),
+            2000,
+            resources.getDimension(R.dimen.message_text_size)
+        )
+        val scoreMessage = MessageSnackBar.make(
+            binding.gameplayFragment,
+            "",
+            2000,
+            resources.getDimension(R.dimen.score_text_size)
+        )
+        scoreMessage.addCallback(object:BaseTransientBottomBar.BaseCallback<MessageSnackBar>(){
+            override fun onDismissed(transientBottomBar: MessageSnackBar?, event: Int) {
+                super.onDismissed(transientBottomBar, event)
+                val nextLevel = gameViewModel.level.value?.levelInfo?.levelId?.plus(1)
+                nextLevel?.let { gameViewModel.changeLevel(it) }
+            }
+        })
+        winningMessage.addCallback(object:BaseTransientBottomBar.BaseCallback<MessageSnackBar>(){
+            override fun onDismissed(transientBottomBar: MessageSnackBar?, event: Int) {
+                super.onDismissed(transientBottomBar, event)
+                scoreMessage.show()
+                startCountAnimation(scoreMessage.view.findViewById(R.id.message))
+            }
+        })
+        winningMessage.show()
+    }
+
+    private fun startCountAnimation(scoreView:TextView) {
+        val currentValue = 0
+        val animator = ValueAnimator.ofInt(currentValue, currentValue + 1529)
+        animator.duration = 1000
+        animator.addUpdateListener {
+                animation ->
+            scoreView.text = animation.animatedValue.toString().padStart(5, '0')
+        }
+        animator.start()
+    }
+
+    private fun playWrongSolutionAnimation() {
         val animatorSet = AnimatorSet()
         val shakeX = ObjectAnimator
             .ofFloat(
@@ -218,12 +271,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         animatorSet.play(shakeX)
         animatorSet.start()
         doubleClickVibration()
-        if (isPalindrome) {
-            MessageDialogFragment(
-                title = getString(R.string.palindrome_found),
-                message = getString(R.string.palindrome_but_not_correct)
-            ).show(childFragmentManager, MessageDialogFragment.TAG)
-        }
+        gameState = GameState.READY
     }
 
     private fun doubleClickVibration() {

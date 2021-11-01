@@ -123,7 +123,7 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
         Log.i(TAG, cells.toString())
     }
 
-    private fun sendLetterHome(letter: Letter) {
+    fun sendLetterHome(letter: Letter) {
         if (letter.hasFriend()) {
             letter.getTheFriend()?.setFriend(null)
             letter.setFriend(null)
