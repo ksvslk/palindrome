@@ -24,7 +24,11 @@
     <color name="navigationBarColor">#80797D88</color>
     <color name="itemDividerColor">#DAD8D8</color>
 
-    <color name="successTextColor">#01A698</color>
-    <color name="successBoxColor">#D8FAF3</color>
+    <color name="successTextColor">#4D4E4F</color>
+    <color name="successBoxColor">#5FFFA7</color>
+
+    <color name="messageTextGood">#B5CC9F</color>
+    <color name="messageTextBad">#D6A9A9</color>
+    <color name="messageTextAlmost">#CFC098</color>
 
 </resources>

@@ -44,6 +44,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     private lateinit var binding: GameplayFragmentBinding
     private lateinit var soundPool: SoundPool
     private var noteSounds by Delegates.notNull<List<Int>>()
+    private var scoreSound by Delegates.notNull<Int>()
+    private var correctSound by Delegates.notNull<Int>()
     private lateinit var audioManager: AudioManager
     lateinit var cellDirector: CellDirector
     val gameViewModel: GameViewModel by activityViewModels()
@@ -62,6 +64,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         cellDirector = CellDirector(this)
         audioManager = requireContext().getSystemService(Context.AUDIO_SERVICE) as AudioManager
         soundPool = SoundPool.Builder().build()
+        scoreSound = soundPool.load(requireContext(), R.raw.score_tick, 1)
+        correctSound = soundPool.load(requireContext(), R.raw.correct, 1)
         noteSounds = arrayListOf(
             soundPool.load(requireContext(), R.raw.fs2, 1),
             soundPool.load(requireContext(), R.raw.fs1, 1),
@@ -163,8 +167,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                     val message = MessageSnackBar.make(
                         binding.gameplayFragment,
                         getString(R.string.not_quite_solution),
-                        2000,
-                        resources.getDimension(R.dimen.wrong_palindrome_text_size)
+                        2000
                     )
                     message.show()
                 }
@@ -175,8 +178,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                     val message = MessageSnackBar.make(
                         binding.gameplayFragment,
                         getString(R.string.wrong_solution),
-                        2000,
-                        resources.getDimension(R.dimen.message_text_size)
+                        2000
                     )
                     message.show()
                 }
@@ -222,13 +224,11 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             binding.gameplayFragment,
             getString(R.string.correct_solution),
             2000,
-            resources.getDimension(R.dimen.message_text_size)
         )
         val scoreMessage = MessageSnackBar.make(
             binding.gameplayFragment,
             "",
             2000,
-            resources.getDimension(R.dimen.score_text_size)
         )
         scoreMessage.addCallback(object:BaseTransientBottomBar.BaseCallback<MessageSnackBar>(){
             override fun onDismissed(transientBottomBar: MessageSnackBar?, event: Int) {
@@ -244,6 +244,9 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 startCountAnimation(scoreMessage.view.findViewById(R.id.message))
             }
         })
+        soundPool.play(
+            correctSound, 1.0f, 1.0f, 2, 0, 1.0f
+        )
         winningMessage.show()
     }
 
@@ -255,6 +258,9 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 animation ->
             scoreView.text = animation.animatedValue.toString().padStart(5, '0')
         }
+        soundPool.play(
+            scoreSound, 1.0f, 1.0f, 2, 0, 1.0f
+        )
         animator.start()
     }
 

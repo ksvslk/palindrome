@@ -1,6 +1,7 @@
 package com.indest.heh.util
 
 import android.content.res.Configuration.ORIENTATION_PORTRAIT
+import android.util.Log
 import androidx.core.view.children
 import androidx.gridlayout.widget.GridLayout
 import com.indest.heh.letter.Letter
@@ -18,6 +19,8 @@ object Util {
         if (puzzle.length < 6) {
             ds = DensitySettings(puzzle.length, 50, 12f, ORIENTATION_PORTRAIT)
         }
+
+        Log.i("getDensitySettings", density.toString())
 
         when (density) {
             in Float.MIN_VALUE..1.49f ->
@@ -45,7 +48,7 @@ object Util {
                 return DensitySettings(
                     ds.columnCount,
                     ((ds.boxSize - 5f) * density + 0.5).toInt(),
-                    ds.textSize * scaledDensity / 1.6f,
+                    ds.textSize * scaledDensity / 1.3f,
                     ORIENTATION_PORTRAIT
                 )
         }

@@ -4,10 +4,10 @@
     tools:layout_height="wrap_content"
     tools:layout_width="match_parent"
     tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/message"
+            android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/colorOnPrimary" />
+            android:paddingHorizontal="@dimen/default_large_margin" />
 </merge>

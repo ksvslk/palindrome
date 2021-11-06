@@ -1,14 +1,9 @@
 package com.indest.heh.game
 
-import android.animation.AnimatorInflater
-import android.animation.AnimatorSet
-import android.animation.ValueAnimator
-import android.os.Build
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.indest.heh.R
@@ -16,11 +11,8 @@ import com.indest.heh.util.findSuitableParent
 import android.widget.FrameLayout
 import android.content.res.Resources
 import android.graphics.drawable.Drawable
-import android.util.Log
 import android.util.TypedValue
-import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.view.size
 
 class MessageSnackBar(
     parent: ViewGroup,
@@ -38,7 +30,7 @@ class MessageSnackBar(
 
     companion object {
 
-        fun make(view: View, message:String, duration:Int, textSize:Float?): MessageSnackBar {
+        fun make(view: View, message:String, duration:Int): MessageSnackBar {
 
             val parent = view.findSuitableParent() ?: throw IllegalArgumentException(
                 "No suitable parent found from the given view. Please provide a valid view."
@@ -52,7 +44,7 @@ class MessageSnackBar(
 
             val textView = customView.findViewById<TextView>(R.id.message)
             textView.text = message
-            textSize?.let { textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, it) }
+            textView.textSize = view.resources.getDimension(R.dimen.message_text_size)
             val snackBar = MessageSnackBar(parent,customView)
             snackBar.duration = duration
             return snackBar
