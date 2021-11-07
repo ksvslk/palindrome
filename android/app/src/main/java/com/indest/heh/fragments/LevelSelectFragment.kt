@@ -32,7 +32,6 @@ class LevelSelectFragment : BottomSheetDialogFragment() {
             {
                 binding.levelSelectRecyclerview.adapter = LevelItemAdapter(levels) {
                     requireActivity().onBackPressed()
-                    requireActivity().onBackPressed()
                     it?.levelId?.let { it1 -> gameViewModel.changeLevel(it1) }
                 }
             }

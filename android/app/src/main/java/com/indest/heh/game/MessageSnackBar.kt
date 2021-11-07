@@ -41,7 +41,6 @@ class MessageSnackBar(
                 parent,
                 false
             ) as MessageSnackView
-
             val textView = customView.findViewById<TextView>(R.id.message)
             textView.text = message
             textView.textSize = view.resources.getDimension(R.dimen.message_text_size)

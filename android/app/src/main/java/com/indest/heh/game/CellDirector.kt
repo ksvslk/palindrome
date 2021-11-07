@@ -20,8 +20,8 @@ import kotlin.math.abs
 class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
 
     private val TAG = "CellDirector"
+    private val gf: GamePlayFragment = gamePlayFragment
     var cells: MutableList<Cell<*, *>> = ArrayList()
-    val gf: GamePlayFragment = gamePlayFragment
 
     fun handleCollisions(cell: Letter) {
         when (val closestCell = getClosestBox(to = cell, from = getCandidateBoxes(cell))) {

@@ -1,12 +1,12 @@
 package com.indest.heh.letter
 
 import android.animation.ObjectAnimator
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import androidx.fragment.app.findFragment
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.indest.heh.fragments.GamePlayFragment
-import com.indest.heh.game.GameState
 import com.indest.heh.letter.effects.ColorSelector
 import com.indest.heh.util.C.NEUTRAL_LAYER
 import com.indest.heh.util.C.TOP_LAYER
@@ -38,7 +38,8 @@ enum class LetterState : ILetterState {
         override fun draw(l: Letter) {}
         override fun executeActionDownBehaviour(l: Letter, v: View, e: MotionEvent) {
 
-            l.findFragment<GamePlayFragment>().gameState = GameState.ANIMATING
+            val fragment = l.findFragment<GamePlayFragment>()
+
 
             // Calculate the distance moved
             l.dX = v.x - e.rawX
@@ -128,7 +129,7 @@ enum class LetterState : ILetterState {
                     l.z = NEUTRAL_LAYER
                     l.currentPos.x = l.pos.x
                     l.currentPos.y = l.pos.y
-                    l.findFragment<GamePlayFragment>().gameState = GameState.READY
+                    Log.i(TAG, "ANIMATION END for $l.")
                 }
                 .start()
         }

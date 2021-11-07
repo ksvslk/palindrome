@@ -25,6 +25,7 @@ class SettingsFragment : BottomSheetDialogFragment() {
         binding = SettingsFragmentBinding.inflate(layoutInflater, container, false)
         binding.levelSelectButton.setOnClickListener {
             parentFragmentManager.commit {
+                remove(this@SettingsFragment)
                 add(LevelSelectFragment(), LevelSelectFragment().tag)
                 addToBackStack(LevelSelectFragment().tag)
             }

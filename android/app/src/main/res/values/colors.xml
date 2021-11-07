@@ -25,10 +25,8 @@
     <color name="itemDividerColor">#DAD8D8</color>
 
     <color name="successTextColor">#4D4E4F</color>
-    <color name="successBoxColor">#5FFFA7</color>
+    <color name="successBoxColor">#00FFAA</color>
 
-    <color name="messageTextGood">#B5CC9F</color>
-    <color name="messageTextBad">#D6A9A9</color>
-    <color name="messageTextAlmost">#CFC098</color>
+    <color name="messageBoxBackground">#BFFAF9F9</color>
 
 </resources>
