@@ -114,6 +114,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                         }
                     }
                     binding.gameplayFragment.addView(level)
+                    gameState = GameState.READY
                     handleGameSolutions()
                 }
             })

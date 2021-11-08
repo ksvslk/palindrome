@@ -2,9 +2,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation_graph"
-    app:startDestination="@id/navigation_home">
+    app:startDestination="@id/navigation_gameplay">
 
-    <fragment
+<!--    <fragment
         android:id="@+id/navigation_home"
         android:name="com.indest.heh.fragments.HomeFragment"
         android:label="Loading"
@@ -25,13 +25,23 @@
             app:exitAnim="@anim/slide_out_top"
             app:popEnterAnim="@anim/fade_in_short"
             app:popExitAnim="@anim/fade_out_short" />
-    </fragment>
+    </fragment>-->
 
     <fragment
         android:id="@+id/navigation_gameplay"
         android:name="com.indest.heh.fragments.GamePlayFragment"
         android:label="GamePlayFragment"
-        tools:layout="@layout/gameplay_fragment"/>
+        tools:layout="@layout/gameplay_fragment">
+        <action
+            android:id="@+id/action_navigation_gameplay_to_navigation_hints"
+            app:destination="@id/navigation_hints" />
+        <action
+            android:id="@+id/action_navigation_gameplay_to_navigation_google_games"
+            app:destination="@id/navigation_google_games" />
+        <action
+            android:id="@+id/action_navigation_gameplay_to_navigation_settings"
+            app:destination="@id/navigation_settings" />
+    </fragment>
 
     <dialog
         android:id="@+id/navigation_hints"
@@ -39,8 +49,8 @@
         android:label="@string/hints"
         tools:layout="@layout/hints_fragment" >
         <action
-            android:id="@+id/action_navigation_hints_to_navigation_home"
-            app:destination="@id/navigation_home" />
+            android:id="@+id/action_navigation_hints_to_navigation_gameplay"
+            app:destination="@id/navigation_gameplay" />
     </dialog>
 
     <dialog
@@ -49,19 +59,22 @@
         android:label="@string/google"
         tools:layout="@layout/google_games_fragment" >
         <action
-            android:id="@+id/action_navigation_google_games_to_navigation_home"
-            app:destination="@id/navigation_home" />
+            android:id="@+id/action_navigation_google_games_to_navigation_gameplay"
+            app:destination="@id/navigation_gameplay" />
     </dialog>
+
     <dialog
         android:id="@+id/navigation_settings"
         android:name="com.indest.heh.fragments.SettingsFragment"
         android:label="@string/settings"
         tools:layout="@layout/settings_fragment" >
         <action
-            android:id="@+id/action_navigation_settings_to_navigation_home"
-            app:destination="@id/navigation_home" />
+            android:id="@+id/action_navigation_settings_to_navigation_gameplay"
+            app:destination="@id/navigation_gameplay" />
+        <action
+            android:id="@+id/action_navigation_settings_to_navigation_level_select"
+            app:destination="@id/navigation_level_select" />
     </dialog>
-<!--
 
     <dialog
         android:id="@+id/navigation_level_select"
@@ -69,12 +82,9 @@
         android:label="@string/level_select"
         tools:layout="@layout/level_select_fragment" >
         <action
-            android:id="@+id/action_navigation_level_select_to_navigation_home"
-            app:popUpTo="@+id/navigation_gameplay"
-            app:popUpToInclusive="true"
+            android:id="@+id/action_navigation_level_select_to_navigation_settings"
             app:destination="@id/navigation_gameplay" />
     </dialog>
--->
 
 
 </navigation>
