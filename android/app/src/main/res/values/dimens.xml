@@ -11,5 +11,6 @@
     <dimen name="simple_dialog_divider_margin">20dp</dimen>
     <dimen name="list_item_height">40dp</dimen>
 
-    <dimen name="message_text_size">20dp</dimen>
+    <dimen name="positive_text_size">14dp</dimen>
+    <dimen name="negative_text_size">12dp</dimen>
 </resources>

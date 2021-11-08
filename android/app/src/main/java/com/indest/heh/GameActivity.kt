@@ -2,17 +2,13 @@ package com.indest.heh
 
 import android.os.Bundle
 import android.util.Log
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.view.forEach
-import androidx.fragment.app.commit
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.indest.heh.databinding.ActivityGameBinding
-import com.indest.heh.fragments.GamePlayFragment
 import com.indest.heh.util.hideSystemBars
 import dagger.hilt.android.AndroidEntryPoint
 

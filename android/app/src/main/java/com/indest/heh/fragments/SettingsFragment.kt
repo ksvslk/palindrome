@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.fragment.app.commit
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.common.SignInButton
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.heh.databinding.SettingsFragmentBinding
@@ -24,10 +25,10 @@ class SettingsFragment : BottomSheetDialogFragment() {
         Log.i(TAG, "onCreateView")
         binding = SettingsFragmentBinding.inflate(layoutInflater, container, false)
         binding.levelSelectButton.setOnClickListener {
+            findNavController().popBackStack()
             parentFragmentManager.commit {
-                remove(this@SettingsFragment)
-                add(LevelSelectFragment(), LevelSelectFragment().tag)
                 addToBackStack(LevelSelectFragment().tag)
+                add(LevelSelectFragment(), LevelSelectFragment().tag)
             }
         }
         binding.soundButton.setOnClickListener {

@@ -30,7 +30,7 @@ class MessageSnackBar(
 
     companion object {
 
-        fun make(view: View, message:String, duration:Int): MessageSnackBar {
+        fun make(view: View, message:String, duration:Int, textSize:Float): MessageSnackBar {
 
             val parent = view.findSuitableParent() ?: throw IllegalArgumentException(
                 "No suitable parent found from the given view. Please provide a valid view."
@@ -43,7 +43,7 @@ class MessageSnackBar(
             ) as MessageSnackView
             val textView = customView.findViewById<TextView>(R.id.message)
             textView.text = message
-            textView.textSize = view.resources.getDimension(R.dimen.message_text_size)
+            textView.textSize = textSize
             val snackBar = MessageSnackBar(parent,customView)
             snackBar.duration = duration
             return snackBar

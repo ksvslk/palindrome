@@ -22,7 +22,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
 import com.google.android.material.snackbar.BaseTransientBottomBar
-
 import com.indest.heh.LevelFactory
 import com.indest.heh.R
 import com.indest.heh.databinding.GameplayFragmentBinding
@@ -134,7 +133,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
     private fun handleGameSolutions() {
         gameViewModel.realSolutionAndGuess
-            .observe(viewLifecycleOwner, { it ->
+            .observe(viewLifecycleOwner, {
                 if (it != null && it.first?.length == it.second?.length) {
                     gameState = GameState.BUSY
                     val playerSolution = it.second?.map { char ->
@@ -153,7 +152,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                             val message = MessageSnackBar.make(
                                 binding.gameplayFragment,
                                 getString(R.string.not_quite_solution),
-                                2000
+                                2000,
+                                resources.getDimension(R.dimen.negative_text_size)
                             )
                             message.show()
                         }
@@ -165,7 +165,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                             val message = MessageSnackBar.make(
                                 binding.gameplayFragment,
                                 getString(R.string.wrong_solution),
-                                2000
+                                2000,
+                                resources.getDimension(R.dimen.negative_text_size)
                             )
                             message.show()
                         }
@@ -214,11 +215,13 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             binding.gameplayFragment,
             getString(R.string.correct_solution),
             2000,
+            resources.getDimension(R.dimen.positive_text_size)
         )
         val scoreMessage = MessageSnackBar.make(
             binding.gameplayFragment,
             "",
             2000,
+            resources.getDimension(R.dimen.negative_text_size)
         )
         scoreMessage.addCallback(object : BaseTransientBottomBar.BaseCallback<MessageSnackBar>() {
             override fun onDismissed(transientBottomBar: MessageSnackBar?, event: Int) {
