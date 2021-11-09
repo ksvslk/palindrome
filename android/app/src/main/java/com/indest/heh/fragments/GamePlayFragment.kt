@@ -21,6 +21,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.indest.heh.LevelFactory
 import com.indest.heh.R
@@ -144,6 +145,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
                     when {
                         it.first == it.second -> {
+                            gameViewModel.realSolutionAndGuess.removeObservers { viewLifecycleOwner.lifecycle }
+                            gameViewModel.updateCurrentLevel()
                             playCorrectSolutionAnimation()
                         }
                         playerSolution?.reversed() == playerSolution -> {

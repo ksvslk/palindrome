@@ -12,6 +12,10 @@ interface LevelDao {
     suspend fun insert(levelInfo: LevelData)
 
     @Transaction
+    @Query("delete from letter_info_table where owner_id = :levelNr")
+    suspend fun deleteLetterInfo(levelNr: Int)
+
+    @Transaction
     @Query("select * from level_info_table where level_id = :nr")
     suspend fun getLevel(nr: Int): Level
 

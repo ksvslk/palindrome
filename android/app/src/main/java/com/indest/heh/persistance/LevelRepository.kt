@@ -29,7 +29,10 @@ class LevelRepository @Inject constructor(
     private val TAG = "LevelRepository"
     lateinit var coverImage: Bitmap
 
-    suspend fun isDatabaseEmpty() = levelDao.rowCount() == 0
+    suspend fun resetLevelLettersInfo(levelNr: Int) = levelDao.deleteLetterInfo(levelNr)
+
+    suspend fun updateLevel(level: LevelData) = levelDao.updateLevelData(level)
+
     // Local
     suspend fun getLevel(nr: Int) = levelDao.getLevel(nr)
 

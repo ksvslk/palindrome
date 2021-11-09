@@ -6,7 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.indest.heh.letter.Cell
 import com.indest.heh.letter.Letter
+import com.indest.heh.persistance.LevelProgress
 import com.indest.heh.persistance.LevelRepository
+import com.indest.heh.persistance.dto.LetterProperties
 import com.indest.heh.persistance.dto.Level
 import com.indest.heh.persistance.dto.LevelData
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,16 +22,11 @@ class GameViewModel @Inject constructor(
 ) :
     AndroidViewModel(application) {
 
-    val levels:MutableLiveData<List<LevelData>> by lazy {
-        MutableLiveData<List<LevelData>>()
-    }
+    val levels = MutableLiveData<List<LevelData>>()
 
-    val level:MutableLiveData<Level> by lazy {
-        MutableLiveData<Level>()
-    }
-    val realSolutionAndGuess: MutableLiveData<Triple<String?, String?, Int?>> by lazy {
-        MutableLiveData<Triple<String?, String?, Int?>>()
-    }
+    val level = MutableLiveData<Level>()
+
+    val realSolutionAndGuess =  MutableLiveData<Triple<String?, String?, Int?>>()
 
     init {
         viewModelScope.launch {
@@ -41,6 +38,19 @@ class GameViewModel @Inject constructor(
     fun changeLevel(nr: Int) {
         viewModelScope.launch {
             level.value = levelRepository.getLevel(nr)
+        }
+    }
+
+    fun updateCurrentLevel(levelScore: Int = 1337)
+    {
+        viewModelScope.launch {
+            levelRepository.resetLevelLettersInfo(level.value!!.levelInfo.levelId)
+            val updatedLevel = level.value!!.levelInfo.copy(
+                progress = LevelProgress.REPLAY,
+                puzzle = level.value!!.levelInfo.puzzle,
+                score = levelScore
+            )
+            levelRepository.updateLevel(updatedLevel)
         }
     }
 
