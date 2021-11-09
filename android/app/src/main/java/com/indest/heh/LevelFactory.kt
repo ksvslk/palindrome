@@ -12,8 +12,8 @@ import com.indest.heh.letter.Letter
 import com.indest.heh.letter.LetterState
 import com.indest.heh.letter.Slot
 import com.indest.heh.persistance.dto.Level
+import com.indest.heh.util.C
 import com.indest.heh.util.DensitySettings
-import com.indest.heh.util.Util
 
 object LevelFactory {
     /*
@@ -27,12 +27,13 @@ object LevelFactory {
         layoutInflater: LayoutInflater,
         container: CellContainer
     ): GridLayout {
-        val puzzle = info.levelInfo.puzzle
-        val densitySettings = Util.getDensitySettings(
-            context.resources.displayMetrics.density,
-            context.resources.displayMetrics.scaledDensity,
-            puzzle
+
+        val densitySettings = DensitySettings(
+            C.DEFAULT_COLUMNS_COUNT,
+            context.resources.getDimensionPixelSize(R.dimen.box_size),
+            context.resources.getDimensionPixelSize(R.dimen.box_text_size),
         )
+
         val level = layoutInflater.inflate(R.layout.grid, container, false) as GridLayout
         level.columnCount = densitySettings.columnCount
         addLetters(level, densitySettings, info, context)
@@ -66,7 +67,7 @@ object LevelFactory {
                     .apply {
                         width = ds.boxSize
                         height = ds.boxSize
-                        textSize = ds.textSize
+                        textSize = ds.textSize.toFloat()
                         typeface = ResourcesCompat.getFont(context, R.font.yantramanav_bold)
                         gravity = Gravity.CENTER
 
@@ -89,13 +90,13 @@ object LevelFactory {
     }
 
     private fun addSlots(puzzle: String, grid: GridLayout, ds: DensitySettings, context: Context) {
-        val solutionRows = Util.getSolutionRows(puzzle, ds.columnCount)
+        val solutionRows = getSolutionRows(puzzle, ds.columnCount)
         for (row in solutionRows) {
             for (char in row) {
                 when (char) {
                     ' ' -> grid.addView(Space(context))
                     else -> grid.addView(Slot(context).apply {
-                        textSize = ds.textSize
+                        textSize = ds.textSize.toFloat()
                         width = ds.boxSize
                         height = ds.boxSize
                         background =
@@ -108,6 +109,24 @@ object LevelFactory {
                 }
             }
         }
+    }
+
+    private fun getSolutionRows(puzzle: String, cols: Int): List<String> {
+        val puzzleWords = puzzle.split(' ')
+        return puzzleWords.fold(mutableListOf(), { acc: List<String>, s: String ->
+            when {
+                acc.isEmpty() -> acc + s
+                acc.last().length.plus(1) + s.length <= cols -> {
+                    val last = acc.last().plus(' ')
+                    acc.subList(0, acc.lastIndex) + last.plus(s)
+                }
+                else -> { // New line
+                    val blankCount = cols - acc.last().length
+                    val last = acc.last().plus(" ".repeat(blankCount))
+                    acc.subList(0, acc.lastIndex) + last + s
+                }
+            }
+        })
     }
 
     private fun addBlanks(columnCount: Int, grid: GridLayout, layoutInflater: LayoutInflater) {

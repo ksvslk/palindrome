@@ -7,5 +7,7 @@ object C {
     const val BOTTOM_LAYER = -1f
 
     const val SAVE_GAME = "NewSaveGame2"
+
+    const val DEFAULT_COLUMNS_COUNT = 6
 }
 

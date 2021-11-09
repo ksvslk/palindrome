@@ -70,4 +70,7 @@ interface LevelDao {
     @Query("select count(*) from level_info_table")
     suspend fun rowCount():Int
 
+    @Query("select 1 from level_info_table")
+    fun dummyQuery():Int
+
 }

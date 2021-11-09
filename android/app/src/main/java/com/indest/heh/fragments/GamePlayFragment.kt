@@ -87,8 +87,10 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     }
 
     private fun loadLevel() {
+        Log.i(TAG, "loadLevel")
         gameViewModel.level
             .observe(viewLifecycleOwner, { levelAndLettersInfo ->
+                Log.i(TAG, levelAndLettersInfo?.levelInfo?.solution.toString())
                 if (levelAndLettersInfo != null) {
                     if (binding.gameplayFragment.childCount > 0) {
                         clearPreviousLevel()

@@ -1,5 +1,6 @@
 package com.indest.heh.fragments
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -32,7 +33,8 @@ class SettingsFragment : BottomSheetDialogFragment() {
             }
         }
         binding.soundButton.setOnClickListener {
-            Toast.makeText(requireContext(), "Turn sound ON/OFF", Toast.LENGTH_LONG).show()
+            val config: Configuration = resources.configuration
+            Toast.makeText(requireContext(), "DPI: ${config.densityDpi}", Toast.LENGTH_LONG).show()
         }
         binding.vibrationButton.setOnClickListener {
             Toast.makeText(requireContext(), "Vibration ON/OFF", Toast.LENGTH_LONG).show()
