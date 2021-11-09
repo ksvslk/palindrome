@@ -7,9 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.indest.heh.R
 import com.indest.heh.adapters.LevelItemAdapter
 import com.indest.heh.databinding.LevelSelectFragmentBinding
 import com.indest.heh.game.GameViewModel

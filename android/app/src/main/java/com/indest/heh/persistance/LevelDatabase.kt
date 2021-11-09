@@ -2,7 +2,6 @@ package com.indest.heh.persistance
 
 import android.content.ContentValues
 import android.content.Context
-import android.util.Log
 import androidx.room.*
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.indest.heh.persistance.dto.LetterProperties

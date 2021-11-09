@@ -1,18 +1,16 @@
 package com.indest.heh.game
 
+import android.content.res.Resources
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.indest.heh.R
 import com.indest.heh.util.findSuitableParent
-import android.widget.FrameLayout
-import android.content.res.Resources
-import android.graphics.drawable.Drawable
-import android.util.TypedValue
-import android.widget.TextView
 
 class MessageSnackBar(
     parent: ViewGroup,

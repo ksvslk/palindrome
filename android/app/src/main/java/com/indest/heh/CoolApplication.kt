@@ -4,11 +4,8 @@ import android.app.Application
 import android.os.StrictMode
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
-import com.indest.heh.persistance.LevelDao
 import com.indest.heh.persistance.LevelRepository
 import dagger.hilt.android.HiltAndroidApp
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import java.util.concurrent.Executors
 import javax.inject.Inject
 
