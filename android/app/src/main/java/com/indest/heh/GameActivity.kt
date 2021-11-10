@@ -2,8 +2,11 @@ package com.indest.heh
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.forEach
+import androidx.core.graphics.Insets
+import androidx.core.view.*
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -23,6 +26,18 @@ class GameActivity : AppCompatActivity() {
         Log.i(TAG, "onCreate")
         super.onCreate(savedInstanceState)
         binding = ActivityGameBinding.inflate(layoutInflater)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.container) { _, insets ->
+            WindowInsetsCompat.Builder().setInsets(
+                WindowInsetsCompat.Type.systemBars(),
+                Insets.of(
+                    insets.getInsets(WindowInsetsCompat.Type.systemBars()).left,
+                    insets.getInsets(WindowInsetsCompat.Type.systemBars()).top,
+                    insets.getInsets(WindowInsetsCompat.Type.systemBars()).right,
+                    0
+                )
+            ).build()
+        }
+
         setContentView(binding.root)
 
         val navView: BottomNavigationView = binding.navView
@@ -31,6 +46,7 @@ class GameActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
         navView.menu.setGroupCheckable(0, true, false)
         navView.menu.forEach { it.isChecked = true }
+
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {

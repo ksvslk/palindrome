@@ -28,10 +28,11 @@ object LevelFactory {
         container: CellContainer
     ): GridLayout {
 
+        val boxTextSize = (context.resources.getDimensionPixelSize(R.dimen._18ssp) / context.resources.displayMetrics.scaledDensity) + context.resources.displayMetrics.scaledDensity * 2
         val densitySettings = DensitySettings(
             C.DEFAULT_COLUMNS_COUNT,
-            context.resources.getDimensionPixelSize(R.dimen.box_size),
-            context.resources.getDimensionPixelSize(R.dimen.box_text_size),
+            context.resources.getDimensionPixelSize(R.dimen._35sdp),
+            boxTextSize.toInt(),
         )
 
         val level = layoutInflater.inflate(R.layout.grid, container, false) as GridLayout

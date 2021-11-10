@@ -15,6 +15,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.ViewCompat
 import androidx.core.view.children
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
@@ -85,6 +86,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         loadLevel()
         super.onViewCreated(view, savedInstanceState)
+        ViewCompat.requestApplyInsets(view)
     }
 
     private fun loadLevel() {
