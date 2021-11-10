@@ -6,6 +6,7 @@ import android.media.SoundPool
 import android.view.animation.AccelerateInterpolator
 import com.indest.heh.letter.Cell
 import com.indest.heh.letter.Letter
+import com.indest.heh.util.playWhileSoundOn
 
 object AnimationFactory {
 
@@ -29,7 +30,7 @@ object AnimationFactory {
             if (audioManager.ringerMode == AudioManager.RINGER_MODE_NORMAL) {
                 this.addListener(object : AnimatorListenerAdapter() {
                     override fun onAnimationStart(animation: Animator?) {
-                        soundPool.play(index, 1.0f, 1.0f, 1, 0, 1.0f)
+                        soundPool.playWhileSoundOn(index, 1, audioManager = audioManager)
                     }
                 })
             }
@@ -56,7 +57,7 @@ object AnimationFactory {
             if (audioManager.ringerMode == AudioManager.RINGER_MODE_NORMAL) {
                 this.addListener(object : AnimatorListenerAdapter() {
                     override fun onAnimationStart(animation: Animator?) {
-                        soundPool.play(index, 1.0f, 1.0f, 1, 0, 1.0f)
+                        soundPool.playWhileSoundOn(index, 1, audioManager = audioManager)
                     }
                 })
             }

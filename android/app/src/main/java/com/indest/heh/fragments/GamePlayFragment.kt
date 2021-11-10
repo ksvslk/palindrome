@@ -21,7 +21,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
-import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.indest.heh.LevelFactory
 import com.indest.heh.R
@@ -29,6 +28,7 @@ import com.indest.heh.databinding.GameplayFragmentBinding
 import com.indest.heh.game.*
 import com.indest.heh.letter.Cell
 import com.indest.heh.letter.Letter
+import com.indest.heh.util.playWhileSoundOn
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.properties.Delegates
 
@@ -205,9 +205,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             override fun onAnimationEnd(animation: Animator?) {
                 super.onAnimationEnd(animation)
                 if (gameViewModel.isLastLevel()) {
-                    soundPool.play(
-                        noteSounds[11], 1.0f, 1.0f, 2, 0, 1.0f
-                    )
+                    soundPool.playWhileSoundOn( noteSounds[11], 2, audioManager = audioManager)
                 }
                 showWinningMessages()
             }
@@ -242,9 +240,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 startCountAnimation(scoreMessage.view.findViewById(R.id.message))
             }
         })
-        soundPool.play(
-            correctSound, 1.0f, 1.0f, 2, 0, 1.0f
-        )
+        soundPool.playWhileSoundOn(correctSound, 2, audioManager = audioManager)
         winningMessage.show()
     }
 
@@ -255,9 +251,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         animator.addUpdateListener { animation ->
             scoreView.text = animation.animatedValue.toString().padStart(5, '0')
         }
-        soundPool.play(
-            scoreSound, 1.0f, 1.0f, 2, 0, 1.0f
-        )
+        soundPool.playWhileSoundOn(scoreSound, 2, audioManager = audioManager)
         animator.start()
     }
 

@@ -38,9 +38,6 @@ enum class LetterState : ILetterState {
         override fun draw(l: Letter) {}
         override fun executeActionDownBehaviour(l: Letter, v: View, e: MotionEvent) {
 
-            val fragment = l.findFragment<GamePlayFragment>()
-
-
             // Calculate the distance moved
             l.dX = v.x - e.rawX
             l.dY = v.y - e.rawY

@@ -1,5 +1,7 @@
 package com.indest.heh.util
 
+import android.media.AudioManager
+import android.media.SoundPool
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -19,6 +21,14 @@ fun Fragment.hideSystemBars(viewGroup: ViewGroup) {
     val insetsController = WindowInsetsControllerCompat(requireActivity().window, viewGroup)
     insetsController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
     insetsController.hide(WindowInsetsCompat.Type.navigationBars())
+}
+
+fun SoundPool.playWhileSoundOn(sound:Int, priority: Int, loop:Int = 0, audioManager: AudioManager)
+{
+    if (audioManager.ringerMode == AudioManager.RINGER_MODE_NORMAL)
+    {
+        play(sound, 1.0f, 1.0f, priority, 0, 1.0f)
+    }
 }
 
 internal fun View?.findSuitableParent(): ViewGroup? {

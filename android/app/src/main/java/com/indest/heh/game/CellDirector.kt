@@ -192,9 +192,6 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
             info.lettersProperties.isNotEmpty() -> {
                 info.lettersProperties.forEach { li ->
                     if (li.friendIndex != -666) {
-                        Log.i(TAG, info.lettersProperties[0].letter.toString())
-                        Log.i(TAG, info.lettersProperties[1].letter.toString())
-                        Log.i(TAG, info.lettersProperties[2].letter.toString())
                         val slot = cells.find { it.homeIndex == li.friendIndex } as Slot
                         val letter = cells.filterIsInstance<Letter>()
                             .find { it.homeIndex == li.homeIndex } as Letter

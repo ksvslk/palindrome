@@ -12,8 +12,8 @@
     <dimen name="list_item_height">40dp</dimen>
 
     <!-- GAMEPLAY -->
-    <dimen name="box_size">50dp</dimen>
-    <dimen name="box_text_size">12sp</dimen>
-    <dimen name="positive_text_size">14sp</dimen>
-    <dimen name="negative_text_size">12sp</dimen>
+    <dimen name="box_size">45dp</dimen>
+    <dimen name="box_text_size">10sp</dimen>
+    <dimen name="positive_text_size">12sp</dimen>
+    <dimen name="negative_text_size">10sp</dimen>
 </resources>
