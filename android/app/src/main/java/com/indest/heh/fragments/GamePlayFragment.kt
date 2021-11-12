@@ -47,6 +47,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     private var noteSounds by Delegates.notNull<List<Int>>()
     private var scoreSound by Delegates.notNull<Int>()
     private var correctSound by Delegates.notNull<Int>()
+    private var hintNotification by Delegates.notNull<Int>()
     private var categoryRewardedAd: RewardedAd? = null
     private var mIsLoading = false
     private lateinit var audioManager: AudioManager
@@ -59,8 +60,9 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     private var guesses :Int by Delegates.observable(0) { _, _, new ->
         val guessesBeforeHint = resources.getInteger(R.integer.guessesBeforeHint)
         Log.i(TAG, "Guess nr: $new")
-        if (new == guessesBeforeHint)
+        if (new == guessesBeforeHint && !badge.isVisible)
         {
+            soundPool.playWhileSoundOn(hintNotification, 1, audioManager = audioManager)
             badge.isVisible = true
             val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE) ?: return@observable
             with (sharedPref.edit()) {
@@ -81,6 +83,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         soundPool = SoundPool.Builder().build()
         scoreSound = soundPool.load(requireContext(), R.raw.score_tick, 1)
         correctSound = soundPool.load(requireContext(), R.raw.correct, 1)
+        hintNotification = soundPool.load(requireContext(), R.raw.hint_notification, 1)
         noteSounds = arrayListOf(
             soundPool.load(requireContext(), R.raw.fs2, 1),
             soundPool.load(requireContext(), R.raw.fs1, 1),
@@ -267,6 +270,12 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                             gameViewModel.realSolutionAndGuess.removeObservers { viewLifecycleOwner.lifecycle }
                             gameViewModel.updateCompletedLevel()
                             playCorrectSolutionAnimation()
+                            val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE) ?: return@observe
+                            with (sharedPref.edit()) {
+                                putBoolean(getString(R.string.level_solution_guesses), false)
+                                apply()
+                            }
+                            badge.isVisible = false
                         }
                         playerSolution?.reversed() == playerSolution -> {
                             playWrongSolutionAnimation()
@@ -277,7 +286,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                                 binding.gameplayFragment,
                                 getString(R.string.not_quite_solution),
                                 2000,
-                                resources.getDimensionPixelSize(R.dimen._10ssp).toFloat()
+                                resources.getDimensionPixelSize(R.dimen._9ssp).toFloat()
                             )
                             message.show()
                         }
@@ -290,7 +299,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                                 binding.gameplayFragment,
                                 getString(R.string.wrong_solution),
                                 2000,
-                                resources.getDimensionPixelSize(R.dimen._10ssp).toFloat()
+                                resources.getDimensionPixelSize(R.dimen._9ssp).toFloat()
                             )
                             message.show()
                         }
@@ -337,13 +346,13 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             binding.gameplayFragment,
             getString(R.string.correct_solution),
             2000,
-            resources.getDimensionPixelSize(R.dimen._12ssp).toFloat()
+            resources.getDimensionPixelSize(R.dimen._11ssp).toFloat()
         )
         val scoreMessage = MessageSnackBar.make(
             binding.gameplayFragment,
             "",
             2000,
-            resources.getDimensionPixelSize(R.dimen._10ssp).toFloat()
+            resources.getDimensionPixelSize(R.dimen._9ssp).toFloat()
         )
         scoreMessage.addCallback(object : BaseTransientBottomBar.BaseCallback<MessageSnackBar>() {
             override fun onDismissed(transientBottomBar: MessageSnackBar?, event: Int) {
