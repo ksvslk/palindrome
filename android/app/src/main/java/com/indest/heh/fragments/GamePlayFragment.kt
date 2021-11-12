@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.children
@@ -22,6 +23,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
+import androidx.navigation.fragment.findNavController
+import com.google.android.gms.ads.rewarded.RewardedAd
+import com.google.android.material.badge.BadgeDrawable
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.indest.heh.LevelFactory
 import com.indest.heh.R
@@ -42,11 +47,30 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     private var noteSounds by Delegates.notNull<List<Int>>()
     private var scoreSound by Delegates.notNull<Int>()
     private var correctSound by Delegates.notNull<Int>()
+    private var categoryRewardedAd: RewardedAd? = null
+    private var mIsLoading = false
     private lateinit var audioManager: AudioManager
+    private lateinit var badge:BadgeDrawable
     lateinit var cellDirector: CellDirector
+
     var gameState :GameState by Delegates.observable(GameState.BUSY) { _, old, new ->
-        if (old != new) Log.i(TAG, "$old -> $new")
+        if (old != new) {/*Log.i(TAG, "$old -> $new")*/}
     }
+    private var guesses :Int by Delegates.observable(0) { _, _, new ->
+        val guessesBeforeHint = resources.getInteger(R.integer.guessesBeforeHint)
+        Log.i(TAG, "Guess nr: $new")
+        if (new == guessesBeforeHint)
+        {
+            badge.isVisible = true
+            val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE) ?: return@observable
+            with (sharedPref.edit()) {
+                putBoolean(getString(R.string.level_solution_guesses), true)
+                apply()
+            }
+            guesses = 0
+        }
+    }
+
     val gameViewModel: GameViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,6 +95,95 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             soundPool.load(requireContext(), R.raw.fs11, 1),
             soundPool.load(requireContext(), R.raw.last_level2, 1),
         )
+
+
+        if (categoryRewardedAd == null)
+        {
+            //Log.i(TAG, "Loading new category rewarded ad!")
+           // loadRewardedAd(getString(R.string.category_rewarded_ad_unit_id))
+        }
+    }
+/*
+    private fun loadRewardedAd(adUnit: String) {
+        if (categoryRewardedAd == null) {
+            mIsLoading = true
+            val adRequest = AdRequest.Builder().build()
+
+            RewardedAd.load(
+                requireContext(), adUnit, adRequest,
+                object : RewardedAdLoadCallback() {
+                    override fun onAdFailedToLoad(adError: LoadAdError) {
+                        Log.d(TAG, adError.message)
+                        mIsLoading = false
+                        categoryRewardedAd = null
+                    }
+
+                    override fun onAdLoaded(rewardedAd: RewardedAd) {
+                        Log.d(TAG, "Ad was loaded.")
+                        categoryRewardedAd = rewardedAd
+                        mIsLoading = false
+                    }
+                }
+            )
+        }
+    }
+
+    private fun showRewardedVideo(rewardedAdUnit:String) {
+        if (categoryRewardedAd != null) {
+            categoryRewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
+                override fun onAdDismissedFullScreenContent() {
+                    Log.d(TAG, "Ad was dismissed.")
+                    // Don't forget to set the ad reference to null so you
+                    // don't show the ad a second time.
+                    categoryRewardedAd = null
+                    loadRewardedAd(rewardedAdUnit)
+                }
+
+                override fun onAdFailedToShowFullScreenContent(adError: AdError?) {
+                    Log.d(TAG, "Ad failed to show.")
+                    // Don't forget to set the ad reference to null so you
+                    // don't show the ad a second time.
+                    categoryRewardedAd = null
+                }
+
+                override fun onAdShowedFullScreenContent() {
+                    Log.d(TAG, "Ad showed fullscreen content.")
+                    // Called when ad is dismissed.
+                }
+            }
+
+            categoryRewardedAd?.show(
+                requireActivity(),
+                OnUserEarnedRewardListener() {
+                    fun onUserEarnedReward(rewardItem: RewardItem) {
+                        var rewardAmount = rewardItem.amount
+                        //addCoins(rewardAmount)
+                        Log.d("TAG", "User earned the reward.")
+                    }
+                }
+            )
+        }
+    }*/
+
+    override fun onResume() {
+        super.onResume()
+        findNavController().addOnDestinationChangedListener { _, destination, _ ->
+            if (destination.id == R.id.navigation_hints) {
+                val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE) ?: return@addOnDestinationChangedListener
+                with (sharedPref.edit()) {
+                    badge.isVisible = false
+                    putBoolean(getString(R.string.level_solution_guesses), false)
+                    apply()
+                }
+            }
+        }
+        val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE) ?: return
+        badge.isVisible = sharedPref.getBoolean(getString(R.string.level_solution_guesses), false)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        findNavController().removeOnDestinationChangedListener { _, _, _ ->  }
     }
 
     override fun onCreateView(
@@ -80,6 +193,9 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     ): View {
         binding = GameplayFragmentBinding.inflate(layoutInflater, container, false)
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+        badge = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView).getOrCreateBadge(R.id.navigation_hints)
+        badge.backgroundColor = ContextCompat.getColor(requireContext(), R.color.hintsNotificationColor)
+        badge.badgeGravity = BadgeDrawable.TOP_END
         return binding.root
     }
 
@@ -140,6 +256,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         gameViewModel.realSolutionAndGuess
             .observe(viewLifecycleOwner, {
                 if (it != null && it.first?.length == it.second?.length) {
+                    guesses++
                     gameState = GameState.BUSY
                     val playerSolution = it.second?.map { char ->
                         if ("^([?!.,’])".contains(char)) "" else char
@@ -148,7 +265,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                     when {
                         it.first == it.second -> {
                             gameViewModel.realSolutionAndGuess.removeObservers { viewLifecycleOwner.lifecycle }
-                            gameViewModel.updateCurrentLevel()
+                            gameViewModel.updateCompletedLevel()
                             playCorrectSolutionAnimation()
                         }
                         playerSolution?.reversed() == playerSolution -> {
@@ -160,7 +277,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                                 binding.gameplayFragment,
                                 getString(R.string.not_quite_solution),
                                 2000,
-                                resources.getDimension(R.dimen.negative_text_size)
+                                resources.getDimensionPixelSize(R.dimen._10ssp).toFloat()
                             )
                             message.show()
                         }
@@ -173,7 +290,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                                 binding.gameplayFragment,
                                 getString(R.string.wrong_solution),
                                 2000,
-                                resources.getDimension(R.dimen.negative_text_size)
+                                resources.getDimensionPixelSize(R.dimen._10ssp).toFloat()
                             )
                             message.show()
                         }
@@ -220,13 +337,13 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             binding.gameplayFragment,
             getString(R.string.correct_solution),
             2000,
-            resources.getDimension(R.dimen.positive_text_size)
+            resources.getDimensionPixelSize(R.dimen._12ssp).toFloat()
         )
         val scoreMessage = MessageSnackBar.make(
             binding.gameplayFragment,
             "",
             2000,
-            resources.getDimension(R.dimen.negative_text_size)
+            resources.getDimensionPixelSize(R.dimen._10ssp).toFloat()
         )
         scoreMessage.addCallback(object : BaseTransientBottomBar.BaseCallback<MessageSnackBar>() {
             override fun onDismissed(transientBottomBar: MessageSnackBar?, event: Int) {

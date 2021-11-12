@@ -1,6 +1,7 @@
 package com.indest.heh;
 
 import android.content.Context
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.widget.Space
@@ -28,11 +29,29 @@ object LevelFactory {
         container: CellContainer
     ): GridLayout {
 
-        val boxTextSize = (context.resources.getDimensionPixelSize(R.dimen._18ssp) / context.resources.displayMetrics.scaledDensity) + context.resources.displayMetrics.scaledDensity * 2
+        Log.i("Dpi", context.resources.displayMetrics.densityDpi.toString())
+        val isTablet = context.resources?.displayMetrics?.xdpi?.compareTo(600f) == 1
+        val boxTextSize = (
+                context.resources.getDimensionPixelSize(R.dimen._18ssp) /
+                context.resources.displayMetrics.scaledDensity) +
+                context.resources.displayMetrics.scaledDensity * 2
+
+        val boxSize = if (isTablet){
+            context.resources.getDimensionPixelSize(R.dimen.box_size).toFloat()
+        } else {
+            context.resources.getDimensionPixelSize(R.dimen._35sdp)
+        }
+
+        val textSize = if (isTablet) {
+            context.resources.getDimensionPixelSize(R.dimen.box_text_size).toFloat()
+        } else {
+            boxTextSize.toInt()
+        }
+
         val densitySettings = DensitySettings(
             C.DEFAULT_COLUMNS_COUNT,
-            context.resources.getDimensionPixelSize(R.dimen._35sdp),
-            boxTextSize.toInt(),
+            boxSize.toInt(),
+            textSize.toInt(),
         )
 
         val level = layoutInflater.inflate(R.layout.grid, container, false) as GridLayout

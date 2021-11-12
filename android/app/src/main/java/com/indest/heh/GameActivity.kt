@@ -7,13 +7,21 @@ import android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.Insets
 import androidx.core.view.*
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.whenStarted
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import androidx.window.layout.FoldingFeature
+import androidx.window.layout.WindowMetricsCalculator
+import com.google.android.gms.ads.MobileAds
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.navigation.NavigationView
 import com.indest.heh.databinding.ActivityGameBinding
 import com.indest.heh.util.hideSystemBars
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class GameActivity : AppCompatActivity() {
@@ -40,13 +48,15 @@ class GameActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
-        val navView: BottomNavigationView = binding.navView
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragments_container) as NavHostFragment
+        val bottomNavigationView: BottomNavigationView = binding.bottomNavView
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.fragments_container) as NavHostFragment
         navController = navHostFragment.navController
-        navView.setupWithNavController(navController)
-        navView.menu.setGroupCheckable(0, true, false)
-        navView.menu.forEach { it.isChecked = true }
+        bottomNavigationView.setupWithNavController(navController)
+        bottomNavigationView.menu.setGroupCheckable(0, true, false)
+        bottomNavigationView.menu.forEach { it.isChecked = true }
 
+        MobileAds.initialize(this) {}
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -54,4 +64,5 @@ class GameActivity : AppCompatActivity() {
         super.onWindowFocusChanged(hasFocus)
         hideSystemBars(binding.root)
     }
+
 }

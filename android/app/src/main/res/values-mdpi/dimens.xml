@@ -11,9 +11,4 @@
     <dimen name="simple_dialog_divider_margin">20dp</dimen>
     <dimen name="list_item_height">30dp</dimen>
 
-    <!-- GAMEPLAY -->
-    <dimen name="box_size">35dp</dimen>
-    <dimen name="box_text_size">25sp</dimen>
-    <dimen name="positive_text_size">30sp</dimen>
-    <dimen name="negative_text_size">25sp</dimen>
 </resources>

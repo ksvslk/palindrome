@@ -1,6 +1,7 @@
 package com.indest.heh.game
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -23,10 +24,8 @@ class GameViewModel @Inject constructor(
     AndroidViewModel(application) {
 
     val levels = MutableLiveData<List<LevelData>>()
-
     val level = MutableLiveData<Level>()
-
-    val realSolutionAndGuess =  MutableLiveData<Triple<String?, String?, Int?>>()
+    val realSolutionAndGuess = MutableLiveData<Triple<String?, String?, Int?>>()
 
     init {
         viewModelScope.launch {
@@ -41,7 +40,7 @@ class GameViewModel @Inject constructor(
         }
     }
 
-    fun updateCurrentLevel(levelScore: Int = 1337)
+    fun updateCompletedLevel(levelScore: Int = 1337)
     {
         viewModelScope.launch {
             levelRepository.resetLevelLettersInfo(level.value!!.levelInfo.levelId)
@@ -59,6 +58,7 @@ class GameViewModel @Inject constructor(
     }
 
     fun updateLetters(topIndex: Int, bottomLetter: Char, bottomIndex: Int, topLetter: Char) {
+        Log.i("GMV", "updateLetters")
         viewModelScope.launch {
             levelRepository.updateLetter(
                 homeIndex = topIndex,
@@ -70,6 +70,7 @@ class GameViewModel @Inject constructor(
                 letter = topLetter,
                 level = level.value!!.levelInfo.levelId
             )
+
             realSolutionAndGuess.value = Triple(
                 level.value?.levelInfo?.solution?.replace(" ", ""),
                 levelRepository.currentSolution(level.value?.levelInfo?.levelId),
@@ -79,6 +80,7 @@ class GameViewModel @Inject constructor(
     }
 
     fun updateFriendIndex(index: Int, newIndex: Int) {
+        Log.i("GMV", "updateFriendIndex")
         viewModelScope.launch {
             levelRepository.updateFriendIndex(
                 homeIndex = index,

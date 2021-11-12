@@ -9,8 +9,10 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.fragment.app.commit
+import androidx.fragment.app.findFragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.common.SignInButton
+import com.google.android.gms.games.Game
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.heh.databinding.SettingsFragmentBinding
 

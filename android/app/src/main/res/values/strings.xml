@@ -38,4 +38,5 @@
     <string name="wrong_solution">Try again!</string>
     <string name="correct_solution">Correct!</string>
     <string name="not_quite_solution">Incorrect palindrome!</string>
+    <string name="level_solution_guesses">LEVEL_SOLUTION_GUESSES</string>
 </resources>

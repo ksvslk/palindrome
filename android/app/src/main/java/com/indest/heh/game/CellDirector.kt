@@ -187,14 +187,15 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
         }
     }
 
+    //TODO:Double check
     fun restoreSlotPlacements(info: Level) {
         when {
             info.lettersProperties.isNotEmpty() -> {
-                info.lettersProperties.forEach { li ->
-                    if (li.friendIndex != -666) {
-                        val slot = cells.find { it.homeIndex == li.friendIndex } as Slot
+                info.lettersProperties.forEach { letterProperties ->
+                    if (letterProperties.friendIndex != -666) {
+                        val slot = cells.find { it.homeIndex == letterProperties.friendIndex } as Slot
                         val letter = cells.filterIsInstance<Letter>()
-                            .find { it.homeIndex == li.homeIndex } as Letter
+                            .find { it.homeIndex == letterProperties.homeIndex } as Letter
                         letter.x = slot.x
                         letter.y = slot.y
                         letter.setFriend(slot)

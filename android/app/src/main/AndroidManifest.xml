@@ -26,6 +26,7 @@
             android:screenOrientation="portrait"
             android:hardwareAccelerated="true"
             android:immersive="true"
+            android:exported="true"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_main"
             android:theme="@style/Theme.OC">
@@ -40,9 +41,14 @@
             tools:node="remove">
         </provider>
 
-        <meta-data android:name="com.google.android.gms.games.APP_ID"
-            android:value="@string/app_id" />
-        <meta-data android:name="com.google.android.gms.version"
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/admob_app_id" />
+        <meta-data
+            android:name="com.google.android.gms.games.APP_ID"
+            android:value="@string/games_app_id" />
+        <meta-data
+            android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version"/>
     </application>
 
