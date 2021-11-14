@@ -1,5 +1,6 @@
 package com.indest.heh
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -52,11 +53,20 @@ class GameActivity : AppCompatActivity() {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragments_container) as NavHostFragment
         navController = navHostFragment.navController
+
         bottomNavigationView.setupWithNavController(navController)
         bottomNavigationView.menu.setGroupCheckable(0, true, false)
         bottomNavigationView.menu.forEach { it.isChecked = true }
 
         MobileAds.initialize(this) {}
+
+        // TODO: temp, remove this
+        getPreferences(Context.MODE_PRIVATE)?.let {
+            with (it.edit()) {
+                putBoolean(getString(R.string.tutorial_passed), false)
+                apply()
+            }
+        }
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {

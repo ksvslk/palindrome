@@ -10,6 +10,7 @@
     <string name="score">Score:</string>
     <string name="level">Level:</string>
     <string name="hints">Hints</string>
+    <string name="tutorial">Tutorial</string>
     <string name="level_select">Level Select</string>
     <string name="sign_in">Sign in with Google</string>
     <string name="achievements">Achievements</string>
@@ -38,5 +39,11 @@
     <string name="wrong_solution">Try again!</string>
     <string name="correct_solution">Correct!</string>
     <string name="not_quite_solution">Incorrect palindrome!</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- PREFERENCES -->
     <string name="level_solution_guesses">LEVEL_SOLUTION_GUESSES</string>
+    <string name="tutorial_passed">TUTORIAL_PASSED</string>
+
 </resources>

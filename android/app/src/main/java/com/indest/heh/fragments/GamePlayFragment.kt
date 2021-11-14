@@ -64,10 +64,11 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         {
             soundPool.playWhileSoundOn(hintNotification, 1, audioManager = audioManager)
             badge.isVisible = true
-            val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE) ?: return@observable
-            with (sharedPref.edit()) {
-                putBoolean(getString(R.string.level_solution_guesses), true)
-                apply()
+            activity?.getPreferences(Context.MODE_PRIVATE)?.let { sharedPref ->
+                with (sharedPref.edit()) {
+                    putBoolean(getString(R.string.level_solution_guesses), true)
+                    apply()
+                }
             }
             guesses = 0
         }
@@ -85,7 +86,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         correctSound = soundPool.load(requireContext(), R.raw.correct, 1)
         hintNotification = soundPool.load(requireContext(), R.raw.hint_notification, 1)
         noteSounds = arrayListOf(
-            soundPool.load(requireContext(), R.raw.fs2, 1),
+            soundPool.load(requireContext(), R.raw.fs2_edited, 1),
             soundPool.load(requireContext(), R.raw.fs1, 1),
             soundPool.load(requireContext(), R.raw.fs3, 1),
             soundPool.load(requireContext(), R.raw.fs5, 1),
@@ -172,16 +173,18 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         super.onResume()
         findNavController().addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.navigation_hints) {
-                val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE) ?: return@addOnDestinationChangedListener
-                with (sharedPref.edit()) {
-                    badge.isVisible = false
-                    putBoolean(getString(R.string.level_solution_guesses), false)
-                    apply()
+                activity?.getPreferences(Context.MODE_PRIVATE)?.let {
+                    with (it.edit()) {
+                        badge.isVisible = false
+                        putBoolean(getString(R.string.level_solution_guesses), false)
+                        apply()
+                    }
                 }
             }
         }
-        val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE) ?: return
-        badge.isVisible = sharedPref.getBoolean(getString(R.string.level_solution_guesses), false)
+        activity?.getPreferences(Context.MODE_PRIVATE)?.let {
+            badge.isVisible = it.getBoolean(getString(R.string.level_solution_guesses), false)
+        }
     }
 
     override fun onPause() {
@@ -270,10 +273,11 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                             gameViewModel.realSolutionAndGuess.removeObservers { viewLifecycleOwner.lifecycle }
                             gameViewModel.updateCompletedLevel()
                             playCorrectSolutionAnimation()
-                            val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE) ?: return@observe
-                            with (sharedPref.edit()) {
-                                putBoolean(getString(R.string.level_solution_guesses), false)
-                                apply()
+                            activity?.getPreferences(Context.MODE_PRIVATE)?.let { sharedPref ->
+                                with (sharedPref.edit()) {
+                                    putBoolean(getString(R.string.level_solution_guesses), false)
+                                    apply()
+                                }
                             }
                             badge.isVisible = false
                         }
