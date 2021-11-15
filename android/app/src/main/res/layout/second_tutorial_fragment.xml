@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/second_tutorial_fragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="@dimen/default_large_margin"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context=".fragments.SecondTutorialFragment">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/tutorial"
+            android:textSize="@dimen/_25ssp" />
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:layout_width="@dimen/_100sdp"
+            android:layout_height="match_parent"
+            app:indicatorColor="@color/hintsNotificationColor"
+            android:progress="100" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/default_large_margin"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:paddingHorizontal="@dimen/default_large_margin"
+        android:text="Drag/drop and switch letters to compose a PALINDROME!"
+        android:textSize="@dimen/_16ssp"></androidx.appcompat.widget.AppCompatTextView>
+
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/secondTutorialGameplay"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="4"
+        android:animateLayoutChanges="true"
+        android:clipChildren="false"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <androidx.gridlayout.widget.GridLayout
+            android:id="@+id/secondTutorialGrid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:animateLayoutChanges="true"
+            android:background="@color/colorBackground"
+            android:clipChildren="false"
+            android:splitMotionEvents="false"
+            android:visibility="visible"
+            app:columnCount="3"
+            app:useDefaultMargins="true">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/sLetterE1"
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:background="@color/colorPrimary"
+                android:fontFamily="@font/yantramanav_bold"
+                android:gravity="center"
+                android:text="E"
+                android:textColor="@color/colorOnPrimary"
+                android:textSize="@dimen/_18ssp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/sLetterH1"
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:background="@color/colorPrimary"
+                android:fontFamily="@font/yantramanav_bold"
+                android:gravity="center"
+                android:text="H"
+                android:textColor="@color/colorOnPrimary"
+                android:textSize="@dimen/_18ssp" />
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/sLetterH2"
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:background="@color/colorPrimary"
+                android:fontFamily="@font/yantramanav_bold"
+                android:gravity="center"
+                android:text="H"
+                android:textColor="@color/colorOnPrimary"
+                android:textSize="@dimen/_18ssp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/sSpace1"
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:background="@drawable/slot_edge_fade"
+                android:fontFamily="@font/yantramanav_bold"
+                android:gravity="center"
+                android:textColor="@color/colorOnPrimary"
+                android:textSize="@dimen/_18ssp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/sSpace2"
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:background="@drawable/slot_edge_fade"
+                android:fontFamily="@font/yantramanav_bold"
+                android:gravity="center"
+                android:textColor="@color/colorOnPrimary"
+                android:textSize="@dimen/_18ssp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/sSpace3"
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:background="@drawable/slot_edge_fade"
+                android:fontFamily="@font/yantramanav_bold"
+                android:gravity="center"
+                android:textColor="@color/colorOnPrimary"
+                android:textSize="@dimen/_18ssp" />
+        </androidx.gridlayout.widget.GridLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.5"
+        android:animateLayoutChanges="true"
+        android:clipChildren="false"
+        android:gravity="center"
+
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/startButton"
+            style="?attr/materialButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/yantramanav_bold"
+            android:text="START GAME" />
+
+        <Button
+            android:id="@+id/backButton"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/yantramanav_bold"
+            android:text="BACK" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+</androidx.appcompat.widget.LinearLayoutCompat>

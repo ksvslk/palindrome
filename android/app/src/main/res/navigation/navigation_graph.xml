@@ -27,13 +27,28 @@
         tools:layout="@layout/home_fragment">
         <action
             android:id="@+id/action_navigation_home_to_navigation_tutorial"
-            app:destination="@id/navigation_tutorial" />
+            app:destination="@id/navigation_tutorial"
+            app:enterAnim="@anim/fade_in_short"
+            app:exitAnim="@anim/fade_out_short" />
         <action
             android:id="@+id/action_navigation_home_to_navigation_gameplay"
             app:destination="@id/navigation_gameplay" />
     </fragment>
 
-    <dialog
+    <fragment
+        android:id="@+id/navigation_second_tutorial"
+        android:name="com.indest.heh.fragments.SecondTutorialFragment"
+        android:label="@string/tutorial"
+        tools:layout="@layout/second_tutorial_fragment" >
+        <action
+            android:id="@+id/action_navigation_hints_to_navigation_gameplay"
+            app:destination="@id/navigation_gameplay" />
+        <action
+            android:id="@+id/action_navigation_second_tutorial_to_navigation_tutorial"
+            app:destination="@id/navigation_tutorial" />
+    </fragment>
+
+    <fragment
         android:id="@+id/navigation_tutorial"
         android:name="com.indest.heh.fragments.TutorialFragment"
         android:label="@string/tutorial"
@@ -41,7 +56,10 @@
         <action
             android:id="@+id/action_navigation_hints_to_navigation_gameplay"
             app:destination="@id/navigation_gameplay" />
-    </dialog>
+        <action
+            android:id="@+id/action_navigation_tutorial_to_navigation_second_tutorial"
+            app:destination="@id/navigation_second_tutorial" />
+    </fragment>
 
     <dialog
         android:id="@+id/navigation_hints"

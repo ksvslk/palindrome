@@ -30,5 +30,6 @@
     <color name="messageBoxBackground">#BFFAF9F9</color>
 
     <color name="hintsNotificationColor">#FF9800</color>
+    <color name="handPointerColor">#FBEBC7</color>
 
 </resources>

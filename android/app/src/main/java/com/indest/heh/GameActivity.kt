@@ -1,6 +1,7 @@
 package com.indest.heh
 
 import android.content.Context
+import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -74,5 +75,4 @@ class GameActivity : AppCompatActivity() {
         super.onWindowFocusChanged(hasFocus)
         hideSystemBars(binding.root)
     }
-
 }

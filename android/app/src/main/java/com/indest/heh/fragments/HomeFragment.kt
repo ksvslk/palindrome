@@ -6,6 +6,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.indest.heh.R
 
 class HomeFragment : Fragment(R.layout.home_fragment) {

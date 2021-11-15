@@ -4,7 +4,9 @@ import android.content.Context
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.ViewGroup
 import android.widget.Space
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.gridlayout.widget.GridLayout
@@ -26,17 +28,27 @@ object LevelFactory {
         info: Level,
         context: Context,
         layoutInflater: LayoutInflater,
-        container: CellContainer
+        container: ViewGroup
     ): GridLayout {
 
+        val densitySettings = getDensitySettings(context)
+        val level = layoutInflater.inflate(R.layout.grid, container, false) as GridLayout
+        level.columnCount = densitySettings.columnCount
+        addLetters(level, densitySettings, info, context)
+        addBlanks(densitySettings.columnCount, level, layoutInflater)
+        addSlots(info.levelInfo.solution, level, densitySettings, context)
+        return level
+    }
+
+    private fun getDensitySettings(context: Context): DensitySettings {
         Log.i("Dpi", context.resources.displayMetrics.densityDpi.toString())
         val isTablet = context.resources?.displayMetrics?.xdpi?.compareTo(600f) == 1
         val boxTextSize = (
                 context.resources.getDimensionPixelSize(R.dimen._18ssp) /
-                context.resources.displayMetrics.scaledDensity) +
+                        context.resources.displayMetrics.scaledDensity) +
                 context.resources.displayMetrics.scaledDensity * 2
 
-        val boxSize = if (isTablet){
+        val boxSize = if (isTablet) {
             context.resources.getDimensionPixelSize(R.dimen.box_size).toFloat()
         } else {
             context.resources.getDimensionPixelSize(R.dimen._35sdp)
@@ -48,19 +60,14 @@ object LevelFactory {
             boxTextSize.toInt()
         }
 
-        val densitySettings = DensitySettings(
+        return DensitySettings(
             C.DEFAULT_COLUMNS_COUNT,
             boxSize.toInt(),
             textSize.toInt(),
         )
 
-        val level = layoutInflater.inflate(R.layout.grid, container, false) as GridLayout
-        level.columnCount = densitySettings.columnCount
-        addLetters(level, densitySettings, info, context)
-        addBlanks(densitySettings.columnCount, level, layoutInflater)
-        addSlots(info.levelInfo.solution, level, densitySettings, context)
-        return level
     }
+
 
     private fun addLetters(grid: GridLayout, ds: DensitySettings, info: Level, context: Context) {
         // Also part of restoring the state
