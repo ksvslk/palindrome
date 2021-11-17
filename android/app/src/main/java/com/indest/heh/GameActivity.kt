@@ -1,29 +1,21 @@
 package com.indest.heh
 
 import android.content.Context
-import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.Insets
-import androidx.core.view.*
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.whenStarted
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.forEach
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import androidx.window.layout.FoldingFeature
-import androidx.window.layout.WindowMetricsCalculator
 import com.google.android.gms.ads.MobileAds
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.navigation.NavigationView
 import com.indest.heh.databinding.ActivityGameBinding
 import com.indest.heh.util.hideSystemBars
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class GameActivity : AppCompatActivity() {
@@ -63,7 +55,7 @@ class GameActivity : AppCompatActivity() {
 
         // TODO: temp, remove this
         getPreferences(Context.MODE_PRIVATE)?.let {
-            with (it.edit()) {
+            with(it.edit()) {
                 putBoolean(getString(R.string.tutorial_passed), false)
                 apply()
             }

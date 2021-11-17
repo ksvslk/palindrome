@@ -11,7 +11,7 @@ import com.indest.heh.persistance.dto.LevelData
 class LevelItemAdapter(
     private val dataSet: List<LevelData>,
     private val onItemClicked: (LevelData?) -> Unit
-    ) :
+) :
     RecyclerView.Adapter<LevelItemAdapter.LevelItemViewHolder>() {
 
     val TAG = "LevelSelectAdapter"
@@ -25,6 +25,7 @@ class LevelItemAdapter(
         onItemClicked: (Int) -> Unit
     ) : RecyclerView.ViewHolder(view) {
         val textView: TextView = view.findViewById(R.id.textView)
+
         init {
             itemView.setOnClickListener {
                 onItemClicked(adapterPosition)

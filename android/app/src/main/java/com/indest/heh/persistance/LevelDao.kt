@@ -28,24 +28,23 @@ interface LevelDao {
     suspend fun updateLevelPuzzle(level: Int, newPuzzle: String)
 
     @Query("insert into letter_info_table (owner_id, home_index, friend_index, letter) values(:level, :homeIndex, :friendIndex, :letter)")
-    suspend fun insertLetterData(level: Int, homeIndex:Int, friendIndex:Int, letter:Char)
+    suspend fun insertLetterData(level: Int, homeIndex: Int, friendIndex: Int, letter: Char)
 
     @Query("update letter_info_table set home_index = :newIndex where home_index = :oldIndex and owner_id = :level")
-    suspend fun updateHomeIndex(oldIndex:Int, newIndex:Int, level: Int)
+    suspend fun updateHomeIndex(oldIndex: Int, newIndex: Int, level: Int)
 
     @Query("update letter_info_table set friend_index = :newFriendIndex where home_index = :homeIndex and owner_id = :level")
-    suspend fun updateFriendIndex(homeIndex:Int, newFriendIndex:Int, level: Int)
+    suspend fun updateFriendIndex(homeIndex: Int, newFriendIndex: Int, level: Int)
 
     @Query("update letter_info_table set letter = :letter where home_index = :homeIndex and owner_id = :level")
-    suspend fun updateLetter(homeIndex:Int, letter:Char, level: Int)
+    suspend fun updateLetter(homeIndex: Int, letter: Char, level: Int)
 
     @Query("select letter from letter_info_table where owner_id=:levelNr and friend_index!=-666 order by friend_index asc")
     suspend fun currentSolution(levelNr: Int): List<Char>
 
     @Transaction
-    suspend fun switchHomeIndexes(index1:Int, index2:Int, level:Int)
-    {
-        updateHomeIndex(index1,-420, level)
+    suspend fun switchHomeIndexes(index1: Int, index2: Int, level: Int) {
+        updateHomeIndex(index1, -420, level)
         updateHomeIndex(index2, index1, level)
         updateHomeIndex(-420, index2, level)
     }
@@ -57,8 +56,7 @@ interface LevelDao {
     suspend fun updateLettersProperties(level: List<LetterProperties>)
 
     @Transaction
-    suspend fun updateLevels(levels: List<Level>)
-    {
+    suspend fun updateLevels(levels: List<Level>) {
         levels.forEach {
             updateLevelData(it.levelInfo)
             updateLettersProperties(it.lettersProperties)
@@ -72,9 +70,9 @@ interface LevelDao {
     suspend fun getLocalLastModifiedTimestamp(): Long
 
     @Query("select count(*) from level_info_table")
-    suspend fun rowCount():Int
+    suspend fun rowCount(): Int
 
     @Query("select 1 from level_info_table")
-    fun dummyQuery():Int
+    fun dummyQuery(): Int
 
 }

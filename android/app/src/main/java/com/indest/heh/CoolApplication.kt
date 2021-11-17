@@ -15,7 +15,8 @@ class CoolApplication : Application(), Configuration.Provider {
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
 
-    @Inject lateinit var levelRepository: LevelRepository
+    @Inject
+    lateinit var levelRepository: LevelRepository
 
     override fun getWorkManagerConfiguration(): Configuration =
         Configuration.Builder()

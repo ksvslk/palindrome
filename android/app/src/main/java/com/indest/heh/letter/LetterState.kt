@@ -24,6 +24,7 @@ enum class LetterState : ILetterState {
         override fun draw(l: Letter) {
 
         }
+
         override fun executeActionDownBehaviour(l: Letter, v: View, e: MotionEvent) {}
         override fun executeActionMoveBehaviour(l: Letter, v: View, e: MotionEvent) {}
         override fun executeActionUpBehaviour(l: Letter) {}
@@ -51,8 +52,20 @@ enum class LetterState : ILetterState {
                 l.effects.getColors(ColorSelector.ACTION_DOWN_NO_FRIEND)
             }
 
-            animateNow(l, "backgroundColor", color.viewStart, color.viewEnd, l.effects.onClickColorChangeDuration)
-            animateNow(l, "textColor", color.textStart, color.textEnd, l.effects.onClickColorChangeDuration)
+            animateNow(
+                l,
+                "backgroundColor",
+                color.viewStart,
+                color.viewEnd,
+                l.effects.onClickColorChangeDuration
+            )
+            animateNow(
+                l,
+                "textColor",
+                color.textStart,
+                color.textEnd,
+                l.effects.onClickColorChangeDuration
+            )
 
             l.animate()
                 .z(TOP_LAYER)
@@ -104,10 +117,14 @@ enum class LetterState : ILetterState {
                 l.effects.getColors(ColorSelector.ACTION_UP_NO_FRIEND)
             }
 
-            animateNow(l, "backgroundColor", color.viewStart,
-                color.viewEnd, l.effects.onReleaseColorChangeDuration)
-            animateNow(l, "textColor", color.textStart,
-                color.textEnd, l.effects.onReleaseColorChangeDuration)
+            animateNow(
+                l, "backgroundColor", color.viewStart,
+                color.viewEnd, l.effects.onReleaseColorChangeDuration
+            )
+            animateNow(
+                l, "textColor", color.textStart,
+                color.textEnd, l.effects.onReleaseColorChangeDuration
+            )
 
             // Get some value that represents how much was moved ignoring the actual physical
             // distance. Log applied to Euclidean distance to make it very small.
@@ -134,8 +151,13 @@ enum class LetterState : ILetterState {
 
     };
 
-    fun animateNow(letter: Letter, property: String, startColor:Int, endColor:Int, aDuration:Long)
-    {
+    fun animateNow(
+        letter: Letter,
+        property: String,
+        startColor: Int,
+        endColor: Int,
+        aDuration: Long
+    ) {
         ObjectAnimator.ofArgb(letter, property, startColor, endColor)
             .apply {
                 duration = aDuration

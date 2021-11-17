@@ -18,7 +18,12 @@ class MessageSnackBar(
 ) : BaseTransientBottomBar<MessageSnackBar>(parent, content, content) {
 
     init {
-        getView().setBackgroundColor(ContextCompat.getColor(view.context, android.R.color.transparent))
+        getView().setBackgroundColor(
+            ContextCompat.getColor(
+                view.context,
+                android.R.color.transparent
+            )
+        )
         val bottomPadding = Resources.getSystem().displayMetrics.heightPixels / 2
         getView().setPadding(0, 0, 0, bottomPadding)
         val params = getView().layoutParams as FrameLayout.LayoutParams
@@ -28,7 +33,7 @@ class MessageSnackBar(
 
     companion object {
 
-        fun make(view: View, message:String, duration:Int, textSize:Float): MessageSnackBar {
+        fun make(view: View, message: String, duration: Int, textSize: Float): MessageSnackBar {
 
             val parent = view.findSuitableParent() ?: throw IllegalArgumentException(
                 "No suitable parent found from the given view. Please provide a valid view."
@@ -42,7 +47,7 @@ class MessageSnackBar(
             val textView = customView.findViewById<TextView>(R.id.message)
             textView.text = message
             textView.textSize = textSize
-            val snackBar = MessageSnackBar(parent,customView)
+            val snackBar = MessageSnackBar(parent, customView)
             snackBar.duration = duration
             return snackBar
         }

@@ -6,7 +6,6 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.indest.heh.R
 
 class HomeFragment : Fragment(R.layout.home_fragment) {
@@ -16,11 +15,9 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
             setReorderingAllowed(true)
             requireActivity().getPreferences(Context.MODE_PRIVATE)?.let {
                 val tutorialPassed = it.getBoolean(getString(R.string.tutorial_passed), false)
-                if (tutorialPassed)
-                {
+                if (tutorialPassed) {
                     replace<GamePlayFragment>(R.id.fragments_container)
-                }
-                else {
+                } else {
                     replace<TutorialFragment>(R.id.fragments_container)
                 }
             }

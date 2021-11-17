@@ -1,34 +1,28 @@
 package com.indest.heh.fragments
 
-import android.animation.*
+import android.animation.Animator
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.graphics.Rect
 import android.os.Bundle
-import android.util.Log
-import android.view.*
-import android.widget.GridLayout
-import android.widget.ImageView
-import android.widget.Space
-import androidx.appcompat.widget.AppCompatTextView
-import androidx.core.content.ContextCompat
-import androidx.core.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
+import androidx.core.animation.doOnEnd
+import androidx.core.animation.doOnStart
+import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.indest.heh.LevelFactory
 import com.indest.heh.R
 import com.indest.heh.databinding.TutorialFragmentBinding
-import com.indest.heh.letter.Cell
-import com.indest.heh.letter.Letter
-import com.indest.heh.persistance.LevelProgress
-import com.indest.heh.persistance.dto.Level
-import com.indest.heh.persistance.dto.LevelData
-import kotlin.math.abs
-import kotlin.math.roundToInt
 
 class TutorialFragment : Fragment() {
 
+    private val TAG = "TutorialFragment"
     private lateinit var binding: TutorialFragmentBinding
 
     override fun onCreateView(
@@ -69,70 +63,74 @@ class TutorialFragment : Fragment() {
                     View.VISIBLE
             }
         }
-        view.doOnPreDraw {
-            val rect = Rect()
-            binding.letter1.getGlobalVisibleRect(rect)
-            val rect2 = Rect()
-            binding.hand.getGlobalVisibleRect(rect2)
 
-            ObjectAnimator.ofFloat(
-                binding.hand,
-                "x",
-                -(rect2.centerX() - rect.centerX()).toFloat()
-            ).apply {
-                duration = 1000
-            }.start()
+        view.doOnLayout {
+            repeatingTutorialAnimation()
+        }
+    }
 
-            ObjectAnimator.ofFloat(
-                binding.hand,
-                "y",
-                -(rect2.centerY() - rect.centerY()).toFloat()
-            ).apply {
-                duration = 1000
-            }.start()
-            //val animation = getLetterAnimation(binding.letter1, binding.space1, binding.hand)
-            //animation.start()
+    private fun repeatingTutorialAnimation()
+    {
+        val blankAnimation = getAlphaAnimator(binding.letter1, 1f, 1f, 2000)
+
+        val r1Animation = getAlphaAnimator(binding.r1, 0f, 1f)
+        val r2Animation = getAlphaAnimator(binding.r2, 0f, 1f)
+        val r3Animation = getAlphaAnimator(binding.r3, 0f, 1f)
+        val l1Animation = getAlphaAnimator(binding.l1, 0f, 1f)
+        val l2Animation = getAlphaAnimator(binding.l2, 0f, 1f)
+        val l3Animation = getAlphaAnimator(binding.l3, 0f, 1f)
+
+        val r1FadeAnimation = getAlphaAnimator(binding.r1, 1f, 0f, 500)
+        val r2FadeAnimation = getAlphaAnimator(binding.r2, 1f, 0f, 500)
+        val r3FadeAnimation = getAlphaAnimator(binding.r3, 1f, 0f, 500)
+        val l1FadeAnimation = getAlphaAnimator(binding.l1, 1f, 0f, 500)
+        val l2FadeAnimation = getAlphaAnimator(binding.l2, 1f, 0f, 500)
+        val l3FadeAnimation = getAlphaAnimator(binding.l3, 1f, 0f, 500)
+
+        val mainAnimatorSet = AnimatorSet()
+
+        val rightArrowsAnimation = AnimatorSet().apply {
+            playSequentially(r1Animation, r2Animation, r3Animation)
         }
 
+        val leftArrowsAnimation = AnimatorSet().apply {
+            playSequentially(l1Animation, l2Animation, l3Animation)
+        }
+
+        val rightArrowsFadeAnimation = AnimatorSet().apply {
+            playSequentially(r1FadeAnimation, r2FadeAnimation, r3FadeAnimation)
+        }
+
+        val leftArrowsFadeAnimation = AnimatorSet().apply {
+            playSequentially(l1FadeAnimation, l2FadeAnimation, l3FadeAnimation)
+        }
+
+        mainAnimatorSet.apply {
+            playSequentially(
+                rightArrowsAnimation,
+                leftArrowsAnimation,
+                blankAnimation,
+                leftArrowsFadeAnimation,
+                rightArrowsFadeAnimation,
+                )
+        }
+
+        mainAnimatorSet.doOnEnd {
+            it.start()
+        }
+        mainAnimatorSet.start()
     }
 
-
-    private fun getLetterAnimation(
-        letter: AppCompatTextView,
-        space: AppCompatTextView,
-        hand: ImageView
-    ): AnimatorSet {
-        val animatorSet = AnimatorSet()
-        animatorSet.playTogether(
-            ObjectAnimator.ofFloat(
-                letter,
-                "x",
-                space.x
-            ).apply {
-                duration = 1000
-            }, ObjectAnimator.ofFloat(
-                letter,
-                "y",
-                space.y
-            ).apply {
-                duration = 1000
-            },
-            ObjectAnimator.ofFloat(
-                hand,
-                "x",
-                space.x,
-            ).apply {
-                duration = 1000
-            },
-            ObjectAnimator.ofFloat(
-                hand,
-                "y",
-                space.y
-            ).apply {
-                duration = 1000
-            }
-
-        )
-        return animatorSet
+    private fun getAlphaAnimator(what: View, start:Float, end:Float, aDuration:Long = 1000):Animator
+    {
+        return ObjectAnimator.ofFloat(
+            what,
+            View.ALPHA,
+            start,
+            end
+        ).apply {
+            duration = aDuration
+        }
     }
+
 }

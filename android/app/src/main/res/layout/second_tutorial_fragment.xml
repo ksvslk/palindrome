@@ -13,7 +13,7 @@
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
+        android:layout_weight="1"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -27,34 +27,39 @@
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:layout_width="@dimen/_100sdp"
             android:layout_height="match_parent"
-            app:indicatorColor="@color/hintsNotificationColor"
-            android:progress="100" />
+            android:progress="100"
+            app:indicatorColor="@color/hintsNotificationColor" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginHorizontal="@dimen/default_large_margin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center"
         android:paddingHorizontal="@dimen/default_large_margin"
-        android:text="Drag/drop and switch letters to compose a PALINDROME!"
-        android:textSize="@dimen/_16ssp"></androidx.appcompat.widget.AppCompatTextView>
+        android:text="@string/tutorial2_text"
+        android:textSize="@dimen/_16ssp" />
 
-
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/secondTutorialGameplay"
+    <FrameLayout
+        android:id="@+id/tutorialGameplay"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="4"
+        android:layout_weight="2"
+        android:alpha="0"
         android:animateLayoutChanges="true"
         android:clipChildren="false"
         android:gravity="center"
         android:orientation="vertical">
 
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/hand"
+            android:layout_width="@dimen/_44sdp"
+            android:layout_height="@dimen/_44sdp"
+            android:background="@drawable/tutorial_hand_drawable"
+            android:elevation="2dp" />
+
         <androidx.gridlayout.widget.GridLayout
-            android:id="@+id/secondTutorialGrid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -63,14 +68,15 @@
             android:clipChildren="false"
             android:splitMotionEvents="false"
             android:visibility="visible"
-            app:columnCount="3"
-            app:useDefaultMargins="true">
+            app:useDefaultMargins="true"
+            app:columnCount="3">
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/sLetterE1"
+                android:id="@+id/letter1"
                 android:layout_width="@dimen/_35sdp"
                 android:layout_height="@dimen/_35sdp"
                 android:background="@color/colorPrimary"
+                android:elevation="1dp"
                 android:fontFamily="@font/yantramanav_bold"
                 android:gravity="center"
                 android:text="E"
@@ -78,22 +84,11 @@
                 android:textSize="@dimen/_18ssp" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/sLetterH1"
+                android:id="@+id/letter2"
                 android:layout_width="@dimen/_35sdp"
                 android:layout_height="@dimen/_35sdp"
                 android:background="@color/colorPrimary"
-                android:fontFamily="@font/yantramanav_bold"
-                android:gravity="center"
-                android:text="H"
-                android:textColor="@color/colorOnPrimary"
-                android:textSize="@dimen/_18ssp" />
-
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/sLetterH2"
-                android:layout_width="@dimen/_35sdp"
-                android:layout_height="@dimen/_35sdp"
-                android:background="@color/colorPrimary"
+                android:elevation="1dp"
                 android:fontFamily="@font/yantramanav_bold"
                 android:gravity="center"
                 android:text="H"
@@ -101,41 +96,120 @@
                 android:textSize="@dimen/_18ssp" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/sSpace1"
+                android:id="@+id/letter3"
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:background="@color/colorPrimary"
+                android:elevation="1dp"
+                android:fontFamily="@font/yantramanav_bold"
+                android:gravity="center"
+                android:text="H"
+                android:textColor="@color/colorOnPrimary"
+                android:textSize="@dimen/_18ssp" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/r1"
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
+                app:layout_gravity="center"
+                android:backgroundTint="@color/rightToLeftColor"
+                android:alpha="0"
+                android:background="@drawable/ic_baseline_double_arrow_24">
+            </androidx.appcompat.widget.AppCompatImageView>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/r2"
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
+                app:layout_gravity="center"
+                android:backgroundTint="@color/rightToLeftColor"
+                android:alpha="0"
+                android:background="@drawable/ic_baseline_double_arrow_24">
+            </androidx.appcompat.widget.AppCompatImageView>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/r3"
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
+                app:layout_gravity="center"
+                android:backgroundTint="@color/rightToLeftColor"
+                android:alpha="0"
+                android:background="@drawable/ic_baseline_double_arrow_24">
+            </androidx.appcompat.widget.AppCompatImageView>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/space1"
                 android:layout_width="@dimen/_35sdp"
                 android:layout_height="@dimen/_35sdp"
                 android:background="@drawable/slot_edge_fade"
+                android:elevation="0dp"
                 android:fontFamily="@font/yantramanav_bold"
                 android:gravity="center"
                 android:textColor="@color/colorOnPrimary"
                 android:textSize="@dimen/_18ssp" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/sSpace2"
+                android:id="@+id/space2"
                 android:layout_width="@dimen/_35sdp"
                 android:layout_height="@dimen/_35sdp"
                 android:background="@drawable/slot_edge_fade"
+                android:elevation="0dp"
                 android:fontFamily="@font/yantramanav_bold"
                 android:gravity="center"
                 android:textColor="@color/colorOnPrimary"
                 android:textSize="@dimen/_18ssp" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/sSpace3"
+                android:id="@+id/space3"
                 android:layout_width="@dimen/_35sdp"
                 android:layout_height="@dimen/_35sdp"
                 android:background="@drawable/slot_edge_fade"
+                android:elevation="0dp"
                 android:fontFamily="@font/yantramanav_bold"
                 android:gravity="center"
                 android:textColor="@color/colorOnPrimary"
                 android:textSize="@dimen/_18ssp" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/l3"
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
+                android:rotationY="180"
+                app:layout_gravity="center"
+                android:alpha="0"
+                android:backgroundTint="@color/leftToRightColor"
+                android:background="@drawable/ic_baseline_double_arrow_24">
+            </androidx.appcompat.widget.AppCompatImageView>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/l2"
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
+                android:rotationY="180"
+                app:layout_gravity="center"
+                android:alpha="0"
+                android:backgroundTint="@color/leftToRightColor"
+                android:background="@drawable/ic_baseline_double_arrow_24">
+            </androidx.appcompat.widget.AppCompatImageView>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/l1"
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
+                android:rotationY="180"
+                app:layout_gravity="center"
+                android:alpha="0"
+                android:backgroundTint="@color/leftToRightColor"
+                android:background="@drawable/ic_baseline_double_arrow_24">
+            </androidx.appcompat.widget.AppCompatImageView>
         </androidx.gridlayout.widget.GridLayout>
-    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </FrameLayout>
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1.5"
+        android:layout_weight="2"
         android:animateLayoutChanges="true"
         android:clipChildren="false"
         android:gravity="center"
@@ -148,7 +222,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/yantramanav_bold"
-            android:text="START GAME" />
+            android:text="LET'S GO" />
 
         <Button
             android:id="@+id/backButton"
@@ -158,6 +232,5 @@
             android:fontFamily="@font/yantramanav_bold"
             android:text="BACK" />
     </androidx.appcompat.widget.LinearLayoutCompat>
-
 
 </androidx.appcompat.widget.LinearLayoutCompat>

@@ -9,7 +9,6 @@ import com.indest.heh.letter.Cell
 import com.indest.heh.letter.Letter
 import com.indest.heh.persistance.LevelProgress
 import com.indest.heh.persistance.LevelRepository
-import com.indest.heh.persistance.dto.LetterProperties
 import com.indest.heh.persistance.dto.Level
 import com.indest.heh.persistance.dto.LevelData
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -40,8 +39,7 @@ class GameViewModel @Inject constructor(
         }
     }
 
-    fun updateCompletedLevel(levelScore: Int = 1337)
-    {
+    fun updateCompletedLevel(levelScore: Int = 1337) {
         viewModelScope.launch {
             levelRepository.resetLevelLettersInfo(level.value!!.levelInfo.levelId)
             val updatedLevel = level.value!!.levelInfo.copy(
@@ -53,8 +51,8 @@ class GameViewModel @Inject constructor(
         }
     }
 
-    fun isLastLevel():Boolean {
-       return level.value?.levelInfo?.levelId == levels.value?.size
+    fun isLastLevel(): Boolean {
+        return level.value?.levelInfo?.levelId == levels.value?.size
     }
 
     fun updateLetters(topIndex: Int, bottomLetter: Char, bottomIndex: Int, topLetter: Char) {

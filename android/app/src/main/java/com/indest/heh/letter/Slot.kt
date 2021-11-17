@@ -6,7 +6,7 @@ import com.indest.heh.util.C.BOTTOM_LAYER
 
 class Slot constructor(
     context: Context?
-) : Cell<Slot,Letter>(context!!) {
+) : Cell<Slot, Letter>(context!!) {
 
     private var TAG: String = "Slot ${View.generateViewId()}"
 

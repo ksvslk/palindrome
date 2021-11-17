@@ -66,7 +66,7 @@ class Letter @Inject constructor(
         super.onSizeChanged(w, h, oldw, oldh)
     }
 
-    override fun setFriend(cell: Cell<Slot,Letter>?) {
+    override fun setFriend(cell: Cell<Slot, Letter>?) {
         if (cell != null) {
             friend = cell as Slot?
             friendIndex = cell.homeIndex

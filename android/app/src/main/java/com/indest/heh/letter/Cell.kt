@@ -6,7 +6,7 @@ import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
 import kotlin.math.roundToInt
 
-abstract class Cell<T,F>(context: Context): AppCompatTextView(context) {
+abstract class Cell<T, F>(context: Context) : AppCompatTextView(context) {
 
     var homeIndex: Int = -666
     private var TAG: String = "${javaClass.name} ${View.generateViewId()}"
@@ -38,7 +38,7 @@ abstract class Cell<T,F>(context: Context): AppCompatTextView(context) {
         else null
     }
 
-    abstract fun setFriend(cell: Cell<F,T>?)
+    abstract fun setFriend(cell: Cell<F, T>?)
 
     override fun toString(): String {
         return TAG

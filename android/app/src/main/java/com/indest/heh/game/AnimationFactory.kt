@@ -15,7 +15,7 @@ object AnimationFactory {
         currentColor: Int,
         successColor: Int,
         aDuration: Long,
-        index:Int,
+        index: Int,
         audioManager: AudioManager,
         soundPool: SoundPool
     ): ObjectAnimator {
@@ -41,7 +41,7 @@ object AnimationFactory {
         letter: Letter,
         successTextColor: Int,
         aDuration: Long,
-        index:Int,
+        index: Int,
         audioManager: AudioManager,
         soundPool: SoundPool
     ): ObjectAnimator {
@@ -90,7 +90,7 @@ object AnimationFactory {
         val odd = letters.size % 2 != 0
         val count = letters.size / 2
         val animationDuration = (
-                kotlin.math.log( 50000.0,letters.size.toDouble())*100).toLong()
+                kotlin.math.log(50000.0, letters.size.toDouble()) * 100).toLong()
 
         for (i in 0 until count) {
             val animations = animatorSet.childAnimations
@@ -187,7 +187,7 @@ object AnimationFactory {
                 letter,
                 successTextColor,
                 animationDuration,
-                noteSounds[count+1],
+                noteSounds[count + 1],
                 audioManager,
                 soundPool
             )
@@ -196,7 +196,7 @@ object AnimationFactory {
                 currentBoxColor,
                 boxSuccessColor,
                 animationDuration,
-                noteSounds[count+1],
+                noteSounds[count + 1],
                 audioManager,
                 soundPool
             )

@@ -1,6 +1,5 @@
 package com.indest.heh.fragments
 
-import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.heh.adapters.LevelItemAdapter
 import com.indest.heh.databinding.LevelSelectFragmentBinding
@@ -30,8 +28,7 @@ class LevelSelectFragment : BottomSheetDialogFragment() {
         binding = LevelSelectFragmentBinding.inflate(layoutInflater, container, false)
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         gameViewModel.levels.observe(viewLifecycleOwner, { levels ->
-            if (levels != null)
-            {
+            if (levels != null) {
                 binding.levelSelectRecyclerview.adapter = LevelItemAdapter(levels) {
                     it?.levelId?.let { it1 ->
                         parentFragmentManager.popBackStackImmediate()

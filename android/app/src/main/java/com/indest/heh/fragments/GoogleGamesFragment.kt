@@ -16,7 +16,8 @@ import com.indest.heh.databinding.GoogleGamesFragmentBinding
 class GoogleGamesFragment : BottomSheetDialogFragment() {
 
     private val TAG = "GoogleGamesFragment"
-    private val startActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
+    private val startActivity =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
     private lateinit var binding: GoogleGamesFragmentBinding
 
     override fun onCreateView(
@@ -44,14 +45,13 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
         val lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(requireActivity())
         val leaderboardsClient = if (lastSignedInAccount != null)
             Games.getLeaderboardsClient(
-            requireActivity(),
-            lastSignedInAccount
-        )
+                requireActivity(),
+                lastSignedInAccount
+            )
         else null
 
         leaderboardsClient?.allLeaderboardsIntent?.continueWith {
-            if (it.isSuccessful)
-            {
+            if (it.isSuccessful) {
                 startActivity.launch(it.result)
             }
         }
@@ -64,14 +64,13 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
         val lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(requireActivity())
         val achievementsClient = if (lastSignedInAccount != null)
             Games.getAchievementsClient(
-            requireActivity(),
-            lastSignedInAccount
-        )
+                requireActivity(),
+                lastSignedInAccount
+            )
         else null
 
         achievementsClient?.achievementsIntent?.continueWith {
-            if (it.isSuccessful)
-            {
+            if (it.isSuccessful) {
                 startActivity.launch(it.result)
             }
         }

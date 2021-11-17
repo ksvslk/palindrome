@@ -8,4 +8,5 @@ import androidx.room.PrimaryKey
 data class MetaData(
     @PrimaryKey
     @ColumnInfo(name = "last_modified_timestamp")
-    val lastModifiedTimestamp: Long)
+    val lastModifiedTimestamp: Long
+)

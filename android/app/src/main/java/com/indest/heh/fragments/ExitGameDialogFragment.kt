@@ -38,13 +38,18 @@ class ExitGameDialogFragment : DialogFragment() {
         return activity?.let {
             val builder = MaterialAlertDialogBuilder(it)
             builder
-                .setBackground(ContextCompat.getDrawable(requireActivity(), R.drawable.round_rectangle))
+                .setBackground(
+                    ContextCompat.getDrawable(
+                        requireActivity(),
+                        R.drawable.round_rectangle
+                    )
+                )
                 .setTitle(R.string.exit_game_title)
                 .setMessage(R.string.exit_game_message)
                 .setPositiveButton(R.string.yes)
-                { _, _ ->listener.onDialogPositiveClick(this) }
+                { _, _ -> listener.onDialogPositiveClick(this) }
                 .setNegativeButton(R.string.cancel)
-                { _, _ -> listener.onDialogNegativeClick(this)}
+                { _, _ -> listener.onDialogNegativeClick(this) }
             builder.create()
         } ?: throw IllegalStateException("Activity cannot be null")
     }

@@ -1,4 +1,4 @@
-package com.indest.heh;
+package com.indest.heh
 
 import android.content.Context
 import android.util.Log
@@ -6,11 +6,9 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Space
-import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.gridlayout.widget.GridLayout
-import com.indest.heh.game.CellContainer
 import com.indest.heh.letter.Letter
 import com.indest.heh.letter.LetterState
 import com.indest.heh.letter.Slot

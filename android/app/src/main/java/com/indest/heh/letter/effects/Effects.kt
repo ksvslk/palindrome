@@ -16,7 +16,8 @@ import javax.inject.Inject
 @ActivityScoped
 class Effects @Inject constructor(@ActivityContext val context: Context) {
 
-    private val audioManager: AudioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+    private val audioManager: AudioManager =
+        context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
     // Transition durations
     val onClickColorChangeDuration: Long = 200L
@@ -64,10 +65,10 @@ class Effects @Inject constructor(@ActivityContext val context: Context) {
         if (audioManager.ringerMode != AudioManager.RINGER_MODE_NORMAL) return
         when (soundSelector) {
             SoundSelector.PLACE_LETTER_IN_EMPTY_BOX -> {
-                soundPool.play(placeLetterSoundId,1.0f, 1.0f, 1, 0, 1.0f)
+                soundPool.play(placeLetterSoundId, 1.0f, 1.0f, 1, 0, 1.0f)
             }
             SoundSelector.SWITCH_LETTERS -> {
-                soundPool.play(switchLettersSoundId,1.0f, 1.0f, 1, 0, 1.0f)
+                soundPool.play(switchLettersSoundId, 1.0f, 1.0f, 1, 0, 1.0f)
             }
             else -> {}
         }

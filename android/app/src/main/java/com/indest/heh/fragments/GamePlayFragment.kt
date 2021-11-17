@@ -51,21 +51,21 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     private var categoryRewardedAd: RewardedAd? = null
     private var mIsLoading = false
     private lateinit var audioManager: AudioManager
-    private lateinit var badge:BadgeDrawable
+    private lateinit var badge: BadgeDrawable
     lateinit var cellDirector: CellDirector
 
-    var gameState :GameState by Delegates.observable(GameState.BUSY) { _, old, new ->
-        if (old != new) {/*Log.i(TAG, "$old -> $new")*/}
+    var gameState: GameState by Delegates.observable(GameState.BUSY) { _, old, new ->
+        if (old != new) {/*Log.i(TAG, "$old -> $new")*/
+        }
     }
-    private var guesses :Int by Delegates.observable(0) { _, _, new ->
+    private var guesses: Int by Delegates.observable(0) { _, _, new ->
         val guessesBeforeHint = resources.getInteger(R.integer.guessesBeforeHint)
         Log.i(TAG, "Guess nr: $new")
-        if (new == guessesBeforeHint && !badge.isVisible)
-        {
+        if (new == guessesBeforeHint && !badge.isVisible) {
             soundPool.playWhileSoundOn(hintNotification, 1, audioManager = audioManager)
             badge.isVisible = true
             activity?.getPreferences(Context.MODE_PRIVATE)?.let { sharedPref ->
-                with (sharedPref.edit()) {
+                with(sharedPref.edit()) {
                     putBoolean(getString(R.string.level_solution_guesses), true)
                     apply()
                 }
@@ -101,10 +101,9 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         )
 
 
-        if (categoryRewardedAd == null)
-        {
+        if (categoryRewardedAd == null) {
             //Log.i(TAG, "Loading new category rewarded ad!")
-           // loadRewardedAd(getString(R.string.category_rewarded_ad_unit_id))
+            // loadRewardedAd(getString(R.string.category_rewarded_ad_unit_id))
         }
     }
 /*
@@ -174,7 +173,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         findNavController().addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.navigation_hints) {
                 activity?.getPreferences(Context.MODE_PRIVATE)?.let {
-                    with (it.edit()) {
+                    with(it.edit()) {
                         badge.isVisible = false
                         putBoolean(getString(R.string.level_solution_guesses), false)
                         apply()
@@ -189,7 +188,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
     override fun onPause() {
         super.onPause()
-        findNavController().removeOnDestinationChangedListener { _, _, _ ->  }
+        findNavController().removeOnDestinationChangedListener { _, _, _ -> }
     }
 
     override fun onCreateView(
@@ -199,8 +198,10 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     ): View {
         binding = GameplayFragmentBinding.inflate(layoutInflater, container, false)
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-        badge = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView).getOrCreateBadge(R.id.navigation_hints)
-        badge.backgroundColor = ContextCompat.getColor(requireContext(), R.color.hintsNotificationColor)
+        badge = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView)
+            .getOrCreateBadge(R.id.navigation_hints)
+        badge.backgroundColor =
+            ContextCompat.getColor(requireContext(), R.color.hintsNotificationColor)
         badge.badgeGravity = BadgeDrawable.TOP_END
         return binding.root
     }
@@ -274,7 +275,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                             gameViewModel.updateCompletedLevel()
                             playCorrectSolutionAnimation()
                             activity?.getPreferences(Context.MODE_PRIVATE)?.let { sharedPref ->
-                                with (sharedPref.edit()) {
+                                with(sharedPref.edit()) {
                                     putBoolean(getString(R.string.level_solution_guesses), false)
                                     apply()
                                 }
@@ -308,8 +309,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                             message.show()
                         }
                     }
-                }
-                else {
+                } else {
                     gameState = GameState.READY
                 }
             })
@@ -337,7 +337,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             override fun onAnimationEnd(animation: Animator?) {
                 super.onAnimationEnd(animation)
                 if (gameViewModel.isLastLevel()) {
-                    soundPool.playWhileSoundOn( noteSounds[11], 2, audioManager = audioManager)
+                    soundPool.playWhileSoundOn(noteSounds[11], 2, audioManager = audioManager)
                 }
                 showWinningMessages()
             }

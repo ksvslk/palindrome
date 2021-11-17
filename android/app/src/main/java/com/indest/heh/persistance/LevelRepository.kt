@@ -67,8 +67,7 @@ class LevelRepository @Inject constructor(
     }
 
     suspend fun currentSolution(levelNr: Int?): String {
-        if (levelNr != null)
-        {
+        if (levelNr != null) {
             return levelDao.currentSolution(levelNr).joinToString("")
         }
         return ""
@@ -95,8 +94,7 @@ class LevelRepository @Inject constructor(
     // Update DB when signed in
     suspend fun updateLocalDb(appContext: Context) {
         val lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(appContext)
-        if (lastSignedInAccount != null)
-        {
+        if (lastSignedInAccount != null) {
             Log.i(TAG, "lastSignedInAccount OK!")
             val snapshotsClient = Games.getSnapshotsClient(appContext, lastSignedInAccount)
             val conflictResolutionPolicy = SnapshotsClient.RESOLUTION_POLICY_LONGEST_PLAYTIME
@@ -110,8 +108,8 @@ class LevelRepository @Inject constructor(
             }
         }
     }
-    private fun loadBytes(snapshot: Snapshot?)
-    {
+
+    private fun loadBytes(snapshot: Snapshot?) {
         val gson = Gson()
         val bytes = snapshot?.snapshotContents?.readFully()
         val levelsListType: Type = object : TypeToken<ArrayList<Level?>?>() {}.type

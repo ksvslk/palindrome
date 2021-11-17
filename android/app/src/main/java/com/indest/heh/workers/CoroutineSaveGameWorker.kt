@@ -17,6 +17,6 @@ class CoroutineSaveGameWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         val result = levelRepository.updateCloudSnapshot(appContext)
-        return if(result) Result.success() else Result.failure()
+        return if (result) Result.success() else Result.failure()
     }
 }

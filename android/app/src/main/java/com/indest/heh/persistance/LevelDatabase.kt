@@ -8,7 +8,11 @@ import com.indest.heh.persistance.dto.LetterProperties
 import com.indest.heh.persistance.dto.LevelData
 import com.indest.heh.persistance.dto.MetaData
 
-@Database(entities = [LevelData::class, LetterProperties::class, MetaData::class], version = 1, exportSchema = true)
+@Database(
+    entities = [LevelData::class, LetterProperties::class, MetaData::class],
+    version = 1,
+    exportSchema = true
+)
 @TypeConverters(Converters::class)
 abstract class LevelDatabase : RoomDatabase() {
 
@@ -31,10 +35,10 @@ abstract class LevelDatabase : RoomDatabase() {
                     )
                         .createFromAsset("uus.db")
                         .fallbackToDestructiveMigration()
-                        .addCallback(object: RoomDatabase.Callback() {
+                        .addCallback(object : RoomDatabase.Callback() {
                             override fun onCreate(db: SupportSQLiteDatabase) {
                                 super.onCreate(db)
-                               val trigger = "create trigger level_updated\n" +
+                                val trigger = "create trigger level_updated\n" +
                                         "after update on letter_info_table\n" +
                                         "begin\n" +
                                         "update meta_data set last_modified_timestamp = (CAST((julianday('now') - 2440587.5)*86400000 AS INTEGER));\n" +
