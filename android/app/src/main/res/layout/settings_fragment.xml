@@ -71,7 +71,7 @@
             android:layout_marginStart="@dimen/simple_dialog_left_margin"
             android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
             android:layoutDirection="rtl"
-            android:text="@string/sound_on_text"
+            android:text="@string/sound_text"
             android:textAppearance="@style/TextAppearance.OC.Body1"
             android:textColor="@color/colorOnPrimary" />
 
@@ -94,32 +94,9 @@
             android:layout_marginStart="@dimen/simple_dialog_left_margin"
             android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
             android:layoutDirection="rtl"
-            android:text="@string/vibration_on_text"
+            android:text="@string/vibration_text"
             android:textAppearance="@style/TextAppearance.OC.Body1"
             android:textColor="@color/colorOnPrimary" />
-    </androidx.appcompat.widget.LinearLayoutCompat>
-
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/ui_mode_button"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/simple_dialog_item_height"
-        android:background="?android:attr/selectableItemBackground"
-        android:clickable="true"
-        android:focusable="true"
-        android:orientation="horizontal">
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/ui_switch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/simple_dialog_left_margin"
-            android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
-            android:layoutDirection="rtl"
-            android:text="@string/ui_mode_light_text"
-            android:textAppearance="@style/TextAppearance.OC.Body1"
-            android:textColor="@color/colorOnPrimary" />
-
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.LinearLayoutCompat

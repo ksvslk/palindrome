@@ -10,6 +10,9 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.CompoundButton
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
+import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
 import androidx.fragment.app.commit
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.common.SignInButton
@@ -44,9 +47,7 @@ class SettingsFragment : BottomSheetDialogFragment() {
         binding.vibrationButton.setOnClickListener {
             binding.vibrationSwitch.performClick()
         }
-        binding.uiModeButton.setOnClickListener {
-            binding.uiSwitch.performClick()
-        }
+
         binding.googleSignInButton.setOnClickListener {
             Toast.makeText(requireContext(), "Sign in to google.", Toast.LENGTH_LONG).show()
         }
@@ -57,21 +58,16 @@ class SettingsFragment : BottomSheetDialogFragment() {
         binding.vibrationSwitch.setOnCheckedChangeListener { _, b ->
             changePreference(getString(R.string.vibration_on_pref), b)
         }
-        binding.uiSwitch.setOnCheckedChangeListener { _, b ->
-            changePreference(getString(R.string.ui_night_pref), b)
-        }
 
         setInitialPreference(binding.soundSwitch, getString(R.string.sound_on_pref))
         setInitialPreference(binding.vibrationSwitch, getString(R.string.vibration_on_pref))
-        setInitialPreference(binding.uiSwitch, getString(R.string.ui_night_pref))
 
         binding.googleSignInButton.setSize(SignInButton.SIZE_WIDE)
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         return binding.root
     }
 
-    private fun changePreference(setting:String, value:Boolean)
-    {
+    private fun changePreference(setting: String, value: Boolean) {
         requireActivity().getSharedPreferences("heh_pref", Context.MODE_PRIVATE)?.let {
             with(it.edit()) {
                 putBoolean(setting, value)
@@ -80,11 +76,9 @@ class SettingsFragment : BottomSheetDialogFragment() {
         }
     }
 
-    private fun setInitialPreference(button: CompoundButton, setting:String)
-    {
+    private fun setInitialPreference(button: CompoundButton, setting: String) {
         requireActivity().getSharedPreferences("heh_pref", Context.MODE_PRIVATE)?.let {
             button.isChecked = it.getBoolean(setting, true)
         }
     }
-
 }
