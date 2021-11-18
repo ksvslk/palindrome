@@ -1,6 +1,7 @@
 package com.indest.heh
 
 import android.app.Application
+import android.media.SoundPool
 import android.os.StrictMode
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
@@ -40,6 +41,8 @@ class CoolApplication : Application(), Configuration.Provider {
                 .penaltyLog()
                 .build()
         )
+
+
     }
 
 

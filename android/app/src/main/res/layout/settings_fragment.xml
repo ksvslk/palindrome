@@ -63,23 +63,18 @@
         android:focusable="true"
         android:orientation="horizontal">
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/sound_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/simple_dialog_left_margin"
             android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
-            android:contentDescription="@string/sound_on"
-            android:src="@drawable/volume_icon"
-            app:tint="@color/colorOnPrimary"
-            tools:ignore="RtlSymmetry" />
+            android:layoutDirection="rtl"
+            android:text="@string/sound_on_text"
+            android:textAppearance="@style/TextAppearance.OC.Body1"
+            android:textColor="@color/colorOnPrimary" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="@string/sound_on"
-            android:textAppearance="@style/TextAppearance.OC.Body1" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -91,23 +86,17 @@
         android:focusable="true"
         android:orientation="horizontal">
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/vibration_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/simple_dialog_left_margin"
             android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
-            android:contentDescription="@string/vibration_on"
-            android:src="@drawable/vibration_icon"
-            app:tint="@color/colorOnPrimary"
-            tools:ignore="RtlSymmetry" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="@string/vibration_on"
-            android:textAppearance="@style/TextAppearance.OC.Body1" />
+            android:layoutDirection="rtl"
+            android:text="@string/vibration_on_text"
+            android:textAppearance="@style/TextAppearance.OC.Body1"
+            android:textColor="@color/colorOnPrimary" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -119,23 +108,18 @@
         android:focusable="true"
         android:orientation="horizontal">
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/ui_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/simple_dialog_left_margin"
             android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
-            android:contentDescription="@string/ui_mode_light"
-            android:src="@drawable/dark_icon"
-            app:tint="@color/colorOnPrimary"
-            tools:ignore="RtlSymmetry" />
+            android:layoutDirection="rtl"
+            android:text="@string/ui_mode_light_text"
+            android:textAppearance="@style/TextAppearance.OC.Body1"
+            android:textColor="@color/colorOnPrimary" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="@string/ui_mode_light"
-            android:textAppearance="@style/TextAppearance.OC.Body1" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.LinearLayoutCompat

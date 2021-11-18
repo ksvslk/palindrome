@@ -1,6 +1,7 @@
 package com.indest.heh.game
 
 import android.animation.*
+import android.app.Activity
 import android.media.AudioManager
 import android.media.SoundPool
 import android.view.animation.AccelerateInterpolator
@@ -11,6 +12,7 @@ import com.indest.heh.util.playWhileSoundOn
 object AnimationFactory {
 
     private fun getCellColorAnimation(
+        activity: Activity,
         letter: Letter,
         currentColor: Int,
         successColor: Int,
@@ -30,7 +32,7 @@ object AnimationFactory {
             if (audioManager.ringerMode == AudioManager.RINGER_MODE_NORMAL) {
                 this.addListener(object : AnimatorListenerAdapter() {
                     override fun onAnimationStart(animation: Animator?) {
-                        soundPool.playWhileSoundOn(index, 1, audioManager = audioManager)
+                        soundPool.playWhileSoundOn(activity, index, 1, audioManager = audioManager)
                     }
                 })
             }
@@ -38,6 +40,7 @@ object AnimationFactory {
     }
 
     private fun getTextColorAnimation(
+        activity: Activity,
         letter: Letter,
         successTextColor: Int,
         aDuration: Long,
@@ -57,7 +60,7 @@ object AnimationFactory {
             if (audioManager.ringerMode == AudioManager.RINGER_MODE_NORMAL) {
                 this.addListener(object : AnimatorListenerAdapter() {
                     override fun onAnimationStart(animation: Animator?) {
-                        soundPool.playWhileSoundOn(index, 1, audioManager = audioManager)
+                        soundPool.playWhileSoundOn(activity, index, 1, audioManager = audioManager)
                     }
                 })
             }
@@ -65,6 +68,7 @@ object AnimationFactory {
     }
 
     fun getCorrectSolutionAnimation(
+        activity: Activity,
         successTextColor: Int,
         currentBoxColor: Int,
         boxSuccessColor: Int,
@@ -98,6 +102,7 @@ object AnimationFactory {
             val letterBehind = letters[letters.size - 1 - i]
 
             val letterAheadTextColorAnimation = getTextColorAnimation(
+                activity,
                 letterAhead,
                 successTextColor,
                 animationDuration,
@@ -106,6 +111,7 @@ object AnimationFactory {
                 soundPool
             )
             val letterAheadBoxColorAnimation = getCellColorAnimation(
+                activity,
                 letterAhead,
                 currentBoxColor,
                 boxSuccessColor,
@@ -115,6 +121,7 @@ object AnimationFactory {
                 soundPool
             )
             val letterBehindTextColorAnimation = getTextColorAnimation(
+                activity,
                 letterBehind,
                 successTextColor,
                 animationDuration,
@@ -123,6 +130,7 @@ object AnimationFactory {
                 soundPool
             )
             val letterBehindBoxColorAnimation = getCellColorAnimation(
+                activity,
                 letterBehind,
                 currentBoxColor,
                 boxSuccessColor,
@@ -153,6 +161,7 @@ object AnimationFactory {
             val animations = animatorSet.childAnimations
             val letter = letters[count]
             val letterTextColorAnimation = getTextColorAnimation(
+                activity,
                 letter,
                 successTextColor,
                 animationDuration,
@@ -161,6 +170,7 @@ object AnimationFactory {
                 soundPool
             )
             val letterBoxColorAnimation = getCellColorAnimation(
+                activity,
                 letter,
                 currentBoxColor,
                 boxSuccessColor,
@@ -184,6 +194,7 @@ object AnimationFactory {
             val animations = animatorSet.childAnimations
 
             val letterTextAnimation = getTextColorAnimation(
+                activity,
                 letter,
                 successTextColor,
                 animationDuration,
@@ -192,6 +203,7 @@ object AnimationFactory {
                 soundPool
             )
             val letterAnimation = getCellColorAnimation(
+                activity,
                 letter,
                 currentBoxColor,
                 boxSuccessColor,

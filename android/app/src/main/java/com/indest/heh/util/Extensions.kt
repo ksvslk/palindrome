@@ -1,5 +1,7 @@
 package com.indest.heh.util
 
+import android.app.Activity
+import android.content.Context
 import android.media.AudioManager
 import android.media.SoundPool
 import android.view.View
@@ -9,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.fragment.app.Fragment
+import com.indest.heh.R
 
 fun AppCompatActivity.hideSystemBars(viewGroup: ViewGroup) {
     val insetsController = WindowInsetsControllerCompat(window, viewGroup)
@@ -18,22 +20,20 @@ fun AppCompatActivity.hideSystemBars(viewGroup: ViewGroup) {
     insetsController.hide(WindowInsetsCompat.Type.systemBars())
 }
 
-fun Fragment.hideSystemBars(viewGroup: ViewGroup) {
-    val insetsController = WindowInsetsControllerCompat(requireActivity().window, viewGroup)
-    insetsController.systemBarsBehavior =
-        WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-    insetsController.hide(WindowInsetsCompat.Type.navigationBars())
-}
-
 fun SoundPool.playWhileSoundOn(
+    activity: Activity,
     sound: Int,
     priority: Int,
     loop: Int = 0,
     audioManager: AudioManager
 ) {
-    if (audioManager.ringerMode == AudioManager.RINGER_MODE_NORMAL) {
+    activity.getSharedPreferences("heh_pref", Context.MODE_PRIVATE)?.let {
+        if (audioManager.ringerMode != AudioManager.RINGER_MODE_NORMAL ||
+            !it.getBoolean(activity.getString(R.string.sound_on_pref), true)
+        ) return
         play(sound, 1.0f, 1.0f, priority, 0, 1.0f)
     }
+
 }
 
 internal fun View?.findSuitableParent(): ViewGroup? {

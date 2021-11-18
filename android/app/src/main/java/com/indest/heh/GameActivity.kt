@@ -54,7 +54,7 @@ class GameActivity : AppCompatActivity() {
         MobileAds.initialize(this) {}
 
         // TODO: temp, remove this
-        getPreferences(Context.MODE_PRIVATE)?.let {
+        getSharedPreferences("heh_pref", Context.MODE_PRIVATE)?.let {
             with(it.edit()) {
                 putBoolean(getString(R.string.tutorial_passed), false)
                 apply()

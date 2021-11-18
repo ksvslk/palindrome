@@ -62,7 +62,12 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         val guessesBeforeHint = resources.getInteger(R.integer.guessesBeforeHint)
         Log.i(TAG, "Guess nr: $new")
         if (new == guessesBeforeHint && !badge.isVisible) {
-            soundPool.playWhileSoundOn(hintNotification, 1, audioManager = audioManager)
+            soundPool.playWhileSoundOn(
+                requireActivity(),
+                hintNotification,
+                1,
+                audioManager = audioManager
+            )
             badge.isVisible = true
             activity?.getPreferences(Context.MODE_PRIVATE)?.let { sharedPref ->
                 with(sharedPref.edit()) {
@@ -324,6 +329,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             ResourcesCompat.getColor(resources, R.color.successBoxColor, requireContext().theme)
 
         val animatorSet = AnimationFactory.getCorrectSolutionAnimation(
+            requireActivity(),
             successTextColor,
             currentBoxColor,
             boxSuccessColor,
@@ -337,7 +343,12 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             override fun onAnimationEnd(animation: Animator?) {
                 super.onAnimationEnd(animation)
                 if (gameViewModel.isLastLevel()) {
-                    soundPool.playWhileSoundOn(noteSounds[11], 2, audioManager = audioManager)
+                    soundPool.playWhileSoundOn(
+                        requireActivity(),
+                        noteSounds[11],
+                        2,
+                        audioManager = audioManager
+                    )
                 }
                 showWinningMessages()
             }
@@ -372,7 +383,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 startCountAnimation(scoreMessage.view.findViewById(R.id.message))
             }
         })
-        soundPool.playWhileSoundOn(correctSound, 2, audioManager = audioManager)
+        soundPool.playWhileSoundOn(requireActivity(), correctSound, 2, audioManager = audioManager)
         winningMessage.show()
     }
 
@@ -383,7 +394,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         animator.addUpdateListener { animation ->
             scoreView.text = animation.animatedValue.toString().padStart(5, '0')
         }
-        soundPool.playWhileSoundOn(scoreSound, 2, audioManager = audioManager)
+        soundPool.playWhileSoundOn(requireActivity(), scoreSound, 2, audioManager = audioManager)
         animator.start()
     }
 
@@ -403,19 +414,27 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     }
 
     private fun doubleClickVibration() {
-        val doubleClickPattern = longArrayOf(0, 50, 50, 50)
-        val vibrator = requireContext().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-        if (audioManager.ringerMode != AudioManager.RINGER_MODE_SILENT) {
-            when {
-                Build.VERSION.SDK_INT >= 26 -> {
-                    vibrator.vibrate(
-                        VibrationEffect.createWaveform(doubleClickPattern, -1)
-                    )
-                }
-                else -> {
-                    vibrator.vibrate(doubleClickPattern, -1)
+        val rContext = requireContext()
+        rContext.getSharedPreferences("heh_pref", Context.MODE_PRIVATE)?.let {
+            if (audioManager.ringerMode != AudioManager.RINGER_MODE_SILENT && it.getBoolean(
+                    rContext.getString(R.string.vibration_on_pref),
+                    true
+                )
+            ) {
+                val doubleClickPattern = longArrayOf(0, 50, 50, 50)
+                val vibrator = rContext.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                when {
+                    Build.VERSION.SDK_INT >= 26 -> {
+                        vibrator.vibrate(
+                            VibrationEffect.createWaveform(doubleClickPattern, -1)
+                        )
+                    }
+                    else -> {
+                        vibrator.vibrate(doubleClickPattern, -1)
+                    }
                 }
             }
         }
     }
+
 }

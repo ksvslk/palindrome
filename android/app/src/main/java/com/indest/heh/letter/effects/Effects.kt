@@ -62,15 +62,21 @@ class Effects @Inject constructor(@ActivityContext val context: Context) {
     )
 
     fun playSound(soundSelector: SoundSelector) {
-        if (audioManager.ringerMode != AudioManager.RINGER_MODE_NORMAL) return
-        when (soundSelector) {
-            SoundSelector.PLACE_LETTER_IN_EMPTY_BOX -> {
-                soundPool.play(placeLetterSoundId, 1.0f, 1.0f, 1, 0, 1.0f)
+        context.getSharedPreferences("heh_pref", Context.MODE_PRIVATE)?.let {
+
+            if (audioManager.ringerMode != AudioManager.RINGER_MODE_NORMAL ||
+                !it.getBoolean(context.getString(R.string.sound_on_pref), true)
+            ) return
+
+            when (soundSelector) {
+                SoundSelector.PLACE_LETTER_IN_EMPTY_BOX -> {
+                    soundPool.play(placeLetterSoundId, 1.0f, 1.0f, 1, 0, 1.0f)
+                }
+                SoundSelector.SWITCH_LETTERS -> {
+                    soundPool.play(switchLettersSoundId, 1.0f, 1.0f, 1, 0, 1.0f)
+                }
+                else -> {}
             }
-            SoundSelector.SWITCH_LETTERS -> {
-                soundPool.play(switchLettersSoundId, 1.0f, 1.0f, 1, 0, 1.0f)
-            }
-            else -> {}
         }
     }
 
@@ -84,16 +90,23 @@ class Effects @Inject constructor(@ActivityContext val context: Context) {
     }
 
     fun addShortVibration(length: Long = 20) {
-        if (audioManager.ringerMode != AudioManager.RINGER_MODE_SILENT) {
-            if (Build.VERSION.SDK_INT >= 26) {
-                vibrator.vibrate(
-                    VibrationEffect.createOneShot(
-                        length,
-                        VibrationEffect.DEFAULT_AMPLITUDE
-                    )
+        context.getSharedPreferences("heh_pref", Context.MODE_PRIVATE)?.let {
+            if (audioManager.ringerMode != AudioManager.RINGER_MODE_SILENT && it.getBoolean(
+                    context.getString(
+                        R.string.vibration_on_pref
+                    ), true
                 )
-            } else {
-                vibrator.vibrate(length)
+            ) {
+                if (Build.VERSION.SDK_INT >= 26) {
+                    vibrator.vibrate(
+                        VibrationEffect.createOneShot(
+                            length,
+                            VibrationEffect.DEFAULT_AMPLITUDE
+                        )
+                    )
+                } else {
+                    vibrator.vibrate(length)
+                }
             }
         }
     }
