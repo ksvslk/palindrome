@@ -2,6 +2,8 @@ package com.indest.heh.fragments
 
 import android.animation.*
 import android.content.Context
+import android.content.res.Configuration
+import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.media.AudioManager
 import android.media.SoundPool
 import android.os.Build
@@ -14,6 +16,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.app.AppCompatDelegate.*
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.ViewCompat
@@ -83,7 +87,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        Log.i(TAG, "onCreate")
         cellDirector = CellDirector(this)
         audioManager = requireContext().getSystemService(Context.AUDIO_SERVICE) as AudioManager
         soundPool = SoundPool.Builder().build()
@@ -221,13 +225,13 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         Log.i(TAG, "loadLevel")
         gameViewModel.level
             .observe(viewLifecycleOwner, { levelAndLettersInfo ->
-                Log.i(TAG, levelAndLettersInfo?.levelInfo?.solution.toString())
+                Log.i(TAG, levelAndLettersInfo?.lettersProperties.toString())
                 if (levelAndLettersInfo != null) {
                     if (binding.gameplayFragment.childCount > 0) {
                         clearPreviousLevel()
                         return@observe
                     }
-
+                    Log.i(TAG, "LevelFactory.getLevel")
                     val level = LevelFactory.getLevel(
                         levelAndLettersInfo,
                         requireContext(),
@@ -241,6 +245,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
                     level.doOnPreDraw {
                         cellDirector.restoreSlotPlacements(levelAndLettersInfo)
+                        Log.i(TAG, "restoreSlotPlacements")
                         if (levelAndLettersInfo.lettersProperties.isEmpty()) {
                             gameViewModel.persistInitialLettersInfo(cellDirector.cells)
                         }
