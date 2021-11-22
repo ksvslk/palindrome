@@ -30,9 +30,9 @@ class LevelSelectFragment : BottomSheetDialogFragment() {
         gameViewModel.levels.observe(viewLifecycleOwner, { levels ->
             if (levels != null) {
                 binding.levelSelectRecyclerview.adapter = LevelItemAdapter(levels) {
-                    it?.levelId?.let { it1 ->
+                    it?.levelId?.let { nr ->
                         parentFragmentManager.popBackStackImmediate()
-                        gameViewModel.changeLevel(it1)
+                        gameViewModel.changeLevel(nr)
                     }
                 }
             }

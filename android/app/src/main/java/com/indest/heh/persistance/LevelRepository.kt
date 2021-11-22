@@ -14,6 +14,8 @@ import com.indest.heh.persistance.dto.Level
 import com.indest.heh.persistance.dto.LevelData
 import com.indest.heh.util.C
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.lang.reflect.Type
@@ -30,20 +32,17 @@ class LevelRepository @Inject constructor(
     lateinit var coverImage: Bitmap
 
     suspend fun resetLevelLettersInfo(levelNr: Int) = levelDao.deleteLetterInfo(levelNr)
-
     suspend fun updateLevel(level: LevelData) = levelDao.updateLevelData(level)
-
-    // Local
     suspend fun getLevel(nr: Int) = levelDao.getLevel(nr)
-
     suspend fun getLastLevel() = levelDao.getLastLevel()
 
     suspend fun updateLevelPuzzle(level: Int, newPuzzle: String) {
         levelDao.updateLevelPuzzle(level, newPuzzle)
     }
 
-    suspend fun insertLetterInfo(level: Int, homeIndex: Int, friendIndex: Int, letter: Char) {
-        levelDao.insertLetterData(level, homeIndex, friendIndex, letter)
+    suspend fun insertLetterInfo(level: Int, homeIndex: Int, friendIndex: Int, letter: Char, hintUsed: Boolean) {
+        Log.i(TAG, "insertLetterInfo")
+        levelDao.insertLetterData(level, homeIndex, friendIndex, letter, hintUsed)
     }
 
     suspend fun insertLevel(levelInfo: LevelData) {
@@ -62,9 +61,7 @@ class LevelRepository @Inject constructor(
         levelDao.updateLetter(homeIndex, letter, level)
     }
 
-    private suspend fun updateLevels(levels: List<Level>) {
-        levelDao.updateLevels(levels)
-    }
+    suspend fun isLettersInitialized(nr:Int) = levelDao.isLettersInitialized(nr) > 0
 
     suspend fun currentSolution(levelNr: Int?): String {
         if (levelNr != null) {
@@ -72,6 +69,11 @@ class LevelRepository @Inject constructor(
         }
         return ""
     }
+
+    private suspend fun updateLevels(levels: List<Level>) {
+        levelDao.updateLevels(levels)
+    }
+
 
     // Cloud
     // Upload to cloud onStop()

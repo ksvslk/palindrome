@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "cc1bf0b100aaab5e9b1e2be9ba24eecb",
+    "identityHash": "87a0ec5c73d220c2185131cefcd2db82",
     "entities": [
       {
         "tableName": "level_info_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`level_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `solution` TEXT NOT NULL, `puzzle` TEXT NOT NULL, `category` TEXT NOT NULL, `progress` INTEGER NOT NULL, `score` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`level_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `solution` TEXT NOT NULL, `puzzle` TEXT NOT NULL, `category` TEXT NOT NULL, `progress` INTEGER NOT NULL, `mistakes` INTEGER NOT NULL, `score` INTEGER NOT NULL, `time_modified` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "levelId",
@@ -39,8 +39,20 @@
             "notNull": true
           },
           {
+            "fieldPath": "mistakes",
+            "columnName": "mistakes",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
             "fieldPath": "score",
             "columnName": "score",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timeModified",
+            "columnName": "time_modified",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -56,7 +68,7 @@
       },
       {
         "tableName": "letter_info_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`info_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `owner_id` INTEGER NOT NULL, `home_index` INTEGER NOT NULL, `friend_index` INTEGER NOT NULL, `letter` INTEGER NOT NULL, FOREIGN KEY(`owner_id`) REFERENCES `level_info_table`(`level_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`info_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `owner_id` INTEGER NOT NULL, `home_index` INTEGER NOT NULL, `friend_index` INTEGER NOT NULL, `letter` INTEGER NOT NULL, `hint_used` INTEGER NOT NULL, FOREIGN KEY(`owner_id`) REFERENCES `level_info_table`(`level_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "infoId",
@@ -87,6 +99,12 @@
             "columnName": "letter",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "hintUsed",
+            "columnName": "hint_used",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -103,6 +121,14 @@
               "owner_id"
             ],
             "createSql": "CREATE INDEX IF NOT EXISTS `index_letter_info_table_owner_id` ON `${TABLE_NAME}` (`owner_id`)"
+          },
+          {
+            "name": "index_letter_info_table_home_index",
+            "unique": true,
+            "columnNames": [
+              "home_index"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_letter_info_table_home_index` ON `${TABLE_NAME}` (`home_index`)"
           }
         ],
         "foreignKeys": [
@@ -118,32 +144,12 @@
             ]
           }
         ]
-      },
-      {
-        "tableName": "meta_data",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`last_modified_timestamp` INTEGER NOT NULL, PRIMARY KEY(`last_modified_timestamp`))",
-        "fields": [
-          {
-            "fieldPath": "lastModifiedTimestamp",
-            "columnName": "last_modified_timestamp",
-            "affinity": "INTEGER",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "columnNames": [
-            "last_modified_timestamp"
-          ],
-          "autoGenerate": false
-        },
-        "indices": [],
-        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'cc1bf0b100aaab5e9b1e2be9ba24eecb')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '87a0ec5c73d220c2185131cefcd2db82')"
     ]
   }
 }

@@ -4,6 +4,7 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.indest.heh.letter.Cell
 import com.indest.heh.letter.Letter
@@ -22,13 +23,25 @@ class GameViewModel @Inject constructor(
 ) :
     AndroidViewModel(application) {
 
+    private val TAG = "GameViewModel"
+
     val levels = MutableLiveData<List<LevelData>>()
     val level = MutableLiveData<Level>()
     val realSolutionAndGuess = MutableLiveData<Triple<String?, String?, Int?>>()
 
+    val currentLevel = liveData {
+        if (level.value != null) {
+            Log.i(TAG, "Refresh level")
+            emit(levelRepository.getLevel(level.value!!.levelInfo.levelId))
+        } else {
+            Log.i(TAG, "Load 1st level (not updated)")
+            emit(levelRepository.getLevel(1))
+        }
+    }
+
     init {
         viewModelScope.launch {
-            level.value = levelRepository.getLevel(1)
+            level.value = levelRepository.getLastLevel()
             levels.value = levelRepository.getAllLevels()
         }
     }
@@ -48,6 +61,14 @@ class GameViewModel @Inject constructor(
                 score = levelScore
             )
             levelRepository.updateLevel(updatedLevel)
+        }
+    }
+
+    fun refreshLevel() {
+        viewModelScope.launch {
+            if (level.value != null) {
+                level.value = levelRepository.getLevel(level.value!!.levelInfo.levelId)
+            }
         }
     }
 
@@ -74,6 +95,7 @@ class GameViewModel @Inject constructor(
                 levelRepository.currentSolution(level.value?.levelInfo?.levelId),
                 topIndex
             )
+
         }
     }
 
@@ -95,15 +117,20 @@ class GameViewModel @Inject constructor(
 
     fun persistInitialLettersInfo(cells: MutableList<Cell<*, *>>) {
         viewModelScope.launch {
-            cells.filterIsInstance<Letter>().forEach {
-                levelRepository.insertLetterInfo(
-                    level = level.value!!.levelInfo.levelId,
-                    homeIndex = it.homeIndex,
-                    friendIndex = it.friendIndex,
-                    letter = it.text.first()
-                )
+            val isAlreadyInitialized =
+                levelRepository.isLettersInitialized(level.value!!.levelInfo.levelId)
+            if (!isAlreadyInitialized) {
+                cells.filterIsInstance<Letter>().forEach {
+
+                    levelRepository.insertLetterInfo(
+                        level = level.value!!.levelInfo.levelId,
+                        homeIndex = it.homeIndex,
+                        friendIndex = it.friendIndex,
+                        letter = it.text.first(),
+                        hintUsed = true
+                    )
+                }
             }
         }
     }
-
 }

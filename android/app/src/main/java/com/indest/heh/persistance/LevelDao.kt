@@ -4,6 +4,7 @@ import androidx.room.*
 import com.indest.heh.persistance.dto.LetterProperties
 import com.indest.heh.persistance.dto.Level
 import com.indest.heh.persistance.dto.LevelData
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface LevelDao {
@@ -19,16 +20,15 @@ interface LevelDao {
     @Query("select * from level_info_table where level_id = :nr")
     suspend fun getLevel(nr: Int): Level
 
-    // TODO: change progress to 1
     @Transaction
-    @Query("select * from level_info_table where progress = 0 order by level_id asc limit 1")
+    @Query("select *, max(time_modified) from level_info_table")
     suspend fun getLastLevel(): Level
 
     @Query("update level_info_table set puzzle = :newPuzzle where level_id = :level")
     suspend fun updateLevelPuzzle(level: Int, newPuzzle: String)
 
-    @Query("insert into letter_info_table (owner_id, home_index, friend_index, letter) values(:level, :homeIndex, :friendIndex, :letter)")
-    suspend fun insertLetterData(level: Int, homeIndex: Int, friendIndex: Int, letter: Char)
+    @Query("insert into letter_info_table (owner_id, home_index, friend_index, letter, hint_used) values(:level, :homeIndex, :friendIndex, :letter, :hintUsed)")
+    suspend fun insertLetterData(level: Int, homeIndex: Int, friendIndex: Int, letter: Char, hintUsed: Boolean)
 
     @Query("update letter_info_table set home_index = :newIndex where home_index = :oldIndex and owner_id = :level")
     suspend fun updateHomeIndex(oldIndex: Int, newIndex: Int, level: Int)
@@ -41,6 +41,9 @@ interface LevelDao {
 
     @Query("select letter from letter_info_table where owner_id=:levelNr and friend_index!=-666 order by friend_index asc")
     suspend fun currentSolution(levelNr: Int): List<Char>
+
+    @Query("select count(*) from letter_info_table where owner_id=:levelNr")
+    suspend fun isLettersInitialized(levelNr: Int): Int
 
     @Transaction
     suspend fun switchHomeIndexes(index1: Int, index2: Int, level: Int) {
@@ -66,13 +69,12 @@ interface LevelDao {
     @Query("select * from level_info_table")
     suspend fun getAllLevels(): List<Level>
 
-    @Query("select last_modified_timestamp from meta_data limit 1")
-    suspend fun getLocalLastModifiedTimestamp(): Long
-
     @Query("select count(*) from level_info_table")
     suspend fun rowCount(): Int
 
     @Query("select 1 from level_info_table")
     fun dummyQuery(): Int
+
+    //SELECT * FROM table WHERE id IN (SELECT id FROM table ORDER BY RANDOM() LIMIT x) TODO:Get random hint
 
 }

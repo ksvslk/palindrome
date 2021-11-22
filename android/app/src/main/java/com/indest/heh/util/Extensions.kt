@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.fragment.app.Fragment
 import com.indest.heh.R
 
 fun AppCompatActivity.hideSystemBars(viewGroup: ViewGroup) {
@@ -18,6 +19,12 @@ fun AppCompatActivity.hideSystemBars(viewGroup: ViewGroup) {
     insetsController.systemBarsBehavior =
         WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
     insetsController.hide(WindowInsetsCompat.Type.systemBars())
+}
+
+fun Fragment.hideSystemBars(viewGroup: ViewGroup) {
+    val insetsController = WindowInsetsControllerCompat(requireActivity().window, viewGroup)
+    insetsController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+    insetsController.hide(WindowInsetsCompat.Type.navigationBars())
 }
 
 fun SoundPool.playWhileSoundOn(

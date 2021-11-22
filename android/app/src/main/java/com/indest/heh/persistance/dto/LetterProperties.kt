@@ -11,7 +11,10 @@ import androidx.room.*
         )
     ],
     tableName = "letter_info_table",
-    indices = [Index(value = ["owner_id"])]
+    indices = [
+        Index(value = ["owner_id"]),
+        Index(value = ["home_index"], unique = true)
+    ]
 )
 data class LetterProperties(
     @PrimaryKey(autoGenerate = true)
@@ -24,5 +27,7 @@ data class LetterProperties(
     @ColumnInfo(name = "friend_index")
     val friendIndex: Int,
     @ColumnInfo(name = "letter")
-    val letter: Char
+    val letter: Char,
+    @ColumnInfo(name = "hint_used")
+    val hintUsed: Boolean
 )

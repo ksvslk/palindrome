@@ -2,8 +2,6 @@ package com.indest.heh.fragments
 
 import android.animation.*
 import android.content.Context
-import android.content.res.Configuration
-import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.media.AudioManager
 import android.media.SoundPool
 import android.os.Build
@@ -16,8 +14,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.appcompat.app.AppCompatDelegate.*
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.ViewCompat
@@ -38,6 +34,8 @@ import com.indest.heh.databinding.GameplayFragmentBinding
 import com.indest.heh.game.*
 import com.indest.heh.letter.Cell
 import com.indest.heh.letter.Letter
+import com.indest.heh.persistance.dto.Level
+import com.indest.heh.util.hideSystemBars
 import com.indest.heh.util.playWhileSoundOn
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.properties.Delegates
@@ -86,8 +84,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     val gameViewModel: GameViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         Log.i(TAG, "onCreate")
+        super.onCreate(savedInstanceState)
         cellDirector = CellDirector(this)
         audioManager = requireContext().getSystemService(Context.AUDIO_SERVICE) as AudioManager
         soundPool = SoundPool.Builder().build()
@@ -120,7 +118,6 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         if (categoryRewardedAd == null) {
             mIsLoading = true
             val adRequest = AdRequest.Builder().build()
-
             RewardedAd.load(
                 requireContext(), adUnit, adRequest,
                 object : RewardedAdLoadCallback() {
@@ -129,7 +126,6 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                         mIsLoading = false
                         categoryRewardedAd = null
                     }
-
                     override fun onAdLoaded(rewardedAd: RewardedAd) {
                         Log.d(TAG, "Ad was loaded.")
                         categoryRewardedAd = rewardedAd
@@ -139,7 +135,6 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             )
         }
     }
-
     private fun showRewardedVideo(rewardedAdUnit:String) {
         if (categoryRewardedAd != null) {
             categoryRewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
@@ -150,20 +145,17 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                     categoryRewardedAd = null
                     loadRewardedAd(rewardedAdUnit)
                 }
-
                 override fun onAdFailedToShowFullScreenContent(adError: AdError?) {
                     Log.d(TAG, "Ad failed to show.")
                     // Don't forget to set the ad reference to null so you
                     // don't show the ad a second time.
                     categoryRewardedAd = null
                 }
-
                 override fun onAdShowedFullScreenContent() {
                     Log.d(TAG, "Ad showed fullscreen content.")
                     // Called when ad is dismissed.
                 }
             }
-
             categoryRewardedAd?.show(
                 requireActivity(),
                 OnUserEarnedRewardListener() {
@@ -216,45 +208,45 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        loadLevel()
+        gameViewModel.currentLevel.observe(viewLifecycleOwner) {
+            Log.i(TAG, it.toString())
+            if (it != null) {
+                loadLevel(it)
+            }
+        }
+
         super.onViewCreated(view, savedInstanceState)
         ViewCompat.requestApplyInsets(view)
+        hideSystemBars(binding.gameplayFragment)
     }
 
-    private fun loadLevel() {
+    private fun loadLevel(levelAndLettersInfo: Level) {
         Log.i(TAG, "loadLevel")
-        gameViewModel.level
-            .observe(viewLifecycleOwner, { levelAndLettersInfo ->
-                Log.i(TAG, levelAndLettersInfo?.lettersProperties.toString())
-                if (levelAndLettersInfo != null) {
-                    if (binding.gameplayFragment.childCount > 0) {
-                        clearPreviousLevel()
-                        return@observe
-                    }
-                    Log.i(TAG, "LevelFactory.getLevel")
-                    val level = LevelFactory.getLevel(
-                        levelAndLettersInfo,
-                        requireContext(),
-                        layoutInflater,
-                        binding.gameplayFragment
-                    )
+        Log.i(TAG, levelAndLettersInfo.lettersProperties.toString())
+        if (binding.gameplayFragment.childCount > 0) {
+            clearPreviousLevel()
+            return
+        }
+        Log.i(TAG, "LevelFactory.getLevel")
+        val level = LevelFactory.getLevel(
+            levelAndLettersInfo,
+            requireContext(),
+            layoutInflater,
+            binding.gameplayFragment
+        )
 
-                    cellDirector.cells = level.children
-                        .filterIsInstance<Cell<*, *>>()
-                        .toMutableList()
+        cellDirector.cells = level.children
+            .filterIsInstance<Cell<*, *>>()
+            .toMutableList()
 
-                    level.doOnPreDraw {
-                        cellDirector.restoreSlotPlacements(levelAndLettersInfo)
-                        Log.i(TAG, "restoreSlotPlacements")
-                        if (levelAndLettersInfo.lettersProperties.isEmpty()) {
-                            gameViewModel.persistInitialLettersInfo(cellDirector.cells)
-                        }
-                    }
-                    binding.gameplayFragment.addView(level)
-                    gameState = GameState.READY
-                    handleGameSolutions()
-                }
-            })
+        level.doOnPreDraw {
+            cellDirector.restoreSlotPlacements(levelAndLettersInfo)
+            Log.i(TAG, "restoreSlotPlacements")
+            gameViewModel.persistInitialLettersInfo(cellDirector.cells)
+        }
+        binding.gameplayFragment.addView(level)
+        gameState = GameState.READY
+        handleGameSolutions()
     }
 
     private fun clearPreviousLevel() {
