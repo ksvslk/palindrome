@@ -1,5 +1,6 @@
 package com.indest.heh.persistance
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.indest.heh.persistance.dto.LetterProperties
 import com.indest.heh.persistance.dto.Level
@@ -24,6 +25,10 @@ interface LevelDao {
     @Query("select *, max(time_modified) from level_info_table")
     suspend fun getLastLevel(): Level
 
+    @Transaction
+    @Query("select *, max(time_modified) from level_info_table")
+    fun getLastTest(): Flow<Level>
+
     @Query("update level_info_table set puzzle = :newPuzzle where level_id = :level")
     suspend fun updateLevelPuzzle(level: Int, newPuzzle: String)
 
@@ -44,6 +49,9 @@ interface LevelDao {
 
     @Query("select count(*) from letter_info_table where owner_id=:levelNr")
     suspend fun isLettersInitialized(levelNr: Int): Int
+
+    @Query("update level_info_table set time_modified = (select time_modified + 1 from level_info_table where level_id=:currentLevelNr) where level_id=:nextLevelNr")
+    suspend fun updateNextLevelTimestamp(currentLevelNr:Int, nextLevelNr: Int)
 
     @Transaction
     suspend fun switchHomeIndexes(index1: Int, index2: Int, level: Int) {

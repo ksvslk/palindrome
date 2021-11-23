@@ -13,7 +13,7 @@ import androidx.room.*
     tableName = "letter_info_table",
     indices = [
         Index(value = ["owner_id"]),
-        Index(value = ["home_index"], unique = true)
+        Index(value = ["home_index", "owner_id"], unique = true)
     ]
 )
 data class LetterProperties(

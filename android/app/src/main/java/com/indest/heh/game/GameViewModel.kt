@@ -2,10 +2,7 @@ package com.indest.heh.game
 
 import android.app.Application
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.liveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.indest.heh.letter.Cell
 import com.indest.heh.letter.Letter
 import com.indest.heh.persistance.LevelProgress
@@ -13,6 +10,9 @@ import com.indest.heh.persistance.LevelRepository
 import com.indest.heh.persistance.dto.Level
 import com.indest.heh.persistance.dto.LevelData
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,16 +28,9 @@ class GameViewModel @Inject constructor(
     val levels = MutableLiveData<List<LevelData>>()
     val level = MutableLiveData<Level>()
     val realSolutionAndGuess = MutableLiveData<Triple<String?, String?, Int?>>()
-
-    val currentLevel = liveData {
-        if (level.value != null) {
-            Log.i(TAG, "Refresh level")
-            emit(levelRepository.getLevel(level.value!!.levelInfo.levelId))
-        } else {
-            Log.i(TAG, "Load 1st level (not updated)")
-            emit(levelRepository.getLevel(1))
-        }
-    }
+    val currentLevel: LiveData<Level> = levelRepository.getLastLevelTest().asLiveData()
+    private val eventChannel = Channel<GameEvent>()
+    val eventFlow = eventChannel.receiveAsFlow()
 
     init {
         viewModelScope.launch {
@@ -48,7 +41,8 @@ class GameViewModel @Inject constructor(
 
     fun changeLevel(nr: Int) {
         viewModelScope.launch {
-            level.value = levelRepository.getLevel(nr)
+            levelRepository.updateNextLevelTimestamp(currentLevel.value!!.levelInfo.levelId, nr)
+            eventChannel.send(GameEvent.ChangeLevel(levelRepository.getLevel(nr)))
         }
     }
 
@@ -61,14 +55,6 @@ class GameViewModel @Inject constructor(
                 score = levelScore
             )
             levelRepository.updateLevel(updatedLevel)
-        }
-    }
-
-    fun refreshLevel() {
-        viewModelScope.launch {
-            if (level.value != null) {
-                level.value = levelRepository.getLevel(level.value!!.levelInfo.levelId)
-            }
         }
     }
 
@@ -118,12 +104,12 @@ class GameViewModel @Inject constructor(
     fun persistInitialLettersInfo(cells: MutableList<Cell<*, *>>) {
         viewModelScope.launch {
             val isAlreadyInitialized =
-                levelRepository.isLettersInitialized(level.value!!.levelInfo.levelId)
+                levelRepository.isLettersInitialized(currentLevel.value!!.levelInfo.levelId)
+            Log.i(TAG, "Is initialized: $isAlreadyInitialized")
             if (!isAlreadyInitialized) {
                 cells.filterIsInstance<Letter>().forEach {
-
                     levelRepository.insertLetterInfo(
-                        level = level.value!!.levelInfo.levelId,
+                        level = currentLevel.value!!.levelInfo.levelId,
                         homeIndex = it.homeIndex,
                         friendIndex = it.friendIndex,
                         letter = it.text.first(),
@@ -133,4 +119,11 @@ class GameViewModel @Inject constructor(
             }
         }
     }
+
+
+
+}
+
+sealed class GameEvent {
+    data class ChangeLevel(val level: Level): GameEvent()
 }

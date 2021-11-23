@@ -14,6 +14,7 @@ import com.indest.heh.persistance.dto.LevelData
     exportSchema = true
 )
 @TypeConverters(Converters::class)
+@RewriteQueriesToDropUnusedColumns
 abstract class LevelDatabase : RoomDatabase() {
 
     abstract val levelDao: LevelDao

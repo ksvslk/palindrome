@@ -23,6 +23,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.material.badge.BadgeDrawable
@@ -38,6 +39,8 @@ import com.indest.heh.persistance.dto.Level
 import com.indest.heh.util.hideSystemBars
 import com.indest.heh.util.playWhileSoundOn
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import kotlin.properties.Delegates
 
 @AndroidEntryPoint
@@ -208,16 +211,26 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        gameViewModel.currentLevel.observe(viewLifecycleOwner) {
-            Log.i(TAG, it.toString())
-            if (it != null) {
-                loadLevel(it)
+        lifecycleScope.launch {
+            gameViewModel.currentLevel.observe(viewLifecycleOwner) { level ->
+                Log.i(TAG, "onViewCreated: ${level.levelInfo.solution}")
+                if (binding.gameplayFragment.childCount == 0)
+                {
+                    loadLevel(level)
+                }
             }
+
+            gameViewModel.eventFlow.collect { event ->
+                when(event) {
+                    is GameEvent.ChangeLevel -> loadLevel(event.level)
+                }
+            }
+
+            super.onViewCreated(view, savedInstanceState)
+            ViewCompat.requestApplyInsets(view)
+            hideSystemBars(binding.gameplayFragment)
         }
 
-        super.onViewCreated(view, savedInstanceState)
-        ViewCompat.requestApplyInsets(view)
-        hideSystemBars(binding.gameplayFragment)
     }
 
     private fun loadLevel(levelAndLettersInfo: Level) {
