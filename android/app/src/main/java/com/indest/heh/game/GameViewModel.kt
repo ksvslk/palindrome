@@ -2,7 +2,9 @@ package com.indest.heh.game
 
 import android.app.Application
 import android.util.Log
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.indest.heh.letter.Cell
 import com.indest.heh.letter.Letter
 import com.indest.heh.persistance.LevelProgress
@@ -11,11 +13,13 @@ import com.indest.heh.persistance.dto.Level
 import com.indest.heh.persistance.dto.LevelData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@OptIn(InternalCoroutinesApi::class)
 @HiltViewModel
 class GameViewModel @Inject constructor(
     private val levelRepository: LevelRepository,
@@ -28,33 +32,46 @@ class GameViewModel @Inject constructor(
     val levels = MutableLiveData<List<LevelData>>()
     val level = MutableLiveData<Level>()
     val realSolutionAndGuess = MutableLiveData<Triple<String?, String?, Int?>>()
-    val currentLevel: LiveData<Level> = levelRepository.getLastLevelTest().asLiveData()
-    private val eventChannel = Channel<GameEvent>()
-    val eventFlow = eventChannel.receiveAsFlow()
+
+    private val _uiState = MutableStateFlow(LatestLevelEvent.Success(Level(), Level()))
+    val uiState: StateFlow<LatestLevelEvent> = _uiState
 
     init {
         viewModelScope.launch {
-            level.value = levelRepository.getLastLevel()
             levels.value = levelRepository.getAllLevels()
+            levelRepository.getLastLevel()
+                .collect { newLevel ->
+                    val oldLevel = _uiState.value.currentLevel
+                    _uiState.value = LatestLevelEvent.Success(oldLevel, newLevel)
+                }
         }
     }
 
     fun changeLevel(nr: Int) {
         viewModelScope.launch {
-            levelRepository.updateNextLevelTimestamp(currentLevel.value!!.levelInfo.levelId, nr)
-            eventChannel.send(GameEvent.ChangeLevel(levelRepository.getLevel(nr)))
+            levelRepository.updateNextLevelTimestamp(_uiState.value.currentLevel.levelInfo.levelId, nr)
+            //_uiState.value = LatestLevelEvent.Success(_uiState.value.currentLevel,levelRepository.getLevel(nr))
         }
     }
 
     fun updateCompletedLevel(levelScore: Int = 1337) {
         viewModelScope.launch {
-            levelRepository.resetLevelLettersInfo(level.value!!.levelInfo.levelId)
-            val updatedLevel = level.value!!.levelInfo.copy(
+            levelRepository.resetLevelLettersInfo(_uiState.value.currentLevel.levelInfo.levelId)
+            val updatedLevel = _uiState.value.currentLevel.levelInfo.copy(
                 progress = LevelProgress.REPLAY,
-                puzzle = level.value!!.levelInfo.puzzle,
+                puzzle = _uiState.value.currentLevel.levelInfo.puzzle,
                 score = levelScore
             )
             levelRepository.updateLevel(updatedLevel)
+        }
+    }
+
+    fun refreshLevel() {
+        viewModelScope.launch {
+            if (level.value != null) {
+                level.value =
+                    levelRepository.getLevel(_uiState.value.currentLevel.levelInfo.levelId)
+            }
         }
     }
 
@@ -68,12 +85,12 @@ class GameViewModel @Inject constructor(
             levelRepository.updateLetter(
                 homeIndex = topIndex,
                 letter = bottomLetter,
-                level = level.value!!.levelInfo.levelId
+                level = _uiState.value.currentLevel.levelInfo.levelId
             )
             levelRepository.updateLetter(
                 homeIndex = bottomIndex,
                 letter = topLetter,
-                level = level.value!!.levelInfo.levelId
+                level = _uiState.value.currentLevel.levelInfo.levelId
             )
 
             realSolutionAndGuess.value = Triple(
@@ -91,7 +108,7 @@ class GameViewModel @Inject constructor(
             levelRepository.updateFriendIndex(
                 homeIndex = index,
                 newFriendIndex = newIndex,
-                level = level.value!!.levelInfo.levelId
+                level = _uiState.value.currentLevel.levelInfo.levelId
             )
             realSolutionAndGuess.value = Triple(
                 level.value?.levelInfo?.solution?.replace(" ", ""),
@@ -104,12 +121,12 @@ class GameViewModel @Inject constructor(
     fun persistInitialLettersInfo(cells: MutableList<Cell<*, *>>) {
         viewModelScope.launch {
             val isAlreadyInitialized =
-                levelRepository.isLettersInitialized(currentLevel.value!!.levelInfo.levelId)
-            Log.i(TAG, "Is initialized: $isAlreadyInitialized")
+                levelRepository.isLettersInitialized(_uiState.value.currentLevel.levelInfo.levelId)
             if (!isAlreadyInitialized) {
+                Log.i(TAG, "isAlreadyInitialized is false, starting to insert data (for first time)")
                 cells.filterIsInstance<Letter>().forEach {
                     levelRepository.insertLetterInfo(
-                        level = currentLevel.value!!.levelInfo.levelId,
+                        level = _uiState.value.currentLevel.levelInfo.levelId,
                         homeIndex = it.homeIndex,
                         friendIndex = it.friendIndex,
                         letter = it.text.first(),
@@ -119,11 +136,9 @@ class GameViewModel @Inject constructor(
             }
         }
     }
-
-
-
 }
 
-sealed class GameEvent {
-    data class ChangeLevel(val level: Level): GameEvent()
+sealed class LatestLevelEvent {
+    data class Success(val oldLevel: Level, val currentLevel: Level) : LatestLevelEvent()
+    data class Error(val exception: Throwable) : LatestLevelEvent()
 }

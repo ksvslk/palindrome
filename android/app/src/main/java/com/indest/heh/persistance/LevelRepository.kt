@@ -3,7 +3,6 @@ package com.indest.heh.persistance
 import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
-import androidx.lifecycle.LiveData
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.games.Games
 import com.google.android.gms.games.SnapshotsClient
@@ -16,6 +15,7 @@ import com.indest.heh.persistance.dto.LevelData
 import com.indest.heh.util.C
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.lang.reflect.Type
@@ -34,10 +34,7 @@ class LevelRepository @Inject constructor(
     suspend fun resetLevelLettersInfo(levelNr: Int) = levelDao.deleteLetterInfo(levelNr)
     suspend fun updateLevel(level: LevelData) = levelDao.updateLevelData(level)
     suspend fun getLevel(nr: Int) = levelDao.getLevel(nr)
-    suspend fun getLastLevel(): Level = levelDao.getLastLevel()
-    fun getLastLevelTest() = levelDao.getLastTest()
-    suspend fun updateNextLevelTimestamp(currentLevelNr:Int, nextLevelNr: Int) =
-        levelDao.updateNextLevelTimestamp(currentLevelNr, nextLevelNr)
+    fun getLastLevel() = levelDao.getLastLevel()
 
     suspend fun updateLevelPuzzle(level: Int, newPuzzle: String) {
         levelDao.updateLevelPuzzle(level, newPuzzle)
@@ -76,6 +73,8 @@ class LevelRepository @Inject constructor(
     private suspend fun updateLevels(levels: List<Level>) {
         levelDao.updateLevels(levels)
     }
+
+    suspend fun updateNextLevelTimestamp(current:Int, next:Int) = levelDao.updateNextLevelTimestamp(current, next)
 
 
     // Cloud
@@ -132,7 +131,8 @@ class LevelRepository @Inject constructor(
 
         val gson = Gson()
         val levelsData = gson.toJson(getAllLevels()).toByteArray()
-        val desc = "Level ${getLastLevel().levelInfo.levelId}"
+        //val desc = "Level ${getLastLevel().levelInfo.levelId}" // H
+        val desc = "UNDO!" // TODO:UNDO
 
         // Set the data payload for the snapshot
         snapshot.snapshotContents.writeBytes(levelsData).run {

@@ -6,6 +6,7 @@ import com.indest.heh.persistance.dto.LetterProperties
 import com.indest.heh.persistance.dto.Level
 import com.indest.heh.persistance.dto.LevelData
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 
 @Dao
 interface LevelDao {
@@ -23,7 +24,7 @@ interface LevelDao {
 
     @Transaction
     @Query("select *, max(time_modified) from level_info_table")
-    suspend fun getLastLevel(): Level
+    fun getLastLevel(): Flow<Level>
 
     @Transaction
     @Query("select *, max(time_modified) from level_info_table")

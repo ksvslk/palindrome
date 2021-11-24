@@ -23,7 +23,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.material.badge.BadgeDrawable
@@ -114,6 +116,42 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         if (categoryRewardedAd == null) {
             //Log.i(TAG, "Loading new category rewarded ad!")
             // loadRewardedAd(getString(R.string.category_rewarded_ad_unit_id))
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                gameViewModel.uiState.collect { uiState ->
+                    when (uiState) {
+                        is LatestLevelEvent.Success -> {
+                            if (!(uiState.oldLevel.levelInfo.levelId == 0 && uiState.currentLevel.levelInfo.levelId == 0)) {
+                                if (uiState.oldLevel.levelInfo.levelId != uiState.currentLevel.levelInfo.levelId && uiState.oldLevel.levelInfo.levelId != 0) {
+                                    if (binding.gameplayFragment.childCount > 0) {
+                                        Log.i(
+                                            TAG, "Successfully got levels. START LEVEL CHANGE! \n" +
+                                                    "Old: ${uiState.oldLevel.levelInfo.solution} \n" +
+                                                    "Current: ${uiState.currentLevel.levelInfo.solution}."
+                                        )
+                                        clearPreviousLevel()
+                                    } else {
+                                        loadLevel(uiState.currentLevel)
+                                    }
+                                } else if (binding.gameplayFragment.childCount == 0) {
+                                    Log.i(
+                                        TAG, "Successfully got levels. RELOAD LEVEL! \n" +
+                                                "Old: ${uiState.oldLevel.levelInfo.solution} \n" +
+                                                "Current: ${uiState.currentLevel.levelInfo.solution}."
+                                    )
+                                    loadLevel(uiState.currentLevel)
+                                }
+                            }
+
+                        }
+                        is LatestLevelEvent.Error -> {
+                            Log.i(TAG, "Error getting level from gameViewModel")
+                        }
+                    }
+                }
+            }
         }
     }
 /*
@@ -211,35 +249,18 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        lifecycleScope.launch {
-            gameViewModel.currentLevel.observe(viewLifecycleOwner) { level ->
-                Log.i(TAG, "onViewCreated: ${level.levelInfo.solution}")
-                if (binding.gameplayFragment.childCount == 0)
-                {
-                    loadLevel(level)
-                }
-            }
-
-            gameViewModel.eventFlow.collect { event ->
-                when(event) {
-                    is GameEvent.ChangeLevel -> loadLevel(event.level)
-                }
-            }
-
-            super.onViewCreated(view, savedInstanceState)
-            ViewCompat.requestApplyInsets(view)
-            hideSystemBars(binding.gameplayFragment)
-        }
-
+        super.onViewCreated(view, savedInstanceState)
+        ViewCompat.requestApplyInsets(view)
+        hideSystemBars(binding.gameplayFragment)
     }
 
     private fun loadLevel(levelAndLettersInfo: Level) {
         Log.i(TAG, "loadLevel")
         Log.i(TAG, levelAndLettersInfo.lettersProperties.toString())
-        if (binding.gameplayFragment.childCount > 0) {
-            clearPreviousLevel()
-            return
-        }
+        /*   if (binding.gameplayFragment.childCount > 0) {
+               clearPreviousLevel()
+               return
+           }*/
         Log.i(TAG, "LevelFactory.getLevel")
         val level = LevelFactory.getLevel(
             levelAndLettersInfo,
@@ -253,8 +274,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             .toMutableList()
 
         level.doOnPreDraw {
-            cellDirector.restoreSlotPlacements(levelAndLettersInfo)
             Log.i(TAG, "restoreSlotPlacements")
+            cellDirector.restoreSlotPlacements(levelAndLettersInfo)
             gameViewModel.persistInitialLettersInfo(cellDirector.cells)
         }
         binding.gameplayFragment.addView(level)
