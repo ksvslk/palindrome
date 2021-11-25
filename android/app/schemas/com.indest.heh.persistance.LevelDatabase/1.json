@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "244855573d5b15e141c079347e9143d9",
+    "identityHash": "a3fc8692c81b5d7c1b5b1c1296f53d73",
     "entities": [
       {
         "tableName": "level_info_table",
@@ -68,7 +68,7 @@
       },
       {
         "tableName": "letter_info_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`info_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `owner_id` INTEGER NOT NULL, `home_index` INTEGER NOT NULL, `friend_index` INTEGER NOT NULL, `letter` INTEGER NOT NULL, `hint_used` INTEGER NOT NULL, FOREIGN KEY(`owner_id`) REFERENCES `level_info_table`(`level_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`info_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `owner_id` INTEGER NOT NULL, `home_index` INTEGER NOT NULL, `friend_index` INTEGER NOT NULL, `letter` INTEGER NOT NULL, `correct_letter` INTEGER NOT NULL, `hint_used` INTEGER NOT NULL, FOREIGN KEY(`owner_id`) REFERENCES `level_info_table`(`level_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "infoId",
@@ -97,6 +97,12 @@
           {
             "fieldPath": "letter",
             "columnName": "letter",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "correctLetter",
+            "columnName": "correct_letter",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -141,7 +147,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '244855573d5b15e141c079347e9143d9')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a3fc8692c81b5d7c1b5b1c1296f53d73')"
     ]
   }
 }

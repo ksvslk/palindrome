@@ -14,8 +14,6 @@ import com.indest.heh.persistance.dto.Level
 import com.indest.heh.persistance.dto.LevelData
 import com.indest.heh.util.C
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.lang.reflect.Type
@@ -40,9 +38,9 @@ class LevelRepository @Inject constructor(
         levelDao.updateLevelPuzzle(level, newPuzzle)
     }
 
-    suspend fun insertLetterInfo(level: Int, homeIndex: Int, friendIndex: Int, letter: Char, hintUsed: Boolean) {
+    suspend fun insertLetterInfo(level: Int, homeIndex: Int, friendIndex: Int, letter: Char, correctLetter: Char, hintUsed: Boolean) {
         Log.i(TAG, "insertLetterInfo")
-        levelDao.insertLetterData(level, homeIndex, friendIndex, letter, hintUsed)
+        levelDao.insertLetterData(level, homeIndex, friendIndex, letter, correctLetter, hintUsed)
     }
 
     suspend fun insertLevel(levelInfo: LevelData) {
@@ -61,7 +59,7 @@ class LevelRepository @Inject constructor(
         levelDao.updateLetter(homeIndex, letter, level)
     }
 
-    suspend fun isLettersInitialized(nr:Int) = levelDao.isLettersInitialized(nr) > 0
+    suspend fun isLettersInitialized(nr:Int) = levelDao.areLettersInitialized(nr) > 0
 
     suspend fun currentSolution(levelNr: Int?): String {
         if (levelNr != null) {

@@ -1,18 +1,20 @@
 package com.indest.heh.persistance
 
-import androidx.lifecycle.LiveData
+import android.util.Log
 import androidx.room.*
 import com.indest.heh.persistance.dto.LetterProperties
 import com.indest.heh.persistance.dto.Level
 import com.indest.heh.persistance.dto.LevelData
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.StateFlow
 
 @Dao
 interface LevelDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(levelInfo: LevelData)
+
+    @Query("select similarity from level_info_table where level_id = :nr")
+    suspend fun getSimilarityScore(nr: Int): Float
 
     @Transaction
     @Query("delete from letter_info_table where owner_id = :levelNr")
@@ -33,23 +35,33 @@ interface LevelDao {
     @Query("update level_info_table set puzzle = :newPuzzle where level_id = :level")
     suspend fun updateLevelPuzzle(level: Int, newPuzzle: String)
 
-    @Query("insert into letter_info_table (owner_id, home_index, friend_index, letter, hint_used) values(:level, :homeIndex, :friendIndex, :letter, :hintUsed)")
-    suspend fun insertLetterData(level: Int, homeIndex: Int, friendIndex: Int, letter: Char, hintUsed: Boolean)
-
-    @Query("update letter_info_table set home_index = :newIndex where home_index = :oldIndex and owner_id = :level")
-    suspend fun updateHomeIndex(oldIndex: Int, newIndex: Int, level: Int)
+    @Query("insert into letter_info_table (owner_id, home_index, friend_index, letter, correct_letter, hint_used) values(:level, :homeIndex, :friendIndex, :letter, :correctLetter, :hintUsed)")
+    suspend fun insertLetterData(level: Int, homeIndex: Int, friendIndex: Int, letter: Char, correctLetter:Char,  hintUsed: Boolean)
 
     @Query("update letter_info_table set friend_index = :newFriendIndex where home_index = :homeIndex and owner_id = :level")
     suspend fun updateFriendIndex(homeIndex: Int, newFriendIndex: Int, level: Int)
 
     @Query("update letter_info_table set letter = :letter where home_index = :homeIndex and owner_id = :level")
-    suspend fun updateLetter(homeIndex: Int, letter: Char, level: Int)
+    suspend fun updateLetterQuery(homeIndex: Int, letter: Char, level: Int)
+
+    @Query("update level_info_table set mistakes = mistakes + 1 where level_id = :level and (select count(*) from letter_info_table where owner_id = :level and home_index = :homeIndex and friend_index != -666 and correct_letter = :letter) = 0")
+    suspend fun updateLevelMistakes(homeIndex: Int, letter:Char, level: Int): Int
+
+    //TODO: Try setting correct index for each home_index instead of letter
+    @Transaction
+    suspend fun updateLetter(homeIndex: Int, letter: Char, level: Int) {
+        updateLetterQuery(homeIndex, letter, level)
+        val solution = currentSolution(level)
+        val similarityScore = getSimilarityScore(level)
+        solution.
+        updateLevelMistakes(homeIndex, letter, level)
+    }
 
     @Query("select letter from letter_info_table where owner_id=:levelNr and friend_index!=-666 order by friend_index asc")
     suspend fun currentSolution(levelNr: Int): List<Char>
 
     @Query("select count(*) from letter_info_table where owner_id=:levelNr")
-    suspend fun isLettersInitialized(levelNr: Int): Int
+    suspend fun areLettersInitialized(levelNr: Int): Int
 
     @Query("update level_info_table set time_modified = (select time_modified + 1 from level_info_table where level_id=:currentLevelNr) where level_id=:nextLevelNr")
     suspend fun updateNextLevelTimestamp(currentLevelNr:Int, nextLevelNr: Int)
@@ -60,6 +72,9 @@ interface LevelDao {
         updateHomeIndex(index2, index1, level)
         updateHomeIndex(-420, index2, level)
     }
+
+    @Query("update letter_info_table set home_index = :newIndex where home_index = :oldIndex and owner_id = :level")
+    suspend fun updateHomeIndex(oldIndex: Int, newIndex: Int, level: Int)
 
     @Update
     suspend fun updateLevelData(levelInfo: LevelData)
@@ -80,9 +95,6 @@ interface LevelDao {
 
     @Query("select count(*) from level_info_table")
     suspend fun rowCount(): Int
-
-    @Query("select 1 from level_info_table")
-    fun dummyQuery(): Int
 
     //SELECT * FROM table WHERE id IN (SELECT id FROM table ORDER BY RANDOM() LIMIT x) TODO:Get random hint
 

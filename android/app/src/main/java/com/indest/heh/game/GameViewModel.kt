@@ -124,13 +124,14 @@ class GameViewModel @Inject constructor(
                 levelRepository.isLettersInitialized(_uiState.value.currentLevel.levelInfo.levelId)
             if (!isAlreadyInitialized) {
                 Log.i(TAG, "isAlreadyInitialized is false, starting to insert data (for first time)")
-                cells.filterIsInstance<Letter>().forEach {
+                cells.filterIsInstance<Letter>().forEachIndexed { index, it ->
                     levelRepository.insertLetterInfo(
                         level = _uiState.value.currentLevel.levelInfo.levelId,
                         homeIndex = it.homeIndex,
                         friendIndex = it.friendIndex,
                         letter = it.text.first(),
-                        hintUsed = true
+                        correctLetter = _uiState.value.currentLevel.levelInfo.solution[index],
+                        hintUsed = true,
                     )
                 }
             }
