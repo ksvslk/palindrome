@@ -69,6 +69,7 @@ abstract class LevelDatabase : RoomDatabase() {
                                     contentValues.put("progress", progress.ordinal)
                                     contentValues.put("mistakes", mistakes)
                                     contentValues.put("score", score)
+                                    contentValues.put("similarity", 0.0)
                                     contentValues.put("time_modified", 0)
 
                                     db.insert(

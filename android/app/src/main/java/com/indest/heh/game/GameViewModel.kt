@@ -18,6 +18,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 @OptIn(InternalCoroutinesApi::class)
 @HiltViewModel
@@ -93,6 +95,13 @@ class GameViewModel @Inject constructor(
                 level = _uiState.value.currentLevel.levelInfo.levelId
             )
 
+            val currentSolution = levelRepository.currentSolution(_uiState.value.currentLevel.levelInfo.levelId)
+            val realSolution = _uiState.value.currentLevel.levelInfo.solution
+            Log.i(TAG, currentSolution.toString())
+            Log.i(TAG, realSolution.toString())
+            val similarityScore = getSimilarityScore(currentSolution.map { c -> c.code }, realSolution.map { c -> c.code })
+            Log.i(TAG, "Similarity: $similarityScore")
+
             realSolutionAndGuess.value = Triple(
                 level.value?.levelInfo?.solution?.replace(" ", ""),
                 levelRepository.currentSolution(level.value?.levelInfo?.levelId),
@@ -100,6 +109,19 @@ class GameViewModel @Inject constructor(
             )
 
         }
+    }
+
+    private fun getSimilarityScore(solution: List<Int>, guess: List<Int>): Double {
+        var dotProduct = 0.0
+        var normA = 0.0
+        var normB = 0.0
+        solution.forEachIndexed { i, _ ->
+            val guessI = if (guess.contains(i)) guess[i] else 0
+            dotProduct += solution[i] * guessI
+            normA += solution[i].toDouble().pow(2.0)
+            normB += guessI.toDouble().pow(2.0)
+        }
+        return dotProduct / (sqrt(normA) * sqrt(normB))
     }
 
     fun updateFriendIndex(index: Int, newIndex: Int) {
@@ -130,7 +152,6 @@ class GameViewModel @Inject constructor(
                         homeIndex = it.homeIndex,
                         friendIndex = it.friendIndex,
                         letter = it.text.first(),
-                        correctLetter = _uiState.value.currentLevel.levelInfo.solution[index],
                         hintUsed = true,
                     )
                 }

@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "a3fc8692c81b5d7c1b5b1c1296f53d73",
+    "identityHash": "f68dbc09030a40f003b9042cd413e9bd",
     "entities": [
       {
         "tableName": "level_info_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`level_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `solution` TEXT NOT NULL, `puzzle` TEXT NOT NULL, `category` TEXT NOT NULL, `progress` INTEGER NOT NULL, `mistakes` INTEGER NOT NULL, `score` INTEGER NOT NULL, `time_modified` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`level_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `solution` TEXT NOT NULL, `puzzle` TEXT NOT NULL, `category` TEXT NOT NULL, `progress` INTEGER NOT NULL, `mistakes` INTEGER NOT NULL, `similarity` REAL NOT NULL, `score` INTEGER NOT NULL, `time_modified` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "levelId",
@@ -45,6 +45,12 @@
             "notNull": true
           },
           {
+            "fieldPath": "similarity",
+            "columnName": "similarity",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
             "fieldPath": "score",
             "columnName": "score",
             "affinity": "INTEGER",
@@ -68,7 +74,7 @@
       },
       {
         "tableName": "letter_info_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`info_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `owner_id` INTEGER NOT NULL, `home_index` INTEGER NOT NULL, `friend_index` INTEGER NOT NULL, `letter` INTEGER NOT NULL, `correct_letter` INTEGER NOT NULL, `hint_used` INTEGER NOT NULL, FOREIGN KEY(`owner_id`) REFERENCES `level_info_table`(`level_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`info_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `owner_id` INTEGER NOT NULL, `home_index` INTEGER NOT NULL, `friend_index` INTEGER NOT NULL, `letter` INTEGER NOT NULL, `hint_used` INTEGER NOT NULL, FOREIGN KEY(`owner_id`) REFERENCES `level_info_table`(`level_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "infoId",
@@ -97,12 +103,6 @@
           {
             "fieldPath": "letter",
             "columnName": "letter",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "correctLetter",
-            "columnName": "correct_letter",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -147,7 +147,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a3fc8692c81b5d7c1b5b1c1296f53d73')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f68dbc09030a40f003b9042cd413e9bd')"
     ]
   }
 }

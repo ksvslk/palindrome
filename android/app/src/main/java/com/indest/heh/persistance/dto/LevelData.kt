@@ -21,7 +21,7 @@ data class LevelData(
     @ColumnInfo(name = "mistakes")
     val mistakes: Int,
     @ColumnInfo(name = "similarity")
-    val similarity: Float,
+    val similarity: Double,
     @ColumnInfo(name = "score")
     val score: Int,
     @ColumnInfo(name = "time_modified")
