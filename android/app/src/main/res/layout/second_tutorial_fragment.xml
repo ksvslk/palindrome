@@ -79,7 +79,7 @@
                 android:elevation="1dp"
                 android:fontFamily="@font/yantramanav_bold"
                 android:gravity="center"
-                android:text="E"
+                android:text="A"
                 android:textColor="@color/colorOnPrimary"
                 android:textSize="@dimen/_18ssp" />
 

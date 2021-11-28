@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/navigation_gameplay"
-        android:name="com.indest.heh.fragments.GamePlayFragment"
+        android:name="com.indest.hah.fragments.GamePlayFragment"
         android:label="GamePlayFragment"
         tools:layout="@layout/gameplay_fragment">
         <action
@@ -22,7 +22,7 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.indest.heh.fragments.HomeFragment"
+        android:name="com.indest.hah.fragments.HomeFragment"
         android:label="HomeFragment"
         tools:layout="@layout/home_fragment">
         <action
@@ -37,7 +37,7 @@
 
     <fragment
         android:id="@+id/navigation_second_tutorial"
-        android:name="com.indest.heh.fragments.SecondTutorialFragment"
+        android:name="com.indest.hah.fragments.SecondTutorialFragment"
         android:label="@string/tutorial"
         tools:layout="@layout/second_tutorial_fragment" >
         <action
@@ -50,7 +50,7 @@
 
     <fragment
         android:id="@+id/navigation_tutorial"
-        android:name="com.indest.heh.fragments.TutorialFragment"
+        android:name="com.indest.hah.fragments.TutorialFragment"
         android:label="@string/tutorial"
         tools:layout="@layout/tutorial_fragment" >
         <action
@@ -63,7 +63,7 @@
 
     <dialog
         android:id="@+id/navigation_hints"
-        android:name="com.indest.heh.fragments.HintsFragment"
+        android:name="com.indest.hah.fragments.HintsFragment"
         android:label="@string/hints"
         tools:layout="@layout/hints_fragment" >
         <action
@@ -73,7 +73,7 @@
 
     <dialog
         android:id="@+id/navigation_google_games"
-        android:name="com.indest.heh.fragments.GoogleGamesFragment"
+        android:name="com.indest.hah.fragments.GoogleGamesFragment"
         android:label="@string/google"
         tools:layout="@layout/google_games_fragment" >
         <action
@@ -83,7 +83,7 @@
 
     <dialog
         android:id="@+id/navigation_settings"
-        android:name="com.indest.heh.fragments.SettingsFragment"
+        android:name="com.indest.hah.fragments.SettingsFragment"
         android:label="@string/settings"
         tools:layout="@layout/settings_fragment" >
         <action
@@ -96,7 +96,7 @@
 
     <dialog
         android:id="@+id/navigation_level_select"
-        android:name="com.indest.heh.fragments.LevelSelectFragment"
+        android:name="com.indest.hah.fragments.LevelSelectFragment"
         android:label="@string/level_select"
         tools:layout="@layout/level_select_fragment" >
         <action

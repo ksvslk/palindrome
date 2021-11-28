@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.indest.heh"
+    package="com.indest.hah"
     xmlns:dist="http://schemas.android.com/apk/distribution"
     android:targetSandboxVersion="2">
 
@@ -12,7 +12,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
-        android:name="com.indest.heh.CoolApplication"
+        android:name="com.indest.hah.CoolApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -22,7 +22,7 @@
         android:theme="@style/Theme.OC">
 
         <activity
-            android:name="com.indest.heh.GameActivity"
+            android:name="com.indest.hah.GameActivity"
             android:screenOrientation="portrait"
             android:hardwareAccelerated="true"
             android:immersive="true"

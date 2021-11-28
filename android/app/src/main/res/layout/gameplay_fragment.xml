@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.indest.heh.game.CellContainer xmlns:android="http://schemas.android.com/apk/res/android"
+<com.indest.hah.game.CellContainer xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/gameplay_fragment"
     android:layout_width="match_parent"
@@ -9,4 +9,4 @@
     android:gravity="center"
     tools:context=".GameActivity">
 
-</com.indest.heh.game.CellContainer>
+</com.indest.hah.game.CellContainer>

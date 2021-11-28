@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">heh</string>
-    <string name="title_activity_main">heh</string>
+    <string name="app_name">hah</string>
+    <string name="title_activity_main">hah</string>
     <string name="play_button_text">PLAY</string>
     <string name="exit_game_title">Exit game?</string>
     <string name="exit_game_message">Your progress will be saved when leaving the game.</string>
