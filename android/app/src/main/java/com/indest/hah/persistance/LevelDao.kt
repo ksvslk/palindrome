@@ -1,6 +1,7 @@
 package com.indest.hah.persistance
 
 import androidx.room.*
+import com.indest.hah.persistance.dto.FriendLetter
 import com.indest.hah.persistance.dto.LetterProperties
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
@@ -56,6 +57,9 @@ interface LevelDao {
 
     @Query("select letter from letter_info_table where owner_id=:levelNr and friend_index!=-666 order by friend_index asc")
     suspend fun getCurrentSolution(levelNr: Int): List<Char>
+
+    @Query("SELECT friend_index, letter FROM letter_info_table where owner_id=:levelNr order by friend_index asc")
+    suspend fun getFriendLetters(levelNr: Int): List<FriendLetter>
 
     @Query("select count(*) from letter_info_table where owner_id=:levelNr")
     suspend fun areLettersInitialized(levelNr: Int): Int

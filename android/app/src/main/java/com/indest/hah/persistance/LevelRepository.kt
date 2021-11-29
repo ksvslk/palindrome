@@ -10,6 +10,7 @@ import com.google.android.gms.games.snapshot.Snapshot
 import com.google.android.gms.games.snapshot.SnapshotMetadataChange
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.indest.hah.persistance.dto.FriendLetter
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
 import com.indest.hah.util.C
@@ -67,6 +68,8 @@ class LevelRepository @Inject constructor(
         }
         return ""
     }
+
+    suspend fun getFriendLetters(levelNr: Int): List<FriendLetter> = levelDao.getFriendLetters(levelNr)
 
     private suspend fun updateLevels(levels: List<Level>) {
         levelDao.updateLevels(levels)

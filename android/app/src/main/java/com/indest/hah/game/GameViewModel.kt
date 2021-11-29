@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -92,19 +93,21 @@ class GameViewModel @Inject constructor(
                 level = _uiState.value.currentLevel.levelInfo.levelId
             )
 
+            val sol = levelRepository.getFriendLetters(_uiState.value.currentLevel.levelInfo.levelId)
+            Log.i(TAG, sol.map { fl -> if (fl.friend_index != -666) fl.letter.toChar() else '-'  }.toString())
+            /*
             val currentSolution = levelRepository.currentSolution(_uiState.value.currentLevel.levelInfo.levelId)
             val realSolution = _uiState.value.currentLevel.levelInfo.solution
             Log.i(TAG, currentSolution.toString())
             Log.i(TAG, realSolution.toString())
             val similarityScore = getSimilarityScore(currentSolution.map { c -> c.code }, realSolution.map { c -> c.code })
-            Log.i(TAG, "Similarity: $similarityScore")
+            Log.i(TAG, "Similarity: $similarityScore")*/
 
             realSolutionAndGuess.value = Triple(
                 _uiState.value.currentLevel.levelInfo.solution.replace(" ", ""),
                 levelRepository.currentSolution(_uiState.value.currentLevel.levelInfo.levelId),
                 topIndex
             )
-
         }
     }
 
