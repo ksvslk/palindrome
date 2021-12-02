@@ -32,7 +32,7 @@
     <color name="hintsNotificationColor">#FF9800</color>
     <color name="handPointerColor">#F7D795</color>
 
-    <color name="rightToLeftColor">#4400C1</color>
-    <color name="leftToRightColor">#D500FF</color>
+    <color name="rightToLeftColor">#FF9800</color>
+    <color name="leftToRightColor">#FF9800</color>
 
 </resources>

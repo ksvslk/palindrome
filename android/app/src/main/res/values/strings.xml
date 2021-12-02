@@ -47,7 +47,7 @@
     <string name="ui_night_pref">NIGHT_ON</string>
 
     <!-- TUTORIAL -->
-    <string name="tutorial_text">Palindrome is a word identical from \n <font color="#4400C1">right to left</font> and <font color="#D500FF">left to right</font>. Ignore punctuation marks - only letters count!</string>
+    <string name="tutorial_text">Palindrome is a word identical from \n <font color="#FF9800">right to left</font> and <font color="#FF9800">left to right</font>. Ignore punctuation marks - only letters count!</string>
     <string name="tutorial2_text">Compete against other players by making as few mistakes as possible!</string>
 
 </resources>
