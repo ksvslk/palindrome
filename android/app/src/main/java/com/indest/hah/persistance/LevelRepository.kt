@@ -10,7 +10,6 @@ import com.google.android.gms.games.snapshot.Snapshot
 import com.google.android.gms.games.snapshot.SnapshotMetadataChange
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.indest.hah.persistance.dto.FriendLetter
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
 import com.indest.hah.util.C
@@ -60,7 +59,6 @@ class LevelRepository @Inject constructor(
         levelDao.updateLetter(homeIndex, letter, level)
     }
 
-    suspend fun isLettersInitialized(nr:Int) = levelDao.areLettersInitialized(nr) > 0
 
     suspend fun currentSolution(levelNr: Int?): String {
         if (levelNr != null) {
@@ -69,14 +67,10 @@ class LevelRepository @Inject constructor(
         return ""
     }
 
-    suspend fun getFriendLetters(levelNr: Int): List<FriendLetter> = levelDao.getFriendLetters(levelNr)
-
-    private suspend fun updateLevels(levels: List<Level>) {
-        levelDao.updateLevels(levels)
-    }
-
+    suspend fun isLettersInitialized(nr:Int) = levelDao.areLettersInitialized(nr) > 0
+    private suspend fun updateLevels(levels: List<Level>) = levelDao.updateLevels(levels)
     suspend fun updateNextLevelTimestamp(current:Int, next:Int) = levelDao.updateNextLevelTimestamp(current, next)
-
+    suspend fun updateScore(newScore:Int, level:Int) = levelDao.updateScore(newScore, level)
 
     // Cloud
     // Upload to cloud onStop()

@@ -12,17 +12,12 @@ import com.indest.hah.persistance.LevelRepository
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.math.abs
-import kotlin.math.pow
-import kotlin.math.sqrt
 
-@OptIn(InternalCoroutinesApi::class)
 @HiltViewModel
 class GameViewModel @Inject constructor(
     private val levelRepository: LevelRepository,
@@ -50,7 +45,10 @@ class GameViewModel @Inject constructor(
 
     fun changeLevel(nr: Int) {
         viewModelScope.launch {
-            levelRepository.updateNextLevelTimestamp(_uiState.value.currentLevel.levelInfo.levelId, nr)
+            levelRepository.updateNextLevelTimestamp(
+                _uiState.value.currentLevel.levelInfo.levelId,
+                nr
+            )
         }
     }
 
@@ -63,16 +61,32 @@ class GameViewModel @Inject constructor(
         }
     }
 
-    fun updateCompletedLevel(levelScore: Int = 1337) {
+    fun increaseMistakes() {
+        viewModelScope.launch {
+            levelRepository.updateScore(
+                _uiState.value.currentLevel.levelInfo.score-2,
+                _uiState.value.currentLevel.levelInfo.levelId
+            )
+        }
+    }
+
+    fun updateCompletedLevel() {
         viewModelScope.launch {
             levelRepository.resetLevelLettersInfo(_uiState.value.currentLevel.levelInfo.levelId)
             val updatedLevel = _uiState.value.currentLevel.levelInfo.copy(
                 progress = LevelProgress.REPLAY,
                 puzzle = _uiState.value.currentLevel.levelInfo.puzzle,
-                score = levelScore
+                score = _uiState.value.currentLevel.levelInfo.score
             )
             levelRepository.updateLevel(updatedLevel)
         }
+    }
+
+    fun getCurrentAndMaxScore(): Pair<Int, Int> {
+        return Pair(
+            _uiState.value.currentLevel.levelInfo.score,
+            _uiState.value.currentLevel.levelInfo.levelId * 100
+        )
     }
 
     fun isLastLevel(): Boolean {
@@ -80,7 +94,7 @@ class GameViewModel @Inject constructor(
     }
 
     fun updateLetters(topIndex: Int, bottomLetter: Char, bottomIndex: Int, topLetter: Char) {
-        Log.i("GMV", "updateLetters")
+        Log.i(TAG, "updateLetters")
         viewModelScope.launch {
             levelRepository.updateLetter(
                 homeIndex = topIndex,
@@ -93,16 +107,6 @@ class GameViewModel @Inject constructor(
                 level = _uiState.value.currentLevel.levelInfo.levelId
             )
 
-            val sol = levelRepository.getFriendLetters(_uiState.value.currentLevel.levelInfo.levelId)
-            Log.i(TAG, sol.map { fl -> if (fl.friend_index != -666) fl.letter.toChar() else '-'  }.toString())
-            /*
-            val currentSolution = levelRepository.currentSolution(_uiState.value.currentLevel.levelInfo.levelId)
-            val realSolution = _uiState.value.currentLevel.levelInfo.solution
-            Log.i(TAG, currentSolution.toString())
-            Log.i(TAG, realSolution.toString())
-            val similarityScore = getSimilarityScore(currentSolution.map { c -> c.code }, realSolution.map { c -> c.code })
-            Log.i(TAG, "Similarity: $similarityScore")*/
-
             realSolutionAndGuess.value = Triple(
                 _uiState.value.currentLevel.levelInfo.solution.replace(" ", ""),
                 levelRepository.currentSolution(_uiState.value.currentLevel.levelInfo.levelId),
@@ -111,21 +115,8 @@ class GameViewModel @Inject constructor(
         }
     }
 
-    private fun getSimilarityScore(solution: List<Int>, guess: List<Int>): Double {
-        var dotProduct = 0.0
-        var normA = 0.0
-        var normB = 0.0
-        solution.forEachIndexed { i, _ ->
-            val guessI = if (guess.contains(i)) guess[i] else 0
-            dotProduct += solution[i] * guessI
-            normA += solution[i].toDouble().pow(2.0)
-            normB += guessI.toDouble().pow(2.0)
-        }
-        return dotProduct / (sqrt(normA) * sqrt(normB))
-    }
-
     fun updateFriendIndex(index: Int, newIndex: Int) {
-        Log.i("GMV", "updateFriendIndex")
+        Log.i(TAG, "updateFriendIndex")
         viewModelScope.launch {
             levelRepository.updateFriendIndex(
                 homeIndex = index,
@@ -145,7 +136,10 @@ class GameViewModel @Inject constructor(
             val isAlreadyInitialized =
                 levelRepository.isLettersInitialized(_uiState.value.currentLevel.levelInfo.levelId)
             if (!isAlreadyInitialized) {
-                Log.i(TAG, "isAlreadyInitialized is false, starting to insert data (for first time)")
+                Log.i(
+                    TAG,
+                    "isAlreadyInitialized is false, starting to insert data (for first time)"
+                )
                 cells.filterIsInstance<Letter>().forEachIndexed { _, it ->
                     levelRepository.insertLetterInfo(
                         level = _uiState.value.currentLevel.levelInfo.levelId,
@@ -155,6 +149,11 @@ class GameViewModel @Inject constructor(
                         hintUsed = true,
                     )
                 }
+                levelRepository.updateScore(
+                    _uiState.value.currentLevel.levelInfo.levelId * 100,
+                    _uiState.value.currentLevel.levelInfo.levelId
+                )
+
             }
         }
     }

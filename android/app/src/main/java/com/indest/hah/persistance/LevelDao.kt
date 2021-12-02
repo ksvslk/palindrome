@@ -1,7 +1,6 @@
 package com.indest.hah.persistance
 
 import androidx.room.*
-import com.indest.hah.persistance.dto.FriendLetter
 import com.indest.hah.persistance.dto.LetterProperties
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
@@ -12,9 +11,6 @@ interface LevelDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(levelInfo: LevelData)
-
-    @Query("select similarity from level_info_table where level_id = :nr")
-    suspend fun getSimilarityScore(nr: Int): Double
 
     @Transaction
     @Query("delete from letter_info_table where owner_id = :levelNr")
@@ -27,10 +23,6 @@ interface LevelDao {
     @Transaction
     @Query("select *, max(time_modified) from level_info_table")
     fun getLastLevel(): Flow<Level>
-
-    @Transaction
-    @Query("select *, max(time_modified) from level_info_table")
-    fun getLastTest(): Flow<Level>
 
     @Query("update level_info_table set puzzle = :newPuzzle where level_id = :level")
     suspend fun updateLevelPuzzle(level: Int, newPuzzle: String)
@@ -57,9 +49,6 @@ interface LevelDao {
 
     @Query("select letter from letter_info_table where owner_id=:levelNr and friend_index!=-666 order by friend_index asc")
     suspend fun getCurrentSolution(levelNr: Int): List<Char>
-
-    @Query("SELECT friend_index, letter FROM letter_info_table where owner_id=:levelNr order by friend_index asc")
-    suspend fun getFriendLetters(levelNr: Int): List<FriendLetter>
 
     @Query("select count(*) from letter_info_table where owner_id=:levelNr")
     suspend fun areLettersInitialized(levelNr: Int): Int
@@ -96,6 +85,9 @@ interface LevelDao {
 
     @Query("select count(*) from level_info_table")
     suspend fun rowCount(): Int
+
+    @Query("update level_info_table set score=:newScore where level_id=:level")
+    suspend fun updateScore(newScore:Int, level: Int)
 
     //SELECT * FROM table WHERE id IN (SELECT id FROM table ORDER BY RANDOM() LIMIT x) TODO:Get random hint
 

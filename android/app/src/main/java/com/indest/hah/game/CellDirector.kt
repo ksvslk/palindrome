@@ -1,6 +1,5 @@
 package com.indest.hah.game
 
-import android.util.Log
 import com.indest.hah.fragments.GamePlayFragment
 import com.indest.hah.letter.*
 import com.indest.hah.letter.effects.ColorSelector
@@ -38,7 +37,6 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
                 }
             }
         }
-
         sendLetterHome(cell)
     }
 
@@ -85,6 +83,9 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
         switchFriends(bottom, top)
         switchIndex(bottom, top)
 
+        if (top.text.first() != top.friend?.realChar) gf.gameViewModel.increaseMistakes()
+        if (bottom.text.first() != bottom.friend?.realChar) gf.gameViewModel.increaseMistakes()
+
         // Set the layers accordingly - which letter is FRONT and which is BEHIND
         bottom.z = MIDDLE_LAYER
         bottom.elevation = MIDDLE_LAYER
@@ -120,13 +121,15 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
             index = letter.homeIndex,
             newIndex = slot.homeIndex
         )
-        Log.i(TAG, cells.toString())
+        val isCorrectMove = slot.friend?.text?.first()?.equals(slot.realChar)
+        if (isCorrectMove == false) gf.gameViewModel.increaseMistakes()
     }
 
     fun sendLetterHome(letter: Letter) {
         if (letter.hasFriend()) {
             letter.getTheFriend()?.setFriend(null)
             letter.setFriend(null)
+            gf.gameViewModel.increaseMistakes()
 
             gf.gameViewModel.updateFriendIndex(
                 index = letter.homeIndex,
@@ -139,7 +142,6 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
                 (letter.homePos.x - letter.pos.x),
                 (letter.homePos.y - letter.pos.y)
             )
-            Log.i(TAG, cells.toString())
         } else {
             letter.state = LetterState.ANIMATION
             letter.state.executeAnimationBehaviour(
@@ -178,11 +180,15 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
         if (bottom.hasFriend() && top.hasFriend()) {
             bottom.setFriend(topFriend)
             top.setFriend(bottomFriend)
+            topFriend?.setFriend(bottom)
+            bottomFriend?.setFriend(top)
         } else if (bottom.hasFriend() && !top.hasFriend()) {
             top.setFriend(bottomFriend)
+            bottomFriend?.setFriend(top)
             bottom.setFriend(null)
         } else if (top.hasFriend() && !bottom.hasFriend()) {
             bottom.setFriend(topFriend)
+            topFriend?.setFriend(bottom)
             top.setFriend(null)
         }
     }

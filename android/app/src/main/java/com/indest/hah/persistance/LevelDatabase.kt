@@ -58,8 +58,7 @@ abstract class LevelDatabase : RoomDatabase() {
                                     val puzzle = shuffledChars.concatToString()
                                     val category = levels[i].category
                                     val progress = LevelProgress.TODO
-                                    val score = 0
-                                    val mistakes = 0
+                                    val score = (i + 1) * 100
 
                                     val contentValues = ContentValues()
                                     contentValues.put("level_id", i + 1)
@@ -67,9 +66,7 @@ abstract class LevelDatabase : RoomDatabase() {
                                     contentValues.put("puzzle", puzzle)
                                     contentValues.put("category", category)
                                     contentValues.put("progress", progress.ordinal)
-                                    contentValues.put("mistakes", mistakes)
                                     contentValues.put("score", score)
-                                    contentValues.put("similarity", 0.0)
                                     contentValues.put("time_modified", 0)
 
                                     db.insert(

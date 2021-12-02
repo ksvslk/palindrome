@@ -18,10 +18,6 @@ data class LevelData(
     val category: String,
     @ColumnInfo(name = "progress")
     val progress: LevelProgress,
-    @ColumnInfo(name = "mistakes")
-    val mistakes: Int,
-    @ColumnInfo(name = "similarity")
-    val similarity: Double,
     @ColumnInfo(name = "score")
     val score: Int,
     @ColumnInfo(name = "time_modified")

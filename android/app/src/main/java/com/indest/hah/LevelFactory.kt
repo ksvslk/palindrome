@@ -120,7 +120,7 @@ object LevelFactory {
             for (char in row) {
                 when (char) {
                     ' ' -> grid.addView(Space(context))
-                    else -> grid.addView(Slot(context).apply {
+                    else -> grid.addView(Slot(context, char).apply {
                         textSize = ds.textSize.toFloat()
                         width = ds.boxSize
                         height = ds.boxSize

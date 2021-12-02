@@ -43,6 +43,7 @@ import com.indest.hah.util.playWhileSoundOn
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.lang.StringBuilder
 import kotlin.properties.Delegates
 
 @AndroidEntryPoint
@@ -56,7 +57,6 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     private var correctSound by Delegates.notNull<Int>()
     private var hintNotification by Delegates.notNull<Int>()
     private var categoryRewardedAd: RewardedAd? = null
-    private var mIsLoading = false
     private lateinit var audioManager: AudioManager
     private lateinit var badge: BadgeDrawable
     lateinit var cellDirector: CellDirector
@@ -255,13 +255,6 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     }
 
     private fun loadLevel(levelAndLettersInfo: Level) {
-        Log.i(TAG, "loadLevel")
-        Log.i(TAG, levelAndLettersInfo.lettersProperties.toString())
-        /*   if (binding.gameplayFragment.childCount > 0) {
-               clearPreviousLevel()
-               return
-           }*/
-        Log.i(TAG, "LevelFactory.getLevel")
         val level = LevelFactory.getLevel(
             levelAndLettersInfo,
             requireContext(),
@@ -274,7 +267,6 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             .toMutableList()
 
         level.doOnPreDraw {
-            Log.i(TAG, "restoreSlotPlacements")
             cellDirector.restoreSlotPlacements(levelAndLettersInfo)
             gameViewModel.persistInitialLettersInfo(cellDirector.cells)
         }
@@ -419,10 +411,14 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
     private fun startCountAnimation(scoreView: TextView) {
         val currentValue = 0
-        val animator = ValueAnimator.ofInt(currentValue, currentValue + 1529)
+        val currentAndMaxScore = gameViewModel.getCurrentAndMaxScore()
+        val animator = ValueAnimator.ofInt(currentValue, currentValue.plus(currentAndMaxScore.first))
+        val paddingLength = currentAndMaxScore.second.toString().length
         animator.duration = 1000
         animator.addUpdateListener { animation ->
-            scoreView.text = animation.animatedValue.toString().padStart(5, '0')
+            scoreView.text = StringBuilder()
+                .append("Score: ")
+                .append(animation.animatedValue.toString().padStart(paddingLength, '0'))
         }
         soundPool.playWhileSoundOn(requireActivity(), scoreSound, 2, audioManager = audioManager)
         animator.start()

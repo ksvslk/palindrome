@@ -1,13 +1,17 @@
 package com.indest.hah.letter
 
 import android.content.Context
+import android.util.Log
 import android.view.View
 import com.indest.hah.util.C.BOTTOM_LAYER
 
 class Slot constructor(
-    context: Context?
+    context: Context?, realFriendChar: Char
 ) : Cell<Slot, Letter>(context!!) {
 
+    constructor(context: Context) : this(context, '-')
+
+    var realChar: Char = realFriendChar
     private var TAG: String = "Slot ${View.generateViewId()}"
 
     init {
@@ -21,6 +25,7 @@ class Slot constructor(
 
     override fun setFriend(cell: Cell<Letter, Slot>?) {
         friend = cell as Letter?
+        Log.i(TAG, "Setting new letter to Slot: ${friend?.text}. Real char for this slot is: $realChar")
     }
 
     override fun toString(): String {

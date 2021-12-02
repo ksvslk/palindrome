@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "f68dbc09030a40f003b9042cd413e9bd",
+    "identityHash": "97c8d1355847475237717b1e14c2a07f",
     "entities": [
       {
         "tableName": "level_info_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`level_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `solution` TEXT NOT NULL, `puzzle` TEXT NOT NULL, `category` TEXT NOT NULL, `progress` INTEGER NOT NULL, `mistakes` INTEGER NOT NULL, `similarity` REAL NOT NULL, `score` INTEGER NOT NULL, `time_modified` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`level_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `solution` TEXT NOT NULL, `puzzle` TEXT NOT NULL, `category` TEXT NOT NULL, `progress` INTEGER NOT NULL, `score` INTEGER NOT NULL, `time_modified` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "levelId",
@@ -36,18 +36,6 @@
             "fieldPath": "progress",
             "columnName": "progress",
             "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "mistakes",
-            "columnName": "mistakes",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "similarity",
-            "columnName": "similarity",
-            "affinity": "REAL",
             "notNull": true
           },
           {
@@ -147,7 +135,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f68dbc09030a40f003b9042cd413e9bd')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '97c8d1355847475237717b1e14c2a07f')"
     ]
   }
 }
