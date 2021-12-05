@@ -16,6 +16,8 @@ data class LevelData(
     var puzzle: String,
     @ColumnInfo(name = "category")
     val category: String,
+    @ColumnInfo(name = "category_rewarded")
+    val categoryRewarded: Boolean,
     @ColumnInfo(name = "progress")
     val progress: LevelProgress,
     @ColumnInfo(name = "score")

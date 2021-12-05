@@ -59,6 +59,9 @@ class LevelRepository @Inject constructor(
         levelDao.updateLetter(homeIndex, letter, level)
     }
 
+    suspend fun updateCategoryRewarded(value: Boolean, level: Int) {
+        levelDao.updateCategoryRewarded(value, level)
+    }
 
     suspend fun currentSolution(levelNr: Int?): String {
         if (levelNr != null) {

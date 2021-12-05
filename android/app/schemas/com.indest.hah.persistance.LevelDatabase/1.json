@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "97c8d1355847475237717b1e14c2a07f",
+    "identityHash": "c24eca3e1f6b2c445fd965c75de5363c",
     "entities": [
       {
         "tableName": "level_info_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`level_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `solution` TEXT NOT NULL, `puzzle` TEXT NOT NULL, `category` TEXT NOT NULL, `progress` INTEGER NOT NULL, `score` INTEGER NOT NULL, `time_modified` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`level_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `solution` TEXT NOT NULL, `puzzle` TEXT NOT NULL, `category` TEXT NOT NULL, `category_rewarded` INTEGER NOT NULL, `progress` INTEGER NOT NULL, `score` INTEGER NOT NULL, `time_modified` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "levelId",
@@ -30,6 +30,12 @@
             "fieldPath": "category",
             "columnName": "category",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "categoryRewarded",
+            "columnName": "category_rewarded",
+            "affinity": "INTEGER",
             "notNull": true
           },
           {
@@ -135,7 +141,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '97c8d1355847475237717b1e14c2a07f')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c24eca3e1f6b2c445fd965c75de5363c')"
     ]
   }
 }

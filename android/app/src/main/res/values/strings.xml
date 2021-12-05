@@ -45,6 +45,7 @@
     <string name="sound_on_pref">SOUND_ON</string>
     <string name="vibration_on_pref">VIBRATION_ON</string>
     <string name="ui_night_pref">NIGHT_ON</string>
+    <string name="categories_purchased">CATEGORIES_PURCHASED</string>
 
     <!-- TUTORIAL -->
     <string name="tutorial_text">Palindrome is a word identical from \n <font color="#FF9800">right to left</font> and <font color="#FF9800">left to right</font>. Ignore punctuation marks - only letters count!</string>

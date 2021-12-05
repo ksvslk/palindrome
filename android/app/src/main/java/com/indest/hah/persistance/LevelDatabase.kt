@@ -65,6 +65,7 @@ abstract class LevelDatabase : RoomDatabase() {
                                     contentValues.put("solution", levels[i].solution)
                                     contentValues.put("puzzle", puzzle)
                                     contentValues.put("category", category)
+                                    contentValues.put("category_rewarded", false)
                                     contentValues.put("progress", progress.ordinal)
                                     contentValues.put("score", score)
                                     contentValues.put("time_modified", 0)

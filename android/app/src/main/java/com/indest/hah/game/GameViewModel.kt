@@ -2,9 +2,14 @@ package com.indest.hah.game
 
 import android.app.Application
 import android.util.Log
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.rewarded.RewardedAd
+import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.indest.hah.letter.Cell
 import com.indest.hah.letter.Letter
 import com.indest.hah.persistance.LevelProgress
@@ -64,7 +69,7 @@ class GameViewModel @Inject constructor(
     fun increaseMistakes() {
         viewModelScope.launch {
             levelRepository.updateScore(
-                _uiState.value.currentLevel.levelInfo.score-2,
+                _uiState.value.currentLevel.levelInfo.score - 2,
                 _uiState.value.currentLevel.levelInfo.levelId
             )
         }
@@ -156,6 +161,19 @@ class GameViewModel @Inject constructor(
 
             }
         }
+    }
+
+    fun setCategoryRewarded(value: Boolean) {
+        viewModelScope.launch {
+            levelRepository.updateCategoryRewarded(
+                value,
+                _uiState.value.currentLevel.levelInfo.levelId
+            )
+        }
+    }
+
+    fun isCategoryRewarded(): Boolean {
+        return _uiState.value.currentLevel.levelInfo.categoryRewarded
     }
 }
 

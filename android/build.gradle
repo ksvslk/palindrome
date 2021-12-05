@@ -30,7 +30,7 @@ buildscript {
     ext.sdp_version = '1.0.6'
     ext.ssp_version = '1.0.6'
     ext.window_manager_version ='1.0.0-beta03'
-    ext.ads_version = '20.4.0'
+    ext.ads_version = '20.5.0'
 
 
     repositories {

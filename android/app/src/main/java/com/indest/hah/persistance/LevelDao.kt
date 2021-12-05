@@ -89,6 +89,9 @@ interface LevelDao {
     @Query("update level_info_table set score=:newScore where level_id=:level")
     suspend fun updateScore(newScore:Int, level: Int)
 
+    @Query("update level_info_table set category_rewarded=:value where level_id=:level")
+    suspend fun updateCategoryRewarded(value:Boolean, level: Int)
+
     //SELECT * FROM table WHERE id IN (SELECT id FROM table ORDER BY RANDOM() LIMIT x) TODO:Get random hint
 
 }

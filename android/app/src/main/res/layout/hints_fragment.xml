@@ -5,11 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
-    app:divider="@drawable/divider"
-    app:showDividers="middle"
-    app:dividerPadding="@dimen/simple_dialog_left_margin"
     android:orientation="vertical"
-    android:paddingVertical="@dimen/default_large_margin">
+    android:paddingVertical="@dimen/default_large_margin"
+    app:divider="@drawable/divider"
+    app:dividerPadding="@dimen/simple_dialog_left_margin"
+    app:showDividers="middle">
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/hints_dialog_title"
@@ -46,26 +46,24 @@
             app:tint="@color/colorOnPrimary"
             tools:ignore="RtlSymmetry" />
 
-        <androidx.appcompat.widget.LinearLayoutCompat
+        <ViewFlipper
+            android:id="@+id/reveal_category_flipper"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:orientation="vertical">
+            android:inAnimation="@android:anim/slide_in_left"
+            android:outAnimation="@android:anim/slide_out_right">
+            <include
+                android:id="@+id/reveal_category_hidden"
+                layout="@layout/hint_available"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+            <include
+                android:id="@+id/reveal_category_shown"
+                layout="@layout/hint_revealed"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </ViewFlipper>
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="@string/rewarded_reveal_category"
-                android:textAppearance="@style/TextAppearance.OC.Body1" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="@string/watch_rewarded_video"
-                android:textAppearance="@style/TextAppearance.OC.Caption" />
-        </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.LinearLayoutCompat

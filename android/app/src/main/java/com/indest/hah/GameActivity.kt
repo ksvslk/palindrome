@@ -11,7 +11,9 @@ import androidx.core.view.forEach
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.*
+import com.google.android.gms.ads.rewarded.RewardedAd
+import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.indest.hah.databinding.ActivityGameBinding
 import com.indest.hah.util.hideSystemBars
@@ -53,7 +55,7 @@ class GameActivity : AppCompatActivity() {
 
         MobileAds.initialize(this) {}
 
-        // TODO: temp, remove this
+        // TODO: temp, remove this ??? why temp?
         getSharedPreferences("heh_pref", Context.MODE_PRIVATE)?.let {
             with(it.edit()) {
                 putBoolean(getString(R.string.tutorial_passed), false)

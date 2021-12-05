@@ -16,21 +16,25 @@ import android.view.WindowManager
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
 import androidx.core.view.children
 import androidx.core.view.doOnPreDraw
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.commit
-import androidx.fragment.app.replace
+import androidx.fragment.app.*
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.google.android.gms.ads.AdError
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.FullScreenContentCallback
+import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.rewarded.RewardedAd
+import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.indest.hah.GameActivity
 import com.indest.hah.LevelFactory
 import com.indest.hah.R
 import com.indest.hah.databinding.GameplayFragmentBinding
@@ -56,18 +60,14 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     private var scoreSound by Delegates.notNull<Int>()
     private var correctSound by Delegates.notNull<Int>()
     private var hintNotification by Delegates.notNull<Int>()
-    private var categoryRewardedAd: RewardedAd? = null
     private lateinit var audioManager: AudioManager
     private lateinit var badge: BadgeDrawable
     lateinit var cellDirector: CellDirector
+    lateinit var gameState: GameState
+    var categoryRewardedAd: RewardedAd? = null
 
-    var gameState: GameState by Delegates.observable(GameState.BUSY) { _, old, new ->
-        if (old != new) {/*Log.i(TAG, "$old -> $new")*/
-        }
-    }
     private var guesses: Int by Delegates.observable(0) { _, _, new ->
         val guessesBeforeHint = resources.getInteger(R.integer.guessesBeforeHint)
-        Log.i(TAG, "Guess nr: $new")
         if (new == guessesBeforeHint && !badge.isVisible) {
             soundPool.playWhileSoundOn(
                 requireActivity(),
@@ -91,6 +91,13 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate")
         super.onCreate(savedInstanceState)
+        requireActivity().getSharedPreferences("heh_pref", Context.MODE_PRIVATE)?.let {
+            if (!it.getBoolean(getString(R.string.categories_purchased), false))
+            {
+                loadRewardedAd(getString(R.string.category_rewarded_ad_unit_id))
+            }
+        }
+
         cellDirector = CellDirector(this)
         audioManager = requireContext().getSystemService(Context.AUDIO_SERVICE) as AudioManager
         soundPool = SoundPool.Builder().build()
@@ -111,12 +118,6 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             soundPool.load(requireContext(), R.raw.fs11, 1),
             soundPool.load(requireContext(), R.raw.last_level2, 1),
         )
-
-
-        if (categoryRewardedAd == null) {
-            //Log.i(TAG, "Loading new category rewarded ad!")
-            // loadRewardedAd(getString(R.string.category_rewarded_ad_unit_id))
-        }
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -144,7 +145,6 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                                     loadLevel(uiState.currentLevel)
                                 }
                             }
-
                         }
                         is LatestLevelEvent.Error -> {
                             Log.i(TAG, "Error getting level from gameViewModel")
@@ -154,61 +154,6 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             }
         }
     }
-/*
-    private fun loadRewardedAd(adUnit: String) {
-        if (categoryRewardedAd == null) {
-            mIsLoading = true
-            val adRequest = AdRequest.Builder().build()
-            RewardedAd.load(
-                requireContext(), adUnit, adRequest,
-                object : RewardedAdLoadCallback() {
-                    override fun onAdFailedToLoad(adError: LoadAdError) {
-                        Log.d(TAG, adError.message)
-                        mIsLoading = false
-                        categoryRewardedAd = null
-                    }
-                    override fun onAdLoaded(rewardedAd: RewardedAd) {
-                        Log.d(TAG, "Ad was loaded.")
-                        categoryRewardedAd = rewardedAd
-                        mIsLoading = false
-                    }
-                }
-            )
-        }
-    }
-    private fun showRewardedVideo(rewardedAdUnit:String) {
-        if (categoryRewardedAd != null) {
-            categoryRewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
-                override fun onAdDismissedFullScreenContent() {
-                    Log.d(TAG, "Ad was dismissed.")
-                    // Don't forget to set the ad reference to null so you
-                    // don't show the ad a second time.
-                    categoryRewardedAd = null
-                    loadRewardedAd(rewardedAdUnit)
-                }
-                override fun onAdFailedToShowFullScreenContent(adError: AdError?) {
-                    Log.d(TAG, "Ad failed to show.")
-                    // Don't forget to set the ad reference to null so you
-                    // don't show the ad a second time.
-                    categoryRewardedAd = null
-                }
-                override fun onAdShowedFullScreenContent() {
-                    Log.d(TAG, "Ad showed fullscreen content.")
-                    // Called when ad is dismissed.
-                }
-            }
-            categoryRewardedAd?.show(
-                requireActivity(),
-                OnUserEarnedRewardListener() {
-                    fun onUserEarnedReward(rewardItem: RewardItem) {
-                        var rewardAmount = rewardItem.amount
-                        //addCoins(rewardAmount)
-                        Log.d("TAG", "User earned the reward.")
-                    }
-                }
-            )
-        }
-    }*/
 
     override fun onResume() {
         super.onResume()
@@ -412,7 +357,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     private fun startCountAnimation(scoreView: TextView) {
         val currentValue = 0
         val currentAndMaxScore = gameViewModel.getCurrentAndMaxScore()
-        val animator = ValueAnimator.ofInt(currentValue, currentValue.plus(currentAndMaxScore.first))
+        val animator =
+            ValueAnimator.ofInt(currentValue, currentValue.plus(currentAndMaxScore.first))
         val paddingLength = currentAndMaxScore.second.toString().length
         animator.duration = 1000
         animator.addUpdateListener { animation ->
@@ -459,6 +405,58 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                         vibrator.vibrate(doubleClickPattern, -1)
                     }
                 }
+            }
+        }
+    }
+
+    private fun loadRewardedAd(adUnit: String) {
+        if (categoryRewardedAd == null) {
+            val adRequest = AdRequest.Builder().build()
+            RewardedAd.load(
+                requireActivity(), adUnit, adRequest,
+                object : RewardedAdLoadCallback() {
+                    override fun onAdFailedToLoad(adError: LoadAdError) {
+                        Log.d(TAG, adError.message)
+                        categoryRewardedAd = null
+                    }
+
+                    override fun onAdLoaded(rewardedAd: RewardedAd) {
+                        Log.d(TAG, "Ad was loaded.")
+                        categoryRewardedAd = rewardedAd
+                    }
+                }
+            )
+        }
+    }
+
+    fun showRewardedVideo(rewardedAdUnit: String) {
+        if (categoryRewardedAd != null) {
+            categoryRewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
+                override fun onAdDismissedFullScreenContent() {
+                    Log.d(TAG, "Ad was dismissed.")
+                    // Don't forget to set the ad reference to null so you
+                    // don't show the ad a second time.
+                  categoryRewardedAd = null
+                  loadRewardedAd(rewardedAdUnit)
+                }
+
+                override fun onAdFailedToShowFullScreenContent(adError: AdError?) {
+                    Log.d(TAG, "Ad failed to show.")
+                    // Don't forget to set the ad reference to null so you
+                    // don't show the ad a second time.
+                    categoryRewardedAd = null
+                }
+
+                override fun onAdShowedFullScreenContent() {
+                    Log.d(TAG, "Ad showed fullscreen content.")
+                    // Called when ad is dismissed.
+                }
+            }
+            categoryRewardedAd?.show(
+                requireActivity()
+            ) {
+                gameViewModel.setCategoryRewarded(true)
+                Log.d(TAG, "User earned the reward.")
             }
         }
     }
