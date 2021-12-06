@@ -16,25 +16,24 @@ import android.view.WindowManager
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
 import androidx.core.view.children
 import androidx.core.view.doOnPreDraw
-import androidx.fragment.app.*
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.commit
+import androidx.fragment.app.replace
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.BaseTransientBottomBar
-import com.indest.hah.GameActivity
 import com.indest.hah.LevelFactory
 import com.indest.hah.R
 import com.indest.hah.databinding.GameplayFragmentBinding
@@ -47,7 +46,6 @@ import com.indest.hah.util.playWhileSoundOn
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import java.lang.StringBuilder
 import kotlin.properties.Delegates
 
 @AndroidEntryPoint
@@ -64,7 +62,6 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     private lateinit var badge: BadgeDrawable
     lateinit var cellDirector: CellDirector
     lateinit var gameState: GameState
-    var categoryRewardedAd: RewardedAd? = null
 
     private var guesses: Int by Delegates.observable(0) { _, _, new ->
         val guessesBeforeHint = resources.getInteger(R.integer.guessesBeforeHint)
@@ -410,54 +407,22 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     }
 
     private fun loadRewardedAd(adUnit: String) {
-        if (categoryRewardedAd == null) {
+        if (gameViewModel.rewardedAd == null) {
             val adRequest = AdRequest.Builder().build()
             RewardedAd.load(
                 requireActivity(), adUnit, adRequest,
                 object : RewardedAdLoadCallback() {
                     override fun onAdFailedToLoad(adError: LoadAdError) {
                         Log.d(TAG, adError.message)
-                        categoryRewardedAd = null
+                        gameViewModel.rewardedAd = null
                     }
 
                     override fun onAdLoaded(rewardedAd: RewardedAd) {
                         Log.d(TAG, "Ad was loaded.")
-                        categoryRewardedAd = rewardedAd
+                        gameViewModel.rewardedAd = rewardedAd
                     }
                 }
             )
-        }
-    }
-
-    fun showRewardedVideo(rewardedAdUnit: String) {
-        if (categoryRewardedAd != null) {
-            categoryRewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
-                override fun onAdDismissedFullScreenContent() {
-                    Log.d(TAG, "Ad was dismissed.")
-                    // Don't forget to set the ad reference to null so you
-                    // don't show the ad a second time.
-                  categoryRewardedAd = null
-                  loadRewardedAd(rewardedAdUnit)
-                }
-
-                override fun onAdFailedToShowFullScreenContent(adError: AdError?) {
-                    Log.d(TAG, "Ad failed to show.")
-                    // Don't forget to set the ad reference to null so you
-                    // don't show the ad a second time.
-                    categoryRewardedAd = null
-                }
-
-                override fun onAdShowedFullScreenContent() {
-                    Log.d(TAG, "Ad showed fullscreen content.")
-                    // Called when ad is dismissed.
-                }
-            }
-            categoryRewardedAd?.show(
-                requireActivity()
-            ) {
-                gameViewModel.setCategoryRewarded(true)
-                Log.d(TAG, "User earned the reward.")
-            }
         }
     }
 

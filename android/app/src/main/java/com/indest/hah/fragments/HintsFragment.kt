@@ -12,10 +12,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.ads.AdError
+import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
+import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.rewarded.RewardedAd
+import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.indest.hah.GameActivity
 import com.indest.hah.R
 import com.indest.hah.databinding.HintsFragmentBinding
 import com.indest.hah.game.GameViewModel
@@ -39,11 +41,7 @@ class HintsFragment : BottomSheetDialogFragment() {
         binding = HintsFragmentBinding.inflate(layoutInflater, container, false)
         binding.categoryRevealButton.setOnClickListener {
             if (!gameViewModel.isCategoryRewarded()) {
-                /* TODO: how do we call the showRewardedVideo? Loading the ad cannot be in
-                    this fragment because it starts to load too late. We must have a way to access the parent
-                     to call it. And in the show it should change the layout of this fragment. */
-                val gamePlayFragment = parentFragmentManager.findFragmentById(R.id.navigation_gameplay) as GamePlayFragment
-                gamePlayFragment.showRewardedVideo(
+                showRewardedVideo(
                     getString(R.string.category_rewarded_ad_unit_id)
                 )
             }
@@ -68,11 +66,11 @@ class HintsFragment : BottomSheetDialogFragment() {
                         is LatestLevelEvent.Success -> {
                             binding.revealCategoryShown.hintRevealedTextview.text =
                                 StringBuilder().append(
-                                    "HINT: ",
                                     uiState.currentLevel.levelInfo.category
                                 )
                             if (uiState.currentLevel.levelInfo.categoryRewarded) {
                                 binding.revealCategoryFlipper.showNext()
+                                binding.categoryRevealButton.isEnabled = false
                             }
                         }
                         is LatestLevelEvent.Error -> {
@@ -84,6 +82,59 @@ class HintsFragment : BottomSheetDialogFragment() {
         }
 
         return binding.root
+    }
+
+    private fun showRewardedVideo(rewardedAdUnit: String) {
+        if (gameViewModel.rewardedAd != null) {
+            gameViewModel.rewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
+                override fun onAdDismissedFullScreenContent() {
+                    Log.d(TAG, "Ad was dismissed.")
+                    // Don't forget to set the ad reference to null so you
+                    // don't show the ad a second time.
+                    gameViewModel.rewardedAd = null
+                    loadRewardedAd(rewardedAdUnit)
+                }
+
+                override fun onAdFailedToShowFullScreenContent(adError: AdError?) {
+                    Log.d(TAG, "Ad failed to show.")
+                    // Don't forget to set the ad reference to null so you
+                    // don't show the ad a second time.
+                    gameViewModel.rewardedAd = null
+                }
+
+                override fun onAdShowedFullScreenContent() {
+                    Log.d(TAG, "Ad showed fullscreen content.")
+                    // Called when ad is dismissed.
+                }
+            }
+            gameViewModel.rewardedAd?.show(
+                requireActivity()
+            ) {
+                gameViewModel.setCategoryRewarded(true)
+                binding.categoryRevealButton.isEnabled = false
+                Log.d(TAG, "User earned the reward.")
+            }
+        }
+    }
+
+    private fun loadRewardedAd(adUnit: String) {
+        if (gameViewModel.rewardedAd == null) {
+            val adRequest = AdRequest.Builder().build()
+            RewardedAd.load(
+                requireActivity(), adUnit, adRequest,
+                object : RewardedAdLoadCallback() {
+                    override fun onAdFailedToLoad(adError: LoadAdError) {
+                        Log.d(TAG, adError.message)
+                        gameViewModel.rewardedAd = null
+                    }
+
+                    override fun onAdLoaded(rewardedAd: RewardedAd) {
+                        Log.d(TAG, "Ad was loaded.")
+                        gameViewModel.rewardedAd = rewardedAd
+                    }
+                }
+            )
+        }
     }
 
 }

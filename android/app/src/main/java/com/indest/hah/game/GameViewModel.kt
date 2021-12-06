@@ -2,14 +2,10 @@ package com.indest.hah.game
 
 import android.app.Application
 import android.util.Log
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.rewarded.RewardedAd
-import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.indest.hah.letter.Cell
 import com.indest.hah.letter.Letter
 import com.indest.hah.persistance.LevelProgress
@@ -37,7 +33,10 @@ class GameViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(LatestLevelEvent.Success(Level(), Level()))
     val uiState: StateFlow<LatestLevelEvent> = _uiState
 
+    var rewardedAd: RewardedAd? = null
+
     init {
+
         viewModelScope.launch {
             levels.value = levelRepository.getAllLevels()
             levelRepository.getLastLevel()
