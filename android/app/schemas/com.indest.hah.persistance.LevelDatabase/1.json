@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "c24eca3e1f6b2c445fd965c75de5363c",
+    "identityHash": "fb9261c1601c152bc4e93852d6ec8df3",
     "entities": [
       {
         "tableName": "level_info_table",
@@ -68,7 +68,7 @@
       },
       {
         "tableName": "letter_info_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`info_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `owner_id` INTEGER NOT NULL, `home_index` INTEGER NOT NULL, `friend_index` INTEGER NOT NULL, `letter` INTEGER NOT NULL, `hint_used` INTEGER NOT NULL, FOREIGN KEY(`owner_id`) REFERENCES `level_info_table`(`level_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`info_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `owner_id` INTEGER NOT NULL, `home_index` INTEGER NOT NULL, `friend_index` INTEGER NOT NULL, `letter` INTEGER NOT NULL, `locked` INTEGER NOT NULL, FOREIGN KEY(`owner_id`) REFERENCES `level_info_table`(`level_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "infoId",
@@ -101,8 +101,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "hintUsed",
-            "columnName": "hint_used",
+            "fieldPath": "locked",
+            "columnName": "locked",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -141,7 +141,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c24eca3e1f6b2c445fd965c75de5363c')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'fb9261c1601c152bc4e93852d6ec8df3')"
     ]
   }
 }

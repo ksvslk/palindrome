@@ -26,6 +26,7 @@ class Letter @Inject constructor(
     var dX: Float = 0.0f
     var dY: Float = 0.0f
     var friendIndex: Int = -666
+    var isLocked = false
     var state: LetterState = initialState
 
     override fun onDraw(canvas: Canvas?) {
@@ -34,26 +35,28 @@ class Letter @Inject constructor(
     }
 
     private val touchListen = OnTouchListener { v, e ->
-        when (e.action) {
-            MotionEvent.ACTION_DOWN -> {
-                if (state == LetterState.HOME) {
-                    effects.addShortVibration()
-                    effects.playSound(SoundSelector.DRAGGING_LETTER)
-                    state = LetterState.DRAGGING
-                    state.executeActionDownBehaviour(this, v, e)
+        if (!isLocked) {
+            when (e.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    if (state == LetterState.HOME) {
+                        effects.addShortVibration()
+                        effects.playSound(SoundSelector.DRAGGING_LETTER)
+                        state = LetterState.DRAGGING
+                        state.executeActionDownBehaviour(this, v, e)
+                    }
                 }
-            }
-            MotionEvent.ACTION_MOVE -> {
-                if (state == LetterState.DRAGGING) {
-                    state.executeActionMoveBehaviour(this, v, e)
+                MotionEvent.ACTION_MOVE -> {
+                    if (state == LetterState.DRAGGING) {
+                        state.executeActionMoveBehaviour(this, v, e)
+                    }
                 }
-            }
-            else -> {
-                if (state == LetterState.DRAGGING) {
-                    state = LetterState.RESOLVING
-                    state.executeActionUpBehaviour(this)
+                else -> {
+                    if (state == LetterState.DRAGGING) {
+                        state = LetterState.RESOLVING
+                        state.executeActionUpBehaviour(this)
+                    }
+                    performClick()
                 }
-                performClick()
             }
         }
         true

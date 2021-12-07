@@ -36,7 +36,6 @@ class GameViewModel @Inject constructor(
     var rewardedAd: RewardedAd? = null
 
     init {
-
         viewModelScope.launch {
             levels.value = levelRepository.getAllLevels()
             levelRepository.getLastLevel()
@@ -135,6 +134,16 @@ class GameViewModel @Inject constructor(
         }
     }
 
+    fun setLetterLocked(index: Int) {
+        Log.i(TAG, "setLetterLocked")
+        viewModelScope.launch {
+            levelRepository.setLetterLocked(
+                homeIndex = index,
+                level = _uiState.value.currentLevel.levelInfo.levelId
+            )
+        }
+    }
+
     fun persistInitialLettersInfo(cells: MutableList<Cell<*, *>>) {
         viewModelScope.launch {
             val isAlreadyInitialized =
@@ -150,7 +159,7 @@ class GameViewModel @Inject constructor(
                         homeIndex = it.homeIndex,
                         friendIndex = it.friendIndex,
                         letter = it.text.first(),
-                        hintUsed = true,
+                        locked = false,
                     )
                 }
                 levelRepository.updateScore(

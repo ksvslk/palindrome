@@ -10,7 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:textStyle="italic"
         android:text="@string/rewarded_reveal_category"
         android:textColor="@color/hintsNotificationColor"
         android:textAppearance="@style/TextAppearance.OC.Body1" />

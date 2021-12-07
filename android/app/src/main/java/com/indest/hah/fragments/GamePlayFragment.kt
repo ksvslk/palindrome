@@ -19,10 +19,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.children
 import androidx.core.view.doOnPreDraw
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.commit
-import androidx.fragment.app.replace
+import androidx.fragment.app.*
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -40,6 +37,7 @@ import com.indest.hah.databinding.GameplayFragmentBinding
 import com.indest.hah.game.*
 import com.indest.hah.letter.Cell
 import com.indest.hah.letter.Letter
+import com.indest.hah.letter.Slot
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.util.hideSystemBars
 import com.indest.hah.util.playWhileSoundOn
@@ -89,9 +87,26 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         Log.i(TAG, "onCreate")
         super.onCreate(savedInstanceState)
         requireActivity().getSharedPreferences("heh_pref", Context.MODE_PRIVATE)?.let {
-            if (!it.getBoolean(getString(R.string.categories_purchased), false))
-            {
-                loadRewardedAd(getString(R.string.category_rewarded_ad_unit_id))
+            if (!it.getBoolean(getString(R.string.categories_purchased), false) ||
+                !it.getBoolean(getString(R.string.place_letter_purchased), false)
+            ) {
+                loadRewardedAd(getString(R.string.rewarded_ad_unit))
+            }
+        }
+
+        setFragmentResultListener("hint_fragment") { _, _ ->
+            run {
+                Log.i(TAG, "fragmentResultListener")
+                gameState = GameState.REWARDING
+                val randomLetter = cellDirector.cells.filterIsInstance<Letter>().first {
+                    !it.hasFriend()
+                }
+                val correspondingSlot = cellDirector.cells.filterIsInstance<Slot>().first {
+                    it.realChar == randomLetter.text.first() && !it.hasFriend()
+                }
+                randomLetter.isLocked = true
+                cellDirector.placeLetterInEmptyBox(randomLetter, correspondingSlot, true)
+
             }
         }
 
@@ -124,21 +139,11 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                             if (!(uiState.oldLevel.levelInfo.levelId == 0 && uiState.currentLevel.levelInfo.levelId == 0)) {
                                 if (uiState.oldLevel.levelInfo.levelId != uiState.currentLevel.levelInfo.levelId && uiState.oldLevel.levelInfo.levelId != 0) {
                                     if (binding.gameplayFragment.childCount > 0) {
-                                        Log.i(
-                                            TAG, "Successfully got levels. START LEVEL CHANGE! \n" +
-                                                    "Old: ${uiState.oldLevel.levelInfo.solution} \n" +
-                                                    "Current: ${uiState.currentLevel.levelInfo.solution}."
-                                        )
                                         clearPreviousLevel()
                                     } else {
                                         loadLevel(uiState.currentLevel)
                                     }
                                 } else if (binding.gameplayFragment.childCount == 0) {
-                                    Log.i(
-                                        TAG, "Successfully got levels. RELOAD LEVEL! \n" +
-                                                "Old: ${uiState.oldLevel.levelInfo.solution} \n" +
-                                                "Current: ${uiState.currentLevel.levelInfo.solution}."
-                                    )
                                     loadLevel(uiState.currentLevel)
                                 }
                             }
@@ -154,6 +159,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
     override fun onResume() {
         super.onResume()
+
         findNavController().addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.navigation_hints) {
                 activity?.getPreferences(Context.MODE_PRIVATE)?.let {
@@ -212,6 +218,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             cellDirector.restoreSlotPlacements(levelAndLettersInfo)
             gameViewModel.persistInitialLettersInfo(cellDirector.cells)
         }
+
         binding.gameplayFragment.addView(level)
         gameState = GameState.READY
         handleGameSolutions()
@@ -279,7 +286,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                             message.show()
                         }
                     }
-                } else {
+                } else if(gameState != GameState.REWARDING) {
                     gameState = GameState.READY
                 }
             })
@@ -292,6 +299,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             ResourcesCompat.getColor(resources, R.color.colorSecondary, requireContext().theme)
         val boxSuccessColor =
             ResourcesCompat.getColor(resources, R.color.successBoxColor, requireContext().theme)
+        val lockedColor =
+            ResourcesCompat.getColor(resources, R.color.letterRewardedColor, requireContext().theme)
 
         val animatorSet = AnimationFactory.getCorrectSolutionAnimation(
             requireActivity(),
@@ -302,6 +311,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             audioManager,
             soundPool,
             noteSounds,
+            lockedColor
         )
 
         animatorSet.addListener(object : AnimatorListenerAdapter() {

@@ -1,5 +1,6 @@
 package com.indest.hah.game
 
+import androidx.core.content.ContextCompat
 import com.indest.hah.fragments.GamePlayFragment
 import com.indest.hah.letter.*
 import com.indest.hah.letter.effects.ColorSelector
@@ -25,7 +26,7 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
     fun handleCollisions(cell: Letter) {
         when (val closestCell = getClosestBox(to = cell, from = getCandidateBoxes(cell))) {
             is Letter -> {
-                if (closestCell.state == LetterState.HOME) {
+                if (closestCell.state == LetterState.HOME && !closestCell.isLocked) {
                     switchLetterPositions(cell, closestCell)
                     return
                 }
@@ -101,7 +102,7 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
         bottom.state.executeAnimationBehaviour(bottom, droppedToMoveX, droppedToMoveY)
     }
 
-    private fun placeLetterInEmptyBox(letter: Letter, slot: Slot) {
+    fun placeLetterInEmptyBox(letter: Letter, slot: Slot, isRewarded: Boolean = false) {
         letter.effects.playSound(SoundSelector.PLACE_LETTER_IN_EMPTY_BOX)
         letter.getTheFriend()?.setFriend(null)
         slot.setFriend(letter)
@@ -111,16 +112,21 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
         letter.z = NEUTRAL_LAYER
         letter.elevation = NEUTRAL_LAYER
         letter.state = LetterState.ANIMATION
+
+        val durationModifier = if (isRewarded) 6 else 1
         letter.state.executeAnimationBehaviour(
             letter,
             (slot.pos.x - letter.pos.x),
-            (slot.pos.y - letter.pos.y)
+            (slot.pos.y - letter.pos.y),
+            durationModifier
         )
 
         gf.gameViewModel.updateFriendIndex(
             index = letter.homeIndex,
             newIndex = slot.homeIndex
         )
+        if (isRewarded) gf.gameViewModel.setLetterLocked(letter.homeIndex)
+
         val isCorrectMove = slot.friend?.text?.first()?.equals(slot.realChar)
         if (isCorrectMove == false) gf.gameViewModel.increaseMistakes()
     }
@@ -209,8 +215,13 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
                         slot.setFriend(letter)
                         letter.friendIndex = slot.homeIndex
                         letter.currentPos = slot.pos
+                        letter.isLocked = letterProperties.locked
                         val colors = letter.effects.getColors(ColorSelector.ACTION_DOWN_FRIEND)
-                        letter.setBackgroundColor(colors.viewEnd)
+                        if (letterProperties.locked) {
+                            letter.setBackgroundColor(letter.effects.getLockedColor())
+                        } else {
+                            letter.setBackgroundColor(colors.viewEnd)
+                        }
                     }
                 }
             }

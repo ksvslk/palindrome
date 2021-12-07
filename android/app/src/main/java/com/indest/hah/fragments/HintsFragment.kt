@@ -7,10 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
@@ -24,12 +27,12 @@ import com.indest.hah.game.GameViewModel
 import com.indest.hah.game.LatestLevelEvent
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import java.lang.StringBuilder
 
 class HintsFragment : BottomSheetDialogFragment() {
     private val TAG = "HintsFragment"
     private lateinit var binding: HintsFragmentBinding
     private val gameViewModel: GameViewModel by activityViewModels()
+    private var rewardEarned = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,11 +45,20 @@ class HintsFragment : BottomSheetDialogFragment() {
         binding.categoryRevealButton.setOnClickListener {
             if (!gameViewModel.isCategoryRewarded()) {
                 showRewardedVideo(
-                    getString(R.string.category_rewarded_ad_unit_id)
+                    getString(
+                        R.string.rewarded_ad_unit
+                    ),
+                    RewardedAdType.REVEAL_CATEGORY
                 )
             }
         }
         binding.letterPlaceButton.setOnClickListener {
+            showRewardedVideo(
+                getString(
+                    R.string.rewarded_ad_unit
+                ),
+                RewardedAdType.PLACE_LETTER
+            )
             Toast.makeText(requireContext(), "Place letter rewarded.", Toast.LENGTH_LONG).show()
         }
         binding.allCategoriesButton.setOnClickListener {
@@ -69,6 +81,7 @@ class HintsFragment : BottomSheetDialogFragment() {
                                     uiState.currentLevel.levelInfo.category
                                 )
                             if (uiState.currentLevel.levelInfo.categoryRewarded) {
+                                Log.i(TAG, "revealCategoryFlipper.showNext()")
                                 binding.revealCategoryFlipper.showNext()
                                 binding.categoryRevealButton.isEnabled = false
                             }
@@ -84,34 +97,49 @@ class HintsFragment : BottomSheetDialogFragment() {
         return binding.root
     }
 
-    private fun showRewardedVideo(rewardedAdUnit: String) {
+    private fun showRewardedVideo(rewardedAdUnit: String, rewardedType: RewardedAdType) {
         if (gameViewModel.rewardedAd != null) {
-            gameViewModel.rewardedAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
-                override fun onAdDismissedFullScreenContent() {
-                    Log.d(TAG, "Ad was dismissed.")
-                    // Don't forget to set the ad reference to null so you
-                    // don't show the ad a second time.
-                    gameViewModel.rewardedAd = null
-                    loadRewardedAd(rewardedAdUnit)
-                }
+            gameViewModel.rewardedAd?.fullScreenContentCallback =
+                object : FullScreenContentCallback() {
+                    override fun onAdDismissedFullScreenContent() {
+                        Log.d(TAG, "Ad was dismissed.")
+                        // Don't forget to set the ad reference to null so you
+                        // don't show the ad a second time.
+                        gameViewModel.rewardedAd = null
+                        loadRewardedAd(rewardedAdUnit)
+                        if (rewardEarned) {
+                            rewardEarned = false
+                            when (rewardedType) {
+                                RewardedAdType.REVEAL_CATEGORY -> {
+                                    gameViewModel.setCategoryRewarded(true)
+                                    binding.categoryRevealButton.isEnabled = false
+                                    Log.d(TAG, "Showing category.")
+                                }
+                                RewardedAdType.PLACE_LETTER -> {
+                                    setFragmentResult("hint_fragment", bundleOf())
+                                    dismiss()
+                                    Log.d(TAG, "Placing letter.")
+                                }
+                            }
+                        }
+                    }
 
-                override fun onAdFailedToShowFullScreenContent(adError: AdError?) {
-                    Log.d(TAG, "Ad failed to show.")
-                    // Don't forget to set the ad reference to null so you
-                    // don't show the ad a second time.
-                    gameViewModel.rewardedAd = null
-                }
+                    override fun onAdFailedToShowFullScreenContent(adError: AdError?) {
+                        Log.d(TAG, "Ad failed to show.")
+                        // Don't forget to set the ad reference to null so you
+                        // don't show the ad a second time.
+                        gameViewModel.rewardedAd = null
+                    }
 
-                override fun onAdShowedFullScreenContent() {
-                    Log.d(TAG, "Ad showed fullscreen content.")
-                    // Called when ad is dismissed.
+                    override fun onAdShowedFullScreenContent() {
+                        Log.d(TAG, "Ad showed fullscreen content.")
+                        // Called when ad is dismissed.
+                    }
                 }
-            }
             gameViewModel.rewardedAd?.show(
                 requireActivity()
             ) {
-                gameViewModel.setCategoryRewarded(true)
-                binding.categoryRevealButton.isEnabled = false
+                rewardEarned = true
                 Log.d(TAG, "User earned the reward.")
             }
         }
@@ -135,6 +163,11 @@ class HintsFragment : BottomSheetDialogFragment() {
                 }
             )
         }
+    }
+
+    enum class RewardedAdType {
+        REVEAL_CATEGORY,
+        PLACE_LETTER
     }
 
 }

@@ -5,6 +5,7 @@ import android.app.Activity
 import android.media.AudioManager
 import android.media.SoundPool
 import android.view.animation.AccelerateInterpolator
+import androidx.core.content.ContextCompat
 import com.indest.hah.letter.Cell
 import com.indest.hah.letter.Letter
 import com.indest.hah.util.playWhileSoundOn
@@ -19,12 +20,14 @@ object AnimationFactory {
         aDuration: Long,
         index: Int,
         audioManager: AudioManager,
-        soundPool: SoundPool
+        soundPool: SoundPool,
+        lockedColor:Int
     ): ObjectAnimator {
+        val cColor = if (letter.isLocked) lockedColor else currentColor
         return ObjectAnimator.ofArgb(
             letter,
             "backgroundColor",
-            currentColor,
+            cColor,
             successColor
         ).apply {
             setEvaluator(ArgbEvaluator())
@@ -75,7 +78,8 @@ object AnimationFactory {
         cells: MutableList<Cell<*, *>>,
         audioManager: AudioManager,
         soundPool: SoundPool,
-        noteSounds: List<Int>
+        noteSounds: List<Int>,
+        lockedColor:Int
     ): AnimatorSet {
         val animatorSet = AnimatorSet()
         val specialChars = ArrayList<Letter>()
@@ -118,7 +122,8 @@ object AnimationFactory {
                 animationDuration,
                 noteSounds[i],
                 audioManager,
-                soundPool
+                soundPool,
+                lockedColor
             )
             val letterBehindTextColorAnimation = getTextColorAnimation(
                 activity,
@@ -137,7 +142,8 @@ object AnimationFactory {
                 animationDuration,
                 noteSounds[i],
                 audioManager,
-                soundPool
+                soundPool,
+                lockedColor
             )
 
             if (animations.size > 0) {
@@ -177,7 +183,8 @@ object AnimationFactory {
                 animationDuration,
                 noteSounds[count],
                 audioManager,
-                soundPool
+                soundPool,
+                lockedColor
             )
 
             if (animations.size > 0) {
@@ -210,7 +217,8 @@ object AnimationFactory {
                 animationDuration,
                 noteSounds[count + 1],
                 audioManager,
-                soundPool
+                soundPool,
+                lockedColor
             )
             animatorSet
                 .play(letterTextAnimation)

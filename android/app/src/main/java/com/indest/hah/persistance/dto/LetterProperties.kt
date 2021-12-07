@@ -27,6 +27,6 @@ data class LetterProperties(
     val friendIndex: Int,
     @ColumnInfo(name = "letter")
     val letter: Char,
-    @ColumnInfo(name = "hint_used")
-    val hintUsed: Boolean
+    @ColumnInfo(name = "locked")
+    val locked: Boolean
 )

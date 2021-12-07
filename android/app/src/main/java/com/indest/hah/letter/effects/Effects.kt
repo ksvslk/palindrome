@@ -89,6 +89,10 @@ class Effects @Inject constructor(@ActivityContext val context: Context) {
         }
     }
 
+    fun getLockedColor(): Int {
+        return ContextCompat.getColor(context, R.color.letterRewardedColor)
+    }
+
     fun addShortVibration(length: Long = 20) {
         context.getSharedPreferences("heh_pref", Context.MODE_PRIVATE)?.let {
             if (audioManager.ringerMode != AudioManager.RINGER_MODE_SILENT && it.getBoolean(

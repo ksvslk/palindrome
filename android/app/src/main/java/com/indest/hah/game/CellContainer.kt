@@ -2,6 +2,7 @@ package com.indest.hah.game
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.fragment.app.findFragment
@@ -20,8 +21,9 @@ class CellContainer : LinearLayoutCompat {
     )
 
     override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
+        Log.i("TEST", "onInterceptTouchEvent")
         val fragment = findFragment<GamePlayFragment>()
-        if (fragment.gameState == GameState.BUSY) {
+        if (fragment.gameState == GameState.BUSY || fragment.gameState == GameState.REWARDING) {
             return true
         }
         return false

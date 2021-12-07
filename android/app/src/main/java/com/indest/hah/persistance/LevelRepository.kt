@@ -38,9 +38,9 @@ class LevelRepository @Inject constructor(
         levelDao.updateLevelPuzzle(level, newPuzzle)
     }
 
-    suspend fun insertLetterInfo(level: Int, homeIndex: Int, friendIndex: Int, letter: Char, hintUsed: Boolean) {
+    suspend fun insertLetterInfo(level: Int, homeIndex: Int, friendIndex: Int, letter: Char, locked: Boolean) {
         Log.i(TAG, "insertLetterInfo")
-        levelDao.insertLetterData(level, homeIndex, friendIndex, letter, hintUsed)
+        levelDao.insertLetterData(level, homeIndex, friendIndex, letter, locked)
     }
 
     suspend fun insertLevel(levelInfo: LevelData) {
@@ -53,6 +53,10 @@ class LevelRepository @Inject constructor(
 
     suspend fun updateFriendIndex(homeIndex: Int, newFriendIndex: Int, level: Int) {
         levelDao.updateFriendIndex(homeIndex, newFriendIndex, level)
+    }
+
+    suspend fun setLetterLocked(homeIndex: Int, level: Int) {
+        levelDao.setLetterLocked(homeIndex, level)
     }
 
     suspend fun updateLetter(homeIndex: Int, letter: Char, level: Int) {

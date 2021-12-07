@@ -35,4 +35,6 @@
     <color name="rightToLeftColor">#FF9800</color>
     <color name="leftToRightColor">#FF9800</color>
 
+    <color name="letterRewardedColor">#FFC107</color>
+
 </resources>

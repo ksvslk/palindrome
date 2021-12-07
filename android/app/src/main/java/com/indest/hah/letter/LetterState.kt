@@ -4,9 +4,12 @@ import android.animation.ObjectAnimator
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.findFragment
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import com.indest.hah.R
 import com.indest.hah.fragments.GamePlayFragment
+import com.indest.hah.game.GameState
 import com.indest.hah.letter.effects.ColorSelector
 import com.indest.hah.util.C.NEUTRAL_LAYER
 import com.indest.hah.util.C.TOP_LAYER
@@ -31,7 +34,8 @@ enum class LetterState : ILetterState {
         override fun executeAnimationBehaviour(
             l: Letter,
             moveByX: Int,
-            moveByY: Int
+            moveByY: Int,
+            durationModifier: Int
         ) {
         }
     },
@@ -81,7 +85,8 @@ enum class LetterState : ILetterState {
         override fun executeAnimationBehaviour(
             l: Letter,
             moveByX: Int,
-            moveByY: Int
+            moveByY: Int,
+            durationModifier: Int
         ) {
         }
     },
@@ -96,7 +101,8 @@ enum class LetterState : ILetterState {
         override fun executeAnimationBehaviour(
             l: Letter,
             moveByX: Int,
-            moveByY: Int
+            moveByY: Int,
+            durationModifier: Int
         ) {
         }
     },
@@ -108,7 +114,8 @@ enum class LetterState : ILetterState {
         override fun executeAnimationBehaviour(
             l: Letter,
             moveByX: Int,
-            moveByY: Int
+            moveByY: Int,
+            durationModifier: Int
         ) {
 
             val color = if (l.hasFriend()) {
@@ -117,13 +124,26 @@ enum class LetterState : ILetterState {
                 l.effects.getColors(ColorSelector.ACTION_UP_NO_FRIEND)
             }
 
+            val endColor = if (durationModifier == 1) {
+                color.viewEnd
+            } else {
+                ContextCompat.getColor(l.context, R.color.letterRewardedColor)
+            }
+
+            val onReleaseDuration = if (durationModifier == 1) {
+                l.effects.onReleaseColorChangeDuration
+            } else {
+                l.effects.onReleaseColorChangeDuration * durationModifier
+            }
+
             animateNow(
                 l, "backgroundColor", color.viewStart,
-                color.viewEnd, l.effects.onReleaseColorChangeDuration
+                endColor, onReleaseDuration
             )
+
             animateNow(
                 l, "textColor", color.textStart,
-                color.textEnd, l.effects.onReleaseColorChangeDuration
+                color.textEnd, onReleaseDuration
             )
 
             // Get some value that represents how much was moved ignoring the actual physical
@@ -137,13 +157,16 @@ enum class LetterState : ILetterState {
                 .setInterpolator(FastOutSlowInInterpolator())
                 // Here we use the log-distance to calculate the duration of the animation.
                 // Longer distance should be only slightly longer animation and vice-versa
-                .setDuration(distance.toLong() * l.effects.animateToHomeDurationMultiplier)
+                .setDuration(distance.toLong() * l.effects.animateToHomeDurationMultiplier * durationModifier)
                 .withEndAction {
                     l.state = HOME
                     l.z = NEUTRAL_LAYER
                     l.currentPos.x = l.pos.x
                     l.currentPos.y = l.pos.y
                     Log.i(TAG, "ANIMATION END for $l.")
+                    if (durationModifier != 1) {
+                        l.findFragment<GamePlayFragment>().gameState = GameState.READY
+                    }
                 }
                 .start()
         }

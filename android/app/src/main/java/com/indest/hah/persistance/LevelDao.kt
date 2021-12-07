@@ -27,17 +27,20 @@ interface LevelDao {
     @Query("update level_info_table set puzzle = :newPuzzle where level_id = :level")
     suspend fun updateLevelPuzzle(level: Int, newPuzzle: String)
 
-    @Query("insert into letter_info_table (owner_id, home_index, friend_index, letter, hint_used) values(:level, :homeIndex, :friendIndex, :letter, :hintUsed)")
+    @Query("insert into letter_info_table (owner_id, home_index, friend_index, letter, locked) values(:level, :homeIndex, :friendIndex, :letter, :locked)")
     suspend fun insertLetterData(
         level: Int,
         homeIndex: Int,
         friendIndex: Int,
         letter: Char,
-        hintUsed: Boolean
+        locked: Boolean
     )
 
     @Query("update letter_info_table set friend_index = :newFriendIndex where home_index = :homeIndex and owner_id = :level")
     suspend fun updateFriendIndex(homeIndex: Int, newFriendIndex: Int, level: Int)
+
+    @Query("update letter_info_table set locked = 1 where home_index = :homeIndex and owner_id = :level")
+    suspend fun setLetterLocked(homeIndex: Int, level: Int)
 
     @Query("update letter_info_table set letter = :letter where home_index = :homeIndex and owner_id = :level")
     suspend fun updateLetterQuery(homeIndex: Int, letter: Char, level: Int)

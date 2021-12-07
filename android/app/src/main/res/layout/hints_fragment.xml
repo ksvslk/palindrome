@@ -140,13 +140,41 @@
                 android:layout_gravity="center_vertical"
                 android:text="@string/iap_unlock_categories"
                 android:textAppearance="@style/TextAppearance.OC.Body1" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/all_letters_button"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/simple_dialog_item_height"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/simple_dialog_left_margin"
+            android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
+            android:contentDescription="@string/iap_unlock_letters"
+            android:src="@drawable/lock_icon"
+            app:tint="@color/colorOnPrimary"
+            tools:ignore="RtlSymmetry" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="@string/all_categories_price"
-                android:textAppearance="@style/TextAppearance.OC.Caption" />
+                android:text="@string/iap_unlock_letters"
+                android:textAppearance="@style/TextAppearance.OC.Body1" />
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -183,12 +211,6 @@
                 android:text="@string/iap_unlock_hints"
                 android:textAppearance="@style/TextAppearance.OC.Body1" />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="@string/all_hints_price"
-                android:textAppearance="@style/TextAppearance.OC.Caption" />
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.appcompat.widget.LinearLayoutCompat>
 
