@@ -40,7 +40,6 @@ class Letter @Inject constructor(
                 MotionEvent.ACTION_DOWN -> {
                     if (state == LetterState.HOME) {
                         effects.addShortVibration()
-                        effects.playSound(SoundSelector.DRAGGING_LETTER)
                         state = LetterState.DRAGGING
                         state.executeActionDownBehaviour(this, v, e)
                     }

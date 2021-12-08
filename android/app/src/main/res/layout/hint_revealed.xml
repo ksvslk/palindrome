@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:text="@string/rewarded_reveal_category"
-        android:textColor="@color/hintsNotificationColor"
+        android:textColor="@color/letterRewardedColor"
         android:textAppearance="@style/TextAppearance.OC.Body1" />
 
 </androidx.appcompat.widget.LinearLayoutCompat>

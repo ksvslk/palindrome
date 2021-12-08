@@ -31,6 +31,7 @@ class Effects @Inject constructor(@ActivityContext val context: Context) {
     // Sound effect IDs
     private val switchLettersSoundId = soundPool.load(context, R.raw.double_finger, 1)
     private val placeLetterSoundId = soundPool.load(context, R.raw.block_hit, 1)
+    private val letterRewardedSoundId = soundPool.load(context, R.raw.hint_revealed, 1)
 
     // Colors
     private val actionDownNoFriend = AnimationColor(
@@ -75,7 +76,9 @@ class Effects @Inject constructor(@ActivityContext val context: Context) {
                 SoundSelector.SWITCH_LETTERS -> {
                     soundPool.play(switchLettersSoundId, 1.0f, 1.0f, 1, 0, 1.0f)
                 }
-                else -> {}
+                SoundSelector.LETTER_REWARDED -> {
+                    soundPool.play(letterRewardedSoundId, 1.0f, 1.0f, 1, 0, 1.0f)
+                }
             }
         }
     }

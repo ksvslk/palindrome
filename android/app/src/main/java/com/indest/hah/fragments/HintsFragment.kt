@@ -25,6 +25,10 @@ import com.indest.hah.R
 import com.indest.hah.databinding.HintsFragmentBinding
 import com.indest.hah.game.GameViewModel
 import com.indest.hah.game.LatestLevelEvent
+import com.indest.hah.util.C.CATEGORY
+import com.indest.hah.util.C.HINT_REQUEST_KEY
+import com.indest.hah.util.C.HINT_TYPE
+import com.indest.hah.util.C.LETTER
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -113,12 +117,17 @@ class HintsFragment : BottomSheetDialogFragment() {
                                 RewardedAdType.REVEAL_CATEGORY -> {
                                     gameViewModel.setCategoryRewarded(true)
                                     binding.categoryRevealButton.isEnabled = false
-                                    Log.d(TAG, "Showing category.")
+                                    setFragmentResult(
+                                        HINT_REQUEST_KEY,
+                                        bundleOf(HINT_TYPE to CATEGORY)
+                                    )
                                 }
                                 RewardedAdType.PLACE_LETTER -> {
-                                    setFragmentResult("hint_fragment", bundleOf())
+                                    setFragmentResult(
+                                        HINT_REQUEST_KEY,
+                                        bundleOf(HINT_TYPE to LETTER)
+                                    )
                                     dismiss()
-                                    Log.d(TAG, "Placing letter.")
                                 }
                             }
                         }

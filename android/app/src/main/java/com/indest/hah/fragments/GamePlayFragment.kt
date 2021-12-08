@@ -38,7 +38,12 @@ import com.indest.hah.game.*
 import com.indest.hah.letter.Cell
 import com.indest.hah.letter.Letter
 import com.indest.hah.letter.Slot
+import com.indest.hah.letter.effects.SoundSelector
 import com.indest.hah.persistance.dto.Level
+import com.indest.hah.util.C.CATEGORY
+import com.indest.hah.util.C.HINT_REQUEST_KEY
+import com.indest.hah.util.C.HINT_TYPE
+import com.indest.hah.util.C.LETTER
 import com.indest.hah.util.hideSystemBars
 import com.indest.hah.util.playWhileSoundOn
 import dagger.hilt.android.AndroidEntryPoint
@@ -94,19 +99,30 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             }
         }
 
-        setFragmentResultListener("hint_fragment") { _, _ ->
+        setFragmentResultListener(HINT_REQUEST_KEY) { _, bundle ->
             run {
                 Log.i(TAG, "fragmentResultListener")
-                gameState = GameState.REWARDING
-                val randomLetter = cellDirector.cells.filterIsInstance<Letter>().first {
-                    !it.hasFriend()
+                when(bundle[HINT_TYPE])
+                {
+                    LETTER ->
+                    {
+                        gameState = GameState.REWARDING
+                        val randomLetter = cellDirector.cells.filterIsInstance<Letter>().filter {
+                            !it.hasFriend()
+                        }.random()
+                        val correctSlot = cellDirector.cells.filterIsInstance<Slot>().first {
+                            it.realChar == randomLetter.text.first() && !it.hasFriend()
+                        }
+                        randomLetter.isLocked = true
+                        cellDirector.placeLetterInEmptyBox(randomLetter, correctSlot, true)
+                        Log.d(TAG, "Rewarding with placing a letter.")
+                    }
+                    CATEGORY ->
+                    {
+                        cellDirector.cells.filterIsInstance<Letter>().first().effects.playSound(SoundSelector.LETTER_REWARDED)
+                        Log.d(TAG, "Rewarding with category.")
+                    }
                 }
-                val correspondingSlot = cellDirector.cells.filterIsInstance<Slot>().first {
-                    it.realChar == randomLetter.text.first() && !it.hasFriend()
-                }
-                randomLetter.isLocked = true
-                cellDirector.placeLetterInEmptyBox(randomLetter, correspondingSlot, true)
-
             }
         }
 

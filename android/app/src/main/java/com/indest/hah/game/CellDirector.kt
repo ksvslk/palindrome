@@ -103,7 +103,12 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
     }
 
     fun placeLetterInEmptyBox(letter: Letter, slot: Slot, isRewarded: Boolean = false) {
-        letter.effects.playSound(SoundSelector.PLACE_LETTER_IN_EMPTY_BOX)
+        if (isRewarded){
+            letter.effects.playSound(SoundSelector.LETTER_REWARDED)
+        }
+        else {
+            letter.effects.playSound(SoundSelector.PLACE_LETTER_IN_EMPTY_BOX)
+        }
         letter.getTheFriend()?.setFriend(null)
         slot.setFriend(letter)
         letter.setFriend(slot)
