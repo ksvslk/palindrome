@@ -8,6 +8,8 @@ import com.indest.hah.letter.effects.SoundSelector
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.util.C.MIDDLE_LAYER
 import com.indest.hah.util.C.NEUTRAL_LAYER
+import com.indest.hah.util.C.REWARDED_ANIM_MUL
+import com.indest.hah.util.C.REWARDED_ANIM_MUL_DEFAULT
 import com.indest.hah.util.C.TOP_LAYER
 import kotlin.math.abs
 
@@ -56,8 +58,13 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
         return candidateCells
     }
 
-    private fun switchLetterPositions(top: Letter, bottom: Letter) {
-        top.effects.playSound(SoundSelector.SWITCH_LETTERS)
+    fun switchLetterPositions(top: Letter, bottom: Letter, isRewarded: Boolean = false) {
+        if (isRewarded){
+            top.effects.playSound(SoundSelector.LETTER_REWARDED)
+        }
+        else {
+            top.effects.playSound(SoundSelector.SWITCH_LETTERS)
+        }
 
         // Calculate distance for animation
         val distanceToMoveX = bottom.pos.x - top.pos.x
@@ -98,11 +105,12 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
         bottom.state = LetterState.ANIMATION
 
         // Execute animation
-        top.state.executeAnimationBehaviour(top, distanceToMoveX, distanceToMoveY)
+        val durationModifier = if (isRewarded) REWARDED_ANIM_MUL else REWARDED_ANIM_MUL_DEFAULT
+        top.state.executeAnimationBehaviour(top, distanceToMoveX, distanceToMoveY, durationModifier)
         bottom.state.executeAnimationBehaviour(bottom, droppedToMoveX, droppedToMoveY)
     }
 
-    fun placeLetterInEmptyBox(letter: Letter, slot: Slot, isRewarded: Boolean = false) {
+    fun placeLetterInEmptyBox(letter: Letter, slot: Slot, isRewarded: Boolean = false, isLastRewardedLetter:Boolean = false) {
         if (isRewarded){
             letter.effects.playSound(SoundSelector.LETTER_REWARDED)
         }
@@ -118,7 +126,7 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
         letter.elevation = NEUTRAL_LAYER
         letter.state = LetterState.ANIMATION
 
-        val durationModifier = if (isRewarded) 6 else 1
+        val durationModifier = if (isRewarded && !isLastRewardedLetter) REWARDED_ANIM_MUL else REWARDED_ANIM_MUL_DEFAULT
         letter.state.executeAnimationBehaviour(
             letter,
             (slot.pos.x - letter.pos.x),

@@ -107,14 +107,30 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                     LETTER ->
                     {
                         gameState = GameState.REWARDING
-                        val randomLetter = cellDirector.cells.filterIsInstance<Letter>().filter {
-                            !it.hasFriend()
-                        }.random()
+                        val candidateLetters = cellDirector.cells
+                            .filterIsInstance<Letter>()
+                            .filter { !it.hasFriend() }
+                        val randomLetter = candidateLetters.random()
                         val correctSlot = cellDirector.cells.filterIsInstance<Slot>().first {
-                            it.realChar == randomLetter.text.first() && !it.hasFriend()
+                            it.realChar == randomLetter.text.first() && !it.hasFriend() ||
+                            it.realChar == randomLetter.text.first() && it.hasFriend() && it.getTheFriend()?.text?.first() != it.realChar
                         }
+
                         randomLetter.isLocked = true
-                        cellDirector.placeLetterInEmptyBox(randomLetter, correctSlot, true)
+                        if (correctSlot.hasFriend())
+                        {
+                            correctSlot.friend?.let {
+                                cellDirector.switchLetterPositions(randomLetter,
+                                    it, true)
+                            }
+                        }
+                        else {
+                            if (candidateLetters.size == 1) {
+                                cellDirector.placeLetterInEmptyBox(randomLetter, correctSlot, true, true)
+                            } else {
+                                cellDirector.placeLetterInEmptyBox(randomLetter, correctSlot, true)
+                            }
+                        }
                         Log.d(TAG, "Rewarding with placing a letter.")
                     }
                     CATEGORY ->
