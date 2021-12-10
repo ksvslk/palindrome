@@ -27,7 +27,7 @@
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:layout_width="@dimen/_100sdp"
             android:layout_height="match_parent"
-            android:progress="100"
+            android:progress="66"
             app:indicatorColor="@color/hintsNotificationColor" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
@@ -217,12 +217,12 @@
         android:orientation="vertical">
 
         <Button
-            android:id="@+id/startButton"
+            android:id="@+id/continueButton"
             style="?attr/materialButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/yantramanav_bold"
-            android:text="LET'S GO" />
+            android:text="Next" />
 
         <Button
             android:id="@+id/backButton"

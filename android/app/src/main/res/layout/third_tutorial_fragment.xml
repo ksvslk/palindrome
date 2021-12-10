@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/third_tutorial_fragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="@dimen/default_large_margin"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context=".fragments.ThirdTutorialFragment">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/tutorial"
+            android:textSize="@dimen/_25ssp" />
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:layout_width="@dimen/_100sdp"
+            android:layout_height="match_parent"
+            android:progress="100"
+            app:indicatorColor="@color/hintsNotificationColor" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:paddingHorizontal="@dimen/default_large_margin"
+        android:text="@string/tutorial3_text"
+        android:textSize="@dimen/_16ssp" />
+
+    <FrameLayout
+        android:id="@+id/tutorialGameplay"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:animateLayoutChanges="true"
+        android:clipChildren="false"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <androidx.gridlayout.widget.GridLayout
+            android:id="@+id/tutorial_letters_grid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:animateLayoutChanges="true"
+            android:background="@color/colorBackground"
+            android:clipChildren="false"
+            android:splitMotionEvents="false"
+            android:visibility="visible"
+            app:columnCount="4"
+            app:useDefaultMargins="true">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/letter1"
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:background="@color/colorPrimary"
+                android:elevation="1dp"
+                android:fontFamily="@font/yantramanav_bold"
+                android:gravity="center"
+                android:text="H"
+                android:textColor="@color/colorOnPrimary"
+                android:textSize="@dimen/_18ssp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/letter2"
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:background="@color/colorPrimary"
+                android:elevation="1dp"
+                android:fontFamily="@font/yantramanav_bold"
+                android:gravity="center"
+                android:text="A"
+                android:textColor="@color/colorOnPrimary"
+                android:textSize="@dimen/_18ssp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/letter3"
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:background="@color/colorPrimary"
+                android:elevation="1dp"
+                android:fontFamily="@font/yantramanav_bold"
+                android:gravity="center"
+                android:text="H"
+                android:textColor="@color/colorOnPrimary"
+                android:textSize="@dimen/_18ssp" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/letter4"
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:background="@color/colorPrimary"
+                android:elevation="1dp"
+                android:fontFamily="@font/yantramanav_bold"
+                android:gravity="center"
+                android:text="!"
+                android:backgroundTint="@color/hintsNotificationColor"
+                android:textColor="@color/colorOnPrimary"
+                android:textSize="@dimen/_18ssp" />
+        </androidx.gridlayout.widget.GridLayout>
+
+    </FrameLayout>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:animateLayoutChanges="true"
+        android:clipChildren="false"
+        android:gravity="center"
+
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/startButton"
+            style="?attr/materialButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/yantramanav_bold"
+            android:text="Let's Go!" />
+
+        <Button
+            android:id="@+id/backButton"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/yantramanav_bold"
+            android:text="Back" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+</androidx.appcompat.widget.LinearLayoutCompat>

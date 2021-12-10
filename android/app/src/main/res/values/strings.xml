@@ -50,7 +50,8 @@
     <string name="place_letter_purchased">LETTERS_PURCHASED</string>
 
     <!-- TUTORIAL -->
-    <string name="tutorial_text">Palindrome is a word identical from \n <font color="#FF9800">right to left</font> and <font color="#FF9800">left to right</font>. Ignore punctuation marks - only letters count!</string>
+    <string name="tutorial_text">Palindrome is a word identical from \n <font color="#FF9800">right to left</font> and <font color="#FF9800">left to right</font>.</string>
     <string name="tutorial2_text">Compete against other players by making as few mistakes as possible!</string>
+    <string name="tutorial3_text">Punctuations are required to be in the correct positions but not from both sides.</string>
 
 </resources>

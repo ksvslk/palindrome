@@ -13,7 +13,7 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
         super.onViewCreated(view, savedInstanceState)
         parentFragmentManager.commit {
             setReorderingAllowed(true)
-            requireActivity().getPreferences(Context.MODE_PRIVATE)?.let {
+            requireActivity().getSharedPreferences("heh_pref", Context.MODE_PRIVATE)?.let {
                 val tutorialPassed = it.getBoolean(getString(R.string.tutorial_passed), false)
                 if (tutorialPassed) {
                     replace<GamePlayFragment>(R.id.fragments_container)

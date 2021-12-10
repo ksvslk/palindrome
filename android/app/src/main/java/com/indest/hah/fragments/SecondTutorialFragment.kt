@@ -21,6 +21,7 @@ import com.indest.hah.databinding.SecondTutorialFragmentBinding
 
 class SecondTutorialFragment : Fragment() {
     private lateinit var binding: SecondTutorialFragmentBinding
+    private val mainAnimatorSet = AnimatorSet()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,13 +35,12 @@ class SecondTutorialFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.startButton.setOnClickListener {
+        binding.continueButton.setOnClickListener {
             parentFragmentManager.commit {
+                setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top)
                 setReorderingAllowed(true)
-                setCustomAnimations(R.anim.fade_in_short, R.anim.fade_out_short)
-                replace<GamePlayFragment>(R.id.fragments_container)
-                requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView).visibility =
-                    View.VISIBLE
+                mainAnimatorSet.removeAllListeners()
+                replace<ThirdTutorialFragment>(R.id.fragments_container)
             }
         }
 
@@ -48,6 +48,7 @@ class SecondTutorialFragment : Fragment() {
             parentFragmentManager.commit {
                 setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top)
                 setReorderingAllowed(true)
+                mainAnimatorSet.removeAllListeners()
                 replace<TutorialFragment>(R.id.fragments_container)
             }
         }
@@ -83,7 +84,7 @@ class SecondTutorialFragment : Fragment() {
         val l2Animation = getAlphaAnimator(binding.l2, 0f, 1f, 500)
         val l3Animation = getAlphaAnimator(binding.l3, 0f, 1f, 500)
 
-        val mainAnimatorSet = AnimatorSet()
+
 
         val handToStartAnimation = AnimatorSet().apply {
             play(handToStartPosition.first).with(handToStartPosition.second)

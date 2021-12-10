@@ -305,7 +305,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                                 binding.gameplayFragment,
                                 getString(R.string.not_quite_solution),
                                 2000,
-                                resources.getDimensionPixelSize(R.dimen._9ssp).toFloat()
+                                resources.getDimensionPixelSize(R.dimen._8ssp).toFloat()
                             )
                             message.show()
                         }
@@ -318,7 +318,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                                 binding.gameplayFragment,
                                 getString(R.string.wrong_solution),
                                 2000,
-                                resources.getDimensionPixelSize(R.dimen._9ssp).toFloat()
+                                resources.getDimensionPixelSize(R.dimen._8ssp).toFloat()
                             )
                             message.show()
                         }
@@ -373,13 +373,13 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             binding.gameplayFragment,
             getString(R.string.correct_solution),
             2000,
-            resources.getDimensionPixelSize(R.dimen._11ssp).toFloat()
+            resources.getDimensionPixelSize(R.dimen._9ssp).toFloat()
         )
         val scoreMessage = MessageSnackBar.make(
             binding.gameplayFragment,
             "",
             2000,
-            resources.getDimensionPixelSize(R.dimen._9ssp).toFloat()
+            resources.getDimensionPixelSize(R.dimen._8ssp).toFloat()
         )
         scoreMessage.addCallback(object : BaseTransientBottomBar.BaseCallback<MessageSnackBar>() {
             override fun onDismissed(transientBottomBar: MessageSnackBar?, event: Int) {

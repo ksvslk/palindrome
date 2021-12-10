@@ -22,6 +22,7 @@ class TutorialFragment : Fragment() {
 
     private val TAG = "TutorialFragment"
     private lateinit var binding: TutorialFragmentBinding
+    private val mainAnimatorSet = AnimatorSet()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,6 +43,7 @@ class TutorialFragment : Fragment() {
             parentFragmentManager.commit {
                 setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top)
                 setReorderingAllowed(true)
+                mainAnimatorSet.removeAllListeners()
                 replace<SecondTutorialFragment>(R.id.fragments_container)
             }
         }
@@ -56,6 +58,7 @@ class TutorialFragment : Fragment() {
             parentFragmentManager.commit {
                 setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top)
                 setReorderingAllowed(true)
+                mainAnimatorSet.removeAllListeners()
                 replace<GamePlayFragment>(R.id.fragments_container)
                 requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView).visibility =
                     View.VISIBLE
@@ -85,7 +88,6 @@ class TutorialFragment : Fragment() {
         val l2FadeAnimation = getAlphaAnimator(binding.l2, 1f, 0f, 500)
         val l3FadeAnimation = getAlphaAnimator(binding.l3, 1f, 0f, 500)
 
-        val mainAnimatorSet = AnimatorSet()
 
         val rightArrowsAnimation = AnimatorSet().apply {
             playSequentially(r1Animation, r2Animation, r3Animation)

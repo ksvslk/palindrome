@@ -27,7 +27,7 @@
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:layout_width="@dimen/_100sdp"
             android:layout_height="match_parent"
-            android:progress="50"
+            android:progress="33"
             app:indicatorColor="@color/hintsNotificationColor" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
