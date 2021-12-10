@@ -113,8 +113,12 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                         val correctSlot = cellDirector.cells.filterIsInstance<Slot>().first {
                             (it.realChar == randomLetter.text.first() && !it.hasFriend()) ||
                                     (it.realChar == randomLetter.text.first() &&
-                                    it.hasFriend() &&
-                                    it.getTheFriend()?.text?.first() != it.realChar)
+                                            it.hasFriend() &&
+                                            it.getTheFriend()?.text?.first() != it.realChar)
+                        }
+                        val incorrectSlot = cellDirector.cells.filterIsInstance<Slot>().firstOrNull {
+                            it.hasFriend() &&
+                                    it.getTheFriend()?.text?.first() != it.realChar
                         }
                         randomLetter.isLocked = true
                         if (correctSlot.hasFriend()) {
@@ -125,12 +129,22 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                                 )
                             }
                         } else {
-                            if (candidateLetters.size == 1) { // Last letter to be placed in the slot
+                            if (candidateLetters.size == 1 && incorrectSlot == null) { // Last letter to be placed in the slot
                                 cellDirector.placeLetterInEmptyBox(
                                     randomLetter, correctSlot,
                                     isRewarded = true,
                                     isLastRewardedLetter = true
                                 )
+                            }
+                            else if (candidateLetters.size == 1 && incorrectSlot != null) {
+                                incorrectSlot.getTheFriend()
+                                    ?.let {
+                                        cellDirector.sendLetterHome(it)
+                                        cellDirector.placeLetterInEmptyBox(
+                                            randomLetter, correctSlot,
+                                            isRewarded = true
+                                        )
+                                    }
                             } else {
                                 cellDirector.placeLetterInEmptyBox(randomLetter, correctSlot, true)
                             }
