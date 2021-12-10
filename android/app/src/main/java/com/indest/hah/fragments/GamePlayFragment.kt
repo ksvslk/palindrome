@@ -62,20 +62,20 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     private var correctSound by Delegates.notNull<Int>()
     private var hintNotification by Delegates.notNull<Int>()
     private lateinit var audioManager: AudioManager
-    private lateinit var badge: BadgeDrawable
+    private lateinit var hintBadge: BadgeDrawable
     lateinit var cellDirector: CellDirector
-    lateinit var gameState: GameState
+    var gameState: GameState = GameState.BUSY
 
     private var guesses: Int by Delegates.observable(0) { _, _, new ->
         val guessesBeforeHint = resources.getInteger(R.integer.guessesBeforeHint)
-        if (new == guessesBeforeHint && !badge.isVisible) {
+        if (new == guessesBeforeHint && !hintBadge.isVisible) {
             soundPool.playWhileSoundOn(
                 requireActivity(),
                 hintNotification,
                 1,
                 audioManager = audioManager
             )
-            badge.isVisible = true
+            hintBadge.isVisible = true
             activity?.getPreferences(Context.MODE_PRIVATE)?.let { sharedPref ->
                 with(sharedPref.edit()) {
                     putBoolean(getString(R.string.level_solution_guesses), true)
@@ -102,40 +102,46 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         setFragmentResultListener(HINT_REQUEST_KEY) { _, bundle ->
             run {
                 Log.i(TAG, "fragmentResultListener")
-                when(bundle[HINT_TYPE])
-                {
-                    LETTER ->
-                    {
+                when (bundle[HINT_TYPE]) {
+                    // Reward player with random letter placed to correct slot
+                    LETTER -> {
                         gameState = GameState.REWARDING
                         val candidateLetters = cellDirector.cells
                             .filterIsInstance<Letter>()
                             .filter { !it.hasFriend() }
                         val randomLetter = candidateLetters.random()
                         val correctSlot = cellDirector.cells.filterIsInstance<Slot>().first {
-                            it.realChar == randomLetter.text.first() && !it.hasFriend() ||
-                            it.realChar == randomLetter.text.first() && it.hasFriend() && it.getTheFriend()?.text?.first() != it.realChar
+                            (it.realChar == randomLetter.text.first() && !it.hasFriend()) ||
+                                    (it.realChar == randomLetter.text.first() &&
+                                    it.hasFriend() &&
+                                    it.getTheFriend()?.text?.first() != it.realChar)
                         }
-
                         randomLetter.isLocked = true
-                        if (correctSlot.hasFriend())
-                        {
+                        if (correctSlot.hasFriend()) {
                             correctSlot.friend?.let {
-                                cellDirector.switchLetterPositions(randomLetter,
-                                    it, true)
+                                cellDirector.switchLetterPositions(
+                                    randomLetter,
+                                    it, true
+                                )
                             }
-                        }
-                        else {
-                            if (candidateLetters.size == 1) {
-                                cellDirector.placeLetterInEmptyBox(randomLetter, correctSlot, true, true)
+                        } else {
+                            if (candidateLetters.size == 1) { // Last letter to be placed in the slot
+                                cellDirector.placeLetterInEmptyBox(
+                                    randomLetter, correctSlot,
+                                    isRewarded = true,
+                                    isLastRewardedLetter = true
+                                )
                             } else {
                                 cellDirector.placeLetterInEmptyBox(randomLetter, correctSlot, true)
                             }
                         }
                         Log.d(TAG, "Rewarding with placing a letter.")
                     }
-                    CATEGORY ->
-                    {
-                        cellDirector.cells.filterIsInstance<Letter>().first().effects.playSound(SoundSelector.LETTER_REWARDED)
+                    // We just play the sound effect (reward given in HintsFragment)
+                    CATEGORY -> {
+                        cellDirector.cells.filterIsInstance<Letter>().first().effects.playSound(
+                            SoundSelector.LETTER_REWARDED
+                        )
                         Log.d(TAG, "Rewarding with category.")
                     }
                 }
@@ -191,12 +197,11 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
     override fun onResume() {
         super.onResume()
-
         findNavController().addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.navigation_hints) {
                 activity?.getPreferences(Context.MODE_PRIVATE)?.let {
                     with(it.edit()) {
-                        badge.isVisible = false
+                        hintBadge.isVisible = false
                         putBoolean(getString(R.string.level_solution_guesses), false)
                         apply()
                     }
@@ -204,7 +209,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             }
         }
         activity?.getPreferences(Context.MODE_PRIVATE)?.let {
-            badge.isVisible = it.getBoolean(getString(R.string.level_solution_guesses), false)
+            hintBadge.isVisible = it.getBoolean(getString(R.string.level_solution_guesses), false)
         }
     }
 
@@ -220,11 +225,11 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     ): View {
         binding = GameplayFragmentBinding.inflate(layoutInflater, container, false)
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-        badge = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView)
+        hintBadge = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView)
             .getOrCreateBadge(R.id.navigation_hints)
-        badge.backgroundColor =
+        hintBadge.backgroundColor =
             ContextCompat.getColor(requireContext(), R.color.hintsNotificationColor)
-        badge.badgeGravity = BadgeDrawable.TOP_END
+        hintBadge.badgeGravity = BadgeDrawable.TOP_END
         return binding.root
     }
 
@@ -289,7 +294,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                                     apply()
                                 }
                             }
-                            badge.isVisible = false
+                            hintBadge.isVisible = false
                         }
                         playerSolution?.reversed() == playerSolution -> {
                             playWrongSolutionAnimation()
@@ -318,7 +323,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                             message.show()
                         }
                     }
-                } else if(gameState != GameState.REWARDING) {
+                } else if (gameState != GameState.REWARDING) {
                     gameState = GameState.READY
                 }
             })
@@ -379,6 +384,9 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         scoreMessage.addCallback(object : BaseTransientBottomBar.BaseCallback<MessageSnackBar>() {
             override fun onDismissed(transientBottomBar: MessageSnackBar?, event: Int) {
                 super.onDismissed(transientBottomBar, event)
+                parentFragmentManager.fragments.forEach {
+                    if (it is DialogFragment) it.dismiss()
+                }
                 gameViewModel.changeToNextLevel()
             }
         })
