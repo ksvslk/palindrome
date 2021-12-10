@@ -86,7 +86,9 @@ class HintsFragment : BottomSheetDialogFragment() {
                                 )
                             if (uiState.currentLevel.levelInfo.categoryRewarded) {
                                 Log.i(TAG, "revealCategoryFlipper.showNext()")
-                                binding.revealCategoryFlipper.showNext()
+                                if (!binding.revealCategoryShown.root.isShown) {
+                                    binding.revealCategoryFlipper.showNext()
+                                }
                                 binding.categoryRevealButton.isEnabled = false
                             }
                         }
@@ -99,6 +101,11 @@ class HintsFragment : BottomSheetDialogFragment() {
         }
 
         return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+
     }
 
     private fun showRewardedVideo(rewardedAdUnit: String, rewardedType: RewardedAdType) {

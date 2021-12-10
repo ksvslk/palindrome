@@ -34,7 +34,7 @@
     <string name="palindrome_but_not_correct">It is a palindrome, but can you also find the correct solution?</string>
     <string name="placeholder_text">placeholder</string>
     <string name="snackbar_icon">Snackbar icon</string>
-    <string name="wrong_solution">Try again!</string>
+    <string name="wrong_solution">Seems not right :(</string>
     <string name="correct_solution">Correct!</string>
     <string name="not_quite_solution">Incorrect palindrome!</string>
     <!-- TODO: Remove or change this placeholder text -->

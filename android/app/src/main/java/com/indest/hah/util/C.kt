@@ -6,7 +6,7 @@ object C {
     const val NEUTRAL_LAYER = 1f
     const val BOTTOM_LAYER = -1f
     const val DEFAULT_COLUMNS_COUNT = 6
-    const val REWARDED_ANIM_MUL = 6
+    const val REWARDED_ANIM_MUL = 3
     const val REWARDED_ANIM_MUL_DEFAULT = 1
     const val SAVE_GAME = "NewSaveGame2"
     const val HINT_REQUEST_KEY = "hint_fragment"
