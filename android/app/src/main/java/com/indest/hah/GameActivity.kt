@@ -52,14 +52,6 @@ class GameActivity : AppCompatActivity() {
         bottomNavigationView.menu.forEach { it.isChecked = true }
 
         MobileAds.initialize(this) {}
-
-        // TODO: temp, remove this ??? why temp?
-        getSharedPreferences("heh_pref", Context.MODE_PRIVATE)?.let {
-            with(it.edit()) {
-                putBoolean(getString(R.string.tutorial_passed), false)
-                apply()
-            }
-        }
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {

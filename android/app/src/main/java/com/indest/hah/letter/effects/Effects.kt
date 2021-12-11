@@ -63,8 +63,7 @@ class Effects @Inject constructor(@ActivityContext val context: Context) {
     )
 
     fun playSound(soundSelector: SoundSelector) {
-        context.getSharedPreferences("heh_pref", Context.MODE_PRIVATE)?.let {
-
+        context.getSharedPreferences(context.getString(R.string.preferences), Context.MODE_PRIVATE)?.let {
             if (audioManager.ringerMode != AudioManager.RINGER_MODE_NORMAL ||
                 !it.getBoolean(context.getString(R.string.sound_on_pref), true)
             ) return
@@ -97,7 +96,7 @@ class Effects @Inject constructor(@ActivityContext val context: Context) {
     }
 
     fun addShortVibration(length: Long = 20) {
-        context.getSharedPreferences("heh_pref", Context.MODE_PRIVATE)?.let {
+        context.getSharedPreferences(context.getString(R.string.preferences), Context.MODE_PRIVATE)?.let {
             if (audioManager.ringerMode != AudioManager.RINGER_MODE_SILENT && it.getBoolean(
                     context.getString(
                         R.string.vibration_on_pref

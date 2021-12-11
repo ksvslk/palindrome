@@ -76,7 +76,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 audioManager = audioManager
             )
             hintBadge.isVisible = true
-            activity?.getPreferences(Context.MODE_PRIVATE)?.let { sharedPref ->
+            activity?.getSharedPreferences(getString(R.string.preferences), Context.MODE_PRIVATE)?.let { sharedPref ->
                 with(sharedPref.edit()) {
                     putBoolean(getString(R.string.level_solution_guesses), true)
                     apply()
@@ -91,7 +91,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate")
         super.onCreate(savedInstanceState)
-        requireActivity().getSharedPreferences("heh_pref", Context.MODE_PRIVATE)?.let {
+        requireActivity().getSharedPreferences(getString(R.string.preferences), Context.MODE_PRIVATE)?.let {
             if (!it.getBoolean(getString(R.string.categories_purchased), false) ||
                 !it.getBoolean(getString(R.string.place_letter_purchased), false)
             ) {
@@ -213,7 +213,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         super.onResume()
         findNavController().addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.navigation_hints) {
-                activity?.getPreferences(Context.MODE_PRIVATE)?.let {
+                activity?.getSharedPreferences(getString(R.string.preferences), Context.MODE_PRIVATE)?.let {
                     with(it.edit()) {
                         hintBadge.isVisible = false
                         putBoolean(getString(R.string.level_solution_guesses), false)
@@ -222,7 +222,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 }
             }
         }
-        activity?.getPreferences(Context.MODE_PRIVATE)?.let {
+        activity?.getSharedPreferences(getString(R.string.preferences), Context.MODE_PRIVATE)?.let {
             hintBadge.isVisible = it.getBoolean(getString(R.string.level_solution_guesses), false)
         }
     }
@@ -302,7 +302,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                             gameViewModel.realSolutionAndGuess.removeObservers { viewLifecycleOwner.lifecycle }
                             gameViewModel.updateCompletedLevel()
                             playCorrectSolutionAnimation()
-                            activity?.getPreferences(Context.MODE_PRIVATE)?.let { sharedPref ->
+                            activity?.getSharedPreferences(getString(R.string.preferences), Context.MODE_PRIVATE)?.let { sharedPref ->
                                 with(sharedPref.edit()) {
                                     putBoolean(getString(R.string.level_solution_guesses), false)
                                     apply()
@@ -319,7 +319,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                                 binding.gameplayFragment,
                                 getString(R.string.not_quite_solution),
                                 2000,
-                                resources.getDimensionPixelSize(R.dimen._8ssp).toFloat()
+                                resources.getDimensionPixelSize(R.dimen.other_message_size).toFloat()
                             )
                             message.show()
                         }
@@ -332,7 +332,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                                 binding.gameplayFragment,
                                 getString(R.string.wrong_solution),
                                 2000,
-                                resources.getDimensionPixelSize(R.dimen._8ssp).toFloat()
+                                resources.getDimensionPixelSize(R.dimen.other_message_size).toFloat()
                             )
                             message.show()
                         }
@@ -387,13 +387,13 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             binding.gameplayFragment,
             getString(R.string.correct_solution),
             2000,
-            resources.getDimensionPixelSize(R.dimen._9ssp).toFloat()
+            resources.getDimensionPixelSize(R.dimen.winning_message_size).toFloat()
         )
         val scoreMessage = MessageSnackBar.make(
             binding.gameplayFragment,
             "",
             2000,
-            resources.getDimensionPixelSize(R.dimen._8ssp).toFloat()
+            resources.getDimensionPixelSize(R.dimen.other_message_size).toFloat()
         )
         scoreMessage.addCallback(object : BaseTransientBottomBar.BaseCallback<MessageSnackBar>() {
             override fun onDismissed(transientBottomBar: MessageSnackBar?, event: Int) {
@@ -448,7 +448,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
     private fun doubleClickVibration() {
         val rContext = requireContext()
-        rContext.getSharedPreferences("heh_pref", Context.MODE_PRIVATE)?.let {
+        requireActivity().getSharedPreferences(getString(R.string.preferences), Context.MODE_PRIVATE)?.let {
             if (audioManager.ringerMode != AudioManager.RINGER_MODE_SILENT && it.getBoolean(
                     rContext.getString(R.string.vibration_on_pref),
                     true

@@ -34,7 +34,7 @@ fun SoundPool.playWhileSoundOn(
     loop: Int = 0,
     audioManager: AudioManager
 ) {
-    activity.getSharedPreferences("heh_pref", Context.MODE_PRIVATE)?.let {
+    activity.getSharedPreferences(activity.getString(R.string.preferences), Context.MODE_PRIVATE)?.let {
         if (audioManager.ringerMode != AudioManager.RINGER_MODE_NORMAL ||
             !it.getBoolean(activity.getString(R.string.sound_on_pref), true)
         ) return

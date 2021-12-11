@@ -65,7 +65,7 @@ class SettingsFragment : BottomSheetDialogFragment() {
     }
 
     private fun changePreference(setting: String, value: Boolean) {
-        requireActivity().getSharedPreferences("heh_pref", Context.MODE_PRIVATE)?.let {
+        requireActivity().getSharedPreferences(getString(R.string.preferences), Context.MODE_PRIVATE)?.let {
             with(it.edit()) {
                 putBoolean(setting, value)
                 apply()
@@ -74,7 +74,7 @@ class SettingsFragment : BottomSheetDialogFragment() {
     }
 
     private fun setInitialPreference(button: CompoundButton, setting: String) {
-        requireActivity().getSharedPreferences("heh_pref", Context.MODE_PRIVATE)?.let {
+        requireActivity().getSharedPreferences(getString(R.string.preferences), Context.MODE_PRIVATE)?.let {
             button.isChecked = it.getBoolean(setting, true)
         }
     }

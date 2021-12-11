@@ -1,6 +1,6 @@
 package com.indest.hah.fragments
 
-import android.animation.AnimatorSet
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -29,7 +29,14 @@ class ThirdTutorialFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.startButton.setOnClickListener {
+
             parentFragmentManager.commit {
+                requireActivity().getSharedPreferences(getString(R.string.preferences), Context.MODE_PRIVATE)?.let {
+                    with(it.edit()) {
+                        putBoolean(getString(R.string.tutorial_passed), true)
+                        apply()
+                    }
+                }
                 setReorderingAllowed(true)
                 setCustomAnimations(R.anim.fade_in_short, R.anim.fade_out_short)
                 replace<GamePlayFragment>(R.id.fragments_container)

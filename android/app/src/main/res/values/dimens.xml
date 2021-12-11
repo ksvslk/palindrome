@@ -13,4 +13,7 @@
 
     <dimen name="box_size">8dp</dimen>
     <dimen name="box_text_size">2dp</dimen>
+
+    <dimen name="winning_message_size">@dimen/_9ssp</dimen>
+    <dimen name="other_message_size">@dimen/_8ssp</dimen>
 </resources>
