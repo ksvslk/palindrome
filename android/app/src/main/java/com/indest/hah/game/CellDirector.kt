@@ -1,6 +1,6 @@
 package com.indest.hah.game
 
-import androidx.core.content.ContextCompat
+import android.util.Log
 import com.indest.hah.fragments.GamePlayFragment
 import com.indest.hah.letter.*
 import com.indest.hah.letter.effects.ColorSelector
@@ -25,29 +25,46 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
     private val gf: GamePlayFragment = gamePlayFragment
     var cells: MutableList<Cell<*, *>> = ArrayList()
 
-    fun handleCollisions(cell: Letter) {
-        when (val closestCell = getClosestBox(to = cell, from = getCandidateBoxes(cell))) {
+    fun handleCollisions(letter: Letter) {
+        Log.i(TAG,"Here")
+        when (val closestCell = getClosestCell(to = letter, from = getCandidateCells(letter))) {
             is Letter -> {
                 if (closestCell.state == LetterState.HOME && !closestCell.isLocked) {
-                    switchLetterPositions(cell, closestCell)
+                    switchLetterPositions(letter, closestCell)
                     return
                 }
             }
             is Slot -> {
                 if (!closestCell.hasFriend()) {
-                    placeLetterInEmptyBox(cell, closestCell)
+                    placeLetterInEmptyBox(letter, closestCell)
+                    return
+                }
+                else if (closestCell.getTheFriend() == letter)
+                {
+                    letter.effects.playSound(SoundSelector.PLACE_LETTER_IN_EMPTY_BOX)
+                    letter.currentPos.x = closestCell.pos.x
+                    letter.currentPos.y = closestCell.pos.y
+                    letter.z = NEUTRAL_LAYER
+                    letter.elevation = NEUTRAL_LAYER
+                    letter.state = LetterState.ANIMATION
+                    letter.state.executeAnimationBehaviour(
+                        letter,
+                        (closestCell.pos.x - letter.pos.x),
+                        (closestCell.pos.y - letter.pos.y),
+                    )
                     return
                 }
             }
+
         }
-        sendLetterHome(cell)
+        sendLetterHome(letter)
     }
 
-    private fun getCandidateBoxes(box: Letter): MutableList<Cell<*, *>> {
+    private fun getCandidateCells(letter: Letter): MutableList<Cell<*, *>> {
         val candidateCells = mutableListOf<Cell<*, *>>()
 
         for (droppedTo in cells) {
-            if (box.rect.intersect(droppedTo.rect) && box != droppedTo) {
+            if (letter.rect.intersect(droppedTo.rect) && letter != droppedTo) {
                 if ((droppedTo is Letter) && droppedTo.state == LetterState.HOME) {
                     candidateCells.add(droppedTo)
                 } else if (droppedTo is Slot) {
@@ -55,6 +72,7 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
                 }
             }
         }
+        Log.i(TAG, candidateCells.firstOrNull().toString())
         return candidateCells
     }
 
@@ -171,7 +189,7 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
         }
     }
 
-    private fun getClosestBox(to: Letter, from: MutableList<Cell<*, *>>): Cell<*, *>? {
+    private fun getClosestCell(to: Letter, from: MutableList<Cell<*, *>>): Cell<*, *>? {
         return from.minByOrNull {
             abs(to.pos.x - it.pos.x) +
                     abs(to.pos.y - it.pos.y)
