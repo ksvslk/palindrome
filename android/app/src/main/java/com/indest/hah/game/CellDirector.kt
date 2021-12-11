@@ -41,7 +41,7 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
                 }
                 else if (closestCell.getTheFriend() == letter)
                 {
-                    letter.effects.playSound(SoundSelector.PLACE_LETTER_IN_EMPTY_BOX)
+                    letter.effects.playSound(SoundSelector.SWITCH_LETTERS)
                     letter.currentPos.x = closestCell.pos.x
                     letter.currentPos.y = closestCell.pos.y
                     letter.z = NEUTRAL_LAYER

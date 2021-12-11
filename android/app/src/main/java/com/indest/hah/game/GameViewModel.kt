@@ -66,8 +66,13 @@ class GameViewModel @Inject constructor(
 
     fun increaseMistakes() {
         viewModelScope.launch {
+            val newScore = if (_uiState.value.currentLevel.levelInfo.score - 2 < 0) {
+                0
+            } else {
+                _uiState.value.currentLevel.levelInfo.score - 2
+            }
             levelRepository.updateScore(
-                _uiState.value.currentLevel.levelInfo.score - 2,
+                newScore,
                 _uiState.value.currentLevel.levelInfo.levelId
             )
         }
