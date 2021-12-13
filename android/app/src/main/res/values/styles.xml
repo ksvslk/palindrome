@@ -4,6 +4,10 @@
         <item name="fontFamily">@font/yantramanav_bold</item>
         <item name="android:textColor">@color/colorOnPrimary</item>
     </style>
+    <style name="TextAppearance.OC.LevelSelectNumber" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="fontFamily">@font/yantramanav_bold</item>
+        <item name="android:textColor">@color/hintsNotificationColor</item>
+    </style>
     <style name="TextAppearance.OC.Body1" parent="TextAppearance.MaterialComponents.Body1">
         <item name="fontFamily">@font/yantramanav_medium</item>
         <item name="android:textColor">@color/colorOnPrimary</item>

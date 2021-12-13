@@ -81,13 +81,18 @@ class GameViewModel @Inject constructor(
     fun updateCompletedLevel() {
         viewModelScope.launch {
             levelRepository.resetLevelLettersInfo(_uiState.value.currentLevel.levelInfo.levelId)
-            val updatedLevel = _uiState.value.currentLevel.levelInfo.copy(
-                progress = LevelProgress.REPLAY,
-                puzzle = _uiState.value.currentLevel.levelInfo.puzzle,
-                score = _uiState.value.currentLevel.levelInfo.score
-            )
-            levelRepository.updateLevel(updatedLevel)
+            updateLevelProgress(LevelProgress.REPLAY)
         }
+    }
+
+    private suspend fun updateLevelProgress(progress: LevelProgress)
+    {
+        val updatedLevel = _uiState.value.currentLevel.levelInfo.copy(
+            progress = progress,
+            puzzle = _uiState.value.currentLevel.levelInfo.puzzle,
+            score = _uiState.value.currentLevel.levelInfo.score
+        )
+        levelRepository.updateLevel(updatedLevel)
     }
 
     fun getCurrentAndMaxScore(): Pair<Int, Int> {
@@ -154,10 +159,6 @@ class GameViewModel @Inject constructor(
             val isAlreadyInitialized =
                 levelRepository.isLettersInitialized(_uiState.value.currentLevel.levelInfo.levelId)
             if (!isAlreadyInitialized) {
-                Log.i(
-                    TAG,
-                    "isAlreadyInitialized is false, starting to insert data (for first time)"
-                )
                 cells.filterIsInstance<Letter>().forEachIndexed { _, it ->
                     levelRepository.insertLetterInfo(
                         level = _uiState.value.currentLevel.levelInfo.levelId,
@@ -171,7 +172,8 @@ class GameViewModel @Inject constructor(
                     _uiState.value.currentLevel.levelInfo.levelId * 100,
                     _uiState.value.currentLevel.levelInfo.levelId
                 )
-
+                updateLevelProgress(LevelProgress.IN_PROGRESS)
+                levels.value = levelRepository.getAllLevels()
             }
         }
     }

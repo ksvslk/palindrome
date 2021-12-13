@@ -9,6 +9,7 @@
         android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.OC.Body1"
+        android:textColor="@drawable/level_select_textview_color_selector"
+        android:textAppearance="@style/TextAppearance.OC.Headline5"
         android:text="@string/placeholder_text"/>
 </FrameLayout>

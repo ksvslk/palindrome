@@ -39,7 +39,6 @@ class LevelRepository @Inject constructor(
     }
 
     suspend fun insertLetterInfo(level: Int, homeIndex: Int, friendIndex: Int, letter: Char, locked: Boolean) {
-        Log.i(TAG, "insertLetterInfo")
         levelDao.insertLetterData(level, homeIndex, friendIndex, letter, locked)
     }
 
