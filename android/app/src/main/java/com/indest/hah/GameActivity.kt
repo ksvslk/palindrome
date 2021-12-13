@@ -1,8 +1,12 @@
 package com.indest.hah
 
+import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
@@ -17,11 +21,17 @@ import com.indest.hah.databinding.ActivityGameBinding
 import com.indest.hah.util.hideSystemBars
 import dagger.hilt.android.AndroidEntryPoint
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.games.Games
+
+
 @AndroidEntryPoint
 class GameActivity : AppCompatActivity() {
 
     private val TAG = "GameActivity"
-    private lateinit var binding: ActivityGameBinding
+    lateinit var binding: ActivityGameBinding
     private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,5 +68,75 @@ class GameActivity : AppCompatActivity() {
         Log.i(TAG, "onWindowFocusChanged")
         super.onWindowFocusChanged(hasFocus)
         hideSystemBars(binding.root)
+    }
+
+    private fun signInSilently() {
+        val signInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
+            .requestScopes(Games.SCOPE_GAMES_SNAPSHOTS)
+            .build()
+        val account = GoogleSignIn.getLastSignedInAccount(this)
+        if (GoogleSignIn.hasPermissions(account, *signInOptions.scopeArray)) {
+            // Already signed in.
+            // The signed in account is stored in the 'account' variable.
+            if (account != null) {
+                Games.getGamesClient(this, account)
+                    .setViewForPopups(findViewById(android.R.id.content))
+            }
+        } else {
+            // Haven't been signed-in before. Try the silent sign-in first.
+            val signInClient = GoogleSignIn.getClient(this, signInOptions)
+            signInClient
+                .silentSignIn()
+                .addOnCompleteListener(
+                    this
+                ) { task ->
+                    if (task.isSuccessful) {
+                        // The signed in account is stored in the task's result.
+                        val signedInAccount = task.result
+                        Games.getGamesClient(this, signedInAccount)
+                            .setViewForPopups(findViewById(android.R.id.content))
+                        Log.i(TAG, "Signed in successfully.")
+                    } else if(task.isComplete) {
+                        Log.i(
+                            TAG,
+                            "Player needs to sign-in explicitly using via UI. ${task.exception}"
+                        )
+                        getSharedPreferences(getString(R.string.preferences), Context.MODE_PRIVATE)?.let {
+                            if (!it.getBoolean(getString(R.string.interactive_sign_in_done), false))
+                            {
+                                with(it.edit()) {
+                                    putBoolean(getString(R.string.interactive_sign_in_done), true)
+                                    apply()
+                                }
+                                signInToGoogle()
+                            }
+                        }
+                    }
+                }
+        }
+    }
+
+    private val activityResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode != Activity.RESULT_OK && it.resultCode != Activity.RESULT_CANCELED) {
+                Toast.makeText(
+                    this,
+                    "Something went wrong. Do you have internet connection?",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+
+    private fun signInToGoogle() {
+        val signInClient = GoogleSignIn.getClient(
+            this,
+            GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN
+        )
+        activityResultLauncher.launch(signInClient.signInIntent)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        signInSilently()
     }
 }

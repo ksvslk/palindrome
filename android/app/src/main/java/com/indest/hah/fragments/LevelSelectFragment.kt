@@ -1,5 +1,6 @@
 package com.indest.hah.fragments
 
+import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -7,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.activityViewModels
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.adapters.LevelItemAdapter
 import com.indest.hah.databinding.LevelSelectFragmentBinding
@@ -35,8 +37,15 @@ class LevelSelectFragment : BottomSheetDialogFragment() {
                         gameViewModel.changeLevel(nr)
                     }
                 }
+
             }
         })
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.levelSelectRecyclerview.scrollToPosition(94)
     }
 }

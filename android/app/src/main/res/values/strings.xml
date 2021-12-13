@@ -13,6 +13,8 @@
     <string name="tutorial">Tutorial</string>
     <string name="level_select">Level Select</string>
     <string name="sign_in">Sign in with Google</string>
+    <string name="log_out">Log Out from Google</string>
+    <string name="please_sign_in">Please sign in from "Settings" page.</string>
     <string name="achievements">Achievements</string>
     <string name="leaderboard">Leaderboard</string>
     <string name="google_play_games">Google Play Games</string>
@@ -48,6 +50,7 @@
     <string name="ui_night_pref">NIGHT_ON</string>
     <string name="categories_purchased">CATEGORIES_PURCHASED</string>
     <string name="place_letter_purchased">LETTERS_PURCHASED</string>
+    <string name="interactive_sign_in_done">INTERACTIVE_SIGN_IN_DONE</string>
 
     <!-- TUTORIAL -->
     <string name="tutorial_text">Palindrome is a word identical from \n <font color="#FF9800">right to left</font> and <font color="#FF9800">left to right</font>.</string>

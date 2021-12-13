@@ -12,4 +12,7 @@
     <dimen name="simple_dialog_divider_margin">20dp</dimen>
     <dimen name="list_item_height">40dp</dimen>
 
+    <dimen name="winning_message_size">8sp</dimen>
+    <dimen name="other_message_size">7sp</dimen>
+
 </resources>

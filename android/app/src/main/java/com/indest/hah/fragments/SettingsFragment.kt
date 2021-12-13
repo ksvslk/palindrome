@@ -1,5 +1,6 @@
 package com.indest.hah.fragments
 
+import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
@@ -10,16 +11,22 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.CompoundButton
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.commit
 import androidx.navigation.fragment.findNavController
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.databinding.SettingsFragmentBinding
 
+
 class SettingsFragment : BottomSheetDialogFragment() {
     private val TAG = "SettingsFragment"
     private lateinit var binding: SettingsFragmentBinding
+    private val startActivity =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,6 +35,22 @@ class SettingsFragment : BottomSheetDialogFragment() {
     ): View {
         Log.i(TAG, "onCreateView")
         binding = SettingsFragmentBinding.inflate(layoutInflater, container, false)
+
+        val lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(requireActivity())
+        if (lastSignedInAccount != null) {
+            binding.googleSignInButton.visibility = View.GONE
+            binding.googleSignOutButton.visibility = View.VISIBLE
+            binding.googleSignOutButton.setOnClickListener {
+                signOut()
+            }
+        } else {
+            binding.googleSignOutButton.visibility = View.GONE
+            binding.googleSignInButton.visibility = View.VISIBLE
+            binding.googleSignInButton.setOnClickListener {
+                signInToGoogle()
+            }
+        }
+
         binding.levelSelectButton.setOnClickListener {
             findNavController().popBackStack()
             parentFragmentManager.commit {
@@ -44,11 +67,6 @@ class SettingsFragment : BottomSheetDialogFragment() {
         binding.vibrationButton.setOnClickListener {
             binding.vibrationSwitch.performClick()
         }
-
-        binding.googleSignInButton.setOnClickListener {
-            Toast.makeText(requireContext(), "Sign in to google.", Toast.LENGTH_LONG).show()
-        }
-
         binding.soundSwitch.setOnCheckedChangeListener { _, b ->
             changePreference(getString(R.string.sound_on_pref), b)
         }
@@ -64,8 +82,59 @@ class SettingsFragment : BottomSheetDialogFragment() {
         return binding.root
     }
 
+    private val activityResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                dismiss()
+            }
+            else if (it.resultCode != Activity.RESULT_CANCELED) {
+                Toast.makeText(
+                    requireContext(),
+                    "Something went wrong. Do you have internet connection?",
+                    Toast.LENGTH_LONG
+                ).show()
+                dismiss()
+            }
+        }
+
+    private fun signInToGoogle() {
+        val signInClient = GoogleSignIn.getClient(
+            requireActivity(),
+            GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN
+        )
+        activityResultLauncher.launch(signInClient.signInIntent)
+    }
+
+    private fun signOut() {
+        val signInClient = GoogleSignIn.getClient(
+            requireActivity(),
+            GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN
+        )
+        signInClient.signOut().addOnCompleteListener {
+            if (it.isSuccessful)
+            {
+                Toast.makeText(
+                    requireContext(),
+                    "Successfully signed out.",
+                    Toast.LENGTH_LONG
+                ).show()
+                dismiss()
+            }
+            else {
+                Toast.makeText(
+                    requireContext(),
+                    "Something went wrong when trying to sign out.",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+    }
+
     private fun changePreference(setting: String, value: Boolean) {
-        requireActivity().getSharedPreferences(getString(R.string.preferences), Context.MODE_PRIVATE)?.let {
+        requireActivity().getSharedPreferences(
+            getString(R.string.preferences),
+            Context.MODE_PRIVATE
+        )?.let {
             with(it.edit()) {
                 putBoolean(setting, value)
                 apply()
@@ -74,7 +143,10 @@ class SettingsFragment : BottomSheetDialogFragment() {
     }
 
     private fun setInitialPreference(button: CompoundButton, setting: String) {
-        requireActivity().getSharedPreferences(getString(R.string.preferences), Context.MODE_PRIVATE)?.let {
+        requireActivity().getSharedPreferences(
+            getString(R.string.preferences),
+            Context.MODE_PRIVATE
+        )?.let {
             button.isChecked = it.getBoolean(setting, true)
         }
     }

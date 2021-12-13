@@ -13,7 +13,6 @@ import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.findNavController
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
@@ -31,6 +30,8 @@ import com.indest.hah.util.C.HINT_TYPE
 import com.indest.hah.util.C.LETTER
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 
 class HintsFragment : BottomSheetDialogFragment() {
     private val TAG = "HintsFragment"
@@ -179,6 +180,29 @@ class HintsFragment : BottomSheetDialogFragment() {
                 }
             )
         }
+    }
+
+    private fun signOut() {
+        val signInClient = GoogleSignIn.getClient(
+            requireActivity(),
+            GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN
+        )
+        signInClient.signOut().addOnCompleteListener {
+            if (it.isSuccessful)
+            {
+                // TODO: Change button to "SIGN IN"
+            }
+        }
+    }
+
+    private fun startSignInIntent() {
+        val signInClient = GoogleSignIn.getClient(
+            requireActivity(),
+            GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN
+        )
+        val intent = signInClient.signInIntent
+        //startActivityForResult(requireActivity(), intent)
+
     }
 
     enum class RewardedAdType {

@@ -31,6 +31,7 @@ import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.indest.hah.GameActivity
 import com.indest.hah.LevelFactory
 import com.indest.hah.R
 import com.indest.hah.databinding.GameplayFragmentBinding
@@ -199,6 +200,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                                     loadLevel(uiState.currentLevel)
                                 }
                             }
+                            (requireActivity() as GameActivity).binding.gameProgress.progress =
+                                ((uiState.currentLevel.levelInfo.levelId.toFloat() / 94f) * 100).toInt()
                         }
                         is LatestLevelEvent.Error -> {
                             Log.i(TAG, "Error getting level from gameViewModel")
