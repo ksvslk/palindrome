@@ -3,5 +3,6 @@
     android:layout_gravity="center_horizontal"
     android:padding="@dimen/default_gap"
     android:paddingHorizontal="@dimen/default_large_margin"
+    android:layout_marginVertical="@dimen/_50sdp"
     android:layout_width="wrap_content"
     android:layout_height="match_parent" />

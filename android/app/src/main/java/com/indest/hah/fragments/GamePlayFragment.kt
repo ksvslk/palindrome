@@ -8,11 +8,13 @@ import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.animation.Animation
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -28,6 +30,9 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.games.Games
+import com.google.android.gms.games.GamesClient
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.BaseTransientBottomBar
@@ -77,12 +82,13 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 audioManager = audioManager
             )
             hintBadge.isVisible = true
-            activity?.getSharedPreferences(getString(R.string.preferences), Context.MODE_PRIVATE)?.let { sharedPref ->
-                with(sharedPref.edit()) {
-                    putBoolean(getString(R.string.level_solution_guesses), true)
-                    apply()
+            activity?.getSharedPreferences(getString(R.string.preferences), Context.MODE_PRIVATE)
+                ?.let { sharedPref ->
+                    with(sharedPref.edit()) {
+                        putBoolean(getString(R.string.level_solution_guesses), true)
+                        apply()
+                    }
                 }
-            }
             guesses = 0
         }
     }
@@ -92,7 +98,10 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate")
         super.onCreate(savedInstanceState)
-        requireActivity().getSharedPreferences(getString(R.string.preferences), Context.MODE_PRIVATE)?.let {
+        requireActivity().getSharedPreferences(
+            getString(R.string.preferences),
+            Context.MODE_PRIVATE
+        )?.let {
             if (!it.getBoolean(getString(R.string.categories_purchased), false) ||
                 !it.getBoolean(getString(R.string.place_letter_purchased), false)
             ) {
@@ -117,10 +126,11 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                                             it.hasFriend() &&
                                             it.getTheFriend()?.text?.first() != it.realChar)
                         }
-                        val incorrectSlot = cellDirector.cells.filterIsInstance<Slot>().firstOrNull {
-                            it.hasFriend() &&
-                                    it.getTheFriend()?.text?.first() != it.realChar
-                        }
+                        val incorrectSlot =
+                            cellDirector.cells.filterIsInstance<Slot>().firstOrNull {
+                                it.hasFriend() &&
+                                        it.getTheFriend()?.text?.first() != it.realChar
+                            }
                         randomLetter.isLocked = true
                         if (correctSlot.hasFriend()) {
                             correctSlot.friend?.let {
@@ -136,8 +146,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                                     isRewarded = true,
                                     isLastRewardedLetter = true
                                 )
-                            }
-                            else if (candidateLetters.size == 1 && incorrectSlot != null) {
+                            } else if (candidateLetters.size == 1 && incorrectSlot != null) {
                                 incorrectSlot.getTheFriend()
                                     ?.let {
                                         cellDirector.sendLetterHome(it)
@@ -216,7 +225,10 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         super.onResume()
         findNavController().addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.navigation_hints) {
-                activity?.getSharedPreferences(getString(R.string.preferences), Context.MODE_PRIVATE)?.let {
+                activity?.getSharedPreferences(
+                    getString(R.string.preferences),
+                    Context.MODE_PRIVATE
+                )?.let {
                     with(it.edit()) {
                         hintBadge.isVisible = false
                         putBoolean(getString(R.string.level_solution_guesses), false)
@@ -302,48 +314,61 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
                     when {
                         it.first == it.second -> {
-                            gameViewModel.realSolutionAndGuess.removeObservers { viewLifecycleOwner.lifecycle }
-                            gameViewModel.updateCompletedLevel()
                             playCorrectSolutionAnimation()
-                            activity?.getSharedPreferences(getString(R.string.preferences), Context.MODE_PRIVATE)?.let { sharedPref ->
-                                with(sharedPref.edit()) {
-                                    putBoolean(getString(R.string.level_solution_guesses), false)
-                                    apply()
-                                }
-                            }
-                            hintBadge.isVisible = false
+                            correctSolutionActions()
                         }
                         playerSolution?.reversed() == playerSolution -> {
                             playWrongSolutionAnimation()
-                            val lastLetter =
-                                cellDirector.cells.find { p -> p.homeIndex == it.third } as Letter
-                            cellDirector.sendLetterHome(lastLetter)
-                            val message = MessageSnackBar.make(
-                                binding.gameplayFragment,
-                                getString(R.string.not_quite_solution),
-                                2000,
-                                resources.getDimensionPixelSize(R.dimen.other_message_size).toFloat()
-                            )
-                            message.show()
+                            wrongPalindromeActions(it)
                         }
                         else -> {
                             playWrongSolutionAnimation()
-                            val lastLetter =
-                                cellDirector.cells.find { p -> p.homeIndex == it.third } as Letter
-                            cellDirector.sendLetterHome(lastLetter)
-                            val message = MessageSnackBar.make(
-                                binding.gameplayFragment,
-                                getString(R.string.wrong_solution),
-                                2000,
-                                resources.getDimensionPixelSize(R.dimen.other_message_size).toFloat()
-                            )
-                            message.show()
+                            wrongSolutionActions(it)
                         }
                     }
                 } else if (gameState != GameState.REWARDING) {
                     gameState = GameState.READY
                 }
             })
+    }
+
+    private fun correctSolutionActions() {
+        gameViewModel.realSolutionAndGuess.removeObservers { viewLifecycleOwner.lifecycle }
+        gameViewModel.updateCompletedLevel()
+        activity?.getSharedPreferences(getString(R.string.preferences), Context.MODE_PRIVATE)
+            ?.let { sharedPref ->
+                with(sharedPref.edit()) {
+                    putBoolean(getString(R.string.level_solution_guesses), false)
+                    apply()
+                }
+            }
+        hintBadge.isVisible = false
+    }
+
+    private fun wrongPalindromeActions(info: Triple<String?, String?, Int?>) {
+        val lastLetter =
+            cellDirector.cells.find { p -> p.homeIndex == info.third } as Letter
+        cellDirector.sendLetterHome(lastLetter)
+        val message = MessageSnackBar.make(
+            binding.gameplayFragment,
+            getString(R.string.not_quite_solution),
+            2000,
+            resources.getDimensionPixelSize(R.dimen.other_message_size).toFloat()
+        )
+        message.show()
+    }
+
+    private fun wrongSolutionActions(info: Triple<String?, String?, Int?>) {
+        val lastLetter =
+            cellDirector.cells.find { p -> p.homeIndex == info.third } as Letter
+        cellDirector.sendLetterHome(lastLetter)
+        val message = MessageSnackBar.make(
+            binding.gameplayFragment,
+            getString(R.string.wrong_solution),
+            2000,
+            resources.getDimensionPixelSize(R.dimen.other_message_size).toFloat()
+        )
+        message.show()
     }
 
     private fun playCorrectSolutionAnimation() {
@@ -404,7 +429,31 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 parentFragmentManager.fragments.forEach {
                     if (it is DialogFragment) it.dismiss()
                 }
-                gameViewModel.changeToNextLevel()
+                if (gameViewModel.getLevelNumber() == 20) {
+                    val lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(requireActivity())
+                    if (lastSignedInAccount != null) {
+                        Games.getAchievementsClient(requireActivity(), lastSignedInAccount)
+                            .unlock(getString(R.string.achievement_greenhorn))
+                    }
+
+                }
+                val message = MessageSnackBar.make(
+                    binding.gameplayFragment,
+                    getString(R.string.tap_to_continue),
+                    Int.MAX_VALUE,
+                    resources.getDimensionPixelSize(R.dimen.other_message_size).toFloat()
+                )
+                message.show()
+                val alphaAnim = ObjectAnimator.ofFloat(message.view, View.ALPHA, 1f, 0.5f)
+                alphaAnim.duration = 1000
+                alphaAnim.repeatCount = ObjectAnimator.INFINITE
+                alphaAnim.repeatMode = ObjectAnimator.REVERSE
+                alphaAnim.start()
+                message.view.setOnClickListener {
+                    message.dismiss()
+                    alphaAnim.cancel()
+                    gameViewModel.changeToNextLevel()
+                }
             }
         })
         winningMessage.addCallback(object : BaseTransientBottomBar.BaseCallback<MessageSnackBar>() {
@@ -417,6 +466,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         soundPool.playWhileSoundOn(requireActivity(), correctSound, 2, audioManager = audioManager)
         winningMessage.show()
     }
+
 
     private fun startCountAnimation(scoreView: TextView) {
         val currentValue = 0
@@ -451,7 +501,10 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
     private fun doubleClickVibration() {
         val rContext = requireContext()
-        requireActivity().getSharedPreferences(getString(R.string.preferences), Context.MODE_PRIVATE)?.let {
+        requireActivity().getSharedPreferences(
+            getString(R.string.preferences),
+            Context.MODE_PRIVATE
+        )?.let {
             if (audioManager.ringerMode != AudioManager.RINGER_MODE_SILENT && it.getBoolean(
                     rContext.getString(R.string.vibration_on_pref),
                     true
