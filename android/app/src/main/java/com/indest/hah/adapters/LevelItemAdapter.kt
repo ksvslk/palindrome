@@ -1,12 +1,11 @@
 package com.indest.hah.adapters
 
-import android.content.res.Resources
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.TextView
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.content.res.ResourcesCompat.getColor
 import androidx.recyclerview.widget.RecyclerView
 import com.indest.hah.R
 import com.indest.hah.persistance.LevelProgress
@@ -50,14 +49,16 @@ class LevelItemAdapter(
 
     // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(levelItemViewHolder: LevelItemViewHolder, position: Int) {
+        Log.i(TAG, "onBindViewHolder")
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
         levelItemViewHolder.textView.text = dataSet[position].levelId.toString()
-        levelItemViewHolder.textView.isEnabled =
+        levelItemViewHolder.itemView.isClickable =
             if (dataSet[position].progress == LevelProgress.TODO) {
-                levelItemViewHolder.itemView.isClickable = false
+                levelItemViewHolder.textView.isEnabled = false
                 false
             } else {
+                levelItemViewHolder.textView.isEnabled = true
                 true
             }
     }

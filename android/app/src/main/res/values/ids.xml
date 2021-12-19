@@ -4,9 +4,13 @@
     <!--app_id-->
     <string name="games_app_id" translatable="false">1023077026447</string>
     <string name="package_name" translatable="false">com.indest.heh</string>
+    <string name="preferences" translatable="false">prefs</string>
+    <!-- Achievements -->
     <string name="achievement_greenhorn" translatable="false">CgkIj5WSoeMdEAIQAQ</string>
     <string name="achievement_zero_mistakes" translatable="false">CgkIj5WSoeMdEAIQBg</string>
+    <!-- Ads -->
     <string name="admob_app_id">ca-app-pub-3940256099942544~3347511713</string> <!-- TODO: Fake id, change back -->
     <string name="rewarded_ad_unit">ca-app-pub-3940256099942544/5224354917</string> <!-- TODO: Fake id, change back -->
-    <string name="preferences" translatable="false">prefs</string>
+    <!-- IAP -->
+
 </resources>

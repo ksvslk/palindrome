@@ -51,7 +51,6 @@ class LevelSelectFragment : BottomSheetDialogFragment() {
                         gameViewModel.changeLevel(nr)
                     }
                 }
-               // val lastLevelPlayed = levels.maxWithOrNull(compareBy { it.timeModified })?.levelId ?: 1
             }
         })
     }

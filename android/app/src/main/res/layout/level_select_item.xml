@@ -6,9 +6,9 @@
     android:gravity="center_vertical">
     <TextView
         android:id="@+id/textView"
-        android:layout_gravity="center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:textColor="@drawable/level_select_textview_color_selector"
         android:textAppearance="@style/TextAppearance.OC.LevelSelectNumber"
         android:text="@string/placeholder_text"/>
