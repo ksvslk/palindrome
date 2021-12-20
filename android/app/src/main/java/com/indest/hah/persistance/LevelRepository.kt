@@ -20,7 +20,6 @@ import java.lang.reflect.Type
 import javax.inject.Inject
 import javax.inject.Singleton
 
-
 @Singleton
 class LevelRepository @Inject constructor(
     private val levelDao: LevelDao
@@ -31,19 +30,11 @@ class LevelRepository @Inject constructor(
 
     suspend fun resetLevelLettersInfo(levelNr: Int) = levelDao.deleteLetterInfo(levelNr)
     suspend fun updateLevel(level: LevelData) = levelDao.updateLevelData(level)
-    suspend fun getLevel(nr: Int) = levelDao.getLevel(nr)
+    suspend fun unlockNextLevel(current: Int) = levelDao.unlockNextLevel(current)
     fun getLastLevel() = levelDao.getLastLevel()
-
-    suspend fun updateLevelPuzzle(level: Int, newPuzzle: String) {
-        levelDao.updateLevelPuzzle(level, newPuzzle)
-    }
 
     suspend fun insertLetterInfo(level: Int, homeIndex: Int, friendIndex: Int, letter: Char, locked: Boolean) {
         levelDao.insertLetterData(level, homeIndex, friendIndex, letter, locked)
-    }
-
-    suspend fun insertLevel(levelInfo: LevelData) {
-        levelDao.insert(levelInfo)
     }
 
     suspend fun getAllLevels(): List<LevelData> = levelDao.getAllLevels().map {
@@ -74,7 +65,6 @@ class LevelRepository @Inject constructor(
     }
 
     suspend fun isLettersInitialized(nr:Int) = levelDao.areLettersInitialized(nr) > 0
-    private suspend fun updateLevels(levels: List<Level>) = levelDao.updateLevels(levels)
     suspend fun updateNextLevelTimestamp(current:Int, next:Int) = levelDao.updateNextLevelTimestamp(current, next)
     suspend fun updateScore(newScore:Int, level:Int) = levelDao.updateScore(newScore, level)
 

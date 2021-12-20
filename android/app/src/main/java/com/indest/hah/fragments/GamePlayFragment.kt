@@ -67,6 +67,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     private var noteSounds by Delegates.notNull<List<Int>>()
     private var scoreSound by Delegates.notNull<Int>()
     private var correctSound by Delegates.notNull<Int>()
+    private var levelTransition by Delegates.notNull<Int>()
     private var hintNotification by Delegates.notNull<Int>()
     private lateinit var audioManager: AudioManager
     private lateinit var hintBadge: BadgeDrawable
@@ -179,6 +180,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         scoreSound = soundPool.load(requireContext(), R.raw.score_tick, 1)
         correctSound = soundPool.load(requireContext(), R.raw.correct, 1)
         hintNotification = soundPool.load(requireContext(), R.raw.hint_notification, 1)
+        levelTransition = soundPool.load(requireContext(), R.raw.level_transition, 1)
         noteSounds = arrayListOf(
             soundPool.load(requireContext(), R.raw.fs2_edited, 1),
             soundPool.load(requireContext(), R.raw.fs1, 1),
@@ -197,6 +199,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 gameViewModel.uiState.collect { uiState ->
+                    if (gameState == GameState.LEVEL_COMPLETED) return@collect
                     when (uiState) {
                         is LatestLevelEvent.Success -> {
                             if (!(uiState.oldLevel.levelInfo.levelId == 0 && uiState.currentLevel.levelInfo.levelId == 0)) {
@@ -315,6 +318,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
                     when {
                         it.first == it.second -> {
+                            gameState = GameState.LEVEL_COMPLETED
                             playCorrectSolutionAnimation()
                             correctSolutionActions()
                         }
@@ -336,6 +340,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     private fun correctSolutionActions() {
         gameViewModel.realSolutionAndGuess.removeObservers { viewLifecycleOwner.lifecycle }
         gameViewModel.updateCompletedLevel()
+        gameViewModel.unlockNextLevel()
+
         activity?.getSharedPreferences(getString(R.string.preferences), Context.MODE_PRIVATE)
             ?.let { sharedPref ->
                 with(sharedPref.edit()) {
@@ -450,9 +456,10 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 alphaAnim.repeatMode = ObjectAnimator.REVERSE
                 alphaAnim.start()
                 message.view.setOnClickListener {
+                    soundPool.playWhileSoundOn(requireActivity(), levelTransition, 2, audioManager = audioManager)
                     message.dismiss()
                     alphaAnim.cancel()
-                    gameViewModel.changeToNextLevel()
+                    //gameViewModel.changeToNextLevel()
                 }
             }
         })

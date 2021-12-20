@@ -72,6 +72,21 @@ interface LevelDao {
     @Update
     suspend fun updateLevelData(levelInfo: LevelData)
 
+    @Query("update level_info_table set progress = :progress where level_id = :current + 1")
+    suspend fun updateNextLevelProgress(current:Int, progress:LevelProgress)
+
+    @Query("select progress from level_info_table where level_id = :current + 1")
+    suspend fun getNextLevelProgress(current:Int):Int
+
+    @Transaction
+    suspend fun unlockNextLevel(current:Int) {
+        if (getNextLevelProgress(current) == 0)
+        {
+            updateNextLevelProgress(current, LevelProgress.IN_PROGRESS)
+        }
+        updateNextLevelTimestamp(current, current + 1)
+    }
+
     @Update
     suspend fun updateLettersProperties(level: List<LetterProperties>)
 

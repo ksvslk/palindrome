@@ -5,7 +5,6 @@ import android.app.Activity
 import android.media.AudioManager
 import android.media.SoundPool
 import android.view.animation.AccelerateInterpolator
-import androidx.core.content.ContextCompat
 import com.indest.hah.letter.Cell
 import com.indest.hah.letter.Letter
 import com.indest.hah.util.playWhileSoundOn

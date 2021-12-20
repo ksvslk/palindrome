@@ -64,6 +64,13 @@ class GameViewModel @Inject constructor(
         }
     }
 
+    fun unlockNextLevel()
+    {
+        viewModelScope.launch {
+            levelRepository.unlockNextLevel(_uiState.value.currentLevel.levelInfo.levelId)
+        }
+    }
+
     fun getLevelNumber():Int {
       return _uiState.value.currentLevel.levelInfo.levelId
     }
