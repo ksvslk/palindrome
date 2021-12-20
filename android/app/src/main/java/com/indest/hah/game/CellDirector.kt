@@ -122,6 +122,9 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
         top.state = LetterState.ANIMATION
         bottom.state = LetterState.ANIMATION
 
+        // Set letter locked in database
+        if (isRewarded) gf.gameViewModel.setLetterLocked(top.homeIndex)
+
         // Execute animation
         val durationModifier = if (isRewarded) REWARDED_ANIM_MUL else REWARDED_ANIM_MUL_DEFAULT
         top.state.executeAnimationBehaviour(top, distanceToMoveX, distanceToMoveY, durationModifier)

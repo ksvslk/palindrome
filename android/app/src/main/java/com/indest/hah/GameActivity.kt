@@ -72,7 +72,6 @@ class GameActivity : AppCompatActivity() {
 
     private fun signInSilently() {
         val signInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
-            .requestScopes(Games.SCOPE_GAMES_SNAPSHOTS)
             .build()
         val account = GoogleSignIn.getLastSignedInAccount(this)
         if (GoogleSignIn.hasPermissions(account, *signInOptions.scopeArray)) {
