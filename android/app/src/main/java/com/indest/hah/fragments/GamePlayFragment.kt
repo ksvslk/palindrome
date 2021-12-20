@@ -459,7 +459,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                     soundPool.playWhileSoundOn(requireActivity(), levelTransition, 2, audioManager = audioManager)
                     message.dismiss()
                     alphaAnim.cancel()
-                    //gameViewModel.changeToNextLevel()
+                    gameState = GameState.BUSY
+                    gameViewModel.changeToNextLevel()
                 }
             }
         })
