@@ -7,10 +7,18 @@
     <string name="preferences" translatable="false">prefs</string>
     <!-- Achievements -->
     <string name="achievement_greenhorn" translatable="false">CgkIj5WSoeMdEAIQAQ</string>
+    <string name="achievement_proficient" translatable="false">CgkIj5WSoeMdEAIQAg</string>
+    <string name="achievement_crackerjack" translatable="false">CgkIj5WSoeMdEAIQAw</string>
+    <string name="achievement_chief" translatable="false">CgkIj5WSoeMdEAIQBA</string>
+    <string name="achievement_authority" translatable="false">CgkIj5WSoeMdEAIQBQ</string>
     <string name="achievement_zero_mistakes" translatable="false">CgkIj5WSoeMdEAIQBg</string>
+    <string name="achievement_complete_level" translatable="false">CgkIj5WSoeMdEAIQBw</string>
+    <string name="achievement_wrong_palindrome" translatable="false">CgkIj5WSoeMdEAIQCA</string>
+    <string name="achievement_flawless_5" translatable="false">CgkIj5WSoeMdEAIQCg</string>
+    <string name="achievement_flawless_15" translatable="false">CgkIj5WSoeMdEAIQCw</string>
     <!-- Ads -->
-    <string name="admob_app_id">ca-app-pub-3940256099942544~3347511713</string> <!-- TODO: Fake id, change back -->
-    <string name="rewarded_ad_unit">ca-app-pub-3940256099942544/5224354917</string> <!-- TODO: Fake id, change back -->
+    <string name="admob_app_id" translatable="false">ca-app-pub-3940256099942544~3347511713</string> <!-- TODO: Fake id, change back -->
+    <string name="rewarded_ad_unit" translatable="false">ca-app-pub-3940256099942544/5224354917</string> <!-- TODO: Fake id, change back -->
     <!-- IAP -->
 
 </resources>

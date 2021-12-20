@@ -31,6 +31,7 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.games.Games
 import com.google.android.gms.games.GamesClient
 import com.google.android.material.badge.BadgeDrawable
@@ -429,14 +430,13 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 parentFragmentManager.fragments.forEach {
                     if (it is DialogFragment) it.dismiss()
                 }
-                if (gameViewModel.getLevelNumber() == 20) {
-                    val lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(requireActivity())
-                    if (lastSignedInAccount != null) {
-                        Games.getAchievementsClient(requireActivity(), lastSignedInAccount)
-                            .unlock(getString(R.string.achievement_greenhorn))
-                    }
 
+                val lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(requireActivity())
+                if (lastSignedInAccount != null)
+                {
+                    unlockAchievementForLevel(gameViewModel.getLevelNumber(), lastSignedInAccount)
                 }
+
                 val message = MessageSnackBar.make(
                     binding.gameplayFragment,
                     getString(R.string.tap_to_continue),
@@ -465,6 +465,38 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         })
         soundPool.playWhileSoundOn(requireActivity(), correctSound, 2, audioManager = audioManager)
         winningMessage.show()
+    }
+
+    private fun unlockAchievementForLevel(level:Int, lastSignedInAccount:GoogleSignInAccount)
+    {
+        when(level)
+        {
+            20 ->
+            {
+                Games.getAchievementsClient(requireActivity(), lastSignedInAccount)
+                    .unlock(getString(R.string.achievement_greenhorn))
+            }
+            40 ->
+            {
+                Games.getAchievementsClient(requireActivity(), lastSignedInAccount)
+                    .unlock(getString(R.string.achievement_proficient))
+            }
+            60 ->
+            {
+                Games.getAchievementsClient(requireActivity(), lastSignedInAccount)
+                    .unlock(getString(R.string.achievement_crackerjack))
+            }
+            80 ->
+            {
+                Games.getAchievementsClient(requireActivity(), lastSignedInAccount)
+                    .unlock(getString(R.string.achievement_chief))
+            }
+            94 ->
+            {
+                Games.getAchievementsClient(requireActivity(), lastSignedInAccount)
+                    .unlock(getString(R.string.achievement_authority))
+            }
+        }
     }
 
 
