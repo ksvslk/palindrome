@@ -182,18 +182,18 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         hintNotification = soundPool.load(requireContext(), R.raw.hint_notification, 1)
         levelTransition = soundPool.load(requireContext(), R.raw.level_transition, 1)
         noteSounds = arrayListOf(
-            soundPool.load(requireContext(), R.raw.fs2_edited, 1),
-            soundPool.load(requireContext(), R.raw.fs1, 1),
-            soundPool.load(requireContext(), R.raw.fs3, 1),
-            soundPool.load(requireContext(), R.raw.fs5, 1),
-            soundPool.load(requireContext(), R.raw.fs6, 1),
-            soundPool.load(requireContext(), R.raw.fs4, 1),
-            soundPool.load(requireContext(), R.raw.fs7, 1),
-            soundPool.load(requireContext(), R.raw.fs9, 1),
-            soundPool.load(requireContext(), R.raw.fs8, 1),
-            soundPool.load(requireContext(), R.raw.fs11, 1),
-            soundPool.load(requireContext(), R.raw.fs11, 1),
-            soundPool.load(requireContext(), R.raw.last_level2, 1),
+            soundPool.load(requireContext(), R.raw.c3_outer, 1),
+            soundPool.load(requireContext(), R.raw.c4_outer, 1),
+            soundPool.load(requireContext(), R.raw.g3_outer, 1),
+            soundPool.load(requireContext(), R.raw.c4_outer, 1),
+            soundPool.load(requireContext(), R.raw.c5_outer, 1),
+            soundPool.load(requireContext(), R.raw.g4_outer, 1),
+            soundPool.load(requireContext(), R.raw.c5_outer, 1),
+            soundPool.load(requireContext(), R.raw.c6_outer, 1),
+            soundPool.load(requireContext(), R.raw.g5_outer, 1),
+            soundPool.load(requireContext(), R.raw.c3_outer, 1),
+            soundPool.load(requireContext(), R.raw.c5_outer, 1),
+            soundPool.load(requireContext(), R.raw.c6_outer, 1),
         )
 
         lifecycleScope.launch {
@@ -460,7 +460,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                     message.dismiss()
                     alphaAnim.cancel()
                     gameState = GameState.BUSY
-                    gameViewModel.changeToNextLevel()
+                    message.view.setOnClickListener(null)
+                    clearPreviousLevel()
                 }
             }
         })

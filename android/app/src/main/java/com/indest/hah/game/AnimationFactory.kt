@@ -20,7 +20,8 @@ object AnimationFactory {
         index: Int,
         audioManager: AudioManager,
         soundPool: SoundPool,
-        lockedColor:Int
+        lockedColor:Int,
+        soundEffect:Boolean = true
     ): ObjectAnimator {
         val cColor = if (letter.isLocked) lockedColor else currentColor
         return ObjectAnimator.ofArgb(
@@ -31,24 +32,23 @@ object AnimationFactory {
         ).apply {
             setEvaluator(ArgbEvaluator())
             duration = aDuration
-            if (audioManager.ringerMode == AudioManager.RINGER_MODE_NORMAL) {
-                this.addListener(object : AnimatorListenerAdapter() {
-                    override fun onAnimationStart(animation: Animator?) {
-                        soundPool.playWhileSoundOn(activity, index, 1, audioManager = audioManager)
-                    }
-                })
+            if (soundEffect)
+            {
+                if (audioManager.ringerMode == AudioManager.RINGER_MODE_NORMAL) {
+                    this.addListener(object : AnimatorListenerAdapter() {
+                        override fun onAnimationStart(animation: Animator?) {
+                            soundPool.playWhileSoundOn(activity, index, 1, audioManager = audioManager)
+                        }
+                    })
+                }
             }
         }
     }
 
     private fun getTextColorAnimation(
-        activity: Activity,
         letter: Letter,
         successTextColor: Int,
         aDuration: Long,
-        index: Int,
-        audioManager: AudioManager,
-        soundPool: SoundPool
     ): ObjectAnimator {
         return ObjectAnimator.ofInt(
             letter,
@@ -59,13 +59,6 @@ object AnimationFactory {
             setEvaluator(ArgbEvaluator())
             interpolator = AccelerateInterpolator()
             duration = aDuration
-            if (audioManager.ringerMode == AudioManager.RINGER_MODE_NORMAL) {
-                this.addListener(object : AnimatorListenerAdapter() {
-                    override fun onAnimationStart(animation: Animator?) {
-                        soundPool.playWhileSoundOn(activity, index, 1, audioManager = audioManager)
-                    }
-                })
-            }
         }
     }
 
@@ -96,22 +89,19 @@ object AnimationFactory {
 
         val odd = letters.size % 2 != 0
         val count = letters.size / 2
-        val animationDuration = (
-                kotlin.math.log(50000.0, letters.size.toDouble()) * 100).toLong()
+        //val animationDuration = (kotlin.math.log(50000.0, letters.size.toDouble()) * 100).toLong()
+        val animationDuration = 900L
 
         for (i in 0 until count) {
             val animations = animatorSet.childAnimations
             val letterAhead = letters[i]
             val letterBehind = letters[letters.size - 1 - i]
+            val sound = if (i == count - 1) noteSounds[11] else noteSounds[i]
 
             val letterAheadTextColorAnimation = getTextColorAnimation(
-                activity,
                 letterAhead,
                 successTextColor,
                 animationDuration,
-                noteSounds[i],
-                audioManager,
-                soundPool
             )
             val letterAheadBoxColorAnimation = getCellColorAnimation(
                 activity,
@@ -119,19 +109,16 @@ object AnimationFactory {
                 currentBoxColor,
                 boxSuccessColor,
                 animationDuration,
-                noteSounds[i],
+                sound,
                 audioManager,
                 soundPool,
-                lockedColor
+                lockedColor,
+                soundEffect = true
             )
             val letterBehindTextColorAnimation = getTextColorAnimation(
-                activity,
                 letterBehind,
                 successTextColor,
                 animationDuration,
-                noteSounds[i],
-                audioManager,
-                soundPool
             )
             val letterBehindBoxColorAnimation = getCellColorAnimation(
                 activity,
@@ -139,10 +126,11 @@ object AnimationFactory {
                 currentBoxColor,
                 boxSuccessColor,
                 animationDuration,
-                noteSounds[i],
+                sound,
                 audioManager,
                 soundPool,
-                lockedColor
+                lockedColor,
+                soundEffect = false
             )
 
             if (animations.size > 0) {
@@ -166,13 +154,9 @@ object AnimationFactory {
             val animations = animatorSet.childAnimations
             val letter = letters[count]
             val letterTextColorAnimation = getTextColorAnimation(
-                activity,
                 letter,
                 successTextColor,
                 animationDuration,
-                noteSounds[count],
-                audioManager,
-                soundPool
             )
             val letterBoxColorAnimation = getCellColorAnimation(
                 activity,
@@ -183,7 +167,8 @@ object AnimationFactory {
                 noteSounds[count],
                 audioManager,
                 soundPool,
-                lockedColor
+                lockedColor,
+                soundEffect = true
             )
 
             if (animations.size > 0) {
@@ -200,13 +185,9 @@ object AnimationFactory {
             val animations = animatorSet.childAnimations
 
             val letterTextAnimation = getTextColorAnimation(
-                activity,
                 letter,
                 successTextColor,
                 animationDuration,
-                noteSounds[count + 1],
-                audioManager,
-                soundPool
             )
             val letterAnimation = getCellColorAnimation(
                 activity,
@@ -217,7 +198,8 @@ object AnimationFactory {
                 noteSounds[count + 1],
                 audioManager,
                 soundPool,
-                lockedColor
+                lockedColor,
+                soundEffect = false
             )
             animatorSet
                 .play(letterTextAnimation)

@@ -55,15 +55,6 @@ class GameViewModel @Inject constructor(
         }
     }
 
-    fun changeToNextLevel() {
-        viewModelScope.launch {
-            levelRepository.updateNextLevelTimestamp(
-                _uiState.value.currentLevel.levelInfo.levelId,
-                _uiState.value.currentLevel.levelInfo.levelId + 1
-            )
-        }
-    }
-
     fun unlockNextLevel()
     {
         viewModelScope.launch {
