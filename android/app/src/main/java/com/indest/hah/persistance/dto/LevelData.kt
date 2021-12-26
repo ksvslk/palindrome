@@ -22,6 +22,8 @@ data class LevelData(
     val progress: LevelProgress,
     @ColumnInfo(name = "score")
     val score: Int,
+    @ColumnInfo(name = "best_score")
+    val best_score: Int,
     @ColumnInfo(name = "time_modified")
     val timeModified: Long
 )

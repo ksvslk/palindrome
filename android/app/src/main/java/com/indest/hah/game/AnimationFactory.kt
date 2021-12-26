@@ -90,7 +90,7 @@ object AnimationFactory {
         val odd = letters.size % 2 != 0
         val count = letters.size / 2
         //val animationDuration = (kotlin.math.log(50000.0, letters.size.toDouble()) * 100).toLong()
-        val animationDuration = 900L
+        val animationDuration = 400L
 
         for (i in 0 until count) {
             val animations = animatorSet.childAnimations

@@ -19,6 +19,7 @@ import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
+import com.google.android.gms.games.Games
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.databinding.HintsFragmentBinding
@@ -30,8 +31,6 @@ import com.indest.hah.util.C.HINT_TYPE
 import com.indest.hah.util.C.LETTER
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.auth.api.signin.GoogleSignIn
 
 class HintsFragment : BottomSheetDialogFragment() {
     private val TAG = "HintsFragment"
@@ -102,11 +101,6 @@ class HintsFragment : BottomSheetDialogFragment() {
         }
 
         return binding.root
-    }
-
-    override fun onResume() {
-        super.onResume()
-
     }
 
     private fun showRewardedVideo(rewardedAdUnit: String, rewardedType: RewardedAdType) {
@@ -180,29 +174,6 @@ class HintsFragment : BottomSheetDialogFragment() {
                 }
             )
         }
-    }
-
-    private fun signOut() {
-        val signInClient = GoogleSignIn.getClient(
-            requireActivity(),
-            GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN
-        )
-        signInClient.signOut().addOnCompleteListener {
-            if (it.isSuccessful)
-            {
-                // TODO: Change button to "SIGN IN"
-            }
-        }
-    }
-
-    private fun startSignInIntent() {
-        val signInClient = GoogleSignIn.getClient(
-            requireActivity(),
-            GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN
-        )
-        val intent = signInClient.signInIntent
-        //startActivityForResult(requireActivity(), intent)
-
     }
 
     enum class RewardedAdType {

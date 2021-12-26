@@ -30,10 +30,20 @@ class LevelRepository @Inject constructor(
 
     suspend fun resetLevelLettersInfo(levelNr: Int) = levelDao.deleteLetterInfo(levelNr)
     suspend fun updateLevel(level: LevelData) = levelDao.updateLevelData(level)
+    suspend fun updateLevelAndBestScore(level: LevelData, score:Int) = levelDao.updateLevelDataAndBestScore(level, score)
     suspend fun unlockNextLevel(current: Int) = levelDao.unlockNextLevel(current)
+    suspend fun updateBestScore(score: Int, level: Int) = levelDao.updateBestScore(score, level)
+    suspend fun getTotalScore() = levelDao.getTotalScore()
+
     fun getLastLevel() = levelDao.getLastLevel()
 
-    suspend fun insertLetterInfo(level: Int, homeIndex: Int, friendIndex: Int, letter: Char, locked: Boolean) {
+    suspend fun insertLetterInfo(
+        level: Int,
+        homeIndex: Int,
+        friendIndex: Int,
+        letter: Char,
+        locked: Boolean
+    ) {
         levelDao.insertLetterData(level, homeIndex, friendIndex, letter, locked)
     }
 
@@ -57,6 +67,7 @@ class LevelRepository @Inject constructor(
         levelDao.updateCategoryRewarded(value, level)
     }
 
+
     suspend fun currentSolution(levelNr: Int?): String {
         if (levelNr != null) {
             return levelDao.getCurrentSolution(levelNr).joinToString("")
@@ -64,9 +75,11 @@ class LevelRepository @Inject constructor(
         return ""
     }
 
-    suspend fun isLettersInitialized(nr:Int) = levelDao.areLettersInitialized(nr) > 0
-    suspend fun updateNextLevelTimestamp(current:Int, next:Int) = levelDao.updateNextLevelTimestamp(current, next)
-    suspend fun updateScore(newScore:Int, level:Int) = levelDao.updateScore(newScore, level)
+    suspend fun isLettersInitialized(nr: Int) = levelDao.areLettersInitialized(nr) > 0
+    suspend fun updateNextLevelTimestamp(current: Int, next: Int) =
+        levelDao.updateNextLevelTimestamp(current, next)
+
+    suspend fun updateScore(newScore: Int, level: Int) = levelDao.updateScore(newScore, level)
 
     // Cloud
     // Upload to cloud onStop()

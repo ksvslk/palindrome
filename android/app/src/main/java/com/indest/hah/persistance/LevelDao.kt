@@ -72,6 +72,12 @@ interface LevelDao {
     @Update
     suspend fun updateLevelData(levelInfo: LevelData)
 
+    @Update
+    suspend fun updateLevelDataAndBestScore(levelInfo: LevelData, score:Int) {
+        updateLevelData(levelInfo)
+        updateBestScore(score, levelInfo.levelId)
+    }
+
     @Query("update level_info_table set progress = :progress where level_id = :current + 1")
     suspend fun updateNextLevelProgress(current:Int, progress:LevelProgress)
 
@@ -86,6 +92,12 @@ interface LevelDao {
         }
         updateNextLevelTimestamp(current, current + 1)
     }
+
+    @Query("update level_info_table set best_score = :score where best_score < :score and level_id = :level")
+    suspend fun updateBestScore(score:Int, level:Int)
+
+    @Query("select sum(best_score) from level_info_table")
+    suspend fun getTotalScore():Int
 
     @Update
     suspend fun updateLettersProperties(level: List<LetterProperties>)

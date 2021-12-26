@@ -6,6 +6,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.ads.rewarded.RewardedAd
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.games.Games
 import com.indest.hah.letter.Cell
 import com.indest.hah.letter.Letter
 import com.indest.hah.persistance.LevelProgress
@@ -32,6 +34,7 @@ class GameViewModel @Inject constructor(
     val realSolutionAndGuess = MutableLiveData<Triple<String?, String?, Int?>>()
     private val _uiState = MutableStateFlow(LatestLevelEvent.Success(Level(), Level()))
     val uiState: StateFlow<LatestLevelEvent> = _uiState
+    val totalScore = MutableLiveData<Int>()
 
     var rewardedAd: RewardedAd? = null
 
@@ -55,15 +58,14 @@ class GameViewModel @Inject constructor(
         }
     }
 
-    fun unlockNextLevel()
-    {
+    fun unlockNextLevel() {
         viewModelScope.launch {
             levelRepository.unlockNextLevel(_uiState.value.currentLevel.levelInfo.levelId)
         }
     }
 
-    fun getLevelNumber():Int {
-      return _uiState.value.currentLevel.levelInfo.levelId
+    fun getLevelNumber(): Int {
+        return _uiState.value.currentLevel.levelInfo.levelId
     }
 
     fun increaseMistakes() {
@@ -87,14 +89,17 @@ class GameViewModel @Inject constructor(
         }
     }
 
-    private suspend fun updateLevelProgress(progress: LevelProgress)
-    {
+    private suspend fun updateLevelProgress(progress: LevelProgress) {
         val updatedLevel = _uiState.value.currentLevel.levelInfo.copy(
             progress = progress,
             puzzle = _uiState.value.currentLevel.levelInfo.puzzle,
             score = _uiState.value.currentLevel.levelInfo.score
         )
-        levelRepository.updateLevel(updatedLevel)
+        levelRepository.updateLevelAndBestScore(
+            updatedLevel,
+            _uiState.value.currentLevel.levelInfo.score
+        )
+        totalScore.value = levelRepository.getTotalScore()
     }
 
     fun getCurrentAndMaxScore(): Pair<Int, Int> {
@@ -170,11 +175,12 @@ class GameViewModel @Inject constructor(
                         locked = false,
                     )
                 }
-                levelRepository.updateScore(
-                    _uiState.value.currentLevel.levelInfo.levelId * 100,
-                    _uiState.value.currentLevel.levelInfo.levelId
+                val updatedLevel = _uiState.value.currentLevel.levelInfo.copy(
+                    progress = LevelProgress.IN_PROGRESS,
+                    puzzle = _uiState.value.currentLevel.levelInfo.puzzle,
+                    score = _uiState.value.currentLevel.levelInfo.levelId * 100
                 )
-                updateLevelProgress(LevelProgress.IN_PROGRESS)
+                levelRepository.updateLevel(updatedLevel)
                 levels.value = levelRepository.getAllLevels()
             }
         }

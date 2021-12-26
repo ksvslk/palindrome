@@ -68,6 +68,7 @@ abstract class LevelDatabase : RoomDatabase() {
                                     contentValues.put("category_rewarded", false)
                                     contentValues.put("progress", progress.ordinal)
                                     contentValues.put("score", score)
+                                    contentValues.put("best_score", 0)
                                     contentValues.put("time_modified", 0)
 
                                     db.insert(

@@ -14,6 +14,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.games.Games
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.indest.hah.R
 import com.indest.hah.databinding.GoogleGamesFragmentBinding
 
 class GoogleGamesFragment : BottomSheetDialogFragment() {
@@ -36,8 +37,7 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
         if (lastSignedInAccount == null) {
             binding.achievementsButton.visibility = View.GONE
             binding.leaderboardsButton.visibility = View.GONE
-        }
-        else {
+        } else {
             binding.signInFromSettings.visibility = View.GONE
             binding.achievementsButton.setOnClickListener {
                 showAchievements()
@@ -62,11 +62,12 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
             )
         else null
 
-        leaderboardsClient?.allLeaderboardsIntent?.continueWith {
-            if (it.isSuccessful) {
-                startActivity.launch(it.result)
+        leaderboardsClient?.getLeaderboardIntent(getString(R.string.leaderboard_crme_de_la_crme))
+            ?.continueWith {
+                if (it.isSuccessful) {
+                    startActivity.launch(it.result)
+                }
             }
-        }
     }
 
     private fun showAchievements() {

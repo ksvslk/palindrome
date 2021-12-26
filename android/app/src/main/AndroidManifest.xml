@@ -3,9 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.indest.hah"
     xmlns:dist="http://schemas.android.com/apk/distribution"
-    android:targetSandboxVersion="2">
-
-    <dist:module dist:instant="true" />
+    >
+    <!--android:targetSandboxVersion="2"-->
+<!--    <dist:module dist:instant="true" />-->
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -46,7 +46,7 @@
             android:value="@string/admob_app_id" />
         <meta-data
             android:name="com.google.android.gms.games.APP_ID"
-            android:value="@string/games_app_id" />
+            android:value="@string/app_id" />
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version"/>

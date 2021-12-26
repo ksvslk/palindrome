@@ -38,7 +38,7 @@ fun SoundPool.playWhileSoundOn(
         if (audioManager.ringerMode != AudioManager.RINGER_MODE_NORMAL ||
             !it.getBoolean(activity.getString(R.string.sound_on_pref), true)
         ) return
-        play(sound, 1.0f, 1.0f, priority, 0, 1.0f)
+        play(sound, 1f, 1f, priority, 0, 1.0f)
     }
 
 }

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Google Play game services IDs. Save this file as res/values/games-ids.xml in your project.-->
+<resources>
+    <!--app_id-->
+    <string name="app_id" translatable="false">1023077026447</string>
+    <!--package_name-->
+    <string name="package_name" translatable="false">com.indest.hah</string>
+    <!--achievement Greenhorn-->
+    <string name="achievement_greenhorn" translatable="false">CgkIj5WSoeMdEAIQAQ</string>
+    <!--achievement Proficient-->
+    <string name="achievement_proficient" translatable="false">CgkIj5WSoeMdEAIQAg</string>
+    <!--achievement Crackerjack-->
+    <string name="achievement_crackerjack" translatable="false">CgkIj5WSoeMdEAIQAw</string>
+    <!--achievement Chief-->
+    <string name="achievement_chief" translatable="false">CgkIj5WSoeMdEAIQBA</string>
+    <!--achievement Authority-->
+    <string name="achievement_authority" translatable="false">CgkIj5WSoeMdEAIQBQ</string>
+    <!--achievement Zero Mistakes-->
+    <string name="achievement_zero_mistakes" translatable="false">CgkIj5WSoeMdEAIQBg</string>
+    <!--achievement Complete Level-->
+    <string name="achievement_complete_level" translatable="false">CgkIj5WSoeMdEAIQBw</string>
+    <!--achievement Wrong Palindrome-->
+    <string name="achievement_wrong_palindrome" translatable="false">CgkIj5WSoeMdEAIQCA</string>
+    <!--achievement Flawless 5-->
+    <string name="achievement_flawless_5" translatable="false">CgkIj5WSoeMdEAIQCg</string>
+    <!--achievement Flawless 15-->
+    <string name="achievement_flawless_15" translatable="false">CgkIj5WSoeMdEAIQCw</string>
+    <!--leaderboard Crème de la Crème-->
+    <string name="leaderboard_crme_de_la_crme" translatable="false">CgkIj5WSoeMdEAIQCQ</string>
+</resources>

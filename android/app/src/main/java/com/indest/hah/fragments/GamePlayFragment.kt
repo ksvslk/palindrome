@@ -189,8 +189,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             soundPool.load(requireContext(), R.raw.c5_outer, 1),
             soundPool.load(requireContext(), R.raw.g4_outer, 1),
             soundPool.load(requireContext(), R.raw.c5_outer, 1),
-            soundPool.load(requireContext(), R.raw.c6_outer, 1),
             soundPool.load(requireContext(), R.raw.g5_outer, 1),
+            soundPool.load(requireContext(), R.raw.c5_outer, 1),
             soundPool.load(requireContext(), R.raw.c3_outer, 1),
             soundPool.load(requireContext(), R.raw.c5_outer, 1),
             soundPool.load(requireContext(), R.raw.c6_outer, 1),
@@ -319,8 +319,12 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                     when {
                         it.first == it.second -> {
                             gameState = GameState.LEVEL_COMPLETED
-                            playCorrectSolutionAnimation()
-                            correctSolutionActions()
+                            val currentAndMaxScore = gameViewModel.getCurrentAndMaxScore()
+                            playCorrectSolutionAnimation(currentAndMaxScore)
+                            correctSolutionActions(
+                                it.first?.count(),
+                                currentAndMaxScore.first == currentAndMaxScore.second
+                            )
                         }
                         playerSolution?.reversed() == playerSolution -> {
                             playWrongSolutionAnimation()
@@ -337,8 +341,23 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             })
     }
 
-    private fun correctSolutionActions() {
+    private fun correctSolutionActions(puzzleLength:Int?, didNoMistakes:Boolean) {
         gameViewModel.realSolutionAndGuess.removeObservers { viewLifecycleOwner.lifecycle }
+        lifecycleScope.launch {
+            gameViewModel.totalScore.observe(viewLifecycleOwner)
+            {
+                if (it != null) {
+                    val account = GoogleSignIn.getLastSignedInAccount(requireActivity())
+                    if (account != null) {
+                        Games.getLeaderboardsClient(requireActivity(), account)
+                            .submitScore(getString(R.string.leaderboard_crme_de_la_crme), it.toLong())
+                        Log.i(TAG, "New score: $it submitted to leaderboards.")
+                    }
+                }
+                gameViewModel.totalScore.removeObserver { viewLifecycleOwner.lifecycle }
+            }
+        }
+
         gameViewModel.updateCompletedLevel()
         gameViewModel.unlockNextLevel()
 
@@ -350,6 +369,15 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 }
             }
         hintBadge.isVisible = false
+
+        GoogleSignIn.getLastSignedInAccount(requireActivity())?.let {
+            if (puzzleLength?.compareTo(4) == 1 && didNoMistakes)
+            {
+                Games.getAchievementsClient(requireActivity(), it)
+                    .unlock(getString(R.string.achievement_zero_mistakes))
+            }
+            unlockAchievementForLevel(gameViewModel.getLevelNumber(), it)
+        }
     }
 
     private fun wrongPalindromeActions(info: Triple<String?, String?, Int?>) {
@@ -363,6 +391,10 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             resources.getDimensionPixelSize(R.dimen.other_message_size).toFloat()
         )
         message.show()
+        GoogleSignIn.getLastSignedInAccount(requireActivity())?.let {
+            Games.getAchievementsClient(requireActivity(), it)
+                .unlock(getString(R.string.achievement_wrong_palindrome))
+        }
     }
 
     private fun wrongSolutionActions(info: Triple<String?, String?, Int?>) {
@@ -378,7 +410,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         message.show()
     }
 
-    private fun playCorrectSolutionAnimation() {
+    private fun playCorrectSolutionAnimation(currentAndMaxScore: Pair<Int, Int>) {
         val successTextColor =
             ResourcesCompat.getColor(resources, R.color.successTextColor, requireContext().theme)
         val currentBoxColor =
@@ -403,21 +435,13 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         animatorSet.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator?) {
                 super.onAnimationEnd(animation)
-                if (gameViewModel.isLastLevel()) {
-                    soundPool.playWhileSoundOn(
-                        requireActivity(),
-                        noteSounds[11],
-                        2,
-                        audioManager = audioManager
-                    )
-                }
-                showWinningMessages()
+                showWinningMessages(currentAndMaxScore)
             }
         })
         animatorSet.start()
     }
 
-    private fun showWinningMessages() {
+    private fun showWinningMessages(currentAndMaxScore: Pair<Int, Int>) {
         val winningMessage = MessageSnackBar.make(
             binding.gameplayFragment,
             getString(R.string.correct_solution),
@@ -436,13 +460,6 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 parentFragmentManager.fragments.forEach {
                     if (it is DialogFragment) it.dismiss()
                 }
-
-                val lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(requireActivity())
-                if (lastSignedInAccount != null)
-                {
-                    unlockAchievementForLevel(gameViewModel.getLevelNumber(), lastSignedInAccount)
-                }
-
                 val message = MessageSnackBar.make(
                     binding.gameplayFragment,
                     getString(R.string.tap_to_continue),
@@ -456,11 +473,17 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 alphaAnim.repeatMode = ObjectAnimator.REVERSE
                 alphaAnim.start()
                 message.view.setOnClickListener {
-                    soundPool.playWhileSoundOn(requireActivity(), levelTransition, 2, audioManager = audioManager)
+                    soundPool.playWhileSoundOn(
+                        requireActivity(),
+                        levelTransition,
+                        2,
+                        audioManager = audioManager
+                    )
                     message.dismiss()
                     alphaAnim.cancel()
                     gameState = GameState.BUSY
                     message.view.setOnClickListener(null)
+                    gameViewModel.totalScore.removeObserver { viewLifecycleOwner.lifecycle }
                     clearPreviousLevel()
                 }
             }
@@ -469,39 +492,32 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             override fun onDismissed(transientBottomBar: MessageSnackBar?, event: Int) {
                 super.onDismissed(transientBottomBar, event)
                 scoreMessage.show()
-                startCountAnimation(scoreMessage.view.findViewById(R.id.message))
+                startCountAnimation(scoreMessage.view.findViewById(R.id.message), currentAndMaxScore)
             }
         })
         soundPool.playWhileSoundOn(requireActivity(), correctSound, 2, audioManager = audioManager)
         winningMessage.show()
     }
 
-    private fun unlockAchievementForLevel(level:Int, lastSignedInAccount:GoogleSignInAccount)
-    {
-        when(level)
-        {
-            20 ->
-            {
+    private fun unlockAchievementForLevel(level: Int, lastSignedInAccount: GoogleSignInAccount) {
+        when (level) {
+            20 -> {
                 Games.getAchievementsClient(requireActivity(), lastSignedInAccount)
                     .unlock(getString(R.string.achievement_greenhorn))
             }
-            40 ->
-            {
+            40 -> {
                 Games.getAchievementsClient(requireActivity(), lastSignedInAccount)
                     .unlock(getString(R.string.achievement_proficient))
             }
-            60 ->
-            {
+            60 -> {
                 Games.getAchievementsClient(requireActivity(), lastSignedInAccount)
                     .unlock(getString(R.string.achievement_crackerjack))
             }
-            80 ->
-            {
+            80 -> {
                 Games.getAchievementsClient(requireActivity(), lastSignedInAccount)
                     .unlock(getString(R.string.achievement_chief))
             }
-            94 ->
-            {
+            94 -> {
                 Games.getAchievementsClient(requireActivity(), lastSignedInAccount)
                     .unlock(getString(R.string.achievement_authority))
             }
@@ -509,9 +525,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     }
 
 
-    private fun startCountAnimation(scoreView: TextView) {
+    private fun startCountAnimation(scoreView: TextView, currentAndMaxScore:Pair<Int,Int>) {
         val currentValue = 0
-        val currentAndMaxScore = gameViewModel.getCurrentAndMaxScore()
         val animator =
             ValueAnimator.ofInt(currentValue, currentValue.plus(currentAndMaxScore.first))
         val paddingLength = currentAndMaxScore.second.toString().length
