@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/score_fragment"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingVertical="@dimen/default_large_margin"
+    app:divider="@drawable/divider"
+    app:dividerPadding="@dimen/simple_dialog_left_margin"
+    app:showDividers="middle">
+
+    <ViewFlipper
+        android:id="@+id/score_flipper"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:inAnimation="@android:anim/slide_in_left"
+        android:outAnimation="@android:anim/slide_out_right">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/scores_dialog_title_1"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/simple_dialog_header_height"
+            android:layout_marginHorizontal="@dimen/simple_dialog_left_margin"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="@dimen/default_gap"
+                app:srcCompat="@drawable/ic_baseline_stars_24"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="@string/scores"
+                android:textAppearance="@style/TextAppearance.OC.Headline5" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/scores_dialog_title_2"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/simple_dialog_header_height"
+            android:layout_marginHorizontal="@dimen/simple_dialog_left_margin"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="@dimen/default_gap"
+                app:srcCompat="@drawable/ic_baseline_stars_24"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/player_score_improve_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="@string/scores"
+                android:textAppearance="@style/TextAppearance.OC.Headline6" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </ViewFlipper>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

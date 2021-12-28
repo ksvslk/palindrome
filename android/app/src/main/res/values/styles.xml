@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="TextAppearance.OC.Headline6" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="fontFamily">@font/yantramanav_bold</item>
+        <item name="android:textColor">@color/colorOnPrimary</item>
+    </style>
     <style name="TextAppearance.OC.Headline5" parent="TextAppearance.MaterialComponents.Headline5">
+        <item name="fontFamily">@font/yantramanav_bold</item>
+        <item name="android:textColor">@color/colorOnPrimary</item>
+    </style>
+    <style name="TextAppearance.OC.Headline4" parent="TextAppearance.MaterialComponents.Headline4">
+        <item name="fontFamily">@font/yantramanav_bold</item>
+        <item name="android:textColor">@color/colorOnPrimary</item>
+    </style>
+    <style name="TextAppearance.OC.Headline3" parent="TextAppearance.MaterialComponents.Headline3">
         <item name="fontFamily">@font/yantramanav_bold</item>
         <item name="android:textColor">@color/colorOnPrimary</item>
     </style>
@@ -15,5 +27,8 @@
     <style name="TextAppearance.OC.Caption" parent="TextAppearance.MaterialComponents.Caption">
         <item name="fontFamily">@font/yantramanav_medium</item>
         <item name="android:textColor">@color/colorSecondaryVariant</item>
+    </style>
+    <style name="ScoreBackground">
+        <item name="background">@color/colorSecondary</item>
     </style>
 </resources>

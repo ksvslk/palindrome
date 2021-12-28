@@ -25,8 +25,6 @@ import com.indest.hah.databinding.SettingsFragmentBinding
 class SettingsFragment : BottomSheetDialogFragment() {
     private val TAG = "SettingsFragment"
     private lateinit var binding: SettingsFragmentBinding
-    private val startActivity =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
 
     override fun onCreateView(
         inflater: LayoutInflater,

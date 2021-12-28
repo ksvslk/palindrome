@@ -16,12 +16,15 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.animation.Animation
 import android.widget.TextView
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
 import androidx.core.view.children
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.*
+import androidx.gridlayout.widget.GridLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -34,6 +37,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.games.Games
 import com.google.android.gms.games.GamesClient
+import com.google.android.gms.games.leaderboard.LeaderboardVariant.*
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.BaseTransientBottomBar
@@ -370,13 +374,14 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             }
         hintBadge.isVisible = false
 
-        GoogleSignIn.getLastSignedInAccount(requireActivity())?.let {
+        GoogleSignIn.getLastSignedInAccount(requireActivity())?.let { googleSignInAccount ->
+
             if (puzzleLength?.compareTo(4) == 1 && didNoMistakes)
             {
-                Games.getAchievementsClient(requireActivity(), it)
+                Games.getAchievementsClient(requireActivity(), googleSignInAccount)
                     .unlock(getString(R.string.achievement_zero_mistakes))
             }
-            unlockAchievementForLevel(gameViewModel.getLevelNumber(), it)
+            unlockAchievementForLevel(gameViewModel.getLevelNumber(), googleSignInAccount)
         }
     }
 
@@ -472,6 +477,13 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 alphaAnim.repeatCount = ObjectAnimator.INFINITE
                 alphaAnim.repeatMode = ObjectAnimator.REVERSE
                 alphaAnim.start()
+                if (gameViewModel.getLevelNumber() % 5 == 0)
+                {
+                    parentFragmentManager.commit {
+                        addToBackStack(ScoresFragment().tag)
+                        add(ScoresFragment(), ScoresFragment().tag)
+                    }
+                }
                 message.view.setOnClickListener {
                     soundPool.playWhileSoundOn(
                         requireActivity(),

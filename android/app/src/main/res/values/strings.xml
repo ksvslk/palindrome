@@ -10,6 +10,7 @@
     <string name="score">Score:</string>
     <string name="level">Level:</string>
     <string name="hints">Hints</string>
+    <string name="scores">Scores</string>
     <string name="tutorial">Tutorial</string>
     <string name="level_select">Level Select</string>
     <string name="sign_in">Sign in with Google</string>
