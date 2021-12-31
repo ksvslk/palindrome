@@ -98,6 +98,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate")
         super.onCreate(savedInstanceState)
+        gameViewModel.realSolutionAndGuess.removeObservers { viewLifecycleOwner.lifecycle }
+        gameViewModel.totalScore.removeObserver { viewLifecycleOwner.lifecycle }
         cellDirector = CellDirector(this)
         audioManager = requireContext().getSystemService(Context.AUDIO_SERVICE) as AudioManager
         soundPool = SoundPool.Builder().build()
@@ -120,9 +122,13 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 soundPool.load(requireContext(), R.raw.c6_outer, 1),
         )
 
-        loadRewardedAd()
-        handleGivingRewards()
-        handleLoadingLevel()
+
+            loadRewardedAd()
+            handleGivingRewards()
+            handleLoadingLevel()
+
+
+
     }
 
     // CLEAN
@@ -156,13 +162,14 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         findNavController().removeOnDestinationChangedListener { _, _, _ -> }
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
+   override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         if (gameState == GameState.LEVEL_COMPLETED) {
             outState.putString("state", GameState.LEVEL_COMPLETED.name)
         }
     }
 
+    /*
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
         if (savedInstanceState != null) {
@@ -175,6 +182,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             }
         }
     }
+
+     */
 
     private fun handleLoadingLevel() {
         lifecycleScope.launch {
@@ -206,6 +215,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         }
     }
 
+    // CAN BE CLEANED
     private fun handleGivingRewards() {
         setFragmentResultListener(HINT_REQUEST_KEY) { _, bundle ->
             run {
@@ -338,7 +348,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         }
     }
 
-    // CLEAN - ACHIEVEMENT METHOD CALL CAN BE ADDED
+    // CLEAN
     private fun handleGameSolutions() {
         gameViewModel.realSolutionAndGuess
                 .observe(viewLifecycleOwner, {
@@ -393,9 +403,6 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 gameViewModel.totalScore.removeObserver { viewLifecycleOwner.lifecycle }
             }
         }
-
-        gameViewModel.updateCompletedLevel()
-        gameViewModel.unlockNextLevel()
 
         activity?.getSharedPreferences(getString(R.string.preferences), Context.MODE_PRIVATE)
                 ?.let { sharedPref ->
@@ -526,6 +533,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                     message.dismiss()
                     tapToContinueAnimation.cancel()
                     message.view.setOnClickListener(null)
+                    gameViewModel.updateCompletedLevel()
+                    gameViewModel.unlockNextLevel()
                     continueToNextLevelActions()
                 }
             }
