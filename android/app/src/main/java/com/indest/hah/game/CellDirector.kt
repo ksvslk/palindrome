@@ -1,10 +1,13 @@
 package com.indest.hah.game
 
 import android.util.Log
+import androidx.core.content.res.ResourcesCompat
+import com.indest.hah.R
 import com.indest.hah.fragments.GamePlayFragment
 import com.indest.hah.letter.*
 import com.indest.hah.letter.effects.ColorSelector
 import com.indest.hah.letter.effects.SoundSelector
+import com.indest.hah.persistance.LevelProgress
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.util.C.MIDDLE_LAYER
 import com.indest.hah.util.C.NEUTRAL_LAYER
@@ -253,9 +256,17 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
                         val colors = letter.effects.getColors(ColorSelector.ACTION_DOWN_FRIEND)
                         if (letterProperties.locked) {
                             letter.setBackgroundColor(letter.effects.getLockedColor())
+                        } else if (info.levelInfo.progress == LevelProgress.INTERMEDIATE) {
+                            val successBoxColor = ResourcesCompat.getColor(
+                                gf.requireContext().resources,
+                                R.color.successBoxColor,
+                                gf.requireContext().theme
+                            )
+                            letter.setBackgroundColor(successBoxColor)
                         } else {
                             letter.setBackgroundColor(colors.viewEnd)
                         }
+
                     }
                 }
             }
