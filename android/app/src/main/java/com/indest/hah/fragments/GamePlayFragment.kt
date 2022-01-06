@@ -675,7 +675,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             Context.MODE_PRIVATE
         )?.let {
             if (gameViewModel.rewardedAd == null &&
-                (!it.getBoolean(getString(R.string.categories_purchased), false) ||
+                (!it.getBoolean(getString(R.string.clues_purchased), false) ||
                         !it.getBoolean(getString(R.string.place_letter_purchased), false))
             ) {
 

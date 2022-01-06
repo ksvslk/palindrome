@@ -19,11 +19,11 @@
     <string name="achievements">Achievements</string>
     <string name="leaderboard">Leaderboard</string>
     <string name="google_play_games">Google Play Games</string>
-    <string name="rewarded_reveal_category">Reveal Category</string>
+    <string name="rewarded_reveal_clue">Reveal Clue</string>
     <string name="rewarded_place_letter">Place Letter</string>
-    <string name="iap_unlock_categories">Purchase All Categories</string>
-    <string name="iap_unlock_letters">Purchase Unlimited Letters</string>
-    <string name="iap_unlock_hints">Purchase All Hints</string>
+    <string name="iap_remove_clue_ads">Remove Clue Ads</string>
+    <string name="iap_remove_letter_ads">Remove Letter Ads</string>
+    <string name="iap_remove_all_ads">Remove All Ads</string>
     <string name="sound_text">Sound</string>
     <string name="vibration_text">Vibration</string>
     <string name="ui_mode_dark">Dark Mode</string>
@@ -50,8 +50,9 @@
     <string name="sound_on_pref">SOUND_ON</string>
     <string name="vibration_on_pref">VIBRATION_ON</string>
     <string name="ui_night_pref">NIGHT_ON</string>
-    <string name="categories_purchased">CATEGORIES_PURCHASED</string>
-    <string name="place_letter_purchased">LETTERS_PURCHASED</string>
+    <string name="clues_purchased">ALL_CLUES_PURCHASED</string>
+    <string name="place_letter_purchased">ALL_LETTERS_PURCHASED</string>
+    <string name="all_hints_purchased">ALL_HINTS_PURCHASED</string>
     <string name="interactive_sign_in_done">INTERACTIVE_SIGN_IN_DONE</string>
 
     <!-- TUTORIAL -->

@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:text="@string/rewarded_reveal_category"
+        android:text="@string/rewarded_reveal_clue"
         android:textColor="@color/letterRewardedColor"
         android:textAppearance="@style/TextAppearance.OC.Body1" />
 

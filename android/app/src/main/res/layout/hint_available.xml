@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:text="@string/rewarded_reveal_category"
+        android:text="@string/rewarded_reveal_clue"
         android:textAppearance="@style/TextAppearance.OC.Body1" />
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -17,5 +17,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:text="@string/watch_rewarded_video"
+        android:paddingHorizontal="@dimen/_3sdp"
+        android:background="@color/colorPrimary"
+        android:textColor="@color/colorOnPrimary"
         android:textAppearance="@style/TextAppearance.OC.Caption" />
 </androidx.appcompat.widget.LinearLayoutCompat>
