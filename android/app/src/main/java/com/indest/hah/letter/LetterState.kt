@@ -130,6 +130,12 @@ enum class LetterState : ILetterState {
                 ContextCompat.getColor(l.context, R.color.letterRewardedColor)
             }
 
+            val endTextColor = if (durationModifier == 1) {
+                color.textEnd
+            } else {
+                ContextCompat.getColor(l.context, R.color.textOnRewardedColor)
+            }
+
             val onReleaseDuration = if (durationModifier == 1) {
                 l.effects.onReleaseColorChangeDuration
             } else {
@@ -143,7 +149,7 @@ enum class LetterState : ILetterState {
 
             animateNow(
                 l, "textColor", color.textStart,
-                color.textEnd, onReleaseDuration
+                endTextColor, onReleaseDuration
             )
 
             // Get some value that represents how much was moved ignoring the actual physical

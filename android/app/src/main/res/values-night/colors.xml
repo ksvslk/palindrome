@@ -8,10 +8,10 @@
 
     <color name="colorSecondary">#007ea7</color>
     <color name="colorSecondaryVariant">#72868F</color>
-    <color name="colorOnSecondary">#003459</color>
+    <color name="colorOnSecondary">#00233c</color>
 
     <color name="colorBackground">#00171f</color>
-    <color name="colorOnBackground">#003459</color>
+    <color name="colorOnBackground">#006ebc</color>
 
     <color name="colorSurface">#00171f</color>
     <color name="colorOnSurface">#003459</color>

@@ -111,7 +111,7 @@
             android:id="@+id/google_sign_in_button"
             android:visibility="gone"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginHorizontal="@dimen/simple_dialog_left_margin" />
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/google_sign_out_button"

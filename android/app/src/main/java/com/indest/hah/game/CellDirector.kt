@@ -256,6 +256,7 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
                         val colors = letter.effects.getColors(ColorSelector.ACTION_DOWN_FRIEND)
                         if (letterProperties.locked) {
                             letter.setBackgroundColor(letter.effects.getLockedColor())
+                            letter.setTextColor(letter.effects.getLockedTextColor())
                         } else if (info.levelInfo.progress == LevelProgress.INTERMEDIATE) {
                             val successBoxColor = ResourcesCompat.getColor(
                                 gf.requireContext().resources,

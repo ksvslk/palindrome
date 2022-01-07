@@ -13,7 +13,7 @@ android {
         applicationId "com.indest.hah"
         minSdkVersion 21
         targetSdkVersion 31
-        versionCode 3 // versionCode does not necessarily have a strong resemblance to versionName
+        versionCode 4 // versionCode does not necessarily have a strong resemblance to versionName
         versionName "1.0.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

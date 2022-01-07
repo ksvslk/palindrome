@@ -2,19 +2,19 @@
 <resources>
 
     <color name="colorPrimary">#89b0ae</color>
-    <color name="colorPrimaryVariant">#89b0ae</color>
-    <color name="colorOnPrimary">#555b6e</color>
+    <color name="colorPrimaryVariant">#578280</color>
+    <color name="colorOnPrimary">#3c404d</color>
     <color name="colorOnPrimaryDisabled">#DEE1EB</color>
 
     <color name="colorSecondary">#bee3db</color>
-    <color name="colorSecondaryVariant">#555b6e</color>
-    <color name="colorOnSecondary">#89b0ae</color>
+    <color name="colorSecondaryVariant">#3c404d</color>
+    <color name="colorOnSecondary">#405f5e</color>
 
     <color name="colorBackground">#faf9f9</color>
-    <color name="colorOnBackground">#89b0ae</color>
+    <color name="colorOnBackground">#4f7573</color>
 
     <color name="colorSurface">#faf9f9</color>
-    <color name="colorOnSurface">#89b0ae</color>
+    <color name="colorOnSurface">#4f7573</color>
 
     <color name="colorError">#EE3502</color>
     <color name="colorOnError">#faf9f9</color>
@@ -30,12 +30,13 @@
 
     <color name="messageBoxBackground">#BFFAF9F9</color>
 
-    <color name="hintsNotificationColor">#FF9800</color>
+    <color name="hintsNotificationColor">#d55b06</color>
     <color name="handPointerColor">#F7D795</color>
 
-    <color name="rightToLeftColor">#FF9800</color>
-    <color name="leftToRightColor">#FF9800</color>
+    <color name="rightToLeftColor">#d55b06</color>
+    <color name="leftToRightColor">#d55b06</color>
 
-    <color name="letterRewardedColor">#FFC107</color>
+    <color name="letterRewardedColor">#719114</color>
+    <color name="textOnRewardedColor">#22242b</color>
 
 </resources>
