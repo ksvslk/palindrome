@@ -218,19 +218,21 @@
 
         <Button
             android:id="@+id/continueButton"
-            style="?attr/materialButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/OC.Button"
+            android:layout_width="@dimen/_200sdp"
+            android:layout_height="@dimen/_58sdp"
             android:fontFamily="@font/yantramanav_bold"
-            android:text="Next" />
+            android:textAppearance="@style/TextAppearance.OC.Headline5"
+            android:text="@string/next" />
 
         <Button
             android:id="@+id/backButton"
-            style="?attr/materialButtonOutlinedStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/OC.OutlinedButton"
+            android:textAppearance="@style/TextAppearance.OC.LevelSelectNumber"
+            android:layout_width="@dimen/_200sdp"
+            android:layout_height="@dimen/_48sdp"
             android:fontFamily="@font/yantramanav_bold"
-            android:text="BACK" />
+            android:text="@string/back" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 </androidx.appcompat.widget.LinearLayoutCompat>

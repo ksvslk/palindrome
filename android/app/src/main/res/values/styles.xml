@@ -31,4 +31,13 @@
     <style name="ScoreBackground">
         <item name="background">@color/colorSecondary</item>
     </style>
+
+    <style name= "OC.Button" parent="Widget.MaterialComponents.Button">
+        <item name="android:textColor">@color/colorOnPrimary</item>
+    </style>
+
+    <style name= "OC.OutlinedButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:textColor">@color/colorOnBackground</item>
+    </style>
+
 </resources>

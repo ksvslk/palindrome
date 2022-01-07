@@ -121,6 +121,7 @@ object LevelFactory {
                 when (char) {
                     ' ' -> grid.addView(Space(context))
                     else -> grid.addView(Slot(context, char).apply {
+                        contentDescription = "Slot nr ${this.homeIndex}"
                         textSize = ds.textSize.toFloat()
                         width = ds.boxSize
                         height = ds.boxSize

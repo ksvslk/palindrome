@@ -3,15 +3,15 @@
 
     <color name="colorPrimary">#89b0ae</color>
     <color name="colorPrimaryVariant">#578280</color>
-    <color name="colorOnPrimary">#3c404d</color>
+    <color name="colorOnPrimary">#18182C</color>
     <color name="colorOnPrimaryDisabled">#DEE1EB</color>
 
     <color name="colorSecondary">#bee3db</color>
-    <color name="colorSecondaryVariant">#3c404d</color>
+    <color name="colorSecondaryVariant">#18182C</color>
     <color name="colorOnSecondary">#405f5e</color>
 
     <color name="colorBackground">#faf9f9</color>
-    <color name="colorOnBackground">#4f7573</color>
+    <color name="colorOnBackground">#344D4B</color>
 
     <color name="colorSurface">#faf9f9</color>
     <color name="colorOnSurface">#4f7573</color>
@@ -25,7 +25,7 @@
     <color name="navigationBarColor">#80797D88</color>
     <color name="itemDividerColor">#DAD8D8</color>
 
-    <color name="successTextColor">#4D4E4F</color>
+    <color name="successTextColor">#18182C</color>
     <color name="successBoxColor">#2FEFB2</color>
 
     <color name="messageBoxBackground">#BFFAF9F9</color>
@@ -36,7 +36,7 @@
     <color name="rightToLeftColor">#d55b06</color>
     <color name="leftToRightColor">#d55b06</color>
 
-    <color name="letterRewardedColor">#719114</color>
-    <color name="textOnRewardedColor">#22242b</color>
+    <color name="letterRewardedColor">#FFD000</color>
+    <color name="textOnRewardedColor">#18182C</color>
 
 </resources>

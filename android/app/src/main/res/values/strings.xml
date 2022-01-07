@@ -59,5 +59,10 @@
     <string name="tutorial_text">Your mission is to construct a palindrome from the given letters. Palindrome is a word identical from \n <font color="#d55b06">right to left</font> and <font color="#d55b06">left to right</font>.</string>
     <string name="tutorial2_text">Compete against other players by making as few mistakes as possible!</string>
     <string name="tutorial3_text">Punctuations are required to be in the correct positions but not from both sides.</string>
+    <string name="next">Next</string>
+    <string name="skip">Skip Tutorial</string>
+    <string name="back">Back</string>
+    <string name="lets_go">Let´s go!</string>
+
 
 </resources>

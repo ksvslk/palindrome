@@ -69,21 +69,26 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     private var levelTransition by Delegates.notNull<Int>()
     private var hintNotification by Delegates.notNull<Int>()
     private lateinit var audioManager: AudioManager
-    private lateinit var hintBadge: BadgeDrawable
+    private var hintBadge: BadgeDrawable? = null
     lateinit var cellDirector: CellDirector
     var gameState: GameState = GameState.BUSY
     val gameViewModel: GameViewModel by activityViewModels()
 
     private var guesses: Int by Delegates.observable(0) { _, _, new ->
         val guessesBeforeHint = resources.getInteger(R.integer.guessesBeforeHint)
-        if (new == guessesBeforeHint && !hintBadge.isVisible) {
+        Log.i(TAG, "guessesBeforeHint: $guessesBeforeHint")
+        Log.i(TAG, "new: $new")
+
+        if (new == guessesBeforeHint) {
             soundPool.playWhileSoundOn(
                 requireActivity(),
                 hintNotification,
                 1,
                 audioManager = audioManager
             )
-            hintBadge.isVisible = true
+            createHintsBadge()
+            hintBadge?.isVisible = true
+            Log.i(TAG, "hintBadge.isVisible: ${hintBadge?.isVisible}")
             activity?.getSharedPreferences(getString(R.string.preferences), Context.MODE_PRIVATE)
                 ?.let { sharedPref ->
                     with(sharedPref.edit()) {
@@ -98,6 +103,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate")
+
         super.onCreate(savedInstanceState)
         cellDirector = CellDirector(this)
         audioManager = requireContext().getSystemService(Context.AUDIO_SERVICE) as AudioManager
@@ -135,7 +141,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     ): View {
         binding = GameplayFragmentBinding.inflate(layoutInflater, container, false)
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-        createHintsBadge()
+        Log.i(TAG, "onCreateView")
         return binding.root
     }
 
@@ -263,7 +269,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                     Context.MODE_PRIVATE
                 )?.let {
                     with(it.edit()) {
-                        hintBadge.isVisible = false
+                        hintBadge?.isVisible = false
                         putBoolean(getString(R.string.level_solution_guesses), false)
                         apply()
                     }
@@ -271,7 +277,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             }
         }
         activity?.getSharedPreferences(getString(R.string.preferences), Context.MODE_PRIVATE)?.let {
-            hintBadge.isVisible = it.getBoolean(getString(R.string.level_solution_guesses), false)
+            hintBadge?.isVisible = it.getBoolean(getString(R.string.level_solution_guesses), false)
         }
     }
 
@@ -279,9 +285,9 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     private fun createHintsBadge() {
         hintBadge = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView)
             .getOrCreateBadge(R.id.navigation_hints)
-        hintBadge.backgroundColor =
+        hintBadge?.backgroundColor =
             ContextCompat.getColor(requireContext(), R.color.hintsNotificationColor)
-        hintBadge.badgeGravity = BadgeDrawable.TOP_END
+        hintBadge?.badgeGravity = BadgeDrawable.TOP_END
     }
 
     // CLEAN
@@ -422,7 +428,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                     apply()
                 }
             }
-        hintBadge.isVisible = false
+        hintBadge?.isVisible = false
 
         GoogleSignIn.getLastSignedInAccount(requireActivity())?.let { googleSignInAccount ->
 

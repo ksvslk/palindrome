@@ -7,11 +7,13 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/hint_revealed_textview"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:text="@string/rewarded_reveal_clue"
-        android:textColor="@color/letterRewardedColor"
+        android:padding="@dimen/_3sdp"
+        android:textColor="@color/textOnRewardedColor"
+        android:background="@color/letterRewardedColor"
         android:textAppearance="@style/TextAppearance.OC.Body1" />
 
 </androidx.appcompat.widget.LinearLayoutCompat>

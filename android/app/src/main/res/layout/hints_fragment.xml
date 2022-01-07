@@ -42,6 +42,7 @@
             android:layout_marginStart="@dimen/simple_dialog_left_margin"
             android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
             android:contentDescription="@string/rewarded_reveal_clue"
+            android:clickable="false"
             android:src="@drawable/category_icon"
             app:tint="@color/colorOnPrimary"
             tools:ignore="RtlSymmetry" />
@@ -50,6 +51,7 @@
             android:id="@+id/reveal_category_flipper"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:clickable="false"
             android:inAnimation="@android:anim/slide_in_left"
             android:outAnimation="@android:anim/slide_out_right">
 
@@ -83,6 +85,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/simple_dialog_left_margin"
             android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
+            android:clickable="false"
             android:contentDescription="@string/rewarded_place_letter"
             android:src="@drawable/letter_icon"
             app:tint="@color/colorOnPrimary"
@@ -92,6 +95,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
+            android:clickable="false"
             android:orientation="vertical">
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -130,6 +134,7 @@
             android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
             android:contentDescription="@string/iap_remove_clue_ads"
             android:src="@drawable/lock_icon"
+            android:clickable="false"
             app:tint="@color/colorOnPrimary"
             tools:ignore="RtlSymmetry" />
 
@@ -137,6 +142,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
+            android:clickable="false"
             android:orientation="vertical">
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -164,6 +170,7 @@
             android:layout_marginStart="@dimen/simple_dialog_left_margin"
             android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
             android:contentDescription="@string/iap_remove_letter_ads"
+            android:clickable="false"
             android:src="@drawable/lock_icon"
             app:tint="@color/colorOnPrimary"
             tools:ignore="RtlSymmetry" />
@@ -173,6 +180,7 @@
             android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:orientation="horizontal"
+            android:clickable="false"
             android:weightSum="2">
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -237,6 +245,7 @@
             android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
             android:contentDescription="@string/iap_remove_all_ads"
             android:src="@drawable/lock_icon"
+            android:clickable="false"
             app:tint="@color/colorOnPrimary"
             tools:ignore="RtlSymmetry" />
 
@@ -245,6 +254,7 @@
             android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:layout_marginRight="@dimen/simple_dialog_left_margin"
+            android:clickable="false"
             android:orientation="horizontal"
             android:weightSum="2">
 

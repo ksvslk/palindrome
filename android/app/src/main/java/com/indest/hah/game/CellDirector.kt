@@ -29,7 +29,7 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
     var cells: MutableList<Cell<*, *>> = ArrayList()
 
     fun handleCollisions(letter: Letter) {
-        Log.i(TAG,"Here")
+        Log.i(TAG, "Here")
         when (val closestCell = getClosestCell(to = letter, from = getCandidateCells(letter))) {
             is Letter -> {
                 if (closestCell.state == LetterState.HOME && !closestCell.isLocked) {
@@ -41,9 +41,7 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
                 if (!closestCell.hasFriend()) {
                     placeLetterInEmptyBox(letter, closestCell)
                     return
-                }
-                else if (closestCell.getTheFriend() == letter)
-                {
+                } else if (closestCell.getTheFriend() == letter) {
                     letter.effects.playSound(SoundSelector.SWITCH_LETTERS)
                     letter.currentPos.x = closestCell.pos.x
                     letter.currentPos.y = closestCell.pos.y
@@ -80,10 +78,9 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
     }
 
     fun switchLetterPositions(top: Letter, bottom: Letter, isRewarded: Boolean = false) {
-        if (isRewarded){
+        if (isRewarded) {
             top.effects.playSound(SoundSelector.LETTER_REWARDED)
-        }
-        else {
+        } else {
             top.effects.playSound(SoundSelector.SWITCH_LETTERS)
         }
 
@@ -134,11 +131,15 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
         bottom.state.executeAnimationBehaviour(bottom, droppedToMoveX, droppedToMoveY)
     }
 
-    fun placeLetterInEmptyBox(letter: Letter, slot: Slot, isRewarded: Boolean = false, isLastRewardedLetter:Boolean = false) {
-        if (isRewarded){
+    fun placeLetterInEmptyBox(
+        letter: Letter,
+        slot: Slot,
+        isRewarded: Boolean = false,
+        isLastRewardedLetter: Boolean = false
+    ) {
+        if (isRewarded) {
             letter.effects.playSound(SoundSelector.LETTER_REWARDED)
-        }
-        else {
+        } else {
             letter.effects.playSound(SoundSelector.PLACE_LETTER_IN_EMPTY_BOX)
         }
         letter.getTheFriend()?.setFriend(null)
@@ -150,7 +151,8 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
         letter.elevation = NEUTRAL_LAYER
         letter.state = LetterState.ANIMATION
 
-        val durationModifier = if (isRewarded && !isLastRewardedLetter) REWARDED_ANIM_MUL else REWARDED_ANIM_MUL_DEFAULT
+        val durationModifier =
+            if (isRewarded && !isLastRewardedLetter) REWARDED_ANIM_MUL else REWARDED_ANIM_MUL_DEFAULT
         letter.state.executeAnimationBehaviour(
             letter,
             (slot.pos.x - letter.pos.x),
@@ -254,16 +256,18 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
                         letter.currentPos = slot.pos
                         letter.isLocked = letterProperties.locked
                         val colors = letter.effects.getColors(ColorSelector.ACTION_DOWN_FRIEND)
-                        if (letterProperties.locked) {
-                            letter.setBackgroundColor(letter.effects.getLockedColor())
-                            letter.setTextColor(letter.effects.getLockedTextColor())
-                        } else if (info.levelInfo.progress == LevelProgress.INTERMEDIATE) {
+
+                        if (info.levelInfo.progress == LevelProgress.INTERMEDIATE) {
                             val successBoxColor = ResourcesCompat.getColor(
                                 gf.requireContext().resources,
                                 R.color.successBoxColor,
                                 gf.requireContext().theme
                             )
                             letter.setBackgroundColor(successBoxColor)
+                        } else if (letterProperties.locked) {
+                            letter.setBackgroundColor(letter.effects.getLockedColor())
+                            letter.setTextColor(letter.effects.getLockedTextColor())
+
                         } else {
                             letter.setBackgroundColor(colors.viewEnd)
                         }

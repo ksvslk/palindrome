@@ -42,6 +42,7 @@
             android:layout_marginStart="@dimen/simple_dialog_left_margin"
             android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
             android:contentDescription="@string/leaderboard"
+            android:clickable="false"
             android:src="@drawable/games_leaderboards"
             app:tint="@color/colorOnPrimary"
             tools:ignore="RtlSymmetry" />
@@ -50,6 +51,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:clickable="false"
             android:text="@string/leaderboard"
             android:textAppearance="@style/TextAppearance.OC.Body1" />
     </androidx.appcompat.widget.LinearLayoutCompat>
@@ -70,6 +72,7 @@
             android:layout_marginStart="@dimen/simple_dialog_left_margin"
             android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
             android:contentDescription="@string/achievements"
+            android:clickable="false"
             android:src="@drawable/games_achievements"
             app:tint="@color/colorOnPrimary"
             tools:ignore="RtlSymmetry" />
@@ -78,6 +81,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:clickable="false"
             android:text="@string/achievements"
             android:textAppearance="@style/TextAppearance.OC.Body1"
             />

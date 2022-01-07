@@ -65,27 +65,14 @@ class ScoresFragment : BottomSheetDialogFragment() {
                                 scoreLayout.findViewById<AppCompatTextView>(R.id.score).text =
                                     "Score: ${score.rawScore}"
 
-                                when {
-                                    index > 3 -> {
-                                        binding.playerScoreImproveMessage.text =
-                                            "Earn ${it.scores[index - 1].rawScore - score.rawScore} points to rank up!"
-                                    }
-                                    index == 1 -> {
-                                        binding.playerScoreImproveMessage.text =
-                                            "Earn ${it.scores[index - 1].rawScore - score.rawScore} points to rank 1st!"
-                                    }
-                                    index == 2 -> {
-                                        binding.playerScoreImproveMessage.text =
-                                            "Earn ${it.scores[index - 1].rawScore - score.rawScore} points to rank 2nd!"
-                                    }
-                                    index == 3 -> {
-                                        binding.playerScoreImproveMessage.text =
-                                            "Earn ${it.scores[index - 1].rawScore - score.rawScore} points to rank 3rd!"
-                                    }
-                                    index == 0 -> {
-                                        binding.playerScoreImproveMessage.text = "You rank first!"
-                                    }
+                                if (index == 0) {
+                                    binding.playerScoreImproveMessage.text = "You rank first!"
                                 }
+                                else {
+                                    binding.playerScoreImproveMessage.text =
+                                        "Earn ${it.scores[index - 1].rawScore - score.rawScore} points to rank up!"
+                                }
+
                                 binding.scoreFlipper.showNext()
                                 binding.scoreFragment.addView(scoreLayout)
                             } else {
