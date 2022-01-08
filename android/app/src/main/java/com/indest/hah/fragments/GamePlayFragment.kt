@@ -622,8 +622,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         animator.duration = 1000
         animator.addUpdateListener { animation ->
             scoreView.text = StringBuilder()
-                .append("Score: ")
                 .append(animation.animatedValue.toString().padStart(paddingLength, '0'))
+                .append(" of ${currentAndMaxScore.second} points")
         }
         soundPool.playWhileSoundOn(requireActivity(), scoreSound, 2, audioManager = audioManager)
         animator.start()

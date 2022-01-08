@@ -28,6 +28,9 @@ class ThirdTutorialFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView).visibility =
+            View.INVISIBLE
+
         binding.startButton.setOnClickListener {
 
             parentFragmentManager.commit {

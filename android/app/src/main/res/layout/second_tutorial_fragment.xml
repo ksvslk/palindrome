@@ -21,6 +21,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:textColor="@color/colorOnPrimary"
             android:text="@string/tutorial"
             android:textSize="@dimen/_25ssp" />
 
@@ -37,6 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center"
+        android:textColor="@color/colorOnPrimary"
         android:paddingHorizontal="@dimen/default_large_margin"
         android:text="@string/tutorial2_text"
         android:textSize="@dimen/_16ssp" />

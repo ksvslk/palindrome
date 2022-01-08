@@ -37,7 +37,7 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/simple_dialog_left_margin"
             android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
@@ -48,9 +48,9 @@
             tools:ignore="RtlSymmetry" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
             android:clickable="false"
             android:text="@string/level_select"
             android:textAppearance="@style/TextAppearance.OC.Body1" />
@@ -67,8 +67,8 @@
 
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/sound_switch"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/simple_dialog_item_height"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/simple_dialog_left_margin"
             android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
@@ -91,8 +91,8 @@
 
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/vibration_switch"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/simple_dialog_item_height"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/simple_dialog_left_margin"
             android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
@@ -115,14 +115,16 @@
             android:id="@+id/google_sign_in_button"
             android:visibility="gone"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:clickable="false"
+            android:gravity="center"
             android:layout_marginHorizontal="@dimen/simple_dialog_left_margin" />
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/google_sign_out_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:clickable="false"
+            android:gravity="center"
             android:textAppearance="@style/TextAppearance.OC.Body1"
             android:text="@string/log_out"
             android:layout_marginHorizontal="@dimen/simple_dialog_left_margin" />

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="colorPrimary">#003459</color>
-    <color name="colorPrimaryVariant">#003459</color>
+    <color name="colorPrimary">#306D90</color>
+    <color name="colorPrimaryVariant">#306D90</color>
     <color name="colorOnPrimary">#FFFFFF</color>
     <color name="colorOnPrimaryDisabled">#44464D</color>
 
-    <color name="colorSecondary">#007ea7</color>
+    <color name="colorSecondary">#0099CC</color>
     <color name="colorSecondaryVariant">#72868F</color>
     <color name="colorOnSecondary">#00233c</color>
 
@@ -24,6 +24,8 @@
 
     <color name="successTextColor">#FFFFFF</color>
     <color name="successBoxColor">#00BB7A</color>
+
+    <color name="handPointerColor">#F1CA75</color>
 
     <color name="messageBoxBackground">#BF00171F</color>
 
