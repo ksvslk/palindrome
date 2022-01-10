@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="colorPrimary">#4B738E</color>
-    <color name="colorPrimaryVariant">#4B738E</color>
+    <color name="colorPrimary">#1A4C6C</color>
+    <color name="colorPrimaryVariant">#1A4C6C</color>
     <color name="colorOnPrimary">#FFFFFF</color>
     <color name="colorOnPrimaryDisabled">#44464D</color>
 
@@ -31,5 +31,6 @@
 
     <color name="letterRewardedColor">#9500A9</color>
     <color name="textOnRewardedColor">#FFFFFF</color>
+
 
 </resources>

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--Google Play game services IDs. Save this file as res/values/ids.xml in your project.-->
 <resources>
+    <string name="app_package_url">https://play.google.com/store/apps/details?id=com.indest.hah</string>
+    <string name="vending_package">com.android.vending</string>
     <!--app_id-->
     <string name="preferences" translatable="false">prefs</string>
     <!-- Ads -->

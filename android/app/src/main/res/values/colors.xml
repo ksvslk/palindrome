@@ -22,7 +22,7 @@
     <color name="darkGray">#4A4A4A</color>
     <color name="darkBlue">#1E2D40</color>
 
-    <color name="navigationBarColor">#801A48C6</color>
+    <color name="navigationBarColor">#80797D88</color>
     <color name="itemDividerColor">#DAD8D8</color>
 
     <color name="successTextColor">#18182C</color>
@@ -38,5 +38,4 @@
 
     <color name="letterRewardedColor">#FFD000</color>
     <color name="textOnRewardedColor">#18182C</color>
-
 </resources>

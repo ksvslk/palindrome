@@ -102,7 +102,35 @@
             android:textAppearance="@style/TextAppearance.OC.Body1"
             android:textColor="@color/colorOnPrimary" />
     </androidx.appcompat.widget.LinearLayoutCompat>
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/rate_game_button"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/simple_dialog_item_height"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="horizontal">
 
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/simple_dialog_left_margin"
+            android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
+            android:contentDescription="@string/rate_game"
+            android:clickable="false"
+            android:src="@drawable/baseline_rate_review_black_36"
+            app:tint="@color/colorOnPrimary"
+            tools:ignore="RtlSymmetry" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:clickable="false"
+            android:text="@string/rate_game"
+            android:textAppearance="@style/TextAppearance.OC.Body1" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/google_sign_in_out_button"
         android:layout_width="match_parent"

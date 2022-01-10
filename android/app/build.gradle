@@ -85,6 +85,7 @@ dependencies {
     implementation("com.google.dagger:hilt-android:$hilt_version")
     implementation "androidx.window:window:$window_manager_version"
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'com.google.android.play:core-ktx:1.8.1'
     kapt("com.google.dagger:hilt-android-compiler:$hilt_version")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_runtime_ktx")

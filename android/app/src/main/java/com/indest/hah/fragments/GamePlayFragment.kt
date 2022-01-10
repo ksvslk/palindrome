@@ -274,11 +274,13 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                         apply()
                     }
                 }
+                guesses = 0
             }
         }
         activity?.getSharedPreferences(getString(R.string.preferences), Context.MODE_PRIVATE)?.let {
             hintBadge?.isVisible = it.getBoolean(getString(R.string.level_solution_guesses), false)
         }
+
     }
 
     // CLEAN

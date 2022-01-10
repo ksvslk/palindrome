@@ -18,8 +18,15 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.play.core.review.ReviewManagerFactory
 import com.indest.hah.R
 import com.indest.hah.databinding.SettingsFragmentBinding
+import androidx.test.core.app.ApplicationProvider.getApplicationContext
+
+import android.content.Intent
+import android.net.Uri
+import androidx.browser.customtabs.CustomTabsClient.getPackageName
+import androidx.test.core.app.ApplicationProvider
 
 
 class SettingsFragment : BottomSheetDialogFragment() {
@@ -56,6 +63,33 @@ class SettingsFragment : BottomSheetDialogFragment() {
                 add(LevelSelectFragment(), LevelSelectFragment().tag)
             }
         }
+
+        binding.rateGameButton.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                data = Uri.parse(
+                    getString(R.string.app_package_url))
+                setPackage(getString(R.string.vending_package))
+            }
+            startActivity(intent)
+
+    /*        val reviewManager = ReviewManagerFactory.create(requireContext())
+            val request = reviewManager.requestReviewFlow()
+            request.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val reviewInfo = task.result
+                    val flow = reviewManager.launchReviewFlow(requireActivity(), reviewInfo)
+                    flow.addOnCompleteListener { _ ->
+                        parentFragmentManager.commit {
+                            addToBackStack(LevelSelectFragment().tag)
+                            add(LevelSelectFragment(), LevelSelectFragment().tag)
+                        }
+                    }
+                } else {
+                    Log.i(TAG, "Review flow did not complete successfully: ${task.exception?.message}")
+                }
+            }*/
+        }
+
         binding.soundButton.setOnClickListener {
             //TODO: remove next 2 lines in production
             val config: Configuration = resources.configuration

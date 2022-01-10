@@ -13,6 +13,8 @@ import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.android.billingclient.api.BillingClient
+import com.android.billingclient.api.PurchasesUpdatedListener
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
@@ -37,6 +39,7 @@ class HintsFragment : BottomSheetDialogFragment() {
     private lateinit var binding: HintsFragmentBinding
     private val gameViewModel: GameViewModel by activityViewModels()
     private var rewardEarned = false
+
 
     override fun onCreateView(
         inflater: LayoutInflater,

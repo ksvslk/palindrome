@@ -70,7 +70,7 @@ class ScoresFragment : BottomSheetDialogFragment() {
                                 }
                                 else {
                                     binding.playerScoreImproveMessage.text =
-                                        "Earn ${it.scores[index - 1].rawScore - score.rawScore} points to rank up!"
+                                        "Earn ${it.scores[index - 1].rawScore - score.rawScore + 1} points to rank up!"
                                 }
 
                                 binding.scoreFlipper.showNext()
