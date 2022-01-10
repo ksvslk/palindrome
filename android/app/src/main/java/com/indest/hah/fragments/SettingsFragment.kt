@@ -71,23 +71,6 @@ class SettingsFragment : BottomSheetDialogFragment() {
                 setPackage(getString(R.string.vending_package))
             }
             startActivity(intent)
-
-    /*        val reviewManager = ReviewManagerFactory.create(requireContext())
-            val request = reviewManager.requestReviewFlow()
-            request.addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val reviewInfo = task.result
-                    val flow = reviewManager.launchReviewFlow(requireActivity(), reviewInfo)
-                    flow.addOnCompleteListener { _ ->
-                        parentFragmentManager.commit {
-                            addToBackStack(LevelSelectFragment().tag)
-                            add(LevelSelectFragment(), LevelSelectFragment().tag)
-                        }
-                    }
-                } else {
-                    Log.i(TAG, "Review flow did not complete successfully: ${task.exception?.message}")
-                }
-            }*/
         }
 
         binding.soundButton.setOnClickListener {

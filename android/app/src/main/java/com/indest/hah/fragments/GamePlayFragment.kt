@@ -35,6 +35,8 @@ import com.google.android.gms.games.leaderboard.LeaderboardVariant.*
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.play.core.review.ReviewManagerFactory
+import com.google.android.play.core.review.testing.FakeReviewManager
 import com.indest.hah.GameActivity
 import com.indest.hah.LevelFactory
 import com.indest.hah.R
@@ -194,6 +196,42 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         }
     }
 
+    private fun showReviewOption(level: Int) {
+        if (level == 21) {
+            requireActivity().getSharedPreferences(
+                getString(R.string.preferences),
+                Context.MODE_PRIVATE
+            )?.let {
+                if (!(it.getBoolean(requireContext().getString(R.string.review_displayed_to_user), false))) {
+                    // val reviewManager = FakeReviewManager(requireContext())
+                    val reviewManager = ReviewManagerFactory.create(requireContext())
+                    val request = reviewManager.requestReviewFlow()
+                    request.addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            val reviewInfo = task.result
+                            val flow = reviewManager.launchReviewFlow(requireActivity(), reviewInfo)
+                            flow.addOnCompleteListener { _ ->
+                                Log.i(
+                                    TAG,
+                                    "Review completed (whatever the action)."
+                                )
+                            }
+                        } else {
+                            Log.i(
+                                TAG,
+                                "Review flow did not complete successfully: ${task.exception?.message}"
+                            )
+                        }
+                    }
+                    with(it.edit()) {
+                        putBoolean(getString(R.string.review_displayed_to_user), true)
+                        apply()
+                    }
+                }
+            }
+        }
+    }
+
     // CAN BE CLEANED
     private fun handleGivingRewards() {
         setFragmentResultListener(HINT_REQUEST_KEY) { _, bundle ->
@@ -312,8 +350,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
         binding.gameplayFragment.addView(level)
 
-        if (levelAndLettersInfo.levelInfo.progress == LevelProgress.INTERMEDIATE)
-        {
+        if (levelAndLettersInfo.levelInfo.progress == LevelProgress.INTERMEDIATE) {
             gameState = GameState.LEVEL_COMPLETED
             val message = MessageSnackBar.make(
                 binding.gameplayFragment,
@@ -347,6 +384,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             gameState = GameState.READY
             handleGameSolutions()
         }
+        showReviewOption(levelAndLettersInfo.levelInfo.levelId)
     }
 
     // CLEAN
@@ -594,6 +632,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             20 -> {
                 Games.getAchievementsClient(requireActivity(), lastSignedInAccount)
                     .unlock(getString(R.string.achievement_greenhorn))
+
             }
             40 -> {
                 Games.getAchievementsClient(requireActivity(), lastSignedInAccount)

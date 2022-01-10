@@ -55,15 +55,16 @@
     <string name="place_letter_purchased">ALL_LETTERS_PURCHASED</string>
     <string name="all_hints_purchased">ALL_HINTS_PURCHASED</string>
     <string name="interactive_sign_in_done">INTERACTIVE_SIGN_IN_DONE</string>
+    <string name="review_displayed_to_user">REVIEW_DISPLAYED_TO_USER</string>
 
     <!-- TUTORIAL -->
-    <string name="tutorial_text">Your mission is to construct a palindrome from the given letters. Palindrome is a word identical from \n <font color="#d55b06">right to left</font> and <font color="#d55b06">left to right</font>.</string>
+    <string name="tutorial_text">Use all letters and punctuation marks to create a palindrome. Palindrome is a word identical from \n <font color="#d55b06">right to left</font> and <font color="#d55b06">left to right</font>.</string>
     <string name="tutorial2_text">Compete against other players by making as few mistakes as possible!</string>
     <string name="tutorial3_text">Punctuations are required to be in the correct positions but not from both sides.</string>
     <string name="next">Next</string>
     <string name="skip">Skip Tutorial</string>
     <string name="back">Back</string>
-    <string name="lets_go">Let´s go!</string>
+    <string name="lets_go">Start</string>
 
 
 </resources>
