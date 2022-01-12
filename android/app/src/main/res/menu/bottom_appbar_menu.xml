@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/navigation_google_games"
-        android:title="@string/google"
+        android:title="@string/play_games"
         android:icon="@drawable/games_controller_grey"/>
 
     <item

@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/simple_dialog_left_margin"
-            android:text="@string/google_play_games"
+            android:text="@string/play_games"
             android:textAppearance="@style/TextAppearance.OC.Headline5" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 

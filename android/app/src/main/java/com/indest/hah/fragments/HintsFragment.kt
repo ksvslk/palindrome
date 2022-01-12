@@ -107,6 +107,14 @@ class HintsFragment : BottomSheetDialogFragment() {
     }
 
     private fun showRewardedVideo(rewardedAdUnit: String, rewardedType: RewardedAdType) {
+
+        setFragmentResult(
+            HINT_REQUEST_KEY,
+            bundleOf(HINT_TYPE to LETTER)
+        )
+        dismiss()
+        return
+
         if (gameViewModel.rewardedAd != null) {
             gameViewModel.rewardedAd?.fullScreenContentCallback =
                 object : FullScreenContentCallback() {

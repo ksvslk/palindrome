@@ -70,7 +70,10 @@ class SettingsFragment : BottomSheetDialogFragment() {
                     getString(R.string.app_package_url))
                 setPackage(getString(R.string.vending_package))
             }
-            startActivity(intent)
+            if(intent.resolveActivity(requireContext().packageManager) != null)
+            {
+                startActivity(intent)
+            }
         }
 
         binding.soundButton.setOnClickListener {

@@ -74,7 +74,7 @@
     <dialog
         android:id="@+id/navigation_google_games"
         android:name="com.indest.hah.fragments.GoogleGamesFragment"
-        android:label="@string/google"
+        android:label="@string/play_games"
         tools:layout="@layout/google_games_fragment" >
         <action
             android:id="@+id/action_navigation_google_games_to_navigation_gameplay"

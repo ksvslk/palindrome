@@ -611,7 +611,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
     // CLEAN
     private fun showPlayerCenteredScores() {
-        if (gameViewModel.getLevelNumber() % 5 == 0) {
+        val signedIn = GoogleSignIn.getLastSignedInAccount(requireActivity())
+        if (gameViewModel.getLevelNumber() % 5 == 0 && signedIn != null) {
             parentFragmentManager.commit {
                 addToBackStack(ScoresFragment().tag)
                 add(ScoresFragment(), ScoresFragment().tag)

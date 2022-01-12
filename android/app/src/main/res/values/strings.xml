@@ -15,11 +15,10 @@
     <string name="level_select">Level Select</string>
     <string name="rate_game">Leave Your Feedback</string>
     <string name="sign_in">Sign in with Google</string>
-    <string name="log_out">Log Out from Google</string>
+    <string name="log_out">Log Out</string>
     <string name="please_sign_in">Please sign in from "Settings" page.</string>
     <string name="achievements">Achievements</string>
     <string name="leaderboard">Leaderboard</string>
-    <string name="google_play_games">Google Play Games</string>
     <string name="rewarded_reveal_clue">Reveal Clue</string>
     <string name="rewarded_place_letter">Place Letter</string>
     <string name="iap_remove_clue_ads">Remove Clue Ads</string>
@@ -32,7 +31,7 @@
     <string name="watch_rewarded_video">Watch Rewarded Video</string>
     <string name="all_categories_price">$1.99</string>
     <string name="all_hints_price">$2.99</string>
-    <string name="google">Google</string>
+    <string name="play_games">Play Games</string>
     <string name="palindrome_found">Palindrome! But…</string>
     <string name="i_can_do_better">Sure</string>
     <string name="palindrome_but_not_correct">It is a palindrome, but can you also find the correct solution?</string>
