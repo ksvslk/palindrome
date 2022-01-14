@@ -18,20 +18,24 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.play.core.review.ReviewManagerFactory
 import com.indest.hah.R
 import com.indest.hah.databinding.SettingsFragmentBinding
-import androidx.test.core.app.ApplicationProvider.getApplicationContext
 
 import android.content.Intent
 import android.net.Uri
-import androidx.browser.customtabs.CustomTabsClient.getPackageName
-import androidx.test.core.app.ApplicationProvider
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.replace
+import androidx.fragment.app.viewModels
+import com.indest.hah.game.OverallState
+import com.indest.hah.game.OverallViewModel
+import java.net.HttpURLConnection
+import java.net.URL
 
 
 class SettingsFragment : BottomSheetDialogFragment() {
     private val TAG = "SettingsFragment"
     private lateinit var binding: SettingsFragmentBinding
+    private val overallViewModel: OverallViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,7 +56,15 @@ class SettingsFragment : BottomSheetDialogFragment() {
             binding.googleSignOutButton.visibility = View.GONE
             binding.googleSignInButton.visibility = View.VISIBLE
             binding.googleSignInButton.setOnClickListener {
-                signInToGoogle()
+                if (overallViewModel.uiState.value.state == OverallState.ONLINE) {
+                    signInToGoogle()
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.no_internet),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
         }
 
@@ -65,14 +77,22 @@ class SettingsFragment : BottomSheetDialogFragment() {
         }
 
         binding.rateGameButton.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW).apply {
-                data = Uri.parse(
-                    getString(R.string.app_package_url))
-                setPackage(getString(R.string.vending_package))
-            }
-            if(intent.resolveActivity(requireContext().packageManager) != null)
-            {
-                startActivity(intent)
+            if (overallViewModel.uiState.value.state == OverallState.ONLINE) {
+                val intent = Intent(Intent.ACTION_VIEW).apply {
+                    data = Uri.parse(
+                        getString(R.string.app_package_url)
+                    )
+                    setPackage(getString(R.string.vending_package))
+                }
+                if (intent.resolveActivity(requireContext().packageManager) != null) {
+                    startActivity(intent)
+                }
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.no_internet),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
 
@@ -104,8 +124,7 @@ class SettingsFragment : BottomSheetDialogFragment() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == Activity.RESULT_OK) {
                 dismiss()
-            }
-            else if (it.resultCode != Activity.RESULT_CANCELED) {
+            } else if (it.resultCode != Activity.RESULT_CANCELED) {
                 Toast.makeText(
                     requireContext(),
                     "Something went wrong. Do you have internet connection?",
@@ -116,6 +135,15 @@ class SettingsFragment : BottomSheetDialogFragment() {
         }
 
     private fun signInToGoogle() {
+        overallViewModel.changeState(OverallState.LOADING)
+        parentFragmentManager.commit {
+            setCustomAnimations(
+                R.anim.slide_in_bottom,
+                R.anim.slide_out_top
+            )
+            setReorderingAllowed(true)
+            replace<LoadingFragment>(R.id.fragments_container)
+        }
         val signInClient = GoogleSignIn.getClient(
             requireActivity(),
             GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN
@@ -129,16 +157,14 @@ class SettingsFragment : BottomSheetDialogFragment() {
             GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN
         )
         signInClient.signOut().addOnCompleteListener {
-            if (it.isSuccessful)
-            {
+            if (it.isSuccessful) {
                 Toast.makeText(
                     requireContext(),
                     "Successfully signed out.",
                     Toast.LENGTH_LONG
                 ).show()
                 dismiss()
-            }
-            else {
+            } else {
                 Toast.makeText(
                     requireContext(),
                     "Something went wrong when trying to sign out.",

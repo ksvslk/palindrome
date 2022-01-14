@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.media.AudioManager
 import android.media.SoundPool
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -13,6 +14,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
 import com.indest.hah.R
+import java.net.HttpURLConnection
+import java.net.URL
 
 fun AppCompatActivity.hideSystemBars(viewGroup: ViewGroup) {
     val insetsController = WindowInsetsControllerCompat(window, viewGroup)

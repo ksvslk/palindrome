@@ -30,8 +30,8 @@ class GameViewModel @Inject constructor(
 
     val levels = MutableLiveData<List<LevelData>>()
     val realSolutionAndGuess = MutableLiveData<Triple<String?, String?, Int?>>()
-    private val _uiState = MutableStateFlow(LatestLevelEvent.Success(Level(), Level()))
-    val uiState: StateFlow<LatestLevelEvent> = _uiState
+    private val _uiState = MutableStateFlow(LevelEvent.Success(Level(), Level()))
+    val uiState: StateFlow<LevelEvent> = _uiState
     val totalScore = MutableLiveData<Int>()
 
     var rewardedAd: RewardedAd? = null
@@ -42,7 +42,7 @@ class GameViewModel @Inject constructor(
             levelRepository.getLastLevel()
                 .collect { newLevel ->
                     val oldLevel = _uiState.value.currentLevel
-                    _uiState.value = LatestLevelEvent.Success(oldLevel, newLevel)
+                    _uiState.value = LevelEvent.Success(oldLevel, newLevel)
                 }
         }
     }
@@ -199,7 +199,7 @@ class GameViewModel @Inject constructor(
     }
 }
 
-sealed class LatestLevelEvent {
-    data class Success(val oldLevel: Level, val currentLevel: Level) : LatestLevelEvent()
-    data class Error(val exception: Throwable) : LatestLevelEvent()
+sealed class LevelEvent {
+    data class Success(val oldLevel: Level, val currentLevel: Level) : LevelEvent()
+    data class Error(val exception: Throwable) : LevelEvent()
 }

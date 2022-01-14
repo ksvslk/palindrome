@@ -16,6 +16,7 @@
     <string name="rate_game">Leave Your Feedback</string>
     <string name="sign_in">Sign in with Google</string>
     <string name="log_out">Log Out</string>
+    <string name="no_internet">No Internet Connection</string>
     <string name="please_sign_in">Please sign in from "Settings" page.</string>
     <string name="achievements">Achievements</string>
     <string name="leaderboard">Leaderboard</string>

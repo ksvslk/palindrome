@@ -22,7 +22,7 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.indest.hah.fragments.HomeFragment"
+        android:name="com.indest.hah.fragments.LoadingFragment"
         android:label="HomeFragment"
         tools:layout="@layout/home_fragment">
         <action

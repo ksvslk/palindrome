@@ -1,0 +1,48 @@
+package com.indest.hah.fragments
+
+import android.content.Context
+import android.os.Bundle
+import android.view.View
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.commit
+import androidx.fragment.app.replace
+import androidx.lifecycle.lifecycleScope
+import com.indest.hah.R
+import com.indest.hah.game.OverallState
+import com.indest.hah.game.OverallViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+
+class LoadingFragment : Fragment(R.layout.home_fragment) {
+    private val overallViewModel: OverallViewModel by activityViewModels()
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        lifecycleScope.launch {
+            overallViewModel.uiState.collectLatest { latest ->
+                if (latest.state != OverallState.LOADING) {
+                    requireActivity().getSharedPreferences(
+                        getString(R.string.preferences),
+                        Context.MODE_PRIVATE
+                    )?.let {
+                        val tutorialPassed =
+                            it.getBoolean(getString(R.string.tutorial_passed), false)
+                        if (tutorialPassed) {
+                            parentFragmentManager.commit {
+                                setReorderingAllowed(true)
+                                replace<GamePlayFragment>(R.id.fragments_container)
+                            }
+                        } else {
+                            parentFragmentManager.commit {
+                                setReorderingAllowed(true)
+                                replace<TutorialFragment>(R.id.fragments_container)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

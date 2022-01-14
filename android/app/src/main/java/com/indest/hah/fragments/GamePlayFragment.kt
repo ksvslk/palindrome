@@ -36,7 +36,6 @@ import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.play.core.review.ReviewManagerFactory
-import com.google.android.play.core.review.testing.FakeReviewManager
 import com.indest.hah.GameActivity
 import com.indest.hah.LevelFactory
 import com.indest.hah.R
@@ -107,6 +106,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         Log.i(TAG, "onCreate")
 
         super.onCreate(savedInstanceState)
+
         cellDirector = CellDirector(this)
         audioManager = requireContext().getSystemService(Context.AUDIO_SERVICE) as AudioManager
         soundPool = SoundPool.Builder().build()
@@ -172,7 +172,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 gameViewModel.uiState.collect { uiState ->
                     if (gameState == GameState.LEVEL_COMPLETED) return@collect
                     when (uiState) {
-                        is LatestLevelEvent.Success -> {
+                        is LevelEvent.Success -> {
                             if (!(uiState.oldLevel.levelInfo.levelId == 0 && uiState.currentLevel.levelInfo.levelId == 0)) {
                                 if (uiState.oldLevel.levelInfo.levelId != uiState.currentLevel.levelInfo.levelId && uiState.oldLevel.levelInfo.levelId != 0) {
                                     if (binding.gameplayFragment.childCount > 0) {
@@ -187,7 +187,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                             (requireActivity() as GameActivity).binding.gameProgress.progress =
                                 ((uiState.currentLevel.levelInfo.levelId.toFloat() / 94f) * 100).toInt()
                         }
-                        is LatestLevelEvent.Error -> {
+                        is LevelEvent.Error -> {
                             Log.i(TAG, "Error getting level from gameViewModel")
                         }
                     }

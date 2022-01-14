@@ -9,6 +9,10 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.view.get
+import androidx.fragment.app.activityViewModels
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
@@ -16,6 +20,8 @@ import com.google.android.gms.games.Games
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.databinding.GoogleGamesFragmentBinding
+import com.indest.hah.game.OverallState
+import com.indest.hah.game.OverallViewModel
 
 class GoogleGamesFragment : BottomSheetDialogFragment() {
 
@@ -23,6 +29,7 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
     private val startActivity =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
     private lateinit var binding: GoogleGamesFragmentBinding
+    private val overallViewModel: OverallViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,19 +40,28 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
         Log.i(TAG, "onCreateView")
         binding = GoogleGamesFragmentBinding.inflate(layoutInflater, container, false)
 
-        val lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(requireActivity())
-        if (lastSignedInAccount == null) {
+
+        if (overallViewModel.uiState.value.state == OverallState.ONLINE) {
+            val lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(requireActivity())
+            if (lastSignedInAccount == null) {
+                binding.achievementsButton.visibility = View.GONE
+                binding.leaderboardsButton.visibility = View.GONE
+            } else {
+                binding.alternativeScreen.visibility = View.GONE
+                binding.achievementsButton.setOnClickListener {
+                    showAchievements()
+                }
+                binding.leaderboardsButton.setOnClickListener {
+                    showLeaderBoard()
+                }
+            }
+        } else {
             binding.achievementsButton.visibility = View.GONE
             binding.leaderboardsButton.visibility = View.GONE
-        } else {
-            binding.signInFromSettings.visibility = View.GONE
-            binding.achievementsButton.setOnClickListener {
-                showAchievements()
-            }
-            binding.leaderboardsButton.setOnClickListener {
-                showLeaderBoard()
-            }
+            binding.alternativeScreen.findViewById<AppCompatTextView>(R.id.alternative_text).text =
+                getString(R.string.no_internet)
         }
+
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         return binding.root
     }

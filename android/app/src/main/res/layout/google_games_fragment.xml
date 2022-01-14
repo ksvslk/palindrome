@@ -87,13 +87,14 @@
             />
     </androidx.appcompat.widget.LinearLayoutCompat>
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/sign_in_from_settings"
+        android:id="@+id/alternative_screen"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/simple_dialog_item_height"
         android:background="?android:attr/selectableItemBackground"
         android:orientation="horizontal">
 
         <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/alternative_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

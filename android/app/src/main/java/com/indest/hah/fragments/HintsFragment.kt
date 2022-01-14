@@ -13,20 +13,17 @@ import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.android.billingclient.api.BillingClient
-import com.android.billingclient.api.PurchasesUpdatedListener
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
-import com.google.android.gms.games.Games
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.databinding.HintsFragmentBinding
 import com.indest.hah.game.GameViewModel
-import com.indest.hah.game.LatestLevelEvent
+import com.indest.hah.game.LevelEvent
 import com.indest.hah.util.C.CATEGORY
 import com.indest.hah.util.C.HINT_REQUEST_KEY
 import com.indest.hah.util.C.HINT_TYPE
@@ -82,7 +79,7 @@ class HintsFragment : BottomSheetDialogFragment() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 gameViewModel.uiState.collect { uiState ->
                     when (uiState) {
-                        is LatestLevelEvent.Success -> {
+                        is LevelEvent.Success -> {
                             binding.revealCategoryShown.hintRevealedTextview.text =
                                 StringBuilder().append(
                                     uiState.currentLevel.levelInfo.category
@@ -95,7 +92,7 @@ class HintsFragment : BottomSheetDialogFragment() {
                                 binding.categoryRevealButton.isEnabled = false
                             }
                         }
-                        is LatestLevelEvent.Error -> {
+                        is LevelEvent.Error -> {
                             Log.i(TAG, "Error getting level from gameViewModel")
                         }
                     }
@@ -108,12 +105,12 @@ class HintsFragment : BottomSheetDialogFragment() {
 
     private fun showRewardedVideo(rewardedAdUnit: String, rewardedType: RewardedAdType) {
 
-        setFragmentResult(
+/*        setFragmentResult(
             HINT_REQUEST_KEY,
             bundleOf(HINT_TYPE to LETTER)
         )
         dismiss()
-        return
+        return*/
 
         if (gameViewModel.rewardedAd != null) {
             gameViewModel.rewardedAd?.fullScreenContentCallback =
