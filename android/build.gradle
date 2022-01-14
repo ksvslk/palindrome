@@ -1,38 +1,5 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
-    ext.kotlin_version = "1.5.30"
-    ext.hilt_version = '2.38.1'
-    ext.coroutine_version = '1.5.1'
-    ext.work_version ='2.6.0'
-    ext.coroutines_play_services_version = '1.4.1'
-    ext.instant_apps_version = '17.0.1'
-    ext.room_version = '2.3.0'
-    ext.fragment_version = '1.3.6'
-    ext.user_messaging_platform_version = '2.0.0'
-    ext.google_play_services_version = '21.0.0'
-    ext.google_play_services_auth_version = '19.2.0'
-    ext.gson_version = '2.8.7'
-    ext.gridlayout_version = '1.0.0'
-    ext.constraintlayout_version = '2.1.0'
-    ext.material_version = '1.4.0'
-    ext.appcompat_version = '1.3.1'
-    ext.androidx_core_version = '1.6.0'
-    ext.junit_version = '4.13.2'
-    ext.androidx_test_version = '1.1.3'
-    ext.espresso_core_version = '3.4.0'
-    ext.coroutines_test_version = '1.5.1'
-    ext.hilt_work_version = '1.0.0'
-    ext.fragment_version = '1.3.6'
-    ext.nav_version = '2.3.5'
-    ext.appcompat_version = '1.3.1'
-    ext.lifecycle_version = '2.4.0'
-    ext.lifecycle_runtime_ktx = '2.4.0'
-    ext.sdp_version = '1.0.6'
-    ext.ssp_version = '1.0.6'
-    ext.window_manager_version ='1.0.0-beta03'
-    ext.ads_version = '20.5.0'
-    ext.billing_version = '4.0.0'
-
 
     repositories {
         google()
@@ -40,12 +7,12 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:7.0.4'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.31"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10"
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
         classpath 'com.google.gms:google-services:4.3.10'
-        classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_version"
+        classpath "com.google.dagger:hilt-android-gradle-plugin:2.38.1"
         classpath "com.vanniktech:gradle-dependency-graph-generator-plugin:0.6.0"
     }
 }

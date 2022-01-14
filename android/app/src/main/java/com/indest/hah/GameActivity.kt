@@ -13,8 +13,6 @@ import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.forEach
-import androidx.fragment.app.commit
-import androidx.fragment.app.replace
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -27,10 +25,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.games.Games
-import com.indest.hah.fragments.GamePlayFragment
-import com.indest.hah.fragments.LoadingFragment
-import com.indest.hah.fragments.TutorialFragment
-import com.indest.hah.game.OverallState
 import com.indest.hah.game.OverallState.*
 import com.indest.hah.game.OverallViewModel
 import com.indest.hah.util.ConnectionLiveData
@@ -38,6 +32,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import java.net.HttpURLConnection
 import java.net.URL
+
 
 @AndroidEntryPoint
 class GameActivity : AppCompatActivity() {
@@ -88,36 +83,34 @@ class GameActivity : AppCompatActivity() {
         hideSystemBars(binding.root)
     }
 
-    private fun startListeningConnectionStatus() {
+    private fun startObservingNetworkStatus() {
         connectionLiveData.observe(this@GameActivity, { hasNetwork ->
             Log.i(TAG, "hasNetwork: $hasNetwork.")
             lifecycleScope.launch(Dispatchers.IO) {
-                Log.i(TAG, "hier")
-                val url = URL("https://www.google.com")
-                (url.openConnection() as? HttpURLConnection)?.runCatching {
-                    requestMethod = "GET"
-                    val hasInternet = responseCode == HttpURLConnection.HTTP_OK
-                    change(hasInternet, hasNetwork)
-                    Log.i(TAG, "got result")
-                }?.onFailure {
-                    Log.i(TAG, "Something went wrong: ${it.message}")
+                if (hasNetwork)
+                {
+                    val url = URL("https://www.google.com")
+                    (url.openConnection() as? HttpURLConnection)?.runCatching {
+                        requestMethod = "GET"
+                        val hasInternet = responseCode == HttpURLConnection.HTTP_OK
+                        if (hasInternet) overallViewModel.changeState(ONLINE)
+                        else overallViewModel.changeState(OFFLINE)
+                        disconnect()
+                    }?.onFailure {
+                        this.cancel()
+                        Log.i(TAG, "Something went wrong: ${it.message}")
+                    }
+                }
+                else {
+                    overallViewModel.changeState(OFFLINE)
                 }
             }
         })
     }
 
-    private fun change(hasInternet: Boolean, hasNetwork: Boolean) {
-        val newState = if (hasNetwork && hasInternet) ONLINE else OFFLINE
-        Log.i(TAG, "New state: $newState!")
-        if (newState != overallViewModel.uiState.value.state) {
-            overallViewModel.changeState(newState)
-            Log.i(TAG, "Internet: $newState!")
-        } else {
-            Log.i(TAG, "currentInternet: ${overallViewModel.uiState.value.state}!")
-        }
-    }
 
     private fun signInSilently() {
+        Log.i(TAG, "Trying to sign in silently.")
         val signInOptions =
             GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
                 .build()
@@ -130,7 +123,7 @@ class GameActivity : AppCompatActivity() {
                     .setViewForPopups(findViewById(android.R.id.content))
             }
             overallViewModel.changeState(ONLINE)
-            startListeningConnectionStatus()
+            startObservingNetworkStatus()
         } else {
             // Haven't been signed-in before. Try the silent sign-in first.
             val signInClient = GoogleSignIn.getClient(this, signInOptions)
@@ -146,10 +139,10 @@ class GameActivity : AppCompatActivity() {
                             .setViewForPopups(findViewById(android.R.id.content))
                         Log.i(TAG, "Signed in successfully.")
                         overallViewModel.changeState(ONLINE)
-                        startListeningConnectionStatus()
+                        startObservingNetworkStatus()
                     } else if (task.isComplete) {
                         overallViewModel.changeState(ONLINE)
-                        startListeningConnectionStatus()
+                        startObservingNetworkStatus()
                         Log.i(
                             TAG,
                             "Player needs to sign-in explicitly using via UI. ${task.exception}"
