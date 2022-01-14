@@ -17,16 +17,23 @@ import com.indest.hah.R
 import com.indest.hah.databinding.ScoreFragmentBinding
 
 class ScoresFragment : BottomSheetDialogFragment() {
-    private lateinit var binding: ScoreFragmentBinding
+    private var _binding: ScoreFragmentBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = ScoreFragmentBinding.inflate(layoutInflater, container, false)
+        val b = ScoreFragmentBinding.inflate(layoutInflater, container, false)
+        _binding = b
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         layoutInflater.inflate(R.layout.ciruclar_progress, binding.scoreFragment)
-        return binding.root
+        return b.root
+    }
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

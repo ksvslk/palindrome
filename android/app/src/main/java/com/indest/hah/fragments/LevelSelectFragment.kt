@@ -21,7 +21,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 @AndroidEntryPoint
 class LevelSelectFragment : BottomSheetDialogFragment() {
     private val TAG = "LevelSelectFragment"
-    private lateinit var binding: LevelSelectFragmentBinding
+    private var _binding: LevelSelectFragmentBinding? = null
+    private val binding get() = _binding!!
     private val gameViewModel: GameViewModel by activityViewModels()
     private var lastUnlocked = 1
 
@@ -31,9 +32,10 @@ class LevelSelectFragment : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         Log.i(TAG, "onCreateView")
-        binding = LevelSelectFragmentBinding.inflate(layoutInflater, container, false)
+        val b = LevelSelectFragmentBinding.inflate(layoutInflater, container, false)
+        _binding = b
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-        return binding.root
+        return b.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -64,6 +66,12 @@ class LevelSelectFragment : BottomSheetDialogFragment() {
             binding.levelSelectRecyclerview.scrollToPosition(lastUnlocked - 1)
         }
         return bottomSheetDialog
+    }
+
+    override fun onDestroyView() {
+        _binding?.levelSelectRecyclerview?.adapter = null
+        _binding = null
+        super.onDestroyView()
     }
 
 }

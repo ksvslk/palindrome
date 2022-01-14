@@ -34,7 +34,8 @@ import java.net.URL
 
 class SettingsFragment : BottomSheetDialogFragment() {
     private val TAG = "SettingsFragment"
-    private lateinit var binding: SettingsFragmentBinding
+    private var _binding: SettingsFragmentBinding? = null
+    private val binding get() = _binding!!
     private val overallViewModel: OverallViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -43,7 +44,8 @@ class SettingsFragment : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         Log.i(TAG, "onCreateView")
-        binding = SettingsFragmentBinding.inflate(layoutInflater, container, false)
+        val b = SettingsFragmentBinding.inflate(layoutInflater, container, false)
+        _binding = b
 
         val lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(requireActivity())
         if (lastSignedInAccount != null) {
@@ -117,7 +119,7 @@ class SettingsFragment : BottomSheetDialogFragment() {
 
         binding.googleSignInButton.setSize(SignInButton.SIZE_WIDE)
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-        return binding.root
+        return b.root
     }
 
     private val activityResultLauncher =
@@ -193,5 +195,11 @@ class SettingsFragment : BottomSheetDialogFragment() {
         )?.let {
             button.isChecked = it.getBoolean(setting, true)
         }
+    }
+
+    override fun onDestroyView() {
+        activityResultLauncher.unregister()
+        _binding = null
+        super.onDestroyView()
     }
 }

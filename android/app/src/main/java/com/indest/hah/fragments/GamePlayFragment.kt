@@ -40,6 +40,7 @@ import com.indest.hah.GameActivity
 import com.indest.hah.LevelFactory
 import com.indest.hah.R
 import com.indest.hah.databinding.GameplayFragmentBinding
+import com.indest.hah.databinding.HintsFragmentBinding
 import com.indest.hah.game.*
 import com.indest.hah.letter.Cell
 import com.indest.hah.letter.Letter
@@ -47,6 +48,7 @@ import com.indest.hah.letter.Slot
 import com.indest.hah.letter.effects.SoundSelector
 import com.indest.hah.persistance.LevelProgress
 import com.indest.hah.persistance.dto.Level
+import com.indest.hah.util.C
 import com.indest.hah.util.C.CATEGORY
 import com.indest.hah.util.C.HINT_REQUEST_KEY
 import com.indest.hah.util.C.HINT_TYPE
@@ -62,7 +64,8 @@ import kotlin.properties.Delegates
 class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
     private val TAG = "GamePlayFragment"
-    private lateinit var binding: GameplayFragmentBinding
+    private var _binding: GameplayFragmentBinding? = null
+    private val binding get() = _binding!!
     private lateinit var soundPool: SoundPool
     private var noteSounds by Delegates.notNull<List<Int>>()
     private var scoreSound by Delegates.notNull<Int>()
@@ -99,6 +102,12 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 }
             guesses = 0
         }
+    }
+
+    override fun onDestroy() {
+        findNavController().removeOnDestinationChangedListener { _, _, _ -> }
+        hintBadge = null
+        super.onDestroy()
     }
 
 
@@ -141,10 +150,11 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = GameplayFragmentBinding.inflate(layoutInflater, container, false)
+        val b = GameplayFragmentBinding.inflate(layoutInflater, container, false)
+        _binding = b
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         Log.i(TAG, "onCreateView")
-        return binding.root
+        return b.root
     }
 
     // CLEAN
@@ -390,13 +400,14 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     // CLEAN
     private fun replaceFragmentWithSelf() {
         gameViewModel.realSolutionAndGuess.postValue(Triple("", "2", null))
+
         parentFragmentManager.commit {
             setCustomAnimations(
                 R.anim.slide_in_bottom,
                 R.anim.slide_out_top
             )
             setReorderingAllowed(true)
-            replace<GamePlayFragment>(R.id.fragments_container)
+            replace<GamePlayFragment>(R.id.fragments_container, tag = C.GAMEPLAY_FRAGMENT_TAG)
         }
     }
 
@@ -726,7 +737,6 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 (!it.getBoolean(getString(R.string.clues_purchased), false) ||
                         !it.getBoolean(getString(R.string.place_letter_purchased), false))
             ) {
-
                 val adRequest = AdRequest.Builder().build()
                 RewardedAd.load(
                     requireActivity(), getString(R.string.rewarded_ad_unit), adRequest,
@@ -744,6 +754,11 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 )
             }
         }
+    }
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
     }
 
 

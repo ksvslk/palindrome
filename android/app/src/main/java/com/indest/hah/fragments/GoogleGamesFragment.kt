@@ -1,6 +1,5 @@
 package com.indest.hah.fragments
 
-import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,13 +8,9 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
-import androidx.core.view.get
 import androidx.fragment.app.activityViewModels
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.SignInButton
 import com.google.android.gms.games.Games
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
@@ -28,7 +23,8 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
     private val TAG = "GoogleGamesFragment"
     private val startActivity =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
-    private lateinit var binding: GoogleGamesFragmentBinding
+    private var _binding: GoogleGamesFragmentBinding? = null
+    private val binding get() = _binding!!
     private val overallViewModel: OverallViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -38,8 +34,8 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
     ): View {
 
         Log.i(TAG, "onCreateView")
-        binding = GoogleGamesFragmentBinding.inflate(layoutInflater, container, false)
-
+        val b = GoogleGamesFragmentBinding.inflate(layoutInflater, container, false)
+        _binding = b
 
         if (overallViewModel.uiState.value.state == OverallState.ONLINE) {
             val lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(requireActivity())
@@ -63,7 +59,7 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
         }
 
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-        return binding.root
+        return b.root
     }
 
     private fun showLeaderBoard() {
@@ -103,6 +99,11 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
                 startActivity.launch(it.result)
             }
         }
+    }
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
     }
 
 }

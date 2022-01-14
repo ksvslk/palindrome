@@ -127,9 +127,9 @@ dependencies {
     implementation "androidx.hilt:hilt-work:$hilt_work_version"
     kapt "androidx.hilt:hilt-compiler:$hilt_work_version"
 
-    testImplementation "junit:junit:$junit_version"
-    implementation "androidx.test.ext:junit-ktx:$androidx_test_version"
-    androidTestImplementation "androidx.test.ext:junit:$androidx_test_version"
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.8.1'
+
+
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_core_version"
     androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_test_version"
 }

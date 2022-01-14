@@ -21,16 +21,23 @@ import com.indest.hah.databinding.TutorialFragmentBinding
 class TutorialFragment : Fragment() {
 
     private val TAG = "TutorialFragment"
-    private lateinit var binding: TutorialFragmentBinding
+    private var _binding: TutorialFragmentBinding? = null
+    private val binding get() = _binding!!
     private val mainAnimatorSet = AnimatorSet()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = TutorialFragmentBinding.inflate(layoutInflater, container, false)
+        val b = TutorialFragmentBinding.inflate(layoutInflater, container, false)
+        _binding = b
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-        return binding.root
+        return b.root
+    }
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

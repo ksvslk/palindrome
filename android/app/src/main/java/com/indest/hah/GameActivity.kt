@@ -32,6 +32,8 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import java.net.HttpURLConnection
 import java.net.URL
+import javax.net.ssl.HttpsURLConnection
+import kotlin.coroutines.suspendCoroutine
 
 
 @AndroidEntryPoint
@@ -46,8 +48,7 @@ class GameActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate")
         super.onCreate(savedInstanceState)
-        connectionLiveData = ConnectionLiveData(this)
-
+        connectionLiveData = ConnectionLiveData(applicationContext)
         binding = ActivityGameBinding.inflate(layoutInflater)
         ViewCompat.setOnApplyWindowInsetsListener(binding.container) { _, insets ->
             WindowInsetsCompat.Builder().setInsets(
@@ -73,9 +74,12 @@ class GameActivity : AppCompatActivity() {
         bottomNavigationView.menu.forEach { it.isChecked = true }
 
         MobileAds.initialize(this) {}
-
     }
 
+    override fun onResume() {
+        super.onResume()
+        signInSilently()
+    }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         Log.i(TAG, "onWindowFocusChanged")
@@ -86,22 +90,21 @@ class GameActivity : AppCompatActivity() {
     private fun startObservingNetworkStatus() {
         connectionLiveData.observe(this@GameActivity, { hasNetwork ->
             Log.i(TAG, "hasNetwork: $hasNetwork.")
-            lifecycleScope.launch(Dispatchers.IO) {
-                if (hasNetwork)
-                {
+            lifecycleScope.launch(Dispatchers.IO)
+            {
+                if (hasNetwork) {
                     val url = URL("https://www.google.com")
-                    (url.openConnection() as? HttpURLConnection)?.runCatching {
-                        requestMethod = "GET"
-                        val hasInternet = responseCode == HttpURLConnection.HTTP_OK
+                    val urlConnection = url.openConnection() as? HttpsURLConnection
+                    try {
+                        val hasInternet = urlConnection?.responseCode == HttpsURLConnection.HTTP_OK
                         if (hasInternet) overallViewModel.changeState(ONLINE)
                         else overallViewModel.changeState(OFFLINE)
-                        disconnect()
-                    }?.onFailure {
-                        this.cancel()
-                        Log.i(TAG, "Something went wrong: ${it.message}")
+                    } catch (ex: Exception) {
+                        Log.e(TAG, ex.message.toString())
+                    } finally {
+                        urlConnection?.disconnect()
                     }
-                }
-                else {
+                } else {
                     overallViewModel.changeState(OFFLINE)
                 }
             }
@@ -191,8 +194,4 @@ class GameActivity : AppCompatActivity() {
         activityResultLauncher.launch(signInClient.signInIntent)
     }
 
-    override fun onResume() {
-        super.onResume()
-        signInSilently()
-    }
 }

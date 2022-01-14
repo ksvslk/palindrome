@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.indest.hah.R
 import com.indest.hah.game.OverallState
 import com.indest.hah.game.OverallViewModel
+import com.indest.hah.util.C.GAMEPLAY_FRAGMENT_TAG
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -32,7 +33,7 @@ class LoadingFragment : Fragment(R.layout.home_fragment) {
                         if (tutorialPassed) {
                             parentFragmentManager.commit {
                                 setReorderingAllowed(true)
-                                replace<GamePlayFragment>(R.id.fragments_container)
+                                replace<GamePlayFragment>(R.id.fragments_container, tag = GAMEPLAY_FRAGMENT_TAG)
                             }
                         } else {
                             parentFragmentManager.commit {

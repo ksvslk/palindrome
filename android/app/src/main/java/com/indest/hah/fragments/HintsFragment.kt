@@ -33,10 +33,10 @@ import kotlinx.coroutines.launch
 
 class HintsFragment : BottomSheetDialogFragment() {
     private val TAG = "HintsFragment"
-    private lateinit var binding: HintsFragmentBinding
+    private var _binding: HintsFragmentBinding? = null
+    private val binding get() = _binding!!
     private val gameViewModel: GameViewModel by activityViewModels()
     private var rewardEarned = false
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,7 +45,8 @@ class HintsFragment : BottomSheetDialogFragment() {
     ): View {
 
         Log.i(TAG, "onCreateView")
-        binding = HintsFragmentBinding.inflate(layoutInflater, container, false)
+        val b  = HintsFragmentBinding.inflate(layoutInflater, container, false)
+        _binding = b
         binding.categoryRevealButton.setOnClickListener {
             if (!gameViewModel.isCategoryRewarded()) {
                 showRewardedVideo(
@@ -75,15 +76,13 @@ class HintsFragment : BottomSheetDialogFragment() {
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
         )
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 gameViewModel.uiState.collect { uiState ->
                     when (uiState) {
                         is LevelEvent.Success -> {
                             binding.revealCategoryShown.hintRevealedTextview.text =
-                                StringBuilder().append(
-                                    uiState.currentLevel.levelInfo.category
-                                )
+                                uiState.currentLevel.levelInfo.category
                             if (uiState.currentLevel.levelInfo.categoryRewarded) {
                                 Log.i(TAG, "revealCategoryFlipper.showNext()")
                                 if (!binding.revealCategoryShown.root.isShown) {
@@ -100,7 +99,7 @@ class HintsFragment : BottomSheetDialogFragment() {
             }
         }
 
-        return binding.root
+        return b.root
     }
 
     private fun showRewardedVideo(rewardedAdUnit: String, rewardedType: RewardedAdType) {
@@ -183,6 +182,12 @@ class HintsFragment : BottomSheetDialogFragment() {
             )
         }
     }
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
+    }
+
 
     enum class RewardedAdType {
         REVEAL_CATEGORY,

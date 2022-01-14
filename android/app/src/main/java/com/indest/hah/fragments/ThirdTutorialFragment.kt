@@ -14,15 +14,22 @@ import com.indest.hah.R
 import com.indest.hah.databinding.ThirdTutorialFragmentBinding
 
 class ThirdTutorialFragment : Fragment() {
-    private lateinit var binding: ThirdTutorialFragmentBinding
+    private var _binding: ThirdTutorialFragmentBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = ThirdTutorialFragmentBinding.inflate(layoutInflater, container, false)
+        val b = ThirdTutorialFragmentBinding.inflate(layoutInflater, container, false)
+        _binding = b
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-        return binding.root
+        return b.root
+    }
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

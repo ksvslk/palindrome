@@ -13,5 +13,7 @@ object C {
     const val HINT_TYPE = "type"
     const val LETTER = "letter"
     const val CATEGORY = "category"
+    const val GAMEPLAY_FRAGMENT_TAG ="gameplay_fragment_Tag"
+    const val HINT_FRAGMENT_TAG ="hints_fragment_tag"
 }
 
