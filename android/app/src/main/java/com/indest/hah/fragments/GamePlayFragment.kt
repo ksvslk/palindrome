@@ -23,7 +23,7 @@ import androidx.fragment.app.*
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.NavHostFragment.findNavController
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.rewarded.RewardedAd
@@ -40,7 +40,6 @@ import com.indest.hah.GameActivity
 import com.indest.hah.LevelFactory
 import com.indest.hah.R
 import com.indest.hah.databinding.GameplayFragmentBinding
-import com.indest.hah.databinding.HintsFragmentBinding
 import com.indest.hah.game.*
 import com.indest.hah.letter.Cell
 import com.indest.hah.letter.Letter
@@ -50,6 +49,7 @@ import com.indest.hah.persistance.LevelProgress
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.util.C
 import com.indest.hah.util.C.CATEGORY
+import com.indest.hah.util.C.HINT_FRAGMENT_TAG
 import com.indest.hah.util.C.HINT_REQUEST_KEY
 import com.indest.hah.util.C.HINT_TYPE
 import com.indest.hah.util.C.LETTER
@@ -90,7 +90,6 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 1,
                 audioManager = audioManager
             )
-            createHintsBadge()
             hintBadge?.isVisible = true
             Log.i(TAG, "hintBadge.isVisible: ${hintBadge?.isVisible}")
             activity?.getSharedPreferences(getString(R.string.preferences), Context.MODE_PRIVATE)
@@ -103,13 +102,6 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             guesses = 0
         }
     }
-
-    override fun onDestroy() {
-        findNavController().removeOnDestinationChangedListener { _, _, _ -> }
-        hintBadge = null
-        super.onDestroy()
-    }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate")
@@ -153,6 +145,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         val b = GameplayFragmentBinding.inflate(layoutInflater, container, false)
         _binding = b
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+        createHintsBadge()
         Log.i(TAG, "onCreateView")
         return b.root
     }
@@ -173,7 +166,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     // CLEAN
     override fun onPause() {
         super.onPause()
-        findNavController().removeOnDestinationChangedListener { _, _, _ -> }
+        findNavController(this).removeOnDestinationChangedListener { _, _, _ -> }
     }
 
     private fun handleLoadingLevel() {
@@ -212,7 +205,11 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 getString(R.string.preferences),
                 Context.MODE_PRIVATE
             )?.let {
-                if (!(it.getBoolean(requireContext().getString(R.string.review_displayed_to_user), false))) {
+                if (!(it.getBoolean(
+                        requireContext().getString(R.string.review_displayed_to_user),
+                        false
+                    ))
+                ) {
                     // val reviewManager = FakeReviewManager(requireContext())
                     val reviewManager = ReviewManagerFactory.create(requireContext())
                     val request = reviewManager.requestReviewFlow()
@@ -245,8 +242,12 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     // CAN BE CLEANED
     private fun handleGivingRewards() {
         setFragmentResultListener(HINT_REQUEST_KEY) { _, bundle ->
+            Log.i(TAG, "HINT_REQUEST_KEY")
+            if (bundle[HINT_FRAGMENT_TAG] != null)
+            {
+                resetHintsBadge()
+            }
             run {
-                Log.i(TAG, "fragmentResultListener")
                 when (bundle[HINT_TYPE]) {
                     // Reward player with random letter placed to correct slot
                     LETTER -> {
@@ -310,25 +311,18 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
     // CLEAN
     private fun resetHintsBadge() {
-        findNavController().addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.id == R.id.navigation_hints) {
-                activity?.getSharedPreferences(
-                    getString(R.string.preferences),
-                    Context.MODE_PRIVATE
-                )?.let {
-                    with(it.edit()) {
-                        hintBadge?.isVisible = false
-                        putBoolean(getString(R.string.level_solution_guesses), false)
-                        apply()
-                    }
-                }
-                guesses = 0
+        activity?.getSharedPreferences(
+            getString(R.string.preferences),
+            Context.MODE_PRIVATE
+        )?.let {
+            with(it.edit()) {
+                hintBadge?.isVisible = false
+                putBoolean(getString(R.string.level_solution_guesses), false)
+                apply()
             }
         }
-        activity?.getSharedPreferences(getString(R.string.preferences), Context.MODE_PRIVATE)?.let {
-            hintBadge?.isVisible = it.getBoolean(getString(R.string.level_solution_guesses), false)
-        }
-
+        guesses = 0
+        hintBadge?.isVisible = false
     }
 
     // CLEAN
@@ -757,9 +751,9 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     }
 
     override fun onDestroyView() {
+        hintBadge = null
         _binding = null
         super.onDestroyView()
     }
-
 
 }

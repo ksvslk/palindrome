@@ -1,5 +1,6 @@
 package com.indest.hah.fragments
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -25,6 +26,7 @@ import com.indest.hah.databinding.HintsFragmentBinding
 import com.indest.hah.game.GameViewModel
 import com.indest.hah.game.LevelEvent
 import com.indest.hah.util.C.CATEGORY
+import com.indest.hah.util.C.HINT_FRAGMENT_TAG
 import com.indest.hah.util.C.HINT_REQUEST_KEY
 import com.indest.hah.util.C.HINT_TYPE
 import com.indest.hah.util.C.LETTER
@@ -37,6 +39,7 @@ class HintsFragment : BottomSheetDialogFragment() {
     private val binding get() = _binding!!
     private val gameViewModel: GameViewModel by activityViewModels()
     private var rewardEarned = false
+    private var bundle:Bundle = bundleOf()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -126,16 +129,10 @@ class HintsFragment : BottomSheetDialogFragment() {
                                 RewardedAdType.REVEAL_CATEGORY -> {
                                     gameViewModel.setCategoryRewarded(true)
                                     binding.categoryRevealButton.isEnabled = false
-                                    setFragmentResult(
-                                        HINT_REQUEST_KEY,
-                                        bundleOf(HINT_TYPE to CATEGORY)
-                                    )
+                                    bundle.putString(HINT_TYPE, CATEGORY)
                                 }
                                 RewardedAdType.PLACE_LETTER -> {
-                                    setFragmentResult(
-                                        HINT_REQUEST_KEY,
-                                        bundleOf(HINT_TYPE to LETTER)
-                                    )
+                                    bundle.putString(HINT_TYPE, LETTER)
                                     dismiss()
                                 }
                             }
@@ -163,6 +160,15 @@ class HintsFragment : BottomSheetDialogFragment() {
         }
     }
 
+    override fun onDismiss(dialog: DialogInterface) {
+        bundle.putString(HINT_FRAGMENT_TAG, HINT_FRAGMENT_TAG)
+        setFragmentResult(
+            HINT_REQUEST_KEY,
+            bundle
+        )
+        super.onDismiss(dialog)
+    }
+
     private fun loadRewardedAd(adUnit: String) {
         if (gameViewModel.rewardedAd == null) {
             val adRequest = AdRequest.Builder().build()
@@ -182,6 +188,7 @@ class HintsFragment : BottomSheetDialogFragment() {
             )
         }
     }
+
 
     override fun onDestroyView() {
         _binding = null

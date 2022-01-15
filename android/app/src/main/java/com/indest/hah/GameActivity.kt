@@ -14,7 +14,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.forEach
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.gms.ads.*
@@ -40,8 +40,8 @@ import kotlin.coroutines.suspendCoroutine
 class GameActivity : AppCompatActivity() {
 
     private val TAG = "GameActivity"
-    lateinit var binding: ActivityGameBinding
-    private lateinit var navController: NavController
+    private var _binding: ActivityGameBinding? = null
+    val binding get() = _binding!!
     private lateinit var connectionLiveData: ConnectionLiveData
     private val overallViewModel: OverallViewModel by viewModels()
 
@@ -49,7 +49,8 @@ class GameActivity : AppCompatActivity() {
         Log.i(TAG, "onCreate")
         super.onCreate(savedInstanceState)
         connectionLiveData = ConnectionLiveData(applicationContext)
-        binding = ActivityGameBinding.inflate(layoutInflater)
+        val b = ActivityGameBinding.inflate(layoutInflater)
+        _binding = b
         ViewCompat.setOnApplyWindowInsetsListener(binding.container) { _, insets ->
             WindowInsetsCompat.Builder().setInsets(
                 WindowInsetsCompat.Type.systemBars(),
@@ -64,11 +65,10 @@ class GameActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
-        val bottomNavigationView: BottomNavigationView = binding.bottomNavView
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragments_container) as NavHostFragment
-        navController = navHostFragment.navController
-
+        val navController = navHostFragment.navController
+        val bottomNavigationView: BottomNavigationView = binding.bottomNavView
         bottomNavigationView.setupWithNavController(navController)
         bottomNavigationView.menu.setGroupCheckable(0, true, false)
         bottomNavigationView.menu.forEach { it.isChecked = true }
@@ -192,6 +192,11 @@ class GameActivity : AppCompatActivity() {
             GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN
         )
         activityResultLauncher.launch(signInClient.signInIntent)
+    }
+
+    override fun onDestroy() {
+        _binding = null
+        super.onDestroy()
     }
 
 }
