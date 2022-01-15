@@ -73,7 +73,7 @@ class GameActivity : AppCompatActivity() {
         bottomNavigationView.menu.setGroupCheckable(0, true, false)
         bottomNavigationView.menu.forEach { it.isChecked = true }
 
-        MobileAds.initialize(this) {}
+        MobileAds.initialize(applicationContext) {}
     }
 
     override fun onResume() {
@@ -99,10 +99,12 @@ class GameActivity : AppCompatActivity() {
                         val hasInternet = urlConnection?.responseCode == HttpsURLConnection.HTTP_OK
                         if (hasInternet) overallViewModel.changeState(ONLINE)
                         else overallViewModel.changeState(OFFLINE)
-                    } catch (ex: Exception) {
-                        Log.e(TAG, ex.message.toString())
-                    } finally {
+                        urlConnection?.inputStream?.close()
                         urlConnection?.disconnect()
+                    } catch (ex: Exception) {
+                        urlConnection?.inputStream?.close()
+                        urlConnection?.disconnect()
+                        Log.e(TAG, ex.message.toString())
                     }
                 } else {
                     overallViewModel.changeState(OFFLINE)
