@@ -24,10 +24,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment.findNavController
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.LoadAdError
-import com.google.android.gms.ads.rewarded.RewardedAd
-import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.games.Games
@@ -44,15 +40,11 @@ import com.indest.hah.game.*
 import com.indest.hah.letter.Cell
 import com.indest.hah.letter.Letter
 import com.indest.hah.letter.Slot
-import com.indest.hah.letter.effects.SoundSelector
 import com.indest.hah.persistance.LevelProgress
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.util.C
-import com.indest.hah.util.C.CATEGORY
 import com.indest.hah.util.C.HINT_FRAGMENT_TAG
-import com.indest.hah.util.C.HINT_REQUEST_KEY
-import com.indest.hah.util.C.HINT_TYPE
-import com.indest.hah.util.C.LETTER
+import com.indest.hah.util.C.HINT_TEST
 import com.indest.hah.util.hideSystemBars
 import com.indest.hah.util.playWhileSoundOn
 import dagger.hilt.android.AndroidEntryPoint
@@ -129,11 +121,78 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             soundPool.load(requireContext(), R.raw.c5_outer, 1),
             soundPool.load(requireContext(), R.raw.c6_outer, 1),
         )
+        gameViewModel.resetRewardedAdState()
+        resetHintsBadgeOnFragmentResult()
+        observeViewModel()
 
-        loadRewardedAd()
-        handleGivingRewards()
-        handleLoadingLevel()
+    }
 
+    private fun resetHintsBadgeOnFragmentResult() {
+        setFragmentResultListener(HINT_TEST) { _, bundle ->
+            run {
+                if (bundle[HINT_FRAGMENT_TAG] != null) {
+                    resetHintsBadge()
+                }
+            }
+        }
+    }
+
+    private fun rewardUser(hintType: RewardType) {
+        when (hintType) {
+            RewardType.HINT -> {
+                gameViewModel.setCategoryRewarded(true)
+            }
+            RewardType.LETTER -> {
+                gameState = GameState.REWARDING
+                val candidateLetters = cellDirector.cells
+                    .filterIsInstance<Letter>()
+                    .filter { !it.hasFriend() }
+                val randomLetter = candidateLetters.random()
+                val correctSlot = cellDirector.cells.filterIsInstance<Slot>().first {
+                    (it.realChar == randomLetter.text.first() && !it.hasFriend()) ||
+                            (it.realChar == randomLetter.text.first() &&
+                                    it.hasFriend() &&
+                                    it.getTheFriend()?.text?.first() != it.realChar)
+                }
+                val incorrectSlot =
+                    cellDirector.cells.filterIsInstance<Slot>().firstOrNull {
+                        it.hasFriend() &&
+                                it.getTheFriend()?.text?.first() != it.realChar
+                    }
+                randomLetter.isLocked = true
+                if (correctSlot.hasFriend()) {
+                    correctSlot.friend?.let {
+                        cellDirector.switchLetterPositions(
+                            randomLetter,
+                            it, true
+                        )
+                    }
+                } else {
+                    if (candidateLetters.size == 1 && incorrectSlot == null) { // Last letter to be placed in the slot
+                        cellDirector.placeLetterInEmptyBox(
+                            randomLetter, correctSlot,
+                            isRewarded = true,
+                            isLastRewardedLetter = true
+                        )
+                    } else if (candidateLetters.size == 1 && incorrectSlot != null) {
+                        incorrectSlot.getTheFriend()
+                            ?.let {
+                                cellDirector.sendLetterHome(it)
+                                cellDirector.placeLetterInEmptyBox(
+                                    randomLetter, correctSlot,
+                                    isRewarded = true
+                                )
+                            }
+                    } else {
+                        cellDirector.placeLetterInEmptyBox(randomLetter, correctSlot, true)
+                    }
+                }
+            }
+            else -> {
+                Log.i(TAG, "No reward")
+            }
+        }
+        gameViewModel.resetRewardedAdState()
     }
 
     // CLEAN
@@ -169,32 +228,43 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         findNavController(this).removeOnDestinationChangedListener { _, _, _ -> }
     }
 
-    private fun handleLoadingLevel() {
+    private fun observeViewModel() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                gameViewModel.uiState.collect { uiState ->
-                    if (gameState == GameState.LEVEL_COMPLETED) return@collect
-                    when (uiState) {
-                        is LevelEvent.Success -> {
-                            if (!(uiState.oldLevel.levelInfo.levelId == 0 && uiState.currentLevel.levelInfo.levelId == 0)) {
-                                if (uiState.oldLevel.levelInfo.levelId != uiState.currentLevel.levelInfo.levelId && uiState.oldLevel.levelInfo.levelId != 0) {
-                                    if (binding.gameplayFragment.childCount > 0) {
-                                        replaceFragmentWithSelf()
-                                    } else {
+                launch {
+                    gameViewModel.uiState.collect { uiState ->
+                        if (gameState == GameState.LEVEL_COMPLETED) return@collect
+                        when (uiState) {
+                            is LevelEvent.Success -> {
+                                if (!(uiState.oldLevel.levelInfo.levelId == 0 && uiState.currentLevel.levelInfo.levelId == 0)) {
+                                    if (uiState.oldLevel.levelInfo.levelId != uiState.currentLevel.levelInfo.levelId && uiState.oldLevel.levelInfo.levelId != 0) {
+                                        if (binding.gameplayFragment.childCount > 0) {
+                                            replaceFragmentWithSelf()
+                                        } else {
+                                            loadLevel(uiState.currentLevel)
+                                        }
+                                    } else if (binding.gameplayFragment.childCount == 0) {
                                         loadLevel(uiState.currentLevel)
                                     }
-                                } else if (binding.gameplayFragment.childCount == 0) {
-                                    loadLevel(uiState.currentLevel)
                                 }
+                                (requireActivity() as GameActivity).binding.gameProgress.progress =
+                                    ((uiState.currentLevel.levelInfo.levelId.toFloat() / 94f) * 100).toInt()
                             }
-                            (requireActivity() as GameActivity).binding.gameProgress.progress =
-                                ((uiState.currentLevel.levelInfo.levelId.toFloat() / 94f) * 100).toInt()
-                        }
-                        is LevelEvent.Error -> {
-                            Log.i(TAG, "Error getting level from gameViewModel")
+                            is LevelEvent.Error -> {
+                                Log.i(TAG, "Error getting level from gameViewModel")
+                            }
                         }
                     }
                 }
+                launch {
+                    gameViewModel.rewardedAdState.collect { rewardedAdState ->
+                        if (rewardedAdState.userEarnedReward && rewardedAdState.rewardType != RewardType.NONE)
+                        {
+                            rewardUser(rewardedAdState.rewardType)
+                        }
+                    }
+                }
+
             }
         }
     }
@@ -216,7 +286,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                     request.addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             val reviewInfo = task.result
-                            val flow = reviewManager.launchReviewFlow(requireActivity(), reviewInfo)
+                            val flow =
+                                reviewManager.launchReviewFlow(requireActivity(), reviewInfo)
                             flow.addOnCompleteListener { _ ->
                                 Log.i(
                                     TAG,
@@ -233,76 +304,6 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                     with(it.edit()) {
                         putBoolean(getString(R.string.review_displayed_to_user), true)
                         apply()
-                    }
-                }
-            }
-        }
-    }
-
-    // CAN BE CLEANED
-    private fun handleGivingRewards() {
-        setFragmentResultListener(HINT_REQUEST_KEY) { _, bundle ->
-            Log.i(TAG, "HINT_REQUEST_KEY")
-            if (bundle[HINT_FRAGMENT_TAG] != null)
-            {
-                resetHintsBadge()
-            }
-            run {
-                when (bundle[HINT_TYPE]) {
-                    // Reward player with random letter placed to correct slot
-                    LETTER -> {
-                        gameState = GameState.REWARDING
-                        val candidateLetters = cellDirector.cells
-                            .filterIsInstance<Letter>()
-                            .filter { !it.hasFriend() }
-                        val randomLetter = candidateLetters.random()
-                        val correctSlot = cellDirector.cells.filterIsInstance<Slot>().first {
-                            (it.realChar == randomLetter.text.first() && !it.hasFriend()) ||
-                                    (it.realChar == randomLetter.text.first() &&
-                                            it.hasFriend() &&
-                                            it.getTheFriend()?.text?.first() != it.realChar)
-                        }
-                        val incorrectSlot =
-                            cellDirector.cells.filterIsInstance<Slot>().firstOrNull {
-                                it.hasFriend() &&
-                                        it.getTheFriend()?.text?.first() != it.realChar
-                            }
-                        randomLetter.isLocked = true
-                        if (correctSlot.hasFriend()) {
-                            correctSlot.friend?.let {
-                                cellDirector.switchLetterPositions(
-                                    randomLetter,
-                                    it, true
-                                )
-                            }
-                        } else {
-                            if (candidateLetters.size == 1 && incorrectSlot == null) { // Last letter to be placed in the slot
-                                cellDirector.placeLetterInEmptyBox(
-                                    randomLetter, correctSlot,
-                                    isRewarded = true,
-                                    isLastRewardedLetter = true
-                                )
-                            } else if (candidateLetters.size == 1 && incorrectSlot != null) {
-                                incorrectSlot.getTheFriend()
-                                    ?.let {
-                                        cellDirector.sendLetterHome(it)
-                                        cellDirector.placeLetterInEmptyBox(
-                                            randomLetter, correctSlot,
-                                            isRewarded = true
-                                        )
-                                    }
-                            } else {
-                                cellDirector.placeLetterInEmptyBox(randomLetter, correctSlot, true)
-                            }
-                        }
-                        Log.d(TAG, "Rewarding with placing a letter.")
-                    }
-                    // We just play the sound effect (reward given in HintsFragment)
-                    CATEGORY -> {
-                        cellDirector.cells.filterIsInstance<Letter>().first().effects.playSound(
-                            SoundSelector.LETTER_REWARDED
-                        )
-                        Log.d(TAG, "Rewarding with category.")
                     }
                 }
             }
@@ -520,13 +521,21 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     // MIXED
     private fun playCorrectSolutionAnimation(currentAndMaxScore: Pair<Int, Int>) {
         val successTextColor =
-            ResourcesCompat.getColor(resources, R.color.successTextColor, requireContext().theme)
+            ResourcesCompat.getColor(
+                resources,
+                R.color.successTextColor,
+                requireContext().theme
+            )
         val currentBoxColor =
             ResourcesCompat.getColor(resources, R.color.colorSecondary, requireContext().theme)
         val boxSuccessColor =
             ResourcesCompat.getColor(resources, R.color.successBoxColor, requireContext().theme)
         val lockedColor =
-            ResourcesCompat.getColor(resources, R.color.letterRewardedColor, requireContext().theme)
+            ResourcesCompat.getColor(
+                resources,
+                R.color.letterRewardedColor,
+                requireContext().theme
+            )
 
         val animatorSet = AnimationFactory.getCorrectSolutionAnimation(
             requireActivity(),
@@ -563,7 +572,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             2000,
             resources.getDimensionPixelSize(R.dimen.other_message_size).toFloat()
         )
-        scoreMessage.addCallback(object : BaseTransientBottomBar.BaseCallback<MessageSnackBar>() {
+        scoreMessage.addCallback(object :
+            BaseTransientBottomBar.BaseCallback<MessageSnackBar>() {
             override fun onDismissed(transientBottomBar: MessageSnackBar?, event: Int) {
                 super.onDismissed(transientBottomBar, event)
                 parentFragmentManager.fragments.forEach {
@@ -600,7 +610,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 }
             }
         })
-        winningMessage.addCallback(object : BaseTransientBottomBar.BaseCallback<MessageSnackBar>() {
+        winningMessage.addCallback(object :
+            BaseTransientBottomBar.BaseCallback<MessageSnackBar>() {
             override fun onDismissed(transientBottomBar: MessageSnackBar?, event: Int) {
                 super.onDismissed(transientBottomBar, event)
                 scoreMessage.show()
@@ -610,7 +621,12 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 )
             }
         })
-        soundPool.playWhileSoundOn(requireActivity(), correctSound, 2, audioManager = audioManager)
+        soundPool.playWhileSoundOn(
+            requireActivity(),
+            correctSound,
+            2,
+            audioManager = audioManager
+        )
         winningMessage.show()
     }
 
@@ -633,7 +649,10 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     }
 
     // CLEAN
-    private fun unlockAchievementForLevel(level: Int, lastSignedInAccount: GoogleSignInAccount) {
+    private fun unlockAchievementForLevel(
+        level: Int,
+        lastSignedInAccount: GoogleSignInAccount
+    ) {
         when (level) {
             20 -> {
                 Games.getAchievementsClient(requireActivity(), lastSignedInAccount)
@@ -672,7 +691,12 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 .append(animation.animatedValue.toString().padStart(paddingLength, '0'))
                 .append(" of ${currentAndMaxScore.second} points")
         }
-        soundPool.playWhileSoundOn(requireActivity(), scoreSound, 2, audioManager = audioManager)
+        soundPool.playWhileSoundOn(
+            requireActivity(),
+            scoreSound,
+            2,
+            audioManager = audioManager
+        )
         animator.start()
     }
 
@@ -717,35 +741,6 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                         vibrator.vibrate(doubleClickPattern, -1)
                     }
                 }
-            }
-        }
-    }
-
-    // CLEAN
-    private fun loadRewardedAd() {
-        requireActivity().getSharedPreferences(
-            getString(R.string.preferences),
-            Context.MODE_PRIVATE
-        )?.let {
-            if (gameViewModel.rewardedAd == null &&
-                (!it.getBoolean(getString(R.string.clues_purchased), false) ||
-                        !it.getBoolean(getString(R.string.place_letter_purchased), false))
-            ) {
-                val adRequest = AdRequest.Builder().build()
-                RewardedAd.load(
-                    requireActivity(), getString(R.string.rewarded_ad_unit), adRequest,
-                    object : RewardedAdLoadCallback() {
-                        override fun onAdFailedToLoad(adError: LoadAdError) {
-                            Log.d(TAG, adError.message)
-                            gameViewModel.rewardedAd = null
-                        }
-
-                        override fun onAdLoaded(rewardedAd: RewardedAd) {
-                            Log.d(TAG, "Ad was loaded.")
-                            gameViewModel.rewardedAd = rewardedAd
-                        }
-                    }
-                )
             }
         }
     }

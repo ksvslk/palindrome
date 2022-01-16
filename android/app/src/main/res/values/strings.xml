@@ -25,6 +25,7 @@
     <string name="iap_remove_clue_ads">Remove Clue Ads</string>
     <string name="iap_remove_letter_ads">Remove Letter Ads</string>
     <string name="iap_remove_all_ads">Remove All Ads</string>
+    <string name="no_ad_available">Hint Not Available</string>
     <string name="sound_text">Sound</string>
     <string name="vibration_text">Vibration</string>
     <string name="ui_mode_dark">Dark Mode</string>

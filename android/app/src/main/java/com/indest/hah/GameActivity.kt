@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.*
 import android.os.Bundle
 import android.util.Log
+import android.view.WindowManager.LayoutParams.*
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -13,28 +14,32 @@ import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.forEach
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.findNavController
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.gms.ads.*
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.indest.hah.databinding.ActivityGameBinding
-import com.indest.hah.util.hideSystemBars
-import dagger.hilt.android.AndroidEntryPoint
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.games.Games
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.indest.hah.databinding.ActivityGameBinding
+import com.indest.hah.game.GameViewModel
 import com.indest.hah.game.OverallState.*
-import com.indest.hah.game.OverallViewModel
+import com.indest.hah.game.RewardType
 import com.indest.hah.util.ConnectionLiveData
+import com.indest.hah.util.hideSystemBars
+import com.unity3d.ads.IUnityAdsInitializationListener
+import com.unity3d.ads.IUnityAdsLoadListener
+import com.unity3d.ads.IUnityAdsShowListener
+import com.unity3d.ads.UnityAds
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.collect
 import java.net.HttpURLConnection
 import java.net.URL
 import javax.net.ssl.HttpsURLConnection
-import kotlin.coroutines.suspendCoroutine
-
 
 @AndroidEntryPoint
 class GameActivity : AppCompatActivity() {
@@ -43,12 +48,30 @@ class GameActivity : AppCompatActivity() {
     private var _binding: ActivityGameBinding? = null
     val binding get() = _binding!!
     private lateinit var connectionLiveData: ConnectionLiveData
-    private val overallViewModel: OverallViewModel by viewModels()
+    private val gameViewModel: GameViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate")
         super.onCreate(savedInstanceState)
         connectionLiveData = ConnectionLiveData(applicationContext)
+        UnityAds.initialize(
+            applicationContext,
+            getString(R.string.game_id),
+            true,
+            object : IUnityAdsInitializationListener {
+                override fun onInitializationComplete() {
+                    gameViewModel.setShouldLoadAd(true)
+                }
+
+                override fun onInitializationFailed(
+                    error: UnityAds.UnityAdsInitializationError?,
+                    message: String?
+                ) {
+                    Log.i(TAG, "onInitializationFailed. Error: $error, Message: $message.")
+                }
+
+            })
+
         val b = ActivityGameBinding.inflate(layoutInflater)
         _binding = b
         ViewCompat.setOnApplyWindowInsetsListener(binding.container) { _, insets ->
@@ -73,7 +96,75 @@ class GameActivity : AppCompatActivity() {
         bottomNavigationView.menu.setGroupCheckable(0, true, false)
         bottomNavigationView.menu.forEach { it.isChecked = true }
 
-        MobileAds.initialize(applicationContext) {}
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    gameViewModel.rewardedAdState.collect { rewardedAdState ->
+                        if (!rewardedAdState.adAvailable && rewardedAdState.shouldLoadNewAd && rewardedAdState.rewardType == RewardType.NONE && !rewardedAdState.userEarnedReward) {
+                            loadRewardedAd(getString(R.string.ad_unit_rewarded))
+                        }
+                        else if (rewardedAdState.adAvailable && rewardedAdState.rewardType != RewardType.NONE)
+                        {
+                            showRewardedAd()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun loadRewardedAd(adUnit: String) {
+        UnityAds.load(adUnit, object : IUnityAdsLoadListener {
+            override fun onUnityAdsAdLoaded(placementId: String?) {
+                Log.i(TAG, "onUnityAdsAdLoaded: $placementId")
+                gameViewModel.setRewardedAdAvailability(true)
+            }
+
+            override fun onUnityAdsFailedToLoad(
+                placementId: String?,
+                error: UnityAds.UnityAdsLoadError?,
+                message: String?
+            ) {
+                gameViewModel.resetRewardedAdState()
+                Log.i(TAG, "onUnityAdsFailedToLoad ($placementId, $error, $message)")
+            }
+
+        })
+    }
+
+    private fun showRewardedAd() {
+        UnityAds.show(
+            this,
+            getString(R.string.ad_unit_rewarded),
+            object : IUnityAdsShowListener {
+
+                override fun onUnityAdsShowFailure(
+                    placementId: String?,
+                    error: UnityAds.UnityAdsShowError?,
+                    message: String?
+                ) {
+                    Log.i(TAG, "onUnityAdsShowFailure: $message")
+                }
+
+                override fun onUnityAdsShowStart(placementId: String?) {
+                    Log.i(TAG, "onUnityAdsShowStart: $placementId")
+                }
+
+                override fun onUnityAdsShowClick(placementId: String?) {
+                    Log.i(TAG, "onUnityAdsShowClick: $placementId")
+                }
+
+                override fun onUnityAdsShowComplete(
+                    placementId: String?,
+                    state: UnityAds.UnityAdsShowCompletionState?
+                ) {
+                    Log.i(TAG, "onUnityAdsShowComplete: $placementId. State: $state")
+                    if (state == UnityAds.UnityAdsShowCompletionState.COMPLETED) {
+                        Log.i(TAG, "Reward user!")
+                        gameViewModel.setUserEarnedReward(true)
+                    }
+                }
+            })
     }
 
     override fun onResume() {
@@ -93,26 +184,26 @@ class GameActivity : AppCompatActivity() {
             lifecycleScope.launch(Dispatchers.IO)
             {
                 if (hasNetwork) {
-                    val url = URL("https://www.google.com")
-                    val urlConnection = url.openConnection() as? HttpsURLConnection
-                    try {
-                        val hasInternet = urlConnection?.responseCode == HttpsURLConnection.HTTP_OK
-                        if (hasInternet) overallViewModel.changeState(ONLINE)
-                        else overallViewModel.changeState(OFFLINE)
-                        urlConnection?.inputStream?.close()
-                        urlConnection?.disconnect()
-                    } catch (ex: Exception) {
-                        urlConnection?.inputStream?.close()
-                        urlConnection?.disconnect()
-                        Log.e(TAG, ex.message.toString())
-                    }
+                    if (isConnectedToInternet()) gameViewModel.changeState(ONLINE)
+                    else gameViewModel.changeState(OFFLINE)
                 } else {
-                    overallViewModel.changeState(OFFLINE)
+                    gameViewModel.changeState(OFFLINE)
                 }
             }
         })
     }
 
+    private fun isConnectedToInternet(): Boolean {
+        val url = URL("https://www.google.com")
+        (url.openConnection() as? HttpURLConnection)?.run {
+            requestMethod = "GET"
+            val hasInternet = responseCode == HttpsURLConnection.HTTP_OK
+            inputStream.close()
+            disconnect()
+            return hasInternet
+        }
+        return false
+    }
 
     private fun signInSilently() {
         Log.i(TAG, "Trying to sign in silently.")
@@ -127,7 +218,7 @@ class GameActivity : AppCompatActivity() {
                 Games.getGamesClient(this, account)
                     .setViewForPopups(findViewById(android.R.id.content))
             }
-            overallViewModel.changeState(ONLINE)
+            gameViewModel.changeState(ONLINE)
             startObservingNetworkStatus()
         } else {
             // Haven't been signed-in before. Try the silent sign-in first.
@@ -143,10 +234,10 @@ class GameActivity : AppCompatActivity() {
                         Games.getGamesClient(this, signedInAccount)
                             .setViewForPopups(findViewById(android.R.id.content))
                         Log.i(TAG, "Signed in successfully.")
-                        overallViewModel.changeState(ONLINE)
+                        gameViewModel.changeState(ONLINE)
                         startObservingNetworkStatus()
                     } else if (task.isComplete) {
-                        overallViewModel.changeState(ONLINE)
+                        gameViewModel.changeState(ONLINE)
                         startObservingNetworkStatus()
                         Log.i(
                             TAG,
@@ -188,7 +279,7 @@ class GameActivity : AppCompatActivity() {
         }
 
     private fun signInToGoogle() {
-        overallViewModel.changeState(LOADING)
+        gameViewModel.changeState(LOADING)
         val signInClient = GoogleSignIn.getClient(
             this,
             GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN

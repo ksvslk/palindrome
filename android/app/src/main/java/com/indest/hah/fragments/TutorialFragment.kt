@@ -36,6 +36,8 @@ class TutorialFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        mainAnimatorSet.end()
+        mainAnimatorSet.removeAllListeners()
         _binding = null
         super.onDestroyView()
     }

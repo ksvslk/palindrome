@@ -6,8 +6,13 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Space
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.marginRight
+import androidx.core.view.setMargins
+import androidx.core.view.setPadding
+import androidx.core.view.updateLayoutParams
 import androidx.gridlayout.widget.GridLayout
 import com.indest.hah.letter.Letter
 import com.indest.hah.letter.LetterState
@@ -32,6 +37,10 @@ object LevelFactory {
         val densitySettings = getDensitySettings(context)
         val level = layoutInflater.inflate(R.layout.grid, container, false) as GridLayout
         level.columnCount = densitySettings.columnCount
+        val shuffledChars = info.levelInfo.solution.toCharArray()
+        while (shuffledChars.concatToString() == info.levelInfo.solution) shuffledChars.shuffle()
+        val puzzle = shuffledChars.concatToString()
+        info.levelInfo.puzzle = puzzle
         addLetters(level, densitySettings, info, context)
         addBlanks(densitySettings.columnCount, level, layoutInflater)
         addSlots(info.levelInfo.solution, level, densitySettings, context)
@@ -103,6 +112,7 @@ object LevelFactory {
                             )
                         )
                         setTextColor(ContextCompat.getColor(context, R.color.colorOnPrimary))
+
                     })
         }
 

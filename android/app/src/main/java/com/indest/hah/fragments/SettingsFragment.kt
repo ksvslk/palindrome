@@ -25,18 +25,15 @@ import android.content.Intent
 import android.net.Uri
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.replace
-import androidx.fragment.app.viewModels
+import com.indest.hah.game.GameViewModel
 import com.indest.hah.game.OverallState
-import com.indest.hah.game.OverallViewModel
-import java.net.HttpURLConnection
-import java.net.URL
 
 
 class SettingsFragment : BottomSheetDialogFragment() {
     private val TAG = "SettingsFragment"
     private var _binding: SettingsFragmentBinding? = null
     private val binding get() = _binding!!
-    private val overallViewModel: OverallViewModel by activityViewModels()
+    private val gameViewModel: GameViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -58,11 +55,11 @@ class SettingsFragment : BottomSheetDialogFragment() {
             binding.googleSignOutButton.visibility = View.GONE
             binding.googleSignInButton.visibility = View.VISIBLE
             binding.googleSignInButton.setOnClickListener {
-                if (overallViewModel.uiState.value.state == OverallState.ONLINE) {
+                if (gameViewModel.overAllState.value.state == OverallState.ONLINE) {
                     signInToGoogle()
                 } else {
                     Toast.makeText(
-                        requireContext(),
+                        requireContext().applicationContext,
                         getString(R.string.no_internet),
                         Toast.LENGTH_SHORT
                     ).show()
@@ -79,7 +76,7 @@ class SettingsFragment : BottomSheetDialogFragment() {
         }
 
         binding.rateGameButton.setOnClickListener {
-            if (overallViewModel.uiState.value.state == OverallState.ONLINE) {
+            if (gameViewModel.overAllState.value.state == OverallState.ONLINE) {
                 val intent = Intent(Intent.ACTION_VIEW).apply {
                     data = Uri.parse(
                         getString(R.string.app_package_url)
@@ -91,7 +88,7 @@ class SettingsFragment : BottomSheetDialogFragment() {
                 }
             } else {
                 Toast.makeText(
-                    requireContext(),
+                    requireContext().applicationContext,
                     getString(R.string.no_internet),
                     Toast.LENGTH_SHORT
                 ).show()
@@ -101,7 +98,7 @@ class SettingsFragment : BottomSheetDialogFragment() {
         binding.soundButton.setOnClickListener {
             //TODO: remove next 2 lines in production
             val config: Configuration = resources.configuration
-            Toast.makeText(requireContext(), "DPI: ${config.densityDpi}", Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext().applicationContext, "DPI: ${config.densityDpi}", Toast.LENGTH_LONG).show()
             binding.soundSwitch.performClick()
         }
         binding.vibrationButton.setOnClickListener {
@@ -128,7 +125,7 @@ class SettingsFragment : BottomSheetDialogFragment() {
                 dismiss()
             } else if (it.resultCode != Activity.RESULT_CANCELED) {
                 Toast.makeText(
-                    requireContext(),
+                    requireContext().applicationContext,
                     "Something went wrong. Do you have internet connection?",
                     Toast.LENGTH_LONG
                 ).show()
@@ -137,7 +134,7 @@ class SettingsFragment : BottomSheetDialogFragment() {
         }
 
     private fun signInToGoogle() {
-        overallViewModel.changeState(OverallState.LOADING)
+        gameViewModel.changeState(OverallState.LOADING)
         parentFragmentManager.commit {
             setCustomAnimations(
                 R.anim.slide_in_bottom,
@@ -161,14 +158,14 @@ class SettingsFragment : BottomSheetDialogFragment() {
         signInClient.signOut().addOnCompleteListener {
             if (it.isSuccessful) {
                 Toast.makeText(
-                    requireContext(),
+                    requireContext().applicationContext,
                     "Successfully signed out.",
                     Toast.LENGTH_LONG
                 ).show()
                 dismiss()
             } else {
                 Toast.makeText(
-                    requireContext(),
+                    requireContext().applicationContext,
                     "Something went wrong when trying to sign out.",
                     Toast.LENGTH_LONG
                 ).show()

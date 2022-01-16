@@ -15,8 +15,8 @@ import com.google.android.gms.games.Games
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.databinding.GoogleGamesFragmentBinding
+import com.indest.hah.game.GameViewModel
 import com.indest.hah.game.OverallState
-import com.indest.hah.game.OverallViewModel
 
 class GoogleGamesFragment : BottomSheetDialogFragment() {
 
@@ -25,7 +25,7 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
     private var _binding: GoogleGamesFragmentBinding? = null
     private val binding get() = _binding!!
-    private val overallViewModel: OverallViewModel by activityViewModels()
+    private val gameViewModel: GameViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,7 +37,7 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
         val b = GoogleGamesFragmentBinding.inflate(layoutInflater, container, false)
         _binding = b
 
-        if (overallViewModel.uiState.value.state == OverallState.ONLINE) {
+        if (gameViewModel.overAllState.value.state == OverallState.ONLINE) {
             val lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(requireActivity())
             if (lastSignedInAccount == null) {
                 binding.achievementsButton.visibility = View.GONE
@@ -65,7 +65,7 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
     private fun showLeaderBoard() {
         dismiss()
         Log.i(TAG, "showLeaderBoard")
-        Toast.makeText(requireContext(), "Showing leaderboard!", Toast.LENGTH_LONG * 4).show()
+        Toast.makeText(requireContext().applicationContext, "Showing leaderboard!", Toast.LENGTH_LONG * 4).show()
         val lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(requireActivity())
         val leaderboardsClient = if (lastSignedInAccount != null)
             Games.getLeaderboardsClient(
@@ -85,7 +85,7 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
     private fun showAchievements() {
         dismiss()
         Log.i(TAG, "showAchievements")
-        Toast.makeText(requireContext(), "Showing achievements!", Toast.LENGTH_LONG * 4).show()
+        Toast.makeText(requireContext().applicationContext, "Showing achievements!", Toast.LENGTH_LONG * 4).show()
         val lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(requireActivity())
         val achievementsClient = if (lastSignedInAccount != null)
             Games.getAchievementsClient(

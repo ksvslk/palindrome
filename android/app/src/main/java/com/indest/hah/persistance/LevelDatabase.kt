@@ -53,9 +53,9 @@ abstract class LevelDatabase : RoomDatabase() {
 
                                 for (i in levels.indices) {
                                     val sol = levels[i].solution.replace(" ", "")
-                                    val shuffledChars = sol.toCharArray()
-                                    while (shuffledChars.concatToString() == sol) shuffledChars.shuffle()
-                                    val puzzle = shuffledChars.concatToString()
+                                    //val shuffledChars = sol.toCharArray()
+                                    //while (shuffledChars.concatToString() == sol) shuffledChars.shuffle()
+                                    val puzzle = ""
                                     val category = levels[i].category
                                     val progress = LevelProgress.TODO
                                     val score = (i + 1) * 100

@@ -85,6 +85,8 @@ dependencies {
     def ads_version = '20.5.0'
     def billing_version = '4.0.0'
 
+    implementation 'com.unity3d.ads:unity-ads:4.0.0'
+
     implementation "com.intuit.sdp:sdp-android:$sdp_version"
     implementation "com.intuit.ssp:ssp-android:$ssp_version"
     implementation "androidx.core:core-ktx:$androidx_core_version"
@@ -106,7 +108,6 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
     implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
     implementation "androidx.fragment:fragment-ktx:$fragment_version"
-    implementation "com.google.android.gms:play-services-ads:$ads_version"
     implementation "com.google.android.gms:play-services-auth:$google_play_services_auth_version"
     implementation "com.google.android.gms:play-services-games:$google_play_services_games_version"
     implementation "com.google.android.ump:user-messaging-platform:$user_messaging_platform_version"

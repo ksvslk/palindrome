@@ -1,5 +1,5 @@
 package com.indest.hah.game
 
-data class UiState(
+data class AppState(
     val state:OverallState = OverallState.LOADING
 )

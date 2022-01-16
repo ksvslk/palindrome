@@ -35,6 +35,8 @@ class SecondTutorialFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        mainAnimatorSet.end()
+        mainAnimatorSet.removeAllListeners()
         _binding = null
         super.onDestroyView()
     }
@@ -93,8 +95,6 @@ class SecondTutorialFragment : Fragment() {
         val l1Animation = getAlphaAnimator(binding.l1, 0f, 1f, 500)
         val l2Animation = getAlphaAnimator(binding.l2, 0f, 1f, 500)
         val l3Animation = getAlphaAnimator(binding.l3, 0f, 1f, 500)
-
-
 
         val handToStartAnimation = AnimatorSet().apply {
             play(handToStartPosition.first).with(handToStartPosition.second)

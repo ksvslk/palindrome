@@ -106,6 +106,7 @@
                 android:textAppearance="@style/TextAppearance.OC.Body1" />
 
             <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/place_letter_subtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"

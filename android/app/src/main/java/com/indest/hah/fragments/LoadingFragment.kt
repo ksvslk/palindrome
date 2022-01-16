@@ -9,20 +9,20 @@ import androidx.fragment.app.commit
 import androidx.fragment.app.replace
 import androidx.lifecycle.lifecycleScope
 import com.indest.hah.R
+import com.indest.hah.game.GameViewModel
 import com.indest.hah.game.OverallState
-import com.indest.hah.game.OverallViewModel
 import com.indest.hah.util.C.GAMEPLAY_FRAGMENT_TAG
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class LoadingFragment : Fragment(R.layout.home_fragment) {
-    private val overallViewModel: OverallViewModel by activityViewModels()
+    private val gameViewModel: GameViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         lifecycleScope.launch {
-            overallViewModel.uiState.collectLatest { latest ->
+            gameViewModel.overAllState.collectLatest { latest ->
                 if (latest.state != OverallState.LOADING) {
                     requireActivity().getSharedPreferences(
                         getString(R.string.preferences),

@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.ads.rewarded.RewardedAd
 import com.indest.hah.letter.Cell
 import com.indest.hah.letter.Letter
 import com.indest.hah.persistance.LevelProgress
@@ -15,6 +14,7 @@ import com.indest.hah.persistance.dto.LevelData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -29,12 +29,63 @@ class GameViewModel @Inject constructor(
     private val TAG = "GameViewModel"
 
     val levels = MutableLiveData<List<LevelData>>()
+    val totalScore = MutableLiveData<Int>()
     val realSolutionAndGuess = MutableLiveData<Triple<String?, String?, Int?>>()
+
     private val _uiState = MutableStateFlow(LevelEvent.Success(Level(), Level()))
     val uiState: StateFlow<LevelEvent> = _uiState
-    val totalScore = MutableLiveData<Int>()
 
-    var rewardedAd: RewardedAd? = null
+    private val _rewardedAdState  = MutableStateFlow(RewardedAdState())
+    val rewardedAdState: StateFlow<RewardedAdState> = _rewardedAdState.asStateFlow()
+
+    private val _overAllState = MutableStateFlow(AppState())
+    val overAllState: StateFlow<AppState> = _overAllState.asStateFlow()
+
+    fun changeState(newState: OverallState)
+    {
+        _overAllState.value = AppState(state = newState)
+    }
+
+    fun setShowRewardedAd(rewardType: RewardType)
+    {
+        if (_rewardedAdState.value.adAvailable)
+        {
+            _rewardedAdState.value = _rewardedAdState.value.copy(
+                rewardType = rewardType
+            )
+        }
+    }
+
+    fun setShouldLoadAd(loadAd:Boolean)
+    {
+        _rewardedAdState.value = _rewardedAdState.value.copy(
+            shouldLoadNewAd = loadAd
+        )
+    }
+
+    fun setRewardedAdAvailability(isAvailable:Boolean)
+    {
+        _rewardedAdState.value = _rewardedAdState.value.copy(
+            adAvailable = isAvailable
+        )
+    }
+
+    fun setUserEarnedReward(earned:Boolean)
+    {
+        _rewardedAdState.value = _rewardedAdState.value.copy(
+            userEarnedReward = earned
+        )
+    }
+
+    fun resetRewardedAdState()
+    {
+        _rewardedAdState.value = RewardedAdState(
+            adAvailable = false,
+            userEarnedReward = false,
+            shouldLoadNewAd = true,
+            rewardType = RewardType.NONE,
+        )
+    }
 
     init {
         viewModelScope.launch {
