@@ -1,6 +1,7 @@
 package com.indest.hah
 
 import android.content.Context
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -46,7 +47,7 @@ object LevelFactory {
 
     private fun getDensitySettings(context: Context): DensitySettings {
         Log.i("Dpi", context.resources.displayMetrics.densityDpi.toString())
-        val isTablet = context.resources?.displayMetrics?.xdpi?.compareTo(600f) == 1
+        val isTablet = context.resources?.displayMetrics?.densityDpi == DisplayMetrics.DENSITY_XHIGH
         val boxTextSize = (
                 context.resources.getDimensionPixelSize(R.dimen._18ssp) /
                         context.resources.displayMetrics.scaledDensity) +

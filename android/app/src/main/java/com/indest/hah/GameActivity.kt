@@ -180,14 +180,20 @@ class GameActivity : AppCompatActivity() {
 
     private fun startObservingNetworkStatus() {
         connectionLiveData.observe(this@GameActivity, { hasNetwork ->
-            Log.i(TAG, "hasNetwork: $hasNetwork.")
             lifecycleScope.launch(Dispatchers.IO)
             {
                 if (hasNetwork) {
-                    if (isConnectedToInternet()) gameViewModel.changeState(ONLINE)
-                    else gameViewModel.changeState(OFFLINE)
+                    if (isConnectedToInternet()) {
+                        gameViewModel.changeState(ONLINE)
+                        Log.i(TAG, "Internet connection: $ONLINE.")
+                    }
+                    else {
+                        gameViewModel.changeState(OFFLINE)
+                        Log.i(TAG, "Internet connection: $OFFLINE.")
+                    }
                 } else {
                     gameViewModel.changeState(OFFLINE)
+                    Log.i(TAG, "Internet connection: $OFFLINE.")
                 }
             }
         })
@@ -195,12 +201,15 @@ class GameActivity : AppCompatActivity() {
 
     private fun isConnectedToInternet(): Boolean {
         val url = URL("https://www.google.com")
-        (url.openConnection() as? HttpURLConnection)?.run {
+        (url.openConnection() as? HttpURLConnection)?.runCatching {
             requestMethod = "GET"
             val hasInternet = responseCode == HttpsURLConnection.HTTP_OK
             inputStream.close()
             disconnect()
             return hasInternet
+        }?.onFailure {
+            Log.e(TAG, "URL openConnection onFailure: ${it.message}")
+            return false
         }
         return false
     }
