@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.gridlayout.widget.GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:addStatesFromChildren="false"
+    android:animateLayoutChanges="true"
+    android:background="@color/colorBackground"
+    android:clipChildren="false"
+    android:soundEffectsEnabled="true"
+    android:splitMotionEvents="false"
+    android:visibility="visible"
+    app:columnCount="3"
+    app:useDefaultMargins="false">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="@dimen/_60sdp"
+        android:layout_height="@dimen/_60sdp"
+        android:background="@color/hintsNotificationColor"></androidx.appcompat.widget.AppCompatTextView>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="@dimen/_60sdp"
+        android:layout_height="@dimen/_60sdp"
+        android:background="@color/hintsNotificationColor"></androidx.appcompat.widget.AppCompatTextView>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="@dimen/_60sdp"
+        android:layout_height="@dimen/_60sdp"
+        android:background="@color/hintsNotificationColor"></androidx.appcompat.widget.AppCompatTextView>
+</androidx.gridlayout.widget.GridLayout>

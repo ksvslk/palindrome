@@ -245,9 +245,13 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
                 info.lettersProperties.forEach { letterProperties ->
                     if (letterProperties.friendIndex != -666) {
                         val slot = cells.filterIsInstance<Slot>()
-                            .find { it.homeIndex == letterProperties.friendIndex } as Slot
+                            .find { it.homeIndex == letterProperties.friendIndex } as? Slot
                         val letter = cells.filterIsInstance<Letter>()
-                            .find { it.homeIndex == letterProperties.homeIndex } as Letter
+                            .find { it.homeIndex == letterProperties.homeIndex } as? Letter
+                        if (slot == null || letter == null) {
+                            Log.e(TAG, "Could not restore letter placements. ")
+                            return
+                        }
                         letter.x = slot.x
                         letter.y = slot.y
                         letter.setFriend(slot)

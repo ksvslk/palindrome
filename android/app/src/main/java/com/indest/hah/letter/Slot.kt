@@ -3,6 +3,8 @@ package com.indest.hah.letter
 import android.content.Context
 import android.util.Log
 import android.view.View
+import androidx.core.view.marginRight
+import androidx.core.view.updatePadding
 import com.indest.hah.util.C.BOTTOM_LAYER
 
 class Slot constructor(
@@ -25,7 +27,6 @@ class Slot constructor(
 
     override fun setFriend(cell: Cell<Letter, Slot>?) {
         friend = cell as Letter?
-        Log.i(TAG, "Setting new letter to Slot: ${friend?.text}. Real char for this slot is: $realChar")
     }
 
     override fun toString(): String {

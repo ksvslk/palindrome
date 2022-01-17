@@ -5,11 +5,16 @@ import android.content.Context
 import android.graphics.Canvas
 import android.view.MotionEvent
 import android.view.View.OnTouchListener
+import androidx.core.view.marginRight
+import androidx.core.view.updatePadding
 import com.indest.hah.letter.effects.Effects
 import com.indest.hah.letter.effects.SoundSelector
 import com.indest.hah.util.C.NEUTRAL_LAYER
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import android.widget.LinearLayout
+import androidx.gridlayout.widget.GridLayout
+
 
 @SuppressLint("ViewConstructor")
 @AndroidEntryPoint

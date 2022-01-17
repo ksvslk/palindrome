@@ -160,6 +160,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                                 it.getTheFriend()?.text?.first() != it.realChar
                     }
                 randomLetter.isLocked = true
+                randomLetter.z = C.TOP_LAYER
                 if (correctSlot.hasFriend()) {
                     correctSlot.friend?.let {
                         cellDirector.switchLetterPositions(
@@ -264,7 +265,6 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                         }
                     }
                 }
-
             }
         }
     }

@@ -3,13 +3,23 @@ package com.indest.hah.letter
 import android.content.Context
 import android.graphics.Rect
 import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.gridlayout.widget.GridLayout
+import com.indest.hah.R
 import kotlin.math.roundToInt
 
 abstract class Cell<T, F>(context: Context) : AppCompatTextView(context) {
 
     var homeIndex: Int = -666
     private var TAG: String = "${javaClass.name} ${View.generateViewId()}"
+
+    init {
+        val params = GridLayout.LayoutParams()
+        val dp = context.resources.getDimensionPixelSize(R.dimen._1sdp)
+        params.setMargins(dp, dp, dp, dp)
+        layoutParams = params
+    }
 
     val pos: GlobalPosition
         get() {
