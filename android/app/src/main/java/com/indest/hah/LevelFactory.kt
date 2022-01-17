@@ -7,10 +7,8 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Space
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.*
 import androidx.gridlayout.widget.GridLayout
 import com.indest.hah.letter.Letter
 import com.indest.hah.letter.LetterState
@@ -25,50 +23,118 @@ object LevelFactory {
     If level is created the first time persists letters positions to database.
     Returned view is ready to be added into the container in GamePlayFragment.
      */
+
+    private val TAG = "LevelFactory"
+
     fun getLevel(
         info: Level,
         context: Context,
         layoutInflater: LayoutInflater,
-        container: ViewGroup
+        container: ViewGroup,
+        isBookMode:Boolean
     ): GridLayout {
 
-        val densitySettings = getDensitySettings(context)
+        val densitySettings = getDensitySettings(context, isBookMode)
         val level = layoutInflater.inflate(R.layout.grid, container, false) as GridLayout
         level.columnCount = densitySettings.columnCount
-        val shuffledChars = info.levelInfo.solution.toCharArray()
-        while (shuffledChars.concatToString() == info.levelInfo.solution) shuffledChars.shuffle()
-        val puzzle = shuffledChars.concatToString()
-        info.levelInfo.puzzle = puzzle
+        info.levelInfo.puzzle = shuffledSolution(info.levelInfo.solution)
         addLetters(level, densitySettings, info, context)
         addBlanks(densitySettings.columnCount, level, layoutInflater)
         addSlots(info.levelInfo.solution, level, densitySettings, context)
         return level
     }
 
-    private fun getDensitySettings(context: Context): DensitySettings {
+    private fun shuffledSolution(solution: String): String {
+        val solutionWithoutWhiteSpace = solution.replace(" ", "")
+        val shuffledChars = solutionWithoutWhiteSpace.toCharArray()
+        while (shuffledChars.concatToString() == solutionWithoutWhiteSpace) shuffledChars.shuffle()
+        return shuffledChars.concatToString()
+    }
+
+    private fun getDensitySettings(context: Context, isBookMode: Boolean): DensitySettings {
         Log.i("Dpi", context.resources.displayMetrics.densityDpi.toString())
-        val isTablet = context.resources?.displayMetrics?.densityDpi == DisplayMetrics.DENSITY_XHIGH
-        val boxTextSize = (
-                context.resources.getDimensionPixelSize(R.dimen._18ssp) /
-                        context.resources.displayMetrics.scaledDensity) +
-                context.resources.displayMetrics.scaledDensity * 2
+        var boxSize = 0
+        var textSize = 0
+        val densityDpi = context.resources?.displayMetrics?.densityDpi
 
-        val boxSize = if (isTablet) {
-            context.resources.getDimensionPixelSize(R.dimen.box_size).toFloat()
-        } else {
-            context.resources.getDimensionPixelSize(R.dimen._35sdp)
+        when {
+            densityDpi in DisplayMetrics.DENSITY_LOW.rangeTo(DisplayMetrics.DENSITY_MEDIUM) -> {
+                Log.i(TAG, "DisplayMetrics.DENSITY_LOW.rangeTo(DisplayMetrics.DENSITY_MEDIUM)")
+                boxSize = context.resources.getDimensionPixelSize(R.dimen._25sdp)
+                textSize = context.resources.getDimensionPixelSize(R.dimen._15sdp)
+            }
+            densityDpi in DisplayMetrics.DENSITY_MEDIUM.rangeTo(DisplayMetrics.DENSITY_HIGH) -> {
+                Log.i(TAG, "DisplayMetrics.DENSITY_MEDIUM.rangeTo(DisplayMetrics.DENSITY_HIGH)")
+                boxSize = context.resources.getDimensionPixelSize(R.dimen._25sdp)
+                textSize = context.resources.getDimensionPixelSize(R.dimen._15sdp)
+            }
+            densityDpi in DisplayMetrics.DENSITY_HIGH.rangeTo(DisplayMetrics.DENSITY_XHIGH) -> {
+                Log.i(TAG, "DisplayMetrics.DENSITY_HIGH.rangeTo(DisplayMetrics.DENSITY_XHIGH)")
+                boxSize = context.resources.getDimensionPixelSize(R.dimen._25sdp)
+                textSize = context.resources.getDimensionPixelSize(R.dimen._15sdp)
+            }
+            densityDpi in DisplayMetrics.DENSITY_XHIGH.rangeTo(DisplayMetrics.DENSITY_XXHIGH) -> {
+                Log.i(TAG, "DisplayMetrics.DENSITY_XHIGH.rangeTo(DisplayMetrics.DENSITY_XXHIGH)")
+                if (isBookMode)
+                {
+                    Log.i(TAG, "Book mode orientation")
+                    boxSize = context.resources.getDimensionPixelSize(R.dimen._20sdp)
+                    textSize = context.resources.getDimensionPixelSize(R.dimen._6ssp)
+                }
+                else {
+                    Log.i(TAG, "Table top orientation")
+                    boxSize = context.resources.getDimensionPixelSize(R.dimen._35sdp)
+                    textSize = context.resources.getDimensionPixelSize(R.dimen._10ssp)
+                }
+            }
+            densityDpi?.compareTo(DisplayMetrics.DENSITY_XXXHIGH) == 1 -> {
+                Log.i(TAG, "> DisplayMetrics.DENSITY_XXXHIGH")
+                boxSize = context.resources.getDimensionPixelSize(R.dimen._25sdp)
+                textSize = context.resources.getDimensionPixelSize(R.dimen._15sdp)
+            }
         }
+        /* val isTablet = context.resources?.displayMetrics?.densityDpi == DisplayMetrics.DENSITY_XHIGH
+         val isHugeTablet =
+             context.resources?.displayMetrics?.densityDpi == DisplayMetrics.DENSITY_XXHIGH
 
-        val textSize = if (isTablet) {
-            context.resources.getDimensionPixelSize(R.dimen.box_text_size).toFloat()
-        } else {
-            boxTextSize.toInt()
-        }
+         val boxTextSize = (
+                 context.resources.getDimensionPixelSize(R.dimen._18ssp) /
+                         context.resources.displayMetrics.scaledDensity) +
+                 context.resources.displayMetrics.scaledDensity * 2
+
+         val boxSize = when {
+             isTablet -> {
+                 Log.i(TAG, "Device: isTablet ")
+                 context.resources.getDimensionPixelSize(R.dimen.box_size).toFloat()
+             }
+             isHugeTablet -> {
+                 Log.i(TAG, "Device: isHugeTablet ")
+                 context.resources.getDimensionPixelSize(R.dimen._25sdp)
+             }
+             else -> {
+                 Log.i(TAG, "Device: default ")
+                 context.resources.getDimensionPixelSize(R.dimen._35sdp)
+             }
+         }
+
+         val textSize = when {
+             isTablet -> {
+                 context.resources.getDimensionPixelSize(R.dimen.box_text_size).toFloat()
+             }
+             isHugeTablet -> {
+                 context.resources.getDimensionPixelSize(R.dimen._15ssp)
+             }
+             else -> {
+                 boxTextSize.toInt()
+             }
+         }*/
+
+
 
         return DensitySettings(
             C.DEFAULT_COLUMNS_COUNT,
-            boxSize.toInt(),
-            textSize.toInt(),
+            boxSize,
+            textSize,
         )
 
     }

@@ -261,19 +261,23 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
                         letter.isLocked = letterProperties.locked
                         val colors = letter.effects.getColors(ColorSelector.ACTION_DOWN_FRIEND)
 
-                        if (info.levelInfo.progress == LevelProgress.INTERMEDIATE) {
-                            val successBoxColor = ResourcesCompat.getColor(
-                                gf.requireContext().resources,
-                                R.color.successBoxColor,
-                                gf.requireContext().theme
-                            )
-                            letter.setBackgroundColor(successBoxColor)
-                        } else if (letterProperties.locked) {
-                            letter.setBackgroundColor(letter.effects.getLockedColor())
-                            letter.setTextColor(letter.effects.getLockedTextColor())
+                        when {
+                            info.levelInfo.progress == LevelProgress.INTERMEDIATE -> {
+                                val successBoxColor = ResourcesCompat.getColor(
+                                    gf.requireContext().resources,
+                                    R.color.successBoxColor,
+                                    gf.requireContext().theme
+                                )
+                                letter.setBackgroundColor(successBoxColor)
+                            }
+                            letterProperties.locked -> {
+                                letter.setBackgroundColor(letter.effects.getLockedColor())
+                                letter.setTextColor(letter.effects.getLockedTextColor())
 
-                        } else {
-                            letter.setBackgroundColor(colors.viewEnd)
+                            }
+                            else -> {
+                                letter.setBackgroundColor(colors.viewEnd)
+                            }
                         }
 
                     }

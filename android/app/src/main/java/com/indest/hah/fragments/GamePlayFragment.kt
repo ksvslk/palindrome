@@ -18,12 +18,16 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.children
+import androidx.core.view.doOnLayout
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.*
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment.findNavController
+import androidx.window.layout.FoldingFeature
+import androidx.window.layout.WindowInfoTracker
+import androidx.window.layout.WindowMetrics
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.games.Games
@@ -48,8 +52,8 @@ import com.indest.hah.util.C.HINT_TEST
 import com.indest.hah.util.hideSystemBars
 import com.indest.hah.util.playWhileSoundOn
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import kotlin.properties.Delegates
 
 @AndroidEntryPoint
@@ -123,8 +127,19 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         )
         gameViewModel.resetRewardedAdState()
         resetHintsBadgeOnFragmentResult()
-        observeViewModel()
 
+        lifecycleScope.launch(Dispatchers.Main) {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
+                WindowInfoTracker.getOrCreate(requireActivity())
+                    .windowLayoutInfo(requireActivity())
+                    .collectLatest { newLayoutInfo ->
+                        val foldingFeature: FoldingFeature? =
+                            newLayoutInfo.displayFeatures.find { it is FoldingFeature } as? FoldingFeature
+                        val isBookMode = isBookMode(foldingFeature)
+                        observeViewModel(isBookMode)
+                    }
+            }
+        }
     }
 
     private fun resetHintsBadgeOnFragmentResult() {
@@ -229,7 +244,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         findNavController(this).removeOnDestinationChangedListener { _, _, _ -> }
     }
 
-    private fun observeViewModel() {
+    private fun observeViewModel(isBookMode: Boolean) {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
@@ -240,12 +255,15 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                                 if (!(uiState.oldLevel.levelInfo.levelId == 0 && uiState.currentLevel.levelInfo.levelId == 0)) {
                                     if (uiState.oldLevel.levelInfo.levelId != uiState.currentLevel.levelInfo.levelId && uiState.oldLevel.levelInfo.levelId != 0) {
                                         if (binding.gameplayFragment.childCount > 0) {
+                                            Log.i(TAG, "replaceFragmentWithSelf childCount > 0")
                                             replaceFragmentWithSelf()
                                         } else {
-                                            loadLevel(uiState.currentLevel)
+                                            Log.i(TAG, "oadLevel(uiState.currentLevel, isBookMode) NOT childCount > 0" )
+                                            loadLevel(uiState.currentLevel, isBookMode)
                                         }
                                     } else if (binding.gameplayFragment.childCount == 0) {
-                                        loadLevel(uiState.currentLevel)
+                                        Log.i(TAG, "  loadLevel(uiState.currentLevel, isBookMode) childCount == 0" )
+                                        loadLevel(uiState.currentLevel, isBookMode)
                                     }
                                 }
                                 (requireActivity() as GameActivity).binding.gameProgress.progress =
@@ -257,17 +275,20 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                         }
                     }
                 }
-                launch {
-                    gameViewModel.rewardedAdState.collect { rewardedAdState ->
-                        if (rewardedAdState.userEarnedReward && rewardedAdState.rewardType != RewardType.NONE)
-                        {
-                            rewardUser(rewardedAdState.rewardType)
-                        }
+            }
+            launch {
+                gameViewModel.rewardedAdState.collect { rewardedAdState ->
+                    if (rewardedAdState.userEarnedReward && rewardedAdState.rewardType != RewardType.NONE) {
+                        rewardUser(rewardedAdState.rewardType)
                     }
                 }
             }
         }
     }
+
+    private fun isBookMode(foldFeature: FoldingFeature?) =
+        foldFeature?.state == FoldingFeature.State.FLAT
+
 
     private fun showReviewOption(level: Int) {
         if (level == 21) {
@@ -336,12 +357,14 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     }
 
     // CLEAN
-    private fun loadLevel(levelAndLettersInfo: Level) {
+    private fun loadLevel(levelAndLettersInfo: Level, isBookMode: Boolean) {
+        Log.i(TAG, "loadLevel")
         val level = LevelFactory.getLevel(
             levelAndLettersInfo,
             requireContext(),
             layoutInflater,
-            binding.gameplayFragment
+            binding.gameplayFragment,
+            isBookMode
         )
 
         cellDirector.cells = level.children
