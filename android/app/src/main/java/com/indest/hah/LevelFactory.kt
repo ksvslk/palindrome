@@ -58,20 +58,28 @@ object LevelFactory {
         val densityDpi = context.resources?.displayMetrics?.densityDpi
 
         when {
+            densityDpi?.compareTo(DisplayMetrics.DENSITY_LOW) == -1 -> {
+                Log.i(TAG, "densityDpi?.compareTo(DisplayMetrics.DENSITY_LOW) == -1")
+                boxSize = context.resources.getDimensionPixelSize(R.dimen._25sdp)
+                textSize = context.resources.getDimensionPixelSize(R.dimen._15sdp)
+            }
+            //MDPI
             densityDpi in DisplayMetrics.DENSITY_LOW.rangeTo(DisplayMetrics.DENSITY_MEDIUM) -> {
                 Log.i(TAG, "DisplayMetrics.DENSITY_LOW.rangeTo(DisplayMetrics.DENSITY_MEDIUM)")
-                boxSize = context.resources.getDimensionPixelSize(R.dimen._25sdp)
-                textSize = context.resources.getDimensionPixelSize(R.dimen._15sdp)
+                boxSize = context.resources.getDimensionPixelSize(R.dimen._35sdp)
+                textSize = context.resources.getDimensionPixelSize(R.dimen._25sdp)
             }
+            // HDPI
             densityDpi in DisplayMetrics.DENSITY_MEDIUM.rangeTo(DisplayMetrics.DENSITY_HIGH) -> {
                 Log.i(TAG, "DisplayMetrics.DENSITY_MEDIUM.rangeTo(DisplayMetrics.DENSITY_HIGH)")
-                boxSize = context.resources.getDimensionPixelSize(R.dimen._25sdp)
-                textSize = context.resources.getDimensionPixelSize(R.dimen._15sdp)
+                boxSize = context.resources.getDimensionPixelSize(R.dimen._34sdp)
+                textSize = context.resources.getDimensionPixelSize(R.dimen._17ssp)
             }
+            // XHDPI
             densityDpi in DisplayMetrics.DENSITY_HIGH.rangeTo(DisplayMetrics.DENSITY_XHIGH) -> {
                 Log.i(TAG, "DisplayMetrics.DENSITY_HIGH.rangeTo(DisplayMetrics.DENSITY_XHIGH)")
                 boxSize = context.resources.getDimensionPixelSize(R.dimen._25sdp)
-                textSize = context.resources.getDimensionPixelSize(R.dimen._15sdp)
+                textSize = context.resources.getDimensionPixelSize(R.dimen._10ssp)
             }
             densityDpi in DisplayMetrics.DENSITY_XHIGH.rangeTo(DisplayMetrics.DENSITY_XXHIGH) -> {
                 Log.i(TAG, "DisplayMetrics.DENSITY_XHIGH.rangeTo(DisplayMetrics.DENSITY_XXHIGH)")
@@ -83,8 +91,8 @@ object LevelFactory {
                 }
                 else {
                     Log.i(TAG, "Table top orientation")
-                    boxSize = context.resources.getDimensionPixelSize(R.dimen._35sdp)
-                    textSize = context.resources.getDimensionPixelSize(R.dimen._10ssp)
+                    boxSize = context.resources.getDimensionPixelSize(R.dimen._33sdp)
+                    textSize = context.resources.getDimensionPixelSize(R.dimen._8ssp)
                 }
             }
             densityDpi?.compareTo(DisplayMetrics.DENSITY_XXXHIGH) == 1 -> {
@@ -199,8 +207,7 @@ object LevelFactory {
                         textSize = ds.textSize.toFloat()
                         width = ds.boxSize
                         height = ds.boxSize
-                        background =
-                            ResourcesCompat.getDrawable(resources, R.drawable.slot_edge_fade, null)
+                        background = ResourcesCompat.getDrawable(resources, R.drawable.slot_edge_fade, null)
                         typeface = ResourcesCompat.getFont(context, R.font.yantramanav_bold)
                         gravity = Gravity.CENTER
                         setTextColor(ContextCompat.getColor(context, R.color.colorSecondaryVariant))
