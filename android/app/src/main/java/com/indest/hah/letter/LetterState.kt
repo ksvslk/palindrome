@@ -11,6 +11,7 @@ import com.indest.hah.R
 import com.indest.hah.fragments.GamePlayFragment
 import com.indest.hah.game.GameState
 import com.indest.hah.letter.effects.ColorSelector
+import com.indest.hah.util.C.MIDDLE_LAYER
 import com.indest.hah.util.C.NEUTRAL_LAYER
 import com.indest.hah.util.C.TOP_LAYER
 import kotlin.math.abs
@@ -35,7 +36,8 @@ enum class LetterState : ILetterState {
             l: Letter,
             moveByX: Int,
             moveByY: Int,
-            durationModifier: Int
+            durationModifier: Int,
+            layer: Float
         ) {
         }
     },
@@ -86,7 +88,8 @@ enum class LetterState : ILetterState {
             l: Letter,
             moveByX: Int,
             moveByY: Int,
-            durationModifier: Int
+            durationModifier: Int,
+            layer: Float
         ) {
         }
     },
@@ -102,7 +105,8 @@ enum class LetterState : ILetterState {
             l: Letter,
             moveByX: Int,
             moveByY: Int,
-            durationModifier: Int
+            durationModifier: Int,
+            layer: Float
         ) {
         }
     },
@@ -115,7 +119,8 @@ enum class LetterState : ILetterState {
             l: Letter,
             moveByX: Int,
             moveByY: Int,
-            durationModifier: Int
+            durationModifier: Int,
+            layer:Float
         ) {
 
             val color = if (l.hasFriend()) {
@@ -159,7 +164,7 @@ enum class LetterState : ILetterState {
             l.animate()
                 .xBy(moveByX.toFloat())
                 .yBy(moveByY.toFloat())
-                .z(NEUTRAL_LAYER)
+                .z(layer)
                 .setInterpolator(FastOutSlowInInterpolator())
                 // Here we use the log-distance to calculate the duration of the animation.
                 // Longer distance should be only slightly longer animation and vice-versa

@@ -45,8 +45,8 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
                     letter.effects.playSound(SoundSelector.SWITCH_LETTERS)
                     letter.currentPos.x = closestCell.pos.x
                     letter.currentPos.y = closestCell.pos.y
-                    letter.z = NEUTRAL_LAYER
-                    letter.elevation = NEUTRAL_LAYER
+                    letter.z = TOP_LAYER
+                    letter.elevation = TOP_LAYER
                     letter.state = LetterState.ANIMATION
                     letter.state.executeAnimationBehaviour(
                         letter,
@@ -127,8 +127,8 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
 
         // Execute animation
         val durationModifier = if (isRewarded) REWARDED_ANIM_MUL else REWARDED_ANIM_MUL_DEFAULT
-        top.state.executeAnimationBehaviour(top, distanceToMoveX, distanceToMoveY, durationModifier)
-        bottom.state.executeAnimationBehaviour(bottom, droppedToMoveX, droppedToMoveY)
+        top.state.executeAnimationBehaviour(top, distanceToMoveX, distanceToMoveY, durationModifier, layer = TOP_LAYER)
+        bottom.state.executeAnimationBehaviour(bottom, droppedToMoveX, droppedToMoveY, layer = MIDDLE_LAYER)
     }
 
     fun placeLetterInEmptyBox(
@@ -147,8 +147,8 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
         letter.setFriend(slot)
         letter.currentPos.x = slot.pos.x
         letter.currentPos.y = slot.pos.y
-        letter.z = NEUTRAL_LAYER
-        letter.elevation = NEUTRAL_LAYER
+        letter.z = TOP_LAYER
+        letter.elevation = TOP_LAYER
         letter.state = LetterState.ANIMATION
 
         val durationModifier =
@@ -185,14 +185,16 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
             letter.state.executeAnimationBehaviour(
                 letter,
                 (letter.homePos.x - letter.pos.x),
-                (letter.homePos.y - letter.pos.y)
+                (letter.homePos.y - letter.pos.y),
+                layer = TOP_LAYER
             )
         } else {
             letter.state = LetterState.ANIMATION
             letter.state.executeAnimationBehaviour(
                 letter,
                 (letter.currentPos.x - letter.pos.x),
-                (letter.currentPos.y - letter.pos.y)
+                (letter.currentPos.y - letter.pos.y),
+                layer = TOP_LAYER
             )
         }
     }

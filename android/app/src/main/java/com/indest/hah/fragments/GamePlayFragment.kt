@@ -811,9 +811,9 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                     textSmall = resources.getDimensionPixelSize(R.dimen._7ssp)
                 }
             }
-            densityDpi?.compareTo(DisplayMetrics.DENSITY_XXXHIGH) == 1 -> {
-                textBig = resources.getDimensionPixelSize(R.dimen._25sdp)
-                textSmall =resources.getDimensionPixelSize(R.dimen._15sdp)
+            densityDpi?.compareTo(DisplayMetrics.DENSITY_XXXHIGH) == 1 || densityDpi?.compareTo(DisplayMetrics.DENSITY_XXXHIGH) == 0 -> {
+                textBig = resources.getDimensionPixelSize(R.dimen._7ssp)
+                textSmall =resources.getDimensionPixelSize(R.dimen._6ssp)
             }
         }
 

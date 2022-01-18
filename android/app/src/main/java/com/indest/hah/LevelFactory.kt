@@ -72,8 +72,8 @@ object LevelFactory {
             // HDPI
             densityDpi in DisplayMetrics.DENSITY_MEDIUM.rangeTo(DisplayMetrics.DENSITY_HIGH) -> {
                 Log.i(TAG, "DisplayMetrics.DENSITY_MEDIUM.rangeTo(DisplayMetrics.DENSITY_HIGH)")
-                boxSize = context.resources.getDimensionPixelSize(R.dimen._34sdp)
-                textSize = context.resources.getDimensionPixelSize(R.dimen._17ssp)
+                boxSize = context.resources.getDimensionPixelSize(R.dimen._30sdp)
+                textSize = context.resources.getDimensionPixelSize(R.dimen._14ssp)
             }
             // XHDPI
             densityDpi in DisplayMetrics.DENSITY_HIGH.rangeTo(DisplayMetrics.DENSITY_XHIGH) -> {
@@ -95,10 +95,10 @@ object LevelFactory {
                     textSize = context.resources.getDimensionPixelSize(R.dimen._8ssp)
                 }
             }
-            densityDpi?.compareTo(DisplayMetrics.DENSITY_XXXHIGH) == 1 -> {
+            densityDpi?.compareTo(DisplayMetrics.DENSITY_XXXHIGH) == 1 || densityDpi?.compareTo(DisplayMetrics.DENSITY_XXXHIGH) == 0 -> {
                 Log.i(TAG, "> DisplayMetrics.DENSITY_XXXHIGH")
-                boxSize = context.resources.getDimensionPixelSize(R.dimen._25sdp)
-                textSize = context.resources.getDimensionPixelSize(R.dimen._15sdp)
+                boxSize = context.resources.getDimensionPixelSize(R.dimen._35sdp)
+                textSize = context.resources.getDimensionPixelSize(R.dimen._7ssp)
             }
         }
         /* val isTablet = context.resources?.displayMetrics?.densityDpi == DisplayMetrics.DENSITY_XHIGH

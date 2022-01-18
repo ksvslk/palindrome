@@ -2,11 +2,12 @@ package com.indest.hah.letter
 
 import android.view.MotionEvent
 import android.view.View
+import com.indest.hah.util.C
 
 sealed interface ILetterState {
     fun draw(l: Letter)
     fun executeActionDownBehaviour(l: Letter, v: View, e: MotionEvent)
     fun executeActionMoveBehaviour(l: Letter, v: View, e: MotionEvent)
     fun executeActionUpBehaviour(l: Letter)
-    fun executeAnimationBehaviour(l: Letter, moveByX: Int, moveByY: Int, durationModifier: Int = 1)
+    fun executeAnimationBehaviour(l: Letter, moveByX: Int, moveByY: Int, durationModifier: Int = 1, layer:Float = C.BOTTOM_LAYER)
 }
