@@ -16,6 +16,7 @@ import com.indest.hah.letter.Slot
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.util.C
 import com.indest.hah.util.DensitySettings
+import com.indest.hah.util.WindowSizeClass
 
 object LevelFactory {
     /*
@@ -31,10 +32,11 @@ object LevelFactory {
         context: Context,
         layoutInflater: LayoutInflater,
         container: ViewGroup,
-        isBookMode:Boolean
+        isBookMode: Boolean,
+        windowSizeClassWidth: WindowSizeClass
     ): GridLayout {
 
-        val densitySettings = getDensitySettings(context, isBookMode)
+        val densitySettings = getDensitySettings(context, isBookMode, windowSizeClassWidth)
         val level = layoutInflater.inflate(R.layout.grid, container, false) as GridLayout
         level.columnCount = densitySettings.columnCount
         info.levelInfo.puzzle = shuffledSolution(info.levelInfo.solution)
@@ -51,56 +53,159 @@ object LevelFactory {
         return shuffledChars.concatToString()
     }
 
-    private fun getDensitySettings(context: Context, isBookMode: Boolean): DensitySettings {
+    private fun getBoxAndTextSize(
+        widthPixels: Int,
+        margin: Int,
+        isBookMode: Boolean,
+        sizeClassWidth: WindowSizeClass
+    ): Pair<Int, Int> {
+
+        if (isBookMode)
+        {
+            val box = (widthPixels / 2 - margin * 2) / 7
+            val text = box.div(3.8).toInt()
+            return Pair(box, text)
+        }
+        else {
+            when(sizeClassWidth)
+            {
+                WindowSizeClass.COMPACT ->
+                {
+                    val box = (widthPixels - margin * 2) / 7
+                    val text = box.div(3.8).toInt()
+                    return Pair(box, text)
+                }
+                WindowSizeClass.MEDIUM -> {
+                    val box = (widthPixels / 2 - margin * 2) / 7
+                    val text = box.div(2.5).toInt()
+                    return Pair(box, text)
+                }
+                WindowSizeClass.EXPANDED -> {
+                    val box = (widthPixels / 2 - margin * 2) / 7
+                    val text = box.div(2.5).toInt()
+                    return Pair(box, text)
+                }
+                WindowSizeClass.NOT_SET -> {
+                    val box = (widthPixels - margin * 2) / 7
+                    val text = box.div(2.5).toInt()
+                    return Pair(box, text)
+                }
+            }
+        }
+    }
+
+    private fun getDensitySettings(
+        context: Context,
+        isBookMode: Boolean,
+        sizeClassWidth: WindowSizeClass
+    ): DensitySettings {
         Log.i("Dpi", context.resources.displayMetrics.densityDpi.toString())
         var boxSize = 0
         var textSize = 0
         val densityDpi = context.resources?.displayMetrics?.densityDpi
+        val margin = context.resources.getDimensionPixelSize(R.dimen.def)
+        val screenWidth = context.resources?.displayMetrics?.widthPixels!!
+        val boxAndText = getBoxAndTextSize(screenWidth, margin, isBookMode, sizeClassWidth)
 
         when {
             densityDpi?.compareTo(DisplayMetrics.DENSITY_LOW) == -1 -> {
-                Log.i(TAG, "densityDpi?.compareTo(DisplayMetrics.DENSITY_LOW) == -1")
-                boxSize = context.resources.getDimensionPixelSize(R.dimen._25sdp)
-                textSize = context.resources.getDimensionPixelSize(R.dimen._15sdp)
+                Log.i(TAG, "densityDpi?.compareTo(DisplayMetrics.DENSITY_LOW) == -1 - $sizeClassWidth")
+                boxSize = boxAndText.first
+                textSize = boxAndText.second
             }
             //MDPI
             densityDpi in DisplayMetrics.DENSITY_LOW.rangeTo(DisplayMetrics.DENSITY_MEDIUM) -> {
-                Log.i(TAG, "DisplayMetrics.DENSITY_LOW.rangeTo(DisplayMetrics.DENSITY_MEDIUM)")
-                boxSize = context.resources.getDimensionPixelSize(R.dimen._35sdp)
-                textSize = context.resources.getDimensionPixelSize(R.dimen._25sdp)
+                Log.i(TAG, "DisplayMetrics.DENSITY_LOW.rangeTo(DisplayMetrics.DENSITY_MEDIUM) - $sizeClassWidth")
+                boxSize = boxAndText.first
+                textSize = boxAndText.second
             }
             // HDPI
             densityDpi in DisplayMetrics.DENSITY_MEDIUM.rangeTo(DisplayMetrics.DENSITY_HIGH) -> {
-                Log.i(TAG, "DisplayMetrics.DENSITY_MEDIUM.rangeTo(DisplayMetrics.DENSITY_HIGH)")
-                boxSize = context.resources.getDimensionPixelSize(R.dimen._30sdp)
-                textSize = context.resources.getDimensionPixelSize(R.dimen._14ssp)
+                Log.i(TAG, "DisplayMetrics.DENSITY_MEDIUM.rangeTo(DisplayMetrics.DENSITY_HIGH) - $sizeClassWidth")
+                boxSize = boxAndText.first
+                textSize = boxAndText.second
             }
             // XHDPI
             densityDpi in DisplayMetrics.DENSITY_HIGH.rangeTo(DisplayMetrics.DENSITY_XHIGH) -> {
-                Log.i(TAG, "DisplayMetrics.DENSITY_HIGH.rangeTo(DisplayMetrics.DENSITY_XHIGH)")
-                boxSize = context.resources.getDimensionPixelSize(R.dimen._25sdp)
-                textSize = context.resources.getDimensionPixelSize(R.dimen._10ssp)
+                Log.i(TAG, "DisplayMetrics.DENSITY_HIGH.rangeTo(DisplayMetrics.DENSITY_XHIGH) - $sizeClassWidth")
+                boxSize = boxAndText.first
+                textSize = boxAndText.second
             }
+            // XXHDPI
             densityDpi in DisplayMetrics.DENSITY_XHIGH.rangeTo(DisplayMetrics.DENSITY_XXHIGH) -> {
-                Log.i(TAG, "DisplayMetrics.DENSITY_XHIGH.rangeTo(DisplayMetrics.DENSITY_XXHIGH)")
-                if (isBookMode)
-                {
-                    Log.i(TAG, "Book mode orientation")
-                    boxSize = context.resources.getDimensionPixelSize(R.dimen._20sdp)
-                    textSize = context.resources.getDimensionPixelSize(R.dimen._6ssp)
-                }
-                else {
-                    Log.i(TAG, "Table top orientation")
-                    boxSize = context.resources.getDimensionPixelSize(R.dimen._33sdp)
-                    textSize = context.resources.getDimensionPixelSize(R.dimen._8ssp)
-                }
+                Log.i(TAG, "DisplayMetrics.DENSITY_XHIGH.rangeTo(DisplayMetrics.DENSITY_XXHIGH) - $sizeClassWidth")
+                boxSize = boxAndText.first
+                textSize = boxAndText.second
             }
             densityDpi?.compareTo(DisplayMetrics.DENSITY_XXXHIGH) == 1 || densityDpi?.compareTo(DisplayMetrics.DENSITY_XXXHIGH) == 0 -> {
-                Log.i(TAG, "> DisplayMetrics.DENSITY_XXXHIGH")
-                boxSize = context.resources.getDimensionPixelSize(R.dimen._35sdp)
-                textSize = context.resources.getDimensionPixelSize(R.dimen._7ssp)
+                Log.i(TAG, "> DisplayMetrics.DENSITY_XXXHIGH - $sizeClassWidth")
+                boxSize = boxAndText.first
+                textSize = boxAndText.second
             }
         }
+
+        /*   when {
+               densityDpi?.compareTo(DisplayMetrics.DENSITY_LOW) == -1 -> {
+                   Log.i(TAG, "densityDpi?.compareTo(DisplayMetrics.DENSITY_LOW) == -1")
+                   boxSize = context.resources.getDimensionPixelSize(R.dimen._25sdp)
+                   textSize = context.resources.getDimensionPixelSize(R.dimen._15sdp)
+               }
+               //MDPI
+               densityDpi in DisplayMetrics.DENSITY_LOW.rangeTo(DisplayMetrics.DENSITY_MEDIUM) -> {
+                   Log.i(TAG, "DisplayMetrics.DENSITY_LOW.rangeTo(DisplayMetrics.DENSITY_MEDIUM)")
+                   boxSize = context.resources.getDimensionPixelSize(R.dimen._35sdp)
+                   textSize = context.resources.getDimensionPixelSize(R.dimen._25sdp)
+               }
+               // HDPI
+               densityDpi in DisplayMetrics.DENSITY_MEDIUM.rangeTo(DisplayMetrics.DENSITY_HIGH) -> {
+                   Log.i(TAG, "DisplayMetrics.DENSITY_MEDIUM.rangeTo(DisplayMetrics.DENSITY_HIGH)")
+                   boxSize = context.resources.getDimensionPixelSize(R.dimen._30sdp)
+                   textSize = context.resources.getDimensionPixelSize(R.dimen._14ssp)
+               }
+               // XHDPI
+               densityDpi in DisplayMetrics.DENSITY_HIGH.rangeTo(DisplayMetrics.DENSITY_XHIGH) -> {
+
+                   if (sizeClasses.first == WindowSizeClass.COMPACT)
+                   {
+                       Log.i(TAG, "DisplayMetrics.DENSITY_HIGH.rangeTo(DisplayMetrics.DENSITY_XHIGH) - COMPACT")
+
+                       boxSize = context.resources.getDimensionPixelSize(R.dimen._28sdp)
+                       textSize = context.resources.getDimensionPixelSize(R.dimen._11ssp)
+                   }
+                   else if (sizeClasses.first == WindowSizeClass.MEDIUM) {
+                       Log.i(TAG, "DisplayMetrics.DENSITY_HIGH.rangeTo(DisplayMetrics.DENSITY_XHIGH) - MEDIUM")
+                       boxSize = context.resources.getDimensionPixelSize(R.dimen._20sdp)
+                       textSize = context.resources.getDimensionPixelSize(R.dimen._7ssp)
+                   }
+                   else if (sizeClasses.first == WindowSizeClass.EXPANDED) {
+                       Log.i(TAG, "DisplayMetrics.DENSITY_HIGH.rangeTo(DisplayMetrics.DENSITY_XHIGH) - EXPANDED")
+                       boxSize = context.resources.getDimensionPixelSize(R.dimen._20sdp)
+                       textSize = context.resources.getDimensionPixelSize(R.dimen._7ssp)
+                   }
+
+               }
+               densityDpi in DisplayMetrics.DENSITY_XHIGH.rangeTo(DisplayMetrics.DENSITY_XXHIGH) -> {
+                   Log.i(TAG, "DisplayMetrics.DENSITY_XHIGH.rangeTo(DisplayMetrics.DENSITY_XXHIGH)")
+                   if (isBookMode)
+                   {
+                       Log.i(TAG, "Book mode orientation")
+                       boxSize = context.resources.getDimensionPixelSize(R.dimen._20sdp)
+                       textSize = context.resources.getDimensionPixelSize(R.dimen._6ssp)
+                   }
+                   else {
+                       Log.i(TAG, "Table top orientation")
+                       boxSize = context.resources.getDimensionPixelSize(R.dimen._33sdp)
+                       textSize = context.resources.getDimensionPixelSize(R.dimen._8ssp)
+                   }
+               }
+               densityDpi?.compareTo(DisplayMetrics.DENSITY_XXXHIGH) == 1 || densityDpi?.compareTo(DisplayMetrics.DENSITY_XXXHIGH) == 0 -> {
+                   Log.i(TAG, "> DisplayMetrics.DENSITY_XXXHIGH")
+                   boxSize = context.resources.getDimensionPixelSize(R.dimen._35sdp)
+                   textSize = context.resources.getDimensionPixelSize(R.dimen._7ssp)
+               }
+           }*/
+
+
         /* val isTablet = context.resources?.displayMetrics?.densityDpi == DisplayMetrics.DENSITY_XHIGH
          val isHugeTablet =
              context.resources?.displayMetrics?.densityDpi == DisplayMetrics.DENSITY_XXHIGH
@@ -207,7 +312,8 @@ object LevelFactory {
                         textSize = ds.textSize.toFloat()
                         width = ds.boxSize
                         height = ds.boxSize
-                        background = ResourcesCompat.getDrawable(resources, R.drawable.slot_edge_fade, null)
+                        background =
+                            ResourcesCompat.getDrawable(resources, R.drawable.slot_edge_fade, null)
                         typeface = ResourcesCompat.getFont(context, R.font.yantramanav_bold)
                         gravity = Gravity.CENTER
                         setTextColor(ContextCompat.getColor(context, R.color.colorSecondaryVariant))

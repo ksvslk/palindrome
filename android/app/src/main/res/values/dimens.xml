@@ -16,6 +16,6 @@
 
     <dimen name="winning_message_size">@dimen/_7ssp</dimen>
     <dimen name="other_message_size">@dimen/_6ssp</dimen>
-
-
+    
+    <dimen name="def">32dp</dimen>
 </resources>

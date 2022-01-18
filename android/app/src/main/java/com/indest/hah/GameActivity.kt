@@ -2,9 +2,11 @@ package com.indest.hah
 
 import android.app.Activity
 import android.content.Context
+import android.content.res.Configuration
 import android.net.*
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.view.WindowManager.LayoutParams.*
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -19,6 +21,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import androidx.window.layout.WindowMetricsCalculator
 import com.google.android.gms.ads.*
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -29,6 +32,7 @@ import com.indest.hah.game.GameViewModel
 import com.indest.hah.game.OverallState.*
 import com.indest.hah.game.RewardType
 import com.indest.hah.util.ConnectionLiveData
+import com.indest.hah.util.WindowSizeClass
 import com.indest.hah.util.hideSystemBars
 import com.unity3d.ads.IUnityAdsInitializationListener
 import com.unity3d.ads.IUnityAdsLoadListener
@@ -40,6 +44,7 @@ import kotlinx.coroutines.flow.collect
 import java.net.HttpURLConnection
 import java.net.URL
 import javax.net.ssl.HttpsURLConnection
+
 
 @AndroidEntryPoint
 class GameActivity : AppCompatActivity() {
@@ -74,6 +79,7 @@ class GameActivity : AppCompatActivity() {
 
         val b = ActivityGameBinding.inflate(layoutInflater)
         _binding = b
+
         ViewCompat.setOnApplyWindowInsetsListener(binding.container) { _, insets ->
             WindowInsetsCompat.Builder().setInsets(
                 WindowInsetsCompat.Type.systemBars(),
@@ -111,6 +117,30 @@ class GameActivity : AppCompatActivity() {
                 }
             }
         }
+
+        b.container.addView(object : View(this) {
+            override fun onConfigurationChanged(newConfig: Configuration?) {
+                super.onConfigurationChanged(newConfig)
+                computeWindowSizeClasses()
+            }
+        })
+        computeWindowSizeClasses()
+    }
+
+    private fun computeWindowSizeClasses() {
+        val metrics = WindowMetricsCalculator.getOrCreate()
+            .computeCurrentWindowMetrics(this)
+
+        val widthDp = metrics.bounds.width() /
+                resources.displayMetrics.density
+        val widthWindowSizeClass = when {
+            widthDp < 600f -> WindowSizeClass.COMPACT
+            widthDp < 840f -> WindowSizeClass.MEDIUM
+            else -> WindowSizeClass.EXPANDED
+        }
+
+        gameViewModel.windowSizeClassWidth = widthWindowSizeClass
+
     }
 
     private fun loadRewardedAd(adUnit: String) {

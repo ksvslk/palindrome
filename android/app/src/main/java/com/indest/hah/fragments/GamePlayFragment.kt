@@ -48,7 +48,6 @@ import com.indest.hah.persistance.dto.Level
 import com.indest.hah.util.C
 import com.indest.hah.util.C.HINT_FRAGMENT_TAG
 import com.indest.hah.util.C.HINT_TEST
-import com.indest.hah.util.DensitySettings
 import com.indest.hah.util.hideSystemBars
 import com.indest.hah.util.playWhileSoundOn
 import dagger.hilt.android.AndroidEntryPoint
@@ -367,7 +366,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             requireContext(),
             layoutInflater,
             binding.gameplayFragment,
-            isBookMode
+            isBookMode,
+            gameViewModel.windowSizeClassWidth
         )
 
         cellDirector.cells = level.children

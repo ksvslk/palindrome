@@ -11,6 +11,7 @@ import com.indest.hah.persistance.LevelProgress
 import com.indest.hah.persistance.LevelRepository
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
+import com.indest.hah.util.WindowSizeClass
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -35,50 +36,45 @@ class GameViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(LevelEvent.Success(Level(), Level()))
     val uiState: StateFlow<LevelEvent> = _uiState
 
-    private val _rewardedAdState  = MutableStateFlow(RewardedAdState())
+    private val _rewardedAdState = MutableStateFlow(RewardedAdState())
     val rewardedAdState: StateFlow<RewardedAdState> = _rewardedAdState.asStateFlow()
 
     private val _overAllState = MutableStateFlow(AppState())
     val overAllState: StateFlow<AppState> = _overAllState.asStateFlow()
 
-    fun changeState(newState: OverallState)
-    {
+    var windowSizeClassWidth: WindowSizeClass = WindowSizeClass.NOT_SET
+
+    fun changeState(newState: OverallState) {
         _overAllState.value = AppState(state = newState)
     }
 
-    fun setShowRewardedAd(rewardType: RewardType)
-    {
-        if (_rewardedAdState.value.adAvailable)
-        {
+    fun setShowRewardedAd(rewardType: RewardType) {
+        if (_rewardedAdState.value.adAvailable) {
             _rewardedAdState.value = _rewardedAdState.value.copy(
                 rewardType = rewardType
             )
         }
     }
 
-    fun setShouldLoadAd(loadAd:Boolean)
-    {
+    fun setShouldLoadAd(loadAd: Boolean) {
         _rewardedAdState.value = _rewardedAdState.value.copy(
             shouldLoadNewAd = loadAd
         )
     }
 
-    fun setRewardedAdAvailability(isAvailable:Boolean)
-    {
+    fun setRewardedAdAvailability(isAvailable: Boolean) {
         _rewardedAdState.value = _rewardedAdState.value.copy(
             adAvailable = isAvailable
         )
     }
 
-    fun setUserEarnedReward(earned:Boolean)
-    {
+    fun setUserEarnedReward(earned: Boolean) {
         _rewardedAdState.value = _rewardedAdState.value.copy(
             userEarnedReward = earned
         )
     }
 
-    fun resetRewardedAdState()
-    {
+    fun resetRewardedAdState() {
         _rewardedAdState.value = RewardedAdState(
             adAvailable = false,
             userEarnedReward = false,
