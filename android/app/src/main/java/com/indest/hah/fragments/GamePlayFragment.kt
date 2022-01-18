@@ -48,6 +48,7 @@ import com.indest.hah.persistance.dto.Level
 import com.indest.hah.util.C
 import com.indest.hah.util.C.HINT_FRAGMENT_TAG
 import com.indest.hah.util.C.HINT_TEST
+import com.indest.hah.util.WindowSizeClass
 import com.indest.hah.util.hideSystemBars
 import com.indest.hah.util.playWhileSoundOn
 import dagger.hilt.android.AndroidEntryPoint
@@ -69,7 +70,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     private var hintNotification by Delegates.notNull<Int>()
     private lateinit var audioManager: AudioManager
     private var hintBadge: BadgeDrawable? = null
-    private var textBigAndSmall: Pair<Float,Float>? = null
+    private var textBigAndSmall: Pair<Float, Float>? = null
     lateinit var cellDirector: CellDirector
     var gameState: GameState = GameState.BUSY
     val gameViewModel: GameViewModel by activityViewModels()
@@ -259,11 +260,17 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                                             Log.i(TAG, "replaceFragmentWithSelf childCount > 0")
                                             replaceFragmentWithSelf()
                                         } else {
-                                            Log.i(TAG, "oadLevel(uiState.currentLevel, isBookMode) NOT childCount > 0" )
+                                            Log.i(
+                                                TAG,
+                                                "oadLevel(uiState.currentLevel, isBookMode) NOT childCount > 0"
+                                            )
                                             loadLevel(uiState.currentLevel, isBookMode)
                                         }
                                     } else if (binding.gameplayFragment.childCount == 0) {
-                                        Log.i(TAG, "  loadLevel(uiState.currentLevel, isBookMode) childCount == 0" )
+                                        Log.i(
+                                            TAG,
+                                            "  loadLevel(uiState.currentLevel, isBookMode) childCount == 0"
+                                        )
                                         loadLevel(uiState.currentLevel, isBookMode)
                                     }
                                 }
@@ -387,7 +394,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 binding.gameplayFragment,
                 getString(R.string.tap_to_continue),
                 Int.MAX_VALUE,
-                textBigAndSmall?.second ?: resources.getDimensionPixelSize(R.dimen.other_message_size).toFloat()
+                textBigAndSmall?.second
+                    ?: resources.getDimensionPixelSize(R.dimen.other_message_size).toFloat()
             )
             message.show()
 
@@ -521,7 +529,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             binding.gameplayFragment,
             getString(R.string.not_quite_solution),
             2000,
-            textBigAndSmall?.second ?: resources.getDimensionPixelSize(R.dimen.other_message_size).toFloat()
+            textBigAndSmall?.second ?: resources.getDimensionPixelSize(R.dimen.other_message_size)
+                .toFloat()
         )
         message.show()
         GoogleSignIn.getLastSignedInAccount(requireActivity())?.let {
@@ -539,7 +548,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             binding.gameplayFragment,
             getString(R.string.wrong_solution),
             2000,
-            textBigAndSmall?.second ?: resources.getDimensionPixelSize(R.dimen.other_message_size).toFloat()
+            textBigAndSmall?.second ?: resources.getDimensionPixelSize(R.dimen.other_message_size)
+                .toFloat()
         )
         message.show()
     }
@@ -590,13 +600,15 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             binding.gameplayFragment,
             getString(R.string.correct_solution),
             2000,
-            textBigAndSmall?.first ?: resources.getDimensionPixelSize(R.dimen.winning_message_size).toFloat()
+            textBigAndSmall?.first ?: resources.getDimensionPixelSize(R.dimen.winning_message_size)
+                .toFloat()
         )
         val scoreMessage = MessageSnackBar.make(
             binding.gameplayFragment,
             "",
             2000,
-            textBigAndSmall?.second ?: resources.getDimensionPixelSize(R.dimen.other_message_size).toFloat()
+            textBigAndSmall?.second ?: resources.getDimensionPixelSize(R.dimen.other_message_size)
+                .toFloat()
         )
         scoreMessage.addCallback(object :
             BaseTransientBottomBar.BaseCallback<MessageSnackBar>() {
@@ -609,7 +621,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                     binding.gameplayFragment,
                     getString(R.string.tap_to_continue),
                     Int.MAX_VALUE,
-                    textBigAndSmall?.second ?: resources.getDimensionPixelSize(R.dimen.other_message_size).toFloat()
+                    textBigAndSmall?.second
+                        ?: resources.getDimensionPixelSize(R.dimen.other_message_size).toFloat()
                 )
                 message.show()
 
@@ -771,11 +784,73 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         }
     }
 
-    private fun setTextSizes(isBookMode: Boolean): Pair<Float,Float> {
+    private fun setTextSizes(isBookMode: Boolean): Pair<Float, Float> {
         var textBig = 0
         var textSmall = 0
-        val densityDpi = resources?.displayMetrics?.densityDpi
-        when {
+        val densityDpi = requireContext().resources?.displayMetrics?.densityDpi
+
+        when (gameViewModel.windowSizeClassWidth) {
+            WindowSizeClass.COMPACT -> {
+                when {
+                    densityDpi in DisplayMetrics.DENSITY_LOW.rangeTo(DisplayMetrics.DENSITY_MEDIUM) -> {
+                        textBig = resources.getDimensionPixelSize(R.dimen._25ssp)
+                        textSmall = resources.getDimensionPixelSize(R.dimen._24ssp)
+                    }
+                    densityDpi in DisplayMetrics.DENSITY_MEDIUM.rangeTo(DisplayMetrics.DENSITY_HIGH) -> {
+                        textBig = resources.getDimensionPixelSize(R.dimen._14ssp)
+                        textSmall = resources.getDimensionPixelSize(R.dimen._13ssp)
+                    }
+                    densityDpi in DisplayMetrics.DENSITY_HIGH.rangeTo(DisplayMetrics.DENSITY_XHIGH) -> {
+                        textBig = resources.getDimensionPixelSize(R.dimen._10ssp)
+                        textSmall = resources.getDimensionPixelSize(R.dimen._9ssp)
+                    }
+                    densityDpi?.compareTo(DisplayMetrics.DENSITY_XXXHIGH) == 1 || densityDpi?.compareTo(
+                        DisplayMetrics.DENSITY_XXXHIGH
+                    ) == 0 -> {
+                        textBig = resources.getDimensionPixelSize(R.dimen._6ssp)
+                        textSmall = resources.getDimensionPixelSize(R.dimen._5ssp)
+                    }
+                    else -> {
+                        textBig = resources.getDimensionPixelSize(R.dimen._8ssp)
+                        textSmall = resources.getDimensionPixelSize(R.dimen._7ssp)
+                    }
+                }
+            }
+            WindowSizeClass.MEDIUM -> {
+                when {
+                    densityDpi in DisplayMetrics.DENSITY_LOW.rangeTo(DisplayMetrics.DENSITY_MEDIUM) -> {
+                        textBig = resources.getDimensionPixelSize(R.dimen._15ssp)
+                        textSmall = resources.getDimensionPixelSize(R.dimen._14ssp)
+                    }
+                    densityDpi in DisplayMetrics.DENSITY_XHIGH.rangeTo(DisplayMetrics.DENSITY_XXHIGH) -> {
+                        textBig = resources.getDimensionPixelSize(R.dimen._6ssp)
+                        textSmall = resources.getDimensionPixelSize(R.dimen._5ssp)
+                    }
+                    else -> {
+                        textBig = resources.getDimensionPixelSize(R.dimen._7ssp)
+                        textSmall = resources.getDimensionPixelSize(R.dimen._6ssp)
+                    }
+                }
+            }
+            WindowSizeClass.EXPANDED -> {
+                when {
+                    densityDpi in DisplayMetrics.DENSITY_MEDIUM.rangeTo(DisplayMetrics.DENSITY_HIGH) -> {
+                        textBig = resources.getDimensionPixelSize(R.dimen._10ssp)
+                        textSmall = resources.getDimensionPixelSize(R.dimen._9ssp)
+                    }
+                    else -> {
+                        textBig = resources.getDimensionPixelSize(R.dimen._7ssp)
+                        textSmall = resources.getDimensionPixelSize(R.dimen._6ssp)
+                    }
+                }
+
+            }
+            WindowSizeClass.NOT_SET -> {
+                textBig = resources.getDimensionPixelSize(R.dimen._7ssp)
+                textSmall = resources.getDimensionPixelSize(R.dimen._6ssp)
+            }
+        }
+/*        when {
             densityDpi?.compareTo(DisplayMetrics.DENSITY_LOW) == -1 -> {
                 textBig = resources.getDimensionPixelSize(R.dimen._7ssp)
                 textSmall =resources.getDimensionPixelSize(R.dimen._6ssp)
@@ -815,7 +890,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 textBig = resources.getDimensionPixelSize(R.dimen._7ssp)
                 textSmall =resources.getDimensionPixelSize(R.dimen._6ssp)
             }
-        }
+        }*/
 
         return Pair(textBig.toFloat(), textSmall.toFloat())
     }

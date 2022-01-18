@@ -57,7 +57,8 @@ object LevelFactory {
         widthPixels: Int,
         margin: Int,
         isBookMode: Boolean,
-        sizeClassWidth: WindowSizeClass
+        sizeClassWidth: WindowSizeClass,
+        densityDpi: Int?
     ): Pair<Int, Int> {
 
         if (isBookMode)
@@ -71,14 +72,42 @@ object LevelFactory {
             {
                 WindowSizeClass.COMPACT ->
                 {
-                    val box = (widthPixels - margin * 2) / 7
-                    val text = box.div(3.8).toInt()
-                    return Pair(box, text)
+                    when {
+                        densityDpi in DisplayMetrics.DENSITY_LOW.rangeTo(DisplayMetrics.DENSITY_MEDIUM) -> {
+                            val box = (widthPixels - margin * 2) / 7
+                            val text = box.div(1.2).toInt()
+                            return Pair(box, text)
+                        }
+                        densityDpi in DisplayMetrics.DENSITY_MEDIUM.rangeTo(DisplayMetrics.DENSITY_HIGH) -> {
+                            val box = (widthPixels - margin * 2) / 7
+                            val text = box.div(2.5).toInt()
+                            return Pair(box, text)
+                        }
+                        densityDpi in DisplayMetrics.DENSITY_HIGH.rangeTo(DisplayMetrics.DENSITY_XHIGH) -> {
+                            val box = (widthPixels - margin * 2) / 7
+                            val text = box.div(3).toInt()
+                            return Pair(box, text)
+                        }
+                        else -> {
+                            val box = (widthPixels - margin * 2) / 7
+                            val text = box.div(3.9).toInt()
+                            return Pair(box, text)
+                        }
+                    }
                 }
                 WindowSizeClass.MEDIUM -> {
-                    val box = (widthPixels / 2 - margin * 2) / 7
-                    val text = box.div(2.5).toInt()
-                    return Pair(box, text)
+                    when {
+                        densityDpi in DisplayMetrics.DENSITY_LOW.rangeTo(DisplayMetrics.DENSITY_MEDIUM) -> {
+                            val box = ((widthPixels / 1.5 - margin * 2) / 7).toInt()
+                            val text = box.div(1.5).toInt()
+                            return Pair(box, text)
+                        }
+                        else -> {
+                            val box = (widthPixels / 2 - margin * 2) / 7
+                            val text = box.div(2.5).toInt()
+                            return Pair(box, text)
+                        }
+                    }
                 }
                 WindowSizeClass.EXPANDED -> {
                     val box = (widthPixels / 2 - margin * 2) / 7
@@ -105,7 +134,7 @@ object LevelFactory {
         val densityDpi = context.resources?.displayMetrics?.densityDpi
         val margin = context.resources.getDimensionPixelSize(R.dimen.def)
         val screenWidth = context.resources?.displayMetrics?.widthPixels!!
-        val boxAndText = getBoxAndTextSize(screenWidth, margin, isBookMode, sizeClassWidth)
+        val boxAndText = getBoxAndTextSize(screenWidth, margin, isBookMode, sizeClassWidth, densityDpi)
 
         when {
             densityDpi?.compareTo(DisplayMetrics.DENSITY_LOW) == -1 -> {
@@ -137,10 +166,11 @@ object LevelFactory {
                 boxSize = boxAndText.first
                 textSize = boxAndText.second
             }
+            // XXXHDPI
             densityDpi?.compareTo(DisplayMetrics.DENSITY_XXXHIGH) == 1 || densityDpi?.compareTo(DisplayMetrics.DENSITY_XXXHIGH) == 0 -> {
                 Log.i(TAG, "> DisplayMetrics.DENSITY_XXXHIGH - $sizeClassWidth")
                 boxSize = boxAndText.first
-                textSize = boxAndText.second
+                textSize = (boxAndText.second / 1.3f).toInt()
             }
         }
 
