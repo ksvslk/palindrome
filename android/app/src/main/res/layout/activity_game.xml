@@ -10,10 +10,33 @@
         android:id="@+id/gameProgress"
         android:layout_height="@dimen/_10sdp"
         android:layout_width="match_parent"
+        android:layout_marginHorizontal="@dimen/_8sdp"
         app:indicatorColor="@color/colorSecondaryVariant"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/level_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/yantramanav_bold"
+        android:layout_marginHorizontal="@dimen/_8sdp"
+        app:layout_constraintTop_toBottomOf="@+id/gameProgress"
+        app:layout_constraintLeft_toLeftOf="@+id/container"
+        android:text="1">
+    </androidx.appcompat.widget.AppCompatTextView>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/trainLinearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:animateLayoutChanges="true"
+        app:layout_constraintRight_toLeftOf="@id/container"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavView">
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavView"

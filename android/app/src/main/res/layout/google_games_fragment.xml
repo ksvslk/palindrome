@@ -30,6 +30,7 @@
         android:id="@+id/leaderboards_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
+        android:layout_margin="@dimen/_2sdp"
         android:background="?android:attr/selectableItemBackground"
         android:clickable="true"
         android:focusable="true"
@@ -60,6 +61,7 @@
         android:id="@+id/achievements_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
+        android:layout_margin="@dimen/_2sdp"
         android:background="?android:attr/selectableItemBackground"
         android:clickable="true"
         android:focusable="true"
@@ -90,6 +92,7 @@
         android:id="@+id/alternative_screen"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/simple_dialog_item_height"
+        android:layout_margin="@dimen/_2sdp"
         android:background="?android:attr/selectableItemBackground"
         android:orientation="horizontal">
 

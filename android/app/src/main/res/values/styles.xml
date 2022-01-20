@@ -8,14 +8,7 @@
         <item name="fontFamily">@font/yantramanav_bold</item>
         <item name="android:textColor">@color/colorOnPrimary</item>
     </style>
-    <style name="TextAppearance.OC.Headline4" parent="TextAppearance.MaterialComponents.Headline4">
-        <item name="fontFamily">@font/yantramanav_bold</item>
-        <item name="android:textColor">@color/colorOnPrimary</item>
-    </style>
-    <style name="TextAppearance.OC.Headline3" parent="TextAppearance.MaterialComponents.Headline3">
-        <item name="fontFamily">@font/yantramanav_bold</item>
-        <item name="android:textColor">@color/colorOnPrimary</item>
-    </style>
+
     <style name="TextAppearance.OC.LevelSelectNumber" parent="TextAppearance.MaterialComponents.Headline6">
         <item name="fontFamily">@font/yantramanav_bold</item>
         <item name="android:textColor">@color/hintsNotificationColor</item>
@@ -27,9 +20,6 @@
     <style name="TextAppearance.OC.Caption" parent="TextAppearance.MaterialComponents.Caption">
         <item name="fontFamily">@font/yantramanav_medium</item>
         <item name="android:textColor">@color/colorSecondaryVariant</item>
-    </style>
-    <style name="ScoreBackground">
-        <item name="background">@color/colorSecondary</item>
     </style>
 
     <style name= "OC.Button" parent="Widget.MaterialComponents.Button">

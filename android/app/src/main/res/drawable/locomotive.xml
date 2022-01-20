@@ -1,0 +1,10 @@
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="false"
+    android:visible="true">
+    <item android:drawable="@drawable/ic_loco1" android:duration="150" />
+    <item android:drawable="@drawable/ic_loco2" android:duration="150" />
+    <item android:drawable="@drawable/ic_loco3" android:duration="150" />
+    <item android:drawable="@drawable/ic_loco4" android:duration="150" />
+    <item android:drawable="@drawable/ic_loco5" android:duration="150" />
+    <item android:drawable="@drawable/ic_loco6" android:duration="150" />
+</animation-list>

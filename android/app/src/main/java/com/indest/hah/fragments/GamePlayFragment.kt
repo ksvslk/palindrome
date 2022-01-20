@@ -2,6 +2,7 @@ package com.indest.hah.fragments
 
 import android.animation.*
 import android.content.Context
+import android.graphics.drawable.AnimationDrawable
 import android.media.AudioManager
 import android.media.SoundPool
 import android.os.Build
@@ -17,9 +18,6 @@ import android.view.WindowManager
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.children
-import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.*
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -55,6 +53,11 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlin.properties.Delegates
+import android.animation.ObjectAnimator
+import androidx.appcompat.widget.LinearLayoutCompat
+import androidx.core.animation.doOnEnd
+import androidx.core.view.*
+
 
 @AndroidEntryPoint
 class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
@@ -74,6 +77,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     lateinit var cellDirector: CellDirector
     var gameState: GameState = GameState.BUSY
     val gameViewModel: GameViewModel by activityViewModels()
+    private var locomotiveAnimation: AnimationDrawable? = null
 
     private var guesses: Int by Delegates.observable(0) { _, _, new ->
         val guessesBeforeHint = resources.getInteger(R.integer.guessesBeforeHint)
@@ -275,7 +279,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                                     }
                                 }
                                 (requireActivity() as GameActivity).binding.gameProgress.progress =
-                                    ((uiState.currentLevel.levelInfo.levelId.toFloat() / 94f) * 100).toInt()
+                                    ((uiState.currentLevel.levelInfo.levelId.toFloat() / 100f) * 100).toInt()
                             }
                             is LevelEvent.Error -> {
                                 Log.i(TAG, "Error getting level from gameViewModel")
@@ -298,6 +302,87 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     private fun isBookMode(foldFeature: FoldingFeature?) =
         foldFeature?.state == FoldingFeature.State.FLAT
 
+    private fun playSpecialAnimation() {
+        Log.i(TAG, "Play special animation")
+        //TODO: this should be leaking..
+        val trainLinearLayout =
+            requireActivity().findViewById<LinearLayoutCompat>(R.id.trainLinearLayout)
+
+        val oldTrainDisappearingAnimation = ObjectAnimator.ofFloat(
+            trainLinearLayout,
+            "alpha",
+            1f,
+            0f
+        )
+        oldTrainDisappearingAnimation.duration = 500
+        oldTrainDisappearingAnimation.start()
+
+        oldTrainDisappearingAnimation.doOnEnd {
+            trainLinearLayout.alpha = 1f
+            oldTrainDisappearingAnimation.removeAllListeners()
+            trainLinearLayout.removeAllViews()
+            trainLinearLayout.removeAllViewsInLayout()
+            trainLinearLayout.clearAnimation()
+            trainLinearLayout.clearDisappearingChildren()
+
+            val lastCarriage = arrayOf(
+                R.drawable.ic_carriage_last,
+                R.drawable.ic_carriage_last_blue,
+                R.drawable.ic_carriage_last_green,
+                R.drawable.ic_carriage_last_yellow
+            ).random()
+
+            val centerCarriages = arrayOf(
+                R.drawable.ic_carriage_center,
+                R.drawable.ic_carriage_center_blue,
+                R.drawable.ic_carriage_center_green,
+                R.drawable.ic_carriage_center_yellow
+            )
+            val randomNumberOfTrains = (1..5).random()
+
+            for (i in 1..randomNumberOfTrains) {
+                if (i == 1) {
+                    layoutInflater.inflate(R.layout.carriage_last, trainLinearLayout, false).also {
+                        it.setBackgroundResource(lastCarriage)
+                        trainLinearLayout.addView(it)
+                    }
+                } else {
+                    layoutInflater.inflate(R.layout.carriage_center, trainLinearLayout, false)
+                        .also {
+                            val randomCarriage = centerCarriages.random()
+                            it.setBackgroundResource(randomCarriage)
+                            trainLinearLayout.addView(it)
+                        }
+                }
+            }
+
+            layoutInflater.inflate(R.layout.locomotive_view, trainLinearLayout, false).also {
+                (it.background as AnimationDrawable).start()
+                trainLinearLayout.addView(it)
+            }
+
+/*
+        trainLinearLayout.doOnPreDraw {
+            val train = trainLinearLayout.findViewById<AppCompatImageView>(R.id.loco)
+            val tsuhhTsuhh = (train.drawable as AnimationDrawable)
+            tsuhhTsuhh.stop()
+            tsuhhTsuhh.start()
+        }
+*/
+
+            trainLinearLayout.doOnNextLayout {
+                val offscreenX = resources.displayMetrics.widthPixels + trainLinearLayout.width
+                val trainAnimator = ObjectAnimator.ofFloat(
+                    trainLinearLayout,
+                    "x",
+                    (0f - it.width),
+                    offscreenX.toFloat()
+                )
+                trainAnimator.duration = 20000
+                trainAnimator.start()
+            }
+        }
+    }
 
     private fun showReviewOption(level: Int) {
         if (level == 21) {
@@ -423,6 +508,17 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             gameState = GameState.READY
             handleGameSolutions()
         }
+        val levelNumber = levelAndLettersInfo.levelInfo.levelId
+        val levelNrView = (requireActivity() as GameActivity).binding.levelNumber
+        val margin = if (levelNumber > 50 ) resources.getDimensionPixelSize(R.dimen._16sdp) - levelNrView.measuredWidth else -resources.getDimensionPixelSize(R.dimen._8sdp)
+        val progressIndicatorWidth = (requireActivity() as GameActivity).binding.gameProgress.measuredWidth
+        val progressX = (levelNumber * progressIndicatorWidth / 100) - margin
+
+        levelNrView.text = levelNumber.toString()
+        Log.i(TAG, "Prog: $progressIndicatorWidth")
+        Log.i(TAG, "Progx: $progressX")
+        levelNrView.x = progressX.toFloat()
+
         showReviewOption(levelAndLettersInfo.levelInfo.levelId)
     }
 
@@ -522,12 +618,14 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
     // CLEAN
     private fun wrongPalindromeActions(info: Triple<String?, String?, Int?>) {
+        val randomWrongPalindromeMessage =
+            resources.getStringArray(R.array.palindrome_wrong_texts).random()
         val lastLetter =
             cellDirector.cells.find { p -> p.homeIndex == info.third } as Letter
         cellDirector.sendLetterHome(lastLetter)
         val message = MessageSnackBar.make(
             binding.gameplayFragment,
-            getString(R.string.not_quite_solution),
+            randomWrongPalindromeMessage,
             2000,
             textBigAndSmall?.second ?: resources.getDimensionPixelSize(R.dimen.other_message_size)
                 .toFloat()
@@ -541,12 +639,13 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
     // CLEAN
     private fun wrongSolutionActions(info: Triple<String?, String?, Int?>) {
+        val randomWrongMessage = resources.getStringArray(R.array.solution_wrong_texts).random()
         val lastLetter =
             cellDirector.cells.find { p -> p.homeIndex == info.third } as Letter
         cellDirector.sendLetterHome(lastLetter)
         val message = MessageSnackBar.make(
             binding.gameplayFragment,
-            getString(R.string.wrong_solution),
+            randomWrongMessage,
             2000,
             textBigAndSmall?.second ?: resources.getDimensionPixelSize(R.dimen.other_message_size)
                 .toFloat()
@@ -596,9 +695,10 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
     // MIXED
     private fun showWinningMessages(currentAndMaxScore: Pair<Int, Int>) {
+        val randomCorrectMessage = resources.getStringArray(R.array.correct_texts).random()
         val winningMessage = MessageSnackBar.make(
             binding.gameplayFragment,
-            getString(R.string.correct_solution),
+            randomCorrectMessage,
             2000,
             textBigAndSmall?.first ?: resources.getDimensionPixelSize(R.dimen.winning_message_size)
                 .toFloat()
@@ -626,6 +726,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 )
                 message.show()
 
+                playSpecialAnimation()
                 val tapToContinueAnimation =
                     ObjectAnimator.ofFloat(message.view, View.ALPHA, 1f, 0.5f)
                 tapToContinueAnimation.duration = 1000
@@ -793,8 +894,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             WindowSizeClass.COMPACT -> {
                 when {
                     densityDpi in DisplayMetrics.DENSITY_LOW.rangeTo(DisplayMetrics.DENSITY_MEDIUM) -> {
-                        textBig = resources.getDimensionPixelSize(R.dimen._25ssp)
-                        textSmall = resources.getDimensionPixelSize(R.dimen._24ssp)
+                        textBig = resources.getDimensionPixelSize(R.dimen._20ssp)
+                        textSmall = resources.getDimensionPixelSize(R.dimen._19ssp)
                     }
                     densityDpi in DisplayMetrics.DENSITY_MEDIUM.rangeTo(DisplayMetrics.DENSITY_HIGH) -> {
                         textBig = resources.getDimensionPixelSize(R.dimen._14ssp)
@@ -803,6 +904,19 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                     densityDpi in DisplayMetrics.DENSITY_HIGH.rangeTo(DisplayMetrics.DENSITY_XHIGH) -> {
                         textBig = resources.getDimensionPixelSize(R.dimen._10ssp)
                         textSmall = resources.getDimensionPixelSize(R.dimen._9ssp)
+                    }
+                    densityDpi in DisplayMetrics.DENSITY_XHIGH.rangeTo(DisplayMetrics.DENSITY_XXHIGH) -> {
+                        if (isBookMode) {
+                            textBig = resources.getDimensionPixelSize(R.dimen._5ssp)
+                            textSmall = resources.getDimensionPixelSize(R.dimen._4ssp)
+                        } else {
+                            textBig = resources.getDimensionPixelSize(R.dimen._8ssp)
+                            textSmall = resources.getDimensionPixelSize(R.dimen._7ssp)
+                        }
+                    }
+                    densityDpi in DisplayMetrics.DENSITY_XXHIGH.rangeTo(DisplayMetrics.DENSITY_XXXHIGH) -> {
+                        textBig = resources.getDimensionPixelSize(R.dimen._6ssp)
+                        textSmall = resources.getDimensionPixelSize(R.dimen._5ssp)
                     }
                     densityDpi?.compareTo(DisplayMetrics.DENSITY_XXXHIGH) == 1 || densityDpi?.compareTo(
                         DisplayMetrics.DENSITY_XXXHIGH
@@ -822,9 +936,22 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                         textBig = resources.getDimensionPixelSize(R.dimen._15ssp)
                         textSmall = resources.getDimensionPixelSize(R.dimen._14ssp)
                     }
+                    densityDpi in DisplayMetrics.DENSITY_MEDIUM.rangeTo(DisplayMetrics.DENSITY_HIGH) -> {
+                        textBig = resources.getDimensionPixelSize(R.dimen._11ssp)
+                        textSmall = resources.getDimensionPixelSize(R.dimen._10ssp)
+                    }
+                    densityDpi in DisplayMetrics.DENSITY_HIGH.rangeTo(DisplayMetrics.DENSITY_XHIGH) -> {
+                        textBig = resources.getDimensionPixelSize(R.dimen._8ssp)
+                        textSmall = resources.getDimensionPixelSize(R.dimen._7ssp)
+                    }
                     densityDpi in DisplayMetrics.DENSITY_XHIGH.rangeTo(DisplayMetrics.DENSITY_XXHIGH) -> {
-                        textBig = resources.getDimensionPixelSize(R.dimen._6ssp)
-                        textSmall = resources.getDimensionPixelSize(R.dimen._5ssp)
+                        if (isBookMode) {
+                            textBig = resources.getDimensionPixelSize(R.dimen._5ssp)
+                            textSmall = resources.getDimensionPixelSize(R.dimen._4ssp)
+                        } else {
+                            textBig = resources.getDimensionPixelSize(R.dimen._6ssp)
+                            textSmall = resources.getDimensionPixelSize(R.dimen._5ssp)
+                        }
                     }
                     else -> {
                         textBig = resources.getDimensionPixelSize(R.dimen._7ssp)
@@ -898,6 +1025,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     override fun onDestroyView() {
         hintBadge = null
         _binding = null
+        locomotiveAnimation?.callback = null
+        locomotiveAnimation?.stop()
         super.onDestroyView()
     }
 
