@@ -915,8 +915,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                         }
                     }
                     densityDpi in DisplayMetrics.DENSITY_XXHIGH.rangeTo(DisplayMetrics.DENSITY_XXXHIGH) -> {
-                        textBig = resources.getDimensionPixelSize(R.dimen._6ssp)
-                        textSmall = resources.getDimensionPixelSize(R.dimen._5ssp)
+                        textBig = resources.getDimensionPixelSize(R.dimen._7ssp)
+                        textSmall = resources.getDimensionPixelSize(R.dimen._6ssp)
                     }
                     densityDpi?.compareTo(DisplayMetrics.DENSITY_XXXHIGH) == 1 || densityDpi?.compareTo(
                         DisplayMetrics.DENSITY_XXXHIGH
@@ -931,20 +931,20 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 }
             }
             WindowSizeClass.MEDIUM -> {
-                when {
-                    densityDpi in DisplayMetrics.DENSITY_LOW.rangeTo(DisplayMetrics.DENSITY_MEDIUM) -> {
+                when (densityDpi) {
+                    in DisplayMetrics.DENSITY_LOW.rangeTo(DisplayMetrics.DENSITY_MEDIUM) -> {
                         textBig = resources.getDimensionPixelSize(R.dimen._15ssp)
                         textSmall = resources.getDimensionPixelSize(R.dimen._14ssp)
                     }
-                    densityDpi in DisplayMetrics.DENSITY_MEDIUM.rangeTo(DisplayMetrics.DENSITY_HIGH) -> {
+                    in DisplayMetrics.DENSITY_MEDIUM.rangeTo(DisplayMetrics.DENSITY_HIGH) -> {
                         textBig = resources.getDimensionPixelSize(R.dimen._11ssp)
                         textSmall = resources.getDimensionPixelSize(R.dimen._10ssp)
                     }
-                    densityDpi in DisplayMetrics.DENSITY_HIGH.rangeTo(DisplayMetrics.DENSITY_XHIGH) -> {
+                    in DisplayMetrics.DENSITY_HIGH.rangeTo(DisplayMetrics.DENSITY_XHIGH) -> {
                         textBig = resources.getDimensionPixelSize(R.dimen._8ssp)
                         textSmall = resources.getDimensionPixelSize(R.dimen._7ssp)
                     }
-                    densityDpi in DisplayMetrics.DENSITY_XHIGH.rangeTo(DisplayMetrics.DENSITY_XXHIGH) -> {
+                    in DisplayMetrics.DENSITY_XHIGH.rangeTo(DisplayMetrics.DENSITY_XXHIGH) -> {
                         if (isBookMode) {
                             textBig = resources.getDimensionPixelSize(R.dimen._5ssp)
                             textSmall = resources.getDimensionPixelSize(R.dimen._4ssp)
@@ -960,8 +960,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 }
             }
             WindowSizeClass.EXPANDED -> {
-                when {
-                    densityDpi in DisplayMetrics.DENSITY_MEDIUM.rangeTo(DisplayMetrics.DENSITY_HIGH) -> {
+                when (densityDpi) {
+                    in DisplayMetrics.DENSITY_MEDIUM.rangeTo(DisplayMetrics.DENSITY_HIGH) -> {
                         textBig = resources.getDimensionPixelSize(R.dimen._10ssp)
                         textSmall = resources.getDimensionPixelSize(R.dimen._9ssp)
                     }

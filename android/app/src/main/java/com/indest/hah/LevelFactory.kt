@@ -81,7 +81,7 @@ object LevelFactory {
                     in DisplayMetrics.DENSITY_MEDIUM.rangeTo(DisplayMetrics.DENSITY_HIGH) -> {
                         Log.i(TAG, "DisplayMetrics.DENSITY_MEDIUM.rangeTo(DisplayMetrics.DENSITY_HIGH) - COMPAT")
                         val box = (widthPixels - margin * 2) / 7
-                        val text = box.div(2.5).toInt()
+                        val text = box.div(2.2).toInt()
                         return Pair(box, text)
                     }
                     in DisplayMetrics.DENSITY_HIGH.rangeTo(DisplayMetrics.DENSITY_XHIGH) -> {
@@ -106,7 +106,7 @@ object LevelFactory {
                     in DisplayMetrics.DENSITY_XXHIGH.rangeTo(DisplayMetrics.DENSITY_XXXHIGH) -> {
                         Log.i(TAG, "DisplayMetrics.DENSITY_XXHIGH.rangeTo(DisplayMetrics.DENSITY_XXXHIGH) - COMPAT")
                         val box = ((widthPixels - margin * 2.8) / 7).toInt()
-                        val text = box.div(4.5).toInt()
+                        val text = box.div(4.7).toInt()
                         Pair(box, text)
                     }
                     else -> {
