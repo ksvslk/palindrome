@@ -23,6 +23,7 @@ import com.indest.hah.databinding.SettingsFragmentBinding
 
 import android.content.Intent
 import android.net.Uri
+import androidx.activity.result.ActivityResultLauncher
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.replace
 import com.indest.hah.game.GameViewModel
@@ -122,32 +123,21 @@ class SettingsFragment : BottomSheetDialogFragment() {
     private val activityResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == Activity.RESULT_OK) {
+                Log.i(TAG, "it.resultCode == Activity.RESULT_OK")
                 dismiss()
-            } else if (it.resultCode != Activity.RESULT_CANCELED) {
-                Toast.makeText(
-                    requireContext().applicationContext,
-                    "Something went wrong. Do you have internet connection?",
-                    Toast.LENGTH_LONG
-                ).show()
+            }
+            else {
                 dismiss()
+                Log.i(TAG, "Activity left without RESULT_OK ${it.resultCode}")
             }
         }
 
     private fun signInToGoogle() {
-        gameViewModel.changeState(OverallState.LOADING)
-        parentFragmentManager.commit {
-            setCustomAnimations(
-                R.anim.slide_in_bottom,
-                R.anim.slide_out_top
-            )
-            setReorderingAllowed(true)
-            replace<LoadingFragment>(R.id.fragments_container)
-        }
         val signInClient = GoogleSignIn.getClient(
             requireActivity(),
             GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN
         )
-        activityResultLauncher.launch(signInClient.signInIntent)
+       activityResultLauncher.launch(signInClient.signInIntent)
     }
 
     private fun signOut() {
