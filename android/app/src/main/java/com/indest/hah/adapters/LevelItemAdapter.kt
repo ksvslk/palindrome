@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.indest.hah.R
-import com.indest.hah.persistance.LevelProgress
 import com.indest.hah.persistance.dto.LevelData
 
 class LevelItemAdapter(
@@ -26,7 +25,7 @@ class LevelItemAdapter(
         view: View,
         onItemClicked: (Int) -> Unit
     ) : RecyclerView.ViewHolder(view) {
-        val textView: TextView = view.findViewById(R.id.textView)
+        val textView: TextView = view.findViewById(R.id.levelSelectView)
 
         init {
             itemView.setOnClickListener {

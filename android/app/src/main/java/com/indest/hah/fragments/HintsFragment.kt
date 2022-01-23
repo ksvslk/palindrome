@@ -34,7 +34,6 @@ class HintsFragment : BottomSheetDialogFragment() {
     private val binding get() = _binding!!
     private val gameViewModel: GameViewModel by activityViewModels()
     private var bundle: Bundle = bundleOf()
-    private lateinit var toast: Toast
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,8 +44,6 @@ class HintsFragment : BottomSheetDialogFragment() {
         Log.i(TAG, "onCreateView")
         val b = HintsFragmentBinding.inflate(layoutInflater, container, false)
         _binding = b
-
-        toast = Toast.makeText(requireContext().applicationContext, "", Toast.LENGTH_LONG)
 
         binding.categoryRevealButton.setOnClickListener {
             if (!gameViewModel.isCategoryRewarded()) {

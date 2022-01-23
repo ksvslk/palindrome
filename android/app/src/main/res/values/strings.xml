@@ -73,7 +73,7 @@
     <string name="review_displayed_to_user">REVIEW_DISPLAYED_TO_USER</string>
 
     <!-- TUTORIAL -->
-    <string name="tutorial_text">Use all letters and punctuation marks to create a palindrome. Palindrome is a word identical from \n <font color="#d55b06">right to left</font> and <font color="#d55b06">left to right</font>.</string>
+    <string name="tutorial_text">Use all letters and punctuation marks to create a palindrome. Palindrome is a same word or sentence both ways.</string>
     <string name="tutorial2_text">Compete against other players by making as few mistakes as possible!</string>
     <string name="tutorial3_text">Punctuations are required to be in the correct positions but not from both sides.</string>
     <string name="next">Next</string>

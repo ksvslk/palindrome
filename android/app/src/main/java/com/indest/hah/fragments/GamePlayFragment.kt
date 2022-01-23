@@ -57,6 +57,9 @@ import android.animation.ObjectAnimator
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.animation.doOnEnd
 import androidx.core.view.*
+import com.indest.hah.util.C.HINT_REQUEST_KEY
+import kotlin.math.ln
+import kotlin.math.log2
 
 
 @AndroidEntryPoint
@@ -149,7 +152,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     }
 
     private fun resetHintsBadgeOnFragmentResult() {
-        setFragmentResultListener(HINT_TEST) { _, bundle ->
+        setFragmentResultListener(HINT_REQUEST_KEY) { _, bundle ->
             run {
                 if (bundle[HINT_FRAGMENT_TAG] != null) {
                     resetHintsBadge()
@@ -278,8 +281,9 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                                         loadLevel(uiState.currentLevel, isBookMode)
                                     }
                                 }
+                                val levelCount = gameViewModel.levels.value?.size ?: 100
                                 (requireActivity() as GameActivity).binding.gameProgress.progress =
-                                    ((uiState.currentLevel.levelInfo.levelId.toFloat() / 100f) * 100).toInt()
+                                    ((uiState.currentLevel.levelInfo.levelId.toFloat().div(levelCount)) * 100).toInt()
                             }
                             is LevelEvent.Error -> {
                                 Log.i(TAG, "Error getting level from gameViewModel")
@@ -361,15 +365,6 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 trainLinearLayout.addView(it)
             }
 
-/*
-        trainLinearLayout.doOnPreDraw {
-            val train = trainLinearLayout.findViewById<AppCompatImageView>(R.id.loco)
-            val tsuhhTsuhh = (train.drawable as AnimationDrawable)
-            tsuhhTsuhh.stop()
-            tsuhhTsuhh.start()
-        }
-*/
-
             trainLinearLayout.doOnNextLayout {
                 val offscreenX = resources.displayMetrics.widthPixels + trainLinearLayout.width
                 val trainAnimator = ObjectAnimator.ofFloat(
@@ -403,7 +398,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                             val reviewInfo = task.result
                             val flow =
                                 reviewManager.launchReviewFlow(requireActivity(), reviewInfo)
-                            flow.addOnCompleteListener { _ ->
+                            flow.addOnCompleteListener {
                                 Log.i(
                                     TAG,
                                     "Review completed (whatever the action)."
@@ -510,15 +505,11 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         }
         val levelNumber = levelAndLettersInfo.levelInfo.levelId
         val levelNrView = (requireActivity() as GameActivity).binding.levelNumber
-        val margin = if (levelNumber > 50 ) resources.getDimensionPixelSize(R.dimen._16sdp) - levelNrView.measuredWidth else -resources.getDimensionPixelSize(R.dimen._8sdp)
         val progressIndicatorWidth = (requireActivity() as GameActivity).binding.gameProgress.measuredWidth
-        val progressX = (levelNumber * progressIndicatorWidth / 100) - margin
-
+        val levelsCount = gameViewModel.levels.value?.size ?: 100
+        val progressX = (levelNumber * progressIndicatorWidth / levelsCount) - ln(levelNumber.toFloat()) * 15
         levelNrView.text = levelNumber.toString()
-        Log.i(TAG, "Prog: $progressIndicatorWidth")
-        Log.i(TAG, "Progx: $progressX")
-        levelNrView.x = progressX.toFloat()
-
+        levelNrView.x = progressX
         showReviewOption(levelAndLettersInfo.levelInfo.levelId)
     }
 
@@ -977,47 +968,6 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 textSmall = resources.getDimensionPixelSize(R.dimen._6ssp)
             }
         }
-/*        when {
-            densityDpi?.compareTo(DisplayMetrics.DENSITY_LOW) == -1 -> {
-                textBig = resources.getDimensionPixelSize(R.dimen._7ssp)
-                textSmall =resources.getDimensionPixelSize(R.dimen._6ssp)
-            }
-
-            //MDPI
-            densityDpi in DisplayMetrics.DENSITY_LOW.rangeTo(DisplayMetrics.DENSITY_MEDIUM) -> {
-                textBig = resources.getDimensionPixelSize(R.dimen._22ssp)
-                textSmall =resources.getDimensionPixelSize(R.dimen._21ssp)
-            }
-
-            //HDPI
-            densityDpi in DisplayMetrics.DENSITY_MEDIUM.rangeTo(DisplayMetrics.DENSITY_HIGH) -> {
-                textBig = resources.getDimensionPixelSize(R.dimen._14ssp)
-                textSmall =resources.getDimensionPixelSize(R.dimen._13ssp)
-            }
-
-            //XHDPI
-            densityDpi in DisplayMetrics.DENSITY_HIGH.rangeTo(DisplayMetrics.DENSITY_XHIGH) -> {
-                textBig = resources.getDimensionPixelSize(R.dimen._10ssp)
-                textSmall = resources.getDimensionPixelSize(R.dimen._9ssp)
-            }
-
-            //XXHDPI
-            densityDpi in DisplayMetrics.DENSITY_XHIGH.rangeTo(DisplayMetrics.DENSITY_XXHIGH) -> {
-                if (isBookMode)
-                {
-                    textBig = resources.getDimensionPixelSize(R.dimen._6ssp)
-                    textSmall = resources.getDimensionPixelSize(R.dimen._5ssp)
-                }
-                else {
-                    textBig = resources.getDimensionPixelSize(R.dimen._8ssp)
-                    textSmall = resources.getDimensionPixelSize(R.dimen._7ssp)
-                }
-            }
-            densityDpi?.compareTo(DisplayMetrics.DENSITY_XXXHIGH) == 1 || densityDpi?.compareTo(DisplayMetrics.DENSITY_XXXHIGH) == 0 -> {
-                textBig = resources.getDimensionPixelSize(R.dimen._7ssp)
-                textSmall =resources.getDimensionPixelSize(R.dimen._6ssp)
-            }
-        }*/
 
         return Pair(textBig.toFloat(), textSmall.toFloat())
     }

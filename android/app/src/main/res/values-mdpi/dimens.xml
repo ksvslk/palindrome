@@ -8,7 +8,6 @@
     <dimen name="simple_dialog_left_margin">24dp</dimen>
     <dimen name="simple_dialog_divider_margin">20dp</dimen>
 
-    <dimen name="winning_message_size">20sp</dimen>
-    <dimen name="other_message_size">19sp</dimen>
+    <dimen name="tutorial_container_margin">@dimen/_64sdp</dimen>
 
 </resources>

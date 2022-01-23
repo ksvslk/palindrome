@@ -10,7 +10,6 @@
         android:id="@+id/gameProgress"
         android:layout_height="@dimen/_10sdp"
         android:layout_width="match_parent"
-        android:layout_marginHorizontal="@dimen/_8sdp"
         app:indicatorColor="@color/colorSecondaryVariant"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -21,10 +20,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/yantramanav_bold"
-        android:layout_marginHorizontal="@dimen/_8sdp"
         app:layout_constraintTop_toBottomOf="@+id/gameProgress"
         app:layout_constraintLeft_toLeftOf="@+id/container"
-        android:text="1">
+        android:text="0">
     </androidx.appcompat.widget.AppCompatTextView>
 
     <androidx.appcompat.widget.LinearLayoutCompat

@@ -125,6 +125,22 @@ class GameActivity : AppCompatActivity() {
             }
         })
         computeWindowSizeClasses()
+        when (resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK)
+        {
+            Configuration.SCREENLAYOUT_SIZE_SMALL -> {
+                Log.i(TAG,"Screen: SMALL, ")
+            }
+            Configuration.SCREENLAYOUT_SIZE_NORMAL -> {
+                Log.i(TAG,"Screen: NORMAL, DPI: ${resources.configuration.densityDpi}")
+            }
+            Configuration.SCREENLAYOUT_SIZE_LARGE -> {
+                Log.i(TAG,"Screen: LARGE, DPI: ${resources.configuration.densityDpi}")
+            }
+            Configuration.SCREENLAYOUT_SIZE_XLARGE -> {
+                Log.i(TAG,"Screen: XLARGE, DPI: ${resources.configuration.densityDpi}")
+            }
+        }
+
     }
 
     private fun computeWindowSizeClasses() {
@@ -309,11 +325,7 @@ class GameActivity : AppCompatActivity() {
     private val activityResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode != Activity.RESULT_OK && it.resultCode != Activity.RESULT_CANCELED) {
-                Toast.makeText(
-                    this,
-                    "Something went wrong :|",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Log.i(TAG, "Something went wrong with ActivityResult. Code Not OK and not CANCELED! ")
             }
         }
 

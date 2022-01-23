@@ -68,6 +68,7 @@ object LevelFactory {
                   return Pair(box, text)
               }
               else {*/
+
         Log.i(TAG, "TERE ${sizeClassWidth.name}, $densityDpi")
         return when (sizeClassWidth) {
             WindowSizeClass.COMPACT -> {
@@ -86,7 +87,7 @@ object LevelFactory {
                     }
                     in DisplayMetrics.DENSITY_HIGH.rangeTo(DisplayMetrics.DENSITY_XHIGH) -> {
                         Log.i(TAG, "DisplayMetrics.DENSITY_HIGH.rangeTo(DisplayMetrics.DENSITY_XHIGH) - COMPAT")
-                        val box = (widthPixels - margin * 2) / 7
+                        val box = (widthPixels - margin * 3) / 7
                         val text = box.div(3).toInt()
                         return Pair(box, text)
                     }
@@ -98,7 +99,7 @@ object LevelFactory {
                             Pair(box, text)
                         } else {
                             Log.i(TAG, "DisplayMetrics.DENSITY_XHIGH.rangeTo(DisplayMetrics.DENSITY_XXHIGH) - COMPAT and DEFAULT")
-                            val box = ((widthPixels / 1.15 - margin) / 7).toInt()
+                            val box = ((widthPixels - margin*3) / 7).toInt()
                             val text = box.div(3.8).toInt()
                             Pair(box, text)
                         }
@@ -121,8 +122,8 @@ object LevelFactory {
                 when (densityDpi) {
                     in DisplayMetrics.DENSITY_LOW.rangeTo(DisplayMetrics.DENSITY_MEDIUM) -> {
                         Log.i(TAG, "DisplayMetrics.DENSITY_LOW.rangeTo(DisplayMetrics.DENSITY_MEDIUM) - MEDIUM")
-                        val box = ((widthPixels / 1.5 - margin * 2) / 7).toInt()
-                        val text = box.div(1.5).toInt()
+                        val box = ((widthPixels / 1.8 - margin) / 7).toInt()
+                        val text = box.div(1.4).toInt()
                         return Pair(box, text)
                     }
                     in DisplayMetrics.DENSITY_MEDIUM.rangeTo(DisplayMetrics.DENSITY_HIGH) -> {
