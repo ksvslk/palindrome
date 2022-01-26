@@ -54,6 +54,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlin.properties.Delegates
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.animation.doOnEnd
 import androidx.core.view.*
@@ -81,6 +82,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     var gameState: GameState = GameState.BUSY
     val gameViewModel: GameViewModel by activityViewModels()
     private var locomotiveAnimation: AnimationDrawable? = null
+    private var oldTrainDisappearingAnimation: ObjectAnimator? = null
 
     private var guesses: Int by Delegates.observable(0) { _, _, new ->
         val guessesBeforeHint = resources.getInteger(R.integer.guessesBeforeHint)
@@ -312,18 +314,17 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         val trainLinearLayout =
             requireActivity().findViewById<LinearLayoutCompat>(R.id.trainLinearLayout)
 
-        val oldTrainDisappearingAnimation = ObjectAnimator.ofFloat(
+        oldTrainDisappearingAnimation = ObjectAnimator.ofFloat(
             trainLinearLayout,
             "alpha",
             1f,
-            0f
+            0f,
         )
-        oldTrainDisappearingAnimation.duration = 500
-        oldTrainDisappearingAnimation.start()
-
-        oldTrainDisappearingAnimation.doOnEnd {
+        oldTrainDisappearingAnimation?.duration = 500
+        oldTrainDisappearingAnimation?.start()
+        oldTrainDisappearingAnimation?.doOnEnd {
             trainLinearLayout.alpha = 1f
-            oldTrainDisappearingAnimation.removeAllListeners()
+            oldTrainDisappearingAnimation?.removeAllListeners()
             trainLinearLayout.removeAllViews()
             trainLinearLayout.removeAllViewsInLayout()
             trainLinearLayout.clearAnimation()
@@ -973,8 +974,11 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     }
 
     override fun onDestroyView() {
+        Log.i(TAG, "onDestroyView")
         hintBadge = null
         _binding = null
+        oldTrainDisappearingAnimation?.removeAllListeners()
+        oldTrainDisappearingAnimation?.cancel()
         locomotiveAnimation?.callback = null
         locomotiveAnimation?.stop()
         super.onDestroyView()

@@ -65,7 +65,7 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
     private fun showLeaderBoard() {
         dismiss()
         Log.i(TAG, "showLeaderBoard")
-        Toast.makeText(requireContext().applicationContext, "Showing leaderboard!", Toast.LENGTH_LONG * 4).show()
+        //Toast.makeText(requireContext().applicationContext, "Showing leaderboard!", Toast.LENGTH_LONG * 4).show()
         val lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(requireActivity())
         val leaderboardsClient = if (lastSignedInAccount != null)
             Games.getLeaderboardsClient(
@@ -85,7 +85,7 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
     private fun showAchievements() {
         dismiss()
         Log.i(TAG, "showAchievements")
-        Toast.makeText(requireContext().applicationContext, "Showing achievements!", Toast.LENGTH_LONG * 4).show()
+        //Toast.makeText(requireContext().applicationContext, "Showing achievements!", Toast.LENGTH_LONG * 4).show()
         val lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(requireActivity())
         val achievementsClient = if (lastSignedInAccount != null)
             Games.getAchievementsClient(

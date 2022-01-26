@@ -55,15 +55,10 @@ class HintsFragment : BottomSheetDialogFragment() {
             gameViewModel.setShowRewardedAd(RewardType.LETTER)
         }
         binding.allCategoriesButton.setOnClickListener {
-            Toast.makeText(
-                requireContext().applicationContext,
-                "All categories IAP.",
-                Toast.LENGTH_LONG
-            ).show()
+            //Toast.makeText(requireContext().applicationContext, "All categories IAP.",Toast.LENGTH_LONG).show()
         }
         binding.unlockAllHintsButton.setOnClickListener {
-            Toast.makeText(requireContext().applicationContext, "All hints IAP.", Toast.LENGTH_LONG)
-                .show()
+            //Toast.makeText(requireContext().applicationContext, "All hints IAP.", Toast.LENGTH_LONG).show()
         }
         requireActivity().window.addFlags(
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS

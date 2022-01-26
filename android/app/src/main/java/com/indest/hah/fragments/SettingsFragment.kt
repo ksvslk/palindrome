@@ -59,11 +59,7 @@ class SettingsFragment : BottomSheetDialogFragment() {
                 if (gameViewModel.overAllState.value.state == OverallState.ONLINE) {
                     signInToGoogle()
                 } else {
-                    Toast.makeText(
-                        requireContext().applicationContext,
-                        getString(R.string.no_internet),
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    //Toast.makeText(requireContext().applicationContext,getString(R.string.no_internet),Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -88,18 +84,14 @@ class SettingsFragment : BottomSheetDialogFragment() {
                     startActivity(intent)
                 }
             } else {
-                Toast.makeText(
-                    requireContext().applicationContext,
-                    getString(R.string.no_internet),
-                    Toast.LENGTH_SHORT
-                ).show()
+                //Toast.makeText(requireContext().applicationContext,getString(R.string.no_internet),Toast.LENGTH_SHORT).show()
             }
         }
 
         binding.soundButton.setOnClickListener {
             //TODO: remove next 2 lines in production
             val config: Configuration = resources.configuration
-            Toast.makeText(requireContext().applicationContext, "DPI: ${config.densityDpi}", Toast.LENGTH_LONG).show()
+            //Toast.makeText(requireContext().applicationContext, "DPI: ${config.densityDpi}", Toast.LENGTH_LONG).show()
             binding.soundSwitch.performClick()
         }
         binding.vibrationButton.setOnClickListener {
@@ -147,18 +139,10 @@ class SettingsFragment : BottomSheetDialogFragment() {
         )
         signInClient.signOut().addOnCompleteListener {
             if (it.isSuccessful) {
-                Toast.makeText(
-                    requireContext().applicationContext,
-                    "Successfully signed out.",
-                    Toast.LENGTH_LONG
-                ).show()
+                //Toast.makeText(requireContext().applicationContext,"Successfully signed out.",Toast.LENGTH_LONG).show()
                 dismiss()
             } else {
-                Toast.makeText(
-                    requireContext().applicationContext,
-                    "Something went wrong when trying to sign out.",
-                    Toast.LENGTH_LONG
-                ).show()
+                //Toast.makeText(requireContext().applicationContext,"Something went wrong when trying to sign out.",Toast.LENGTH_LONG).show()
             }
         }
     }
