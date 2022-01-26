@@ -81,8 +81,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     lateinit var cellDirector: CellDirector
     var gameState: GameState = GameState.BUSY
     val gameViewModel: GameViewModel by activityViewModels()
-    private var locomotiveAnimation: AnimationDrawable? = null
-    private var oldTrainDisappearingAnimation: ObjectAnimator? = null
+    private var animationsSet:MutableSet<ValueAnimator> = mutableSetOf()
 
     private var guesses: Int by Delegates.observable(0) { _, _, new ->
         val guessesBeforeHint = resources.getInteger(R.integer.guessesBeforeHint)
@@ -314,7 +313,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         val trainLinearLayout =
             requireActivity().findViewById<LinearLayoutCompat>(R.id.trainLinearLayout)
 
-        oldTrainDisappearingAnimation = ObjectAnimator.ofFloat(
+        val oldTrainDisappearingAnimation = ObjectAnimator.ofFloat(
             trainLinearLayout,
             "alpha",
             1f,
@@ -324,7 +323,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         oldTrainDisappearingAnimation?.start()
         oldTrainDisappearingAnimation?.doOnEnd {
             trainLinearLayout.alpha = 1f
-            oldTrainDisappearingAnimation?.removeAllListeners()
+            oldTrainDisappearingAnimation.removeAllListeners()
             trainLinearLayout.removeAllViews()
             trainLinearLayout.removeAllViewsInLayout()
             trainLinearLayout.clearAnimation()
@@ -368,12 +367,14 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
             trainLinearLayout.doOnNextLayout {
                 val offscreenX = resources.displayMetrics.widthPixels + trainLinearLayout.width
+                // FIXME: 26.01.2022 LEAK
                 val trainAnimator = ObjectAnimator.ofFloat(
                     trainLinearLayout,
                     "x",
                     (0f - it.width),
                     offscreenX.toFloat()
                 )
+                animationsSet.add(trainAnimator)
                 trainAnimator.duration = 20000
                 trainAnimator.start()
             }
@@ -480,8 +481,10 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             )
             message.show()
 
+            // FIXME: 26.01.2022 LEAK
             val tapToContinueAnimation =
                 ObjectAnimator.ofFloat(message.view, View.ALPHA, 1f, 0.5f)
+            animationsSet.add(tapToContinueAnimation)
             tapToContinueAnimation.duration = 1000
             tapToContinueAnimation.repeatCount = ObjectAnimator.INFINITE
             tapToContinueAnimation.repeatMode = ObjectAnimator.REVERSE
@@ -719,8 +722,10 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 message.show()
 
                 playSpecialAnimation()
+                // FIXME: 26.01.2022 LEAK
                 val tapToContinueAnimation =
                     ObjectAnimator.ofFloat(message.view, View.ALPHA, 1f, 0.5f)
+                animationsSet.add(tapToContinueAnimation)
                 tapToContinueAnimation.duration = 1000
                 tapToContinueAnimation.repeatCount = ObjectAnimator.INFINITE
                 tapToContinueAnimation.repeatMode = ObjectAnimator.REVERSE
@@ -814,8 +819,10 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     // CLEAN
     private fun startCountAnimation(scoreView: TextView, currentAndMaxScore: Pair<Int, Int>) {
         val currentValue = 0
+        // FIXME: 26.01.2022 LEAK
         val animator =
             ValueAnimator.ofInt(currentValue, currentValue.plus(currentAndMaxScore.first))
+        animationsSet.add(animator)
         val paddingLength = currentAndMaxScore.second.toString().length
         animator.duration = 1000
         animator.addUpdateListener { animation ->
@@ -835,6 +842,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     // CLEAN
     private fun playWrongSolutionAnimation() {
         val animatorSet = AnimatorSet()
+        // FIXME: 26.01.2022 LEAK
         val shakeX = ObjectAnimator
             .ofFloat(
                 binding.gameplayFragment,
@@ -843,6 +851,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             ).apply {
                 duration = 1000
             }
+        animationsSet.add(shakeX)
         animatorSet.play(shakeX)
         animatorSet.start()
         doubleClickVibration()
@@ -977,10 +986,11 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         Log.i(TAG, "onDestroyView")
         hintBadge = null
         _binding = null
-        oldTrainDisappearingAnimation?.removeAllListeners()
-        oldTrainDisappearingAnimation?.cancel()
-        locomotiveAnimation?.callback = null
-        locomotiveAnimation?.stop()
+        animationsSet.forEach {
+            it.removeAllUpdateListeners()
+            it.removeAllListeners()
+            it.cancel()
+        }
         super.onDestroyView()
     }
 
