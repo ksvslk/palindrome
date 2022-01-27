@@ -25,7 +25,7 @@ class LoadingFragment : Fragment(R.layout.home_fragment) {
             gameViewModel.overAllState.collectLatest { latest ->
                 if (latest.state != OverallState.LOADING) {
                     requireActivity().getSharedPreferences(
-                        getString(R.string.preferences),
+                        getString(R.string.app_preferences),
                         Context.MODE_PRIVATE
                     )?.let {
                         val tutorialPassed =

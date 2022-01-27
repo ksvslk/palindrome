@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.WindowManager.LayoutParams.*
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -299,7 +298,7 @@ class GameActivity : AppCompatActivity() {
                             "Player needs to sign-in explicitly using via UI. ${task.exception}"
                         )
                         getSharedPreferences(
-                            getString(R.string.preferences),
+                            getString(R.string.app_preferences),
                             Context.MODE_PRIVATE
                         )?.let {
                             if (!it.getBoolean(

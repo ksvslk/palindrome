@@ -58,7 +58,7 @@ class TutorialFragment : Fragment() {
         }
 
         binding.skipButton.setOnClickListener {
-            requireActivity().getSharedPreferences(getString(R.string.preferences), Context.MODE_PRIVATE)?.let {
+            requireActivity().getSharedPreferences(getString(R.string.app_preferences), Context.MODE_PRIVATE)?.let {
                 with(it.edit()) {
                     putBoolean(getString(R.string.tutorial_passed), true)
                     apply()

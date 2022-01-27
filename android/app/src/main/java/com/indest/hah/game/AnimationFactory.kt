@@ -2,6 +2,7 @@ package com.indest.hah.game
 
 import android.animation.*
 import android.app.Activity
+import android.content.Context
 import android.media.AudioManager
 import android.media.SoundPool
 import android.view.animation.AccelerateInterpolator
@@ -12,7 +13,7 @@ import com.indest.hah.util.playWhileSoundOn
 object AnimationFactory {
 
     private fun getCellColorAnimation(
-        activity: Activity,
+        activity: Context,
         letter: Letter,
         currentColor: Int,
         successColor: Int,
@@ -63,7 +64,7 @@ object AnimationFactory {
     }
 
     fun getCorrectSolutionAnimation(
-        activity: Activity,
+        activity: Context,
         successTextColor: Int,
         currentBoxColor: Int,
         boxSuccessColor: Int,

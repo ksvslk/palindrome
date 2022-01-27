@@ -45,7 +45,6 @@ import com.indest.hah.persistance.LevelProgress
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.util.C
 import com.indest.hah.util.C.HINT_FRAGMENT_TAG
-import com.indest.hah.util.C.HINT_TEST
 import com.indest.hah.util.WindowSizeClass
 import com.indest.hah.util.hideSystemBars
 import com.indest.hah.util.playWhileSoundOn
@@ -54,13 +53,20 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlin.properties.Delegates
 import android.animation.ObjectAnimator
-import android.annotation.SuppressLint
+import android.view.animation.AnimationUtils
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.animation.doOnEnd
 import androidx.core.view.*
+import androidx.transition.Fade
+import androidx.transition.Transition
+import androidx.transition.TransitionInflater
+import androidx.transition.TransitionManager
 import com.indest.hah.util.C.HINT_REQUEST_KEY
 import kotlin.math.ln
-import kotlin.math.log2
+import android.animation.LayoutTransition
+
+
+
 
 
 @AndroidEntryPoint
@@ -81,7 +87,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     lateinit var cellDirector: CellDirector
     var gameState: GameState = GameState.BUSY
     val gameViewModel: GameViewModel by activityViewModels()
-    private var animationsSet:MutableSet<ValueAnimator> = mutableSetOf()
+    private var allAnimations: MutableSet<ValueAnimator> = mutableSetOf()
+    private var snackBars: HashMap<MessageSnackBar, BaseTransientBottomBar.BaseCallback<MessageSnackBar>> = hashMapOf()
 
     private var guesses: Int by Delegates.observable(0) { _, _, new ->
         val guessesBeforeHint = resources.getInteger(R.integer.guessesBeforeHint)
@@ -90,14 +97,17 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
         if (new == guessesBeforeHint) {
             soundPool.playWhileSoundOn(
-                requireActivity(),
+                requireContext(),
                 hintNotification,
                 1,
                 audioManager = audioManager
             )
             hintBadge?.isVisible = true
             Log.i(TAG, "hintBadge.isVisible: ${hintBadge?.isVisible}")
-            activity?.getSharedPreferences(getString(R.string.preferences), Context.MODE_PRIVATE)
+            activity?.getSharedPreferences(
+                getString(R.string.app_preferences),
+                Context.MODE_PRIVATE
+            )
                 ?.let { sharedPref ->
                     with(sharedPref.edit()) {
                         putBoolean(getString(R.string.level_solution_guesses), true)
@@ -139,7 +149,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
         lifecycleScope.launch(Dispatchers.Main) {
             lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
-                WindowInfoTracker.getOrCreate(requireActivity())
+                WindowInfoTracker.getOrCreate(requireContext())
                     .windowLayoutInfo(requireActivity())
                     .collectLatest { newLayoutInfo ->
                         val foldingFeature: FoldingFeature? =
@@ -284,7 +294,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                                 }
                                 val levelCount = gameViewModel.levels.value?.size ?: 100
                                 (requireActivity() as GameActivity).binding.gameProgress.progress =
-                                    ((uiState.currentLevel.levelInfo.levelId.toFloat().div(levelCount)) * 100).toInt()
+                                    ((uiState.currentLevel.levelInfo.levelId.toFloat()
+                                        .div(levelCount)) * 100).toInt()
                             }
                             is LevelEvent.Error -> {
                                 Log.i(TAG, "Error getting level from gameViewModel")
@@ -312,22 +323,19 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         //TODO: this should be leaking..
         val trainLinearLayout =
             requireActivity().findViewById<LinearLayoutCompat>(R.id.trainLinearLayout)
-
         val oldTrainDisappearingAnimation = ObjectAnimator.ofFloat(
             trainLinearLayout,
             "alpha",
             1f,
             0f,
         )
+        allAnimations.add(oldTrainDisappearingAnimation)
         oldTrainDisappearingAnimation?.duration = 500
         oldTrainDisappearingAnimation?.start()
         oldTrainDisappearingAnimation?.doOnEnd {
             trainLinearLayout.alpha = 1f
             oldTrainDisappearingAnimation.removeAllListeners()
             trainLinearLayout.removeAllViews()
-            trainLinearLayout.removeAllViewsInLayout()
-            trainLinearLayout.clearAnimation()
-            trainLinearLayout.clearDisappearingChildren()
 
             val lastCarriage = arrayOf(
                 R.drawable.ic_carriage_last,
@@ -367,14 +375,13 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
             trainLinearLayout.doOnNextLayout {
                 val offscreenX = resources.displayMetrics.widthPixels + trainLinearLayout.width
-                // FIXME: 26.01.2022 LEAK
                 val trainAnimator = ObjectAnimator.ofFloat(
                     trainLinearLayout,
                     "x",
                     (0f - it.width),
                     offscreenX.toFloat()
                 )
-                animationsSet.add(trainAnimator)
+                allAnimations.add(trainAnimator)
                 trainAnimator.duration = 20000
                 trainAnimator.start()
             }
@@ -384,7 +391,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     private fun showReviewOption(level: Int) {
         if (level == 21) {
             requireActivity().getSharedPreferences(
-                getString(R.string.preferences),
+                getString(R.string.app_preferences),
                 Context.MODE_PRIVATE
             )?.let {
                 if (!(it.getBoolean(
@@ -425,7 +432,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     // CLEAN
     private fun resetHintsBadge() {
         activity?.getSharedPreferences(
-            getString(R.string.preferences),
+            getString(R.string.app_preferences),
             Context.MODE_PRIVATE
         )?.let {
             with(it.edit()) {
@@ -479,18 +486,16 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 textBigAndSmall?.second
                     ?: resources.getDimensionPixelSize(R.dimen.other_message_size).toFloat()
             )
-            message.show()
 
-            // FIXME: 26.01.2022 LEAK
             val tapToContinueAnimation =
                 ObjectAnimator.ofFloat(message.view, View.ALPHA, 1f, 0.5f)
-            animationsSet.add(tapToContinueAnimation)
+            allAnimations.add(tapToContinueAnimation)
             tapToContinueAnimation.duration = 1000
             tapToContinueAnimation.repeatCount = ObjectAnimator.INFINITE
             tapToContinueAnimation.repeatMode = ObjectAnimator.REVERSE
             tapToContinueAnimation.start()
 
-            message.view.setOnClickListener {
+            val messageViewListener = View.OnClickListener {
                 soundPool.playWhileSoundOn(
                     requireActivity(),
                     levelTransition,
@@ -503,15 +508,20 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 continueToNextLevelActions()
             }
 
+            message.view.setOnClickListener(messageViewListener)
+            message.show()
+
         } else {
             gameState = GameState.READY
             handleGameSolutions()
         }
         val levelNumber = levelAndLettersInfo.levelInfo.levelId
         val levelNrView = (requireActivity() as GameActivity).binding.levelNumber
-        val progressIndicatorWidth = (requireActivity() as GameActivity).binding.gameProgress.measuredWidth
+        val progressIndicatorWidth =
+            (requireActivity() as GameActivity).binding.gameProgress.measuredWidth
         val levelsCount = gameViewModel.levels.value?.size ?: 100
-        val progressX = (levelNumber * progressIndicatorWidth / levelsCount) - ln(levelNumber.toFloat()) * 15
+        val progressX =
+            (levelNumber * progressIndicatorWidth / levelsCount) - ln(levelNumber.toFloat()) * 15
         levelNrView.text = levelNumber.toString()
         levelNrView.x = progressX
         showReviewOption(levelAndLettersInfo.levelInfo.levelId)
@@ -592,7 +602,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
         gameViewModel.updateCompletedLevel()
 
-        activity?.getSharedPreferences(getString(R.string.preferences), Context.MODE_PRIVATE)
+        activity?.getSharedPreferences(getString(R.string.app_preferences), Context.MODE_PRIVATE)
             ?.let { sharedPref ->
                 with(sharedPref.edit()) {
                     putBoolean(getString(R.string.level_solution_guesses), false)
@@ -668,7 +678,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             )
 
         val animatorSet = AnimationFactory.getCorrectSolutionAnimation(
-            requireActivity(),
+            requireContext(),
             successTextColor,
             currentBoxColor,
             boxSuccessColor,
@@ -691,6 +701,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     // MIXED
     private fun showWinningMessages(currentAndMaxScore: Pair<Int, Int>) {
         val randomCorrectMessage = resources.getStringArray(R.array.correct_texts).random()
+
         val winningMessage = MessageSnackBar.make(
             binding.gameplayFragment,
             randomCorrectMessage,
@@ -705,13 +716,11 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             textBigAndSmall?.second ?: resources.getDimensionPixelSize(R.dimen.other_message_size)
                 .toFloat()
         )
-        scoreMessage.addCallback(object :
+
+        val scoreMessageCallback = object :
             BaseTransientBottomBar.BaseCallback<MessageSnackBar>() {
             override fun onDismissed(transientBottomBar: MessageSnackBar?, event: Int) {
                 super.onDismissed(transientBottomBar, event)
-                parentFragmentManager.fragments.forEach {
-                    if (it is DialogFragment) it.dismiss()
-                }
                 val message = MessageSnackBar.make(
                     binding.gameplayFragment,
                     getString(R.string.tap_to_continue),
@@ -721,19 +730,18 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 )
                 message.show()
 
-                playSpecialAnimation()
-                // FIXME: 26.01.2022 LEAK
                 val tapToContinueAnimation =
                     ObjectAnimator.ofFloat(message.view, View.ALPHA, 1f, 0.5f)
-                animationsSet.add(tapToContinueAnimation)
+                allAnimations.add(tapToContinueAnimation)
                 tapToContinueAnimation.duration = 1000
                 tapToContinueAnimation.repeatCount = ObjectAnimator.INFINITE
                 tapToContinueAnimation.repeatMode = ObjectAnimator.REVERSE
                 tapToContinueAnimation.start()
 
+                playSpecialAnimation()
                 showPlayerCenteredScores()
 
-                message.view.setOnClickListener {
+                val messageViewClickListener = View.OnClickListener {
                     soundPool.playWhileSoundOn(
                         requireActivity(),
                         levelTransition,
@@ -745,9 +753,13 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                     message.view.setOnClickListener(null)
                     continueToNextLevelActions()
                 }
+                message.view.setOnClickListener(messageViewClickListener)
             }
-        })
-        winningMessage.addCallback(object :
+        }
+        scoreMessage.addCallback(scoreMessageCallback)
+        snackBars[scoreMessage] = scoreMessageCallback
+
+        val winningMessageCallBack = object :
             BaseTransientBottomBar.BaseCallback<MessageSnackBar>() {
             override fun onDismissed(transientBottomBar: MessageSnackBar?, event: Int) {
                 super.onDismissed(transientBottomBar, event)
@@ -757,7 +769,10 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                     currentAndMaxScore
                 )
             }
-        })
+        }
+        winningMessage.addCallback(winningMessageCallBack)
+        snackBars[winningMessage] = winningMessageCallBack
+
         soundPool.playWhileSoundOn(
             requireActivity(),
             correctSound,
@@ -819,10 +834,9 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     // CLEAN
     private fun startCountAnimation(scoreView: TextView, currentAndMaxScore: Pair<Int, Int>) {
         val currentValue = 0
-        // FIXME: 26.01.2022 LEAK
         val animator =
             ValueAnimator.ofInt(currentValue, currentValue.plus(currentAndMaxScore.first))
-        animationsSet.add(animator)
+        allAnimations.add(animator)
         val paddingLength = currentAndMaxScore.second.toString().length
         animator.duration = 1000
         animator.addUpdateListener { animation ->
@@ -830,8 +844,9 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 .append(animation.animatedValue.toString().padStart(paddingLength, '0'))
                 .append(" of ${currentAndMaxScore.second} points")
         }
+
         soundPool.playWhileSoundOn(
-            requireActivity(),
+            requireContext(),
             scoreSound,
             2,
             audioManager = audioManager
@@ -842,7 +857,6 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     // CLEAN
     private fun playWrongSolutionAnimation() {
         val animatorSet = AnimatorSet()
-        // FIXME: 26.01.2022 LEAK
         val shakeX = ObjectAnimator
             .ofFloat(
                 binding.gameplayFragment,
@@ -851,7 +865,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             ).apply {
                 duration = 1000
             }
-        animationsSet.add(shakeX)
+        allAnimations.add(shakeX)
         animatorSet.play(shakeX)
         animatorSet.start()
         doubleClickVibration()
@@ -861,8 +875,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     // CLEAN
     private fun doubleClickVibration() {
         val rContext = requireContext()
-        requireActivity().getSharedPreferences(
-            getString(R.string.preferences),
+        rContext.getSharedPreferences(
+            getString(R.string.app_preferences),
             Context.MODE_PRIVATE
         )?.let {
             if (audioManager.ringerMode != AudioManager.RINGER_MODE_SILENT && it.getBoolean(
@@ -985,12 +999,17 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     override fun onDestroyView() {
         Log.i(TAG, "onDestroyView")
         hintBadge = null
-        _binding = null
-        animationsSet.forEach {
+        val trainLinearLayout = requireActivity().findViewById<LinearLayoutCompat>(R.id.trainLinearLayout)
+        trainLinearLayout.removeAllViews()
+        allAnimations.forEach {
             it.removeAllUpdateListeners()
             it.removeAllListeners()
             it.cancel()
         }
+        snackBars.forEach {
+            it.key.removeCallback(it.value)
+        }
+        _binding = null
         super.onDestroyView()
     }
 

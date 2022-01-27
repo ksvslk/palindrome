@@ -4,7 +4,7 @@
     <string name="app_package_url">https://play.google.com/store/apps/details?id=com.indest.hah</string>
     <string name="vending_package">com.android.vending</string>
     <!--app_id-->
-    <string name="preferences" translatable="false">prefs</string>
+    <string name="app_preferences" translatable="false">AppPreferences</string>
 
     <!-- Unity ads -->
     <string name="game_id" translatable="false">4562975</string>

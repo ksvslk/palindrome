@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.CompoundButton
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.commit
 import androidx.navigation.fragment.findNavController
@@ -23,9 +22,7 @@ import com.indest.hah.databinding.SettingsFragmentBinding
 
 import android.content.Intent
 import android.net.Uri
-import androidx.activity.result.ActivityResultLauncher
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.replace
 import com.indest.hah.game.GameViewModel
 import com.indest.hah.game.OverallState
 
@@ -149,7 +146,7 @@ class SettingsFragment : BottomSheetDialogFragment() {
 
     private fun changePreference(setting: String, value: Boolean) {
         requireActivity().getSharedPreferences(
-            getString(R.string.preferences),
+            getString(R.string.app_preferences),
             Context.MODE_PRIVATE
         )?.let {
             with(it.edit()) {
@@ -161,7 +158,7 @@ class SettingsFragment : BottomSheetDialogFragment() {
 
     private fun setInitialPreference(button: CompoundButton, setting: String) {
         requireActivity().getSharedPreferences(
-            getString(R.string.preferences),
+            getString(R.string.app_preferences),
             Context.MODE_PRIVATE
         )?.let {
             button.isChecked = it.getBoolean(setting, true)
