@@ -53,21 +53,11 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlin.properties.Delegates
 import android.animation.ObjectAnimator
-import android.view.animation.AnimationUtils
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.animation.doOnEnd
 import androidx.core.view.*
-import androidx.transition.Fade
-import androidx.transition.Transition
-import androidx.transition.TransitionInflater
-import androidx.transition.TransitionManager
 import com.indest.hah.util.C.HINT_REQUEST_KEY
 import kotlin.math.ln
-import android.animation.LayoutTransition
-
-
-
-
 
 @AndroidEntryPoint
 class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
@@ -118,11 +108,11 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         }
     }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate")
 
         super.onCreate(savedInstanceState)
-
         cellDirector = CellDirector(this)
         audioManager = requireContext().getSystemService(Context.AUDIO_SERVICE) as AudioManager
         soundPool = SoundPool.Builder().build()
@@ -144,7 +134,6 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             soundPool.load(requireContext(), R.raw.c5_outer, 1),
             soundPool.load(requireContext(), R.raw.c6_outer, 1),
         )
-        gameViewModel.resetRewardedAdState()
         resetHintsBadgeOnFragmentResult()
 
         lifecycleScope.launch(Dispatchers.Main) {
@@ -228,7 +217,6 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 Log.i(TAG, "No reward")
             }
         }
-        gameViewModel.resetRewardedAdState()
     }
 
     // CLEAN
@@ -303,12 +291,20 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                         }
                     }
                 }
-            }
-            launch {
-                gameViewModel.rewardedAdState.collect { rewardedAdState ->
-                    Log.i(TAG, rewardedAdState.toString())
-                    if (rewardedAdState.userEarnedReward && rewardedAdState.rewardType != RewardType.NONE) {
-                        rewardUser(rewardedAdState.rewardType)
+                launch {
+                    gameViewModel.userReward.collect { userRewardEvent ->
+                        when (userRewardEvent) {
+                            is UserRewardEvent.Success -> {
+                                if (userRewardEvent.rewardEarned)
+                                {
+                                    gameViewModel.resetRewardingUser()
+                                    rewardUser(userRewardEvent.rewardType)
+                                }
+                            }
+                            is UserRewardEvent.Error -> {
+                                Log.i(TAG, "Error getting userRewardEvent from viewModel")
+                            }
+                        }
                     }
                 }
             }

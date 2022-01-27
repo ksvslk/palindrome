@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.res.Configuration
 import android.net.*
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.util.Log
 import android.view.View
 import android.view.WindowManager.LayoutParams.*
@@ -22,6 +23,8 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import androidx.window.layout.WindowMetricsCalculator
 import com.google.android.gms.ads.*
+import com.google.android.gms.ads.rewarded.RewardedAd
+import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.games.Games
@@ -42,7 +45,20 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import java.net.HttpURLConnection
 import java.net.URL
+import java.util.*
 import javax.net.ssl.HttpsURLConnection
+import com.google.android.ump.ConsentForm
+import com.google.android.ump.ConsentForm.OnConsentFormDismissedListener
+
+import com.google.android.ump.ConsentInformation
+import com.google.android.ump.ConsentInformation.OnConsentInfoUpdateFailureListener
+import com.google.android.ump.ConsentInformation.OnConsentInfoUpdateSuccessListener
+import com.google.android.ump.UserMessagingPlatform
+
+import com.google.android.ump.ConsentRequestParameters
+import com.google.android.ump.FormError
+import com.google.android.ump.UserMessagingPlatform.OnConsentFormLoadFailureListener
+import com.google.android.ump.UserMessagingPlatform.OnConsentFormLoadSuccessListener
 
 
 @AndroidEntryPoint
@@ -53,28 +69,16 @@ class GameActivity : AppCompatActivity() {
     val binding get() = _binding!!
     private lateinit var connectionLiveData: ConnectionLiveData
     private val gameViewModel: GameViewModel by viewModels()
+    private var _rewardedAd: RewardedAd? = null
+    private var _rewardEarned = false
+    private var adReloadTimer: CountDownTimer? = null
+    lateinit var consentInformation: ConsentInformation
+    lateinit var consentForm: ConsentForm
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate")
         super.onCreate(savedInstanceState)
         connectionLiveData = ConnectionLiveData(applicationContext)
-        UnityAds.initialize(
-            applicationContext,
-            getString(R.string.game_id),
-            true,
-            object : IUnityAdsInitializationListener {
-                override fun onInitializationComplete() {
-                    gameViewModel.setShouldLoadAd(true)
-                }
-
-                override fun onInitializationFailed(
-                    error: UnityAds.UnityAdsInitializationError?,
-                    message: String?
-                ) {
-                    Log.i(TAG, "onInitializationFailed. Error: $error, Message: $message.")
-                }
-
-            })
 
         val b = ActivityGameBinding.inflate(layoutInflater)
         _binding = b
@@ -101,22 +105,6 @@ class GameActivity : AppCompatActivity() {
         bottomNavigationView.menu.setGroupCheckable(0, true, false)
         bottomNavigationView.menu.forEach { it.isChecked = true }
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    gameViewModel.rewardedAdState.collect { rewardedAdState ->
-                        if (!rewardedAdState.adAvailable && rewardedAdState.shouldLoadNewAd && rewardedAdState.rewardType == RewardType.NONE && !rewardedAdState.userEarnedReward) {
-                            loadRewardedAd(getString(R.string.ad_unit_rewarded))
-                        }
-                        else if (rewardedAdState.adAvailable && rewardedAdState.rewardType != RewardType.NONE)
-                        {
-                            showRewardedAd()
-                        }
-                    }
-                }
-            }
-        }
-
         b.container.addView(object : View(this) {
             override fun onConfigurationChanged(newConfig: Configuration?) {
                 super.onConfigurationChanged(newConfig)
@@ -124,22 +112,67 @@ class GameActivity : AppCompatActivity() {
             }
         })
         computeWindowSizeClasses()
-        when (resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK)
-        {
+        when (resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK) {
             Configuration.SCREENLAYOUT_SIZE_SMALL -> {
-                Log.i(TAG,"Screen: SMALL, ")
+                Log.i(TAG, "Screen: SMALL, ")
             }
             Configuration.SCREENLAYOUT_SIZE_NORMAL -> {
-                Log.i(TAG,"Screen: NORMAL, DPI: ${resources.configuration.densityDpi}")
+                Log.i(TAG, "Screen: NORMAL, DPI: ${resources.configuration.densityDpi}")
             }
             Configuration.SCREENLAYOUT_SIZE_LARGE -> {
-                Log.i(TAG,"Screen: LARGE, DPI: ${resources.configuration.densityDpi}")
+                Log.i(TAG, "Screen: LARGE, DPI: ${resources.configuration.densityDpi}")
             }
             Configuration.SCREENLAYOUT_SIZE_XLARGE -> {
-                Log.i(TAG,"Screen: XLARGE, DPI: ${resources.configuration.densityDpi}")
+                Log.i(TAG, "Screen: XLARGE, DPI: ${resources.configuration.densityDpi}")
             }
         }
 
+        requestConsentInformation()
+        MobileAds.initialize(this) {}
+        RequestConfiguration.Builder().setTestDeviceIds(listOf("6C6A719C306FBA0A0FBE4D81600B8AB1","1C8B057289566E4B36BA860D0A8281CB"))
+        loadRewardedAd()
+    }
+
+    private fun requestConsentInformation()
+    {
+        // Set tag for underage of consent. false means users are not underage.
+        val params = ConsentRequestParameters.Builder()
+            .setTagForUnderAgeOfConsent(false)
+            .build()
+
+        consentInformation = UserMessagingPlatform.getConsentInformation(this)
+        consentInformation.reset();
+        consentInformation.requestConsentInfoUpdate(
+            this,
+            params,
+            {
+                // The consent information state was updated.
+                // You are now ready to check if a form is available.
+                if (consentInformation.isConsentFormAvailable) {
+                    loadForm()
+                }
+            },
+            {
+                // Handle the error.
+            })
+    }
+
+    private fun loadForm() {
+        UserMessagingPlatform.loadConsentForm(
+            this,
+            { consentForm ->
+                this.consentForm = consentForm
+                if (consentInformation.consentStatus == ConsentInformation.ConsentStatus.REQUIRED) {
+                    consentForm.show(
+                       this
+                    ) { // Handle dismissal by reloading form.
+                        loadForm()
+                    }
+                }
+            }
+        ) {
+            /// Handle Error.
+        }
     }
 
     private fun computeWindowSizeClasses() {
@@ -156,60 +189,6 @@ class GameActivity : AppCompatActivity() {
 
         gameViewModel.windowSizeClassWidth = widthWindowSizeClass
 
-    }
-
-    private fun loadRewardedAd(adUnit: String) {
-        UnityAds.load(adUnit, object : IUnityAdsLoadListener {
-            override fun onUnityAdsAdLoaded(placementId: String?) {
-                Log.i(TAG, "onUnityAdsAdLoaded: $placementId")
-                gameViewModel.setRewardedAdAvailability(true)
-            }
-
-            override fun onUnityAdsFailedToLoad(
-                placementId: String?,
-                error: UnityAds.UnityAdsLoadError?,
-                message: String?
-            ) {
-                gameViewModel.resetRewardedAdState()
-                Log.i(TAG, "onUnityAdsFailedToLoad ($placementId, $error, $message)")
-            }
-
-        })
-    }
-
-    private fun showRewardedAd() {
-        UnityAds.show(
-            this,
-            getString(R.string.ad_unit_rewarded),
-            object : IUnityAdsShowListener {
-
-                override fun onUnityAdsShowFailure(
-                    placementId: String?,
-                    error: UnityAds.UnityAdsShowError?,
-                    message: String?
-                ) {
-                    Log.i(TAG, "onUnityAdsShowFailure: $message")
-                }
-
-                override fun onUnityAdsShowStart(placementId: String?) {
-                    Log.i(TAG, "onUnityAdsShowStart: $placementId")
-                }
-
-                override fun onUnityAdsShowClick(placementId: String?) {
-                    Log.i(TAG, "onUnityAdsShowClick: $placementId")
-                }
-
-                override fun onUnityAdsShowComplete(
-                    placementId: String?,
-                    state: UnityAds.UnityAdsShowCompletionState?
-                ) {
-                    Log.i(TAG, "onUnityAdsShowComplete: $placementId. State: $state")
-                    if (state == UnityAds.UnityAdsShowCompletionState.COMPLETED) {
-                        Log.i(TAG, "Reward user!")
-                        gameViewModel.setUserEarnedReward(true)
-                    }
-                }
-            })
     }
 
     override fun onResume() {
@@ -231,8 +210,7 @@ class GameActivity : AppCompatActivity() {
                     if (isConnectedToInternet()) {
                         gameViewModel.changeState(ONLINE)
                         Log.i(TAG, "Internet connection: $ONLINE.")
-                    }
-                    else {
+                    } else {
                         gameViewModel.changeState(OFFLINE)
                         Log.i(TAG, "Internet connection: $OFFLINE.")
                     }
@@ -324,7 +302,10 @@ class GameActivity : AppCompatActivity() {
     private val activityResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode != Activity.RESULT_OK && it.resultCode != Activity.RESULT_CANCELED) {
-                Log.i(TAG, "Something went wrong with ActivityResult. Code Not OK and not CANCELED! ")
+                Log.i(
+                    TAG,
+                    "Something went wrong with ActivityResult. Code Not OK and not CANCELED! "
+                )
             }
         }
 
@@ -337,8 +318,90 @@ class GameActivity : AppCompatActivity() {
         activityResultLauncher.launch(signInClient.signInIntent)
     }
 
+    // CLEAN
+    private fun loadRewardedAd() {
+        if (_rewardedAd == null) {
+            val adRequest = AdRequest.Builder().build()
+            RewardedAd.load(
+                this, getString(R.string.admob_rewarded_ad_unit), adRequest,
+                object : RewardedAdLoadCallback() {
+                    override fun onAdFailedToLoad(adError: LoadAdError) {
+                        Log.d(TAG, adError.message)
+                        gameViewModel.setRewardedAdAvailability(false)
+                        adReloadTimer = object : CountDownTimer(30000, 1000) {
+                            override fun onTick(millisUntilFinished: Long) {
+                            }
+
+                            override fun onFinish() {
+                                Log.i(TAG, "Trying to reload ad.")
+                                loadRewardedAd()
+                            }
+                        }.start()
+
+                    }
+
+                    override fun onAdLoaded(rewardedAd: RewardedAd) {
+                        Log.d(TAG, "Ad was loaded.")
+                        gameViewModel.setRewardedAdAvailability(true)
+                        _rewardedAd = rewardedAd
+                    }
+                }
+            )
+        }
+    }
+
+    fun showRewardedVideo(rewardedType: RewardType) {
+        requestConsentInformation()
+        if (gameViewModel.rewardedAdAvailable.value) {
+            Log.i(TAG, "showRewardedVideo")
+            _rewardedAd?.fullScreenContentCallback =
+                object : FullScreenContentCallback() {
+                    override fun onAdDismissedFullScreenContent() {
+                        Log.d(TAG, "Ad was dismissed.")
+                        // Don't forget to set the ad reference to null so you
+                        // don't show the ad a second time.
+                        _rewardedAd = null
+                        loadRewardedAd()
+                        if (_rewardEarned) {
+                            _rewardEarned = false
+                            when (rewardedType) {
+                                RewardType.HINT -> {
+                                    gameViewModel.setCategoryRewarded(true)
+                                    gameViewModel.rewardUser(rewardedType)
+                                }
+                                RewardType.LETTER -> {
+                                    gameViewModel.rewardUser(rewardedType)
+                                }
+                            }
+                        }
+                    }
+
+                    override fun onAdFailedToShowFullScreenContent(adError: AdError?) {
+                        Log.d(TAG, "Ad failed to show.")
+                        // Don't forget to set the ad reference to null so you
+                        // don't show the ad a second time.
+                        _rewardedAd = null
+                    }
+
+                    override fun onAdShowedFullScreenContent() {
+                        Log.d(TAG, "Ad showed fullscreen content.")
+                        // Called when ad is dismissed.
+                    }
+                }
+            _rewardedAd?.show(
+                this
+            ) {
+                Log.d(TAG, "User earned the reward.")
+                _rewardEarned = true
+            }
+        }
+    }
+
+
     override fun onDestroy() {
         _binding = null
+        adReloadTimer?.cancel()
+        adReloadTimer = null
         super.onDestroy()
     }
 

@@ -16,6 +16,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.indest.hah.GameActivity
 import com.indest.hah.R
 import com.indest.hah.databinding.HintsFragmentBinding
 import com.indest.hah.game.GameViewModel
@@ -47,12 +48,16 @@ class HintsFragment : BottomSheetDialogFragment() {
 
         binding.categoryRevealButton.setOnClickListener {
             if (!gameViewModel.isCategoryRewarded()) {
-                gameViewModel.setShowRewardedAd(RewardType.HINT)
+                if (isAdded) {
+                    (requireActivity() as GameActivity).showRewardedVideo(RewardType.HINT)
+                }
             }
         }
         binding.letterPlaceButton.setOnClickListener {
             dismiss()
-            gameViewModel.setShowRewardedAd(RewardType.LETTER)
+            if (isAdded) {
+                (requireActivity() as GameActivity).showRewardedVideo(RewardType.LETTER)
+            }
         }
         binding.allCategoriesButton.setOnClickListener {
             //Toast.makeText(requireContext().applicationContext, "All categories IAP.",Toast.LENGTH_LONG).show()
@@ -87,13 +92,10 @@ class HintsFragment : BottomSheetDialogFragment() {
                     }
                 }
 
-                launch {
-                    gameViewModel.rewardedAdState.collectLatest {
-                        Log.i(TAG, "Collecting isRewardedAvailable: ${it.adAvailable}")
-                        binding.categoryRevealButton.isEnabled = it.adAvailable
-                        binding.letterPlaceButton.isEnabled = it.adAvailable
 
-                        if (!it.adAvailable) {
+                launch {
+                    gameViewModel.rewardedAdAvailable.collectLatest { rewardedAdAvailable ->
+                        if (!rewardedAdAvailable) {
                             val text = getString(R.string.no_ad_available)
                             val textColor =
                                 ContextCompat.getColor(requireContext(), R.color.colorOnError)
@@ -124,7 +126,6 @@ class HintsFragment : BottomSheetDialogFragment() {
                             binding.placeLetterSubtitle.text = text
                             binding.placeLetterSubtitle.setBackgroundColor(subtitleBackgroundColor)
                         }
-
                     }
                 }
             }

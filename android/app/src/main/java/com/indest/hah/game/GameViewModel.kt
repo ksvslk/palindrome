@@ -36,8 +36,11 @@ class GameViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(LevelEvent.Success(Level(), Level()))
     val uiState: StateFlow<LevelEvent> = _uiState
 
-    private val _rewardedAdState = MutableStateFlow(RewardedAdState())
-    val rewardedAdState: StateFlow<RewardedAdState> = _rewardedAdState.asStateFlow()
+    private val _rewardedAdAvailable = MutableStateFlow(false)
+    val rewardedAdAvailable: StateFlow<Boolean> = _rewardedAdAvailable.asStateFlow()
+
+    private val _userReward = MutableStateFlow(UserRewardEvent.Success())
+    val userReward: StateFlow<UserRewardEvent> = _userReward
 
     private val _overAllState = MutableStateFlow(AppState())
     val overAllState: StateFlow<AppState> = _overAllState.asStateFlow()
@@ -48,39 +51,9 @@ class GameViewModel @Inject constructor(
         _overAllState.value = AppState(state = newState)
     }
 
-    fun setShowRewardedAd(rewardType: RewardType) {
-        if (_rewardedAdState.value.adAvailable) {
-            _rewardedAdState.value = _rewardedAdState.value.copy(
-                rewardType = rewardType
-            )
-        }
-    }
-
-    fun setShouldLoadAd(loadAd: Boolean) {
-        _rewardedAdState.value = _rewardedAdState.value.copy(
-            shouldLoadNewAd = loadAd
-        )
-    }
-
-    fun setRewardedAdAvailability(isAvailable: Boolean) {
-        _rewardedAdState.value = _rewardedAdState.value.copy(
-            adAvailable = isAvailable
-        )
-    }
-
-    fun setUserEarnedReward(earned: Boolean) {
-        _rewardedAdState.value = _rewardedAdState.value.copy(
-            userEarnedReward = earned
-        )
-    }
-
-    fun resetRewardedAdState() {
-        _rewardedAdState.value = RewardedAdState(
-            adAvailable = false,
-            userEarnedReward = false,
-            shouldLoadNewAd = true,
-            rewardType = RewardType.NONE,
-        )
+    fun setRewardedAdAvailability(boolean: Boolean)
+    {
+        _rewardedAdAvailable.value = boolean
     }
 
     init {
@@ -92,6 +65,16 @@ class GameViewModel @Inject constructor(
                     _uiState.value = LevelEvent.Success(oldLevel, newLevel)
                 }
         }
+    }
+
+    fun rewardUser(rewardType: RewardType)
+    {
+        _userReward.value = UserRewardEvent.Success(rewardType = rewardType, rewardEarned = true)
+    }
+
+    fun resetRewardingUser()
+    {
+        _userReward.value = UserRewardEvent.Success(rewardType = RewardType.NONE, rewardEarned = false)
     }
 
     fun changeLevel(nr: Int) {
@@ -249,4 +232,9 @@ class GameViewModel @Inject constructor(
 sealed class LevelEvent {
     data class Success(val oldLevel: Level, val currentLevel: Level) : LevelEvent()
     data class Error(val exception: Throwable) : LevelEvent()
+}
+
+sealed class UserRewardEvent {
+    data class Success(val rewardType: RewardType = RewardType.NONE, val rewardEarned: Boolean = false, val doubleCheck:Boolean = false) : UserRewardEvent()
+    data class Error(val exception: Throwable) : UserRewardEvent()
 }
