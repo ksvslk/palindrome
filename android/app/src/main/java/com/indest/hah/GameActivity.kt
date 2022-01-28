@@ -16,9 +16,7 @@ import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.forEach
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import androidx.window.layout.WindowMetricsCalculator
@@ -29,6 +27,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.games.Games
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.ump.ConsentForm
+import com.google.android.ump.ConsentInformation
+import com.google.android.ump.ConsentRequestParameters
+import com.google.android.ump.UserMessagingPlatform
 import com.indest.hah.databinding.ActivityGameBinding
 import com.indest.hah.game.GameViewModel
 import com.indest.hah.game.OverallState.*
@@ -36,29 +38,12 @@ import com.indest.hah.game.RewardType
 import com.indest.hah.util.ConnectionLiveData
 import com.indest.hah.util.WindowSizeClass
 import com.indest.hah.util.hideSystemBars
-import com.unity3d.ads.IUnityAdsInitializationListener
-import com.unity3d.ads.IUnityAdsLoadListener
-import com.unity3d.ads.IUnityAdsShowListener
-import com.unity3d.ads.UnityAds
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
 import javax.net.ssl.HttpsURLConnection
-import com.google.android.ump.ConsentForm
-import com.google.android.ump.ConsentForm.OnConsentFormDismissedListener
-
-import com.google.android.ump.ConsentInformation
-import com.google.android.ump.ConsentInformation.OnConsentInfoUpdateFailureListener
-import com.google.android.ump.ConsentInformation.OnConsentInfoUpdateSuccessListener
-import com.google.android.ump.UserMessagingPlatform
-
-import com.google.android.ump.ConsentRequestParameters
-import com.google.android.ump.FormError
-import com.google.android.ump.UserMessagingPlatform.OnConsentFormLoadFailureListener
-import com.google.android.ump.UserMessagingPlatform.OnConsentFormLoadSuccessListener
 
 
 @AndroidEntryPoint
@@ -126,22 +111,24 @@ class GameActivity : AppCompatActivity() {
                 Log.i(TAG, "Screen: XLARGE, DPI: ${resources.configuration.densityDpi}")
             }
         }
-
         requestConsentInformation()
         MobileAds.initialize(this) {}
-        RequestConfiguration.Builder().setTestDeviceIds(listOf("6C6A719C306FBA0A0FBE4D81600B8AB1","1C8B057289566E4B36BA860D0A8281CB"))
-        loadRewardedAd()
+        RequestConfiguration.Builder().setTestDeviceIds(
+            listOf(
+                "6C6A719C306FBA0A0FBE4D81600B8AB1",
+                "1C8B057289566E4B36BA860D0A8281CB"
+            )
+        )
     }
 
-    private fun requestConsentInformation()
-    {
+    private fun requestConsentInformation() {
         // Set tag for underage of consent. false means users are not underage.
         val params = ConsentRequestParameters.Builder()
             .setTagForUnderAgeOfConsent(false)
             .build()
 
         consentInformation = UserMessagingPlatform.getConsentInformation(this)
-        consentInformation.reset();
+        consentInformation.reset()
         consentInformation.requestConsentInfoUpdate(
             this,
             params,
@@ -164,7 +151,7 @@ class GameActivity : AppCompatActivity() {
                 this.consentForm = consentForm
                 if (consentInformation.consentStatus == ConsentInformation.ConsentStatus.REQUIRED) {
                     consentForm.show(
-                       this
+                        this
                     ) { // Handle dismissal by reloading form.
                         loadForm()
                     }
@@ -209,6 +196,10 @@ class GameActivity : AppCompatActivity() {
                 if (hasNetwork) {
                     if (isConnectedToInternet()) {
                         gameViewModel.changeState(ONLINE)
+                        withContext(Dispatchers.Main)
+                        {
+                            loadRewardedAd()
+                        }
                         Log.i(TAG, "Internet connection: $ONLINE.")
                     } else {
                         gameViewModel.changeState(OFFLINE)
@@ -351,7 +342,6 @@ class GameActivity : AppCompatActivity() {
     }
 
     fun showRewardedVideo(rewardedType: RewardType) {
-        requestConsentInformation()
         if (gameViewModel.rewardedAdAvailable.value) {
             Log.i(TAG, "showRewardedVideo")
             _rewardedAd?.fullScreenContentCallback =

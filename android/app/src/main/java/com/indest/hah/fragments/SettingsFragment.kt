@@ -23,6 +23,7 @@ import com.indest.hah.databinding.SettingsFragmentBinding
 import android.content.Intent
 import android.net.Uri
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.replace
 import com.indest.hah.game.GameViewModel
 import com.indest.hah.game.OverallState
 
@@ -99,6 +100,13 @@ class SettingsFragment : BottomSheetDialogFragment() {
         }
         binding.vibrationSwitch.setOnCheckedChangeListener { _, b ->
             changePreference(getString(R.string.vibration_on_pref), b)
+        }
+        binding.tutorialButton.setOnClickListener {
+            parentFragmentManager.commit {
+                setReorderingAllowed(true)
+                replace<TutorialFragment>(R.id.fragments_container)
+            }
+            dismiss()
         }
 
         setInitialPreference(binding.soundSwitch, getString(R.string.sound_on_pref))

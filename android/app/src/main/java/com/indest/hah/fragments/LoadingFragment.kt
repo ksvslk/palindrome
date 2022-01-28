@@ -24,23 +24,12 @@ class LoadingFragment : Fragment(R.layout.home_fragment) {
         lifecycleScope.launch {
             gameViewModel.overAllState.collectLatest { latest ->
                 if (latest.state != OverallState.LOADING) {
-                    requireActivity().getSharedPreferences(
-                        getString(R.string.app_preferences),
-                        Context.MODE_PRIVATE
-                    )?.let {
-                        val tutorialPassed =
-                            it.getBoolean(getString(R.string.tutorial_passed), false)
-                        if (tutorialPassed) {
-                            parentFragmentManager.commit {
-                                setReorderingAllowed(true)
-                                replace<GamePlayFragment>(R.id.fragments_container, tag = GAMEPLAY_FRAGMENT_TAG)
-                            }
-                        } else {
-                            parentFragmentManager.commit {
-                                setReorderingAllowed(true)
-                                replace<TutorialFragment>(R.id.fragments_container)
-                            }
-                        }
+                    parentFragmentManager.commit {
+                        setReorderingAllowed(true)
+                        replace<GamePlayFragment>(
+                            R.id.fragments_container,
+                            tag = GAMEPLAY_FRAGMENT_TAG
+                        )
                     }
                 }
             }

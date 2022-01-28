@@ -44,7 +44,7 @@
             android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
             android:contentDescription="@string/level_select"
             android:clickable="false"
-            android:src="@drawable/outline_grid_on_black_24"
+            android:src="@drawable/baseline_list_alt_black_36"
             app:tint="@color/colorOnPrimary"
             tools:ignore="RtlSymmetry" />
 
@@ -55,6 +55,47 @@
             android:clickable="false"
             android:text="@string/level_select"
             android:textAppearance="@style/TextAppearance.OC.Body1" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/tutorial_button"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/simple_dialog_item_height"
+        android:layout_margin="@dimen/_2sdp"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/simple_dialog_left_margin"
+            android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
+            android:contentDescription="@string/iap_remove_all_ads"
+            android:src="@drawable/baseline_help_center_black_36"
+            android:clickable="false"
+            app:tint="@color/colorOnPrimary"
+            tools:ignore="RtlSymmetry" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:layout_marginRight="@dimen/simple_dialog_left_margin"
+            android:clickable="false"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:text="@string/tutorial"
+                android:textAppearance="@style/TextAppearance.OC.Body1" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.LinearLayoutCompat

@@ -11,6 +11,8 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.commit
+import androidx.fragment.app.replace
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -65,6 +67,7 @@ class HintsFragment : BottomSheetDialogFragment() {
         binding.unlockAllHintsButton.setOnClickListener {
             //Toast.makeText(requireContext().applicationContext, "All hints IAP.", Toast.LENGTH_LONG).show()
         }
+
         requireActivity().window.addFlags(
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
         )

@@ -44,7 +44,7 @@
             android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
             android:contentDescription="@string/rewarded_reveal_clue"
             android:clickable="false"
-            android:src="@drawable/category_icon"
+            android:src="@drawable/baseline_category_black_36"
             app:tint="@color/colorOnPrimary"
             tools:ignore="RtlSymmetry" />
 
@@ -89,7 +89,7 @@
             android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
             android:clickable="false"
             android:contentDescription="@string/rewarded_place_letter"
-            android:src="@drawable/letter_icon"
+            android:src="@drawable/baseline_check_box_black_36"
             app:tint="@color/colorOnPrimary"
             tools:ignore="RtlSymmetry" />
 
@@ -137,7 +137,7 @@
             android:layout_marginStart="@dimen/simple_dialog_left_margin"
             android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
             android:contentDescription="@string/iap_remove_clue_ads"
-            android:src="@drawable/lock_icon"
+            android:src="@drawable/baseline_lock_black_36"
             android:clickable="false"
             app:tint="@color/colorOnPrimary"
             tools:ignore="RtlSymmetry" />
@@ -176,7 +176,7 @@
             android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
             android:contentDescription="@string/iap_remove_letter_ads"
             android:clickable="false"
-            android:src="@drawable/lock_icon"
+            android:src="@drawable/baseline_lock_black_36"
             app:tint="@color/colorOnPrimary"
             tools:ignore="RtlSymmetry" />
 
@@ -250,7 +250,7 @@
             android:layout_marginStart="@dimen/simple_dialog_left_margin"
             android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
             android:contentDescription="@string/iap_remove_all_ads"
-            android:src="@drawable/lock_icon"
+            android:src="@drawable/baseline_lock_black_36"
             android:clickable="false"
             app:tint="@color/colorOnPrimary"
             tools:ignore="RtlSymmetry" />
@@ -305,7 +305,13 @@
                     android:textAppearance="@style/TextAppearance.OC.Caption" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
+
+
         </androidx.appcompat.widget.LinearLayoutCompat>
+
+
     </androidx.appcompat.widget.LinearLayoutCompat>
+
+
 
 </androidx.appcompat.widget.LinearLayoutCompat>

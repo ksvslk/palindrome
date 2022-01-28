@@ -65,7 +65,8 @@ class LevelSelectFragment : BottomSheetDialogFragment() {
         bottomSheetDialog.setOnShowListener { dialog: DialogInterface ->
             val bsd = dialog as BottomSheetDialog
             bsd.behavior.state = STATE_EXPANDED
-            binding.levelSelectRecyclerview.scrollToPosition(lastUnlocked - 1)
+            val lastPlayed = gameViewModel.getLevelNumber()
+            binding.levelSelectRecyclerview.scrollToPosition(lastPlayed - 1)
         }
         return bottomSheetDialog
     }
