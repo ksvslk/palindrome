@@ -260,6 +260,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                         if (gameState == GameState.LEVEL_COMPLETED) return@collect
                         when (uiState) {
                             is LevelEvent.Success -> {
+                                Log.i(TAG, "LevelEvent.Success")
                                 if (!(uiState.oldLevel.levelInfo.levelId == 0 && uiState.currentLevel.levelInfo.levelId == 0)) {
                                     if (uiState.oldLevel.levelInfo.levelId != uiState.currentLevel.levelInfo.levelId && uiState.oldLevel.levelInfo.levelId != 0) {
                                         if (binding.gameplayFragment.childCount > 0) {
@@ -268,7 +269,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                                         } else {
                                             Log.i(
                                                 TAG,
-                                                "oadLevel(uiState.currentLevel, isBookMode) NOT childCount > 0"
+                                                "loadLevel(uiState.currentLevel, isBookMode) NOT childCount > 0"
                                             )
                                             loadLevel(uiState.currentLevel, isBookMode)
                                         }

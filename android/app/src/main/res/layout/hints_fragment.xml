@@ -121,7 +121,7 @@
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/all_categories_button"
+        android:id="@+id/instant_clues_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
         android:layout_margin="@dimen/_2sdp"
@@ -136,7 +136,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/simple_dialog_left_margin"
             android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
-            android:contentDescription="@string/iap_remove_clue_ads"
+            android:contentDescription="@string/remove_clue_ads_text"
             android:src="@drawable/baseline_lock_black_36"
             android:clickable="false"
             app:tint="@color/colorOnPrimary"
@@ -150,16 +150,28 @@
             android:orientation="vertical">
 
             <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/instant_clues_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="@string/iap_remove_clue_ads"
+                android:text="@string/remove_clue_ads_text"
                 android:textAppearance="@style/TextAppearance.OC.Body1" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/instant_clues_subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text=""
+                android:paddingHorizontal="@dimen/_3sdp"
+                android:background="@color/colorSecondary"
+                android:textColor="@color/colorOnPrimary"
+                android:textAppearance="@style/TextAppearance.OC.Caption" />
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/all_letters_button"
+        android:id="@+id/instant_letters_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
         android:layout_margin="@dimen/_2sdp"
@@ -174,7 +186,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/simple_dialog_left_margin"
             android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
-            android:contentDescription="@string/iap_remove_letter_ads"
+            android:contentDescription="@string/remove_letter_ads_text"
             android:clickable="false"
             android:src="@drawable/baseline_lock_black_36"
             app:tint="@color/colorOnPrimary"
@@ -188,13 +200,34 @@
             android:clickable="false"
             android:weightSum="2">
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:clickable="false"
                 android:layout_weight="1"
-                android:text="@string/iap_remove_letter_ads"
-                android:textAppearance="@style/TextAppearance.OC.Body1" />
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/instant_letters_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/remove_letter_ads_text"
+                    android:textAppearance="@style/TextAppearance.OC.Body1" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/instant_letters_subtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text=""
+                    android:paddingHorizontal="@dimen/_3sdp"
+                    android:background="@color/colorSecondary"
+                    android:textColor="@color/colorOnPrimary"
+                    android:textAppearance="@style/TextAppearance.OC.Caption" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="wrap_content"
@@ -234,7 +267,7 @@
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/unlock_all_hints_button"
+        android:id="@+id/no_intermediate_ads_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
         android:layout_margin="@dimen/_2sdp"
@@ -249,7 +282,58 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/simple_dialog_left_margin"
             android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
-            android:contentDescription="@string/iap_remove_all_ads"
+            android:contentDescription="@string/remove_intermediate_ads_text"
+            android:src="@drawable/baseline_lock_black_36"
+            android:clickable="false"
+            app:tint="@color/colorOnPrimary"
+            tools:ignore="RtlSymmetry" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:clickable="false"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/remove_intermediate_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="@string/remove_intermediate_ads_text"
+                android:textAppearance="@style/TextAppearance.OC.Body1" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/remove_intermediate_subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text=""
+                android:paddingHorizontal="@dimen/_3sdp"
+                android:background="@color/colorSecondary"
+                android:textColor="@color/colorOnPrimary"
+                android:textAppearance="@style/TextAppearance.OC.Caption" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/full_no_ads_button"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/simple_dialog_item_height"
+        android:layout_margin="@dimen/_2sdp"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/simple_dialog_left_margin"
+            android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
+            android:contentDescription="@string/remove_all_ads_text"
             android:src="@drawable/baseline_lock_black_36"
             android:clickable="false"
             app:tint="@color/colorOnPrimary"
@@ -264,13 +348,33 @@
             android:orientation="horizontal"
             android:weightSum="2">
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:clickable="false"
                 android:layout_weight="1"
-                android:text="@string/iap_remove_all_ads"
-                android:textAppearance="@style/TextAppearance.OC.Body1" />
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/full_no_ads_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/remove_all_ads_text"
+                    android:textAppearance="@style/TextAppearance.OC.Body1" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/full_no_ads_subtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text=""
+                    android:paddingHorizontal="@dimen/_3sdp"
+                    android:background="@color/colorSecondary"
+                    android:textColor="@color/colorOnPrimary"
+                    android:textAppearance="@style/TextAppearance.OC.Caption" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="wrap_content"
@@ -301,14 +405,13 @@
                     android:layout_gravity="center_vertical"
                     android:background="@color/colorOnPrimary"
                     android:textColor="@color/colorPrimary"
-                    android:text="20%"
+                    android:text="24%"
                     android:textAppearance="@style/TextAppearance.OC.Caption" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
 
         </androidx.appcompat.widget.LinearLayoutCompat>
-
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

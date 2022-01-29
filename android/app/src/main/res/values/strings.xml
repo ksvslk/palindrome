@@ -17,9 +17,10 @@
     <string name="leaderboard">Leaderboard</string>
     <string name="rewarded_reveal_clue">Reveal Clue</string>
     <string name="rewarded_place_letter">Place Letter</string>
-    <string name="iap_remove_clue_ads">Remove Clue Ads</string>
-    <string name="iap_remove_letter_ads">Remove Letter Ads</string>
-    <string name="iap_remove_all_ads">Remove All Ads</string>
+    <string name="remove_clue_ads_text">Instant Clues</string>
+    <string name="remove_letter_ads_text">Instant Letters</string>
+    <string name="remove_intermediate_ads_text">No Intermediate Ads</string>
+    <string name="remove_all_ads_text">100% No Ads</string>
     <string name="no_ad_available">Hint Not Available</string>
     <string name="sound_text">Sound</string>
     <string name="vibration_text">Vibration</string>

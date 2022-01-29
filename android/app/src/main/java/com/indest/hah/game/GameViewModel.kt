@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.android.billingclient.api.SkuDetails
 import com.indest.hah.letter.Cell
 import com.indest.hah.letter.Letter
 import com.indest.hah.persistance.LevelProgress
@@ -46,6 +47,7 @@ class GameViewModel @Inject constructor(
     val overAllState: StateFlow<AppState> = _overAllState.asStateFlow()
 
     var windowSizeClassWidth: WindowSizeClass = WindowSizeClass.NOT_SET
+    var skuDetailsList: List<SkuDetails>? = null
 
     fun changeState(newState: OverallState) {
         _overAllState.value = AppState(state = newState)

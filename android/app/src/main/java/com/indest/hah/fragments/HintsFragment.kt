@@ -61,11 +61,35 @@ class HintsFragment : BottomSheetDialogFragment() {
                 (requireActivity() as GameActivity).showRewardedVideo(RewardType.LETTER)
             }
         }
-        binding.allCategoriesButton.setOnClickListener {
+        binding.instantCluesButton.setOnClickListener {
             //Toast.makeText(requireContext().applicationContext, "All categories IAP.",Toast.LENGTH_LONG).show()
         }
-        binding.unlockAllHintsButton.setOnClickListener {
+        binding.fullNoAdsButton.setOnClickListener {
             //Toast.makeText(requireContext().applicationContext, "All hints IAP.", Toast.LENGTH_LONG).show()
+        }
+
+        gameViewModel.skuDetailsList?.forEach {
+            val lastIndex = it.title.indexOf("(")
+            val title = if (lastIndex != -1) it.title.subSequence(0, lastIndex) else ""
+
+            when (it.sku) {
+                getString(R.string.remove_letter_ads) -> {
+                    if (lastIndex != -1) binding.instantLettersTitle.text = title
+                    binding.instantLettersSubtitle.text = it.price
+                }
+                getString(R.string.remove_clue_ads) -> {
+                    if (lastIndex != -1) binding.instantCluesTitle.text = title
+                    binding.instantCluesSubtitle.text = it.price
+                }
+                getString(R.string.remove_inbetween_ads) -> {
+                    if (lastIndex != -1) binding.removeIntermediateTitle.text = title
+                    binding.removeIntermediateSubtitle.text = it.price
+                }
+                getString(R.string.remove_all_ads) -> {
+                    if (lastIndex != -1) binding.fullNoAdsTitle.text = title
+                    binding.fullNoAdsSubtitle.text = it.price
+                }
+            }
         }
 
         requireActivity().window.addFlags(

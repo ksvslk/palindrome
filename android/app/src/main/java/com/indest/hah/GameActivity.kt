@@ -20,6 +20,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import androidx.window.layout.WindowMetricsCalculator
+import com.android.billingclient.api.*
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
@@ -59,6 +60,12 @@ class GameActivity : AppCompatActivity() {
     private var adReloadTimer: CountDownTimer? = null
     lateinit var consentInformation: ConsentInformation
     lateinit var consentForm: ConsentForm
+    private val purchasesUpdatedListener =
+        PurchasesUpdatedListener { billingResult, purchases ->
+            // To be implemented in a later section.
+
+        }
+    lateinit var billingClient:BillingClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate")
@@ -67,6 +74,10 @@ class GameActivity : AppCompatActivity() {
 
         val b = ActivityGameBinding.inflate(layoutInflater)
         _binding = b
+        billingClient = BillingClient.newBuilder(this)
+            .setListener(purchasesUpdatedListener)
+            .enablePendingPurchases()
+            .build()
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.container) { _, insets ->
             WindowInsetsCompat.Builder().setInsets(
@@ -119,6 +130,41 @@ class GameActivity : AppCompatActivity() {
                 "1C8B057289566E4B36BA860D0A8281CB"
             )
         )
+        billingInit()
+    }
+
+    private fun billingInit() {
+        billingClient.startConnection(object : BillingClientStateListener {
+            override fun onBillingSetupFinished(billingResult: BillingResult) {
+                if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                    // The BillingClient is ready. You can query purchases here.
+                    lifecycleScope.launch {
+                        querySkuDetails()
+                    }
+                }
+            }
+
+            override fun onBillingServiceDisconnected() {
+                // Try to restart the connection on the next request to
+                // Google Play by calling the startConnection() method.
+            }
+        })
+    }
+
+    suspend fun querySkuDetails() {
+        val skuList = ArrayList<String>()
+        skuList.add(getString(R.string.remove_letter_ads))
+        skuList.add(getString(R.string.remove_clue_ads))
+        skuList.add(getString(R.string.remove_inbetween_ads))
+        skuList.add(getString(R.string.remove_all_ads))
+        val params = SkuDetailsParams.newBuilder()
+        params.setSkusList(skuList).setType(BillingClient.SkuType.INAPP)
+
+        // leverage querySkuDetails Kotlin extension function
+        val skuDetailsResult = withContext(Dispatchers.IO) {
+            billingClient.querySkuDetails(params.build())
+        }
+        gameViewModel.skuDetailsList = skuDetailsResult.skuDetailsList
     }
 
     private fun requestConsentInformation() {
