@@ -58,6 +58,9 @@ import androidx.core.animation.doOnEnd
 import androidx.core.view.*
 import com.indest.hah.util.C.HINT_REQUEST_KEY
 import kotlin.math.ln
+import android.graphics.BitmapFactory
+
+import android.graphics.Bitmap
 
 @AndroidEntryPoint
 class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
@@ -522,6 +525,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         levelNrView.text = levelNumber.toString()
         levelNrView.x = progressX
         showReviewOption(levelAndLettersInfo.levelInfo.levelId)
+
     }
 
     // CLEAN
@@ -739,16 +743,19 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 showPlayerCenteredScores()
 
                 val messageViewClickListener = View.OnClickListener {
-                    soundPool.playWhileSoundOn(
-                        requireActivity(),
-                        levelTransition,
-                        2,
-                        audioManager = audioManager
-                    )
-                    message.dismiss()
-                    tapToContinueAnimation.cancel()
-                    message.view.setOnClickListener(null)
-                    continueToNextLevelActions()
+                    if(isAdded)
+                    {
+                        soundPool.playWhileSoundOn(
+                            requireActivity(),
+                            levelTransition,
+                            2,
+                            audioManager = audioManager
+                        )
+                        message.dismiss()
+                        tapToContinueAnimation.cancel()
+                        message.view.setOnClickListener(null)
+                        continueToNextLevelActions()
+                    }
                 }
                 message.view.setOnClickListener(messageViewClickListener)
             }
@@ -795,6 +802,9 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         gameState = GameState.BUSY
         gameViewModel.totalScore.removeObserver { viewLifecycleOwner.lifecycle }
         gameViewModel.unlockNextLevel()
+        lifecycleScope.launch {
+            gameViewModel.saveSnapshot(requireActivity(), binding.gameplayFragment.drawToBitmap())
+        }
     }
 
     // CLEAN
@@ -826,7 +836,6 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             }
         }
     }
-
 
     // CLEAN
     private fun startCountAnimation(scoreView: TextView, currentAndMaxScore: Pair<Int, Int>) {

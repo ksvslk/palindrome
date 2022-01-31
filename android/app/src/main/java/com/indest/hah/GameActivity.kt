@@ -2,7 +2,9 @@ package com.indest.hah
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.*
 import android.net.*
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -12,9 +14,11 @@ import android.view.WindowManager.LayoutParams.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.drawToBitmap
 import androidx.core.view.forEach
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
@@ -26,7 +30,10 @@ import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.Scopes
+import com.google.android.gms.common.api.Scope
 import com.google.android.gms.games.Games
+import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.ump.ConsentForm
 import com.google.android.ump.ConsentInformation
@@ -34,7 +41,8 @@ import com.google.android.ump.ConsentRequestParameters
 import com.google.android.ump.UserMessagingPlatform
 import com.indest.hah.databinding.ActivityGameBinding
 import com.indest.hah.game.GameViewModel
-import com.indest.hah.game.OverallState.*
+import com.indest.hah.game.InternetState.*
+import com.indest.hah.game.LoadingState
 import com.indest.hah.game.RewardType
 import com.indest.hah.util.ConnectionLiveData
 import com.indest.hah.util.WindowSizeClass
@@ -58,6 +66,7 @@ class GameActivity : AppCompatActivity() {
     private var _rewardedAd: RewardedAd? = null
     private var _rewardEarned = false
     private var adReloadTimer: CountDownTimer? = null
+    private var saveGameTimer: CountDownTimer? = null
     lateinit var consentInformation: ConsentInformation
     lateinit var consentForm: ConsentForm
     private val purchasesUpdatedListener =
@@ -65,7 +74,7 @@ class GameActivity : AppCompatActivity() {
             // To be implemented in a later section.
 
         }
-    lateinit var billingClient:BillingClient
+    lateinit var billingClient: BillingClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate")
@@ -131,9 +140,27 @@ class GameActivity : AppCompatActivity() {
             )
         )
         billingInit()
+        saveGameTimer = object : CountDownTimer(60000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+            }
+
+            override fun onFinish() {
+                lifecycleScope.launchWhenCreated {
+                    Log.d(TAG, "Saving game!")
+                    val coverImage =
+                        binding.fragmentsContainer.drawToBitmap()
+                    lifecycleScope.launch {
+
+                    }
+                    start()
+                }
+            }
+        }
+
     }
 
     private fun billingInit() {
+        Log.d(TAG, "Billing Init")
         billingClient.startConnection(object : BillingClientStateListener {
             override fun onBillingSetupFinished(billingResult: BillingResult) {
                 if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
@@ -174,7 +201,7 @@ class GameActivity : AppCompatActivity() {
             .build()
 
         consentInformation = UserMessagingPlatform.getConsentInformation(this)
-        consentInformation.reset()
+        //consentInformation.reset()
         consentInformation.requestConsentInfoUpdate(
             this,
             params,
@@ -241,18 +268,18 @@ class GameActivity : AppCompatActivity() {
             {
                 if (hasNetwork) {
                     if (isConnectedToInternet()) {
-                        gameViewModel.changeState(ONLINE)
+                        gameViewModel.changeInternetState(ONLINE)
                         withContext(Dispatchers.Main)
                         {
                             loadRewardedAd()
                         }
                         Log.i(TAG, "Internet connection: $ONLINE.")
                     } else {
-                        gameViewModel.changeState(OFFLINE)
+                        gameViewModel.changeInternetState(OFFLINE)
                         Log.i(TAG, "Internet connection: $OFFLINE.")
                     }
                 } else {
-                    gameViewModel.changeState(OFFLINE)
+                    gameViewModel.changeInternetState(OFFLINE)
                     Log.i(TAG, "Internet connection: $OFFLINE.")
                 }
             }
@@ -278,8 +305,9 @@ class GameActivity : AppCompatActivity() {
         Log.i(TAG, "Trying to sign in silently.")
         val signInOptions =
             GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
+                .requestScopes(Scope(Scopes.DRIVE_APPFOLDER))
                 .build()
-        val account = GoogleSignIn.getLastSignedInAccount(this)
+        val account = GoogleSignIn.getLastSignedInAccount(applicationContext)
         if (GoogleSignIn.hasPermissions(account, *signInOptions.scopeArray)) {
             // Already signed in.
             // The signed in account is stored in the 'account' variable.
@@ -287,7 +315,9 @@ class GameActivity : AppCompatActivity() {
                 Games.getGamesClient(this, account)
                     .setViewForPopups(findViewById(android.R.id.content))
             }
-            gameViewModel.changeState(ONLINE)
+            lifecycleScope.launch {
+                gameViewModel.loadSnapshot(this@GameActivity)
+            }
             startObservingNetworkStatus()
         } else {
             // Haven't been signed-in before. Try the silent sign-in first.
@@ -303,10 +333,14 @@ class GameActivity : AppCompatActivity() {
                         Games.getGamesClient(this, signedInAccount)
                             .setViewForPopups(findViewById(android.R.id.content))
                         Log.i(TAG, "Signed in successfully.")
-                        gameViewModel.changeState(ONLINE)
+                        lifecycleScope.launch {
+                            gameViewModel.loadSnapshot(this@GameActivity)
+                        }
                         startObservingNetworkStatus()
                     } else if (task.isComplete) {
-                        gameViewModel.changeState(ONLINE)
+                        lifecycleScope.launch {
+                            gameViewModel.loadSnapshot(this@GameActivity)
+                        }
                         startObservingNetworkStatus()
                         Log.i(
                             TAG,
@@ -347,10 +381,10 @@ class GameActivity : AppCompatActivity() {
         }
 
     private fun signInToGoogle() {
-        gameViewModel.changeState(LOADING)
+        gameViewModel.changeState(LoadingState.LOADING)
         val signInClient = GoogleSignIn.getClient(
             this,
-            GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN
+            GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN,
         )
         activityResultLauncher.launch(signInClient.signInIntent)
     }
@@ -433,6 +467,25 @@ class GameActivity : AppCompatActivity() {
         }
     }
 
+    private val RC_SAVED_GAMES = 9009
+    fun showSavedGamesUI() {
+        val snapshotsClient = Games.getSnapshotsClient(
+            applicationContext,
+            GoogleSignIn.getLastSignedInAccount(applicationContext)!!
+        )
+        val maxNumberOfSavedGamesToShow = 5
+        val intentTask: Task<Intent> = snapshotsClient.getSelectSnapshotIntent(
+            "See My Saves", true, true, maxNumberOfSavedGamesToShow
+        )
+        intentTask.addOnSuccessListener { intent ->
+            ActivityCompat.startActivityForResult(
+                this,
+                intent,
+                RC_SAVED_GAMES,
+                null
+            )
+        }
+    }
 
     override fun onDestroy() {
         _binding = null

@@ -13,26 +13,11 @@ import java.util.concurrent.Executors
 import javax.inject.Inject
 
 @HiltAndroidApp
-class CoolApplication : Application(), Configuration.Provider {
-
-    @Inject
-    lateinit var workerFactory: HiltWorkerFactory
-
-    @Inject
-    lateinit var levelRepository: LevelRepository
-
-
-    override fun getWorkManagerConfiguration(): Configuration =
-        Configuration.Builder()
-            .setWorkerFactory(workerFactory)
-            .setExecutor(Executors.newSingleThreadExecutor())
-            .setMinimumLoggingLevel(android.util.Log.INFO)
-            .build()
-
+class CoolApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        StrictMode.setThreadPolicy(
+ /*       StrictMode.setThreadPolicy(
             StrictMode.ThreadPolicy.Builder()
                 .detectAll()
                 .penaltyLog()
@@ -43,10 +28,6 @@ class CoolApplication : Application(), Configuration.Provider {
                 .detectAll()
                 .penaltyLog()
                 .build()
-        )
-
-
+        )*/
     }
-
-
 }

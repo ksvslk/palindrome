@@ -24,8 +24,10 @@ import android.content.Intent
 import android.net.Uri
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.replace
+import com.google.android.gms.common.Scopes
+import com.google.android.gms.common.api.Scope
 import com.indest.hah.game.GameViewModel
-import com.indest.hah.game.OverallState
+import com.indest.hah.game.InternetState
 
 
 class SettingsFragment : BottomSheetDialogFragment() {
@@ -54,7 +56,7 @@ class SettingsFragment : BottomSheetDialogFragment() {
             binding.googleSignOutButton.visibility = View.GONE
             binding.googleSignInButton.visibility = View.VISIBLE
             binding.googleSignInButton.setOnClickListener {
-                if (gameViewModel.overAllState.value.state == OverallState.ONLINE) {
+                if (gameViewModel.internetState.value.state == InternetState.ONLINE) {
                     signInToGoogle()
                 } else {
                     //Toast.makeText(requireContext().applicationContext,getString(R.string.no_internet),Toast.LENGTH_SHORT).show()
@@ -71,7 +73,7 @@ class SettingsFragment : BottomSheetDialogFragment() {
         }
 
         binding.rateGameButton.setOnClickListener {
-            if (gameViewModel.overAllState.value.state == OverallState.ONLINE) {
+            if (gameViewModel.internetState.value.state == InternetState.ONLINE) {
                 val intent = Intent(Intent.ACTION_VIEW).apply {
                     data = Uri.parse(
                         getString(R.string.app_package_url)
@@ -130,9 +132,14 @@ class SettingsFragment : BottomSheetDialogFragment() {
         }
 
     private fun signInToGoogle() {
+        val signInOptions =
+            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
+                .requestScopes(Scope(Scopes.DRIVE_APPFOLDER))
+                .build()
+
         val signInClient = GoogleSignIn.getClient(
             requireActivity(),
-            GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN
+            signInOptions
         )
        activityResultLauncher.launch(signInClient.signInIntent)
     }

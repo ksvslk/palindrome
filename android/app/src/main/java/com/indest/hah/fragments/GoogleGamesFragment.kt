@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.activityViewModels
@@ -16,7 +15,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.databinding.GoogleGamesFragmentBinding
 import com.indest.hah.game.GameViewModel
-import com.indest.hah.game.OverallState
+import com.indest.hah.game.InternetState
 
 class GoogleGamesFragment : BottomSheetDialogFragment() {
 
@@ -37,7 +36,7 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
         val b = GoogleGamesFragmentBinding.inflate(layoutInflater, container, false)
         _binding = b
 
-        if (gameViewModel.overAllState.value.state == OverallState.ONLINE) {
+        if (gameViewModel.internetState.value.state == InternetState.ONLINE) {
             val lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(requireActivity())
             if (lastSignedInAccount == null) {
                 binding.achievementsButton.visibility = View.GONE

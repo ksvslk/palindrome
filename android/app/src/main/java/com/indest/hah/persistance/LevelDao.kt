@@ -1,16 +1,15 @@
 package com.indest.hah.persistance
 
+import android.util.Log
 import androidx.room.*
 import com.indest.hah.persistance.dto.LetterProperties
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
 import kotlinx.coroutines.flow.Flow
+import androidx.room.Update
 
 @Dao
 interface LevelDao {
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(levelInfo: LevelData)
 
     @Transaction
     @Query("delete from letter_info_table where owner_id = :levelNr")
@@ -23,9 +22,6 @@ interface LevelDao {
     @Transaction
     @Query("select *, max(time_modified) from level_info_table")
     fun getLastLevel(): Flow<Level>
-
-    @Query("update level_info_table set puzzle = :newPuzzle where level_id = :level")
-    suspend fun updateLevelPuzzle(level: Int, newPuzzle: String)
 
     @Query("insert into letter_info_table (owner_id, home_index, friend_index, letter, locked) values(:level, :homeIndex, :friendIndex, :letter, :locked)")
     suspend fun insertLetterData(
@@ -59,13 +55,6 @@ interface LevelDao {
     @Query("update level_info_table set time_modified = (select time_modified + 1 from level_info_table where level_id=:currentLevelNr) where level_id=:nextLevelNr")
     suspend fun updateNextLevelTimestamp(currentLevelNr: Int, nextLevelNr: Int)
 
-    @Transaction
-    suspend fun switchHomeIndexes(index1: Int, index2: Int, level: Int) {
-        updateHomeIndex(index1, -420, level)
-        updateHomeIndex(index2, index1, level)
-        updateHomeIndex(-420, index2, level)
-    }
-
     @Query("update letter_info_table set home_index = :newIndex where home_index = :oldIndex and owner_id = :level")
     suspend fun updateHomeIndex(oldIndex: Int, newIndex: Int, level: Int)
 
@@ -73,55 +62,66 @@ interface LevelDao {
     suspend fun updateLevelData(levelInfo: LevelData)
 
     @Update
-    suspend fun updateLevelDataAndBestScore(levelInfo: LevelData, score:Int) {
+    suspend fun updateLevelDataAndBestScore(levelInfo: LevelData, score: Int) {
         updateLevelData(levelInfo)
         updateBestScore(score, levelInfo.levelId)
     }
 
     @Query("update level_info_table set progress = :progress where level_id = :current + 1")
-    suspend fun updateNextLevelProgress(current:Int, progress:LevelProgress)
+    suspend fun updateNextLevelProgress(current: Int, progress: LevelProgress)
 
     @Query("select progress from level_info_table where level_id = :current + 1")
-    suspend fun getNextLevelProgress(current:Int):Int
+    suspend fun getNextLevelProgress(current: Int): Int
 
     @Transaction
-    suspend fun unlockNextLevel(current:Int) {
-        if (getNextLevelProgress(current) == 0)
-        {
+    suspend fun unlockNextLevel(current: Int) {
+        if (getNextLevelProgress(current) == 0) {
             updateNextLevelProgress(current, LevelProgress.IN_PROGRESS)
         }
         updateNextLevelTimestamp(current, current + 1)
     }
 
     @Query("update level_info_table set best_score = :score where best_score < :score and level_id = :level")
-    suspend fun updateBestScore(score:Int, level:Int)
+    suspend fun updateBestScore(score: Int, level: Int)
 
     @Query("select sum(best_score) from level_info_table")
-    suspend fun getTotalScore():Int
+    suspend fun getTotalScore(): Int
 
-    @Update
-    suspend fun updateLettersProperties(level: List<LetterProperties>)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insert(levels: LevelData)
 
     @Transaction
     suspend fun updateLevels(levels: List<Level>) {
-        levels.forEach {
-            updateLevelData(it.levelInfo)
-            updateLettersProperties(it.lettersProperties)
+        deleteLettersInfo()
+        deleteLevels()
+        levels.forEach { level ->
+            insert(level.levelInfo)
+            level.lettersProperties.forEach { lp ->
+                insertLetterData(
+                    level = lp.ownerId,
+                    homeIndex = lp.homeIndex,
+                    friendIndex = lp.friendIndex,
+                    letter = lp.letter,
+                    locked = lp.locked
+                )
+            }
         }
     }
+
+    @Query("DELETE FROM letter_info_table")
+    suspend fun deleteLettersInfo()
+
+    @Query("DELETE FROM level_info_table")
+    suspend fun deleteLevels()
 
     @Query("select * from level_info_table")
     suspend fun getAllLevels(): List<Level>
 
-    @Query("select count(*) from level_info_table")
-    suspend fun rowCount(): Int
 
     @Query("update level_info_table set score=:newScore where level_id=:level")
-    suspend fun updateScore(newScore:Int, level: Int)
+    suspend fun updateScore(newScore: Int, level: Int)
 
     @Query("update level_info_table set category_rewarded=:value where level_id=:level")
-    suspend fun updateCategoryRewarded(value:Boolean, level: Int)
-
-    //SELECT * FROM table WHERE id IN (SELECT id FROM table ORDER BY RANDOM() LIMIT x) TODO:Get random hint
+    suspend fun updateCategoryRewarded(value: Boolean, level: Int)
 
 }

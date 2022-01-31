@@ -62,9 +62,15 @@ class HintsFragment : BottomSheetDialogFragment() {
             }
         }
         binding.instantCluesButton.setOnClickListener {
+            if (isAdded) {
+                (requireActivity() as GameActivity).showSavedGamesUI()
+            }
             //Toast.makeText(requireContext().applicationContext, "All categories IAP.",Toast.LENGTH_LONG).show()
         }
         binding.fullNoAdsButton.setOnClickListener {
+            if (isAdded)
+            {
+            }
             //Toast.makeText(requireContext().applicationContext, "All hints IAP.", Toast.LENGTH_LONG).show()
         }
 

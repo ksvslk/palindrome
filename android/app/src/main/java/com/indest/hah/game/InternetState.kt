@@ -1,7 +1,6 @@
 package com.indest.hah.game
 
-enum class OverallState {
-    LOADING,
+enum class InternetState {
     OFFLINE,
     ONLINE,
 }
