@@ -9,6 +9,7 @@ import com.indest.hah.letter.effects.ColorSelector
 import com.indest.hah.letter.effects.SoundSelector
 import com.indest.hah.persistance.LevelProgress
 import com.indest.hah.persistance.dto.Level
+import com.indest.hah.util.C.BOTTOM_LAYER
 import com.indest.hah.util.C.MIDDLE_LAYER
 import com.indest.hah.util.C.NEUTRAL_LAYER
 import com.indest.hah.util.C.REWARDED_ANIM_MUL
@@ -240,7 +241,6 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
         }
     }
 
-    //TODO:Double check
     fun restoreSlotPlacements(info: Level) {
         when {
             info.lettersProperties.isNotEmpty() -> {
@@ -258,9 +258,11 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
                         letter.y = slot.y
                         letter.setFriend(slot)
                         slot.setFriend(letter)
+                        slot.z = BOTTOM_LAYER
                         letter.friendIndex = slot.homeIndex
                         letter.currentPos = slot.pos
                         letter.isLocked = letterProperties.locked
+                        letter.z = NEUTRAL_LAYER
                         val colors = letter.effects.getColors(ColorSelector.ACTION_DOWN_FRIEND)
 
                         when {
@@ -275,6 +277,7 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
                             letterProperties.locked -> {
                                 letter.setBackgroundColor(letter.effects.getLockedColor())
                                 letter.setTextColor(letter.effects.getLockedTextColor())
+                                letter.z = NEUTRAL_LAYER
 
                             }
                             else -> {

@@ -43,11 +43,7 @@ import com.indest.hah.letter.Letter
 import com.indest.hah.letter.Slot
 import com.indest.hah.persistance.LevelProgress
 import com.indest.hah.persistance.dto.Level
-import com.indest.hah.util.C
 import com.indest.hah.util.C.HINT_FRAGMENT_TAG
-import com.indest.hah.util.WindowSizeClass
-import com.indest.hah.util.hideSystemBars
-import com.indest.hah.util.playWhileSoundOn
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -61,6 +57,7 @@ import kotlin.math.ln
 import android.graphics.BitmapFactory
 
 import android.graphics.Bitmap
+import com.indest.hah.util.*
 
 @AndroidEntryPoint
 class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
@@ -320,7 +317,6 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
     private fun playSpecialAnimation() {
         Log.i(TAG, "Play special animation")
-        //TODO: this should be leaking..
         val trainLinearLayout =
             requireActivity().findViewById<LinearLayoutCompat>(R.id.trainLinearLayout)
         val oldTrainDisappearingAnimation = ObjectAnimator.ofFloat(
@@ -477,6 +473,9 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
         binding.gameplayFragment.addView(level)
 
+        val levelNumber = levelAndLettersInfo.levelInfo.levelId
+        val levelsCount = gameViewModel.levels.value?.size ?: 100
+
         if (levelAndLettersInfo.levelInfo.progress == LevelProgress.INTERMEDIATE) {
             gameState = GameState.LEVEL_COMPLETED
             val message = MessageSnackBar.make(
@@ -514,12 +513,13 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         } else {
             gameState = GameState.READY
             handleGameSolutions()
+            if (VaryingProbability.isAnimationPlayed(levelNumber)) playSpecialAnimation()
         }
-        val levelNumber = levelAndLettersInfo.levelInfo.levelId
+
         val levelNrView = (requireActivity() as GameActivity).binding.levelNumber
         val progressIndicatorWidth =
             (requireActivity() as GameActivity).binding.gameProgress.measuredWidth
-        val levelsCount = gameViewModel.levels.value?.size ?: 100
+
         val progressX =
             (levelNumber * progressIndicatorWidth / levelsCount) - ln(levelNumber.toFloat()) * 15
         levelNrView.text = levelNumber.toString()
@@ -739,7 +739,6 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 tapToContinueAnimation.repeatMode = ObjectAnimator.REVERSE
                 tapToContinueAnimation.start()
 
-                playSpecialAnimation()
                 showPlayerCenteredScores()
 
                 val messageViewClickListener = View.OnClickListener {

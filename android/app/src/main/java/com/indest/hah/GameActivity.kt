@@ -74,7 +74,7 @@ class GameActivity : AppCompatActivity() {
             // To be implemented in a later section.
 
         }
-    lateinit var billingClient: BillingClient
+    private var billingClient: BillingClient? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate")
@@ -139,7 +139,7 @@ class GameActivity : AppCompatActivity() {
                 "1C8B057289566E4B36BA860D0A8281CB"
             )
         )
-        billingInit()
+        billingInitialization()
         saveGameTimer = object : CountDownTimer(60000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
             }
@@ -159,9 +159,9 @@ class GameActivity : AppCompatActivity() {
 
     }
 
-    private fun billingInit() {
-        Log.d(TAG, "Billing Init")
-        billingClient.startConnection(object : BillingClientStateListener {
+    private fun billingInitialization() {
+        Log.d(TAG, "Billing Initialization")
+        billingClient?.startConnection(object : BillingClientStateListener {
             override fun onBillingSetupFinished(billingResult: BillingResult) {
                 if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
                     // The BillingClient is ready. You can query purchases here.
@@ -189,9 +189,9 @@ class GameActivity : AppCompatActivity() {
 
         // leverage querySkuDetails Kotlin extension function
         val skuDetailsResult = withContext(Dispatchers.IO) {
-            billingClient.querySkuDetails(params.build())
+            billingClient?.querySkuDetails(params.build())
         }
-        gameViewModel.skuDetailsList = skuDetailsResult.skuDetailsList
+        gameViewModel.skuDetailsList = skuDetailsResult?.skuDetailsList
     }
 
     private fun requestConsentInformation() {
@@ -338,9 +338,7 @@ class GameActivity : AppCompatActivity() {
                         }
                         startObservingNetworkStatus()
                     } else if (task.isComplete) {
-                        lifecycleScope.launch {
-                            gameViewModel.loadSnapshot(this@GameActivity)
-                        }
+                        gameViewModel.startGame()
                         startObservingNetworkStatus()
                         Log.i(
                             TAG,
@@ -491,6 +489,7 @@ class GameActivity : AppCompatActivity() {
         _binding = null
         adReloadTimer?.cancel()
         adReloadTimer = null
+        billingClient?.endConnection()
         super.onDestroy()
     }
 

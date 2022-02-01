@@ -171,7 +171,8 @@ enum class LetterState : ILetterState {
                 .setDuration(distance.toLong() * l.effects.animateToHomeDurationMultiplier * durationModifier)
                 .withEndAction {
                     l.state = HOME
-                    l.z = NEUTRAL_LAYER
+                    l.z = MIDDLE_LAYER
+                    l.elevation = NEUTRAL_LAYER
                     l.currentPos.x = l.pos.x
                     l.currentPos.y = l.pos.y
                     Log.i(TAG, "ANIMATION END for $l.")
