@@ -76,17 +76,6 @@ class GameActivity : AppCompatActivity() {
         }
     private var billingClient: BillingClient? = null
 
-    override fun onPause() {
-        billingClient?.endConnection()
-        super.onPause()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        signInSilently()
-        billingInitialization()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate")
         super.onCreate(savedInstanceState)
@@ -150,23 +139,36 @@ class GameActivity : AppCompatActivity() {
                 "1C8B057289566E4B36BA860D0A8281CB"
             )
         )
-        saveGameTimer = object : CountDownTimer(60000, 1000) {
+    }
+
+    override fun onPause() {
+        billingClient?.endConnection()
+        super.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        signInSilently()
+        billingInitialization()
+        addSaveGameTimer()
+    }
+
+    private fun addSaveGameTimer() {
+        saveGameTimer = object : CountDownTimer(180000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
             }
 
             override fun onFinish() {
                 lifecycleScope.launchWhenCreated {
                     Log.d(TAG, "Saving game!")
-                    val coverImage =
+                    gameViewModel.saveSnapshot(
+                        this@GameActivity,
                         binding.fragmentsContainer.drawToBitmap()
-                    lifecycleScope.launch {
-
-                    }
+                    )
                     start()
                 }
             }
-        }
-
+        }.start()
     }
 
     private fun billingInitialization() {
@@ -206,11 +208,9 @@ class GameActivity : AppCompatActivity() {
 
     suspend fun handlePurchase(purchase: Purchase) {
         // Purchase retrieved from BillingClient#queryPurchasesAsync or your PurchasesUpdatedListener.
-        when(purchase.purchaseState)
-        {
+        when (purchase.purchaseState) {
             Purchase.PurchaseState.PURCHASED -> {
-                if (!purchase.isAcknowledged)
-                {
+                if (!purchase.isAcknowledged) {
                     val acknowledgePurchaseParams = AcknowledgePurchaseParams.newBuilder()
                         .setPurchaseToken(purchase.purchaseToken)
                     val ackPurchaseResult = withContext(Dispatchers.IO) {
@@ -527,6 +527,7 @@ class GameActivity : AppCompatActivity() {
         billingClient?.endConnection()
         adReloadTimer?.cancel()
         adReloadTimer = null
+        saveGameTimer?.cancel()
         super.onDestroy()
     }
 

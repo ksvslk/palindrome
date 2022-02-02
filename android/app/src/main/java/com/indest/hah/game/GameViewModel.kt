@@ -280,15 +280,13 @@ class GameViewModel @Inject constructor(
                                     Log.e(TAG, "Could not write snapshot: ${ex.message}")
                                 }
                             }
-                        }
-                        catch (e:IOException)
-                        {
+                        } catch (e: IOException) {
                             Log.e(TAG, "Error getting bytes from snapshot.: ${e.message}")
                         }
                     }
                 }.addOnFailureListener {
-                Log.e(TAG, "Could not open snapshot: ${it.message}")
-            }
+                    Log.e(TAG, "Could not open snapshot: ${it.message}")
+                }
         }
     }
 
@@ -296,40 +294,56 @@ class GameViewModel @Inject constructor(
         snapshot: Snapshot,
         snapshotsClient: SnapshotsClient,
         coverImage: Bitmap,
-        bytes:ByteArray
+        bytes: ByteArray
     ): Task<SnapshotMetadata>? {
 
         val gson = Gson()
         val allLevels = levelRepository.getSaveGameData()
         val levelsData = gson.toJson(allLevels).toByteArray()
-        val currentProgress = (allLevels.findLast { it.levelInfo.progress > LevelProgress.TODO }?.levelInfo?.levelId
-            ?: 1)
-        val currentScore = allLevels.sumOf { it.levelInfo.score }
+        val currentProgress =
+            (allLevels.findLast { it.levelInfo.progress > LevelProgress.TODO }?.levelInfo?.levelId
+                ?: 1)
         val desc = "Level progress $currentProgress. Saved at: " + Calendar.getInstance().time
 
         val levelsListType: Type = object : TypeToken<ArrayList<Level?>?>() {}.type
         val levelsList: List<Level>? = gson.fromJson(bytes.decodeToString(), levelsListType)
-        val currentScoreIsGreater = currentScore > (levelsList?.sumOf { it.levelInfo.score } ?: 0)
 
-        if ((snapshot.metadata.progressValue < currentProgress) || (snapshot.metadata.progressValue == currentProgress.toLong() && currentScoreIsGreater)) {
-            snapshot.snapshotContents.writeBytes(levelsData)
-            val metadataChange = SnapshotMetadataChange.Builder()
-                .setCoverImage(coverImage)
-                .setDescription(desc)
-                .setProgressValue(currentProgress.toLong())
-                .build()
-            return snapshotsClient.commitAndClose(snapshot, metadataChange)
+        if (levelsList != null) {
+            val currentGameModifiedTime = allLevels.maxOf { it.levelInfo.timeModified }
+            val snapshotGameModifiedTime = levelsList.maxOf { it.levelInfo.timeModified }
+
+            if ((snapshot.metadata.progressValue < currentProgress)) {
+                Log.i(TAG, "Current progress is greater. Updating snapshot.")
+                snapshot.snapshotContents.writeBytes(levelsData)
+                val metadataChange = SnapshotMetadataChange.Builder()
+                    .setCoverImage(coverImage)
+                    .setDescription(desc)
+                    .setProgressValue(currentProgress.toLong())
+                    .build()
+                return snapshotsClient.commitAndClose(snapshot, metadataChange)
+            } else if ((snapshot.metadata.progressValue == currentProgress.toLong())) {
+                if (snapshotGameModifiedTime < currentGameModifiedTime) {
+                    Log.i(TAG, "Current game was modified more recently. Updating snapshot.")
+                    snapshot.snapshotContents.writeBytes(levelsData)
+                    val metadataChange = SnapshotMetadataChange.Builder()
+                        .setCoverImage(coverImage)
+                        .setDescription(desc)
+                        .setProgressValue(currentProgress.toLong())
+                        .build()
+                    return snapshotsClient.commitAndClose(snapshot, metadataChange)
+                }
+            }
+
         }
 
-        Log.d(TAG, "Snapshot in cloud had more progress.")
+        Log.d(TAG, "Snapshot in cloud had more progress. Return null.")
         return null
     }
 
     suspend fun loadSnapshot(activity: Activity) {
         coroutineScope {
             val signInAccount = GoogleSignIn.getLastSignedInAccount(activity.applicationContext)
-            if (signInAccount != null)
-            {
+            if (signInAccount != null) {
                 val snapshotsClient = Games.getSnapshotsClient(
                     activity,
                     signInAccount
@@ -343,9 +357,7 @@ class GameViewModel @Inject constructor(
                                     updateLocalDatabase(snapshot, bytes)
                                     startGame()
                                 }
-                            }
-                            catch (e:IOException)
-                            {
+                            } catch (e: IOException) {
                                 Log.e(TAG, "Error getting bytes from snapshot.: ${e.message}")
                             }
                         }
@@ -366,8 +378,7 @@ class GameViewModel @Inject constructor(
 
         Log.i(TAG, "Trying to update local database if needed...")
 
-        if (levelsList != null)
-        {
+        if (levelsList != null) {
             val currentGameModifiedTime = allLevels.maxOf { it.timeModified }
             val snapshotGameModifiedTime = levelsList.maxOf { it.levelInfo.timeModified }
             val currentProgress = (allLevels.findLast { it.progress > LevelProgress.TODO }?.levelId
@@ -376,11 +387,8 @@ class GameViewModel @Inject constructor(
             if ((snapshot.metadata.progressValue > currentProgress)) {
                 Log.i(TAG, "Snapshot progress is greater. Updating local database.")
                 levelRepository.updateLevels(levelsList)
-            }
-            else if ((snapshot.metadata.progressValue == currentProgress.toLong()))
-            {
-                if (snapshotGameModifiedTime > currentGameModifiedTime)
-                {
+            } else if ((snapshot.metadata.progressValue == currentProgress.toLong())) {
+                if (snapshotGameModifiedTime > currentGameModifiedTime) {
                     Log.i(TAG, "Snapshot was modified more recently. Updating local database.")
                     levelRepository.updateLevels(levelsList)
                 }
