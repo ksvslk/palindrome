@@ -4,10 +4,10 @@ import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
-import android.view.View
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.fragment.app.findFragment
 import com.indest.hah.fragments.GamePlayFragment
+import com.indest.hah.game.enums.GameState
 
 class CellContainer : LinearLayoutCompat {
 

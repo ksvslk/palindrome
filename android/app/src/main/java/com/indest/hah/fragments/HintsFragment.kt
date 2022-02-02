@@ -7,12 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.commit
-import androidx.fragment.app.replace
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -23,11 +20,10 @@ import com.indest.hah.R
 import com.indest.hah.databinding.HintsFragmentBinding
 import com.indest.hah.game.GameViewModel
 import com.indest.hah.game.LevelEvent
-import com.indest.hah.game.RewardType
+import com.indest.hah.game.enums.RewardType
 import com.indest.hah.util.C.HINT_FRAGMENT_TAG
 import com.indest.hah.util.C.HINT_REQUEST_KEY
 
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 

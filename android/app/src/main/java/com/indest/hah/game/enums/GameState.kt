@@ -1,4 +1,4 @@
-package com.indest.hah.game
+package com.indest.hah.game.enums
 
 enum class GameState {
     BUSY,

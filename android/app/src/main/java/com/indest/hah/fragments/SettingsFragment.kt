@@ -27,7 +27,7 @@ import androidx.fragment.app.replace
 import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.Scope
 import com.indest.hah.game.GameViewModel
-import com.indest.hah.game.InternetState
+import com.indest.hah.game.enums.InternetState
 
 
 class SettingsFragment : BottomSheetDialogFragment() {

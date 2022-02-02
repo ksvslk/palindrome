@@ -20,6 +20,7 @@ import com.google.android.gms.games.snapshot.SnapshotMetadataChange
 import com.google.android.gms.tasks.Task
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.indest.hah.game.enums.*
 import com.indest.hah.letter.Cell
 import com.indest.hah.letter.Letter
 import com.indest.hah.persistance.LevelProgress

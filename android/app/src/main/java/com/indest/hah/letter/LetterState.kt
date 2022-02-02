@@ -9,7 +9,7 @@ import androidx.fragment.app.findFragment
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.indest.hah.R
 import com.indest.hah.fragments.GamePlayFragment
-import com.indest.hah.game.GameState
+import com.indest.hah.game.enums.GameState
 import com.indest.hah.letter.effects.ColorSelector
 import com.indest.hah.util.C.MIDDLE_LAYER
 import com.indest.hah.util.C.NEUTRAL_LAYER

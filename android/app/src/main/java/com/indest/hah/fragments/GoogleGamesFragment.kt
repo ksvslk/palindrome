@@ -15,7 +15,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.databinding.GoogleGamesFragmentBinding
 import com.indest.hah.game.GameViewModel
-import com.indest.hah.game.InternetState
+import com.indest.hah.game.enums.InternetState
 
 class GoogleGamesFragment : BottomSheetDialogFragment() {
 

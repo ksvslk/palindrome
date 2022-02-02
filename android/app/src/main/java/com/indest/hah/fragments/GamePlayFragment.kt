@@ -52,6 +52,9 @@ import android.animation.ObjectAnimator
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.animation.doOnEnd
 import androidx.core.view.*
+import com.indest.hah.game.enums.GameState
+import com.indest.hah.game.enums.LoadingState
+import com.indest.hah.game.enums.RewardType
 import com.indest.hah.util.C.HINT_REQUEST_KEY
 import kotlin.math.ln
 
