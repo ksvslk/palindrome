@@ -473,9 +473,6 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
         binding.gameplayFragment.addView(level)
 
-        val levelNumber = levelAndLettersInfo.levelInfo.levelId
-        val levelsCount = gameViewModel.levels.value?.size ?: 100
-
         if (levelAndLettersInfo.levelInfo.progress == LevelProgress.INTERMEDIATE) {
             gameState = GameState.LEVEL_COMPLETED
             val message = MessageSnackBar.make(
@@ -513,8 +510,11 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         } else {
             gameState = GameState.READY
             handleGameSolutions()
-            if (VaryingProbability.isAnimationPlayed(levelNumber)) playSpecialAnimation()
+            if (VaryingProbability.isAnimationPlayed(levelAndLettersInfo.levelInfo.levelId)) playSpecialAnimation()
         }
+
+        val levelNumber = levelAndLettersInfo.levelInfo.levelId
+        val levelsCount = gameViewModel.levels.value?.size ?: 100
 
         val levelNrView = (requireActivity() as GameActivity).binding.levelNumber
         val progressIndicatorWidth =
@@ -1014,6 +1014,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         snackBars.forEach {
             it.key.removeCallback(it.value)
         }
+        //cellDirector.cells.clear()
         _binding = null
         super.onDestroyView()
     }

@@ -67,6 +67,7 @@ class GameViewModel @Inject constructor(
     val internetState: StateFlow<AppInternetState> = _internetState.asStateFlow()
 
     var windowSizeClassWidth: WindowSizeClass = WindowSizeClass.NOT_SET
+
     var skuDetailsList: List<SkuDetails>? = null
 
     fun changeState(newState: LoadingState) {
@@ -363,17 +364,26 @@ class GameViewModel @Inject constructor(
         val levelsListType: Type = object : TypeToken<ArrayList<Level?>?>() {}.type
         val levelsList: List<Level>? = gson.fromJson(bytes?.decodeToString(), levelsListType)
 
+        Log.i(TAG, "Trying to update local database if needed...")
+
         if (levelsList != null)
         {
-            Log.i(TAG, "Update local database")
-
-            val snapShotScoreIsGreater =
-                levelsList.sumOf { it.levelInfo.score } > allLevels.sumOf { it.score }
+            val currentGameModifiedTime = allLevels.maxOf { it.timeModified }
+            val snapshotGameModifiedTime = levelsList.maxOf { it.levelInfo.timeModified }
             val currentProgress = (allLevels.findLast { it.progress > LevelProgress.TODO }?.levelId
                 ?: 1)
-            Log.i(TAG, "currentProgress: $currentProgress, snapshot.metadata.progressValue: ${snapshot.metadata.progressValue}")
-            if ((snapshot.metadata.progressValue > currentProgress) || (snapshot.metadata.progressValue == currentProgress.toLong() && snapShotScoreIsGreater)) {
+
+            if ((snapshot.metadata.progressValue > currentProgress)) {
+                Log.i(TAG, "Snapshot progress is greater. Updating local database.")
                 levelRepository.updateLevels(levelsList)
+            }
+            else if ((snapshot.metadata.progressValue == currentProgress.toLong()))
+            {
+                if (snapshotGameModifiedTime > currentGameModifiedTime)
+                {
+                    Log.i(TAG, "Snapshot was modified more recently. Updating local database.")
+                    levelRepository.updateLevels(levelsList)
+                }
             }
         }
     }

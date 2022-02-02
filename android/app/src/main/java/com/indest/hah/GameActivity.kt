@@ -76,6 +76,17 @@ class GameActivity : AppCompatActivity() {
         }
     private var billingClient: BillingClient? = null
 
+    override fun onPause() {
+        billingClient?.endConnection()
+        super.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        signInSilently()
+        billingInitialization()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate")
         super.onCreate(savedInstanceState)
@@ -83,7 +94,7 @@ class GameActivity : AppCompatActivity() {
 
         val b = ActivityGameBinding.inflate(layoutInflater)
         _binding = b
-        billingClient = BillingClient.newBuilder(this)
+        billingClient = BillingClient.newBuilder(applicationContext)
             .setListener(purchasesUpdatedListener)
             .enablePendingPurchases()
             .build()
@@ -132,14 +143,13 @@ class GameActivity : AppCompatActivity() {
             }
         }
         requestConsentInformation()
-        MobileAds.initialize(this) {}
+        MobileAds.initialize(applicationContext) {}
         RequestConfiguration.Builder().setTestDeviceIds(
             listOf(
                 "6C6A719C306FBA0A0FBE4D81600B8AB1",
                 "1C8B057289566E4B36BA860D0A8281CB"
             )
         )
-        billingInitialization()
         saveGameTimer = object : CountDownTimer(60000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
             }
@@ -194,13 +204,45 @@ class GameActivity : AppCompatActivity() {
         gameViewModel.skuDetailsList = skuDetailsResult?.skuDetailsList
     }
 
+    suspend fun handlePurchase(purchase: Purchase) {
+        // Purchase retrieved from BillingClient#queryPurchasesAsync or your PurchasesUpdatedListener.
+        when(purchase.purchaseState)
+        {
+            Purchase.PurchaseState.PURCHASED -> {
+                if (!purchase.isAcknowledged)
+                {
+                    val acknowledgePurchaseParams = AcknowledgePurchaseParams.newBuilder()
+                        .setPurchaseToken(purchase.purchaseToken)
+                    val ackPurchaseResult = withContext(Dispatchers.IO) {
+                        billingClient?.acknowledgePurchase(acknowledgePurchaseParams.build())
+                    }
+
+                }
+            }
+            Purchase.PurchaseState.PENDING -> {
+
+            }
+        }
+        // Verify the purchase.
+        // Ensure entitlement was not already granted for this purchaseToken.
+        // Grant entitlement to the user.
+
+        val consumeParams =
+            ConsumeParams.newBuilder()
+                .setPurchaseToken(purchase.purchaseToken)
+                .build()
+        val consumeResult = withContext(Dispatchers.IO) {
+            billingClient?.consumePurchase(consumeParams)
+        }
+    }
+
     private fun requestConsentInformation() {
         // Set tag for underage of consent. false means users are not underage.
         val params = ConsentRequestParameters.Builder()
             .setTagForUnderAgeOfConsent(false)
             .build()
 
-        consentInformation = UserMessagingPlatform.getConsentInformation(this)
+        consentInformation = UserMessagingPlatform.getConsentInformation(applicationContext)
         //consentInformation.reset()
         consentInformation.requestConsentInfoUpdate(
             this,
@@ -219,7 +261,7 @@ class GameActivity : AppCompatActivity() {
 
     private fun loadForm() {
         UserMessagingPlatform.loadConsentForm(
-            this,
+            applicationContext,
             { consentForm ->
                 this.consentForm = consentForm
                 if (consentInformation.consentStatus == ConsentInformation.ConsentStatus.REQUIRED) {
@@ -249,11 +291,6 @@ class GameActivity : AppCompatActivity() {
 
         gameViewModel.windowSizeClassWidth = widthWindowSizeClass
 
-    }
-
-    override fun onResume() {
-        super.onResume()
-        signInSilently()
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -392,7 +429,7 @@ class GameActivity : AppCompatActivity() {
         if (_rewardedAd == null) {
             val adRequest = AdRequest.Builder().build()
             RewardedAd.load(
-                this, getString(R.string.admob_rewarded_ad_unit), adRequest,
+                applicationContext, getString(R.string.admob_rewarded_ad_unit), adRequest,
                 object : RewardedAdLoadCallback() {
                     override fun onAdFailedToLoad(adError: LoadAdError) {
                         Log.d(TAG, adError.message)
@@ -487,9 +524,9 @@ class GameActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         _binding = null
+        billingClient?.endConnection()
         adReloadTimer?.cancel()
         adReloadTimer = null
-        billingClient?.endConnection()
         super.onDestroy()
     }
 
