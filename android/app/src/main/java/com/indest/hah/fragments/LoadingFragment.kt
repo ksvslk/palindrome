@@ -21,11 +21,9 @@ class LoadingFragment : Fragment(R.layout.home_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         lifecycleScope.launch {
             gameViewModel.loadingState.collectLatest { latest ->
-                if (latest.state != LoadingState.LOADING) {
-                    Log.i(TAG, "Starting game.")
+                if (latest.state == LoadingState.READY) {
                     parentFragmentManager.commit {
                         setReorderingAllowed(true)
                         replace<GamePlayFragment>(
@@ -33,9 +31,6 @@ class LoadingFragment : Fragment(R.layout.home_fragment) {
                             tag = GAMEPLAY_FRAGMENT_TAG
                         )
                     }
-                }
-                else {
-                    Log.i(TAG, "Loading...")
                 }
             }
         }

@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.Application
 import android.graphics.Bitmap
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -14,10 +15,12 @@ import com.google.android.gms.games.SnapshotsClient
 import com.google.android.gms.games.SnapshotsClient.RESOLUTION_POLICY_LAST_KNOWN_GOOD
 import com.google.android.gms.games.snapshot.Snapshot
 import com.google.android.gms.games.snapshot.SnapshotMetadata
+import com.google.android.gms.games.snapshot.SnapshotMetadata.PROGRESS_VALUE_UNKNOWN
 import com.google.android.gms.games.snapshot.SnapshotMetadataChange
 import com.google.android.gms.tasks.Task
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.indest.hah.CoolApplication
 import com.indest.hah.letter.Cell
 import com.indest.hah.letter.Letter
 import com.indest.hah.persistance.LevelProgress
@@ -28,10 +31,7 @@ import com.indest.hah.util.C
 import com.indest.hah.util.WindowSizeClass
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.*
 import java.io.IOException
 import java.lang.reflect.Type
 import java.util.*
@@ -69,6 +69,7 @@ class GameViewModel @Inject constructor(
     var windowSizeClassWidth: WindowSizeClass = WindowSizeClass.NOT_SET
 
     var skuDetailsList: List<SkuDetails>? = null
+    private var cloudSave: Boolean = false
 
     fun changeState(newState: LoadingState) {
         _loadingState.value = AppLoadingState(state = newState)
@@ -88,16 +89,23 @@ class GameViewModel @Inject constructor(
             levels.value = levelRepository.getAllLevels()
             levelRepository.getLastLevel()
                 .collect { newLevel ->
-                    Log.i(TAG, _uiState.value.currentLevel.toString())
-                    Log.i(TAG, newLevel.toString())
-                    val oldLevel = _uiState.value.currentLevel
-                    _uiState.value = LevelEvent.Success(oldLevel, newLevel)
+                    if (!cloudSave && newLevel.levelInfo.levelId != _uiState.value.currentLevel.levelInfo.levelId && newLevel.levelInfo.levelId != 0) {
+                        val oldLevel = _uiState.value.currentLevel
+                        _uiState.value = LevelEvent.Success(oldLevel, newLevel)
+                    }
+                    else if (cloudSave)
+                    {
+                        cloudSave = false
+                        val oldLevel = _uiState.value.currentLevel
+                        _uiState.value = LevelEvent.Success(oldLevel, newLevel)
+                    }
                 }
         }
     }
 
     fun rewardUser(rewardType: RewardType) {
-        _userReward.value = UserRewardEvent.Success(rewardType = rewardType, rewardEarned = true)
+        _userReward.value =
+            UserRewardEvent.Success(rewardType = rewardType, rewardEarned = true)
     }
 
     fun resetRewardingUser() {
@@ -165,7 +173,6 @@ class GameViewModel @Inject constructor(
             _uiState.value.currentLevel.levelInfo.levelId * 100
         )
     }
-
 
     fun isLastLevel(): Boolean {
         return _uiState.value.currentLevel.levelInfo.levelId == levels.value?.size
@@ -335,6 +342,17 @@ class GameViewModel @Inject constructor(
             }
 
         }
+        else if(snapshot.metadata.progressValue == PROGRESS_VALUE_UNKNOWN)
+        {
+            Log.i(TAG, "Current progress is greater. First time snapshot upload.")
+            snapshot.snapshotContents.writeBytes(levelsData)
+            val metadataChange = SnapshotMetadataChange.Builder()
+                .setCoverImage(coverImage)
+                .setDescription(desc)
+                .setProgressValue(currentProgress.toLong())
+                .build()
+            return snapshotsClient.commitAndClose(snapshot, metadataChange)
+        }
 
         Log.d(TAG, "Snapshot in cloud had more progress. Return null.")
         return null
@@ -354,8 +372,14 @@ class GameViewModel @Inject constructor(
                             try {
                                 val bytes = snapshot.snapshotContents.readFully()
                                 viewModelScope.launch {
-                                    updateLocalDatabase(snapshot, bytes)
-                                    startGame()
+                                    if(updateLocalDatabase(snapshot, bytes))
+                                    {
+                                        cloudSave = true
+                                        startGame()
+                                    }
+                                    else {
+                                        startGame()
+                                    }
                                 }
                             } catch (e: IOException) {
                                 Log.e(TAG, "Error getting bytes from snapshot.: ${e.message}")
@@ -365,12 +389,10 @@ class GameViewModel @Inject constructor(
                         Log.e(TAG, "Could not open snapshot: ${it.message}")
                     }
             }
-
         }
-
     }
 
-    private suspend fun updateLocalDatabase(snapshot: Snapshot, bytes: ByteArray?) {
+    private suspend fun updateLocalDatabase(snapshot: Snapshot, bytes: ByteArray?): Boolean {
         val gson = Gson()
         val allLevels = levelRepository.getAllLevels()
         val levelsListType: Type = object : TypeToken<ArrayList<Level?>?>() {}.type
@@ -381,24 +403,43 @@ class GameViewModel @Inject constructor(
         if (levelsList != null) {
             val currentGameModifiedTime = allLevels.maxOf { it.timeModified }
             val snapshotGameModifiedTime = levelsList.maxOf { it.levelInfo.timeModified }
-            val currentProgress = (allLevels.findLast { it.progress > LevelProgress.TODO }?.levelId
-                ?: 1)
+            val currentProgress =
+                (allLevels.findLast { it.progress > LevelProgress.TODO }?.levelId
+                    ?: 1)
 
             if ((snapshot.metadata.progressValue > currentProgress)) {
                 Log.i(TAG, "Snapshot progress is greater. Updating local database.")
                 levelRepository.updateLevels(levelsList)
+                Toast.makeText(
+                    getApplication(),
+                    "Restoring game from cloud.",
+                    Toast.LENGTH_LONG
+                ).show()
+                return true
             } else if ((snapshot.metadata.progressValue == currentProgress.toLong())) {
                 if (snapshotGameModifiedTime > currentGameModifiedTime) {
                     Log.i(TAG, "Snapshot was modified more recently. Updating local database.")
                     levelRepository.updateLevels(levelsList)
+                    Toast.makeText(
+                        getApplication(),
+                        "Restoring game from cloud.",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    return true
                 }
             }
         }
+        return false
     }
 }
 
 sealed class LevelEvent {
-    data class Success(val oldLevel: Level, val currentLevel: Level) : LevelEvent()
+    data class Success(
+        val oldLevel: Level,
+        val currentLevel: Level,
+        val cloudSave: Boolean = false
+    ) : LevelEvent()
+
     data class Error(val exception: Throwable) : LevelEvent()
 }
 

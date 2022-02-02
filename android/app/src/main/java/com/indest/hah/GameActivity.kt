@@ -20,7 +20,10 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.drawToBitmap
 import androidx.core.view.forEach
+import androidx.fragment.app.commit
+import androidx.fragment.app.replace
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import androidx.window.layout.WindowMetricsCalculator
@@ -40,15 +43,20 @@ import com.google.android.ump.ConsentInformation
 import com.google.android.ump.ConsentRequestParameters
 import com.google.android.ump.UserMessagingPlatform
 import com.indest.hah.databinding.ActivityGameBinding
+import com.indest.hah.fragments.GamePlayFragment
+import com.indest.hah.fragments.LoadingFragment
 import com.indest.hah.game.GameViewModel
 import com.indest.hah.game.InternetState.*
 import com.indest.hah.game.LoadingState
 import com.indest.hah.game.RewardType
+import com.indest.hah.util.C
 import com.indest.hah.util.ConnectionLiveData
 import com.indest.hah.util.WindowSizeClass
 import com.indest.hah.util.hideSystemBars
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
@@ -102,14 +110,6 @@ class GameActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.fragments_container) as NavHostFragment
-        val navController = navHostFragment.navController
-        val bottomNavigationView: BottomNavigationView = binding.bottomNavView
-        bottomNavigationView.setupWithNavController(navController)
-        bottomNavigationView.menu.setGroupCheckable(0, true, false)
-        bottomNavigationView.menu.forEach { it.isChecked = true }
-
         b.container.addView(object : View(this) {
             override fun onConfigurationChanged(newConfig: Configuration?) {
                 super.onConfigurationChanged(newConfig)
@@ -141,13 +141,30 @@ class GameActivity : AppCompatActivity() {
         )
     }
 
+    private fun setUpNavController()
+    {
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.fragments_container) as NavHostFragment
+        val navController = navHostFragment.navController
+        val bottomNavigationView: BottomNavigationView = binding.bottomNavView
+        bottomNavigationView.setupWithNavController(navController)
+        bottomNavigationView.menu.setGroupCheckable(0, true, false)
+        bottomNavigationView.menu.forEach { it.isChecked = true }
+    }
+
     override fun onPause() {
         billingClient?.endConnection()
+        adReloadTimer?.cancel()
+        adReloadTimer = null
+        saveGameTimer?.cancel()
+        saveGameTimer = null
         super.onPause()
     }
 
     override fun onResume() {
         super.onResume()
+        setUpNavController()
+        gameViewModel.changeState(LoadingState.LOADING)
         signInSilently()
         billingInitialization()
         addSaveGameTimer()
@@ -159,7 +176,7 @@ class GameActivity : AppCompatActivity() {
             }
 
             override fun onFinish() {
-                lifecycleScope.launchWhenCreated {
+                lifecycleScope.launchWhenResumed {
                     Log.d(TAG, "Saving game!")
                     gameViewModel.saveSnapshot(
                         this@GameActivity,
@@ -416,7 +433,6 @@ class GameActivity : AppCompatActivity() {
         }
 
     private fun signInToGoogle() {
-        gameViewModel.changeState(LoadingState.LOADING)
         val signInClient = GoogleSignIn.getClient(
             this,
             GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN,
@@ -528,6 +544,7 @@ class GameActivity : AppCompatActivity() {
         adReloadTimer?.cancel()
         adReloadTimer = null
         saveGameTimer?.cancel()
+        saveGameTimer = null
         super.onDestroy()
     }
 

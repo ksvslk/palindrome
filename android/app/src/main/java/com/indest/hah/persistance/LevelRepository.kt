@@ -26,6 +26,7 @@ import javax.inject.Singleton
 class LevelRepository @Inject constructor(
     private val levelDao: LevelDao
 ) {
+
     private val TAG = "LevelRepository"
     suspend fun resetLevelLettersInfo(levelNr: Int) = levelDao.deleteLetterInfo(levelNr)
     suspend fun updateLevel(level: LevelData) = levelDao.updateLevelData(level)
@@ -67,7 +68,6 @@ class LevelRepository @Inject constructor(
     suspend fun updateCategoryRewarded(value: Boolean, level: Int) {
         levelDao.updateCategoryRewarded(value, level)
     }
-
 
     suspend fun currentSolution(levelNr: Int?): String {
         if (levelNr != null) {

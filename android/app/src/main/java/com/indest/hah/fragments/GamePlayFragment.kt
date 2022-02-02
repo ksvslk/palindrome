@@ -78,7 +78,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     var gameState: GameState = GameState.BUSY
     val gameViewModel: GameViewModel by activityViewModels()
     private var allAnimations: MutableSet<ValueAnimator> = mutableSetOf()
-    private var snackBars: HashMap<MessageSnackBar, BaseTransientBottomBar.BaseCallback<MessageSnackBar>> = hashMapOf()
+    private var snackBars: HashMap<MessageSnackBar, BaseTransientBottomBar.BaseCallback<MessageSnackBar>> =
+        hashMapOf()
 
     private var guesses: Int by Delegates.observable(0) { _, _, new ->
         val guessesBeforeHint = resources.getInteger(R.integer.guessesBeforeHint)
@@ -219,6 +220,25 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         }
     }
 
+    private fun loadingFragmentSwitcher()
+    {
+        lifecycleScope.launchWhenResumed {
+            gameViewModel.loadingState.collect {
+                if (it.state == LoadingState.LOADING)
+                {
+                    parentFragmentManager.commit {
+                        setCustomAnimations(
+                            R.anim.fade_in_short,
+                            R.anim.fade_out_short
+                        )
+                        setReorderingAllowed(true)
+                        replace<LoadingFragment>(R.id.fragments_container)
+                    }
+                }
+            }
+        }
+    }
+
     // CLEAN
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -244,12 +264,13 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     override fun onResume() {
         super.onResume()
         resetHintsBadge()
+        loadingFragmentSwitcher()
     }
 
     // CLEAN
     override fun onPause() {
         super.onPause()
-        findNavController(this).removeOnDestinationChangedListener { _, _, _ -> }
+        //findNavController(this).removeOnDestinationChangedListener { _, _, _ -> }
     }
 
     private fun observeViewModel(isBookMode: Boolean) {
@@ -260,26 +281,10 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                         if (gameState == GameState.LEVEL_COMPLETED) return@collect
                         when (uiState) {
                             is LevelEvent.Success -> {
-                                Log.i(TAG, "LevelEvent.Success")
-                                if (!(uiState.oldLevel.levelInfo.levelId == 0 && uiState.currentLevel.levelInfo.levelId == 0)) {
-                                    if (uiState.oldLevel.levelInfo.levelId != uiState.currentLevel.levelInfo.levelId && uiState.oldLevel.levelInfo.levelId != 0) {
-                                        if (binding.gameplayFragment.childCount > 0) {
-                                            Log.i(TAG, "replaceFragmentWithSelf childCount > 0")
-                                            replaceFragmentWithSelf()
-                                        } else {
-                                            Log.i(
-                                                TAG,
-                                                "loadLevel(uiState.currentLevel, isBookMode) NOT childCount > 0"
-                                            )
-                                            loadLevel(uiState.currentLevel, isBookMode)
-                                        }
-                                    } else if (binding.gameplayFragment.childCount == 0) {
-                                        Log.i(
-                                            TAG,
-                                            "  loadLevel(uiState.currentLevel, isBookMode) childCount == 0"
-                                        )
-                                        loadLevel(uiState.currentLevel, isBookMode)
-                                    }
+                                if (binding.gameplayFragment.childCount > 0) {
+                                    replaceFragmentWithSelf()
+                                } else {
+                                    loadLevel(uiState.currentLevel, isBookMode)
                                 }
                                 val levelCount = gameViewModel.levels.value?.size ?: 100
                                 (requireActivity() as GameActivity).binding.gameProgress.progress =
@@ -296,8 +301,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                     gameViewModel.userReward.collect { userRewardEvent ->
                         when (userRewardEvent) {
                             is UserRewardEvent.Success -> {
-                                if (userRewardEvent.rewardEarned)
-                                {
+                                if (userRewardEvent.rewardEarned) {
                                     gameViewModel.resetRewardingUser()
                                     rewardUser(userRewardEvent.rewardType)
                                 }
@@ -531,7 +535,6 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     // CLEAN
     private fun replaceFragmentWithSelf() {
         gameViewModel.realSolutionAndGuess.postValue(Triple("", "2", null))
-
         parentFragmentManager.commit {
             setCustomAnimations(
                 R.anim.slide_in_bottom,
@@ -742,8 +745,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 showPlayerCenteredScores()
 
                 val messageViewClickListener = View.OnClickListener {
-                    if(isAdded)
-                    {
+                    if (isAdded) {
                         soundPool.playWhileSoundOn(
                             requireActivity(),
                             levelTransition,
@@ -1004,7 +1006,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     override fun onDestroyView() {
         Log.i(TAG, "onDestroyView")
         hintBadge = null
-        val trainLinearLayout = requireActivity().findViewById<LinearLayoutCompat>(R.id.trainLinearLayout)
+        val trainLinearLayout =
+            requireActivity().findViewById<LinearLayoutCompat>(R.id.trainLinearLayout)
         trainLinearLayout.removeAllViews()
         allAnimations.forEach {
             it.removeAllUpdateListeners()
