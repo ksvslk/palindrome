@@ -13,6 +13,7 @@ import androidx.gridlayout.widget.GridLayout
 import com.indest.hah.letter.Letter
 import com.indest.hah.letter.LetterState
 import com.indest.hah.letter.Slot
+import com.indest.hah.persistance.LevelProgress
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.util.C
 import com.indest.hah.util.DensitySettings

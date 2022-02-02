@@ -165,6 +165,7 @@ class GameActivity : AppCompatActivity() {
         super.onResume()
         setUpNavController()
         gameViewModel.changeState(LoadingState.LOADING)
+        gameViewModel.setReloadFromDatabase()
         signInSilently()
         billingInitialization()
         addSaveGameTimer()

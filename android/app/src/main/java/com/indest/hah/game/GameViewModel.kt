@@ -20,7 +20,6 @@ import com.google.android.gms.games.snapshot.SnapshotMetadataChange
 import com.google.android.gms.tasks.Task
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.indest.hah.CoolApplication
 import com.indest.hah.letter.Cell
 import com.indest.hah.letter.Letter
 import com.indest.hah.persistance.LevelProgress
@@ -69,7 +68,12 @@ class GameViewModel @Inject constructor(
     var windowSizeClassWidth: WindowSizeClass = WindowSizeClass.NOT_SET
 
     var skuDetailsList: List<SkuDetails>? = null
-    private var cloudSave: Boolean = false
+    private var reloadLevelFromLocalDatabase: Boolean = false
+
+    fun setReloadFromDatabase()
+    {
+        reloadLevelFromLocalDatabase = true
+    }
 
     fun changeState(newState: LoadingState) {
         _loadingState.value = AppLoadingState(state = newState)
@@ -85,22 +89,25 @@ class GameViewModel @Inject constructor(
 
     fun startGame() {
         viewModelScope.launch {
-            changeState(LoadingState.READY)
             levels.value = levelRepository.getAllLevels()
             levelRepository.getLastLevel()
                 .collect { newLevel ->
-                    if (!cloudSave && newLevel.levelInfo.levelId != _uiState.value.currentLevel.levelInfo.levelId && newLevel.levelInfo.levelId != 0) {
+                    if (!reloadLevelFromLocalDatabase && newLevel.levelInfo.levelId != _uiState.value.currentLevel.levelInfo.levelId && newLevel.levelInfo.levelId != 0) {
+                        Log.i(TAG, "Starting game when level ids are different.")
                         val oldLevel = _uiState.value.currentLevel
                         _uiState.value = LevelEvent.Success(oldLevel, newLevel)
                     }
-                    else if (cloudSave)
+                    else if (reloadLevelFromLocalDatabase)
                     {
-                        cloudSave = false
+                        Log.i(TAG, "Starting game with reloading from DB.")
+                        reloadLevelFromLocalDatabase = false
                         val oldLevel = _uiState.value.currentLevel
                         _uiState.value = LevelEvent.Success(oldLevel, newLevel)
                     }
                 }
         }
+        changeState(LoadingState.READY)
+
     }
 
     fun rewardUser(rewardType: RewardType) {
@@ -231,6 +238,7 @@ class GameViewModel @Inject constructor(
             val isAlreadyInitialized =
                 levelRepository.isLettersInitialized(_uiState.value.currentLevel.levelInfo.levelId)
             if (!isAlreadyInitialized) {
+                Log.i(TAG, "initial letters persist")
                 cells.filterIsInstance<Letter>().forEachIndexed { _, it ->
                     levelRepository.insertLetterInfo(
                         level = _uiState.value.currentLevel.levelInfo.levelId,
@@ -374,10 +382,12 @@ class GameViewModel @Inject constructor(
                                 viewModelScope.launch {
                                     if(updateLocalDatabase(snapshot, bytes))
                                     {
-                                        cloudSave = true
+                                        Log.i(TAG, "Start game with game loaded from cloud.")
+                                        reloadLevelFromLocalDatabase = true
                                         startGame()
                                     }
                                     else {
+                                        Log.i(TAG, "Start game normally.")
                                         startGame()
                                     }
                                 }

@@ -254,6 +254,8 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
                             Log.e(TAG, "Could not restore letter placements. ")
                             return
                         }
+                        Log.i(TAG, "Restoring $letter to $slot.")
+
                         letter.x = slot.x
                         letter.y = slot.y
                         letter.setFriend(slot)

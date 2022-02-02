@@ -54,9 +54,7 @@ import androidx.core.animation.doOnEnd
 import androidx.core.view.*
 import com.indest.hah.util.C.HINT_REQUEST_KEY
 import kotlin.math.ln
-import android.graphics.BitmapFactory
 
-import android.graphics.Bitmap
 import com.indest.hah.util.*
 
 @AndroidEntryPoint
@@ -83,8 +81,6 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
     private var guesses: Int by Delegates.observable(0) { _, _, new ->
         val guessesBeforeHint = resources.getInteger(R.integer.guessesBeforeHint)
-        Log.i(TAG, "guessesBeforeHint: $guessesBeforeHint")
-        Log.i(TAG, "new: $new")
 
         if (new == guessesBeforeHint) {
             soundPool.playWhileSoundOn(
@@ -94,7 +90,6 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 audioManager = audioManager
             )
             hintBadge?.isVisible = true
-            Log.i(TAG, "hintBadge.isVisible: ${hintBadge?.isVisible}")
             activity?.getSharedPreferences(
                 getString(R.string.app_preferences),
                 Context.MODE_PRIVATE
@@ -111,10 +106,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.i(TAG, "onCreate")
-
         super.onCreate(savedInstanceState)
-        cellDirector = CellDirector(this)
         audioManager = requireContext().getSystemService(Context.AUDIO_SERVICE) as AudioManager
         soundPool = SoundPool.Builder().build()
         scoreSound = soundPool.load(requireContext(), R.raw.score_tick, 1)
@@ -138,7 +130,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         resetHintsBadgeOnFragmentResult()
 
         lifecycleScope.launch(Dispatchers.Main) {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 WindowInfoTracker.getOrCreate(requireContext())
                     .windowLayoutInfo(requireActivity())
                     .collectLatest { newLayoutInfo ->
@@ -172,47 +164,53 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                 val candidateLetters = cellDirector.cells
                     .filterIsInstance<Letter>()
                     .filter { !it.hasFriend() }
-                val randomLetter = candidateLetters.random()
-                val correctSlot = cellDirector.cells.filterIsInstance<Slot>().first {
-                    (it.realChar == randomLetter.text.first() && !it.hasFriend()) ||
-                            (it.realChar == randomLetter.text.first() &&
-                                    it.hasFriend() &&
-                                    it.getTheFriend()?.text?.first() != it.realChar)
-                }
-                val incorrectSlot =
-                    cellDirector.cells.filterIsInstance<Slot>().firstOrNull {
-                        it.hasFriend() &&
-                                it.getTheFriend()?.text?.first() != it.realChar
+
+                if (candidateLetters.isNotEmpty()) {
+                    val randomLetter = candidateLetters.random()
+                    val correctSlot = cellDirector.cells.filterIsInstance<Slot>().first {
+                        (it.realChar == randomLetter.text.first() && !it.hasFriend()) ||
+                                (it.realChar == randomLetter.text.first() &&
+                                        it.hasFriend() &&
+                                        it.getTheFriend()?.text?.first() != it.realChar)
                     }
-                randomLetter.isLocked = true
-                randomLetter.z = C.TOP_LAYER
-                if (correctSlot.hasFriend()) {
-                    correctSlot.friend?.let {
-                        cellDirector.switchLetterPositions(
-                            randomLetter,
-                            it, true
-                        )
+                    val incorrectSlot =
+                        cellDirector.cells.filterIsInstance<Slot>().firstOrNull {
+                            it.hasFriend() &&
+                                    it.getTheFriend()?.text?.first() != it.realChar
+                        }
+                    randomLetter.isLocked = true
+                    randomLetter.z = C.TOP_LAYER
+                    if (correctSlot.hasFriend()) {
+                        correctSlot.friend?.let {
+                            cellDirector.switchLetterPositions(
+                                randomLetter,
+                                it, true
+                            )
+                        }
+                    } else {
+                        if (candidateLetters.size == 1 && incorrectSlot == null) { // Last letter to be placed in the slot
+                            cellDirector.placeLetterInEmptyBox(
+                                randomLetter, correctSlot,
+                                isRewarded = true,
+                                isLastRewardedLetter = true
+                            )
+                        } else if (candidateLetters.size == 1 && incorrectSlot != null) {
+                            incorrectSlot.getTheFriend()
+                                ?.let {
+                                    cellDirector.sendLetterHome(it)
+                                    cellDirector.placeLetterInEmptyBox(
+                                        randomLetter, correctSlot,
+                                        isRewarded = true
+                                    )
+                                }
+                        } else {
+                            cellDirector.placeLetterInEmptyBox(randomLetter, correctSlot, true)
+                        }
                     }
                 } else {
-                    if (candidateLetters.size == 1 && incorrectSlot == null) { // Last letter to be placed in the slot
-                        cellDirector.placeLetterInEmptyBox(
-                            randomLetter, correctSlot,
-                            isRewarded = true,
-                            isLastRewardedLetter = true
-                        )
-                    } else if (candidateLetters.size == 1 && incorrectSlot != null) {
-                        incorrectSlot.getTheFriend()
-                            ?.let {
-                                cellDirector.sendLetterHome(it)
-                                cellDirector.placeLetterInEmptyBox(
-                                    randomLetter, correctSlot,
-                                    isRewarded = true
-                                )
-                            }
-                    } else {
-                        cellDirector.placeLetterInEmptyBox(randomLetter, correctSlot, true)
-                    }
+                    Log.e(TAG,"Something went terribly wrong while trying to reward with letter. No letters available :(")
                 }
+
             }
             else -> {
                 Log.i(TAG, "No reward")
@@ -220,12 +218,10 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         }
     }
 
-    private fun loadingFragmentSwitcher()
-    {
+    private fun loadingFragmentSwitcher() {
         lifecycleScope.launchWhenResumed {
             gameViewModel.loadingState.collect {
-                if (it.state == LoadingState.LOADING)
-                {
+                if (it.state == LoadingState.LOADING) {
                     parentFragmentManager.commit {
                         setCustomAnimations(
                             R.anim.fade_in_short,
@@ -249,7 +245,6 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         _binding = b
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         createHintsBadge()
-        Log.i(TAG, "onCreateView")
         return b.root
     }
 
@@ -263,6 +258,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     // CLEAN
     override fun onResume() {
         super.onResume()
+        Log.i(TAG, "onResume")
         resetHintsBadge()
         loadingFragmentSwitcher()
     }
@@ -270,18 +266,20 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     // CLEAN
     override fun onPause() {
         super.onPause()
-        //findNavController(this).removeOnDestinationChangedListener { _, _, _ -> }
+        Log.i(TAG, "onPause")
+        findNavController(this).removeOnDestinationChangedListener { _, _, _ -> }
     }
 
     private fun observeViewModel(isBookMode: Boolean) {
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 launch {
                     gameViewModel.uiState.collect { uiState ->
                         if (gameState == GameState.LEVEL_COMPLETED) return@collect
                         when (uiState) {
                             is LevelEvent.Success -> {
                                 if (binding.gameplayFragment.childCount > 0) {
+                                    Log.i(TAG, "replaceFragmentWithSelf")
                                     replaceFragmentWithSelf()
                                 } else {
                                     loadLevel(uiState.currentLevel, isBookMode)
@@ -457,6 +455,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     // CLEAN
     private fun loadLevel(levelAndLettersInfo: Level, isBookMode: Boolean) {
         Log.i(TAG, "loadLevel")
+        cellDirector = CellDirector(this)
         val level = LevelFactory.getLevel(
             levelAndLettersInfo,
             requireContext(),
