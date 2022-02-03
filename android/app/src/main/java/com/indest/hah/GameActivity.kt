@@ -156,8 +156,6 @@ class GameActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         setUpNavController()
-        gameViewModel.changeState(LoadingState.LOADING)
-        gameViewModel.setReloadFromDatabase()
         signInSilently()
         billingInitialization()
         addSaveGameTimer()

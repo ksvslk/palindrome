@@ -9,6 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.commit
+import androidx.fragment.app.replace
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
@@ -19,6 +21,8 @@ import com.indest.hah.game.GameViewModel
 import com.indest.hah.persistance.LevelProgress
 import dagger.hilt.android.AndroidEntryPoint
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.indest.hah.R
+import com.indest.hah.util.C
 
 @AndroidEntryPoint
 class LevelSelectFragment : BottomSheetDialogFragment() {
@@ -51,8 +55,17 @@ class LevelSelectFragment : BottomSheetDialogFragment() {
                 lastUnlocked = last
                 binding.levelSelectRecyclerview.adapter = LevelItemAdapter(levels) {
                     it?.levelId?.let { nr ->
-                        parentFragmentManager.popBackStackImmediate()
+                        //parentFragmentManager.popBackStackImmediate()
                         gameViewModel.changeLevel(nr)
+                        parentFragmentManager.commit {
+                            setCustomAnimations(
+                                R.anim.slide_in_bottom,
+                                R.anim.slide_out_top
+                            )
+                            setReorderingAllowed(true)
+                            replace<GamePlayFragment>(R.id.fragments_container, tag = C.GAMEPLAY_FRAGMENT_TAG)
+                        }
+                        dismiss()
                     }
                 }
             }

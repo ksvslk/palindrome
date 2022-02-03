@@ -23,6 +23,10 @@ interface LevelDao {
     @Query("select *, max(time_modified) from level_info_table")
     fun getLastLevel(): Flow<Level>
 
+    @Transaction
+    @Query("select *, max(time_modified) from level_info_table")
+    suspend fun getLatestLevel(): Level
+
     @Query("insert into letter_info_table (owner_id, home_index, friend_index, letter, locked) values(:level, :homeIndex, :friendIndex, :letter, :locked)")
     suspend fun insertLetterData(
         level: Int,

@@ -211,7 +211,10 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                         }
                     }
                 } else {
-                    Log.e(TAG,"Something went terribly wrong while trying to reward with letter. No letters available :(")
+                    Log.e(
+                        TAG,
+                        "Something went terribly wrong while trying to reward with letter. No letters available :("
+                    )
                 }
 
             }
@@ -277,26 +280,14 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 launch {
-                    gameViewModel.uiState.collect { uiState ->
-                        if (gameState == GameState.LEVEL_COMPLETED) return@collect
-                        when (uiState) {
-                            is LevelEvent.Success -> {
-                                if (binding.gameplayFragment.childCount > 0) {
-                                    Log.i(TAG, "replaceFragmentWithSelf")
-                                    replaceFragmentWithSelf()
-                                } else {
-                                    loadLevel(uiState.currentLevel, isBookMode)
-                                }
-                                val levelCount = gameViewModel.levels.value?.size ?: 100
-                                (requireActivity() as GameActivity).binding.gameProgress.progress =
-                                    ((uiState.currentLevel.levelInfo.levelId.toFloat()
-                                        .div(levelCount)) * 100).toInt()
-                            }
-                            is LevelEvent.Error -> {
-                                Log.i(TAG, "Error getting level from gameViewModel")
-                            }
-                        }
+                    val lastLevel = gameViewModel.getLatestLevel()
+                    if (binding.gameplayFragment.childCount > 0) {
+                        cellDirector.restoreSlotPlacements(lastLevel)
+                        binding.gameplayFragment.refreshDrawableState()
+                    } else {
+                        loadLevel(lastLevel, isBookMode)
                     }
+
                 }
                 launch {
                     gameViewModel.userReward.collect { userRewardEvent ->
@@ -530,6 +521,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             (levelNumber * progressIndicatorWidth / levelsCount) - ln(levelNumber.toFloat()) * 15
         levelNrView.text = levelNumber.toString()
         levelNrView.x = progressX
+        (requireActivity() as GameActivity).binding.gameProgress.progress = (levelNumber.toFloat() / levelsCount.toFloat() * 100.0).toInt()
         showReviewOption(levelAndLettersInfo.levelInfo.levelId)
 
     }
@@ -808,6 +800,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         lifecycleScope.launch {
             gameViewModel.saveSnapshot(requireActivity(), binding.gameplayFragment.drawToBitmap())
         }
+        replaceFragmentWithSelf()
     }
 
     // CLEAN

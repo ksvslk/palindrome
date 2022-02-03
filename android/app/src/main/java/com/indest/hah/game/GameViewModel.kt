@@ -67,16 +67,9 @@ class GameViewModel @Inject constructor(
     val internetState: StateFlow<AppInternetState> = _internetState.asStateFlow()
 
     var windowSizeClassWidth: WindowSizeClass = WindowSizeClass.NOT_SET
-
     var skuDetailsList: List<SkuDetails>? = null
-    private var reloadLevelFromLocalDatabase: Boolean = false
 
-    fun setReloadFromDatabase()
-    {
-        reloadLevelFromLocalDatabase = true
-    }
-
-    fun changeState(newState: LoadingState) {
+    private fun changeState(newState: LoadingState) {
         _loadingState.value = AppLoadingState(state = newState)
     }
 
@@ -88,27 +81,23 @@ class GameViewModel @Inject constructor(
         _rewardedAdAvailable.value = boolean
     }
 
+    suspend fun getLatestLevel():Level
+    {
+        val latest = levelRepository.getLatestLevel()
+        _uiState.value = LevelEvent.Success(_uiState.value.currentLevel, latest)
+        return latest
+    }
+
     fun startGame() {
         viewModelScope.launch {
             levels.value = levelRepository.getAllLevels()
-            levelRepository.getLastLevel()
-                .collect { newLevel ->
-                    if (!reloadLevelFromLocalDatabase && newLevel.levelInfo.levelId != _uiState.value.currentLevel.levelInfo.levelId && newLevel.levelInfo.levelId != 0) {
-                        Log.i(TAG, "Starting game when level ids are different.")
-                        val oldLevel = _uiState.value.currentLevel
-                        _uiState.value = LevelEvent.Success(oldLevel, newLevel)
-                    }
-                    else if (reloadLevelFromLocalDatabase)
-                    {
-                        Log.i(TAG, "Starting game with reloading from DB.")
-                        reloadLevelFromLocalDatabase = false
-                        val oldLevel = _uiState.value.currentLevel
-                        _uiState.value = LevelEvent.Success(oldLevel, newLevel)
-                    }
-                }
         }
         changeState(LoadingState.READY)
+    }
 
+    suspend fun getLevelCount():Int
+    {
+        return levelRepository.getAllLevels().size
     }
 
     fun rewardUser(rewardType: RewardType) {
@@ -338,7 +327,11 @@ class GameViewModel @Inject constructor(
                     .build()
                 return snapshotsClient.commitAndClose(snapshot, metadataChange)
             } else if ((snapshot.metadata.progressValue == currentProgress.toLong())) {
-                if (snapshotGameModifiedTime < currentGameModifiedTime) {
+
+                val currentLockedLettersCount = allLevels.sumOf { it.lettersProperties.count { letter -> letter.locked }}
+                val snapshotLockedLettersCount = levelsList.sumOf{ it.lettersProperties.count { letter -> letter.locked }}
+
+                if ((currentLockedLettersCount > snapshotLockedLettersCount) || (snapshotGameModifiedTime < currentGameModifiedTime)) {
                     Log.i(TAG, "Current game was modified more recently. Updating snapshot.")
                     snapshot.snapshotContents.writeBytes(levelsData)
                     val metadataChange = SnapshotMetadataChange.Builder()
@@ -384,7 +377,7 @@ class GameViewModel @Inject constructor(
                                     if(updateLocalDatabase(snapshot, bytes))
                                     {
                                         Log.i(TAG, "Start game with game loaded from cloud.")
-                                        reloadLevelFromLocalDatabase = true
+                                        changeState(LoadingState.LOADING)
                                         startGame()
                                     }
                                     else {
@@ -405,17 +398,18 @@ class GameViewModel @Inject constructor(
 
     private suspend fun updateLocalDatabase(snapshot: Snapshot, bytes: ByteArray?): Boolean {
         val gson = Gson()
-        val allLevels = levelRepository.getAllLevels()
+        val allLevels = levelRepository.getSaveGameData()
         val levelsListType: Type = object : TypeToken<ArrayList<Level?>?>() {}.type
         val levelsList: List<Level>? = gson.fromJson(bytes?.decodeToString(), levelsListType)
 
         Log.i(TAG, "Trying to update local database if needed...")
 
         if (levelsList != null) {
-            val currentGameModifiedTime = allLevels.maxOf { it.timeModified }
+
+            val currentGameModifiedTime = allLevels.maxOf { it.levelInfo.timeModified }
             val snapshotGameModifiedTime = levelsList.maxOf { it.levelInfo.timeModified }
             val currentProgress =
-                (allLevels.findLast { it.progress > LevelProgress.TODO }?.levelId
+                (allLevels.findLast { it.levelInfo.progress > LevelProgress.TODO }?.levelInfo?.levelId
                     ?: 1)
 
             if ((snapshot.metadata.progressValue > currentProgress)) {
@@ -428,7 +422,10 @@ class GameViewModel @Inject constructor(
                 ).show()
                 return true
             } else if ((snapshot.metadata.progressValue == currentProgress.toLong())) {
-                if (snapshotGameModifiedTime > currentGameModifiedTime) {
+                val currentLockedLettersCount = allLevels.sumOf { it.lettersProperties.count { letter -> letter.locked }}
+                val snapshotLockedLettersCount = levelsList.sumOf{ it.lettersProperties.count { letter -> letter.locked }}
+
+                if ((snapshotLockedLettersCount > currentLockedLettersCount) || (snapshotGameModifiedTime > currentGameModifiedTime)) {
                     Log.i(TAG, "Snapshot was modified more recently. Updating local database.")
                     levelRepository.updateLevels(levelsList)
                     Toast.makeText(
@@ -448,9 +445,7 @@ sealed class LevelEvent {
     data class Success(
         val oldLevel: Level,
         val currentLevel: Level,
-        val cloudSave: Boolean = false
     ) : LevelEvent()
-
     data class Error(val exception: Throwable) : LevelEvent()
 }
 

@@ -36,6 +36,7 @@ class LevelRepository @Inject constructor(
     suspend fun updateScore(newScore: Int, level: Int) = levelDao.updateScore(newScore, level)
     suspend fun getTotalScore() = levelDao.getTotalScore()
     fun getLastLevel() = levelDao.getLastLevel()
+    suspend fun getLatestLevel() = levelDao.getLatestLevel()
 
     suspend fun insertLetterInfo(
         level: Int,
