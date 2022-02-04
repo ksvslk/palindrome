@@ -1,12 +1,15 @@
 package com.indest.hah.fragments
 
 import android.content.DialogInterface
+import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.appcompat.widget.AppCompatTextView
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
@@ -14,15 +17,19 @@ import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.android.billingclient.api.BillingFlowParams
+import com.google.android.gms.games.Game
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.GameActivity
 import com.indest.hah.R
 import com.indest.hah.databinding.HintsFragmentBinding
 import com.indest.hah.game.GameViewModel
 import com.indest.hah.game.LevelEvent
+import com.indest.hah.game.SkuDetailsWrapper
 import com.indest.hah.game.enums.RewardType
 import com.indest.hah.util.C.HINT_FRAGMENT_TAG
 import com.indest.hah.util.C.HINT_REQUEST_KEY
+import kotlinx.coroutines.flow.collect
 
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -57,42 +64,6 @@ class HintsFragment : BottomSheetDialogFragment() {
                 (requireActivity() as GameActivity).showRewardedVideo(RewardType.LETTER)
             }
         }
-        binding.instantCluesButton.setOnClickListener {
-            if (isAdded) {
-                (requireActivity() as GameActivity).showSavedGamesUI()
-            }
-            //Toast.makeText(requireContext().applicationContext, "All categories IAP.",Toast.LENGTH_LONG).show()
-        }
-        binding.fullNoAdsButton.setOnClickListener {
-            if (isAdded)
-            {
-            }
-            //Toast.makeText(requireContext().applicationContext, "All hints IAP.", Toast.LENGTH_LONG).show()
-        }
-
-        gameViewModel.skuDetailsList?.forEach {
-            val lastIndex = it.title.indexOf("(")
-            val title = if (lastIndex != -1) it.title.subSequence(0, lastIndex) else ""
-
-            when (it.sku) {
-                getString(R.string.remove_letter_ads) -> {
-                    if (lastIndex != -1) binding.instantLettersTitle.text = title
-                    binding.instantLettersSubtitle.text = it.price
-                }
-                getString(R.string.remove_clue_ads) -> {
-                    if (lastIndex != -1) binding.instantCluesTitle.text = title
-                    binding.instantCluesSubtitle.text = it.price
-                }
-                getString(R.string.remove_inbetween_ads) -> {
-                    if (lastIndex != -1) binding.removeIntermediateTitle.text = title
-                    binding.removeIntermediateSubtitle.text = it.price
-                }
-                getString(R.string.remove_all_ads) -> {
-                    if (lastIndex != -1) binding.fullNoAdsTitle.text = title
-                    binding.fullNoAdsSubtitle.text = it.price
-                }
-            }
-        }
 
         requireActivity().window.addFlags(
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
@@ -117,6 +88,65 @@ class HintsFragment : BottomSheetDialogFragment() {
                             is LevelEvent.Error -> {
                                 Log.i(TAG, "Error getting level from gameViewModel")
                             }
+                        }
+                    }
+                }
+
+                launch {
+                    gameViewModel.skuDetails.collect { skuDetailsWrapperList ->
+                        if (skuDetailsWrapperList.isNotEmpty()) {
+                            skuDetailsWrapperList.forEach {
+                                val lastIndex = it.skuDetails.title.indexOf("(")
+                                val title = if (lastIndex != -1) it.skuDetails.title.subSequence(
+                                    0,
+                                    lastIndex
+                                ) else ""
+
+                                when (it.skuDetails.sku) {
+                                    getString(R.string.remove_letter_ads_sku) -> {
+                                        setUpPurchaseButton(
+                                            titleTextView = binding.instantLettersTitle,
+                                            subtitleTextView = binding.instantLettersSubtitle,
+                                            button = binding.instantLettersButton,
+                                            skuDetailsWrapper = it,
+                                            lastIndex = lastIndex,
+                                            title = title
+                                        )
+                                    }
+                                    getString(R.string.remove_clue_ads_sku) -> {
+                                        setUpPurchaseButton(
+                                            titleTextView = binding.instantCluesTitle,
+                                            subtitleTextView = binding.instantCluesSubtitle,
+                                            button = binding.instantCluesButton,
+                                            skuDetailsWrapper = it,
+                                            lastIndex = lastIndex,
+                                            title = title
+                                        )
+                                    }
+                                    getString(R.string.remove_inbetween_ads_sku) -> {
+                                        setUpPurchaseButton(
+                                            titleTextView = binding.removeIntermediateTitle,
+                                            subtitleTextView = binding.removeIntermediateSubtitle,
+                                            button = binding.noIntermediateAdsButton,
+                                            skuDetailsWrapper = it,
+                                            lastIndex = lastIndex,
+                                            title = title
+                                        )
+                                    }
+                                    getString(R.string.remove_all_ads_sku) -> {
+                                        setUpPurchaseButton(
+                                            titleTextView = binding.fullNoAdsTitle,
+                                            subtitleTextView = binding.fullNoAdsSubtitle,
+                                            button = binding.fullNoAdsButton,
+                                            skuDetailsWrapper = it,
+                                            lastIndex = lastIndex,
+                                            title = title
+                                        )
+                                    }
+                                }
+                            }
+                        } else {
+                            hidePurchaseButtons()
                         }
                     }
                 }
@@ -161,6 +191,42 @@ class HintsFragment : BottomSheetDialogFragment() {
         }
 
         return b.root
+    }
+
+    private fun hidePurchaseButtons() {
+        listOf(
+            binding.instantCluesButton,
+            binding.instantLettersButton,
+            binding.noIntermediateAdsButton,
+            binding.fullNoAdsButton
+        ).forEach {
+            it.visibility = View.GONE
+        }
+    }
+
+    private fun setUpPurchaseButton(
+        titleTextView: AppCompatTextView,
+        subtitleTextView: AppCompatTextView,
+        button: LinearLayoutCompat,
+        skuDetailsWrapper: SkuDetailsWrapper,
+        lastIndex: Int,
+        title: CharSequence
+    ) {
+        if (skuDetailsWrapper.purchased) {
+            button.setOnClickListener(null)
+            button.visibility = View.GONE
+        } else {
+            if (lastIndex != -1) titleTextView.text = title
+            subtitleTextView.text = skuDetailsWrapper.skuDetails.price
+            button.setOnClickListener {
+                if (isAdded) {
+                    gameViewModel.launchPurchaseFlow(
+                        skuDetailsWrapper.skuDetails,
+                        requireActivity()
+                    )
+                }
+            }
+        }
     }
 
     override fun onDismiss(dialog: DialogInterface) {

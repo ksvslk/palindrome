@@ -2,13 +2,15 @@ package com.indest.hah.game
 
 import android.app.Activity
 import android.app.Application
+import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
-import com.android.billingclient.api.SkuDetails
+import com.android.billingclient.api.*
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.games.Games
 import com.google.android.gms.games.SnapshotsClient
@@ -20,6 +22,7 @@ import com.google.android.gms.games.snapshot.SnapshotMetadataChange
 import com.google.android.gms.tasks.Task
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.indest.hah.R
 import com.indest.hah.game.enums.*
 import com.indest.hah.letter.Cell
 import com.indest.hah.letter.Letter
@@ -36,6 +39,7 @@ import java.io.IOException
 import java.lang.reflect.Type
 import java.util.*
 import javax.inject.Inject
+import kotlin.collections.HashMap
 
 
 @HiltViewModel
@@ -66,8 +70,120 @@ class GameViewModel @Inject constructor(
     private val _internetState = MutableStateFlow(AppInternetState())
     val internetState: StateFlow<AppInternetState> = _internetState.asStateFlow()
 
+    private val _skuDetails = MutableStateFlow(listOf<SkuDetailsWrapper>())
+    val skuDetails: StateFlow<List<SkuDetailsWrapper>> = _skuDetails.asStateFlow()
+
     var windowSizeClassWidth: WindowSizeClass = WindowSizeClass.NOT_SET
-    var skuDetailsList: List<SkuDetails>? = null
+
+    private var billingClient: BillingClient? = null
+
+    private val purchasesUpdatedListener =
+        PurchasesUpdatedListener { billingResult, purchases ->
+            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && purchases != null) {
+                for (purchase in purchases) {
+                    Log.i(TAG, "Should handle purchase here.")
+                    //handlePurchase(purchase)
+                }
+            } else if (billingResult.responseCode == BillingClient.BillingResponseCode.USER_CANCELED) {
+                Log.i(TAG, "User cancelled the purchase flow.")
+            } else {
+                Log.i(TAG, "Billing flow failed with: ${billingResult.responseCode}")
+            }
+
+        }
+
+    init {
+        billingClient = BillingClient.newBuilder(application.applicationContext)
+            .setListener(purchasesUpdatedListener)
+            .enablePendingPurchases()
+            .build()
+        billingInitialization(application.applicationContext)
+    }
+
+    private fun billingInitialization(context: Context) {
+        Log.d(TAG, "Billing Initialization")
+        billingClient?.startConnection(object:
+            BillingClientStateListener {
+            override fun onBillingSetupFinished(billingResult: BillingResult) {
+                if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                    // The BillingClient is ready. You can query purchases here.
+                    viewModelScope.launch {
+                        querySkuDetails(context)
+                    }
+                }
+            }
+
+            override fun onBillingServiceDisconnected() {
+                Log.i(TAG, "onBillingServiceDisconnected")
+                billingInitialization(context)
+            }
+        })
+    }
+
+    suspend fun querySkuDetails(context: Context) {
+        val skuList = ArrayList<String>()
+        skuList.add(context.getString(R.string.remove_letter_ads_sku))
+        skuList.add(context.getString(R.string.remove_clue_ads_sku))
+        skuList.add(context.getString(R.string.remove_inbetween_ads_sku))
+        skuList.add(context.getString(R.string.remove_all_ads_sku))
+        val params = SkuDetailsParams.newBuilder()
+        params.setSkusList(skuList).setType(BillingClient.SkuType.INAPP)
+
+        // leverage querySkuDetails Kotlin extension function
+        val skuDetailsResult = withContext(Dispatchers.IO) {
+            billingClient?.querySkuDetails(params.build())
+        }
+        skuDetailsResult?.skuDetailsList?.map {
+            SkuDetailsWrapper(purchased = false, it)
+        }?.let {
+           setSkuDetails(
+                it
+            )
+        }
+    }
+
+    fun launchPurchaseFlow(skuDetails: SkuDetails, activity: Activity) {
+        val flowParams = BillingFlowParams.newBuilder()
+            .setSkuDetails(skuDetails)
+            .build()
+        val responseCode = billingClient?.launchBillingFlow(activity, flowParams)?.responseCode
+        Log.i(TAG, "Launch billing flow response code: $responseCode")
+    }
+
+    suspend fun handlePurchase(purchase: Purchase) {
+        // Purchase retrieved from BillingClient#queryPurchasesAsync or your PurchasesUpdatedListener.
+        when (purchase.purchaseState) {
+            Purchase.PurchaseState.PURCHASED -> {
+                if (!purchase.isAcknowledged) {
+                    val acknowledgePurchaseParams = AcknowledgePurchaseParams.newBuilder()
+                        .setPurchaseToken(purchase.purchaseToken)
+                    val ackPurchaseResult = withContext(Dispatchers.IO) {
+                        billingClient?.acknowledgePurchase(acknowledgePurchaseParams.build())
+                    }
+
+                }
+            }
+            Purchase.PurchaseState.PENDING -> {
+
+            }
+        }
+        // Verify the purchase.
+        // Ensure entitlement was not already granted for this purchaseToken.
+        // Grant entitlement to the user.
+
+        val consumeParams =
+            ConsumeParams.newBuilder()
+                .setPurchaseToken(purchase.purchaseToken)
+                .build()
+        val consumeResult = withContext(Dispatchers.IO) {
+            billingClient?.consumePurchase(consumeParams)
+        }
+    }
+
+    fun setSkuDetails(skuDetails: List<SkuDetailsWrapper>)
+    {
+        _skuDetails.value = skuDetails
+    }
 
     private fun changeState(newState: LoadingState) {
         _loadingState.value = AppLoadingState(state = newState)

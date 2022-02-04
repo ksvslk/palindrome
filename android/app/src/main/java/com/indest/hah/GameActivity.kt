@@ -41,8 +41,8 @@ import com.google.android.ump.ConsentRequestParameters
 import com.google.android.ump.UserMessagingPlatform
 import com.indest.hah.databinding.ActivityGameBinding
 import com.indest.hah.game.GameViewModel
+import com.indest.hah.game.SkuDetailsWrapper
 import com.indest.hah.game.enums.InternetState.*
-import com.indest.hah.game.enums.LoadingState
 import com.indest.hah.game.enums.RewardType
 import com.indest.hah.util.ConnectionLiveData
 import com.indest.hah.util.WindowSizeClass
@@ -69,11 +69,6 @@ class GameActivity : AppCompatActivity() {
     private var saveGameTimer: CountDownTimer? = null
     lateinit var consentInformation: ConsentInformation
     lateinit var consentForm: ConsentForm
-    private val purchasesUpdatedListener =
-        PurchasesUpdatedListener { billingResult, purchases ->
-            // To be implemented in a later section.
-
-        }
     private var billingClient: BillingClient? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,10 +78,12 @@ class GameActivity : AppCompatActivity() {
 
         val b = ActivityGameBinding.inflate(layoutInflater)
         _binding = b
+/*
         billingClient = BillingClient.newBuilder(applicationContext)
             .setListener(purchasesUpdatedListener)
             .enablePendingPurchases()
             .build()
+        billingInitialization()*/
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.container) { _, insets ->
             WindowInsetsCompat.Builder().setInsets(
@@ -133,8 +130,7 @@ class GameActivity : AppCompatActivity() {
         )
     }
 
-    private fun setUpNavController()
-    {
+    private fun setUpNavController() {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragments_container) as NavHostFragment
         val navController = navHostFragment.navController
@@ -145,7 +141,6 @@ class GameActivity : AppCompatActivity() {
     }
 
     override fun onPause() {
-        billingClient?.endConnection()
         adReloadTimer?.cancel()
         adReloadTimer = null
         saveGameTimer?.cancel()
@@ -157,7 +152,6 @@ class GameActivity : AppCompatActivity() {
         super.onResume()
         setUpNavController()
         signInSilently()
-        billingInitialization()
         addSaveGameTimer()
     }
 
@@ -179,31 +173,48 @@ class GameActivity : AppCompatActivity() {
         }.start()
     }
 
-    private fun billingInitialization() {
-        Log.d(TAG, "Billing Initialization")
-        billingClient?.startConnection(object : BillingClientStateListener {
-            override fun onBillingSetupFinished(billingResult: BillingResult) {
-                if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                    // The BillingClient is ready. You can query purchases here.
-                    lifecycleScope.launch {
-                        querySkuDetails()
-                    }
+    /*private val billingInitialiaztionCallback:BillingClientStateListener = object: BillingClientStateListener {
+        override fun onBillingSetupFinished(billingResult: BillingResult) {
+            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                // The BillingClient is ready. You can query purchases here.
+                lifecycleScope.launchWhenCreated {
+                    querySkuDetails()
                 }
             }
+        }
 
-            override fun onBillingServiceDisconnected() {
-                // Try to restart the connection on the next request to
-                // Google Play by calling the startConnection() method.
-            }
-        })
+        override fun onBillingServiceDisconnected() {
+            Log.i(TAG, "onBillingServiceDisconnected")
+            billingInitialization()
+        }
     }
+
+    private fun billingInitialization() {
+        Log.d(TAG, "Billing Initialization")
+        billingInitialiaztionCallback.let { billingClient?.startConnection(it) }
+    }
+
+    private val purchasesUpdatedListener =
+        PurchasesUpdatedListener { billingResult, purchases ->
+            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && purchases != null) {
+                for (purchase in purchases) {
+                    Log.i(TAG, "Should handle purchase here.")
+                    //handlePurchase(purchase)
+                }
+            } else if (billingResult.responseCode == BillingClient.BillingResponseCode.USER_CANCELED) {
+                Log.i(TAG, "User cancelled the purchase flow.")
+            } else {
+                Log.i(TAG, "Billing flow failed with: ${billingResult.responseCode}")
+            }
+
+        }
 
     suspend fun querySkuDetails() {
         val skuList = ArrayList<String>()
-        skuList.add(getString(R.string.remove_letter_ads))
-        skuList.add(getString(R.string.remove_clue_ads))
-        skuList.add(getString(R.string.remove_inbetween_ads))
-        skuList.add(getString(R.string.remove_all_ads))
+        skuList.add(getString(R.string.remove_letter_ads_sku))
+        skuList.add(getString(R.string.remove_clue_ads_sku))
+        skuList.add(getString(R.string.remove_inbetween_ads_sku))
+        skuList.add(getString(R.string.remove_all_ads_sku))
         val params = SkuDetailsParams.newBuilder()
         params.setSkusList(skuList).setType(BillingClient.SkuType.INAPP)
 
@@ -211,7 +222,21 @@ class GameActivity : AppCompatActivity() {
         val skuDetailsResult = withContext(Dispatchers.IO) {
             billingClient?.querySkuDetails(params.build())
         }
-        gameViewModel.skuDetailsList = skuDetailsResult?.skuDetailsList
+        skuDetailsResult?.skuDetailsList?.map {
+            SkuDetailsWrapper(purchased = false, it)
+        }?.let {
+            gameViewModel.setSkuDetails(
+                it
+            )
+        }
+    }
+
+    fun launchPurchaseFlow(skuDetails: SkuDetails) {
+        val flowParams = BillingFlowParams.newBuilder()
+            .setSkuDetails(skuDetails)
+            .build()
+        val responseCode = billingClient?.launchBillingFlow(this, flowParams)?.responseCode
+        Log.i(TAG, "Launch billing flow response code: $responseCode")
     }
 
     suspend fun handlePurchase(purchase: Purchase) {
@@ -242,7 +267,7 @@ class GameActivity : AppCompatActivity() {
         val consumeResult = withContext(Dispatchers.IO) {
             billingClient?.consumePurchase(consumeParams)
         }
-    }
+    }*/
 
     private fun requestConsentInformation() {
         // Set tag for underage of consent. false means users are not underage.
@@ -529,9 +554,11 @@ class GameActivity : AppCompatActivity() {
         }
     }
 
+
     override fun onDestroy() {
         _binding = null
-        billingClient?.endConnection()
+        //billingClient?.endConnection()
+        //billingClient = null
         adReloadTimer?.cancel()
         adReloadTimer = null
         saveGameTimer?.cancel()
