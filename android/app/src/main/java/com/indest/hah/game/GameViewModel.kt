@@ -83,6 +83,7 @@ class GameViewModel @Inject constructor(
                 for (purchase in purchases) {
                     Log.i(TAG, "Should handle purchase here.")
                     //handlePurchase(purchase)
+                    // TODO: give the goods
                 }
             } else if (billingResult.responseCode == BillingClient.BillingResponseCode.USER_CANCELED) {
                 Log.i(TAG, "User cancelled the purchase flow.")
@@ -136,9 +137,7 @@ class GameViewModel @Inject constructor(
         skuDetailsResult?.skuDetailsList?.map {
             SkuDetailsWrapper(purchased = false, it)
         }?.let {
-           setSkuDetails(
-                it
-            )
+            _skuDetails.value = it
         }
     }
 
@@ -178,11 +177,6 @@ class GameViewModel @Inject constructor(
         val consumeResult = withContext(Dispatchers.IO) {
             billingClient?.consumePurchase(consumeParams)
         }
-    }
-
-    fun setSkuDetails(skuDetails: List<SkuDetailsWrapper>)
-    {
-        _skuDetails.value = skuDetails
     }
 
     private fun changeState(newState: LoadingState) {

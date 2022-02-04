@@ -69,7 +69,6 @@ class GameActivity : AppCompatActivity() {
     private var saveGameTimer: CountDownTimer? = null
     lateinit var consentInformation: ConsentInformation
     lateinit var consentForm: ConsentForm
-    private var billingClient: BillingClient? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate")
@@ -78,12 +77,6 @@ class GameActivity : AppCompatActivity() {
 
         val b = ActivityGameBinding.inflate(layoutInflater)
         _binding = b
-/*
-        billingClient = BillingClient.newBuilder(applicationContext)
-            .setListener(purchasesUpdatedListener)
-            .enablePendingPurchases()
-            .build()
-        billingInitialization()*/
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.container) { _, insets ->
             WindowInsetsCompat.Builder().setInsets(
@@ -172,102 +165,6 @@ class GameActivity : AppCompatActivity() {
             }
         }.start()
     }
-
-    /*private val billingInitialiaztionCallback:BillingClientStateListener = object: BillingClientStateListener {
-        override fun onBillingSetupFinished(billingResult: BillingResult) {
-            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                // The BillingClient is ready. You can query purchases here.
-                lifecycleScope.launchWhenCreated {
-                    querySkuDetails()
-                }
-            }
-        }
-
-        override fun onBillingServiceDisconnected() {
-            Log.i(TAG, "onBillingServiceDisconnected")
-            billingInitialization()
-        }
-    }
-
-    private fun billingInitialization() {
-        Log.d(TAG, "Billing Initialization")
-        billingInitialiaztionCallback.let { billingClient?.startConnection(it) }
-    }
-
-    private val purchasesUpdatedListener =
-        PurchasesUpdatedListener { billingResult, purchases ->
-            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && purchases != null) {
-                for (purchase in purchases) {
-                    Log.i(TAG, "Should handle purchase here.")
-                    //handlePurchase(purchase)
-                }
-            } else if (billingResult.responseCode == BillingClient.BillingResponseCode.USER_CANCELED) {
-                Log.i(TAG, "User cancelled the purchase flow.")
-            } else {
-                Log.i(TAG, "Billing flow failed with: ${billingResult.responseCode}")
-            }
-
-        }
-
-    suspend fun querySkuDetails() {
-        val skuList = ArrayList<String>()
-        skuList.add(getString(R.string.remove_letter_ads_sku))
-        skuList.add(getString(R.string.remove_clue_ads_sku))
-        skuList.add(getString(R.string.remove_inbetween_ads_sku))
-        skuList.add(getString(R.string.remove_all_ads_sku))
-        val params = SkuDetailsParams.newBuilder()
-        params.setSkusList(skuList).setType(BillingClient.SkuType.INAPP)
-
-        // leverage querySkuDetails Kotlin extension function
-        val skuDetailsResult = withContext(Dispatchers.IO) {
-            billingClient?.querySkuDetails(params.build())
-        }
-        skuDetailsResult?.skuDetailsList?.map {
-            SkuDetailsWrapper(purchased = false, it)
-        }?.let {
-            gameViewModel.setSkuDetails(
-                it
-            )
-        }
-    }
-
-    fun launchPurchaseFlow(skuDetails: SkuDetails) {
-        val flowParams = BillingFlowParams.newBuilder()
-            .setSkuDetails(skuDetails)
-            .build()
-        val responseCode = billingClient?.launchBillingFlow(this, flowParams)?.responseCode
-        Log.i(TAG, "Launch billing flow response code: $responseCode")
-    }
-
-    suspend fun handlePurchase(purchase: Purchase) {
-        // Purchase retrieved from BillingClient#queryPurchasesAsync or your PurchasesUpdatedListener.
-        when (purchase.purchaseState) {
-            Purchase.PurchaseState.PURCHASED -> {
-                if (!purchase.isAcknowledged) {
-                    val acknowledgePurchaseParams = AcknowledgePurchaseParams.newBuilder()
-                        .setPurchaseToken(purchase.purchaseToken)
-                    val ackPurchaseResult = withContext(Dispatchers.IO) {
-                        billingClient?.acknowledgePurchase(acknowledgePurchaseParams.build())
-                    }
-
-                }
-            }
-            Purchase.PurchaseState.PENDING -> {
-
-            }
-        }
-        // Verify the purchase.
-        // Ensure entitlement was not already granted for this purchaseToken.
-        // Grant entitlement to the user.
-
-        val consumeParams =
-            ConsumeParams.newBuilder()
-                .setPurchaseToken(purchase.purchaseToken)
-                .build()
-        val consumeResult = withContext(Dispatchers.IO) {
-            billingClient?.consumePurchase(consumeParams)
-        }
-    }*/
 
     private fun requestConsentInformation() {
         // Set tag for underage of consent. false means users are not underage.
@@ -557,8 +454,6 @@ class GameActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         _binding = null
-        //billingClient?.endConnection()
-        //billingClient = null
         adReloadTimer?.cancel()
         adReloadTimer = null
         saveGameTimer?.cancel()
