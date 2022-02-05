@@ -85,8 +85,6 @@ dependencies {
     def ads_version = '20.5.0'
     def billing_version = '4.0.0'
 
-    implementation 'com.unity3d.ads:unity-ads:4.0.0'
-
     implementation "com.intuit.sdp:sdp-android:$sdp_version"
     implementation "com.intuit.ssp:ssp-android:$ssp_version"
     implementation "androidx.core:core-ktx:$androidx_core_version"

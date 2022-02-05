@@ -7,7 +7,6 @@ import android.content.res.Configuration
 import android.graphics.*
 import android.net.*
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.util.Log
 import android.view.View
 import android.view.WindowManager.LayoutParams.*
@@ -20,7 +19,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.drawToBitmap
 import androidx.core.view.forEach
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import androidx.window.layout.WindowMetricsCalculator
@@ -41,7 +42,6 @@ import com.google.android.ump.ConsentRequestParameters
 import com.google.android.ump.UserMessagingPlatform
 import com.indest.hah.databinding.ActivityGameBinding
 import com.indest.hah.game.GameViewModel
-import com.indest.hah.game.SkuDetailsWrapper
 import com.indest.hah.game.enums.InternetState.*
 import com.indest.hah.game.enums.RewardType
 import com.indest.hah.util.ConnectionLiveData
@@ -49,6 +49,7 @@ import com.indest.hah.util.WindowSizeClass
 import com.indest.hah.util.hideSystemBars
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collectLatest
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
@@ -65,8 +66,6 @@ class GameActivity : AppCompatActivity() {
     private val gameViewModel: GameViewModel by viewModels()
     private var _rewardedAd: RewardedAd? = null
     private var _rewardEarned = false
-    private var adReloadTimer: CountDownTimer? = null
-    private var saveGameTimer: CountDownTimer? = null
     lateinit var consentInformation: ConsentInformation
     lateinit var consentForm: ConsentForm
 
@@ -121,6 +120,10 @@ class GameActivity : AppCompatActivity() {
                 "1C8B057289566E4B36BA860D0A8281CB"
             )
         )
+
+        lifecycleScope.launchWhenStarted {
+
+        }
     }
 
     private fun setUpNavController() {
@@ -133,37 +136,11 @@ class GameActivity : AppCompatActivity() {
         bottomNavigationView.menu.forEach { it.isChecked = true }
     }
 
-    override fun onPause() {
-        adReloadTimer?.cancel()
-        adReloadTimer = null
-        saveGameTimer?.cancel()
-        saveGameTimer = null
-        super.onPause()
-    }
-
     override fun onResume() {
         super.onResume()
         setUpNavController()
         signInSilently()
-        addSaveGameTimer()
-    }
-
-    private fun addSaveGameTimer() {
-        saveGameTimer = object : CountDownTimer(180000, 1000) {
-            override fun onTick(millisUntilFinished: Long) {
-            }
-
-            override fun onFinish() {
-                lifecycleScope.launchWhenResumed {
-                    Log.d(TAG, "Saving game!")
-                    gameViewModel.saveSnapshot(
-                        this@GameActivity,
-                        binding.fragmentsContainer.drawToBitmap()
-                    )
-                    start()
-                }
-            }
-        }.start()
+        gameViewModel.queryPurchasesAsync()
     }
 
     private fun requestConsentInformation() {
@@ -227,6 +204,33 @@ class GameActivity : AppCompatActivity() {
         Log.i(TAG, "onWindowFocusChanged")
         super.onWindowFocusChanged(hasFocus)
         hideSystemBars(binding.root)
+    }
+
+    private fun startObservingSaveGameTimer() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                gameViewModel.saveGameTimer.collectLatest {
+                    if (it) {
+                        gameViewModel.saveSnapshot(
+                            this@GameActivity,
+                            binding.fragmentsContainer.drawToBitmap()
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private fun startObservingAdReloadTimer() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                gameViewModel.adReloadTimer.collectLatest {
+                    if (it) {
+                       loadRewardedAd()
+                    }
+                }
+            }
+        }
     }
 
     private fun startObservingNetworkStatus() {
@@ -355,6 +359,7 @@ class GameActivity : AppCompatActivity() {
 
     // CLEAN
     private fun loadRewardedAd() {
+        gameViewModel.setAdReloadTimer(false)
         if (_rewardedAd == null) {
             val adRequest = AdRequest.Builder().build()
             RewardedAd.load(
@@ -363,16 +368,7 @@ class GameActivity : AppCompatActivity() {
                     override fun onAdFailedToLoad(adError: LoadAdError) {
                         Log.d(TAG, adError.message)
                         gameViewModel.setRewardedAdAvailability(false)
-                        adReloadTimer = object : CountDownTimer(30000, 1000) {
-                            override fun onTick(millisUntilFinished: Long) {
-                            }
-
-                            override fun onFinish() {
-                                Log.i(TAG, "Trying to reload ad.")
-                                loadRewardedAd()
-                            }
-                        }.start()
-
+                        gameViewModel.startAdReloadTimer()
                     }
 
                     override fun onAdLoaded(rewardedAd: RewardedAd) {
@@ -406,6 +402,9 @@ class GameActivity : AppCompatActivity() {
                                 RewardType.LETTER -> {
                                     gameViewModel.rewardUser(rewardedType)
                                 }
+                                else -> {
+                                    Log.i(TAG, "Reward type does not match available ones.")
+                                }
                             }
                         }
                     }
@@ -432,6 +431,7 @@ class GameActivity : AppCompatActivity() {
     }
 
     private val RC_SAVED_GAMES = 9009
+
     fun showSavedGamesUI() {
         val snapshotsClient = Games.getSnapshotsClient(
             applicationContext,
@@ -451,13 +451,8 @@ class GameActivity : AppCompatActivity() {
         }
     }
 
-
     override fun onDestroy() {
         _binding = null
-        adReloadTimer?.cancel()
-        adReloadTimer = null
-        saveGameTimer?.cancel()
-        saveGameTimer = null
         super.onDestroy()
     }
 

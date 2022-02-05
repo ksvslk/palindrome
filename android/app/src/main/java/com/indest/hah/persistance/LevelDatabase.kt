@@ -7,9 +7,11 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.google.gson.Gson
 import com.indest.hah.persistance.dto.LetterProperties
 import com.indest.hah.persistance.dto.LevelData
+import com.indest.hah.persistance.dto.Sku
+import java.util.ArrayList
 
 @Database(
-    entities = [LevelData::class, LetterProperties::class],
+    entities = [LevelData::class, LetterProperties::class, Sku::class],
     version = 1,
     exportSchema = true
 )
@@ -77,9 +79,22 @@ abstract class LevelDatabase : RoomDatabase() {
                                         contentValues
                                     )
                                 }
-                              /*  val contentValues = ContentValues()
-                                contentValues.put("last_modified_timestamp", 0)
-                                db.insert("meta_data", OnConflictStrategy.IGNORE, contentValues)*/
+                                val skuList = ArrayList<String>()
+                                skuList.add(context.getString(com.indest.hah.R.string.remove_letter_ads))
+                                skuList.add(context.getString(com.indest.hah.R.string.remove_clue_ads))
+                                skuList.add(context.getString(com.indest.hah.R.string.remove_inbetween_ads))
+                                skuList.add(context.getString(com.indest.hah.R.string.remove_all_ads))
+
+                                skuList.forEach {
+                                    val skuValue = ContentValues()
+                                    skuValue.put("sku", it)
+                                    skuValue.put("purchased", false)
+                                    db.insert(
+                                        "sku",
+                                        OnConflictStrategy.IGNORE,
+                                        skuValue
+                                    )
+                                }
                             }
                         })
                         .build()

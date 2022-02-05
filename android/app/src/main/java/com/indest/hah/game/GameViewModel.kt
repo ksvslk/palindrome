@@ -4,8 +4,11 @@ import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.os.CountDownTimer
 import android.util.Log
 import android.widget.Toast
+import androidx.core.view.drawToBitmap
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
@@ -30,6 +33,7 @@ import com.indest.hah.persistance.LevelProgress
 import com.indest.hah.persistance.LevelRepository
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
+import com.indest.hah.persistance.dto.Sku
 import com.indest.hah.util.C
 import com.indest.hah.util.WindowSizeClass
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,7 +43,6 @@ import java.io.IOException
 import java.lang.reflect.Type
 import java.util.*
 import javax.inject.Inject
-import kotlin.collections.HashMap
 
 
 @HiltViewModel
@@ -51,44 +54,89 @@ class GameViewModel @Inject constructor(
 
     private val TAG = "GameViewModel"
 
+    private var currentLevel = Level()
     val levels = MutableLiveData<List<LevelData>>()
     val totalScore = MutableLiveData<Int>()
     val realSolutionAndGuess = MutableLiveData<Triple<String?, String?, Int?>>()
-
-    private val _uiState = MutableStateFlow(LevelEvent.Success(Level(), Level()))
-    val uiState: StateFlow<LevelEvent> = _uiState
+    var windowSizeClassWidth: WindowSizeClass = WindowSizeClass.NOT_SET
+    private var billingClient: BillingClient? = null
 
     private val _rewardedAdAvailable = MutableStateFlow(false)
     val rewardedAdAvailable: StateFlow<Boolean> = _rewardedAdAvailable.asStateFlow()
-
     private val _userReward = MutableStateFlow(UserRewardEvent.Success())
     val userReward: StateFlow<UserRewardEvent> = _userReward
-
     private val _loadingState = MutableStateFlow(AppLoadingState())
     val loadingState: StateFlow<AppLoadingState> = _loadingState.asStateFlow()
-
     private val _internetState = MutableStateFlow(AppInternetState())
     val internetState: StateFlow<AppInternetState> = _internetState.asStateFlow()
-
     private val _skuDetails = MutableStateFlow(listOf<SkuDetailsWrapper>())
     val skuDetails: StateFlow<List<SkuDetailsWrapper>> = _skuDetails.asStateFlow()
 
-    var windowSizeClassWidth: WindowSizeClass = WindowSizeClass.NOT_SET
+    private val _adReloadTimer = MutableStateFlow(false)
+    val adReloadTimer: StateFlow<Boolean> = _adReloadTimer.asStateFlow()
+    private val _saveGameTimer = MutableStateFlow(false)
+    val saveGameTimer: StateFlow<Boolean> = _adReloadTimer.asStateFlow()
 
-    private var billingClient: BillingClient? = null
+    private fun startSaveGameTimer() {
+        object : CountDownTimer(180000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {}
+            override fun onFinish() {
+                Log.i(TAG, "Save game timer completed.")
+                _saveGameTimer.value = true
+                startSaveGameTimer()
+            }
+        }.start()
+    }
+
+    fun startAdReloadTimer() {
+        object : CountDownTimer(30000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {}
+            override fun onFinish() {
+                Log.i(TAG, "Ad reload timer completed.")
+                _adReloadTimer.value = true
+            }
+        }.start()
+    }
+
+    fun setAdReloadTimer(value: Boolean)
+    {
+        _adReloadTimer.value = value
+    }
 
     private val purchasesUpdatedListener =
         PurchasesUpdatedListener { billingResult, purchases ->
             if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && purchases != null) {
-                for (purchase in purchases) {
-                    Log.i(TAG, "Should handle purchase here.")
-                    //handlePurchase(purchase)
-                    // TODO: give the goods
+                viewModelScope.launch {
+                    for (purchase in purchases) {
+                        Log.i(TAG, "Should handle purchase here.")
+                        handlePurchase(purchase)
+                    }
                 }
             } else if (billingResult.responseCode == BillingClient.BillingResponseCode.USER_CANCELED) {
                 Log.i(TAG, "User cancelled the purchase flow.")
             } else {
                 Log.i(TAG, "Billing flow failed with: ${billingResult.responseCode}")
+            }
+
+        }
+
+    private val purchaseResponseListener =
+        PurchasesResponseListener { billingResult, purchases ->
+            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && purchases.isNotEmpty()) {
+                viewModelScope.launch {
+                    for (purchase in purchases) {
+                        Log.i(
+                            TAG,
+                            "Handle purchases from PurchasesResponseListener: ${purchase.skus.first()} - ${purchase.purchaseState}"
+                        )
+                        handlePurchase(purchase)
+                    }
+                }
+            } else {
+                Log.i(
+                    TAG,
+                    "purchaseResponseListener failed with: ${billingResult.responseCode}. Purchases: $purchases"
+                )
             }
 
         }
@@ -99,17 +147,19 @@ class GameViewModel @Inject constructor(
             .enablePendingPurchases()
             .build()
         billingInitialization(application.applicationContext)
+        startSaveGameTimer()
     }
 
     private fun billingInitialization(context: Context) {
         Log.d(TAG, "Billing Initialization")
-        billingClient?.startConnection(object:
+        billingClient?.startConnection(object :
             BillingClientStateListener {
             override fun onBillingSetupFinished(billingResult: BillingResult) {
                 if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
                     // The BillingClient is ready. You can query purchases here.
                     viewModelScope.launch {
-                        querySkuDetails(context)
+                        querySkuDetails()
+                        queryPurchasesAsync()
                     }
                 }
             }
@@ -121,12 +171,9 @@ class GameViewModel @Inject constructor(
         })
     }
 
-    suspend fun querySkuDetails(context: Context) {
-        val skuList = ArrayList<String>()
-        skuList.add(context.getString(R.string.remove_letter_ads_sku))
-        skuList.add(context.getString(R.string.remove_clue_ads_sku))
-        skuList.add(context.getString(R.string.remove_inbetween_ads_sku))
-        skuList.add(context.getString(R.string.remove_all_ads_sku))
+
+    suspend fun querySkuDetails() {
+        val skuList = levelRepository.getAllSkus().map { it.sku }
         val params = SkuDetailsParams.newBuilder()
         params.setSkusList(skuList).setType(BillingClient.SkuType.INAPP)
 
@@ -134,11 +181,17 @@ class GameViewModel @Inject constructor(
         val skuDetailsResult = withContext(Dispatchers.IO) {
             billingClient?.querySkuDetails(params.build())
         }
-        skuDetailsResult?.skuDetailsList?.map {
-            SkuDetailsWrapper(purchased = false, it)
-        }?.let {
-            _skuDetails.value = it
+        if (skuDetailsResult?.billingResult?.responseCode == BillingClient.BillingResponseCode.OK) {
+            skuDetailsResult.skuDetailsList?.map {
+                SkuDetailsWrapper(purchased = false, it)
+            }?.let {
+                _skuDetails.value = it
+            }
         }
+    }
+
+    fun queryPurchasesAsync() {
+        billingClient?.queryPurchasesAsync(BillingClient.SkuType.INAPP, purchaseResponseListener)
     }
 
     fun launchPurchaseFlow(skuDetails: SkuDetails, activity: Activity) {
@@ -149,34 +202,54 @@ class GameViewModel @Inject constructor(
         Log.i(TAG, "Launch billing flow response code: $responseCode")
     }
 
-    suspend fun handlePurchase(purchase: Purchase) {
+    private suspend fun handlePurchase(purchase: Purchase) {
         // Purchase retrieved from BillingClient#queryPurchasesAsync or your PurchasesUpdatedListener.
         when (purchase.purchaseState) {
             Purchase.PurchaseState.PURCHASED -> {
+                Log.i(TAG, "Purchased: ${purchase.skus.first()}")
                 if (!purchase.isAcknowledged) {
                     val acknowledgePurchaseParams = AcknowledgePurchaseParams.newBuilder()
                         .setPurchaseToken(purchase.purchaseToken)
                     val ackPurchaseResult = withContext(Dispatchers.IO) {
                         billingClient?.acknowledgePurchase(acknowledgePurchaseParams.build())
                     }
-
+                    if (ackPurchaseResult?.responseCode == BillingClient.BillingResponseCode.OK
+                    ) {
+                        levelRepository.grantSkuEntitlements(purchase.skus.first())
+                        _skuDetails.value = skuDetails.value.map {
+                            if (it.skuDetails.sku == purchase.skus.first()) {
+                                it.copy(purchased = true)
+                            } else {
+                                it.copy()
+                            }
+                        }
+                    }
+                } else {
+                    levelRepository.grantSkuEntitlements(purchase.skus.first())
+                    _skuDetails.value = skuDetails.value.map {
+                        if (it.skuDetails.sku == purchase.skus.first()) {
+                            it.copy(purchased = true)
+                        } else {
+                            it.copy()
+                        }
+                    }
                 }
             }
             Purchase.PurchaseState.PENDING -> {
 
             }
+            else -> {
+                levelRepository.removeSkuEntitlements(purchase.skus.first())
+                _skuDetails.value = skuDetails.value.map {
+                    if (it.skuDetails.sku == purchase.skus.first()) {
+                        it.copy(purchased = false)
+                    } else {
+                        it.copy()
+                    }
+                }
+            }
         }
-        // Verify the purchase.
-        // Ensure entitlement was not already granted for this purchaseToken.
-        // Grant entitlement to the user.
 
-        val consumeParams =
-            ConsumeParams.newBuilder()
-                .setPurchaseToken(purchase.purchaseToken)
-                .build()
-        val consumeResult = withContext(Dispatchers.IO) {
-            billingClient?.consumePurchase(consumeParams)
-        }
     }
 
     private fun changeState(newState: LoadingState) {
@@ -191,11 +264,9 @@ class GameViewModel @Inject constructor(
         _rewardedAdAvailable.value = boolean
     }
 
-    suspend fun getLatestLevel():Level
-    {
-        val latest = levelRepository.getLatestLevel()
-        _uiState.value = LevelEvent.Success(_uiState.value.currentLevel, latest)
-        return latest
+    suspend fun getLatestLevel(): Level {
+        currentLevel = levelRepository.getLatestLevel()
+        return currentLevel
     }
 
     fun startGame() {
@@ -205,8 +276,7 @@ class GameViewModel @Inject constructor(
         changeState(LoadingState.READY)
     }
 
-    suspend fun getLevelCount():Int
-    {
+    suspend fun getLevelCount(): Int {
         return levelRepository.getAllLevels().size
     }
 
@@ -223,26 +293,26 @@ class GameViewModel @Inject constructor(
     fun changeLevel(nr: Int) {
         viewModelScope.launch {
             levelRepository.updateNextLevelTimestamp(
-                _uiState.value.currentLevel.levelInfo.levelId,
+                currentLevel.levelInfo.levelId,
                 nr
             )
         }
     }
 
     fun getLevelNumber(): Int {
-        return _uiState.value.currentLevel.levelInfo.levelId
+        return currentLevel.levelInfo.levelId
     }
 
     fun increaseMistakes() {
         viewModelScope.launch {
-            val newScore = if (_uiState.value.currentLevel.levelInfo.score - 2 < 0) {
+            val newScore = if (currentLevel.levelInfo.score - 2 < 0) {
                 0
             } else {
-                _uiState.value.currentLevel.levelInfo.score - 2
+                currentLevel.levelInfo.score - 2
             }
             levelRepository.updateScore(
                 newScore,
-                _uiState.value.currentLevel.levelInfo.levelId
+                currentLevel.levelInfo.levelId
             )
         }
     }
@@ -255,34 +325,34 @@ class GameViewModel @Inject constructor(
 
     fun unlockNextLevel() {
         viewModelScope.launch {
-            levelRepository.resetLevelLettersInfo(_uiState.value.currentLevel.levelInfo.levelId)
-            levelRepository.unlockNextLevel(_uiState.value.currentLevel.levelInfo.levelId)
+            levelRepository.resetLevelLettersInfo(currentLevel.levelInfo.levelId)
+            levelRepository.unlockNextLevel(currentLevel.levelInfo.levelId)
             updateLevelProgress(LevelProgress.REPLAY)
         }
     }
 
     private suspend fun updateLevelProgress(progress: LevelProgress) {
-        val updatedLevel = _uiState.value.currentLevel.levelInfo.copy(
+        val updatedLevel = currentLevel.levelInfo.copy(
             progress = progress,
-            puzzle = _uiState.value.currentLevel.levelInfo.puzzle,
-            score = _uiState.value.currentLevel.levelInfo.score
+            puzzle = currentLevel.levelInfo.puzzle,
+            score = currentLevel.levelInfo.score
         )
         levelRepository.updateLevelAndBestScore(
             updatedLevel,
-            _uiState.value.currentLevel.levelInfo.score
+            currentLevel.levelInfo.score
         )
         totalScore.value = levelRepository.getTotalScore()
     }
 
     fun getCurrentAndMaxScore(): Pair<Int, Int> {
         return Pair(
-            _uiState.value.currentLevel.levelInfo.score,
-            _uiState.value.currentLevel.levelInfo.levelId * 100
+           currentLevel.levelInfo.score,
+           currentLevel.levelInfo.levelId * 100
         )
     }
 
     fun isLastLevel(): Boolean {
-        return _uiState.value.currentLevel.levelInfo.levelId == levels.value?.size
+        return currentLevel.levelInfo.levelId == levels.value?.size
     }
 
     fun updateLetters(topIndex: Int, bottomLetter: Char, bottomIndex: Int, topLetter: Char) {
@@ -291,17 +361,17 @@ class GameViewModel @Inject constructor(
             levelRepository.updateLetter(
                 homeIndex = topIndex,
                 letter = bottomLetter,
-                level = _uiState.value.currentLevel.levelInfo.levelId
+                level = currentLevel.levelInfo.levelId
             )
             levelRepository.updateLetter(
                 homeIndex = bottomIndex,
                 letter = topLetter,
-                level = _uiState.value.currentLevel.levelInfo.levelId
+                level = currentLevel.levelInfo.levelId
             )
 
             realSolutionAndGuess.value = Triple(
-                _uiState.value.currentLevel.levelInfo.solution.replace(" ", ""),
-                levelRepository.currentSolution(_uiState.value.currentLevel.levelInfo.levelId),
+               currentLevel.levelInfo.solution.replace(" ", ""),
+                levelRepository.currentSolution(currentLevel.levelInfo.levelId),
                 topIndex
             )
         }
@@ -313,11 +383,11 @@ class GameViewModel @Inject constructor(
             levelRepository.updateFriendIndex(
                 homeIndex = index,
                 newFriendIndex = newIndex,
-                level = _uiState.value.currentLevel.levelInfo.levelId
+                level = currentLevel.levelInfo.levelId
             )
             realSolutionAndGuess.value = Triple(
-                _uiState.value.currentLevel.levelInfo.solution.replace(" ", ""),
-                levelRepository.currentSolution(_uiState.value.currentLevel.levelInfo.levelId),
+               currentLevel.levelInfo.solution.replace(" ", ""),
+                levelRepository.currentSolution(currentLevel.levelInfo.levelId),
                 index
             )
         }
@@ -328,7 +398,7 @@ class GameViewModel @Inject constructor(
         viewModelScope.launch {
             levelRepository.setLetterLocked(
                 homeIndex = index,
-                level = _uiState.value.currentLevel.levelInfo.levelId
+                level = currentLevel.levelInfo.levelId
             )
         }
     }
@@ -336,22 +406,22 @@ class GameViewModel @Inject constructor(
     fun persistInitialLettersInfo(cells: MutableList<Cell<*, *>>) {
         viewModelScope.launch {
             val isAlreadyInitialized =
-                levelRepository.isLettersInitialized(_uiState.value.currentLevel.levelInfo.levelId)
+                levelRepository.isLettersInitialized(currentLevel.levelInfo.levelId)
             if (!isAlreadyInitialized) {
                 Log.i(TAG, "initial letters persist")
                 cells.filterIsInstance<Letter>().forEachIndexed { _, it ->
                     levelRepository.insertLetterInfo(
-                        level = _uiState.value.currentLevel.levelInfo.levelId,
+                        level = currentLevel.levelInfo.levelId,
                         homeIndex = it.homeIndex,
                         friendIndex = it.friendIndex,
                         letter = it.text.first(),
                         locked = false,
                     )
                 }
-                val updatedLevel = _uiState.value.currentLevel.levelInfo.copy(
+                val updatedLevel = currentLevel.levelInfo.copy(
                     progress = LevelProgress.IN_PROGRESS,
-                    puzzle = _uiState.value.currentLevel.levelInfo.puzzle,
-                    score = _uiState.value.currentLevel.levelInfo.levelId * 100
+                    puzzle = currentLevel.levelInfo.puzzle,
+                    score = currentLevel.levelInfo.levelId * 100
                 )
                 levelRepository.updateLevel(updatedLevel)
                 levels.value = levelRepository.getAllLevels()
@@ -363,16 +433,21 @@ class GameViewModel @Inject constructor(
         viewModelScope.launch {
             levelRepository.updateCategoryRewarded(
                 value,
-                _uiState.value.currentLevel.levelInfo.levelId
+                currentLevel.levelInfo.levelId
             )
         }
     }
 
-    fun isCategoryRewarded(): Boolean {
-        return _uiState.value.currentLevel.levelInfo.categoryRewarded
+    fun getHint(): String {
+        return currentLevel.levelInfo.category
+    }
+
+    suspend fun isCategoryRewarded(): Boolean {
+        return levelRepository.isCategoryRewarded(currentLevel.levelInfo.levelId)
     }
 
     suspend fun saveSnapshot(activity: Activity, coverImage: Bitmap) {
+        _saveGameTimer.value = false
         GoogleSignIn.getLastSignedInAccount(activity.applicationContext)?.let { signInAccount ->
             val snapshotsClient = Games.getSnapshotsClient(
                 activity,
@@ -438,8 +513,10 @@ class GameViewModel @Inject constructor(
                 return snapshotsClient.commitAndClose(snapshot, metadataChange)
             } else if ((snapshot.metadata.progressValue == currentProgress.toLong())) {
 
-                val currentLockedLettersCount = allLevels.sumOf { it.lettersProperties.count { letter -> letter.locked }}
-                val snapshotLockedLettersCount = levelsList.sumOf{ it.lettersProperties.count { letter -> letter.locked }}
+                val currentLockedLettersCount =
+                    allLevels.sumOf { it.lettersProperties.count { letter -> letter.locked } }
+                val snapshotLockedLettersCount =
+                    levelsList.sumOf { it.lettersProperties.count { letter -> letter.locked } }
 
                 if ((currentLockedLettersCount > snapshotLockedLettersCount) || (snapshotGameModifiedTime < currentGameModifiedTime)) {
                     Log.i(TAG, "Current game was modified more recently. Updating snapshot.")
@@ -453,9 +530,7 @@ class GameViewModel @Inject constructor(
                 }
             }
 
-        }
-        else if(snapshot.metadata.progressValue == PROGRESS_VALUE_UNKNOWN)
-        {
+        } else if (snapshot.metadata.progressValue == PROGRESS_VALUE_UNKNOWN) {
             Log.i(TAG, "Current progress is greater. First time snapshot upload.")
             snapshot.snapshotContents.writeBytes(levelsData)
             val metadataChange = SnapshotMetadataChange.Builder()
@@ -484,13 +559,11 @@ class GameViewModel @Inject constructor(
                             try {
                                 val bytes = snapshot.snapshotContents.readFully()
                                 viewModelScope.launch {
-                                    if(updateLocalDatabase(snapshot, bytes))
-                                    {
+                                    if (updateLocalDatabase(snapshot, bytes)) {
                                         Log.i(TAG, "Start game with game loaded from cloud.")
                                         changeState(LoadingState.LOADING)
                                         startGame()
-                                    }
-                                    else {
+                                    } else {
                                         Log.i(TAG, "Start game normally.")
                                         startGame()
                                     }
@@ -532,8 +605,10 @@ class GameViewModel @Inject constructor(
                 ).show()
                 return true
             } else if ((snapshot.metadata.progressValue == currentProgress.toLong())) {
-                val currentLockedLettersCount = allLevels.sumOf { it.lettersProperties.count { letter -> letter.locked }}
-                val snapshotLockedLettersCount = levelsList.sumOf{ it.lettersProperties.count { letter -> letter.locked }}
+                val currentLockedLettersCount =
+                    allLevels.sumOf { it.lettersProperties.count { letter -> letter.locked } }
+                val snapshotLockedLettersCount =
+                    levelsList.sumOf { it.lettersProperties.count { letter -> letter.locked } }
 
                 if ((snapshotLockedLettersCount > currentLockedLettersCount) || (snapshotGameModifiedTime > currentGameModifiedTime)) {
                     Log.i(TAG, "Snapshot was modified more recently. Updating local database.")
@@ -551,19 +626,11 @@ class GameViewModel @Inject constructor(
     }
 }
 
-sealed class LevelEvent {
-    data class Success(
-        val oldLevel: Level,
-        val currentLevel: Level,
-    ) : LevelEvent()
-    data class Error(val exception: Throwable) : LevelEvent()
-}
 
 sealed class UserRewardEvent {
     data class Success(
         val rewardType: RewardType = RewardType.NONE,
-        val rewardEarned: Boolean = false,
-        val doubleCheck: Boolean = false
+        val rewardEarned: Boolean = false
     ) : UserRewardEvent()
 
     data class Error(val exception: Throwable) : UserRewardEvent()

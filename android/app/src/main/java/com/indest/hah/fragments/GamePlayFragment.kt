@@ -158,68 +158,70 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     }
 
     private fun rewardUser(hintType: RewardType) {
-        when (hintType) {
-            RewardType.HINT -> {
-                gameViewModel.setCategoryRewarded(true)
-            }
-            RewardType.LETTER -> {
-                gameState = GameState.REWARDING
-                val candidateLetters = cellDirector.cells
-                    .filterIsInstance<Letter>()
-                    .filter { !it.hasFriend() }
+        if (gameState == GameState.READY) {
+            when (hintType) {
+                RewardType.HINT -> {
+                    gameViewModel.setCategoryRewarded(true)
+                }
+                RewardType.LETTER -> {
+                    gameState = GameState.REWARDING
+                    val candidateLetters = cellDirector.cells
+                        .filterIsInstance<Letter>()
+                        .filter { !it.hasFriend() }
 
-                if (candidateLetters.isNotEmpty()) {
-                    val randomLetter = candidateLetters.random()
-                    val correctSlot = cellDirector.cells.filterIsInstance<Slot>().first {
-                        (it.realChar == randomLetter.text.first() && !it.hasFriend()) ||
-                                (it.realChar == randomLetter.text.first() &&
-                                        it.hasFriend() &&
-                                        it.getTheFriend()?.text?.first() != it.realChar)
-                    }
-                    val incorrectSlot =
-                        cellDirector.cells.filterIsInstance<Slot>().firstOrNull {
-                            it.hasFriend() &&
-                                    it.getTheFriend()?.text?.first() != it.realChar
+                    if (candidateLetters.isNotEmpty()) {
+                        val randomLetter = candidateLetters.random()
+                        val correctSlot = cellDirector.cells.filterIsInstance<Slot>().first {
+                            (it.realChar == randomLetter.text.first() && !it.hasFriend()) ||
+                                    (it.realChar == randomLetter.text.first() &&
+                                            it.hasFriend() &&
+                                            it.getTheFriend()?.text?.first() != it.realChar)
                         }
-                    randomLetter.isLocked = true
-                    randomLetter.z = C.TOP_LAYER
-                    if (correctSlot.hasFriend()) {
-                        correctSlot.friend?.let {
-                            cellDirector.switchLetterPositions(
-                                randomLetter,
-                                it, true
-                            )
+                        val incorrectSlot =
+                            cellDirector.cells.filterIsInstance<Slot>().firstOrNull {
+                                it.hasFriend() &&
+                                        it.getTheFriend()?.text?.first() != it.realChar
+                            }
+                        randomLetter.isLocked = true
+                        randomLetter.z = C.TOP_LAYER
+                        if (correctSlot.hasFriend()) {
+                            correctSlot.friend?.let {
+                                cellDirector.switchLetterPositions(
+                                    randomLetter,
+                                    it, true
+                                )
+                            }
+                        } else {
+                            if (candidateLetters.size == 1 && incorrectSlot == null) { // Last letter to be placed in the slot
+                                cellDirector.placeLetterInEmptyBox(
+                                    randomLetter, correctSlot,
+                                    isRewarded = true,
+                                    isLastRewardedLetter = true
+                                )
+                            } else if (candidateLetters.size == 1 && incorrectSlot != null) {
+                                incorrectSlot.getTheFriend()
+                                    ?.let {
+                                        cellDirector.sendLetterHome(it)
+                                        cellDirector.placeLetterInEmptyBox(
+                                            randomLetter, correctSlot,
+                                            isRewarded = true
+                                        )
+                                    }
+                            } else {
+                                cellDirector.placeLetterInEmptyBox(randomLetter, correctSlot, true)
+                            }
                         }
                     } else {
-                        if (candidateLetters.size == 1 && incorrectSlot == null) { // Last letter to be placed in the slot
-                            cellDirector.placeLetterInEmptyBox(
-                                randomLetter, correctSlot,
-                                isRewarded = true,
-                                isLastRewardedLetter = true
-                            )
-                        } else if (candidateLetters.size == 1 && incorrectSlot != null) {
-                            incorrectSlot.getTheFriend()
-                                ?.let {
-                                    cellDirector.sendLetterHome(it)
-                                    cellDirector.placeLetterInEmptyBox(
-                                        randomLetter, correctSlot,
-                                        isRewarded = true
-                                    )
-                                }
-                        } else {
-                            cellDirector.placeLetterInEmptyBox(randomLetter, correctSlot, true)
-                        }
+                        Log.e(
+                            TAG,
+                            "Something went terribly wrong while trying to reward with letter. No letters available :("
+                        )
                     }
-                } else {
-                    Log.e(
-                        TAG,
-                        "Something went terribly wrong while trying to reward with letter. No letters available :("
-                    )
-                }
 
-            }
-            else -> {
-                Log.i(TAG, "No reward")
+                }
+                else -> {
+                    Log.i(TAG, "No reward")
+                }
             }
         }
     }
@@ -293,6 +295,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                     gameViewModel.userReward.collect { userRewardEvent ->
                         when (userRewardEvent) {
                             is UserRewardEvent.Success -> {
+                                Log.i(TAG, "UserRewardEvent.Success")
                                 if (userRewardEvent.rewardEarned) {
                                     gameViewModel.resetRewardingUser()
                                     rewardUser(userRewardEvent.rewardType)
@@ -521,7 +524,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             (levelNumber * progressIndicatorWidth / levelsCount) - ln(levelNumber.toFloat()) * 15
         levelNrView.text = levelNumber.toString()
         levelNrView.x = progressX
-        (requireActivity() as GameActivity).binding.gameProgress.progress = (levelNumber.toFloat() / levelsCount.toFloat() * 100.0).toInt()
+        (requireActivity() as GameActivity).binding.gameProgress.progress =
+            (levelNumber.toFloat() / levelsCount.toFloat() * 100.0).toInt()
         showReviewOption(levelAndLettersInfo.levelInfo.levelId)
 
     }

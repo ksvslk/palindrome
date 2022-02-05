@@ -7,6 +7,7 @@ import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
 import kotlinx.coroutines.flow.Flow
 import androidx.room.Update
+import com.indest.hah.persistance.dto.Sku
 
 @Dao
 interface LevelDao {
@@ -121,11 +122,24 @@ interface LevelDao {
     @Query("select * from level_info_table")
     suspend fun getAllLevels(): List<Level>
 
-
     @Query("update level_info_table set score=:newScore where level_id=:level")
     suspend fun updateScore(newScore: Int, level: Int)
 
     @Query("update level_info_table set category_rewarded=:value where level_id=:level")
     suspend fun updateCategoryRewarded(value: Boolean, level: Int)
 
+    @Query("update sku set purchased = 1 where sku=:sku")
+    suspend fun grantSkuEntitlements(sku: String)
+
+    @Query("update sku set purchased = 0 where sku=:sku")
+    suspend fun removeSkuEntitlements(sku: String)
+
+    @Query("select exists(select 1 from sku where sku=:sku and purchased=1)")
+    suspend fun isSkuPurchased(sku: String):Boolean
+
+    @Query("select * from sku")
+    suspend fun getAllSkus():List<Sku>
+
+    @Query("select category_rewarded from level_info_table where level_id=:level")
+    suspend fun isCategoryRewarded(level:Int):Boolean
 }

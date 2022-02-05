@@ -1,24 +1,8 @@
 package com.indest.hah.persistance
 
-import android.content.Context
-import android.graphics.Bitmap
-import android.util.Log
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.drive.Drive
-import com.google.android.gms.drive.Drive.SCOPE_APPFOLDER
-import com.google.android.gms.games.Games
-import com.google.android.gms.games.SnapshotsClient
-import com.google.android.gms.games.snapshot.Snapshot
-import com.google.android.gms.games.snapshot.SnapshotMetadataChange
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
-import com.indest.hah.util.C
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
-import java.lang.reflect.Type
+import com.indest.hah.persistance.dto.Sku
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -32,6 +16,7 @@ class LevelRepository @Inject constructor(
     suspend fun updateLevel(level: LevelData) = levelDao.updateLevelData(level)
     suspend fun updateLevelAndBestScore(level: LevelData, score: Int) =
         levelDao.updateLevelDataAndBestScore(level, score)
+
     suspend fun unlockNextLevel(current: Int) = levelDao.unlockNextLevel(current)
     suspend fun updateScore(newScore: Int, level: Int) = levelDao.updateScore(newScore, level)
     suspend fun getTotalScore() = levelDao.getTotalScore()
@@ -84,7 +69,11 @@ class LevelRepository @Inject constructor(
 
     suspend fun updateLevels(list: List<Level>) {
         levelDao.updateLevels(list)
-
     }
 
+    suspend fun grantSkuEntitlements(sku: String) = levelDao.grantSkuEntitlements(sku)
+    suspend fun removeSkuEntitlements(sku: String) = levelDao.removeSkuEntitlements(sku)
+    suspend fun isSkuPurchased(sku: String): Boolean = levelDao.isSkuPurchased(sku)
+    suspend fun getAllSkus(): List<Sku> = levelDao.getAllSkus()
+    suspend fun isCategoryRewarded(level:Int):Boolean = levelDao.isCategoryRewarded(level)
 }

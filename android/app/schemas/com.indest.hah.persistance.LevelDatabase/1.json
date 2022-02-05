@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "34ce2cb84cb4d1ccb9243e29e29de798",
+    "identityHash": "0f8ab2cd824209171f4633744dab5a37",
     "entities": [
       {
         "tableName": "level_info_table",
@@ -126,6 +126,7 @@
             "columnNames": [
               "owner_id"
             ],
+            "orders": [],
             "createSql": "CREATE INDEX IF NOT EXISTS `index_letter_info_table_owner_id` ON `${TABLE_NAME}` (`owner_id`)"
           }
         ],
@@ -142,12 +143,38 @@
             ]
           }
         ]
+      },
+      {
+        "tableName": "sku",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`sku` TEXT NOT NULL, `purchased` INTEGER NOT NULL, PRIMARY KEY(`sku`))",
+        "fields": [
+          {
+            "fieldPath": "sku",
+            "columnName": "sku",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "purchased",
+            "columnName": "purchased",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "sku"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '34ce2cb84cb4d1ccb9243e29e29de798')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0f8ab2cd824209171f4633744dab5a37')"
     ]
   }
 }
