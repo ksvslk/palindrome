@@ -289,7 +289,6 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                     } else {
                         loadLevel(lastLevel, isBookMode)
                     }
-
                 }
                 launch {
                     gameViewModel.userReward.collect { userRewardEvent ->
@@ -801,9 +800,6 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         gameState = GameState.BUSY
         gameViewModel.totalScore.removeObserver { viewLifecycleOwner.lifecycle }
         gameViewModel.unlockNextLevel()
-        lifecycleScope.launch {
-            gameViewModel.saveSnapshot(requireActivity(), binding.gameplayFragment.drawToBitmap())
-        }
         replaceFragmentWithSelf()
     }
 

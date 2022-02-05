@@ -377,6 +377,7 @@
             </androidx.appcompat.widget.LinearLayoutCompat>
 
             <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/fullAdsSavingsBadge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -407,14 +408,8 @@
                     android:textColor="@color/colorPrimary"
                     android:text="24%"
                     android:textAppearance="@style/TextAppearance.OC.Caption" />
-
             </androidx.appcompat.widget.LinearLayoutCompat>
-
-
         </androidx.appcompat.widget.LinearLayoutCompat>
-
     </androidx.appcompat.widget.LinearLayoutCompat>
-
-
 
 </androidx.appcompat.widget.LinearLayoutCompat>

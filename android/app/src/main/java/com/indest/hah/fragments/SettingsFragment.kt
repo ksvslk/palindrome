@@ -22,10 +22,12 @@ import com.indest.hah.databinding.SettingsFragmentBinding
 
 import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.replace
 import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.Scope
+import com.indest.hah.GameActivity
 import com.indest.hah.game.GameViewModel
 import com.indest.hah.game.enums.InternetState
 
@@ -59,7 +61,7 @@ class SettingsFragment : BottomSheetDialogFragment() {
                 if (gameViewModel.internetState.value.state == InternetState.ONLINE) {
                     signInToGoogle()
                 } else {
-                    //Toast.makeText(requireContext().applicationContext,getString(R.string.no_internet),Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext().applicationContext,getString(R.string.no_internet),Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -73,6 +75,8 @@ class SettingsFragment : BottomSheetDialogFragment() {
         }
 
         binding.rateGameButton.setOnClickListener {
+            (requireActivity() as GameActivity).showSavedGamesUI()
+            return@setOnClickListener
             if (gameViewModel.internetState.value.state == InternetState.ONLINE) {
                 val intent = Intent(Intent.ACTION_VIEW).apply {
                     data = Uri.parse(
@@ -84,14 +88,11 @@ class SettingsFragment : BottomSheetDialogFragment() {
                     startActivity(intent)
                 }
             } else {
-                //Toast.makeText(requireContext().applicationContext,getString(R.string.no_internet),Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext().applicationContext,getString(R.string.no_internet),Toast.LENGTH_SHORT).show()
             }
         }
 
         binding.soundButton.setOnClickListener {
-            //TODO: remove next 2 lines in production
-            val config: Configuration = resources.configuration
-            //Toast.makeText(requireContext().applicationContext, "DPI: ${config.densityDpi}", Toast.LENGTH_LONG).show()
             binding.soundSwitch.performClick()
         }
         binding.vibrationButton.setOnClickListener {

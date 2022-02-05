@@ -5,19 +5,19 @@ import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Log
 import android.widget.Toast
-import androidx.core.view.drawToBitmap
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import com.android.billingclient.api.*
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.games.Games
 import com.google.android.gms.games.SnapshotsClient
 import com.google.android.gms.games.SnapshotsClient.RESOLUTION_POLICY_LAST_KNOWN_GOOD
+import com.google.android.gms.games.SnapshotsClient.RESOLUTION_POLICY_LONGEST_PLAYTIME
 import com.google.android.gms.games.snapshot.Snapshot
 import com.google.android.gms.games.snapshot.SnapshotMetadata
 import com.google.android.gms.games.snapshot.SnapshotMetadata.PROGRESS_VALUE_UNKNOWN
@@ -25,7 +25,6 @@ import com.google.android.gms.games.snapshot.SnapshotMetadataChange
 import com.google.android.gms.tasks.Task
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.indest.hah.R
 import com.indest.hah.game.enums.*
 import com.indest.hah.letter.Cell
 import com.indest.hah.letter.Letter
@@ -33,7 +32,6 @@ import com.indest.hah.persistance.LevelProgress
 import com.indest.hah.persistance.LevelRepository
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
-import com.indest.hah.persistance.dto.Sku
 import com.indest.hah.util.C
 import com.indest.hah.util.WindowSizeClass
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -43,7 +41,6 @@ import java.io.IOException
 import java.lang.reflect.Type
 import java.util.*
 import javax.inject.Inject
-
 
 @HiltViewModel
 class GameViewModel @Inject constructor(
@@ -74,16 +71,31 @@ class GameViewModel @Inject constructor(
 
     private val _adReloadTimer = MutableStateFlow(false)
     val adReloadTimer: StateFlow<Boolean> = _adReloadTimer.asStateFlow()
-    private val _saveGameTimer = MutableStateFlow(false)
-    val saveGameTimer: StateFlow<Boolean> = _adReloadTimer.asStateFlow()
+    private var saveGameTimer: CountDownTimer? = null
 
-    private fun startSaveGameTimer() {
-        object : CountDownTimer(180000, 1000) {
+
+    fun cancelSaveGameTimer() {
+        saveGameTimer?.cancel()
+        viewModelScope.launch(Dispatchers.Default) {
+            saveSnapshot()
+        }
+    }
+
+    fun destroySaveGameTimer()
+    {
+        saveGameTimer?.cancel()
+        saveGameTimer = null
+    }
+
+    fun startSaveGameTimer() {
+        saveGameTimer = object : CountDownTimer(180000, 1000) {
             override fun onTick(millisUntilFinished: Long) {}
             override fun onFinish() {
                 Log.i(TAG, "Save game timer completed.")
-                _saveGameTimer.value = true
-                startSaveGameTimer()
+                viewModelScope.launch(Dispatchers.Default) {
+                    saveSnapshot()
+                }
+                saveGameTimer?.start()
             }
         }.start()
     }
@@ -98,8 +110,7 @@ class GameViewModel @Inject constructor(
         }.start()
     }
 
-    fun setAdReloadTimer(value: Boolean)
-    {
+    fun setAdReloadTimer(value: Boolean) {
         _adReloadTimer.value = value
     }
 
@@ -142,12 +153,15 @@ class GameViewModel @Inject constructor(
         }
 
     init {
+        viewModelScope.launch {
+            getLatestLevel()
+        }
         billingClient = BillingClient.newBuilder(application.applicationContext)
             .setListener(purchasesUpdatedListener)
             .enablePendingPurchases()
             .build()
         billingInitialization(application.applicationContext)
-        startSaveGameTimer()
+
     }
 
     private fun billingInitialization(context: Context) {
@@ -170,7 +184,6 @@ class GameViewModel @Inject constructor(
             }
         })
     }
-
 
     suspend fun querySkuDetails() {
         val skuList = levelRepository.getAllSkus().map { it.sku }
@@ -238,7 +251,7 @@ class GameViewModel @Inject constructor(
             Purchase.PurchaseState.PENDING -> {
 
             }
-            else -> {
+            /*else -> {
                 levelRepository.removeSkuEntitlements(purchase.skus.first())
                 _skuDetails.value = skuDetails.value.map {
                     if (it.skuDetails.sku == purchase.skus.first()) {
@@ -247,7 +260,7 @@ class GameViewModel @Inject constructor(
                         it.copy()
                     }
                 }
-            }
+            }*/
         }
 
     }
@@ -346,8 +359,8 @@ class GameViewModel @Inject constructor(
 
     fun getCurrentAndMaxScore(): Pair<Int, Int> {
         return Pair(
-           currentLevel.levelInfo.score,
-           currentLevel.levelInfo.levelId * 100
+            currentLevel.levelInfo.score,
+            currentLevel.levelInfo.levelId * 100
         )
     }
 
@@ -370,7 +383,7 @@ class GameViewModel @Inject constructor(
             )
 
             realSolutionAndGuess.value = Triple(
-               currentLevel.levelInfo.solution.replace(" ", ""),
+                currentLevel.levelInfo.solution.replace(" ", ""),
                 levelRepository.currentSolution(currentLevel.levelInfo.levelId),
                 topIndex
             )
@@ -386,7 +399,7 @@ class GameViewModel @Inject constructor(
                 level = currentLevel.levelInfo.levelId
             )
             realSolutionAndGuess.value = Triple(
-               currentLevel.levelInfo.solution.replace(" ", ""),
+                currentLevel.levelInfo.solution.replace(" ", ""),
                 levelRepository.currentSolution(currentLevel.levelInfo.levelId),
                 index
             )
@@ -446,19 +459,25 @@ class GameViewModel @Inject constructor(
         return levelRepository.isCategoryRewarded(currentLevel.levelInfo.levelId)
     }
 
-    suspend fun saveSnapshot(activity: Activity, coverImage: Bitmap) {
-        _saveGameTimer.value = false
-        GoogleSignIn.getLastSignedInAccount(activity.applicationContext)?.let { signInAccount ->
+    suspend fun saveSnapshot() {
+        val context = getApplication<Application>().applicationContext
+        val coverImage =
+            BitmapFactory.decodeResource(context.resources, com.indest.hah.R.drawable.o3)
+                ?: Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
+
+        Log.i(TAG, context.toString())
+        Log.i(TAG, coverImage.toString())
+        GoogleSignIn.getLastSignedInAccount(context)?.let { signInAccount ->
             val snapshotsClient = Games.getSnapshotsClient(
-                activity,
+                context,
                 signInAccount
             )
-            snapshotsClient.open(C.SAVE_GAME, true, RESOLUTION_POLICY_LAST_KNOWN_GOOD)
+            snapshotsClient.open(C.SAVE_GAME, true, RESOLUTION_POLICY_LONGEST_PLAYTIME)
                 .addOnSuccessListener {
                     it.data?.let { snapshotToWrite ->
                         try {
                             val bytes = snapshotToWrite.snapshotContents.readFully()
-                            viewModelScope.launch {
+                            viewModelScope.launch(Dispatchers.Default) {
                                 writeSnapshot(
                                     snapshotToWrite,
                                     snapshotsClient,
@@ -486,7 +505,6 @@ class GameViewModel @Inject constructor(
         coverImage: Bitmap,
         bytes: ByteArray
     ): Task<SnapshotMetadata>? {
-
         val gson = Gson()
         val allLevels = levelRepository.getSaveGameData()
         val levelsData = gson.toJson(allLevels).toByteArray()

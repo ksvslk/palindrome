@@ -121,9 +121,7 @@ class GameActivity : AppCompatActivity() {
             )
         )
 
-        lifecycleScope.launchWhenStarted {
-
-        }
+        //startObservingSaveGameTimer()
     }
 
     private fun setUpNavController() {
@@ -141,6 +139,7 @@ class GameActivity : AppCompatActivity() {
         setUpNavController()
         signInSilently()
         gameViewModel.queryPurchasesAsync()
+        gameViewModel.startSaveGameTimer()
     }
 
     private fun requestConsentInformation() {
@@ -206,32 +205,14 @@ class GameActivity : AppCompatActivity() {
         hideSystemBars(binding.root)
     }
 
-    private fun startObservingSaveGameTimer() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                gameViewModel.saveGameTimer.collectLatest {
-                    if (it) {
-                        gameViewModel.saveSnapshot(
-                            this@GameActivity,
-                            binding.fragmentsContainer.drawToBitmap()
-                        )
-                    }
+    private val adReloadTimerJob  =
+        lifecycleScope.launchWhenResumed {
+            gameViewModel.adReloadTimer.collectLatest {
+                if (it) {
+                    loadRewardedAd()
                 }
             }
         }
-    }
-
-    private fun startObservingAdReloadTimer() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                gameViewModel.adReloadTimer.collectLatest {
-                    if (it) {
-                       loadRewardedAd()
-                    }
-                }
-            }
-        }
-    }
 
     private fun startObservingNetworkStatus() {
         connectionLiveData.observe(this@GameActivity, { hasNetwork ->
@@ -359,6 +340,7 @@ class GameActivity : AppCompatActivity() {
 
     // CLEAN
     private fun loadRewardedAd() {
+        adReloadTimerJob.cancel()
         gameViewModel.setAdReloadTimer(false)
         if (_rewardedAd == null) {
             val adRequest = AdRequest.Builder().build()
@@ -369,6 +351,7 @@ class GameActivity : AppCompatActivity() {
                         Log.d(TAG, adError.message)
                         gameViewModel.setRewardedAdAvailability(false)
                         gameViewModel.startAdReloadTimer()
+                        adReloadTimerJob.start()
                     }
 
                     override fun onAdLoaded(rewardedAd: RewardedAd) {
@@ -433,26 +416,35 @@ class GameActivity : AppCompatActivity() {
     private val RC_SAVED_GAMES = 9009
 
     fun showSavedGamesUI() {
-        val snapshotsClient = Games.getSnapshotsClient(
-            applicationContext,
-            GoogleSignIn.getLastSignedInAccount(applicationContext)!!
-        )
-        val maxNumberOfSavedGamesToShow = 5
-        val intentTask: Task<Intent> = snapshotsClient.getSelectSnapshotIntent(
-            "See My Saves", true, true, maxNumberOfSavedGamesToShow
-        )
-        intentTask.addOnSuccessListener { intent ->
-            ActivityCompat.startActivityForResult(
-                this,
-                intent,
-                RC_SAVED_GAMES,
-                null
+        GoogleSignIn.getLastSignedInAccount(applicationContext)?.let {
+            val snapshotsClient = Games.getSnapshotsClient(
+                applicationContext,
+                it
             )
+            val maxNumberOfSavedGamesToShow = 5
+            val intentTask: Task<Intent> = snapshotsClient.getSelectSnapshotIntent(
+                "See My Saves", true, true, maxNumberOfSavedGamesToShow
+            )
+            intentTask.addOnSuccessListener { intent ->
+                ActivityCompat.startActivityForResult(
+                    this,
+                    intent,
+                    RC_SAVED_GAMES,
+                    null
+                )
+            }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        gameViewModel.cancelSaveGameTimer()
     }
 
     override fun onDestroy() {
         _binding = null
+        adReloadTimerJob.cancel()
+        gameViewModel.destroySaveGameTimer()
         super.onDestroy()
     }
 

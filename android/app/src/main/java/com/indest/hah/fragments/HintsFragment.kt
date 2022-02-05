@@ -13,20 +13,21 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.GameActivity
 import com.indest.hah.R
 import com.indest.hah.databinding.HintsFragmentBinding
 import com.indest.hah.game.GameViewModel
 import com.indest.hah.game.SkuDetailsWrapper
-import com.indest.hah.game.enums.RewardType
 import com.indest.hah.util.C.HINT_FRAGMENT_TAG
 import com.indest.hah.util.C.HINT_REQUEST_KEY
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
+import com.indest.hah.fragments.HintsFragment.AvailablePurchase.PLACE
+import com.indest.hah.fragments.HintsFragment.AvailablePurchase.CLUE
+import com.indest.hah.fragments.HintsFragment.AvailablePurchase.INTER
+import com.indest.hah.game.enums.RewardType
 
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -54,224 +55,253 @@ class HintsFragment : BottomSheetDialogFragment() {
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
         )
 
+        return b.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         skuDetailsCollectionJob = lifecycleScope.launch {
             gameViewModel.skuDetails.collect { skuDetailsWrapperList ->
-                if (skuDetailsWrapperList.isNotEmpty()) {
-                    val isCategoryRewarded = gameViewModel.isCategoryRewarded()
-                    skuDetailsWrapperList.forEach {
-                        val lastIndex = it.skuDetails.title.indexOf("(")
-                        val title = if (lastIndex != -1) it.skuDetails.title.subSequence(
-                            0,
-                            lastIndex
-                        ) else ""
-                        val unlimitedSubtitleText = getString(R.string.unlimited)
-                        val unlimitedSubtitleTextColor =
-                            ContextCompat.getColor(
-                                requireContext(),
-                                R.color.successTextColor
+                val isCategoryRewarded = gameViewModel.isCategoryRewarded()
+                val mockList = mutableListOf<SkuDetailsWrapper>()
+      /*          skuDetailsWrapperList.forEach() {
+                    when (it.skuDetails.sku) {
+                        getString(R.string.remove_clue_ads) -> {
+                            mockList.add(
+                                SkuDetailsWrapper(
+                                    purchased = false,
+                                    it.skuDetails
+                                )
                             )
-                        val unlimitedSubtitleBackgroundColor = ContextCompat.getColor(
-                            requireContext(),
-                            R.color.successBoxColor
-                        )
-                        Log.i(TAG, "${it.skuDetails.sku} purchase state: ${it.purchased}")
-                        when (it.skuDetails.sku) {
-                            getString(R.string.remove_letter_ads) -> {
-                                setUpPurchaseButton(
-                                    titleTextView = binding.instantLettersTitle,
-                                    subtitleTextView = binding.instantLettersSubtitle,
-                                    button = binding.instantLettersButton,
-                                    skuDetailsWrapper = it,
-                                    lastIndex = lastIndex,
-                                    title = title
+                        }
+                        getString(R.string.remove_letter_ads) -> {
+                            mockList.add(
+                                SkuDetailsWrapper(
+                                    purchased = false,
+                                    it.skuDetails
                                 )
-                                if (it.purchased) {
-                                    binding.placeLetterSubtitle.setTextColor(
-                                        unlimitedSubtitleTextColor
-                                    )
-                                    binding.placeLetterSubtitle.text = unlimitedSubtitleText
-                                    binding.placeLetterSubtitle.setBackgroundColor(
-                                        unlimitedSubtitleBackgroundColor
-                                    )
-                                    binding.letterPlaceButton.setOnClickListener {
-                                        dismiss()
-                                        if (isAdded) {
-                                            gameViewModel.rewardUser(rewardType = RewardType.LETTER)
-                                        }
-                                    }
-                                } else {
-                                    binding.letterPlaceButton.setOnClickListener {
-                                        dismiss()
-                                        if (isAdded) {
-                                            (requireActivity() as GameActivity).showRewardedVideo(
-                                                RewardType.LETTER
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                            getString(R.string.remove_clue_ads) -> {
-                                setUpPurchaseButton(
-                                    titleTextView = binding.instantCluesTitle,
-                                    subtitleTextView = binding.instantCluesSubtitle,
-                                    button = binding.instantCluesButton,
-                                    skuDetailsWrapper = it,
-                                    lastIndex = lastIndex,
-                                    title = title
+                            )
+                        }
+                        getString(R.string.remove_inbetween_ads) -> {
+                            mockList.add(
+                                SkuDetailsWrapper(
+                                    purchased = false,
+                                    it.skuDetails
                                 )
-                                binding.revealCategoryShown.hintRevealedTextview.text = gameViewModel.getHint()
-                                if (it.purchased) {
-                                    Log.i(TAG, "It purchased")
-                                    binding.revealCategoryHidden.revealClueSubtitle.text =
-                                        unlimitedSubtitleText
-                                    binding.revealCategoryHidden.revealClueSubtitle.setTextColor(
-                                        unlimitedSubtitleTextColor
-                                    )
-                                    binding.revealCategoryHidden.revealClueSubtitle.setBackgroundColor(
-                                        unlimitedSubtitleBackgroundColor
-                                    )
-                                    if (isCategoryRewarded)
-                                    {
-                                        Log.i(TAG, "It isCategoryRewarded yes")
-                                        if (!binding.revealCategoryShown.root.isShown) {
-                                            binding.revealCategoryFlipper.showNext()
-                                        }
-                                        binding.categoryRevealButton.isEnabled = false
-                                    }
-                                    else {
-                                        binding.categoryRevealButton.setOnClickListener {
-                                            gameViewModel.setCategoryRewarded(true)
-                                            if (!binding.revealCategoryShown.root.isShown) {
-                                                binding.revealCategoryFlipper.showNext()
-                                            }
-                                            binding.categoryRevealButton.isEnabled = false
-                                        }
-                                    }
-                                } else {
-                                    binding.categoryRevealButton.setOnClickListener {
-                                        if (!isCategoryRewarded) {
-                                            if (isAdded) {
-                                                (requireActivity() as GameActivity).showRewardedVideo(
-                                                    RewardType.HINT
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
-
-                            }
-                            getString(R.string.remove_inbetween_ads) -> {
-                                setUpPurchaseButton(
-                                    titleTextView = binding.removeIntermediateTitle,
-                                    subtitleTextView = binding.removeIntermediateSubtitle,
-                                    button = binding.noIntermediateAdsButton,
-                                    skuDetailsWrapper = it,
-                                    lastIndex = lastIndex,
-                                    title = title
+                            )
+                        }
+                        getString(R.string.remove_all_ads) -> {
+                            mockList.add(
+                                SkuDetailsWrapper(
+                                    purchased = false,
+                                    it.skuDetails
                                 )
-                            }
-                            getString(R.string.remove_all_ads) -> {
-                                setUpPurchaseButton(
-                                    titleTextView = binding.fullNoAdsTitle,
-                                    subtitleTextView = binding.fullNoAdsSubtitle,
-                                    button = binding.fullNoAdsButton,
-                                    skuDetailsWrapper = it,
-                                    lastIndex = lastIndex,
-                                    title = title
-                                )
-                            }
+                            )
                         }
                     }
-                } else {
-                    hidePurchaseButtons()
+                }*/
+
+                when (setUpAvailablePurchases(skuDetailsWrapperList)) {
+                    setOf(INTER) -> {
+                        setUpPurchasedGoods(RewardType.LETTER)
+                        setUpPurchasedGoods(RewardType.HINT, isCategoryRewarded)
+                        terminateButton(binding.fullNoAdsButton)
+                    }
+                    setOf(CLUE) -> {
+                        setUpPurchasedGoods(RewardType.LETTER)
+                        terminateButton(binding.fullNoAdsButton)
+                    }
+                    setOf(PLACE) -> {
+                        setUpPurchasedGoods(RewardType.HINT)
+                        terminateButton(binding.fullNoAdsButton)
+                    }
+                    setOf(PLACE, INTER) -> {
+                        setUpPurchasedGoods(RewardType.HINT, isCategoryRewarded)
+                        binding.fullAdsSavingsBadge.visibility = View.GONE
+                    }
+                    setOf(PLACE, CLUE) -> {
+                        // All taken care of in setUpAvailablePurchases
+                        binding.fullAdsSavingsBadge.visibility = View.GONE
+                    }
+                    setOf(CLUE, INTER) -> {
+                        terminateButton(binding.fullNoAdsButton)
+                        setUpPurchasedGoods(RewardType.LETTER)
+                    }
+                    setOf(PLACE, CLUE, INTER) -> {
+                        // All taken care of in setUpAvailablePurchases
+                    }
+                    setOf<AvailablePurchase>() -> {
+                        Log.i(TAG, "All good, got 0 set.")
+                        setUpPurchasedGoods(RewardType.LETTER)
+                        setUpPurchasedGoods(RewardType.HINT, isCategoryRewarded)
+                        listOf(
+                            binding.instantCluesButton,
+                            binding.instantLettersButton,
+                            binding.noIntermediateAdsButton,
+                            binding.fullNoAdsButton
+                        ).forEach {
+                            terminateButton(it)
+                        }
+                    }
                 }
             }
         }
 
         rewardedAdCollectionJob = lifecycleScope.launch {
             gameViewModel.rewardedAdAvailable.collectLatest { rewardedAdAvailable ->
-                val cluesPurchased =
-                    gameViewModel.skuDetails.value.find { it.skuDetails.sku == getString(R.string.remove_clue_ads) }?.purchased
-                val lettersPurchased =
-                    gameViewModel.skuDetails.value.find { it.skuDetails.sku == getString(R.string.remove_letter_ads) }?.purchased
+                Log.i(TAG, "Set up the video buttons.: $rewardedAdAvailable")
+                var cluesPurchased = false
+                var lettersPurchased = false
+                var allAdsRemoved = false
 
-                if (cluesPurchased == true && lettersPurchased == true) {
+                gameViewModel.skuDetails.value.forEach {
+                    when (it.skuDetails.sku) {
+                        getString(R.string.remove_clue_ads) -> {
+                            cluesPurchased = it.purchased
+                        }
+                        getString(R.string.remove_letter_ads) -> {
+                            lettersPurchased = it.purchased
+                        }
+                        getString(R.string.remove_all_ads) -> {
+                            allAdsRemoved = it.purchased
+                        }
+                    }
+                }
+                Log.i(TAG, "$cluesPurchased, $lettersPurchased, $allAdsRemoved")
+
+                if ((cluesPurchased && lettersPurchased) || allAdsRemoved) {
                     rewardedAdCollectionJob?.cancel()
                     return@collectLatest
                 }
-                if (!rewardedAdAvailable) {
-                    val text = getString(R.string.no_ad_available)
-                    val textColor =
-                        ContextCompat.getColor(requireContext(), R.color.colorOnError)
-                    val subtitleBackgroundColor = ContextCompat.getColor(
-                        requireContext(),
-                        R.color.hintsNotificationColor
-                    )
-                    if (cluesPurchased == false) {
-                        binding.revealCategoryHidden.revealClueSubtitle.setTextColor(
-                            textColor
-                        )
-                        binding.revealCategoryHidden.revealClueSubtitle.text = text
-                        binding.revealCategoryHidden.revealClueSubtitle.setBackgroundColor(
-                            subtitleBackgroundColor
-                        )
-                    }
-                    if (lettersPurchased == false) {
-                        binding.placeLetterSubtitle.setTextColor(textColor)
-                        binding.placeLetterSubtitle.text = text
-                        binding.placeLetterSubtitle.setBackgroundColor(
-                            subtitleBackgroundColor
-                        )
-                    }
-                } else {
-                    val text = getString(R.string.watch_rewarded_video)
-                    val textColor =
-                        ContextCompat.getColor(requireContext(), R.color.colorOnPrimary)
-                    val subtitleBackgroundColor =
-                        ContextCompat.getColor(requireContext(), R.color.colorPrimary)
 
-                    if (cluesPurchased == false) {
-                        binding.revealCategoryHidden.revealClueSubtitle.setTextColor(
-                            textColor
-                        )
-                        binding.revealCategoryHidden.revealClueSubtitle.text = text
-                        binding.revealCategoryHidden.revealClueSubtitle.setBackgroundColor(
-                            subtitleBackgroundColor
-                        )
+                val isCategoryRewarded = gameViewModel.isCategoryRewarded()
+
+                if (!cluesPurchased) {
+                    setUpRewardedButtonSubtitle(
+                        binding.revealCategoryHidden.revealClueSubtitle,
+                        rewardedAdAvailable
+                    )
+                    binding.categoryRevealButton.setOnClickListener {
+                        if (rewardedAdAvailable) {
+                            if (!isCategoryRewarded) {
+                                if (isAdded) {
+                                    (requireActivity() as GameActivity).showRewardedVideo(RewardType.HINT)
+                                }
+                            }
+                        }
                     }
-                    if (lettersPurchased == false) {
-                        binding.placeLetterSubtitle.setTextColor(textColor)
-                        binding.placeLetterSubtitle.text = text
-                        binding.placeLetterSubtitle.setBackgroundColor(
-                            subtitleBackgroundColor
-                        )
+                }
+                if (!lettersPurchased) {
+                    setUpRewardedButtonSubtitle(binding.placeLetterSubtitle, rewardedAdAvailable)
+                    binding.letterPlaceButton.setOnClickListener {
+                        if (rewardedAdAvailable) {
+                            dismiss()
+                            if (isAdded) {
+                                (requireActivity() as GameActivity).showRewardedVideo(RewardType.LETTER)
+                            }
+                        }
                     }
                 }
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                skuDetailsCollectionJob?.start()
+            skuDetailsCollectionJob?.start()
+            val cluesPurchased =
+                gameViewModel.skuDetails.value.find { it.skuDetails.sku == getString(R.string.remove_clue_ads) }?.purchased
+            val lettersPurchased =
+                gameViewModel.skuDetails.value.find { it.skuDetails.sku == getString(R.string.remove_letter_ads) }?.purchased
+            if (cluesPurchased == false || lettersPurchased == false) {
                 rewardedAdCollectionJob?.start()
             }
         }
-
-        return b.root
     }
 
-    private fun hidePurchaseButtons() {
-        listOf(
-            binding.instantCluesButton,
-            binding.instantLettersButton,
-            binding.noIntermediateAdsButton,
-            binding.fullNoAdsButton
-        ).forEach {
-            it.visibility = View.GONE
+    private fun setUpRewardedButtonSubtitle(subtitle: AppCompatTextView, adAvailable: Boolean) {
+
+        when (adAvailable) {
+            true -> {
+                val text = getString(R.string.watch_rewarded_video)
+                val textColor =
+                    ContextCompat.getColor(requireContext(), R.color.colorOnPrimary)
+                val subtitleBackgroundColor =
+                    ContextCompat.getColor(requireContext(), R.color.colorPrimary)
+
+                subtitle.setTextColor(textColor)
+                subtitle.text = text
+                subtitle.setBackgroundColor(subtitleBackgroundColor)
+            }
+            false -> {
+                val text = getString(R.string.no_ad_available)
+                val textColor = ContextCompat.getColor(requireContext(), R.color.colorOnError)
+                val subtitleBackgroundColor = ContextCompat.getColor(
+                    requireContext(),
+                    R.color.hintsNotificationColor
+                )
+
+                subtitle.setTextColor(textColor)
+                subtitle.text = text
+                subtitle.setBackgroundColor(subtitleBackgroundColor)
+            }
         }
     }
 
-    private fun setUpPurchaseButton(
+    private fun setUpPurchasedGoods(rewardType: RewardType, categoryRevealed: Boolean = false) {
+        val subtitleText = getString(R.string.unlimited)
+        val subtitleTextColor =
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.successTextColor
+            )
+        val subtitleBackgroundColor = ContextCompat.getColor(
+            requireContext(),
+            R.color.successBoxColor
+        )
+
+        when (rewardType) {
+            RewardType.LETTER -> {
+                binding.placeLetterSubtitle.setTextColor(subtitleTextColor)
+                binding.placeLetterSubtitle.text = subtitleText
+                binding.placeLetterSubtitle.setBackgroundColor(subtitleBackgroundColor)
+
+                binding.letterPlaceButton.setOnClickListener {
+                    dismiss()
+                    if (isAdded) {
+                        gameViewModel.rewardUser(rewardType = RewardType.LETTER)
+                    }
+                }
+            }
+            RewardType.HINT -> {
+                binding.revealCategoryShown.hintRevealedTextview.text = gameViewModel.getHint()
+                binding.revealCategoryHidden.revealClueSubtitle.text =
+                    subtitleText
+                binding.revealCategoryHidden.revealClueSubtitle.setTextColor(
+                    subtitleTextColor
+                )
+                binding.revealCategoryHidden.revealClueSubtitle.setBackgroundColor(
+                    subtitleBackgroundColor
+                )
+                if (categoryRevealed) {
+                    if (!binding.revealCategoryShown.root.isShown) {
+                        binding.revealCategoryFlipper.showNext()
+                    }
+                    binding.categoryRevealButton.isEnabled = false
+                } else {
+                    binding.categoryRevealButton.setOnClickListener {
+                        gameViewModel.setCategoryRewarded(true)
+                        if (!binding.revealCategoryShown.root.isShown) {
+                            binding.revealCategoryFlipper.showNext()
+                        }
+                        binding.categoryRevealButton.isEnabled = false
+                    }
+                }
+            }
+            RewardType.NONE -> {}
+        }
+
+    }
+
+    private fun setUpObtainableButton(
         titleTextView: AppCompatTextView,
         subtitleTextView: AppCompatTextView,
         button: LinearLayoutCompat,
@@ -281,8 +311,7 @@ class HintsFragment : BottomSheetDialogFragment() {
     ) {
 
         if (skuDetailsWrapper.purchased) {
-            button.setOnClickListener(null)
-            button.visibility = View.GONE
+            terminateButton(button)
         } else {
             if (lastIndex != -1) titleTextView.text = title
             subtitleTextView.text = skuDetailsWrapper.skuDetails.price
@@ -295,6 +324,101 @@ class HintsFragment : BottomSheetDialogFragment() {
                 }
             }
         }
+    }
+
+    private fun terminateButton(button: LinearLayoutCompat) {
+        button.setOnClickListener(null)
+        button.visibility = View.GONE
+    }
+
+    private fun setUpAvailablePurchases(skuDetails: List<SkuDetailsWrapper>): MutableSet<AvailablePurchase> {
+        assert(skuDetails.size == 4)
+        val purchasesAvailable = mutableSetOf<AvailablePurchase>()
+
+        if (skuDetails.find { it.skuDetails.sku == getString(R.string.remove_all_ads) }?.purchased == true) {
+            return purchasesAvailable
+        }
+
+        skuDetails.forEach {
+            val lastIndex = it.skuDetails.title.indexOf("(")
+            val title = if (lastIndex != -1) it.skuDetails.title.subSequence(
+                0,
+                lastIndex
+            ) else ""
+
+            when (it.skuDetails.sku) {
+                getString(R.string.remove_clue_ads) -> {
+                    if (!it.purchased) {
+                        setUpObtainableButton(
+                            titleTextView = binding.instantCluesTitle,
+                            subtitleTextView = binding.instantCluesSubtitle,
+                            button = binding.instantCluesButton,
+                            skuDetailsWrapper = it,
+                            lastIndex = lastIndex,
+                            title = title
+                        )
+                        purchasesAvailable.add(CLUE)
+                    }
+                    else {
+                        terminateButton(binding.instantCluesButton)
+                    }
+                }
+                getString(R.string.remove_letter_ads) -> {
+                    if (!it.purchased) {
+                        setUpObtainableButton(
+                            titleTextView = binding.instantLettersTitle,
+                            subtitleTextView = binding.instantLettersSubtitle,
+                            button = binding.instantLettersButton,
+                            skuDetailsWrapper = it,
+                            lastIndex = lastIndex,
+                            title = title
+                        )
+                        purchasesAvailable.add(PLACE)
+                    }
+                    else {
+                        terminateButton(binding.instantLettersButton)
+                    }
+                }
+                getString(R.string.remove_inbetween_ads) -> {
+                    if (!it.purchased) {
+                        setUpObtainableButton(
+                            titleTextView = binding.removeIntermediateTitle,
+                            subtitleTextView = binding.removeIntermediateSubtitle,
+                            button = binding.noIntermediateAdsButton,
+                            skuDetailsWrapper = it,
+                            lastIndex = lastIndex,
+                            title = title
+                        )
+                        purchasesAvailable.add(INTER)
+                    }
+                    else {
+                        terminateButton(binding.noIntermediateAdsButton)
+                    }
+                }
+                getString(R.string.remove_all_ads) -> {
+                    if (!it.purchased) {
+                        setUpObtainableButton(
+                            titleTextView = binding.fullNoAdsTitle,
+                            subtitleTextView = binding.fullNoAdsSubtitle,
+                            button = binding.fullNoAdsButton,
+                            skuDetailsWrapper = it,
+                            lastIndex = lastIndex,
+                            title = title
+                        )
+                    }
+                    else {
+                        terminateButton(binding.fullNoAdsButton)
+                    }
+                }
+            }
+        }
+        return purchasesAvailable
+    }
+
+    enum class AvailablePurchase {
+        PLACE,
+        CLUE,
+        INTER
     }
 
     override fun onDismiss(dialog: DialogInterface) {
