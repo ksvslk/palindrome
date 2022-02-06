@@ -5,7 +5,6 @@ import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Log
 import android.widget.Toast
@@ -156,22 +155,24 @@ class GameViewModel @Inject constructor(
         viewModelScope.launch {
             getLatestLevel()
         }
-        billingClient = BillingClient.newBuilder(application.applicationContext)
-            .setListener(purchasesUpdatedListener)
-            .enablePendingPurchases()
-            .build()
-        billingInitialization(application.applicationContext)
-
     }
 
-    private fun billingInitialization(context: Context) {
+    fun startBillingConnection(context: Context) {
         Log.d(TAG, "Billing Initialization")
+        if (billingClient == null)
+        {
+            billingClient = BillingClient.newBuilder(context)
+                .setListener(purchasesUpdatedListener)
+                .enablePendingPurchases()
+                .build()
+        }
+
         billingClient?.startConnection(object :
             BillingClientStateListener {
             override fun onBillingSetupFinished(billingResult: BillingResult) {
                 if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
                     // The BillingClient is ready. You can query purchases here.
-                    viewModelScope.launch {
+                    viewModelScope.launch(Dispatchers.Default) {
                         querySkuDetails()
                         queryPurchasesAsync()
                     }
@@ -180,9 +181,16 @@ class GameViewModel @Inject constructor(
 
             override fun onBillingServiceDisconnected() {
                 Log.i(TAG, "onBillingServiceDisconnected")
-                billingInitialization(context)
+                if (_internetState.value.state == InternetState.ONLINE) {
+                    startBillingConnection(context)
+                }
             }
         })
+    }
+
+    fun endBillingConnection()
+    {
+        billingClient?.endConnection()
     }
 
     suspend fun querySkuDetails() {

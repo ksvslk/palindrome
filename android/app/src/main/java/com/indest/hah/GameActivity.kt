@@ -17,15 +17,11 @@ import androidx.core.app.ActivityCompat
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.drawToBitmap
 import androidx.core.view.forEach
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import androidx.window.layout.WindowMetricsCalculator
-import com.android.billingclient.api.*
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
@@ -138,7 +134,7 @@ class GameActivity : AppCompatActivity() {
         super.onResume()
         setUpNavController()
         signInSilently()
-        gameViewModel.queryPurchasesAsync()
+        gameViewModel.startBillingConnection(applicationContext)
         gameViewModel.startSaveGameTimer()
     }
 
@@ -216,14 +212,16 @@ class GameActivity : AppCompatActivity() {
 
     private fun startObservingNetworkStatus() {
         connectionLiveData.observe(this@GameActivity, { hasNetwork ->
-            lifecycleScope.launch(Dispatchers.IO)
+            lifecycleScope.launch(Dispatchers.Default)
             {
                 if (hasNetwork) {
                     if (isConnectedToInternet()) {
                         gameViewModel.changeInternetState(ONLINE)
                         withContext(Dispatchers.Main)
                         {
-                            loadRewardedAd()
+                            if (!gameViewModel.rewardedAdAvailable.value){
+                                loadRewardedAd()
+                            }
                         }
                         Log.i(TAG, "Internet connection: $ONLINE.")
                     } else {
@@ -438,12 +436,14 @@ class GameActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
+        gameViewModel.endBillingConnection()
         gameViewModel.cancelSaveGameTimer()
     }
 
     override fun onDestroy() {
         _binding = null
         adReloadTimerJob.cancel()
+        gameViewModel.endBillingConnection()
         gameViewModel.destroySaveGameTimer()
         super.onDestroy()
     }
