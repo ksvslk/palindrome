@@ -20,7 +20,7 @@
         android:id="@+id/gameProgress"
         android:layout_height="@dimen/_10sdp"
         android:layout_width="match_parent"
-        app:indicatorColor="@color/colorSecondaryVariant"
+        app:indicatorColor="@color/progressBackgroundColor"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>

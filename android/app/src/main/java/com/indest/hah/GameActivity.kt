@@ -15,6 +15,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -118,6 +119,7 @@ class GameActivity : AppCompatActivity() {
                 "1C8B057289566E4B36BA860D0A8281CB"
             )
         )
+        gameViewModel.startBillingConnection(applicationContext)
     }
 
     private fun setUpNavController() {
@@ -132,9 +134,9 @@ class GameActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        startObservingNetworkStatus()
         setUpNavController()
         signInSilently()
-        gameViewModel.startBillingConnection(applicationContext)
         gameViewModel.startSaveGameTimer()
         if (_rewardedAd == null) loadRewardedAd()
     }
@@ -210,13 +212,19 @@ class GameActivity : AppCompatActivity() {
                     if (isConnectedToInternet()) {
                         gameViewModel.changeInternetState(ONLINE)
                         Log.d(TAG, "Internet connection: $ONLINE.")
+                        val positiveColor = ContextCompat.getColor(applicationContext, R.color.successBoxColor)
+                        binding.gameProgress.setIndicatorColor(positiveColor)
                     } else {
                         gameViewModel.changeInternetState(OFFLINE)
                         Log.d(TAG, "Internet connection: $OFFLINE.")
+                        val negativeColor = ContextCompat.getColor(applicationContext, R.color.colorOnBackground)
+                        binding.gameProgress.setIndicatorColor(negativeColor)
                     }
                 } else {
                     gameViewModel.changeInternetState(OFFLINE)
                     Log.d(TAG, "Internet connection: $OFFLINE.")
+                    val negativeColor = ContextCompat.getColor(applicationContext, R.color.colorOnBackground)
+                    binding.gameProgress.setIndicatorColor(negativeColor)
                 }
             }
         })
@@ -254,7 +262,6 @@ class GameActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 gameViewModel.loadSnapshot(this@GameActivity)
             }
-            startObservingNetworkStatus()
         } else {
             // Haven't been signed-in before. Try the silent sign-in first.
             val signInClient = GoogleSignIn.getClient(this, signInOptions)
@@ -272,10 +279,8 @@ class GameActivity : AppCompatActivity() {
                         lifecycleScope.launch {
                             gameViewModel.loadSnapshot(this@GameActivity)
                         }
-                        startObservingNetworkStatus()
                     } else if (task.isComplete) {
                         gameViewModel.startGame()
-                        startObservingNetworkStatus()
                         Log.d(
                             TAG,
                             "Player needs to sign-in explicitly using via UI. ${task.exception}"
@@ -431,7 +436,6 @@ class GameActivity : AppCompatActivity() {
     override fun onStop() {
         adReloadTimer?.cancel()
         adReloadTimer = null
-        gameViewModel.endBillingConnection()
         gameViewModel.cancelSaveGameTimer()
         super.onStop()
     }

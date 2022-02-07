@@ -32,5 +32,5 @@
     <color name="letterRewardedColor">#9500A9</color>
     <color name="textOnRewardedColor">#FFFFFF</color>
 
-
+    <color name="progressBackgroundColor">#434343</color>
 </resources>

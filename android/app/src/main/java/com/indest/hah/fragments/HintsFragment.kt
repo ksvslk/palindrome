@@ -18,15 +18,14 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.GameActivity
 import com.indest.hah.R
 import com.indest.hah.databinding.HintsFragmentBinding
+import com.indest.hah.fragments.HintsFragment.AvailablePurchase.*
 import com.indest.hah.game.GameViewModel
 import com.indest.hah.game.SkuDetailsWrapper
 import com.indest.hah.util.C.HINT_FRAGMENT_TAG
 import com.indest.hah.util.C.HINT_REQUEST_KEY
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
-import com.indest.hah.fragments.HintsFragment.AvailablePurchase.PLACE
-import com.indest.hah.fragments.HintsFragment.AvailablePurchase.CLUE
-import com.indest.hah.fragments.HintsFragment.AvailablePurchase.INTER
+import com.indest.hah.game.enums.InternetState
 import com.indest.hah.game.enums.RewardType
 import com.indest.hah.persistance.dto.Sku
 
@@ -55,8 +54,20 @@ class HintsFragment : BottomSheetDialogFragment() {
         requireActivity().window.addFlags(
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
         )
-
         return b.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.revealCategoryShown.hintRevealedTextview.text =
+            gameViewModel.currentLevel.levelInfo.category
+        if (gameViewModel.currentLevel.levelInfo.categoryRewarded) {
+            Log.i(TAG, "revealCategoryFlipper.showNext()")
+            if (!binding.revealCategoryShown.root.isShown) {
+                binding.revealCategoryFlipper.showNext()
+            }
+            binding.categoryRevealButton.isEnabled = false
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -65,135 +76,160 @@ class HintsFragment : BottomSheetDialogFragment() {
             gameViewModel.skuDetails.collect { skuDetailsWrapperList ->
                 Log.i(TAG, skuDetailsWrapperList.toString())
                 val isCategoryRewarded = gameViewModel.isCategoryRewarded()
-
-                val setOfAvailablePurchases: MutableSet<AvailablePurchase> =
-                    if (skuDetailsWrapperList.isNotEmpty()) {
-                        Log.d(TAG, "All sku details not there")
-                        setUpAvailablePurchases(skuDetailsWrapperList)
-                    } else {
-                        Log.d(TAG, "Set offline sku details")
-                        val skus = gameViewModel.getAllSkus()
-                        setUpAvailablePurchasesOffline(skus)
-                    }
-
-                when (setOfAvailablePurchases) {
-                    setOf(INTER) -> {
-                        setUpPurchasedGoods(RewardType.LETTER)
-                        setUpPurchasedGoods(RewardType.HINT, isCategoryRewarded)
-                        terminateButton(binding.fullNoAdsButton)
-                    }
-                    setOf(CLUE) -> {
-                        setUpPurchasedGoods(RewardType.LETTER)
-                        terminateButton(binding.fullNoAdsButton)
-                    }
-                    setOf(PLACE) -> {
-                        setUpPurchasedGoods(RewardType.HINT)
-                        terminateButton(binding.fullNoAdsButton)
-                    }
-                    setOf(PLACE, INTER) -> {
-                        setUpPurchasedGoods(RewardType.HINT, isCategoryRewarded)
-                        binding.fullAdsSavingsBadge.visibility = View.GONE
-                    }
-                    setOf(PLACE, CLUE) -> {
-                        // All taken care of in setUpAvailablePurchases
-                        binding.fullAdsSavingsBadge.visibility = View.GONE
-                    }
-                    setOf(CLUE, INTER) -> {
-                        terminateButton(binding.fullNoAdsButton)
-                        setUpPurchasedGoods(RewardType.LETTER)
-                    }
-                    setOf(PLACE, CLUE, INTER) -> {
-                        // All taken care of in setUpAvailablePurchases
-                    }
-                    setOf<AvailablePurchase>() -> {
-                        Log.d(TAG, "All good, got 0 set.")
-                        setUpPurchasedGoods(RewardType.LETTER)
-                        setUpPurchasedGoods(RewardType.HINT, isCategoryRewarded)
-                        listOf(
-                            binding.instantCluesButton,
-                            binding.instantLettersButton,
-                            binding.noIntermediateAdsButton,
-                            binding.fullNoAdsButton
-                        ).forEach {
-                            terminateButton(it)
+                if (gameViewModel.internetState.value.state == InternetState.ONLINE) {
+                    Log.i(TAG, "Set purchases online.")
+                    when (setUpAvailablePurchases(skuDetailsWrapperList)) {
+                        setOf(INTER) -> {
+                            setUpPurchasedGoods(RewardType.LETTER)
+                            setUpPurchasedGoods(RewardType.HINT, isCategoryRewarded)
+                            terminateButton(binding.fullNoAdsButton)
                         }
-                    }
-                }
-            }
-        }
-
-        rewardedAdCollectionJob = lifecycleScope.launch {
-            gameViewModel.rewardedAdAvailable.collectLatest { rewardedAdAvailable ->
-                Log.d(TAG, "Set up the video buttons.: $rewardedAdAvailable")
-                var cluesPurchased = false
-                var lettersPurchased = false
-                var allAdsRemoved = false
-
-                if (gameViewModel.skuDetails.value.isNotEmpty())
-                {
-                    gameViewModel.skuDetails.value.forEach {
-                        when (it.skuDetails.sku) {
-                            getString(R.string.instant_clues) -> {
-                                cluesPurchased = it.purchased
-                            }
-                            getString(R.string.instant_letters) -> {
-                                lettersPurchased = it.purchased
-                            }
-                            getString(R.string.full_no_ads) -> {
-                                allAdsRemoved = it.purchased
+                        setOf(CLUE) -> {
+                            setUpPurchasedGoods(RewardType.LETTER)
+                            terminateButton(binding.fullNoAdsButton)
+                        }
+                        setOf(PLACE) -> {
+                            setUpPurchasedGoods(RewardType.HINT)
+                            terminateButton(binding.fullNoAdsButton)
+                        }
+                        setOf(PLACE, INTER) -> {
+                            setUpPurchasedGoods(RewardType.HINT, isCategoryRewarded)
+                            binding.fullAdsSavingsBadge.visibility = View.GONE
+                        }
+                        setOf(PLACE, CLUE) -> {
+                            // All taken care of in setUpAvailablePurchases
+                            binding.fullAdsSavingsBadge.visibility = View.GONE
+                        }
+                        setOf(CLUE, INTER) -> {
+                            terminateButton(binding.fullNoAdsButton)
+                            setUpPurchasedGoods(RewardType.LETTER)
+                        }
+                        setOf(PLACE, CLUE, INTER) -> {
+                            // All taken care of in setUpAvailablePurchases
+                        }
+                        setOf(UNKNOWN) -> { // old info from offline, not updated yet from online
+                            removeAllPurchaseButtons()
+                        }
+                        setOf<AvailablePurchase>() -> {
+                            setUpPurchasedGoods(RewardType.LETTER)
+                            setUpPurchasedGoods(RewardType.HINT, isCategoryRewarded)
+                            listOf(
+                                binding.instantCluesButton,
+                                binding.instantLettersButton,
+                                binding.noIntermediateAdsButton,
+                                binding.fullNoAdsButton
+                            ).forEach {
+                                terminateButton(it)
                             }
                         }
                     }
                 } else {
+                    Log.i(TAG, "Set purchases offline.")
                     val skus = gameViewModel.getAllSkus()
+                    removeAllPurchaseButtons()
                     skus.forEach {
                         when (it.sku) {
                             getString(R.string.instant_clues) -> {
-                                cluesPurchased = it.purchased
+                                if (it.purchased) {
+                                    setUpPurchasedGoods(RewardType.HINT, isCategoryRewarded)
+                                }
                             }
                             getString(R.string.instant_letters) -> {
-                                lettersPurchased = it.purchased
+                                if (it.purchased) {
+                                    setUpPurchasedGoods(RewardType.LETTER)
+                                }
                             }
                             getString(R.string.full_no_ads) -> {
-                                allAdsRemoved = it.purchased
-                            }
-                        }
-                    }
-                }
-                Log.d(TAG, "$cluesPurchased, $lettersPurchased, $allAdsRemoved")
-
-                if ((cluesPurchased && lettersPurchased) || allAdsRemoved) {
-                    rewardedAdCollectionJob?.cancel()
-                    return@collectLatest
-                }
-
-                val isCategoryRewarded = gameViewModel.isCategoryRewarded()
-
-                if (!cluesPurchased) {
-                    setUpRewardedButtonSubtitle(
-                        binding.revealCategoryHidden.revealClueSubtitle,
-                        rewardedAdAvailable
-                    )
-                    binding.categoryRevealButton.setOnClickListener {
-                        if (rewardedAdAvailable) {
-                            if (!isCategoryRewarded) {
-                                if (isAdded) {
-                                    (requireActivity() as GameActivity).showRewardedVideo(RewardType.HINT)
+                                if (it.purchased) {
+                                    setUpPurchasedGoods(RewardType.HINT, isCategoryRewarded)
+                                    setUpPurchasedGoods(RewardType.LETTER)
                                 }
                             }
                         }
                     }
                 }
-                if (!lettersPurchased) {
-                    setUpRewardedButtonSubtitle(binding.placeLetterSubtitle, rewardedAdAvailable)
-                    binding.letterPlaceButton.setOnClickListener {
-                        if (rewardedAdAvailable) {
+
+            }
+        }
+
+        rewardedAdCollectionJob = lifecycleScope.launch {
+            gameViewModel.rewardedAdAvailable.collectLatest { rewardedAdAvailable ->
+                if (gameViewModel.internetState.value.state == InternetState.ONLINE) {
+
+                    Log.d(TAG, "Set up the video buttons.: $rewardedAdAvailable")
+                    var cluesPurchased = false
+                    var lettersPurchased = false
+                    var allAdsRemoved = false
+
+                    if (gameViewModel.skuDetails.value.isNotEmpty()) {
+                        gameViewModel.skuDetails.value.forEach {
+                            when (it.skuDetails.sku) {
+                                getString(R.string.instant_clues) -> {
+                                    cluesPurchased = it.purchased
+                                }
+                                getString(R.string.instant_letters) -> {
+                                    lettersPurchased = it.purchased
+                                }
+                                getString(R.string.full_no_ads) -> {
+                                    allAdsRemoved = it.purchased
+                                }
+                            }
+                        }
+                    }
+
+                    Log.d(TAG, "$cluesPurchased, $lettersPurchased, $allAdsRemoved")
+
+                    if ((cluesPurchased && lettersPurchased) || allAdsRemoved) {
+                        rewardedAdCollectionJob?.cancel()
+                        return@collectLatest
+                    }
+
+                    val isCatRew = gameViewModel.isCategoryRewarded()
+
+                    if (rewardedAdAvailable)
+                    {
+                        binding.categoryRevealButton.setOnClickListener {
+                            if (!isCatRew) {
+                                if (isAdded) {
+                                    Log.d(TAG, "Set up clue reward button")
+                                    (requireActivity() as GameActivity).showRewardedVideo(
+                                        RewardType.HINT
+                                    )
+                                }
+                            }
+                        }
+
+                        binding.letterPlaceButton.setOnClickListener {
                             dismiss()
                             if (isAdded) {
+                                Log.d(TAG, "Set up letters reward button")
                                 (requireActivity() as GameActivity).showRewardedVideo(RewardType.LETTER)
                             }
                         }
                     }
+
+                    if (!cluesPurchased) {
+                        setUpRewardedButtonSubtitle(
+                            binding.revealCategoryHidden.revealClueSubtitle,
+                            rewardedAdAvailable
+                        )
+                    }
+                    if (!lettersPurchased) {
+                        setUpRewardedButtonSubtitle(
+                            binding.placeLetterSubtitle,
+                            rewardedAdAvailable
+                        )
+                    }
+                } else {
+                    // We are offline, no ad can be available
+                    setUpRewardedButtonSubtitle(
+                        binding.revealCategoryHidden.revealClueSubtitle,
+                        adAvailable = false
+                    )
+                    setUpRewardedButtonSubtitle(
+                        binding.placeLetterSubtitle,
+                        adAvailable = false
+                    )
                 }
             }
         }
@@ -207,6 +243,17 @@ class HintsFragment : BottomSheetDialogFragment() {
             if (cluesPurchased == false || lettersPurchased == false) {
                 rewardedAdCollectionJob?.start()
             }
+        }
+    }
+
+    private fun removeAllPurchaseButtons() {
+        listOf(
+            binding.instantCluesButton,
+            binding.instantLettersButton,
+            binding.noIntermediateAdsButton,
+            binding.fullNoAdsButton
+        ).forEach {
+            terminateButton(it)
         }
     }
 
@@ -324,32 +371,11 @@ class HintsFragment : BottomSheetDialogFragment() {
         button.visibility = View.GONE
     }
 
-    private fun setUpAvailablePurchasesOffline(skus: List<Sku>): MutableSet<AvailablePurchase> {
-        val purchasesAvailable = mutableSetOf<AvailablePurchase>()
-        skus.forEach {
-            when (it.sku) {
-                getString(R.string.instant_clues) -> {
-                    if (!it.purchased) purchasesAvailable.add(CLUE)
-                    else terminateButton(binding.instantCluesButton)
-                }
-                getString(R.string.instant_letters) -> {
-                    if (!it.purchased) purchasesAvailable.add(PLACE)
-                    else terminateButton(binding.instantLettersButton)
-                }
-                getString(R.string.no_intermediate_ads) -> {
-                    if (!it.purchased) purchasesAvailable.add(INTER)
-                    else terminateButton(binding.noIntermediateAdsButton)
-                }
-                getString(R.string.full_no_ads) -> {
-                    if (it.purchased) terminateButton(binding.fullNoAdsButton)
-                }
-            }
-        }
-        return purchasesAvailable
-    }
-
     private fun setUpAvailablePurchases(skuDetails: List<SkuDetailsWrapper>): MutableSet<AvailablePurchase> {
         val purchasesAvailable = mutableSetOf<AvailablePurchase>()
+        if (skuDetails.isEmpty()) {
+            purchasesAvailable.add(UNKNOWN)
+        }
         if (skuDetails.find { it.skuDetails.sku == getString(R.string.full_no_ads) }?.purchased == true) {
             return purchasesAvailable
         }
@@ -428,7 +454,8 @@ class HintsFragment : BottomSheetDialogFragment() {
     enum class AvailablePurchase {
         PLACE,
         CLUE,
-        INTER
+        INTER,
+        UNKNOWN
     }
 
     override fun onDismiss(dialog: DialogInterface) {

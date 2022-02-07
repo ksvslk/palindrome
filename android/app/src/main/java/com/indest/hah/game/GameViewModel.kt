@@ -8,9 +8,7 @@ import android.graphics.BitmapFactory
 import android.os.CountDownTimer
 import android.util.Log
 import android.widget.Toast
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.android.billingclient.api.*
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.games.Games
@@ -78,8 +76,7 @@ class GameViewModel @Inject constructor(
         }
     }
 
-    fun destroySaveGameTimer()
-    {
+    fun destroySaveGameTimer() {
         saveGameTimer?.cancel()
         saveGameTimer = null
     }
@@ -88,7 +85,6 @@ class GameViewModel @Inject constructor(
         saveGameTimer = object : CountDownTimer(180000, 1000) {
             override fun onTick(millisUntilFinished: Long) {}
             override fun onFinish() {
-                Log.d(TAG, "Save game timer completed.")
                 viewModelScope.launch(Dispatchers.Default) {
                     saveSnapshot()
                 }
@@ -103,7 +99,6 @@ class GameViewModel @Inject constructor(
                 Log.d(TAG, "Handle purchases in PurchasesUpdatedListener")
                 viewModelScope.launch {
                     for (purchase in purchases) {
-                        Log.d(TAG, "Should handle purchase here.")
                         handlePurchase(purchase)
                     }
                 }
@@ -118,14 +113,8 @@ class GameViewModel @Inject constructor(
     private val purchaseResponseListener =
         PurchasesResponseListener { billingResult, purchases ->
             if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && purchases.isNotEmpty()) {
-                Log.d(TAG, "Remove entitlements and handle purchases in PurchasesResponseListener")
                 viewModelScope.launch {
-                    //levelRepository.removeAllEntitlements()
                     for (purchase in purchases) {
-                        Log.d(
-                            TAG,
-                            "Handle purchases from PurchasesResponseListener: ${purchase.skus.first()} - ${purchase.purchaseState}"
-                        )
                         handlePurchase(purchase)
                     }
                 }
@@ -138,6 +127,21 @@ class GameViewModel @Inject constructor(
 
         }
 
+    private val billingStateListener = object:BillingClientStateListener {
+        override fun onBillingSetupFinished(billingResult: BillingResult) {
+            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                viewModelScope.launch(Dispatchers.Default) {
+                    querySkuDetails()
+                    queryPurchasesAsync()
+                }
+            }
+        }
+
+        override fun onBillingServiceDisconnected() {
+            Log.d(TAG, "onBillingServiceDisconnected")
+        }
+    }
+
     init {
         viewModelScope.launch {
             levelRepository.latestLevelFlow().collect {
@@ -146,40 +150,22 @@ class GameViewModel @Inject constructor(
         }
     }
 
+
     fun startBillingConnection(context: Context) {
-        Log.d(TAG, "Billing Initialization")
-        if (billingClient == null)
-        {
-            billingClient = BillingClient.newBuilder(context)
-                .setListener(purchasesUpdatedListener)
-                .enablePendingPurchases()
-                .build()
+        billingClient = BillingClient.newBuilder(context.applicationContext)
+            .setListener(purchasesUpdatedListener)
+            .enablePendingPurchases()
+            .build()
+        if (billingClient?.isReady == false) {
+            Log.d(TAG, "BillingClient: Start connection...")
+            billingClient?.startConnection(billingStateListener)
         }
-
-        billingClient?.startConnection(object :
-            BillingClientStateListener {
-            override fun onBillingSetupFinished(billingResult: BillingResult) {
-                if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                    // The BillingClient is ready. You can query purchases here.
-                    viewModelScope.launch(Dispatchers.Default) {
-                        querySkuDetails()
-                        queryPurchasesAsync()
-                    }
-                }
-            }
-
-            override fun onBillingServiceDisconnected() {
-                Log.d(TAG, "onBillingServiceDisconnected")
-                if (_internetState.value.state == InternetState.ONLINE) {
-                    startBillingConnection(context)
-                }
-            }
-        })
     }
 
-    fun endBillingConnection()
-    {
-        billingClient?.endConnection()
+    fun endBillingConnection() {
+        if (billingClient?.isReady == true) {
+            billingClient?.endConnection()
+        }
     }
 
     suspend fun querySkuDetails() {
@@ -191,24 +177,25 @@ class GameViewModel @Inject constructor(
         val skuDetailsResult = withContext(Dispatchers.IO) {
             billingClient?.querySkuDetails(params.build())
         }
+        Log.d(
+            TAG,
+            "skuDetailsResult: ${skuDetailsResult?.billingResult?.debugMessage}, code:${skuDetailsResult?.billingResult?.responseCode}"
+        )
+
         if (skuDetailsResult?.billingResult?.responseCode == BillingClient.BillingResponseCode.OK) {
+            Log.d(TAG, "Got sku details: ${skuDetailsResult.skuDetailsList}")
             skuDetailsResult.skuDetailsList?.map {
                 SkuDetailsWrapper(purchased = false, it)
             }?.let {
                 _skuDetails.value = it
             }
-        }
-        else if (skuDetailsResult?.billingResult?.responseCode == BillingClient.BillingResponseCode.BILLING_UNAVAILABLE)
-        {
-            levelRepository.getAllSkus().map {
-                SkuDetailsWrapper(purchased = false, SkuDetails(""))
-            }
+        } else {
+            _skuDetails.value = emptyList()
         }
     }
 
-    suspend fun getAllSkus():List<Sku>
-    {
-       return levelRepository.getAllSkus()
+    suspend fun getAllSkus(): List<Sku> {
+        return levelRepository.getAllSkus()
     }
 
     fun queryPurchasesAsync() {
@@ -216,6 +203,8 @@ class GameViewModel @Inject constructor(
     }
 
     fun launchPurchaseFlow(skuDetails: SkuDetails, activity: Activity) {
+        Log.i(TAG, "STATE: ${billingClient?.connectionState}")
+        Log.i(TAG, "IS READY: ${billingClient?.isReady}")
         val flowParams = BillingFlowParams.newBuilder()
             .setSkuDetails(skuDetails)
             .build()
@@ -225,10 +214,8 @@ class GameViewModel @Inject constructor(
 
     private suspend fun handlePurchase(purchase: Purchase) {
         // Purchase retrieved from BillingClient#queryPurchasesAsync or your PurchasesUpdatedListener.
-        Log.d(TAG, "Purchase state for ${purchase.skus.first()}: ${purchase.purchaseState}")
         when (purchase.purchaseState) {
             Purchase.PurchaseState.PURCHASED -> {
-                Log.d(TAG, "Purchased: ${purchase.skus.first()}")
                 if (!purchase.isAcknowledged) {
                     val acknowledgePurchaseParams = AcknowledgePurchaseParams.newBuilder()
                         .setPurchaseToken(purchase.purchaseToken)
@@ -286,7 +273,7 @@ class GameViewModel @Inject constructor(
         _rewardedAdAvailable.value = boolean
     }
 
-   suspend fun getLatestLevel(): Level {
+    suspend fun getLatestLevel(): Level {
         return levelRepository.getLatestLevel()
     }
 
@@ -475,8 +462,6 @@ class GameViewModel @Inject constructor(
             BitmapFactory.decodeResource(context.resources, com.indest.hah.R.drawable.o3)
                 ?: Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
 
-        Log.d(TAG, context.toString())
-        Log.d(TAG, coverImage.toString())
         GoogleSignIn.getLastSignedInAccount(context)?.let { signInAccount ->
             val snapshotsClient = Games.getSnapshotsClient(
                 context,
@@ -570,7 +555,7 @@ class GameViewModel @Inject constructor(
             return snapshotsClient.commitAndClose(snapshot, metadataChange)
         }
 
-        Log.d(TAG, "Snapshot in cloud had more progress. Return null.")
+        Log.d(TAG, "WRITE: Snapshot in cloud had more progress. Return null.")
         return null
     }
 
@@ -615,8 +600,6 @@ class GameViewModel @Inject constructor(
         val allLevels = levelRepository.getSaveGameData()
         val levelsListType: Type = object : TypeToken<ArrayList<Level?>?>() {}.type
         val levelsList: List<Level>? = gson.fromJson(bytes?.decodeToString(), levelsListType)
-
-        Log.d(TAG, "Trying to update local database if needed...")
 
         if (levelsList != null) {
 
