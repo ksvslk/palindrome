@@ -2,6 +2,7 @@ package com.indest.hah.fragments
 
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
@@ -33,5 +34,10 @@ class LoadingFragment : Fragment(R.layout.home_fragment) {
                 }
             }
         }
+    }
+
+    override fun onDestroyView() {
+        (this.view as? LinearLayoutCompat)?.clearDisappearingChildren()
+        super.onDestroyView()
     }
 }
