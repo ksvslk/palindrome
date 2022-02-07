@@ -122,6 +122,7 @@ class GameActivity : AppCompatActivity() {
         gameViewModel.startBillingConnection(applicationContext)
     }
 
+
     private fun setUpNavController() {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragments_container) as NavHostFragment
@@ -212,19 +213,13 @@ class GameActivity : AppCompatActivity() {
                     if (isConnectedToInternet()) {
                         gameViewModel.changeInternetState(ONLINE)
                         Log.d(TAG, "Internet connection: $ONLINE.")
-                        val positiveColor = ContextCompat.getColor(applicationContext, R.color.successBoxColor)
-                        binding.gameProgress.setIndicatorColor(positiveColor)
                     } else {
                         gameViewModel.changeInternetState(OFFLINE)
                         Log.d(TAG, "Internet connection: $OFFLINE.")
-                        val negativeColor = ContextCompat.getColor(applicationContext, R.color.colorOnBackground)
-                        binding.gameProgress.setIndicatorColor(negativeColor)
                     }
                 } else {
                     gameViewModel.changeInternetState(OFFLINE)
                     Log.d(TAG, "Internet connection: $OFFLINE.")
-                    val negativeColor = ContextCompat.getColor(applicationContext, R.color.colorOnBackground)
-                    binding.gameProgress.setIndicatorColor(negativeColor)
                 }
             }
         })
