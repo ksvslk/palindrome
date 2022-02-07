@@ -32,7 +32,7 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        Log.i(TAG, "onCreateView")
+        Log.d(TAG, "onCreateView")
         val b = GoogleGamesFragmentBinding.inflate(layoutInflater, container, false)
         _binding = b
 
@@ -63,7 +63,7 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
 
     private fun showLeaderBoard() {
         dismiss()
-        Log.i(TAG, "showLeaderBoard")
+        Log.d(TAG, "showLeaderBoard")
         //Toast.makeText(requireContext().applicationContext, "Showing leaderboard!", Toast.LENGTH_LONG * 4).show()
         val lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(requireActivity())
         val leaderboardsClient = if (lastSignedInAccount != null)
@@ -83,7 +83,7 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
 
     private fun showAchievements() {
         dismiss()
-        Log.i(TAG, "showAchievements")
+        Log.d(TAG, "showAchievements")
         //Toast.makeText(requireContext().applicationContext, "Showing achievements!", Toast.LENGTH_LONG * 4).show()
         val lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(requireActivity())
         val achievementsClient = if (lastSignedInAccount != null)

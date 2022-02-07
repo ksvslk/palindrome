@@ -1,8 +1,10 @@
 package com.indest.hah.persistance
 
+import com.android.billingclient.api.SkuDetails
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
 import com.indest.hah.persistance.dto.Sku
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,8 +22,8 @@ class LevelRepository @Inject constructor(
     suspend fun unlockNextLevel(current: Int) = levelDao.unlockNextLevel(current)
     suspend fun updateScore(newScore: Int, level: Int) = levelDao.updateScore(newScore, level)
     suspend fun getTotalScore() = levelDao.getTotalScore()
-    fun getLastLevel() = levelDao.getLastLevel()
     suspend fun getLatestLevel() = levelDao.getLatestLevel()
+    suspend fun latestLevelFlow(): Flow<Level> = levelDao.getLastLevel()
 
     suspend fun insertLetterInfo(
         level: Int,
@@ -72,8 +74,7 @@ class LevelRepository @Inject constructor(
     }
 
     suspend fun grantSkuEntitlements(sku: String) = levelDao.grantSkuEntitlements(sku)
-    suspend fun removeSkuEntitlements(sku: String) = levelDao.removeSkuEntitlements(sku)
-    suspend fun isSkuPurchased(sku: String): Boolean = levelDao.isSkuPurchased(sku)
+    suspend fun removeAllEntitlements() = levelDao.removeAllEntitlements()
     suspend fun getAllSkus(): List<Sku> = levelDao.getAllSkus()
     suspend fun isCategoryRewarded(level:Int):Boolean = levelDao.isCategoryRewarded(level)
 }

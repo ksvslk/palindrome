@@ -48,7 +48,7 @@ class LevelItemAdapter(
 
     // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(levelItemViewHolder: LevelItemViewHolder, position: Int) {
-        Log.i(TAG, "onBindViewHolder")
+        Log.d(TAG, "onBindViewHolder")
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
         levelItemViewHolder.textView.text = dataSet[position].levelId.toString()

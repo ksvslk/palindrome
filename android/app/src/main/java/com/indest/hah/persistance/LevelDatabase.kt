@@ -80,10 +80,10 @@ abstract class LevelDatabase : RoomDatabase() {
                                     )
                                 }
                                 val skuList = ArrayList<String>()
-                                skuList.add(context.getString(com.indest.hah.R.string.remove_letter_ads))
-                                skuList.add(context.getString(com.indest.hah.R.string.remove_clue_ads))
-                                skuList.add(context.getString(com.indest.hah.R.string.remove_inbetween_ads))
-                                skuList.add(context.getString(com.indest.hah.R.string.remove_all_ads))
+                                skuList.add(context.getString(com.indest.hah.R.string.full_no_ads))
+                                skuList.add(context.getString(com.indest.hah.R.string.instant_clues))
+                                skuList.add(context.getString(com.indest.hah.R.string.no_intermediate_ads))
+                                skuList.add(context.getString(com.indest.hah.R.string.instant_letters))
 
                                 skuList.forEach {
                                     val skuValue = ContentValues()

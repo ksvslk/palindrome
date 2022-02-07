@@ -175,7 +175,7 @@ enum class LetterState : ILetterState {
                     l.elevation = NEUTRAL_LAYER
                     l.currentPos.x = l.pos.x
                     l.currentPos.y = l.pos.y
-                    Log.i(TAG, "ANIMATION END for $l.")
+                    Log.d(TAG, "ANIMATION END for $l.")
                     if (durationModifier != 1) {
                         l.findFragment<GamePlayFragment>().gameState = GameState.READY
                     }

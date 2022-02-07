@@ -43,7 +43,7 @@ class SettingsFragment : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        Log.i(TAG, "onCreateView")
+        Log.d(TAG, "onCreateView")
         val b = SettingsFragmentBinding.inflate(layoutInflater, container, false)
         _binding = b
 
@@ -123,12 +123,12 @@ class SettingsFragment : BottomSheetDialogFragment() {
     private val activityResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == Activity.RESULT_OK) {
-                Log.i(TAG, "it.resultCode == Activity.RESULT_OK")
+                Log.d(TAG, "it.resultCode == Activity.RESULT_OK")
                 dismiss()
             }
             else {
                 dismiss()
-                Log.i(TAG, "Activity left without RESULT_OK ${it.resultCode}")
+                Log.d(TAG, "Activity left without RESULT_OK ${it.resultCode}")
             }
         }
 
@@ -152,10 +152,10 @@ class SettingsFragment : BottomSheetDialogFragment() {
         )
         signInClient.signOut().addOnCompleteListener {
             if (it.isSuccessful) {
-                //Toast.makeText(requireContext().applicationContext,"Successfully signed out.",Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext().applicationContext,"Successfully signed out.",Toast.LENGTH_LONG).show()
                 dismiss()
             } else {
-                //Toast.makeText(requireContext().applicationContext,"Something went wrong when trying to sign out.",Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext().applicationContext,"Something went wrong when trying to sign out.",Toast.LENGTH_LONG).show()
             }
         }
     }

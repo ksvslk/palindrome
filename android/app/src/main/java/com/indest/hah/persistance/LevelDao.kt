@@ -131,8 +131,8 @@ interface LevelDao {
     @Query("update sku set purchased = 1 where sku=:sku")
     suspend fun grantSkuEntitlements(sku: String)
 
-    @Query("update sku set purchased = 0 where sku=:sku")
-    suspend fun removeSkuEntitlements(sku: String)
+    @Query("update sku set purchased = 0")
+    suspend fun removeAllEntitlements()
 
     @Query("select exists(select 1 from sku where sku=:sku and purchased=1)")
     suspend fun isSkuPurchased(sku: String):Boolean

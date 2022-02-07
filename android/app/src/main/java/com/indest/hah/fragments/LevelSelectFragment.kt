@@ -37,7 +37,7 @@ class LevelSelectFragment : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        Log.i(TAG, "onCreateView")
+        Log.d(TAG, "onCreateView")
         val b = LevelSelectFragmentBinding.inflate(layoutInflater, container, false)
         _binding = b
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
@@ -45,7 +45,7 @@ class LevelSelectFragment : BottomSheetDialogFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        Log.i(TAG, "onViewCreated")
+        Log.d(TAG, "onViewCreated")
         super.onViewCreated(view, savedInstanceState)
         gameViewModel.levels.observe(viewLifecycleOwner, { levels ->
             if (levels != null) {
@@ -73,7 +73,7 @@ class LevelSelectFragment : BottomSheetDialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        Log.i(TAG, "onCreateDialog")
+        Log.d(TAG, "onCreateDialog")
         val bottomSheetDialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
         bottomSheetDialog.setOnShowListener { dialog: DialogInterface ->
             val bsd = dialog as BottomSheetDialog

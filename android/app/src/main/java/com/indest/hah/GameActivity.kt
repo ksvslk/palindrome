@@ -7,6 +7,7 @@ import android.content.res.Configuration
 import android.graphics.*
 import android.net.*
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.util.Log
 import android.view.View
 import android.view.WindowManager.LayoutParams.*
@@ -64,9 +65,10 @@ class GameActivity : AppCompatActivity() {
     private var _rewardEarned = false
     lateinit var consentInformation: ConsentInformation
     lateinit var consentForm: ConsentForm
+    private var adReloadTimer: CountDownTimer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.i(TAG, "onCreate")
+        Log.d(TAG, "onCreate")
         super.onCreate(savedInstanceState)
         connectionLiveData = ConnectionLiveData(applicationContext)
 
@@ -96,16 +98,16 @@ class GameActivity : AppCompatActivity() {
         computeWindowSizeClasses()
         when (resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK) {
             Configuration.SCREENLAYOUT_SIZE_SMALL -> {
-                Log.i(TAG, "Screen: SMALL, ")
+                Log.d(TAG, "Screen: SMALL, ")
             }
             Configuration.SCREENLAYOUT_SIZE_NORMAL -> {
-                Log.i(TAG, "Screen: NORMAL, DPI: ${resources.configuration.densityDpi}")
+                Log.d(TAG, "Screen: NORMAL, DPI: ${resources.configuration.densityDpi}")
             }
             Configuration.SCREENLAYOUT_SIZE_LARGE -> {
-                Log.i(TAG, "Screen: LARGE, DPI: ${resources.configuration.densityDpi}")
+                Log.d(TAG, "Screen: LARGE, DPI: ${resources.configuration.densityDpi}")
             }
             Configuration.SCREENLAYOUT_SIZE_XLARGE -> {
-                Log.i(TAG, "Screen: XLARGE, DPI: ${resources.configuration.densityDpi}")
+                Log.d(TAG, "Screen: XLARGE, DPI: ${resources.configuration.densityDpi}")
             }
         }
         requestConsentInformation()
@@ -116,8 +118,6 @@ class GameActivity : AppCompatActivity() {
                 "1C8B057289566E4B36BA860D0A8281CB"
             )
         )
-
-        //startObservingSaveGameTimer()
     }
 
     private fun setUpNavController() {
@@ -136,6 +136,7 @@ class GameActivity : AppCompatActivity() {
         signInSilently()
         gameViewModel.startBillingConnection(applicationContext)
         gameViewModel.startSaveGameTimer()
+        if (_rewardedAd == null) loadRewardedAd()
     }
 
     private fun requestConsentInformation() {
@@ -196,19 +197,10 @@ class GameActivity : AppCompatActivity() {
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
-        Log.i(TAG, "onWindowFocusChanged")
+        Log.d(TAG, "onWindowFocusChanged")
         super.onWindowFocusChanged(hasFocus)
         hideSystemBars(binding.root)
     }
-
-    private val adReloadTimerJob  =
-        lifecycleScope.launchWhenResumed {
-            gameViewModel.adReloadTimer.collectLatest {
-                if (it) {
-                    loadRewardedAd()
-                }
-            }
-        }
 
     private fun startObservingNetworkStatus() {
         connectionLiveData.observe(this@GameActivity, { hasNetwork ->
@@ -217,20 +209,14 @@ class GameActivity : AppCompatActivity() {
                 if (hasNetwork) {
                     if (isConnectedToInternet()) {
                         gameViewModel.changeInternetState(ONLINE)
-                        withContext(Dispatchers.Main)
-                        {
-                            if (!gameViewModel.rewardedAdAvailable.value){
-                                loadRewardedAd()
-                            }
-                        }
-                        Log.i(TAG, "Internet connection: $ONLINE.")
+                        Log.d(TAG, "Internet connection: $ONLINE.")
                     } else {
                         gameViewModel.changeInternetState(OFFLINE)
-                        Log.i(TAG, "Internet connection: $OFFLINE.")
+                        Log.d(TAG, "Internet connection: $OFFLINE.")
                     }
                 } else {
                     gameViewModel.changeInternetState(OFFLINE)
-                    Log.i(TAG, "Internet connection: $OFFLINE.")
+                    Log.d(TAG, "Internet connection: $OFFLINE.")
                 }
             }
         })
@@ -252,7 +238,7 @@ class GameActivity : AppCompatActivity() {
     }
 
     private fun signInSilently() {
-        Log.i(TAG, "Trying to sign in silently.")
+        Log.d(TAG, "Trying to sign in silently.")
         val signInOptions =
             GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
                 .requestScopes(Scope(Scopes.DRIVE_APPFOLDER))
@@ -282,7 +268,7 @@ class GameActivity : AppCompatActivity() {
                         val signedInAccount = task.result
                         Games.getGamesClient(this, signedInAccount)
                             .setViewForPopups(findViewById(android.R.id.content))
-                        Log.i(TAG, "Signed in successfully.")
+                        Log.d(TAG, "Signed in successfully.")
                         lifecycleScope.launch {
                             gameViewModel.loadSnapshot(this@GameActivity)
                         }
@@ -290,7 +276,7 @@ class GameActivity : AppCompatActivity() {
                     } else if (task.isComplete) {
                         gameViewModel.startGame()
                         startObservingNetworkStatus()
-                        Log.i(
+                        Log.d(
                             TAG,
                             "Player needs to sign-in explicitly using via UI. ${task.exception}"
                         )
@@ -321,7 +307,7 @@ class GameActivity : AppCompatActivity() {
     private val activityResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode != Activity.RESULT_OK && it.resultCode != Activity.RESULT_CANCELED) {
-                Log.i(
+                Log.d(
                     TAG,
                     "Something went wrong with ActivityResult. Code Not OK and not CANCELED! "
                 )
@@ -336,10 +322,19 @@ class GameActivity : AppCompatActivity() {
         activityResultLauncher.launch(signInClient.signInIntent)
     }
 
+    private fun startAdReloadTimer() {
+        adReloadTimer?.cancel()
+        adReloadTimer = object : CountDownTimer(30000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {}
+            override fun onFinish() {
+                Log.d(TAG, "Ad reload timer completed.")
+                loadRewardedAd()
+            }
+        }.start()
+    }
+
     // CLEAN
     private fun loadRewardedAd() {
-        adReloadTimerJob.cancel()
-        gameViewModel.setAdReloadTimer(false)
         if (_rewardedAd == null) {
             val adRequest = AdRequest.Builder().build()
             RewardedAd.load(
@@ -348,8 +343,7 @@ class GameActivity : AppCompatActivity() {
                     override fun onAdFailedToLoad(adError: LoadAdError) {
                         Log.d(TAG, adError.message)
                         gameViewModel.setRewardedAdAvailability(false)
-                        gameViewModel.startAdReloadTimer()
-                        adReloadTimerJob.start()
+                        startAdReloadTimer()
                     }
 
                     override fun onAdLoaded(rewardedAd: RewardedAd) {
@@ -364,7 +358,7 @@ class GameActivity : AppCompatActivity() {
 
     fun showRewardedVideo(rewardedType: RewardType) {
         if (gameViewModel.rewardedAdAvailable.value) {
-            Log.i(TAG, "showRewardedVideo")
+            Log.d(TAG, "showRewardedVideo")
             _rewardedAd?.fullScreenContentCallback =
                 object : FullScreenContentCallback() {
                     override fun onAdDismissedFullScreenContent() {
@@ -384,7 +378,7 @@ class GameActivity : AppCompatActivity() {
                                     gameViewModel.rewardUser(rewardedType)
                                 }
                                 else -> {
-                                    Log.i(TAG, "Reward type does not match available ones.")
+                                    Log.d(TAG, "Reward type does not match available ones.")
                                 }
                             }
                         }
@@ -435,14 +429,17 @@ class GameActivity : AppCompatActivity() {
     }
 
     override fun onStop() {
-        super.onStop()
+        adReloadTimer?.cancel()
+        adReloadTimer = null
         gameViewModel.endBillingConnection()
         gameViewModel.cancelSaveGameTimer()
+        super.onStop()
     }
 
     override fun onDestroy() {
         _binding = null
-        adReloadTimerJob.cancel()
+        adReloadTimer?.cancel()
+        adReloadTimer = null
         gameViewModel.endBillingConnection()
         gameViewModel.destroySaveGameTimer()
         super.onDestroy()

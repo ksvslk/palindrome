@@ -28,6 +28,7 @@ import com.indest.hah.fragments.HintsFragment.AvailablePurchase.PLACE
 import com.indest.hah.fragments.HintsFragment.AvailablePurchase.CLUE
 import com.indest.hah.fragments.HintsFragment.AvailablePurchase.INTER
 import com.indest.hah.game.enums.RewardType
+import com.indest.hah.persistance.dto.Sku
 
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -47,7 +48,7 @@ class HintsFragment : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        Log.i(TAG, "onCreateView")
+        Log.d(TAG, "onCreateView")
         val b = HintsFragmentBinding.inflate(layoutInflater, container, false)
         _binding = b
 
@@ -62,46 +63,20 @@ class HintsFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         skuDetailsCollectionJob = lifecycleScope.launch {
             gameViewModel.skuDetails.collect { skuDetailsWrapperList ->
+                Log.i(TAG, skuDetailsWrapperList.toString())
                 val isCategoryRewarded = gameViewModel.isCategoryRewarded()
-                val mockList = mutableListOf<SkuDetailsWrapper>()
-      /*          skuDetailsWrapperList.forEach() {
-                    when (it.skuDetails.sku) {
-                        getString(R.string.remove_clue_ads) -> {
-                            mockList.add(
-                                SkuDetailsWrapper(
-                                    purchased = false,
-                                    it.skuDetails
-                                )
-                            )
-                        }
-                        getString(R.string.remove_letter_ads) -> {
-                            mockList.add(
-                                SkuDetailsWrapper(
-                                    purchased = false,
-                                    it.skuDetails
-                                )
-                            )
-                        }
-                        getString(R.string.remove_inbetween_ads) -> {
-                            mockList.add(
-                                SkuDetailsWrapper(
-                                    purchased = false,
-                                    it.skuDetails
-                                )
-                            )
-                        }
-                        getString(R.string.remove_all_ads) -> {
-                            mockList.add(
-                                SkuDetailsWrapper(
-                                    purchased = false,
-                                    it.skuDetails
-                                )
-                            )
-                        }
-                    }
-                }*/
 
-                when (setUpAvailablePurchases(skuDetailsWrapperList)) {
+                val setOfAvailablePurchases: MutableSet<AvailablePurchase> =
+                    if (skuDetailsWrapperList.isNotEmpty()) {
+                        Log.d(TAG, "All sku details not there")
+                        setUpAvailablePurchases(skuDetailsWrapperList)
+                    } else {
+                        Log.d(TAG, "Set offline sku details")
+                        val skus = gameViewModel.getAllSkus()
+                        setUpAvailablePurchasesOffline(skus)
+                    }
+
+                when (setOfAvailablePurchases) {
                     setOf(INTER) -> {
                         setUpPurchasedGoods(RewardType.LETTER)
                         setUpPurchasedGoods(RewardType.HINT, isCategoryRewarded)
@@ -131,7 +106,7 @@ class HintsFragment : BottomSheetDialogFragment() {
                         // All taken care of in setUpAvailablePurchases
                     }
                     setOf<AvailablePurchase>() -> {
-                        Log.i(TAG, "All good, got 0 set.")
+                        Log.d(TAG, "All good, got 0 set.")
                         setUpPurchasedGoods(RewardType.LETTER)
                         setUpPurchasedGoods(RewardType.HINT, isCategoryRewarded)
                         listOf(
@@ -149,25 +124,43 @@ class HintsFragment : BottomSheetDialogFragment() {
 
         rewardedAdCollectionJob = lifecycleScope.launch {
             gameViewModel.rewardedAdAvailable.collectLatest { rewardedAdAvailable ->
-                Log.i(TAG, "Set up the video buttons.: $rewardedAdAvailable")
+                Log.d(TAG, "Set up the video buttons.: $rewardedAdAvailable")
                 var cluesPurchased = false
                 var lettersPurchased = false
                 var allAdsRemoved = false
 
-                gameViewModel.skuDetails.value.forEach {
-                    when (it.skuDetails.sku) {
-                        getString(R.string.remove_clue_ads) -> {
-                            cluesPurchased = it.purchased
+                if (gameViewModel.skuDetails.value.isNotEmpty())
+                {
+                    gameViewModel.skuDetails.value.forEach {
+                        when (it.skuDetails.sku) {
+                            getString(R.string.instant_clues) -> {
+                                cluesPurchased = it.purchased
+                            }
+                            getString(R.string.instant_letters) -> {
+                                lettersPurchased = it.purchased
+                            }
+                            getString(R.string.full_no_ads) -> {
+                                allAdsRemoved = it.purchased
+                            }
                         }
-                        getString(R.string.remove_letter_ads) -> {
-                            lettersPurchased = it.purchased
-                        }
-                        getString(R.string.remove_all_ads) -> {
-                            allAdsRemoved = it.purchased
+                    }
+                } else {
+                    val skus = gameViewModel.getAllSkus()
+                    skus.forEach {
+                        when (it.sku) {
+                            getString(R.string.instant_clues) -> {
+                                cluesPurchased = it.purchased
+                            }
+                            getString(R.string.instant_letters) -> {
+                                lettersPurchased = it.purchased
+                            }
+                            getString(R.string.full_no_ads) -> {
+                                allAdsRemoved = it.purchased
+                            }
                         }
                     }
                 }
-                Log.i(TAG, "$cluesPurchased, $lettersPurchased, $allAdsRemoved")
+                Log.d(TAG, "$cluesPurchased, $lettersPurchased, $allAdsRemoved")
 
                 if ((cluesPurchased && lettersPurchased) || allAdsRemoved) {
                     rewardedAdCollectionJob?.cancel()
@@ -208,9 +201,9 @@ class HintsFragment : BottomSheetDialogFragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             skuDetailsCollectionJob?.start()
             val cluesPurchased =
-                gameViewModel.skuDetails.value.find { it.skuDetails.sku == getString(R.string.remove_clue_ads) }?.purchased
+                gameViewModel.skuDetails.value.find { it.skuDetails.sku == getString(R.string.instant_clues) }?.purchased
             val lettersPurchased =
-                gameViewModel.skuDetails.value.find { it.skuDetails.sku == getString(R.string.remove_letter_ads) }?.purchased
+                gameViewModel.skuDetails.value.find { it.skuDetails.sku == getString(R.string.instant_letters) }?.purchased
             if (cluesPurchased == false || lettersPurchased == false) {
                 rewardedAdCollectionJob?.start()
             }
@@ -331,14 +324,35 @@ class HintsFragment : BottomSheetDialogFragment() {
         button.visibility = View.GONE
     }
 
-    private fun setUpAvailablePurchases(skuDetails: List<SkuDetailsWrapper>): MutableSet<AvailablePurchase> {
-        assert(skuDetails.size == 4)
+    private fun setUpAvailablePurchasesOffline(skus: List<Sku>): MutableSet<AvailablePurchase> {
         val purchasesAvailable = mutableSetOf<AvailablePurchase>()
+        skus.forEach {
+            when (it.sku) {
+                getString(R.string.instant_clues) -> {
+                    if (!it.purchased) purchasesAvailable.add(CLUE)
+                    else terminateButton(binding.instantCluesButton)
+                }
+                getString(R.string.instant_letters) -> {
+                    if (!it.purchased) purchasesAvailable.add(PLACE)
+                    else terminateButton(binding.instantLettersButton)
+                }
+                getString(R.string.no_intermediate_ads) -> {
+                    if (!it.purchased) purchasesAvailable.add(INTER)
+                    else terminateButton(binding.noIntermediateAdsButton)
+                }
+                getString(R.string.full_no_ads) -> {
+                    if (it.purchased) terminateButton(binding.fullNoAdsButton)
+                }
+            }
+        }
+        return purchasesAvailable
+    }
 
-        if (skuDetails.find { it.skuDetails.sku == getString(R.string.remove_all_ads) }?.purchased == true) {
+    private fun setUpAvailablePurchases(skuDetails: List<SkuDetailsWrapper>): MutableSet<AvailablePurchase> {
+        val purchasesAvailable = mutableSetOf<AvailablePurchase>()
+        if (skuDetails.find { it.skuDetails.sku == getString(R.string.full_no_ads) }?.purchased == true) {
             return purchasesAvailable
         }
-
         skuDetails.forEach {
             val lastIndex = it.skuDetails.title.indexOf("(")
             val title = if (lastIndex != -1) it.skuDetails.title.subSequence(
@@ -347,7 +361,7 @@ class HintsFragment : BottomSheetDialogFragment() {
             ) else ""
 
             when (it.skuDetails.sku) {
-                getString(R.string.remove_clue_ads) -> {
+                getString(R.string.instant_clues) -> {
                     if (!it.purchased) {
                         setUpObtainableButton(
                             titleTextView = binding.instantCluesTitle,
@@ -358,12 +372,11 @@ class HintsFragment : BottomSheetDialogFragment() {
                             title = title
                         )
                         purchasesAvailable.add(CLUE)
-                    }
-                    else {
+                    } else {
                         terminateButton(binding.instantCluesButton)
                     }
                 }
-                getString(R.string.remove_letter_ads) -> {
+                getString(R.string.instant_letters) -> {
                     if (!it.purchased) {
                         setUpObtainableButton(
                             titleTextView = binding.instantLettersTitle,
@@ -374,12 +387,11 @@ class HintsFragment : BottomSheetDialogFragment() {
                             title = title
                         )
                         purchasesAvailable.add(PLACE)
-                    }
-                    else {
+                    } else {
                         terminateButton(binding.instantLettersButton)
                     }
                 }
-                getString(R.string.remove_inbetween_ads) -> {
+                getString(R.string.no_intermediate_ads) -> {
                     if (!it.purchased) {
                         setUpObtainableButton(
                             titleTextView = binding.removeIntermediateTitle,
@@ -390,12 +402,11 @@ class HintsFragment : BottomSheetDialogFragment() {
                             title = title
                         )
                         purchasesAvailable.add(INTER)
-                    }
-                    else {
+                    } else {
                         terminateButton(binding.noIntermediateAdsButton)
                     }
                 }
-                getString(R.string.remove_all_ads) -> {
+                getString(R.string.full_no_ads) -> {
                     if (!it.purchased) {
                         setUpObtainableButton(
                             titleTextView = binding.fullNoAdsTitle,
@@ -405,8 +416,7 @@ class HintsFragment : BottomSheetDialogFragment() {
                             lastIndex = lastIndex,
                             title = title
                         )
-                    }
-                    else {
+                    } else {
                         terminateButton(binding.fullNoAdsButton)
                     }
                 }

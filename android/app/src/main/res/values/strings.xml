@@ -35,14 +35,20 @@
     <string name="not_quite_solution">Incorrect palindrome!</string>
     <string name="tap_to_continue">Tap to continue</string>
 
-    <string-array name="correct_texts">
+    <string-array name="good_texts">
         <item>Correct!</item>
-        <item>Awesome!</item>
-        <item>Superb!</item>
-        <item>Way to go!</item>
+        <item>Good!</item>
         <item>Keep going!</item>
         <item>Yes!</item>
         <item>Hurray!</item>
+    </string-array>
+
+    <string-array name="very_good_texts">
+        <item>Awesome!</item>
+        <item>Superb!</item>
+        <item>Excellent!</item>
+        <item>Perfect!</item>
+        <item>Outstanding!</item>
     </string-array>
 
     <string-array name="solution_wrong_texts">

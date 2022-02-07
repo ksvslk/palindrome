@@ -84,7 +84,9 @@ dependencies {
     def window_manager_version ='1.0.0-rc01'
     def ads_version = '20.5.0'
     def billing_version = '4.0.0'
+    def konfetti_version = '2.0.1'
 
+    implementation "nl.dionsegijn:konfetti-xml:$konfetti_version"
     implementation "com.intuit.sdp:sdp-android:$sdp_version"
     implementation "com.intuit.ssp:ssp-android:$ssp_version"
     implementation "androidx.core:core-ktx:$androidx_core_version"

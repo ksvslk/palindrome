@@ -30,7 +30,7 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
     var cells: MutableList<Cell<*, *>> = ArrayList()
 
     fun handleCollisions(letter: Letter) {
-        Log.i(TAG, "Here")
+        Log.d(TAG, "Here")
         when (val closestCell = getClosestCell(to = letter, from = getCandidateCells(letter))) {
             is Letter -> {
                 if (closestCell.state == LetterState.HOME && !closestCell.isLocked) {
@@ -74,7 +74,7 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
                 }
             }
         }
-        Log.i(TAG, candidateCells.firstOrNull().toString())
+        Log.d(TAG, candidateCells.firstOrNull().toString())
         return candidateCells
     }
 
@@ -254,7 +254,7 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
                             Log.e(TAG, "Could not restore letter placements. ")
                             return
                         }
-                        Log.i(TAG, "Restoring $letter to $slot.")
+                        Log.d(TAG, "Restoring $letter to $slot.")
 
                         letter.x = slot.x
                         letter.y = slot.y

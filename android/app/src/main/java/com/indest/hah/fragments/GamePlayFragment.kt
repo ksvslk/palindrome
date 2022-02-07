@@ -59,6 +59,12 @@ import com.indest.hah.util.C.HINT_REQUEST_KEY
 import kotlin.math.ln
 
 import com.indest.hah.util.*
+import nl.dionsegijn.konfetti.core.Angle
+import nl.dionsegijn.konfetti.core.Party
+import nl.dionsegijn.konfetti.core.Position
+import nl.dionsegijn.konfetti.core.Spread
+import nl.dionsegijn.konfetti.core.emitter.Emitter
+import java.util.concurrent.TimeUnit
 
 @AndroidEntryPoint
 class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
@@ -220,7 +226,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
                 }
                 else -> {
-                    Log.i(TAG, "No reward")
+                    Log.d(TAG, "No reward")
                 }
             }
         }
@@ -266,7 +272,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     // CLEAN
     override fun onResume() {
         super.onResume()
-        Log.i(TAG, "onResume")
+        Log.d(TAG, "onResume")
         resetHintsBadge()
         loadingFragmentSwitcher()
     }
@@ -274,7 +280,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     // CLEAN
     override fun onPause() {
         super.onPause()
-        Log.i(TAG, "onPause")
+        Log.d(TAG, "onPause")
         findNavController(this).removeOnDestinationChangedListener { _, _, _ -> }
     }
 
@@ -294,14 +300,14 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                     gameViewModel.userReward.collect { userRewardEvent ->
                         when (userRewardEvent) {
                             is UserRewardEvent.Success -> {
-                                Log.i(TAG, "UserRewardEvent.Success")
+                                Log.d(TAG, "UserRewardEvent.Success")
                                 if (userRewardEvent.rewardEarned) {
                                     gameViewModel.resetRewardingUser()
                                     rewardUser(userRewardEvent.rewardType)
                                 }
                             }
                             is UserRewardEvent.Error -> {
-                                Log.i(TAG, "Error getting userRewardEvent from viewModel")
+                                Log.d(TAG, "Error getting userRewardEvent from viewModel")
                             }
                         }
                     }
@@ -314,7 +320,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         foldFeature?.state == FoldingFeature.State.FLAT
 
     private fun playSpecialAnimation() {
-        Log.i(TAG, "Play special animation")
+        Log.d(TAG, "Play special animation")
         val trainLinearLayout =
             requireActivity().findViewById<LinearLayoutCompat>(R.id.trainLinearLayout)
         val oldTrainDisappearingAnimation = ObjectAnimator.ofFloat(
@@ -402,13 +408,13 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                             val flow =
                                 reviewManager.launchReviewFlow(requireActivity(), reviewInfo)
                             flow.addOnCompleteListener {
-                                Log.i(
+                                Log.d(
                                     TAG,
                                     "Review completed (whatever the action)."
                                 )
                             }
                         } else {
-                            Log.i(
+                            Log.d(
                                 TAG,
                                 "Review flow did not complete successfully: ${task.exception?.message}"
                             )
@@ -450,7 +456,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
     // CLEAN
     private fun loadLevel(levelAndLettersInfo: Level, isBookMode: Boolean) {
-        Log.i(TAG, "loadLevel")
+        Log.d(TAG, "loadLevel")
         cellDirector = CellDirector(this)
         val level = LevelFactory.getLevel(
             levelAndLettersInfo,
@@ -594,7 +600,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                                 getString(R.string.leaderboard_crme_de_la_crme),
                                 it.toLong()
                             )
-                        Log.i(TAG, "New score: $it submitted to leaderboards.")
+                        Log.d(TAG, "New score: $it submitted to leaderboards.")
                     }
                 }
                 gameViewModel.totalScore.removeObserver { viewLifecycleOwner.lifecycle }
@@ -701,7 +707,17 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
     // MIXED
     private fun showWinningMessages(currentAndMaxScore: Pair<Int, Int>) {
-        val randomCorrectMessage = resources.getStringArray(R.array.correct_texts).random()
+        val randomCorrectMessage = if(currentAndMaxScore.first == currentAndMaxScore.second) {
+            resources.getStringArray(R.array.very_good_texts).random()
+        }
+        else {
+            resources.getStringArray(R.array.good_texts).random()
+        }
+
+        if (currentAndMaxScore.first == currentAndMaxScore.second){
+            val konfettiView = (requireActivity() as GameActivity).binding.konfettiView
+            konfettiView.start(rain())
+        }
 
         val winningMessage = MessageSnackBar.make(
             binding.gameplayFragment,
@@ -834,7 +850,10 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     }
 
     // CLEAN
-    private fun startCountAnimation(scoreView: TextView, currentAndMaxScore: Pair<Int, Int>) {
+    private fun startCountAnimation(
+        scoreView: TextView,
+        currentAndMaxScore: Pair<Int, Int>
+    ) {
         val currentValue = 0
         val animator =
             ValueAnimator.ofInt(currentValue, currentValue.plus(currentAndMaxScore.first))
@@ -855,6 +874,22 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         )
         animator.start()
     }
+
+    private fun rain(): List<Party> {
+        return listOf(
+            Party(
+                speed = 0f,
+                maxSpeed = 15f,
+                damping = 0.9f,
+                angle = Angle.BOTTOM,
+                spread = Spread.ROUND,
+                colors = listOf(0xff0000, 0x2196F3, 0xCDDC39, 0xFFC107),
+                emitter = Emitter(duration = 2, TimeUnit.SECONDS).perSecond(25),
+                position = Position.Relative(0.0, 0.0).between(Position.Relative(1.0, 0.0))
+            )
+        )
+    }
+
 
     // CLEAN
     private fun playWrongSolutionAnimation() {
@@ -999,7 +1034,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     }
 
     override fun onDestroyView() {
-        Log.i(TAG, "onDestroyView")
+        Log.d(TAG, "onDestroyView")
         hintBadge = null
         val trainLinearLayout =
             requireActivity().findViewById<LinearLayoutCompat>(R.id.trainLinearLayout)
