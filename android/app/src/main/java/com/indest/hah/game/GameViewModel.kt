@@ -148,6 +148,18 @@ class GameViewModel @Inject constructor(
                 currentLevel = it
             }
         }
+/*
+        viewModelScope.launch {
+            levelRepository.insertLetterInfo(
+                level = 2,
+                homeIndex = 0,
+                friendIndex = -666,
+                letter = 'A',
+                locked = false,
+            )
+        }
+*/
+
     }
 
 
