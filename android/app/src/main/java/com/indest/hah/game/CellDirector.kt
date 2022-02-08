@@ -26,26 +26,26 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
     var cells: MutableList<Cell<*, *>> = ArrayList()
 
     // TODO: remove when OK
-    fun printDebug()
+/*    fun printDebug()
     {
         if (gf.gameState == GameState.READY)
         {
             val setOfZs = cells.filterIsInstance<Letter>().map { it.z }.toSet()
             val lettersZ = cells.filterIsInstance<Letter>().joinToString { "${it.text}: ${it.z}" }
             val lettersElevation = cells.filterIsInstance<Letter>().joinToString { it.elevation.toString() }
-            /*  val slotsZ = cells.filterIsInstance<Slot>().joinToString { it.z.toString() }
-              val slotsElevation =  cells.filterIsInstance<Slot>().joinToString { it.elevation.toString() }*/
+            *//*  val slotsZ = cells.filterIsInstance<Slot>().joinToString { it.z.toString() }
+              val slotsElevation =  cells.filterIsInstance<Slot>().joinToString { it.elevation.toString() }*//*
 
             Log.d(TAG, "Letters Z-values: $lettersZ")
             Log.d(TAG, "Letters Elevation: $lettersElevation")
-/*        Log.d(TAG, "Slots Z: $slotsZ")
-        Log.d(TAG, "Slots Elevation: $slotsElevation")*/
-         /*   assert(setOfZs.size == 1) {
+*//*        Log.d(TAG, "Slots Z: $slotsZ")
+        Log.d(TAG, "Slots Elevation: $slotsElevation")*//*
+         *//*   assert(setOfZs.size == 1) {
                 Log.d(TAG, "Z values were not equal.")
-            }*/
+            }*//*
         }
 
-    }
+    }*/
 
     fun handleCollisions(letter: Letter) {
         when (val closestCell = getClosestCell(to = letter, from = getCandidateCells(letter))) {

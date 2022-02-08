@@ -42,11 +42,11 @@ class Letter @Inject constructor(
         super.onDraw(canvas)
     }
 
-
-    override fun setTranslationZ(translationZ: Float) {
+    //TODO: remove when OK
+/*    override fun setTranslationZ(translationZ: Float) {
         Log.d(TAG, "Set Z-value for $text to $translationZ")
         super.setTranslationZ(translationZ)
-    }
+    }*/
 
     private val touchListen = OnTouchListener { v, e ->
         if (!isLocked) {
