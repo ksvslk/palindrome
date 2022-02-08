@@ -9,5 +9,5 @@ sealed interface ILetterState {
     fun executeActionDownBehaviour(l: Letter, v: View, e: MotionEvent)
     fun executeActionMoveBehaviour(l: Letter, v: View, e: MotionEvent)
     fun executeActionUpBehaviour(l: Letter)
-    fun executeAnimationBehaviour(l: Letter, moveByX: Int, moveByY: Int, durationModifier: Int = 1, layer:Float = C.BOTTOM_LAYER)
+    fun executeAnimationBehaviour(l: Letter, moveByX: Int, moveByY: Int, durationModifier: Int = 1)
 }

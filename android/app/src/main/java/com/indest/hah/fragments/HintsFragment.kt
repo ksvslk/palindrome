@@ -54,6 +54,7 @@ class HintsFragment : BottomSheetDialogFragment() {
         requireActivity().window.addFlags(
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
         )
+        removeAllPurchaseButtons() // At first remove all to avoid flickering
         return b.root
     }
 
@@ -398,6 +399,7 @@ class HintsFragment : BottomSheetDialogFragment() {
                             title = title
                         )
                         purchasesAvailable.add(CLUE)
+                        binding.instantCluesButton.visibility = View.VISIBLE
                     } else {
                         terminateButton(binding.instantCluesButton)
                     }
@@ -413,6 +415,7 @@ class HintsFragment : BottomSheetDialogFragment() {
                             title = title
                         )
                         purchasesAvailable.add(PLACE)
+                        binding.instantLettersButton.visibility = View.VISIBLE
                     } else {
                         terminateButton(binding.instantLettersButton)
                     }
@@ -428,6 +431,7 @@ class HintsFragment : BottomSheetDialogFragment() {
                             title = title
                         )
                         purchasesAvailable.add(INTER)
+                        binding.noIntermediateAdsButton.visibility = View.VISIBLE
                     } else {
                         terminateButton(binding.noIntermediateAdsButton)
                     }
@@ -442,6 +446,7 @@ class HintsFragment : BottomSheetDialogFragment() {
                             lastIndex = lastIndex,
                             title = title
                         )
+                        binding.fullNoAdsButton.visibility = View.VISIBLE
                     } else {
                         terminateButton(binding.fullNoAdsButton)
                     }

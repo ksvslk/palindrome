@@ -3,6 +3,7 @@ package com.indest.hah.letter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View.OnTouchListener
 import androidx.core.view.marginRight
@@ -14,6 +15,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import android.widget.LinearLayout
 import androidx.gridlayout.widget.GridLayout
+import com.indest.hah.util.C
+import com.indest.hah.util.C.TOP_LAYER
 
 
 @SuppressLint("ViewConstructor")
@@ -37,6 +40,12 @@ class Letter @Inject constructor(
     override fun onDraw(canvas: Canvas?) {
         state.draw(this)
         super.onDraw(canvas)
+    }
+
+
+    override fun setTranslationZ(translationZ: Float) {
+        Log.d(TAG, "Set Z-value for $text to $translationZ")
+        super.setTranslationZ(translationZ)
     }
 
     private val touchListen = OnTouchListener { v, e ->
@@ -85,7 +94,7 @@ class Letter @Inject constructor(
 
     init {
         setOnTouchListener(touchListen)
-        z = NEUTRAL_LAYER
+        translationZ = NEUTRAL_LAYER
         text = letter
     }
 }

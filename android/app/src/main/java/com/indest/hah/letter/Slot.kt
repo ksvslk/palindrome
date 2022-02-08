@@ -17,7 +17,7 @@ class Slot constructor(
     private var TAG: String = "Slot ${View.generateViewId()}"
 
     init {
-        z = BOTTOM_LAYER
+        translationZ = BOTTOM_LAYER
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {

@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.core.content.res.ResourcesCompat
 import com.indest.hah.R
 import com.indest.hah.fragments.GamePlayFragment
+import com.indest.hah.game.enums.GameState
 import com.indest.hah.letter.*
 import com.indest.hah.letter.effects.ColorSelector
 import com.indest.hah.letter.effects.SoundSelector
@@ -17,20 +18,36 @@ import com.indest.hah.util.C.REWARDED_ANIM_MUL_DEFAULT
 import com.indest.hah.util.C.TOP_LAYER
 import kotlin.math.abs
 
-/**
- * CellDirector is kind of a mediator object that will manage the interaction between
- * all the Letter and Slot objects. It will handle the collisions between the objects and the
- * following position (and other important info) changes.
- * State persistence to database is also handled from here (high level calls).
- */
+
 class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
 
     private val TAG = "CellDirector"
     private val gf: GamePlayFragment = gamePlayFragment
     var cells: MutableList<Cell<*, *>> = ArrayList()
 
+    // TODO: remove when OK
+    fun printDebug()
+    {
+        if (gf.gameState == GameState.READY)
+        {
+            val setOfZs = cells.filterIsInstance<Letter>().map { it.z }.toSet()
+            val lettersZ = cells.filterIsInstance<Letter>().joinToString { "${it.text}: ${it.z}" }
+            val lettersElevation = cells.filterIsInstance<Letter>().joinToString { it.elevation.toString() }
+            /*  val slotsZ = cells.filterIsInstance<Slot>().joinToString { it.z.toString() }
+              val slotsElevation =  cells.filterIsInstance<Slot>().joinToString { it.elevation.toString() }*/
+
+            Log.d(TAG, "Letters Z-values: $lettersZ")
+            Log.d(TAG, "Letters Elevation: $lettersElevation")
+/*        Log.d(TAG, "Slots Z: $slotsZ")
+        Log.d(TAG, "Slots Elevation: $slotsElevation")*/
+         /*   assert(setOfZs.size == 1) {
+                Log.d(TAG, "Z values were not equal.")
+            }*/
+        }
+
+    }
+
     fun handleCollisions(letter: Letter) {
-        Log.d(TAG, "Here")
         when (val closestCell = getClosestCell(to = letter, from = getCandidateCells(letter))) {
             is Letter -> {
                 if (closestCell.state == LetterState.HOME && !closestCell.isLocked) {
@@ -46,13 +63,11 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
                     letter.effects.playSound(SoundSelector.SWITCH_LETTERS)
                     letter.currentPos.x = closestCell.pos.x
                     letter.currentPos.y = closestCell.pos.y
-                    letter.z = TOP_LAYER
-                    letter.elevation = TOP_LAYER
                     letter.state = LetterState.ANIMATION
                     letter.state.executeAnimationBehaviour(
                         letter,
                         (closestCell.pos.x - letter.pos.x),
-                        (closestCell.pos.y - letter.pos.y),
+                        (closestCell.pos.y - letter.pos.y)
                     )
                     return
                 }
@@ -113,23 +128,23 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
         if (top.text.first() != top.friend?.realChar) gf.gameViewModel.increaseMistakes()
         if (bottom.text.first() != bottom.friend?.realChar) gf.gameViewModel.increaseMistakes()
 
-        // Set the layers accordingly - which letter is FRONT and which is BEHIND
-        bottom.z = MIDDLE_LAYER
-        bottom.elevation = MIDDLE_LAYER
-        top.z = TOP_LAYER
-        top.elevation = TOP_LAYER
+        bottom.translationZ = MIDDLE_LAYER
 
         // Change state to animation
         top.state = LetterState.ANIMATION
         bottom.state = LetterState.ANIMATION
 
         // Set letter locked in database
-        if (isRewarded) gf.gameViewModel.setLetterLocked(top.homeIndex)
+        if (isRewarded) {
+            gf.gameViewModel.setLetterLocked(top.homeIndex)
+            top.translationZ = TOP_LAYER
+            bottom.translationZ = MIDDLE_LAYER
+        }
 
         // Execute animation
         val durationModifier = if (isRewarded) REWARDED_ANIM_MUL else REWARDED_ANIM_MUL_DEFAULT
-        top.state.executeAnimationBehaviour(top, distanceToMoveX, distanceToMoveY, durationModifier, layer = TOP_LAYER)
-        bottom.state.executeAnimationBehaviour(bottom, droppedToMoveX, droppedToMoveY, layer = MIDDLE_LAYER)
+        top.state.executeAnimationBehaviour(top, distanceToMoveX, distanceToMoveY, durationModifier)
+        bottom.state.executeAnimationBehaviour(bottom, droppedToMoveX, droppedToMoveY)
     }
 
     fun placeLetterInEmptyBox(
@@ -139,6 +154,7 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
         isLastRewardedLetter: Boolean = false
     ) {
         if (isRewarded) {
+            letter.translationZ = TOP_LAYER
             letter.effects.playSound(SoundSelector.LETTER_REWARDED)
         } else {
             letter.effects.playSound(SoundSelector.PLACE_LETTER_IN_EMPTY_BOX)
@@ -148,8 +164,6 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
         letter.setFriend(slot)
         letter.currentPos.x = slot.pos.x
         letter.currentPos.y = slot.pos.y
-        letter.z = TOP_LAYER
-        letter.elevation = TOP_LAYER
         letter.state = LetterState.ANIMATION
 
         val durationModifier =
@@ -171,7 +185,8 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
         if (isCorrectMove == false) gf.gameViewModel.increaseMistakes()
     }
 
-    fun sendLetterHome(letter: Letter) {
+    fun sendLetterHome(letter: Letter, isRewarded: Boolean = false) {
+        if (isRewarded) letter.translationZ = MIDDLE_LAYER
         if (letter.hasFriend()) {
             letter.getTheFriend()?.setFriend(null)
             letter.setFriend(null)
@@ -186,16 +201,14 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
             letter.state.executeAnimationBehaviour(
                 letter,
                 (letter.homePos.x - letter.pos.x),
-                (letter.homePos.y - letter.pos.y),
-                layer = TOP_LAYER
+                (letter.homePos.y - letter.pos.y)
             )
         } else {
             letter.state = LetterState.ANIMATION
             letter.state.executeAnimationBehaviour(
                 letter,
                 (letter.currentPos.x - letter.pos.x),
-                (letter.currentPos.y - letter.pos.y),
-                layer = TOP_LAYER
+                (letter.currentPos.y - letter.pos.y)
             )
         }
     }
@@ -260,11 +273,11 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
                         letter.y = slot.y
                         letter.setFriend(slot)
                         slot.setFriend(letter)
-                        slot.z = BOTTOM_LAYER
+                        slot.translationZ = BOTTOM_LAYER
                         letter.friendIndex = slot.homeIndex
                         letter.currentPos = slot.pos
                         letter.isLocked = letterProperties.locked
-                        letter.z = NEUTRAL_LAYER
+                        letter.translationZ = NEUTRAL_LAYER
                         val colors = letter.effects.getColors(ColorSelector.ACTION_DOWN_FRIEND)
 
                         when {
@@ -279,8 +292,6 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
                             letterProperties.locked -> {
                                 letter.setBackgroundColor(letter.effects.getLockedColor())
                                 letter.setTextColor(letter.effects.getLockedTextColor())
-                                letter.z = NEUTRAL_LAYER
-
                             }
                             else -> {
                                 letter.setBackgroundColor(colors.viewEnd)

@@ -36,8 +36,7 @@ enum class LetterState : ILetterState {
             l: Letter,
             moveByX: Int,
             moveByY: Int,
-            durationModifier: Int,
-            layer: Float
+            durationModifier: Int
         ) {
         }
     },
@@ -50,7 +49,7 @@ enum class LetterState : ILetterState {
             l.dY = v.y - e.rawY
 
             // View and its parent should be always on top when dragging
-            l.z = TOP_LAYER
+            l.translationZ = TOP_LAYER
 
             val color = if (l.hasFriend()) {
                 l.effects.getColors(ColorSelector.ACTION_DOWN_FRIEND)
@@ -73,9 +72,7 @@ enum class LetterState : ILetterState {
                 l.effects.onClickColorChangeDuration
             )
 
-            l.animate()
-                .z(TOP_LAYER)
-                .start()
+            l.animate().start()
         }
 
         override fun executeActionMoveBehaviour(l: Letter, v: View, e: MotionEvent) {
@@ -88,8 +85,7 @@ enum class LetterState : ILetterState {
             l: Letter,
             moveByX: Int,
             moveByY: Int,
-            durationModifier: Int,
-            layer: Float
+            durationModifier: Int
         ) {
         }
     },
@@ -105,8 +101,7 @@ enum class LetterState : ILetterState {
             l: Letter,
             moveByX: Int,
             moveByY: Int,
-            durationModifier: Int,
-            layer: Float
+            durationModifier: Int
         ) {
         }
     },
@@ -119,8 +114,7 @@ enum class LetterState : ILetterState {
             l: Letter,
             moveByX: Int,
             moveByY: Int,
-            durationModifier: Int,
-            layer:Float
+            durationModifier: Int
         ) {
 
             val color = if (l.hasFriend()) {
@@ -164,21 +158,24 @@ enum class LetterState : ILetterState {
             l.animate()
                 .xBy(moveByX.toFloat())
                 .yBy(moveByY.toFloat())
-                .z(layer)
+                //.z(layer)
                 .setInterpolator(FastOutSlowInInterpolator())
                 // Here we use the log-distance to calculate the duration of the animation.
                 // Longer distance should be only slightly longer animation and vice-versa
                 .setDuration(distance.toLong() * l.effects.animateToHomeDurationMultiplier * durationModifier)
                 .withEndAction {
                     l.state = HOME
-                    l.z = MIDDLE_LAYER
-                    l.elevation = NEUTRAL_LAYER
+                    //l.z = MIDDLE_LAYER
+                    //l.elevation = NEUTRAL_LAYER
+                    l.translationZ = NEUTRAL_LAYER
+
                     l.currentPos.x = l.pos.x
                     l.currentPos.y = l.pos.y
-                    Log.d(TAG, "ANIMATION END for $l.")
+
                     if (durationModifier != 1) {
                         l.findFragment<GamePlayFragment>().gameState = GameState.READY
                     }
+
                 }
                 .start()
         }

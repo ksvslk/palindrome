@@ -153,6 +153,20 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         }
     }
 
+    // CLEAN
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        val b = GameplayFragmentBinding.inflate(layoutInflater, container, false)
+        _binding = b
+        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+        createHintsBadge()
+
+        return b.root
+    }
+
     private fun resetHintsBadgeOnFragmentResult() {
         setFragmentResultListener(HINT_REQUEST_KEY) { _, bundle ->
             run {
@@ -189,12 +203,12 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                                         it.getTheFriend()?.text?.first() != it.realChar
                             }
                         randomLetter.isLocked = true
-                        randomLetter.z = C.TOP_LAYER
                         if (correctSlot.hasFriend()) {
                             correctSlot.friend?.let {
                                 cellDirector.switchLetterPositions(
                                     randomLetter,
-                                    it, true
+                                    it,
+                                    isRewarded = true
                                 )
                             }
                         } else {
@@ -207,7 +221,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                             } else if (candidateLetters.size == 1 && incorrectSlot != null) {
                                 incorrectSlot.getTheFriend()
                                     ?.let {
-                                        cellDirector.sendLetterHome(it)
+                                        cellDirector.sendLetterHome(it, isRewarded = true)
                                         cellDirector.placeLetterInEmptyBox(
                                             randomLetter, correctSlot,
                                             isRewarded = true
@@ -249,18 +263,6 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         }
     }
 
-    // CLEAN
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val b = GameplayFragmentBinding.inflate(layoutInflater, container, false)
-        _binding = b
-        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-        createHintsBadge()
-        return b.root
-    }
 
     // CLEAN
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
