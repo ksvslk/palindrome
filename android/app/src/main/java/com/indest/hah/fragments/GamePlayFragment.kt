@@ -53,6 +53,7 @@ import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.animation.doOnEnd
 import androidx.core.view.*
 import com.indest.hah.game.enums.GameState
+import com.indest.hah.game.enums.InternetState
 import com.indest.hah.game.enums.LoadingState
 import com.indest.hah.game.enums.RewardType
 import com.indest.hah.util.C.HINT_REQUEST_KEY
@@ -804,11 +805,14 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
     // CLEAN
     private fun showPlayerCenteredScores() {
-        val signedIn = GoogleSignIn.getLastSignedInAccount(requireActivity())
-        if (gameViewModel.getLevelNumber() % 5 == 0 && signedIn != null) {
-            parentFragmentManager.commit {
-                addToBackStack(ScoresFragment().tag)
-                add(ScoresFragment(), ScoresFragment().tag)
+        if (gameViewModel.internetState.value.equals(InternetState.ONLINE))
+        {
+            val signedIn = GoogleSignIn.getLastSignedInAccount(requireActivity())
+            if (gameViewModel.getLevelNumber() % 5 == 0 && signedIn != null) {
+                parentFragmentManager.commit {
+                    addToBackStack(ScoresFragment().tag)
+                    add(ScoresFragment(), ScoresFragment().tag)
+                }
             }
         }
     }

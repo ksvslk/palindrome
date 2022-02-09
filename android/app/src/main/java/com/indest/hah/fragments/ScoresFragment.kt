@@ -51,8 +51,6 @@ class ScoresFragment : BottomSheetDialogFragment() {
                     val lifeCycleValid =
                         lifecycle.currentState in Lifecycle.State.CREATED..Lifecycle.State.DESTROYED
                     if (lifeCycleValid) {
-
-
                         binding.let { binding ->
                             binding.scoreFragment.removeViewAt(1)
                             data.get()?.let {
