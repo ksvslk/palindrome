@@ -16,6 +16,7 @@ import com.google.android.gms.games.leaderboard.LeaderboardVariant.TIME_SPAN_ALL
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.databinding.ScoreFragmentBinding
+import kotlinx.coroutines.tasks.await
 
 class ScoresFragment : BottomSheetDialogFragment() {
     private var _binding: ScoreFragmentBinding? = null

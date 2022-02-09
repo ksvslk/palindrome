@@ -377,6 +377,9 @@ class GameActivity : AppCompatActivity() {
                                 RewardType.LETTER -> {
                                     gameViewModel.rewardUser(rewardedType)
                                 }
+                                RewardType.NEXT_LEVEL -> {
+                                    gameViewModel.rewardUser(rewardedType)
+                                }
                                 else -> {
                                     Log.d(TAG, "Reward type does not match available ones.")
                                 }

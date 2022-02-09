@@ -654,6 +654,19 @@ class GameViewModel @Inject constructor(
         }
         return false
     }
+
+    // Return when limit reached
+    suspend fun increaseIntervalCount(name:String):Boolean
+    {
+       return levelRepository.increaseIntervalCount(name)
+    }
+
+    suspend fun setCountTo(name:String, count:Int = 0)
+    {
+        viewModelScope.launch {
+            levelRepository.setCountTo(name, count)
+        }
+    }
 }
 
 

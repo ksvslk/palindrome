@@ -131,9 +131,6 @@ interface LevelDao {
     @Query("update sku set purchased = 1 where sku=:sku")
     suspend fun grantSkuEntitlements(sku: String)
 
-    @Query("update sku set purchased = 0")
-    suspend fun removeAllEntitlements()
-
     @Query("select exists(select 1 from sku where sku=:sku and purchased=1)")
     suspend fun isSkuPurchased(sku: String):Boolean
 
@@ -142,4 +139,25 @@ interface LevelDao {
 
     @Query("select category_rewarded from level_info_table where level_id=:level")
     suspend fun isCategoryRewarded(level:Int):Boolean
+
+    @Query("update interval set current_count = (select current_count + 1 from interval where name=:name) where name=:name")
+    suspend fun increaseCurrentCount(name:String)
+
+    @Query("update interval set current_count = 0 where name=:name and current_count = (select limit_count from interval where name=:name)")
+    suspend fun resetCount(name:String)
+
+    @Query("update interval set current_count = :count where name = :name")
+    suspend fun setCountTo(name:String, count:Int)
+
+    @Query("select exists (select 1 from interval where name = :name and current_count = limit_count)")
+    suspend fun isLimitAttained(name:String):Boolean
+
+    @Transaction
+    suspend fun increaseCount(name:String):Boolean
+    {
+        increaseCurrentCount(name)
+        val isLimit = isLimitAttained(name)
+        if (isLimit) resetCount(name)
+        return isLimit
+    }
 }

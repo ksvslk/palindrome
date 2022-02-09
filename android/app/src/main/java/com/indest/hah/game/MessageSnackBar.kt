@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.indest.hah.R
 import com.indest.hah.util.findSuitableParent
+import org.w3c.dom.Text
 
 class MessageSnackBar(
     parent: ViewGroup,
@@ -29,6 +30,11 @@ class MessageSnackBar(
         val params = getView().layoutParams as FrameLayout.LayoutParams
         params.gravity = Gravity.CENTER
         getView().layoutParams = params
+    }
+
+    fun setText(text:String)
+    {
+        this.view.findViewById<TextView>(R.id.message).text = text
     }
 
     companion object {

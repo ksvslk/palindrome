@@ -25,11 +25,13 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.replace
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.Scope
 import com.indest.hah.GameActivity
 import com.indest.hah.game.GameViewModel
 import com.indest.hah.game.enums.InternetState
+import kotlinx.coroutines.launch
 
 
 class SettingsFragment : BottomSheetDialogFragment() {
@@ -75,7 +77,9 @@ class SettingsFragment : BottomSheetDialogFragment() {
         }
 
         binding.rateGameButton.setOnClickListener {
-            (requireActivity() as GameActivity).showSavedGamesUI()
+            lifecycleScope.launch {
+                gameViewModel.increaseIntervalCount(getString(R.string.player_centered_scores))
+            }
             return@setOnClickListener
             if (gameViewModel.internetState.value.state == InternetState.ONLINE) {
                 val intent = Intent(Intent.ACTION_VIEW).apply {
@@ -105,6 +109,10 @@ class SettingsFragment : BottomSheetDialogFragment() {
             changePreference(getString(R.string.vibration_on_pref), b)
         }
         binding.tutorialButton.setOnClickListener {
+            lifecycleScope.launch {
+                gameViewModel.increaseIntervalCount(getString(R.string.hint_suggestion))
+            }
+            return@setOnClickListener
             parentFragmentManager.commit {
                 setReorderingAllowed(true)
                 replace<TutorialFragment>(R.id.fragments_container)

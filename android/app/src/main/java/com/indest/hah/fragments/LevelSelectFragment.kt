@@ -11,18 +11,17 @@ import android.view.WindowManager
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.ItemDecoration
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.adapters.LevelItemAdapter
 import com.indest.hah.databinding.LevelSelectFragmentBinding
 import com.indest.hah.game.GameViewModel
-import com.indest.hah.persistance.LevelProgress
 import dagger.hilt.android.AndroidEntryPoint
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.indest.hah.R
 import com.indest.hah.util.C
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class LevelSelectFragment : BottomSheetDialogFragment() {
@@ -53,6 +52,10 @@ class LevelSelectFragment : BottomSheetDialogFragment() {
                     it?.levelId?.let { nr ->
                         gameViewModel.realSolutionAndGuess.postValue(Triple("", "2", null))
                         gameViewModel.changeLevel(nr)
+
+                        lifecycleScope.launch {
+                            gameViewModel.setCountTo(getString(R.string.hint_suggestion))
+                        }
                         parentFragmentManager.commit {
                             setCustomAnimations(
                                 R.anim.slide_in_bottom,

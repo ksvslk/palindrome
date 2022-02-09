@@ -52,11 +52,11 @@ import android.animation.ObjectAnimator
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.animation.doOnEnd
 import androidx.core.view.*
-import com.google.android.material.snackbar.Snackbar
 import com.indest.hah.game.enums.GameState
 import com.indest.hah.game.enums.InternetState
 import com.indest.hah.game.enums.LoadingState
 import com.indest.hah.game.enums.RewardType
+import com.indest.hah.persistance.dto.LevelData
 import com.indest.hah.util.C.HINT_REQUEST_KEY
 import kotlin.math.ln
 
@@ -89,33 +89,24 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     private var allAnimations: MutableSet<ValueAnimator> = mutableSetOf()
     private var snackBars: HashMap<MessageSnackBar, BaseTransientBottomBar.BaseCallback<MessageSnackBar>> =
         hashMapOf()
-    private var tapToContinueMessage:MessageSnackBar? = null
+    private var tapToContinueMessage: MessageSnackBar? = null
 
-    private var guesses: Int by Delegates.observable(0) { _, _, new ->
-        val guessesBeforeHint = resources.getInteger(R.integer.guessesBeforeHint)
+    private fun increaseHintGuesses() {
+        lifecycleScope.launchWhenResumed {
+            val hintGuessesReached =
+                gameViewModel.increaseIntervalCount(getString(R.string.hint_suggestion))
 
-        if (new == guessesBeforeHint) {
-            soundPool.playWhileSoundOn(
-                requireContext(),
-                hintNotification,
-                1,
-                audioManager = audioManager
-            )
-            hintBadge?.isVisible = true
-            activity?.getSharedPreferences(
-                getString(R.string.app_preferences),
-                Context.MODE_PRIVATE
-            )
-                ?.let { sharedPref ->
-                    with(sharedPref.edit()) {
-                        putBoolean(getString(R.string.level_solution_guesses), true)
-                        apply()
-                    }
-                }
-            guesses = 0
+            if (hintGuessesReached) {
+                soundPool.playWhileSoundOn(
+                    requireContext(),
+                    hintNotification,
+                    1,
+                    audioManager = audioManager
+                )
+                hintBadge?.isVisible = true
+            }
         }
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -181,7 +172,9 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     }
 
     private fun rewardUser(hintType: RewardType) {
-        if (gameState == GameState.READY) {
+        if (hintType == RewardType.NEXT_LEVEL) {
+            continueToNextLevelActions()
+        } else if (gameState == GameState.READY) {
             when (hintType) {
                 RewardType.HINT -> {
                     gameViewModel.setCategoryRewarded(true)
@@ -436,17 +429,6 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
     // CLEAN
     private fun resetHintsBadge() {
-        activity?.getSharedPreferences(
-            getString(R.string.app_preferences),
-            Context.MODE_PRIVATE
-        )?.let {
-            with(it.edit()) {
-                hintBadge?.isVisible = false
-                putBoolean(getString(R.string.level_solution_guesses), false)
-                apply()
-            }
-        }
-        guesses = 0
         hintBadge?.isVisible = false
     }
 
@@ -484,10 +466,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         binding.gameplayFragment.addView(level)
 
         if (levelAndLettersInfo.levelInfo.progress == LevelProgress.INTERMEDIATE) {
-            Log.d(TAG, "Level ${levelAndLettersInfo.levelInfo.levelId} progress is: ${levelAndLettersInfo.levelInfo.progress} and game state is $gameState ")
-
             gameState = GameState.LEVEL_COMPLETED
-
             tapToContinueMessage = MessageSnackBar.make(
                 binding.gameplayFragment,
                 getString(R.string.tap_to_continue),
@@ -511,10 +490,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                     2,
                     audioManager = audioManager
                 )
-                tapToContinueMessage?.dismiss()
-                tapToContinueAnimation.cancel()
-                tapToContinueMessage?.view?.setOnClickListener(null)
-                continueToNextLevelActions()
+                showAdAndContinue(false)
             }
 
             tapToContinueMessage?.view?.setOnClickListener(messageViewListener)
@@ -526,7 +502,11 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             if (VaryingProbability.isAnimationPlayed(levelAndLettersInfo.levelInfo.levelId)) playSpecialAnimation()
         }
 
-        val levelNumber = levelAndLettersInfo.levelInfo.levelId
+        setLevelProgressIndicator(levelAndLettersInfo.levelInfo)
+    }
+
+    private fun setLevelProgressIndicator(level: LevelData) {
+        val levelNumber = level.levelId
         val levelsCount = gameViewModel.levels.value?.size ?: 100
 
         val levelNrView = (requireActivity() as GameActivity).binding.levelNumber
@@ -539,8 +519,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         levelNrView.x = progressX
         (requireActivity() as GameActivity).binding.gameProgress.progress =
             (levelNumber.toFloat() / levelsCount.toFloat() * 100.0).toInt()
-        showReviewOption(levelAndLettersInfo.levelInfo.levelId)
-
+        showReviewOption(level.levelId)
     }
 
     // CLEAN
@@ -562,7 +541,6 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             .observe(viewLifecycleOwner, {
                 if (gameState != GameState.LEVEL_COMPLETED) {
                     if (it != null && it.first?.length == it.second?.length) {
-                        guesses++
                         gameState = GameState.BUSY
                         val playerSolution = it.second?.map { char ->
                             if ("^([?!.,’])".contains(char)) "" else char
@@ -580,10 +558,12 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                                 )
                             }
                             playerSolution?.reversed() == playerSolution -> {
+                                increaseHintGuesses()
                                 playWrongSolutionAnimation()
                                 wrongPalindromeActions(it)
                             }
                             else -> {
+                                increaseHintGuesses()
                                 playWrongSolutionAnimation()
                                 wrongSolutionActions(it)
                             }
@@ -600,15 +580,15 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         gameViewModel.realSolutionAndGuess.removeObservers { viewLifecycleOwner.lifecycle }
         lifecycleScope.launch {
             val totalScore = gameViewModel.getTotalScore()
-                    val account = GoogleSignIn.getLastSignedInAccount(requireActivity())
-                    if (account != null) {
-                        Games.getLeaderboardsClient(requireActivity(), account)
-                            .submitScore(
-                                getString(R.string.leaderboard_crme_de_la_crme),
-                                totalScore.toLong()
-                            )
-                        Log.d(TAG, "New score: $totalScore submitted to leaderboards.")
-                    }
+            val account = GoogleSignIn.getLastSignedInAccount(requireActivity())
+            if (account != null) {
+                Games.getLeaderboardsClient(requireActivity(), account)
+                    .submitScore(
+                        getString(R.string.leaderboard_crme_de_la_crme),
+                        totalScore.toLong()
+                    )
+                Log.d(TAG, "New score: $totalScore submitted to leaderboards.")
+            }
         }
 
         gameViewModel.updateCompletedLevel()
@@ -712,117 +692,160 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
     // MIXED
     private fun showWinningMessages(currentAndMaxScore: Pair<Int, Int>) {
-        Log.d(TAG, "showWinningMessages for Level ${gameViewModel.currentLevel.levelInfo.levelId}")
-        val randomCorrectMessage = if(currentAndMaxScore.first == currentAndMaxScore.second) {
-            resources.getStringArray(R.array.very_good_texts).random()
-        }
-        else {
-            resources.getStringArray(R.array.good_texts).random()
-        }
+        lifecycleScope.launchWhenResumed {
+            Log.d(
+                TAG,
+                "showWinningMessages for Level ${gameViewModel.currentLevel.levelInfo.levelId}"
+            )
+            val randomCorrectMessage = if (currentAndMaxScore.first == currentAndMaxScore.second) {
+                resources.getStringArray(R.array.very_good_texts).random()
+            } else {
+                resources.getStringArray(R.array.good_texts).random()
+            }
 
-        if (currentAndMaxScore.first == currentAndMaxScore.second){
-            val konfettiView = (requireActivity() as GameActivity).binding.konfettiView
-            konfettiView.start(rain())
-        }
+            if (currentAndMaxScore.first == currentAndMaxScore.second) {
+                val konfettiView = (requireActivity() as GameActivity).binding.konfettiView
+                konfettiView.start(rain())
+            }
 
-        val winningMessage = MessageSnackBar.make(
-            binding.gameplayFragment,
-            randomCorrectMessage,
-            2000,
-            textBigAndSmall?.first ?: resources.getDimensionPixelSize(R.dimen.winning_message_size)
-                .toFloat()
-        )
-        val scoreMessage = MessageSnackBar.make(
-            binding.gameplayFragment,
-            "",
-            2000,
-            textBigAndSmall?.second ?: resources.getDimensionPixelSize(R.dimen.other_message_size)
-                .toFloat()
-        )
+            val winningMessage = MessageSnackBar.make(
+                binding.gameplayFragment,
+                randomCorrectMessage,
+                2000,
+                textBigAndSmall?.first
+                    ?: resources.getDimensionPixelSize(R.dimen.winning_message_size)
+                        .toFloat()
+            )
+            val scoreMessage = MessageSnackBar.make(
+                binding.gameplayFragment,
+                "",
+                2000,
+                textBigAndSmall?.second
+                    ?: resources.getDimensionPixelSize(R.dimen.other_message_size)
+                        .toFloat()
+            )
+            val limitReached =
+                gameViewModel.increaseIntervalCount(getString(R.string.intermediate_ads))
 
-        val scoreMessageCallback = object :
-            BaseTransientBottomBar.BaseCallback<MessageSnackBar>() {
-            override fun onDismissed(transientBottomBar: MessageSnackBar?, event: Int) {
-                super.onDismissed(transientBottomBar, event)
-                tapToContinueMessage = MessageSnackBar.make(
-                    binding.gameplayFragment,
-                    getString(R.string.tap_to_continue),
-                    Int.MAX_VALUE,
-                    textBigAndSmall?.second
-                        ?: resources.getDimensionPixelSize(R.dimen.other_message_size).toFloat()
-                )
-                tapToContinueMessage?.show()
+            val scoreMessageCallback = object :
+                BaseTransientBottomBar.BaseCallback<MessageSnackBar>() {
+                override fun onDismissed(transientBottomBar: MessageSnackBar?, event: Int) {
+                    super.onDismissed(transientBottomBar, event)
+                    val tapMessage = getString(R.string.tap_to_continue)
+                    val adMessage = getString(R.string.watch_ad_and_continue)
+                    val messageToShow = if (limitReached && gameViewModel.rewardedAdAvailable.value) adMessage else tapMessage
+                    tapToContinueMessage = MessageSnackBar.make(
+                        binding.gameplayFragment,
+                        messageToShow,
+                        Int.MAX_VALUE,
+                        textBigAndSmall?.second
+                            ?: resources.getDimensionPixelSize(R.dimen.other_message_size).toFloat()
+                    )
+                    tapToContinueMessage?.show()
 
-                val tapToContinueAnimation =
-                    ObjectAnimator.ofFloat(tapToContinueMessage?.view, View.ALPHA, 1f, 0.5f)
-                allAnimations.add(tapToContinueAnimation)
-                tapToContinueAnimation.duration = 1000
-                tapToContinueAnimation.repeatCount = ObjectAnimator.INFINITE
-                tapToContinueAnimation.repeatMode = ObjectAnimator.REVERSE
-                tapToContinueAnimation.start()
+                    val tapToContinueAnimation =
+                        ObjectAnimator.ofFloat(tapToContinueMessage?.view, View.ALPHA, 1f, 0.5f)
+                    allAnimations.add(tapToContinueAnimation)
+                    tapToContinueAnimation.duration = 1000
+                    tapToContinueAnimation.repeatCount = ObjectAnimator.INFINITE
+                    tapToContinueAnimation.repeatMode = ObjectAnimator.REVERSE
+                    tapToContinueAnimation.start()
 
-                showPlayerCenteredScores()
-
-                val messageViewClickListener = View.OnClickListener {
-                    if (isAdded) {
-                        soundPool.playWhileSoundOn(
-                            requireActivity(),
-                            levelTransition,
-                            2,
-                            audioManager = audioManager
-                        )
-                        tapToContinueMessage?.dismiss()
-                        tapToContinueAnimation.cancel()
-                        tapToContinueMessage?.view?.setOnClickListener(null)
-                        continueToNextLevelActions()
-                        Log.d(TAG, "Add listener to message")
+                    val messageViewClickListener = View.OnClickListener {
+                        if (isAdded) {
+                            soundPool.playWhileSoundOn(
+                                requireActivity(),
+                                levelTransition,
+                                2,
+                                audioManager = audioManager
+                            )
+                            showAdAndContinue(limitReached)
+                        }
                     }
+                    showPlayerCenteredScores()
+                    tapToContinueMessage?.view?.setOnClickListener(messageViewClickListener)
                 }
-                tapToContinueMessage?.view?.setOnClickListener(messageViewClickListener)
             }
-        }
-        scoreMessage.addCallback(scoreMessageCallback)
-        snackBars[scoreMessage] = scoreMessageCallback
+            scoreMessage.addCallback(scoreMessageCallback)
+            snackBars[scoreMessage] = scoreMessageCallback
 
-        val winningMessageCallBack = object :
-            BaseTransientBottomBar.BaseCallback<MessageSnackBar>() {
-            override fun onDismissed(transientBottomBar: MessageSnackBar?, event: Int) {
-                super.onDismissed(transientBottomBar, event)
-                scoreMessage.show()
-                startCountAnimation(
-                    scoreMessage.view.findViewById(R.id.message),
-                    currentAndMaxScore
-                )
+            val winningMessageCallBack = object :
+                BaseTransientBottomBar.BaseCallback<MessageSnackBar>() {
+                override fun onDismissed(transientBottomBar: MessageSnackBar?, event: Int) {
+                    super.onDismissed(transientBottomBar, event)
+                    scoreMessage.show()
+                    startCountAnimation(
+                        scoreMessage.view.findViewById(R.id.message),
+                        currentAndMaxScore
+                    )
+                }
             }
-        }
-        winningMessage.addCallback(winningMessageCallBack)
-        snackBars[winningMessage] = winningMessageCallBack
+            winningMessage.addCallback(winningMessageCallBack)
+            snackBars[winningMessage] = winningMessageCallBack
 
-        soundPool.playWhileSoundOn(
-            requireActivity(),
-            correctSound,
-            2,
-            audioManager = audioManager
-        )
-        winningMessage.show()
+            soundPool.playWhileSoundOn(
+                requireActivity(),
+                correctSound,
+                2,
+                audioManager = audioManager
+            )
+            winningMessage.show()
+        }
     }
+
 
     // CLEAN
     private fun showPlayerCenteredScores() {
-        if (gameViewModel.internetState.value.equals(InternetState.ONLINE))
-        {
-            val signedIn = GoogleSignIn.getLastSignedInAccount(requireActivity())
-            if (gameViewModel.getLevelNumber() % 5 == 0 && signedIn != null) {
-                parentFragmentManager.commit {
-                    addToBackStack(ScoresFragment().tag)
-                    add(ScoresFragment(), ScoresFragment().tag)
+        lifecycleScope.launch(Dispatchers.Main) {
+            val limitReached =
+                gameViewModel.increaseIntervalCount(getString(R.string.player_centered_scores))
+            Log.d(TAG, "LimitReached: $limitReached")
+            if (gameViewModel.internetState.value.state == InternetState.ONLINE && limitReached) {
+                Log.d(TAG, "Should show now scores. Limit reached: $limitReached")
+                val signedIn = GoogleSignIn.getLastSignedInAccount(requireActivity())
+                if (gameViewModel.getLevelNumber() % 5 == 0 && signedIn != null) {
+                    parentFragmentManager.commit {
+                        addToBackStack(ScoresFragment().tag)
+                        add(ScoresFragment(), ScoresFragment().tag)
+                    }
                 }
             }
         }
     }
 
     // CLEAN
+    private fun showAdAndContinue(limitReached: Boolean) {
+        if (gameViewModel.internetState.value.state == InternetState.ONLINE && gameViewModel.rewardedAdAvailable.value) {
+            (requireActivity() as? GameActivity).let { gameActivity ->
+                if (gameActivity != null) {
+                    val intermediatePurchased =
+                        gameViewModel.skuDetails.value.find {
+                            it.skuDetails.sku == getString(R.string.no_intermediate_ads)
+                        }?.purchased
+                    val fullNoAdsPurchased =
+                        gameViewModel.skuDetails.value.find {
+                            it.skuDetails.sku == getString(R.string.full_no_ads)
+                        }?.purchased
+                    lifecycleScope.launch {
+                        if (limitReached && !(intermediatePurchased == true || fullNoAdsPurchased == true)) {
+                            gameActivity.showRewardedVideo(RewardType.NEXT_LEVEL)
+                        } else {
+                            continueToNextLevelActions()
+                        }
+                    }
+                } else {
+                    continueToNextLevelActions()
+                }
+            }
+        } else {
+            continueToNextLevelActions()
+        }
+    }
+
     private fun continueToNextLevelActions() {
+        lifecycleScope.launch {
+            gameViewModel.setCountTo(getString(R.string.hint_suggestion))
+        }
         tapToContinueMessage?.view?.setOnClickListener(null)
         tapToContinueMessage?.dismiss()
         gameState = GameState.BUSY

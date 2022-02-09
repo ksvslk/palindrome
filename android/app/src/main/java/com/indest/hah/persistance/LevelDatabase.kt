@@ -5,13 +5,14 @@ import android.content.Context
 import androidx.room.*
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.google.gson.Gson
+import com.indest.hah.persistance.dto.Interval
 import com.indest.hah.persistance.dto.LetterProperties
 import com.indest.hah.persistance.dto.LevelData
 import com.indest.hah.persistance.dto.Sku
 import java.util.ArrayList
 
 @Database(
-    entities = [LevelData::class, LetterProperties::class, Sku::class],
+    entities = [LevelData::class, LetterProperties::class, Sku::class, Interval::class],
     version = 1,
     exportSchema = true
 )
@@ -93,6 +94,31 @@ abstract class LevelDatabase : RoomDatabase() {
                                         "sku",
                                         OnConflictStrategy.IGNORE,
                                         skuValue
+                                    )
+                                }
+
+                                val intervals = ArrayList<String>()
+                                intervals.add(context.getString(com.indest.hah.R.string.intermediate_ads))
+                                intervals.add(context.getString(com.indest.hah.R.string.player_centered_scores))
+                                intervals.add(context.getString(com.indest.hah.R.string.hint_suggestion))
+
+                                intervals.forEach {
+                                    val interval = ContentValues()
+                                    val limit = when(it)
+                                    {
+                                        context.getString(com.indest.hah.R.string.intermediate_ads) -> 10
+                                        context.getString(com.indest.hah.R.string.player_centered_scores) -> 5
+                                        context.getString(com.indest.hah.R.string.hint_suggestion) -> 3
+                                        else -> 7
+                                    }
+                                    interval.put("name", it)
+                                    interval.put("current_count", 0)
+                                    interval.put("limit_count", limit)
+
+                                    db.insert(
+                                        "interval",
+                                        OnConflictStrategy.IGNORE,
+                                        interval
                                     )
                                 }
                             }

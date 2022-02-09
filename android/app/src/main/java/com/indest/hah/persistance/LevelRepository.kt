@@ -74,7 +74,9 @@ class LevelRepository @Inject constructor(
     }
 
     suspend fun grantSkuEntitlements(sku: String) = levelDao.grantSkuEntitlements(sku)
-    suspend fun removeAllEntitlements() = levelDao.removeAllEntitlements()
     suspend fun getAllSkus(): List<Sku> = levelDao.getAllSkus()
     suspend fun isCategoryRewarded(level:Int):Boolean = levelDao.isCategoryRewarded(level)
+
+    suspend fun increaseIntervalCount(name:String):Boolean = levelDao.increaseCount(name)
+    suspend fun setCountTo(name:String, count:Int) = levelDao.setCountTo(name, count)
 }
