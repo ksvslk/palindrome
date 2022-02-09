@@ -52,6 +52,7 @@ import android.animation.ObjectAnimator
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.animation.doOnEnd
 import androidx.core.view.*
+import com.google.android.material.snackbar.Snackbar
 import com.indest.hah.game.enums.GameState
 import com.indest.hah.game.enums.InternetState
 import com.indest.hah.game.enums.LoadingState
@@ -88,6 +89,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     private var allAnimations: MutableSet<ValueAnimator> = mutableSetOf()
     private var snackBars: HashMap<MessageSnackBar, BaseTransientBottomBar.BaseCallback<MessageSnackBar>> =
         hashMapOf()
+    private var tapToContinueMessage:MessageSnackBar? = null
 
     private var guesses: Int by Delegates.observable(0) { _, _, new ->
         val guessesBeforeHint = resources.getInteger(R.integer.guessesBeforeHint)
@@ -482,8 +484,11 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         binding.gameplayFragment.addView(level)
 
         if (levelAndLettersInfo.levelInfo.progress == LevelProgress.INTERMEDIATE) {
+            Log.d(TAG, "Level ${levelAndLettersInfo.levelInfo.levelId} progress is: ${levelAndLettersInfo.levelInfo.progress} and game state is $gameState ")
+
             gameState = GameState.LEVEL_COMPLETED
-            val message = MessageSnackBar.make(
+
+            tapToContinueMessage = MessageSnackBar.make(
                 binding.gameplayFragment,
                 getString(R.string.tap_to_continue),
                 Int.MAX_VALUE,
@@ -492,7 +497,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             )
 
             val tapToContinueAnimation =
-                ObjectAnimator.ofFloat(message.view, View.ALPHA, 1f, 0.5f)
+                ObjectAnimator.ofFloat(tapToContinueMessage?.view, View.ALPHA, 1f, 0.5f)
             allAnimations.add(tapToContinueAnimation)
             tapToContinueAnimation.duration = 1000
             tapToContinueAnimation.repeatCount = ObjectAnimator.INFINITE
@@ -506,14 +511,14 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                     2,
                     audioManager = audioManager
                 )
-                message.dismiss()
+                tapToContinueMessage?.dismiss()
                 tapToContinueAnimation.cancel()
-                message.view.setOnClickListener(null)
+                tapToContinueMessage?.view?.setOnClickListener(null)
                 continueToNextLevelActions()
             }
 
-            message.view.setOnClickListener(messageViewListener)
-            message.show()
+            tapToContinueMessage?.view?.setOnClickListener(messageViewListener)
+            tapToContinueMessage?.show()
 
         } else {
             gameState = GameState.READY
@@ -566,6 +571,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                         when {
                             it.first == it.second -> {
                                 gameState = GameState.LEVEL_COMPLETED
+                                Log.d(TAG, "${it.first} and ${it.second}")
                                 val currentAndMaxScore = gameViewModel.getCurrentAndMaxScore()
                                 playCorrectSolutionAnimation(currentAndMaxScore)
                                 correctSolutionActions(
@@ -593,21 +599,16 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
     private fun correctSolutionActions(puzzleLength: Int?, didNoMistakes: Boolean) {
         gameViewModel.realSolutionAndGuess.removeObservers { viewLifecycleOwner.lifecycle }
         lifecycleScope.launch {
-            gameViewModel.totalScore.observe(viewLifecycleOwner)
-            {
-                if (it != null) {
+            val totalScore = gameViewModel.getTotalScore()
                     val account = GoogleSignIn.getLastSignedInAccount(requireActivity())
                     if (account != null) {
                         Games.getLeaderboardsClient(requireActivity(), account)
                             .submitScore(
                                 getString(R.string.leaderboard_crme_de_la_crme),
-                                it.toLong()
+                                totalScore.toLong()
                             )
-                        Log.d(TAG, "New score: $it submitted to leaderboards.")
+                        Log.d(TAG, "New score: $totalScore submitted to leaderboards.")
                     }
-                }
-                gameViewModel.totalScore.removeObserver { viewLifecycleOwner.lifecycle }
-            }
         }
 
         gameViewModel.updateCompletedLevel()
@@ -670,6 +671,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
     // MIXED
     private fun playCorrectSolutionAnimation(currentAndMaxScore: Pair<Int, Int>) {
+        Log.d(TAG, "playCorrectSolutionAnimation")
         val successTextColor =
             ResourcesCompat.getColor(
                 resources,
@@ -710,6 +712,7 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
     // MIXED
     private fun showWinningMessages(currentAndMaxScore: Pair<Int, Int>) {
+        Log.d(TAG, "showWinningMessages for Level ${gameViewModel.currentLevel.levelInfo.levelId}")
         val randomCorrectMessage = if(currentAndMaxScore.first == currentAndMaxScore.second) {
             resources.getStringArray(R.array.very_good_texts).random()
         }
@@ -741,17 +744,17 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
             BaseTransientBottomBar.BaseCallback<MessageSnackBar>() {
             override fun onDismissed(transientBottomBar: MessageSnackBar?, event: Int) {
                 super.onDismissed(transientBottomBar, event)
-                val message = MessageSnackBar.make(
+                tapToContinueMessage = MessageSnackBar.make(
                     binding.gameplayFragment,
                     getString(R.string.tap_to_continue),
                     Int.MAX_VALUE,
                     textBigAndSmall?.second
                         ?: resources.getDimensionPixelSize(R.dimen.other_message_size).toFloat()
                 )
-                message.show()
+                tapToContinueMessage?.show()
 
                 val tapToContinueAnimation =
-                    ObjectAnimator.ofFloat(message.view, View.ALPHA, 1f, 0.5f)
+                    ObjectAnimator.ofFloat(tapToContinueMessage?.view, View.ALPHA, 1f, 0.5f)
                 allAnimations.add(tapToContinueAnimation)
                 tapToContinueAnimation.duration = 1000
                 tapToContinueAnimation.repeatCount = ObjectAnimator.INFINITE
@@ -768,13 +771,14 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
                             2,
                             audioManager = audioManager
                         )
-                        message.dismiss()
+                        tapToContinueMessage?.dismiss()
                         tapToContinueAnimation.cancel()
-                        message.view.setOnClickListener(null)
+                        tapToContinueMessage?.view?.setOnClickListener(null)
                         continueToNextLevelActions()
+                        Log.d(TAG, "Add listener to message")
                     }
                 }
-                message.view.setOnClickListener(messageViewClickListener)
+                tapToContinueMessage?.view?.setOnClickListener(messageViewClickListener)
             }
         }
         scoreMessage.addCallback(scoreMessageCallback)
@@ -819,8 +823,9 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
 
     // CLEAN
     private fun continueToNextLevelActions() {
+        tapToContinueMessage?.view?.setOnClickListener(null)
+        tapToContinueMessage?.dismiss()
         gameState = GameState.BUSY
-        gameViewModel.totalScore.removeObserver { viewLifecycleOwner.lifecycle }
         gameViewModel.unlockNextLevel()
         replaceFragmentWithSelf()
     }
@@ -1053,7 +1058,8 @@ class GamePlayFragment : Fragment(R.layout.gameplay_fragment) {
         snackBars.forEach {
             it.key.removeCallback(it.value)
         }
-        //cellDirector.cells.clear()
+        tapToContinueMessage?.view?.setOnClickListener(null)
+        tapToContinueMessage?.dismiss()
         _binding = null
         super.onDestroyView()
     }

@@ -49,13 +49,9 @@ class LevelSelectFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         gameViewModel.levels.observe(viewLifecycleOwner, { levels ->
             if (levels != null) {
-                val last = levels.last {
-                    it.progress > LevelProgress.TODO
-                }.levelId
-                lastUnlocked = last
                 binding.levelSelectRecyclerview.adapter = LevelItemAdapter(levels) {
                     it?.levelId?.let { nr ->
-                        //parentFragmentManager.popBackStackImmediate()
+                        gameViewModel.realSolutionAndGuess.postValue(Triple("", "2", null))
                         gameViewModel.changeLevel(nr)
                         parentFragmentManager.commit {
                             setCustomAnimations(

@@ -51,7 +51,6 @@ class GameViewModel @Inject constructor(
 
     var currentLevel = Level()
     val levels = MutableLiveData<List<LevelData>>()
-    val totalScore = MutableLiveData<Int>()
     val realSolutionAndGuess = MutableLiveData<Triple<String?, String?, Int?>>()
     var windowSizeClassWidth: WindowSizeClass = WindowSizeClass.NOT_SET
     private var billingClient: BillingClient? = null
@@ -316,6 +315,7 @@ class GameViewModel @Inject constructor(
                 currentLevel.levelInfo.levelId,
                 nr
             )
+            currentLevel = getLatestLevel()
         }
     }
 
@@ -363,7 +363,11 @@ class GameViewModel @Inject constructor(
             updatedLevel,
             currentLevel.levelInfo.score
         )
-        totalScore.value = levelRepository.getTotalScore()
+    }
+
+    suspend fun getTotalScore():Int
+    {
+       return levelRepository.getTotalScore()
     }
 
     fun getCurrentAndMaxScore(): Pair<Int, Int> {
