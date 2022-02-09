@@ -324,7 +324,7 @@ class GameActivity : AppCompatActivity() {
 
     private fun startAdReloadTimer() {
         adReloadTimer?.cancel()
-        adReloadTimer = object : CountDownTimer(30000, 1000) {
+        adReloadTimer = object : CountDownTimer(15000, 1000) {
             override fun onTick(millisUntilFinished: Long) {}
             override fun onFinish() {
                 Log.d(TAG, "Ad reload timer completed.")

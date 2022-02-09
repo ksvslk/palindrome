@@ -156,7 +156,6 @@ class HintsFragment : BottomSheetDialogFragment() {
         rewardedAdCollectionJob = lifecycleScope.launch {
             gameViewModel.rewardedAdAvailable.collectLatest { rewardedAdAvailable ->
                 if (gameViewModel.internetState.value.state == InternetState.ONLINE) {
-
                     Log.d(TAG, "Set up the video buttons.: $rewardedAdAvailable")
                     var cluesPurchased = false
                     var lettersPurchased = false
@@ -187,7 +186,7 @@ class HintsFragment : BottomSheetDialogFragment() {
 
                     val isCatRew = gameViewModel.isCategoryRewarded()
 
-                    if (rewardedAdAvailable)
+                    if (rewardedAdAvailable && !cluesPurchased)
                     {
                         binding.categoryRevealButton.setOnClickListener {
                             if (!isCatRew) {
@@ -199,7 +198,9 @@ class HintsFragment : BottomSheetDialogFragment() {
                                 }
                             }
                         }
-
+                    }
+                   if (rewardedAdAvailable && !lettersPurchased)
+                        {
                         binding.letterPlaceButton.setOnClickListener {
                             dismiss()
                             if (isAdded) {
