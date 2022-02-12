@@ -22,7 +22,6 @@ import androidx.fragment.app.*
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoTracker
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -52,6 +51,7 @@ import android.animation.ObjectAnimator
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.animation.doOnEnd
 import androidx.core.view.*
+import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
 import com.indest.hah.game.enums.GameState
 import com.indest.hah.game.enums.InternetState
 import com.indest.hah.game.enums.LoadingState
