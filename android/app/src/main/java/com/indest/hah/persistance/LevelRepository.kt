@@ -79,4 +79,5 @@ class LevelRepository @Inject constructor(
 
     suspend fun increaseIntervalCount(name:String):Boolean = levelDao.increaseCount(name)
     suspend fun setCountTo(name:String, count:Int) = levelDao.setCountTo(name, count)
+    suspend fun isLimitAttained(name:String):Boolean = levelDao.isLimitAttained(name)
 }

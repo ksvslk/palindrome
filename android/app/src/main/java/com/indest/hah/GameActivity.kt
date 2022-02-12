@@ -53,7 +53,6 @@ import java.net.URL
 import java.util.*
 import javax.net.ssl.HttpsURLConnection
 
-
 @AndroidEntryPoint
 class GameActivity : AppCompatActivity() {
 

@@ -57,8 +57,13 @@ class GameViewModel @Inject constructor(
 
     private val _rewardedAdAvailable = MutableStateFlow(false)
     val rewardedAdAvailable: StateFlow<Boolean> = _rewardedAdAvailable.asStateFlow()
+
     private val _userReward = MutableStateFlow(UserRewardEvent.Success())
     val userReward: StateFlow<UserRewardEvent> = _userReward
+
+    private val _levelChange = MutableStateFlow(LevelChangeEvent.Success(null))
+    val levelChange: StateFlow<LevelChangeEvent> = _levelChange
+
     private val _loadingState = MutableStateFlow(AppLoadingState())
     val loadingState: StateFlow<AppLoadingState> = _loadingState.asStateFlow()
     private val _internetState = MutableStateFlow(AppInternetState())
@@ -316,6 +321,7 @@ class GameViewModel @Inject constructor(
                 nr
             )
             currentLevel = getLatestLevel()
+            _levelChange.value = LevelChangeEvent.Success(currentLevel)
         }
     }
 
@@ -350,6 +356,8 @@ class GameViewModel @Inject constructor(
             levelRepository.resetLevelLettersInfo(currentLevel.levelInfo.levelId)
             levelRepository.unlockNextLevel(currentLevel.levelInfo.levelId)
             updateLevelProgress(LevelProgress.REPLAY)
+            val nextLevel = getLatestLevel()
+            _levelChange.value = LevelChangeEvent.Success(nextLevel)
         }
     }
 
@@ -667,8 +675,16 @@ class GameViewModel @Inject constructor(
             levelRepository.setCountTo(name, count)
         }
     }
+    suspend fun isLimitAttained(name:String):Boolean
+    {
+       return levelRepository.isLimitAttained(name)
+    }
 }
 
+sealed class LevelChangeEvent {
+    data class Success(val level:Level?) : LevelChangeEvent()
+    data class Error(val exception: Throwable) : LevelChangeEvent()
+}
 
 sealed class UserRewardEvent {
     data class Success(

@@ -1,23 +1,23 @@
 package com.indest.hah.letter.effects
 
 import android.content.Context
-import android.media.AudioManager
-import android.media.SoundPool
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import androidx.core.content.ContextCompat
 import com.indest.hah.R
+import com.indest.hah.components.SoundPlayer
 import com.indest.hah.letter.effects.ColorSelector.*
 import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.scopes.ActivityScoped
+import dagger.hilt.android.scopes.FragmentScoped
 import javax.inject.Inject
 
 @ActivityScoped
-class Effects @Inject constructor(@ActivityContext val context: Context) {
-
-    private val audioManager: AudioManager =
-        context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+class Effects @Inject constructor(
+    @ActivityContext val context: Context,
+    private val soundPlayer: SoundPlayer,
+) {
 
     // Transition durations
     val onClickColorChangeDuration: Long = 200L
@@ -26,12 +26,6 @@ class Effects @Inject constructor(@ActivityContext val context: Context) {
 
     // Audio, sound and vibration
     private val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-    private val soundPool: SoundPool = SoundPool.Builder().build()
-
-    // Sound effect IDs
-    private val switchLettersSoundId = soundPool.load(context, R.raw.double_finger, 1)
-    private val placeLetterSoundId = soundPool.load(context, R.raw.block_hit, 1)
-    private val letterRewardedSoundId = soundPool.load(context, R.raw.hint_revealed, 1)
 
     // Colors
     private val actionDownNoFriend = AnimationColor(
@@ -63,20 +57,20 @@ class Effects @Inject constructor(@ActivityContext val context: Context) {
     )
 
     fun playSound(soundSelector: SoundSelector) {
-        context.getSharedPreferences(context.getString(R.string.app_preferences), Context.MODE_PRIVATE)?.let {
-            if (audioManager.ringerMode != AudioManager.RINGER_MODE_NORMAL ||
-                !it.getBoolean(context.getString(R.string.sound_on_pref), true)
-            ) return
-
+        context.getSharedPreferences(
+            context.getString(R.string.app_preferences),
+            Context.MODE_PRIVATE
+        )?.let {
+            if (soundPlayer.isRingerModeNotNormal() || !it.getBoolean(context.getString(R.string.sound_on_pref), true)) return
             when (soundSelector) {
                 SoundSelector.PLACE_LETTER_IN_EMPTY_BOX -> {
-                    soundPool.play(placeLetterSoundId, 1.0f, 1.0f, 1, 0, 1.0f)
+                    soundPlayer.play(soundPlayer.sounds.placeLetterSoundId)
                 }
                 SoundSelector.SWITCH_LETTERS -> {
-                    soundPool.play(switchLettersSoundId, 1.0f, 1.0f, 1, 0, 1.0f)
+                    soundPlayer.play(soundPlayer.sounds.switchLettersSoundId)
                 }
                 SoundSelector.LETTER_REWARDED -> {
-                    soundPool.play(letterRewardedSoundId, 1.0f, 1.0f, 1, 0, 1.0f)
+                    soundPlayer.play(soundPlayer.sounds.letterRewardedSoundId)
                 }
             }
         }
@@ -100,8 +94,11 @@ class Effects @Inject constructor(@ActivityContext val context: Context) {
     }
 
     fun addShortVibration(length: Long = 20) {
-        context.getSharedPreferences(context.getString(R.string.app_preferences), Context.MODE_PRIVATE)?.let {
-            if (audioManager.ringerMode != AudioManager.RINGER_MODE_SILENT && it.getBoolean(
+        context.getSharedPreferences(
+            context.getString(R.string.app_preferences),
+            Context.MODE_PRIVATE
+        )?.let {
+            if (soundPlayer.isRingerModeNotSilent() && it.getBoolean(
                     context.getString(
                         R.string.vibration_on_pref
                     ), true

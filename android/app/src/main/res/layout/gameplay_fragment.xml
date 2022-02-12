@@ -8,6 +8,4 @@
     android:clipChildren="false"
     android:gravity="center"
     tools:context=".GameActivity">
-    
-
 </com.indest.hah.game.CellContainer>

@@ -28,7 +28,7 @@ interface LevelDao {
     @Query("select *, max(time_modified) from level_info_table")
     suspend fun getLatestLevel(): Level
 
-    @Query("insert or ignore into letter_info_table (owner_id, home_index, friend_index, letter, locked) values(:level, :homeIndex, :friendIndex, :letter, :locked)")
+    @Query("insert or replace into letter_info_table (owner_id, home_index, friend_index, letter, locked) values(:level, :homeIndex, :friendIndex, :letter, :locked)")
     suspend fun insertLetterData(
         level: Int,
         homeIndex: Int,

@@ -46,29 +46,32 @@ class LevelSelectFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         Log.d(TAG, "onViewCreated")
         super.onViewCreated(view, savedInstanceState)
-        gameViewModel.levels.observe(viewLifecycleOwner, { levels ->
+        gameViewModel.levels.observe(viewLifecycleOwner) { levels ->
             if (levels != null) {
                 binding.levelSelectRecyclerview.adapter = LevelItemAdapter(levels) {
                     it?.levelId?.let { nr ->
-                        gameViewModel.realSolutionAndGuess.postValue(Triple("", "2", null))
+                        gameViewModel.realSolutionAndGuess.value = Triple("", "2", null)
                         gameViewModel.changeLevel(nr)
 
                         lifecycleScope.launch {
                             gameViewModel.setCountTo(getString(R.string.hint_suggestion))
                         }
-                        parentFragmentManager.commit {
+             /*           parentFragmentManager.commit {
                             setCustomAnimations(
                                 R.anim.slide_in_bottom,
                                 R.anim.slide_out_top
                             )
                             setReorderingAllowed(true)
-                            replace<GamePlayFragment>(R.id.fragments_container, tag = C.GAMEPLAY_FRAGMENT_TAG)
-                        }
+                            replace<GamePlayFragment>(
+                                R.id.fragments_container,
+                                tag = C.GAMEPLAY_FRAGMENT_TAG
+                            )
+                        }*/
                         dismiss()
                     }
                 }
             }
-        })
+        }
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

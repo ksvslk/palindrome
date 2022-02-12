@@ -106,7 +106,7 @@ abstract class LevelDatabase : RoomDatabase() {
                                     val interval = ContentValues()
                                     val limit = when(it)
                                     {
-                                        context.getString(com.indest.hah.R.string.intermediate_ads) -> 10
+                                        context.getString(com.indest.hah.R.string.intermediate_ads) -> 2
                                         context.getString(com.indest.hah.R.string.player_centered_scores) -> 5
                                         context.getString(com.indest.hah.R.string.hint_suggestion) -> 3
                                         else -> 7

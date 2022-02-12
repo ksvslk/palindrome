@@ -1,78 +1,56 @@
-package com.indest.hah.game
+package com.indest.hah.components
 
 import android.animation.*
-import android.app.Activity
-import android.content.Context
-import android.media.AudioManager
-import android.media.SoundPool
 import android.view.animation.AccelerateInterpolator
 import com.indest.hah.letter.Cell
 import com.indest.hah.letter.Letter
-import com.indest.hah.util.playWhileSoundOn
+import javax.inject.Inject
 
-object AnimationFactory {
+class Animations @Inject constructor(
+    private val soundPlayer: SoundPlayer,
+    private val colors: Colors,
+) {
+
+    private val animationDuration: Long = 400L
 
     private fun getCellColorAnimation(
-        activity: Context,
         letter: Letter,
-        currentColor: Int,
-        successColor: Int,
-        aDuration: Long,
-        index: Int,
-        audioManager: AudioManager,
-        soundPool: SoundPool,
-        lockedColor:Int,
-        soundEffect:Boolean = true
+        index: Int
     ): ObjectAnimator {
-        val cColor = if (letter.isLocked) lockedColor else currentColor
+        val currentBoxColor = if (letter.isLocked) colors.lockedColor else colors.currentBoxColor
         return ObjectAnimator.ofArgb(
             letter,
             "backgroundColor",
-            cColor,
-            successColor
+            currentBoxColor,
+            colors.boxSuccessColor
         ).apply {
             setEvaluator(ArgbEvaluator())
-            duration = aDuration
-            if (soundEffect)
-            {
-                if (audioManager.ringerMode == AudioManager.RINGER_MODE_NORMAL) {
-                    this.addListener(object : AnimatorListenerAdapter() {
-                        override fun onAnimationStart(animation: Animator?) {
-                            soundPool.playWhileSoundOn(activity, index, 1, audioManager = audioManager)
-                        }
-                    })
+            duration = animationDuration
+            this.addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationStart(animation: Animator?) {
+                    soundPlayer.playNote(index)
                 }
-            }
+            })
         }
     }
 
     private fun getTextColorAnimation(
         letter: Letter,
-        successTextColor: Int,
-        aDuration: Long,
     ): ObjectAnimator {
         return ObjectAnimator.ofInt(
             letter,
             "textColor",
             letter.currentTextColor,
-            successTextColor
+            colors.successTextColor
         ).apply {
             setEvaluator(ArgbEvaluator())
             interpolator = AccelerateInterpolator()
-            duration = aDuration
+            duration = animationDuration
         }
     }
 
     fun getCorrectSolutionAnimation(
-        activity: Context,
-        successTextColor: Int,
-        currentBoxColor: Int,
-        boxSuccessColor: Int,
         cells: MutableList<Cell<*, *>>,
-        audioManager: AudioManager,
-        soundPool: SoundPool,
-        noteSounds: List<Int>,
-        lockedColor:Int
     ): AnimatorSet {
         val animatorSet = AnimatorSet()
         val specialChars = ArrayList<Letter>()
@@ -90,48 +68,27 @@ object AnimationFactory {
 
         val odd = letters.size % 2 != 0
         val count = letters.size / 2
-        //val animationDuration = (kotlin.math.log(50000.0, letters.size.toDouble()) * 100).toLong()
-        val animationDuration = 400L
 
         for (i in 0 until count) {
             val animations = animatorSet.childAnimations
             val letterAhead = letters[i]
             val letterBehind = letters[letters.size - 1 - i]
-            val sound = if (i == count - 1) noteSounds[11] else noteSounds[i]
+
+            val noteSoundId = if (i == count - 1) 11 else i
 
             val letterAheadTextColorAnimation = getTextColorAnimation(
-                letterAhead,
-                successTextColor,
-                animationDuration,
+                letterAhead
             )
             val letterAheadBoxColorAnimation = getCellColorAnimation(
-                activity,
                 letterAhead,
-                currentBoxColor,
-                boxSuccessColor,
-                animationDuration,
-                sound,
-                audioManager,
-                soundPool,
-                lockedColor,
-                soundEffect = true
+                noteSoundId
             )
             val letterBehindTextColorAnimation = getTextColorAnimation(
                 letterBehind,
-                successTextColor,
-                animationDuration,
             )
             val letterBehindBoxColorAnimation = getCellColorAnimation(
-                activity,
                 letterBehind,
-                currentBoxColor,
-                boxSuccessColor,
-                animationDuration,
-                sound,
-                audioManager,
-                soundPool,
-                lockedColor,
-                soundEffect = false
+                noteSoundId
             )
 
             if (animations.size > 0) {
@@ -156,20 +113,10 @@ object AnimationFactory {
             val letter = letters[count]
             val letterTextColorAnimation = getTextColorAnimation(
                 letter,
-                successTextColor,
-                animationDuration,
             )
             val letterBoxColorAnimation = getCellColorAnimation(
-                activity,
                 letter,
-                currentBoxColor,
-                boxSuccessColor,
-                animationDuration,
-                noteSounds[count],
-                audioManager,
-                soundPool,
-                lockedColor,
-                soundEffect = true
+                count,
             )
 
             if (animations.size > 0) {
@@ -187,20 +134,10 @@ object AnimationFactory {
 
             val letterTextAnimation = getTextColorAnimation(
                 letter,
-                successTextColor,
-                animationDuration,
             )
             val letterAnimation = getCellColorAnimation(
-                activity,
                 letter,
-                currentBoxColor,
-                boxSuccessColor,
-                animationDuration,
-                noteSounds[count + 1],
-                audioManager,
-                soundPool,
-                lockedColor,
-                soundEffect = false
+                count + 1
             )
             animatorSet
                 .play(letterTextAnimation)
