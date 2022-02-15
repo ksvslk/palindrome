@@ -88,7 +88,7 @@ class LevelViewModel @Inject constructor(
     fun increaseMistakes() {
         viewModelScope.launch {
             currentLevel.value?.levelInfo?.let { levelInfo ->
-                val pointsToSubtract = levelInfo.best_score / 10
+                val pointsToSubtract = levelInfo.levelId * 100 / 10
                 val newScore = if (levelInfo.score - pointsToSubtract < 0) 0
                 else levelInfo.score - pointsToSubtract
                 levelRepository.updateScore(newScore, levelInfo.levelId)
