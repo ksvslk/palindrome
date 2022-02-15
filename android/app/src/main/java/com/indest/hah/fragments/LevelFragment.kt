@@ -108,6 +108,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             }
         }
         binding.levelFragment.addView(levelGridLayout)
+        //TODO: Collect reward flow here?
     }
 
     private fun solutionUiUpdater() {

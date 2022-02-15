@@ -69,32 +69,31 @@ class CellDirector constructor(
                             Log.e(TAG, "Could not restore letter placements. ")
                             return
                         }
-                        with(letter)
-                        {
-                            x = slot.x
-                            y = slot.y
-                            setFriend(slot)
-                            slot.setFriend(this)
-                            slot.translationZ = BOTTOM_LAYER
-                            friendIndex = slot.homeIndex
-                            currentPos = slot.pos
-                            isLocked = letterProperties.locked
-                            translationZ = NEUTRAL_LAYER
-                            val colors = effects.getColors(ColorSelector.ACTION_DOWN_FRIEND)
 
-                            when {
-                                info.levelInfo.progress == LevelProgress.INTERMEDIATE -> {
-                                   setBackgroundColor(effects.getSuccessBoxColor())
-                                }
-                                letterProperties.locked -> {
-                                    setBackgroundColor(effects.getLockedColor())
-                                    setTextColor(effects.getLockedTextColor())
-                                }
-                                else -> {
-                                    setBackgroundColor(colors.viewEnd)
-                                }
+                        letter.x = slot.x
+                        letter.y = slot.y
+                        letter.setFriend(slot)
+                        slot.setFriend(letter)
+                        slot.translationZ = BOTTOM_LAYER
+                        letter.friendIndex = slot.homeIndex
+                        letter.currentPos = slot.pos
+                        letter.isLocked = letterProperties.locked
+                        letter.translationZ = NEUTRAL_LAYER
+                        val colors = letter.effects.getColors(ColorSelector.ACTION_DOWN_FRIEND)
+
+                        when {
+                            info.levelInfo.progress == LevelProgress.INTERMEDIATE -> {
+                                letter.setBackgroundColor(letter.effects.getSuccessBoxColor())
+                            }
+                            letterProperties.locked -> {
+                                letter.setBackgroundColor(letter.effects.getLockedColor())
+                                letter.setTextColor(letter.effects.getLockedTextColor())
+                            }
+                            else -> {
+                                letter.setBackgroundColor(colors.viewEnd)
                             }
                         }
+
                     }
                 }
             }
