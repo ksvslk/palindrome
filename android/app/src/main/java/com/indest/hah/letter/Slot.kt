@@ -1,10 +1,7 @@
 package com.indest.hah.letter
 
 import android.content.Context
-import android.util.Log
 import android.view.View
-import androidx.core.view.marginRight
-import androidx.core.view.updatePadding
 import com.indest.hah.util.C.BOTTOM_LAYER
 
 class Slot constructor(

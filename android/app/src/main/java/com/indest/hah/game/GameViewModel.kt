@@ -49,27 +49,28 @@ class GameViewModel @Inject constructor(
 
     private val TAG = "GameViewModel"
 
-    var currentLevel = Level()
+    val currentLevel: Level = Level()
+
     val levels = MutableLiveData<List<LevelData>>()
     val realSolutionAndGuess = MutableLiveData<Triple<String?, String?, Int?>>()
     var windowSizeClassWidth: WindowSizeClass = WindowSizeClass.NOT_SET
-    private var billingClient: BillingClient? = null
 
     private val _rewardedAdAvailable = MutableStateFlow(false)
     val rewardedAdAvailable: StateFlow<Boolean> = _rewardedAdAvailable.asStateFlow()
-
     private val _userReward = MutableStateFlow(UserRewardEvent.Success())
     val userReward: StateFlow<UserRewardEvent> = _userReward
 
-    private val _levelChange = MutableStateFlow(LevelChangeEvent.Success(null))
-    val levelChange: StateFlow<LevelChangeEvent> = _levelChange
+    private val _level = MutableStateFlow(LevelChangeEvent.Success(null))
+    val level: StateFlow<LevelChangeEvent> = _level
 
     private val _loadingState = MutableStateFlow(AppLoadingState())
     val loadingState: StateFlow<AppLoadingState> = _loadingState.asStateFlow()
     private val _internetState = MutableStateFlow(AppInternetState())
     val internetState: StateFlow<AppInternetState> = _internetState.asStateFlow()
+
     private val _skuDetails = MutableStateFlow(listOf<SkuDetailsWrapper>())
     val skuDetails: StateFlow<List<SkuDetailsWrapper>> = _skuDetails.asStateFlow()
+    private var billingClient: BillingClient? = null
 
     private var saveGameTimer: CountDownTimer? = null
 
@@ -148,22 +149,8 @@ class GameViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            levelRepository.latestLevelFlow().collect {
-                currentLevel = it
-            }
-        }
-/*
-        viewModelScope.launch {
-            levelRepository.insertLetterInfo(
-                level = 2,
-                homeIndex = 0,
-                friendIndex = -666,
-                letter = 'A',
-                locked = false,
-            )
-        }
-*/
 
+        }
     }
 
 
@@ -263,18 +250,7 @@ class GameViewModel @Inject constructor(
             Purchase.PurchaseState.PENDING -> {
 
             }
-            /*else -> {
-                levelRepository.removeSkuEntitlements(purchase.skus.first())
-                _skuDetails.value = skuDetails.value.map {
-                    if (it.skuDetails.sku == purchase.skus.first()) {
-                        it.copy(purchased = false)
-                    } else {
-                        it.copy()
-                    }
-                }
-            }*/
         }
-
     }
 
     private fun changeState(newState: LoadingState) {
@@ -289,7 +265,7 @@ class GameViewModel @Inject constructor(
         _rewardedAdAvailable.value = boolean
     }
 
-    suspend fun getLatestLevel(): Level {
+    private suspend fun getLatestLevel(): Level {
         return levelRepository.getLatestLevel()
     }
 
@@ -320,8 +296,8 @@ class GameViewModel @Inject constructor(
                 currentLevel.levelInfo.levelId,
                 nr
             )
-            currentLevel = getLatestLevel()
-            _levelChange.value = LevelChangeEvent.Success(currentLevel)
+            //currentLevel = getLatestLevel()
+            _level.value = LevelChangeEvent.Success(currentLevel)
         }
     }
 
@@ -356,8 +332,8 @@ class GameViewModel @Inject constructor(
             levelRepository.resetLevelLettersInfo(currentLevel.levelInfo.levelId)
             levelRepository.unlockNextLevel(currentLevel.levelInfo.levelId)
             updateLevelProgress(LevelProgress.REPLAY)
-            val nextLevel = getLatestLevel()
-            _levelChange.value = LevelChangeEvent.Success(nextLevel)
+            //currentLevel = getLatestLevel()
+            _level.value = LevelChangeEvent.Success(currentLevel)
         }
     }
 
@@ -392,6 +368,7 @@ class GameViewModel @Inject constructor(
     fun updateLetters(topIndex: Int, bottomLetter: Char, bottomIndex: Int, topLetter: Char) {
         Log.d(TAG, "updateLetters")
         viewModelScope.launch {
+/*
             levelRepository.updateLetter(
                 homeIndex = topIndex,
                 letter = bottomLetter,
@@ -402,6 +379,7 @@ class GameViewModel @Inject constructor(
                 letter = topLetter,
                 level = currentLevel.levelInfo.levelId
             )
+*/
 
             realSolutionAndGuess.value = Triple(
                 currentLevel.levelInfo.solution.replace(" ", ""),

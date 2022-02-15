@@ -1,6 +1,7 @@
 package com.indest.hah.persistance
 
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.indest.hah.persistance.dto.LetterProperties
 import com.indest.hah.persistance.dto.Level
@@ -22,34 +23,7 @@ interface LevelDao {
 
     @Transaction
     @Query("select *, max(time_modified) from level_info_table")
-    fun getLastLevel(): Flow<Level>
-
-    @Transaction
-    @Query("select *, max(time_modified) from level_info_table")
     suspend fun getLatestLevel(): Level
-
-    @Query("insert or replace into letter_info_table (owner_id, home_index, friend_index, letter, locked) values(:level, :homeIndex, :friendIndex, :letter, :locked)")
-    suspend fun insertLetterData(
-        level: Int,
-        homeIndex: Int,
-        friendIndex: Int,
-        letter: Char,
-        locked: Boolean
-    )
-
-    @Query("update or replace letter_info_table set friend_index = :newFriendIndex where home_index = :homeIndex and owner_id = :level")
-    suspend fun updateFriendIndex(homeIndex: Int, newFriendIndex: Int, level: Int)
-
-    @Query("update letter_info_table set locked = 1 where home_index = :homeIndex and owner_id = :level")
-    suspend fun setLetterLocked(homeIndex: Int, level: Int)
-
-    @Query("update or replace letter_info_table set letter = :letter where home_index = :homeIndex and owner_id = :level")
-    suspend fun updateLetterQuery(homeIndex: Int, letter: Char, level: Int)
-
-    @Transaction
-    suspend fun updateLetter(homeIndex: Int, letter: Char, level: Int) {
-        updateLetterQuery(homeIndex, letter, level)
-    }
 
     @Query("select letter from letter_info_table where owner_id=:levelNr and friend_index!=-666 order by friend_index asc")
     suspend fun getCurrentSolution(levelNr: Int): List<Char>
@@ -62,9 +36,6 @@ interface LevelDao {
 
     @Query("update letter_info_table set home_index = :newIndex where home_index = :oldIndex and owner_id = :level")
     suspend fun updateHomeIndex(oldIndex: Int, newIndex: Int, level: Int)
-
-    @Update
-    suspend fun updateLevelData(levelInfo: LevelData)
 
     @Update
     suspend fun updateLevelDataAndBestScore(levelInfo: LevelData, score: Int) {
@@ -122,9 +93,6 @@ interface LevelDao {
     @Query("select * from level_info_table")
     suspend fun getAllLevels(): List<Level>
 
-    @Query("update level_info_table set score=:newScore where level_id=:level")
-    suspend fun updateScore(newScore: Int, level: Int)
-
     @Query("update level_info_table set category_rewarded=:value where level_id=:level")
     suspend fun updateCategoryRewarded(value: Boolean, level: Int)
 
@@ -160,4 +128,48 @@ interface LevelDao {
         if (isLimit) resetCount(name)
         return isLimit
     }
+
+    // REFACTOR
+    @Transaction
+    @Query("select *, max(time_modified) from level_info_table")
+    fun getLastLevel(): Flow<Level>
+
+    @Query("update or ignore letter_info_table set friend_index = :newFriendIndex where home_index = :homeIndex and owner_id = :level")
+    suspend fun updateFriendIndexSub(homeIndex: Int, newFriendIndex: Int, level: Int)
+
+    @Transaction
+    suspend fun updateFriendIndex(homeIndex: Int, newFriendIndex: Int, level: Int):String
+    {
+        updateFriendIndexSub(homeIndex, newFriendIndex, level)
+        return getCurrentSolution(level).joinToString("")
+    }
+
+    @Query("update letter_info_table set locked = 1 where home_index = :homeIndex and owner_id = :level")
+    suspend fun setLetterLocked(homeIndex: Int, level: Int)
+
+    @Query("update or ignore letter_info_table set letter = :letter where home_index = :homeIndex and owner_id = :level")
+    suspend fun updateLetterQuery(homeIndex: Int, letter: Char, level: Int)
+
+    @Transaction
+    suspend fun updateLetters(homeIndex1: Int,homeIndex2: Int, letter1: Char,letter2: Char, level: Int):String {
+        updateLetterQuery(homeIndex1, letter1, level)
+        updateLetterQuery(homeIndex2, letter2, level)
+        return getCurrentSolution(level).joinToString("")
+    }
+
+    @Query("update level_info_table set score=:newScore where level_id=:level")
+    suspend fun updateScore(newScore: Int, level: Int)
+
+    @Query("insert or ignore into letter_info_table (owner_id, home_index, friend_index, letter, locked) values(:level, :homeIndex, :friendIndex, :letter, :locked)")
+    suspend fun insertLetterData(
+        level: Int,
+        homeIndex: Int,
+        friendIndex: Int,
+        letter: Char,
+        locked: Boolean
+    )
+
+    @Update
+    suspend fun updateLevelData(levelInfo: LevelData)
+
 }

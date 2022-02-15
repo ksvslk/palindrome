@@ -12,4 +12,6 @@
     android:animateLayoutChanges="true"
     android:splitMotionEvents="false"
     android:visibility="visible"
-    app:useDefaultMargins="false"/>
+    app:useDefaultMargins="false">
+
+</androidx.gridlayout.widget.GridLayout>

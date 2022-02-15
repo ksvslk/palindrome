@@ -2,7 +2,6 @@ package com.indest.hah.fragments
 
 import android.app.Activity
 import android.content.Context
-import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -28,7 +27,6 @@ import androidx.fragment.app.replace
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.Scope
-import com.indest.hah.GameActivity
 import com.indest.hah.game.GameViewModel
 import com.indest.hah.game.enums.InternetState
 import kotlinx.coroutines.launch

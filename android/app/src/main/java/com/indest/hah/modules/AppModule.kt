@@ -11,11 +11,10 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
-import dagger.hilt.android.components.FragmentComponent
+import dagger.hilt.android.internal.builders.ViewModelComponentBuilder
 import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityScoped
-import dagger.hilt.android.scopes.FragmentScoped
 
 @Module
 @InstallIn(ActivityComponent::class)
@@ -87,4 +86,5 @@ object AppModule {
             lockedColor = lockedColor
         )
     }
+
 }

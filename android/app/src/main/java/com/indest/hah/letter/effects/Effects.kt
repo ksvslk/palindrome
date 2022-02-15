@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import com.indest.hah.R
 import com.indest.hah.components.SoundPlayer
 import com.indest.hah.letter.effects.ColorSelector.*
@@ -83,6 +84,11 @@ class Effects @Inject constructor(
             ACTION_UP_NO_FRIEND -> actionUpNoFriend
             ACTION_UP_FRIEND -> actionUpFriend
         }
+    }
+
+    fun getSuccessBoxColor():Int
+    {
+        return ContextCompat.getColor(context, R.color.successBoxColor)
     }
 
     fun getLockedColor(): Int {

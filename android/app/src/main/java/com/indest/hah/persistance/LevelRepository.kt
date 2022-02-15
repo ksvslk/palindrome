@@ -15,25 +15,15 @@ class LevelRepository @Inject constructor(
 
     private val TAG = "LevelRepository"
     suspend fun resetLevelLettersInfo(levelNr: Int) = levelDao.deleteLetterInfo(levelNr)
-    suspend fun updateLevel(level: LevelData) = levelDao.updateLevelData(level)
     suspend fun updateLevelAndBestScore(level: LevelData, score: Int) =
         levelDao.updateLevelDataAndBestScore(level, score)
 
     suspend fun unlockNextLevel(current: Int) = levelDao.unlockNextLevel(current)
-    suspend fun updateScore(newScore: Int, level: Int) = levelDao.updateScore(newScore, level)
     suspend fun getTotalScore() = levelDao.getTotalScore()
     suspend fun getLatestLevel() = levelDao.getLatestLevel()
-    suspend fun latestLevelFlow(): Flow<Level> = levelDao.getLastLevel()
+    fun latestLevelFlow(): Flow<Level> = levelDao.getLastLevel()
 
-    suspend fun insertLetterInfo(
-        level: Int,
-        homeIndex: Int,
-        friendIndex: Int,
-        letter: Char,
-        locked: Boolean
-    ) {
-        levelDao.insertLetterData(level, homeIndex, friendIndex, letter, locked)
-    }
+
 
     suspend fun getAllLevels(): List<LevelData> = levelDao.getAllLevels().map {
         it.levelInfo
@@ -41,17 +31,6 @@ class LevelRepository @Inject constructor(
 
     suspend fun getSaveGameData(): List<Level> = levelDao.getAllLevels()
 
-    suspend fun updateFriendIndex(homeIndex: Int, newFriendIndex: Int, level: Int) {
-        levelDao.updateFriendIndex(homeIndex, newFriendIndex, level)
-    }
-
-    suspend fun setLetterLocked(homeIndex: Int, level: Int) {
-        levelDao.setLetterLocked(homeIndex, level)
-    }
-
-    suspend fun updateLetter(homeIndex: Int, letter: Char, level: Int) {
-        levelDao.updateLetter(homeIndex, letter, level)
-    }
 
     suspend fun updateCategoryRewarded(value: Boolean, level: Int) {
         levelDao.updateCategoryRewarded(value, level)
@@ -80,4 +59,33 @@ class LevelRepository @Inject constructor(
     suspend fun increaseIntervalCount(name:String):Boolean = levelDao.increaseCount(name)
     suspend fun setCountTo(name:String, count:Int) = levelDao.setCountTo(name, count)
     suspend fun isLimitAttained(name:String):Boolean = levelDao.isLimitAttained(name)
+
+    // REFACTOR
+
+    suspend fun updateFriendIndex(homeIndex: Int, newFriendIndex: Int, level: Int):String {
+        return levelDao.updateFriendIndex(homeIndex, newFriendIndex, level)
+    }
+
+    suspend fun setLetterLocked(homeIndex: Int, level: Int) {
+        levelDao.setLetterLocked(homeIndex, level)
+    }
+
+    suspend fun updateLetters(homeIndex1: Int,homeIndex2: Int, letter1: Char,letter2: Char, level: Int):String {
+        return levelDao.updateLetters(homeIndex1, homeIndex2, letter1,letter2, level)
+    }
+
+    suspend fun updateScore(newScore: Int, level: Int) = levelDao.updateScore(newScore, level)
+
+    suspend fun insertLetterInfo(
+        level: Int,
+        homeIndex: Int,
+        friendIndex: Int,
+        letter: Char,
+        locked: Boolean
+    ) {
+        levelDao.insertLetterData(level, homeIndex, friendIndex, letter, locked)
+    }
+
+    suspend fun updateLevel(level: LevelData) = levelDao.updateLevelData(level)
+
 }

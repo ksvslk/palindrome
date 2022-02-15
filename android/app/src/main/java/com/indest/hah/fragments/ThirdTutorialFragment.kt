@@ -49,7 +49,7 @@ class ThirdTutorialFragment : Fragment() {
                 }
                 setReorderingAllowed(true)
                 setCustomAnimations(R.anim.fade_in_short, R.anim.fade_out_short)
-                replace<GamePlayFragment>(R.id.fragments_container)
+                replace<LevelFragment>(R.id.fragments_container)
                 requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView).visibility =
                     View.VISIBLE
             }

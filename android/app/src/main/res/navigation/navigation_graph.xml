@@ -2,13 +2,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation_graph"
-    app:startDestination="@id/navigation_home">
+    app:startDestination="@id/navigation_level">
 
     <fragment
-        android:id="@+id/navigation_gameplay"
-        android:name="com.indest.hah.fragments.GamePlayFragment"
-        android:label="GamePlayFragment"
-        tools:layout="@layout/gameplay_fragment">
+        android:id="@+id/navigation_level"
+        android:name="com.indest.hah.fragments.LevelFragment"
+        android:label="LevelFragment"
+        tools:layout="@layout/level_fragment">
         <action
             android:id="@+id/action_navigation_gameplay_to_navigation_hints"
             app:destination="@id/navigation_hints" />
@@ -21,28 +21,13 @@
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_home"
-        android:name="com.indest.hah.fragments.LoadingFragment"
-        android:label="HomeFragment"
-        tools:layout="@layout/home_fragment">
-        <action
-            android:id="@+id/action_navigation_home_to_navigation_tutorial"
-            app:destination="@id/navigation_tutorial"
-            app:enterAnim="@anim/fade_in_short"
-            app:exitAnim="@anim/fade_out_short" />
-        <action
-            android:id="@+id/action_navigation_home_to_navigation_gameplay"
-            app:destination="@id/navigation_gameplay" />
-    </fragment>
-
-    <fragment
         android:id="@+id/navigation_second_tutorial"
         android:name="com.indest.hah.fragments.SecondTutorialFragment"
         android:label="@string/tutorial"
         tools:layout="@layout/second_tutorial_fragment" >
         <action
             android:id="@+id/action_navigation_hints_to_navigation_gameplay"
-            app:destination="@id/navigation_gameplay" />
+            app:destination="@id/navigation_level" />
         <action
             android:id="@+id/action_navigation_second_tutorial_to_navigation_tutorial"
             app:destination="@id/navigation_tutorial" />
@@ -55,7 +40,7 @@
         tools:layout="@layout/tutorial_fragment" >
         <action
             android:id="@+id/action_navigation_hints_to_navigation_gameplay"
-            app:destination="@id/navigation_gameplay" />
+            app:destination="@id/navigation_level" />
         <action
             android:id="@+id/action_navigation_tutorial_to_navigation_second_tutorial"
             app:destination="@id/navigation_second_tutorial" />
@@ -68,7 +53,7 @@
         tools:layout="@layout/hints_fragment" >
         <action
             android:id="@+id/action_navigation_hints_to_navigation_gameplay"
-            app:destination="@id/navigation_gameplay" />
+            app:destination="@id/navigation_level" />
     </dialog>
 
     <dialog
@@ -78,7 +63,7 @@
         tools:layout="@layout/google_games_fragment" >
         <action
             android:id="@+id/action_navigation_google_games_to_navigation_gameplay"
-            app:destination="@id/navigation_gameplay" />
+            app:destination="@id/navigation_level" />
     </dialog>
 
     <dialog
@@ -88,7 +73,7 @@
         tools:layout="@layout/settings_fragment" >
         <action
             android:id="@+id/action_navigation_settings_to_navigation_gameplay"
-            app:destination="@id/navigation_gameplay" />
+            app:destination="@id/navigation_level" />
         <action
             android:id="@+id/action_navigation_settings_to_navigation_level_select"
             app:destination="@id/navigation_level_select" />
@@ -101,7 +86,7 @@
         tools:layout="@layout/level_select_fragment" >
         <action
             android:id="@+id/action_navigation_level_select_to_navigation_settings"
-            app:destination="@id/navigation_gameplay" />
+            app:destination="@id/navigation_level" />
     </dialog>
 
 

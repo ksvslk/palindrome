@@ -3,20 +3,13 @@ package com.indest.hah.letter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View.OnTouchListener
-import androidx.core.view.marginRight
-import androidx.core.view.updatePadding
 import com.indest.hah.letter.effects.Effects
-import com.indest.hah.letter.effects.SoundSelector
 import com.indest.hah.util.C.NEUTRAL_LAYER
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-import android.widget.LinearLayout
 import androidx.gridlayout.widget.GridLayout
-import com.indest.hah.util.C
-import com.indest.hah.util.C.TOP_LAYER
 
 
 @SuppressLint("ViewConstructor")
@@ -41,12 +34,6 @@ class Letter @Inject constructor(
         state.draw(this)
         super.onDraw(canvas)
     }
-
-    //TODO: remove when OK
-/*    override fun setTranslationZ(translationZ: Float) {
-        Log.d(TAG, "Set Z-value for $text to $translationZ")
-        super.setTranslationZ(translationZ)
-    }*/
 
     private val touchListen = OnTouchListener { v, e ->
         if (!isLocked) {
@@ -78,7 +65,7 @@ class Letter @Inject constructor(
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         homePos = pos
         currentPos = pos
-        homeIndex = (parent as androidx.gridlayout.widget.GridLayout).indexOfChild(this)
+        homeIndex = (parent as GridLayout).indexOfChild(this)
         super.onSizeChanged(w, h, oldw, oldh)
     }
 

@@ -68,7 +68,7 @@ class TutorialFragment : Fragment() {
                 setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top)
                 setReorderingAllowed(true)
                 mainAnimatorSet.removeAllListeners()
-                replace<GamePlayFragment>(R.id.fragments_container)
+                replace<LevelFragment>(R.id.fragments_container)
                 requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView).visibility =
                     View.VISIBLE
             }

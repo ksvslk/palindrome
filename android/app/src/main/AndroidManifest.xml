@@ -22,7 +22,7 @@
         android:theme="@style/Theme.OC">
 
         <activity
-            android:name="com.indest.hah.GameActivity"
+            android:name="com.indest.hah.MainActivity"
             android:screenOrientation="portrait"
             android:hardwareAccelerated="true"
             android:immersive="true"

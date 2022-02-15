@@ -1,10 +1,6 @@
 package com.indest.hah.game
 
 import android.util.Log
-import androidx.core.content.res.ResourcesCompat
-import com.indest.hah.R
-import com.indest.hah.fragments.GamePlayFragment
-import com.indest.hah.game.enums.GameState
 import com.indest.hah.letter.*
 import com.indest.hah.letter.effects.ColorSelector
 import com.indest.hah.letter.effects.SoundSelector
@@ -18,34 +14,17 @@ import com.indest.hah.util.C.REWARDED_ANIM_MUL_DEFAULT
 import com.indest.hah.util.C.TOP_LAYER
 import kotlin.math.abs
 
-
-class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
+class CellDirector constructor(
+    info: Level,
+    private val cells: Sequence<Cell<*, *>>,
+    private val viewModel: LevelViewModel
+) {
 
     private val TAG = "CellDirector"
-    private val gf: GamePlayFragment = gamePlayFragment
-    var cells: MutableList<Cell<*, *>> = ArrayList()
 
-    // TODO: remove when OK
-/*    fun printDebug()
-    {
-        if (gf.gameState == GameState.READY)
-        {
-            val setOfZs = cells.filterIsInstance<Letter>().map { it.z }.toSet()
-            val lettersZ = cells.filterIsInstance<Letter>().joinToString { "${it.text}: ${it.z}" }
-            val lettersElevation = cells.filterIsInstance<Letter>().joinToString { it.elevation.toString() }
-            *//*  val slotsZ = cells.filterIsInstance<Slot>().joinToString { it.z.toString() }
-              val slotsElevation =  cells.filterIsInstance<Slot>().joinToString { it.elevation.toString() }*//*
-
-            Log.d(TAG, "Letters Z-values: $lettersZ")
-            Log.d(TAG, "Letters Elevation: $lettersElevation")
-*//*        Log.d(TAG, "Slots Z: $slotsZ")
-        Log.d(TAG, "Slots Elevation: $slotsElevation")*//*
-         *//*   assert(setOfZs.size == 1) {
-                Log.d(TAG, "Z values were not equal.")
-            }*//*
-        }
-
-    }*/
+    init {
+        restoreSlotPlacements(info)
+    }
 
     fun handleCollisions(letter: Letter) {
         when (val closestCell = getClosestCell(to = letter, from = getCandidateCells(letter))) {
@@ -77,6 +56,49 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
         sendLetterHome(letter)
     }
 
+    private fun restoreSlotPlacements(info: Level) {
+        when {
+            info.lettersProperties.isNotEmpty() -> {
+                info.lettersProperties.forEach { letterProperties ->
+                    if (letterProperties.friendIndex != -666) {
+                        val slot = cells.filterIsInstance<Slot>()
+                            .find { it.homeIndex == letterProperties.friendIndex }
+                        val letter = cells.filterIsInstance<Letter>()
+                            .find { it.homeIndex == letterProperties.homeIndex }
+                        if (slot == null || letter == null) {
+                            Log.e(TAG, "Could not restore letter placements. ")
+                            return
+                        }
+                        letter.x = slot.x
+                        letter.y = slot.y
+                        letter.setFriend(slot)
+                        slot.setFriend(letter)
+                        slot.translationZ = BOTTOM_LAYER
+                        letter.friendIndex = slot.homeIndex
+                        letter.currentPos = slot.pos
+                        letter.isLocked = letterProperties.locked
+                        letter.translationZ = NEUTRAL_LAYER
+                        val colors = letter.effects.getColors(ColorSelector.ACTION_DOWN_FRIEND)
+
+                        when {
+                            info.levelInfo.progress == LevelProgress.INTERMEDIATE -> {
+                                letter.setBackgroundColor(letter.effects.getSuccessBoxColor())
+                            }
+                            letterProperties.locked -> {
+                                letter.setBackgroundColor(letter.effects.getLockedColor())
+                                letter.setTextColor(letter.effects.getLockedTextColor())
+                            }
+                            else -> {
+                                letter.setBackgroundColor(colors.viewEnd)
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+
     private fun getCandidateCells(letter: Letter): MutableList<Cell<*, *>> {
         val candidateCells = mutableListOf<Cell<*, *>>()
 
@@ -89,11 +111,14 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
                 }
             }
         }
-        Log.d(TAG, candidateCells.firstOrNull().toString())
         return candidateCells
     }
 
-    fun switchLetterPositions(top: Letter, bottom: Letter, isRewarded: Boolean = false) {
+    private fun switchLetterPositions(
+        top: Letter,
+        bottom: Letter,
+        isRewarded: Boolean = false
+    ) {
         if (isRewarded) {
             top.effects.playSound(SoundSelector.LETTER_REWARDED)
         } else {
@@ -115,7 +140,7 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
         val topLetter = top.text.first()
         val bottomLetter = bottom.text.first()
 
-        gf.gameViewModel.updateLetters(
+        viewModel.updateLetters(
             topIndex = topIndex,
             bottomLetter = bottomLetter,
             bottomIndex = bottomIndex,
@@ -125,8 +150,8 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
         switchFriends(bottom, top)
         switchIndex(bottom, top)
 
-        if (top.text.first() != top.friend?.realChar) gf.gameViewModel.increaseMistakes()
-        if (bottom.text.first() != bottom.friend?.realChar) gf.gameViewModel.increaseMistakes()
+        if (top.text.first() != top.friend?.realChar) viewModel.increaseMistakes()
+        if (bottom.text.first() != bottom.friend?.realChar) viewModel.increaseMistakes()
 
         bottom.translationZ = MIDDLE_LAYER
 
@@ -136,18 +161,23 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
 
         // Set letter locked in database
         if (isRewarded) {
-            gf.gameViewModel.setLetterLocked(top.homeIndex)
+            viewModel.setLetterLocked(top.homeIndex)
             top.translationZ = TOP_LAYER
             bottom.translationZ = MIDDLE_LAYER
         }
 
         // Execute animation
         val durationModifier = if (isRewarded) REWARDED_ANIM_MUL else REWARDED_ANIM_MUL_DEFAULT
-        top.state.executeAnimationBehaviour(top, distanceToMoveX, distanceToMoveY, durationModifier)
+        top.state.executeAnimationBehaviour(
+            top,
+            distanceToMoveX,
+            distanceToMoveY,
+            durationModifier
+        )
         bottom.state.executeAnimationBehaviour(bottom, droppedToMoveX, droppedToMoveY)
     }
 
-    fun placeLetterInEmptyBox(
+    private fun placeLetterInEmptyBox(
         letter: Letter,
         slot: Slot,
         isRewarded: Boolean = false,
@@ -175,24 +205,30 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
             durationModifier
         )
 
-        gf.gameViewModel.updateFriendIndex(
+        viewModel.updateFriendIndex(
             index = letter.homeIndex,
             newIndex = slot.homeIndex
         )
-        if (isRewarded) gf.gameViewModel.setLetterLocked(letter.homeIndex)
+        if (isRewarded) viewModel.setLetterLocked(letter.homeIndex)
 
         val isCorrectMove = slot.friend?.text?.first()?.equals(slot.realChar)
-        if (isCorrectMove == false) gf.gameViewModel.increaseMistakes()
+        if (isCorrectMove == false) viewModel.increaseMistakes()
     }
 
-    fun sendLetterHome(letter: Letter, isRewarded: Boolean = false) {
+    fun sendWrongSolutionLetterHome(index:Int)
+    {
+        val lastLetter = cells.find { p -> p.homeIndex == index } as Letter
+        sendLetterHome(lastLetter)
+    }
+
+    private fun sendLetterHome(letter: Letter, isRewarded: Boolean = false) {
         if (isRewarded) letter.translationZ = MIDDLE_LAYER
         if (letter.hasFriend()) {
             letter.getTheFriend()?.setFriend(null)
             letter.setFriend(null)
-            gf.gameViewModel.increaseMistakes()
 
-            gf.gameViewModel.updateFriendIndex(
+            viewModel.increaseMistakes()
+            viewModel.updateFriendIndex(
                 index = letter.homeIndex,
                 newIndex = -666
             )
@@ -254,54 +290,4 @@ class CellDirector constructor(gamePlayFragment: GamePlayFragment) {
         }
     }
 
-    fun restoreSlotPlacements(info: Level) {
-        when {
-            info.lettersProperties.isNotEmpty() -> {
-                info.lettersProperties.forEach { letterProperties ->
-                    if (letterProperties.friendIndex != -666) {
-                        val slot = cells.filterIsInstance<Slot>()
-                            .find { it.homeIndex == letterProperties.friendIndex } as? Slot
-                        val letter = cells.filterIsInstance<Letter>()
-                            .find { it.homeIndex == letterProperties.homeIndex } as? Letter
-                        if (slot == null || letter == null) {
-                            Log.e(TAG, "Could not restore letter placements. ")
-                            return
-                        }
-                        Log.d(TAG, "Restoring $letter to $slot.")
-
-                        letter.x = slot.x
-                        letter.y = slot.y
-                        letter.setFriend(slot)
-                        slot.setFriend(letter)
-                        slot.translationZ = BOTTOM_LAYER
-                        letter.friendIndex = slot.homeIndex
-                        letter.currentPos = slot.pos
-                        letter.isLocked = letterProperties.locked
-                        letter.translationZ = NEUTRAL_LAYER
-                        val colors = letter.effects.getColors(ColorSelector.ACTION_DOWN_FRIEND)
-
-                        when {
-                            info.levelInfo.progress == LevelProgress.INTERMEDIATE -> {
-                                val successBoxColor = ResourcesCompat.getColor(
-                                    gf.requireContext().resources,
-                                    R.color.successBoxColor,
-                                    gf.requireContext().theme
-                                )
-                                letter.setBackgroundColor(successBoxColor)
-                            }
-                            letterProperties.locked -> {
-                                letter.setBackgroundColor(letter.effects.getLockedColor())
-                                letter.setTextColor(letter.effects.getLockedTextColor())
-                            }
-                            else -> {
-                                letter.setBackgroundColor(colors.viewEnd)
-                            }
-                        }
-
-                    }
-                }
-            }
-        }
-
-    }
 }

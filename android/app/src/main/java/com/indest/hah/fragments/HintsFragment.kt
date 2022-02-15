@@ -15,7 +15,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.indest.hah.GameActivity
+import com.indest.hah.MainActivity
 import com.indest.hah.R
 import com.indest.hah.databinding.HintsFragmentBinding
 import com.indest.hah.fragments.HintsFragment.AvailablePurchase.*
@@ -27,7 +27,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import com.indest.hah.game.enums.InternetState
 import com.indest.hah.game.enums.RewardType
-import com.indest.hah.persistance.dto.Sku
 
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -192,9 +191,10 @@ class HintsFragment : BottomSheetDialogFragment() {
                             if (!isCatRew) {
                                 if (isAdded) {
                                     Log.d(TAG, "Set up clue reward button")
-                                    (requireActivity() as GameActivity).showRewardedVideo(
+                                    //TODO: SHOW REWARDED VIDEO
+                                 /*   (requireActivity() as MainActivity).showRewardedVideo(
                                         RewardType.HINT
-                                    )
+                                    )*/
                                 }
                             }
                         }
@@ -205,7 +205,8 @@ class HintsFragment : BottomSheetDialogFragment() {
                             dismiss()
                             if (isAdded) {
                                 Log.d(TAG, "Set up letters reward button")
-                                (requireActivity() as GameActivity).showRewardedVideo(RewardType.LETTER)
+                                //TODO: SHOW REWARDED VIDEO
+                                //(requireActivity() as MainActivity).showRewardedVideo(RewardType.LETTER)
                             }
                         }
                     }
