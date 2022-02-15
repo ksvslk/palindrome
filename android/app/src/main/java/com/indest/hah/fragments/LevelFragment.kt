@@ -26,7 +26,6 @@ import com.indest.hah.game.LevelViewModel.Solution.*
 import com.indest.hah.game.MessageSnackBar
 import com.indest.hah.letter.Cell
 import com.indest.hah.persistance.dto.Level
-import com.indest.hah.persistance.dto.LevelData
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect

@@ -2,7 +2,6 @@ package com.indest.hah.game
 
 import android.app.Application
 import androidx.lifecycle.*
-import com.indest.hah.R
 import com.indest.hah.letter.Cell
 import com.indest.hah.letter.Letter
 import com.indest.hah.persistance.LevelProgress
@@ -42,7 +41,7 @@ class LevelViewModel @Inject constructor(
         }
     }
 
-    private fun triggerLevelCompleteFlow(index: Int, guess: String) {
+    private fun updateSolutionState(index: Int, guess: String) {
         viewModelScope.launch {
             val solution = _currentLevel.value?.levelInfo?.solution?.replace(" ", "")
             if (guess.length == solution?.length) {
@@ -81,7 +80,7 @@ class LevelViewModel @Inject constructor(
                     letter2 = topLetter,
                     level = levelInfo.levelId
                 )
-                triggerLevelCompleteFlow(topIndex, currentSolution)
+                updateSolutionState(topIndex, currentSolution)
             }
         }
     }
@@ -89,8 +88,9 @@ class LevelViewModel @Inject constructor(
     fun increaseMistakes() {
         viewModelScope.launch {
             currentLevel.value?.levelInfo?.let { levelInfo ->
-                val newScore = if (levelInfo.score - 2 < 0) 0
-                else levelInfo.score - 2
+                val pointsToSubtract = levelInfo.best_score / 10
+                val newScore = if (levelInfo.score - pointsToSubtract < 0) 0
+                else levelInfo.score - pointsToSubtract
                 levelRepository.updateScore(newScore, levelInfo.levelId)
             }
         }
@@ -115,7 +115,7 @@ class LevelViewModel @Inject constructor(
                     newFriendIndex = newIndex,
                     level = levelInfo.levelId
                 )
-                triggerLevelCompleteFlow(index, currentSolution)
+                updateSolutionState(index, currentSolution)
             }
         }
     }
