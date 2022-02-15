@@ -120,14 +120,12 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                             Log.d(TAG, "CORRECT")
                         }
                         WRONG -> {
-                            playWrongMessageEffects()
                             cellDirector.sendWrongSolutionLetterHome(it.second)
-                            displayWrongMessage(WRONG)
+                            updateUiWhenWrongMessage(WRONG)
                         }
                         WRONG_PALIDROME -> {
-                            playWrongMessageEffects()
                             cellDirector.sendWrongSolutionLetterHome(it.second)
-                            displayWrongMessage(WRONG_PALIDROME)
+                            updateUiWhenWrongMessage(WRONG_PALIDROME)
                         }
                         NONE -> {
                             Log.d(TAG, "NONE")
@@ -138,12 +136,10 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         }
     }
 
-    private fun playWrongMessageEffects() {
+    private fun updateUiWhenWrongMessage(solutionType: LevelViewModel.Solution)
+    {
         animations.getWrongSolutionAnimation(binding.levelFragment).start()
         soundPlayer.vibrateDoubleClick()
-    }
-
-    private fun displayWrongMessage(solutionType: LevelViewModel.Solution) {
         val messageToDisplay =
             if (solutionType == WRONG_PALIDROME)
                 resources.getStringArray(R.array.palindrome_wrong_texts).random()
