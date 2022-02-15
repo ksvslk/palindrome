@@ -53,7 +53,7 @@ class LevelViewModel @Inject constructor(
                     guess == solution -> _solution.emit(Pair(Solution.CORRECT, index))
                     playerGuess.reversed() == playerGuess -> _solution.emit(
                         Pair(
-                            Solution.WRONG_PALIDROME,
+                            Solution.BOGUS_PALINDROME,
                             index
                         )
                     )
@@ -167,7 +167,7 @@ class LevelViewModel @Inject constructor(
     enum class Solution {
         CORRECT,
         WRONG,
-        WRONG_PALIDROME,
+        BOGUS_PALINDROME,
         NONE
     }
 }

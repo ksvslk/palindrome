@@ -122,9 +122,9 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                             cellDirector.sendWrongSolutionLetterHome(it.second)
                             updateUiWhenWrongMessage(WRONG)
                         }
-                        WRONG_PALIDROME -> {
+                        BOGUS_PALINDROME -> {
                             cellDirector.sendWrongSolutionLetterHome(it.second)
-                            updateUiWhenWrongMessage(WRONG_PALIDROME)
+                            updateUiWhenWrongMessage(BOGUS_PALINDROME)
                         }
                         NONE -> {
                             Log.d(TAG, "NONE")
@@ -140,7 +140,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         animations.getWrongSolutionAnimation(binding.levelFragment).start()
         soundPlayer.vibrateDoubleClick()
         val messageToDisplay =
-            if (solutionType == WRONG_PALIDROME)
+            if (solutionType == BOGUS_PALINDROME)
                 resources.getStringArray(R.array.palindrome_wrong_texts).random()
             else
                 resources.getStringArray(R.array.solution_wrong_texts).random()
