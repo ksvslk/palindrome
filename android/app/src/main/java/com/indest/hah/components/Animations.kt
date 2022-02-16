@@ -52,6 +52,7 @@ class Animations @Inject constructor(
             this.addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationStart(animation: Animator?) {
                     soundPlayer.playNote(index)
+                    super.onAnimationStart(animation)
                 }
             })
         }
@@ -261,7 +262,7 @@ class Animations @Inject constructor(
                 .append(animation.animatedValue.toString().padStart(paddingLength, '0'))
                 .append(" of $maxScore points")
         }
-        soundPlayer.play(soundPlayer.sounds.scoreSound)
+        if (score > 0) soundPlayer.play(soundPlayer.sounds.scoreSound)
         return animator
     }
 

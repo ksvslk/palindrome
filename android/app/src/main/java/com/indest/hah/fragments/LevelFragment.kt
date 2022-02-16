@@ -84,13 +84,16 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                         val isBookMode = foldingFeature?.state == FoldingFeature.State.FLAT
                         viewModel.isBookMode = isBookMode
                         viewModel.latestLevelFlow().collect { level ->
-                            binding.levelFragment.removeAllViews()
-                            if (level.levelInfo.progress == LevelProgress.INTERMEDIATE) {
-                                displayLevel(level, isBookMode, isLevelFinished = true)
-                            } else {
-                                displayLevel(level, isBookMode)
+                            if (level.levelInfo.levelId != 0)
+                            {
+                                binding.levelFragment.removeAllViews()
+                                if (level.levelInfo.progress == LevelProgress.INTERMEDIATE) {
+                                    displayLevel(level, isBookMode, isLevelFinished = true)
+                                } else {
+                                    displayLevel(level, isBookMode)
+                                }
+                                //TODO: Collect reward flow here?
                             }
-                            //TODO: Collect reward flow here?
                         }
                     }
             }
@@ -207,6 +210,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                 }
                 scoreMessage.addCallback(scoreMessageCallback)
                 winningMessage.show()
+                soundPlayer.play(soundPlayer.sounds.correctSound)
             }
         }
         cellsAnimation.start()

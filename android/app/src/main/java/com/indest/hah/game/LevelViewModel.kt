@@ -1,6 +1,7 @@
 package com.indest.hah.game
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.*
 import com.indest.hah.R
 import com.indest.hah.letter.Cell
@@ -27,7 +28,7 @@ class LevelViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(UiState.TOUCH_DISABLED)
     val uiState = _uiState.asStateFlow()
 
-    private val _currentLevel = MutableStateFlow<Level?>(null)
+    private val _currentLevel = MutableStateFlow(Level())
     val currentLevel = _currentLevel.asStateFlow()
 
     private val _solution = MutableStateFlow(SolutionData(Solution.NONE, -1, -1, -1))
@@ -54,12 +55,12 @@ class LevelViewModel @Inject constructor(
 
     private fun updateSolutionState(index: Int, guess: String) {
         viewModelScope.launch {
-            val solution = _currentLevel.value?.levelInfo?.solution?.replace(" ", "")
-            if (guess.length == solution?.length) {
+            val solution = _currentLevel.value.levelInfo.solution.replace(" ", "")
+            if (guess.length == solution.length) {
                 val playerGuess = guess.map { char ->
                     if ("^([?!.,’])".contains(char)) "" else char
                 }.joinToString("")
-
+                Log.d(TAG, "guess: $guess, solution: $solution")
                 when {
                     guess == solution -> {
                         _uiState.emit(UiState.TOUCH_DISABLED)
@@ -68,8 +69,8 @@ class LevelViewModel @Inject constructor(
                             SolutionData(
                                 solution = Solution.CORRECT,
                                 index = index,
-                                score = _currentLevel.value?.levelInfo?.score!!,
-                                maxScore = _currentLevel.value?.levelInfo?.levelId!! * 100
+                                score = _currentLevel.value.levelInfo.score,
+                                maxScore = _currentLevel.value.levelInfo.levelId * 100
                             )
                         )
                     }
@@ -77,16 +78,16 @@ class LevelViewModel @Inject constructor(
                         SolutionData(
                             solution = Solution.BOGUS_PALINDROME,
                             index = index,
-                            score = _currentLevel.value?.levelInfo?.score!!,
-                            maxScore = _currentLevel.value?.levelInfo?.levelId!! * 100
+                            score = _currentLevel.value.levelInfo.score,
+                            maxScore = _currentLevel.value.levelInfo.levelId * 100
                         )
                     )
                     else -> _solution.emit(
                         SolutionData(
                             solution = Solution.WRONG,
                             index = index,
-                            score = _currentLevel.value?.levelInfo?.score!!,
-                            maxScore = _currentLevel.value?.levelInfo?.levelId!! * 100
+                            score = _currentLevel.value.levelInfo.score,
+                            maxScore = _currentLevel.value.levelInfo.levelId * 100
                         )
                     )
                 }
@@ -104,13 +105,14 @@ class LevelViewModel @Inject constructor(
     }
 
     fun latestLevelFlow(): Flow<Level> {
-        return levelRepository.latestLevelFlow()
-            .distinctUntilChangedBy(keySelector = { level -> level.levelInfo.levelId })
+        return _currentLevel.distinctUntilChangedBy(keySelector = {
+                level -> level.levelInfo.levelId
+        })
     }
 
     fun updateLetters(topIndex: Int, bottomLetter: Char, bottomIndex: Int, topLetter: Char) {
         viewModelScope.launch {
-            currentLevel.value?.levelInfo?.let { levelInfo ->
+            _currentLevel.value.levelInfo.let { levelInfo ->
                 val currentSolution = levelRepository.updateLetters(
                     homeIndex1 = topIndex,
                     homeIndex2 = bottomIndex,
@@ -125,7 +127,7 @@ class LevelViewModel @Inject constructor(
 
     fun increaseMistakes() {
         viewModelScope.launch {
-            currentLevel.value?.levelInfo?.let { levelInfo ->
+            _currentLevel.value.levelInfo.let { levelInfo ->
                 val pointsToSubtract = levelInfo.levelId * 100 / 10
                 val newScore = if (levelInfo.score - pointsToSubtract < 0) 0
                 else levelInfo.score - pointsToSubtract
@@ -136,7 +138,7 @@ class LevelViewModel @Inject constructor(
 
     fun setLetterLocked(index: Int) {
         viewModelScope.launch {
-            currentLevel.value?.levelInfo?.let { levelInfo ->
+            _currentLevel.value.levelInfo.let { levelInfo ->
                 levelRepository.setLetterLocked(
                     homeIndex = index,
                     level = levelInfo.levelId
@@ -147,7 +149,7 @@ class LevelViewModel @Inject constructor(
 
     fun updateFriendIndex(index: Int, newIndex: Int) {
         viewModelScope.launch {
-            currentLevel.value?.levelInfo?.let { levelInfo ->
+            _currentLevel.value.levelInfo.let { levelInfo ->
                 val currentSolution = levelRepository.updateFriendIndex(
                     homeIndex = index,
                     newFriendIndex = newIndex,
@@ -160,7 +162,7 @@ class LevelViewModel @Inject constructor(
 
     fun changeLevel(nr: Int) {
         viewModelScope.launch {
-            currentLevel.value?.levelInfo?.let { levelInfo ->
+            _currentLevel.value.levelInfo.let { levelInfo ->
                 val hintInterval = getApplication<Application>().getString(R.string.hint_suggestion)
                 levelRepository.setCountTo(hintInterval, 0)
                 levelRepository.updateNextLevelTimestamp(
@@ -172,7 +174,7 @@ class LevelViewModel @Inject constructor(
     }
 
     private suspend fun updateLevelProgress(progress: LevelProgress) {
-        currentLevel.value?.levelInfo?.let { levelInfo ->
+        _currentLevel.value.levelInfo.let { levelInfo ->
             val updatedLevel = levelInfo.copy(
                 progress = progress,
                 puzzle = levelInfo.puzzle,
@@ -188,7 +190,7 @@ class LevelViewModel @Inject constructor(
     fun nextLevel()
     {
         viewModelScope.launch {
-            currentLevel.value?.levelInfo?.let { levelInfo ->
+            _currentLevel.value.levelInfo.let { levelInfo ->
                 val hintInterval = getApplication<Application>().getString(R.string.hint_suggestion)
                 levelRepository.setCountTo(hintInterval, 0)
                 levelRepository.resetLevelLettersInfo(levelInfo.levelId)
@@ -211,10 +213,11 @@ class LevelViewModel @Inject constructor(
 
     fun persistInitialLettersInfo(cells: Sequence<Cell<*, *>>) {
         viewModelScope.launch {
-            currentLevel.value?.levelInfo?.let { levelInfo ->
+            _currentLevel.value.levelInfo.let { levelInfo ->
                 val isAlreadyInitialized =
                     levelRepository.isLettersInitialized(levelInfo.levelId)
                 if (!isAlreadyInitialized) {
+                    Log.d(TAG, "Letters are not initialized for level ${levelInfo.levelId}")
                     cells.filterIsInstance<Letter>().forEachIndexed { _, it ->
                         levelRepository.insertLetterInfo(
                             level = levelInfo.levelId,
