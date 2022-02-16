@@ -68,12 +68,12 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        uiStateUpdater()
-        levelUiUpdater()
-        solutionUiUpdater()
+        containerStateUpdater()
+        levelUpdater()
+        solutionEffectsUpdater()
     }
 
-    private fun levelUiUpdater() {
+    private fun levelUpdater() {
         lifecycleScope.launch(Dispatchers.Main) {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 WindowInfoTracker.getOrCreate(requireContext())
@@ -121,7 +121,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         viewModel.setState(TOUCH_ENABLED)
     }
 
-    private fun uiStateUpdater()
+    private fun containerStateUpdater()
     {
         lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
@@ -149,13 +149,13 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         }
     }
 
-    private fun solutionUiUpdater() {
+    private fun solutionEffectsUpdater() {
         lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.solution.collect { solutionData ->
                     when (solutionData.solution) {
                         CORRECT -> {
-                            updateUiWhenCorrect(solutionData.score, solutionData.maxScore)
+                            showCorrectEffects(solutionData.score, solutionData.maxScore)
                         }
                         WRONG -> {
                             cellDirector.sendWrongSolutionLetterHome(solutionData.index)
@@ -174,7 +174,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         }
     }
 
-    private fun updateUiWhenCorrect(score: Int, maxScore: Int) {
+    private fun showCorrectEffects(score: Int, maxScore: Int) {
         val cells = cellDirector.getCells()
         val cellsAnimation = animations.getCorrectSolutionAnimation(cells)
         cellsAnimation.doOnEnd {
