@@ -26,6 +26,8 @@ class CellDirector constructor(
         restoreSlotPlacements(info)
     }
 
+    fun getCells(): Sequence<Cell<*, *>> = cells
+
     fun handleCollisions(letter: Letter) {
         when (val closestCell = getClosestCell(to = letter, from = getCandidateCells(letter))) {
             is Letter -> {
@@ -216,8 +218,7 @@ class CellDirector constructor(
         if (isCorrectMove == false) viewModel.increaseMistakes()
     }
 
-    fun sendWrongSolutionLetterHome(index:Int)
-    {
+    fun sendWrongSolutionLetterHome(index: Int) {
         val lastLetter = cells.find { p -> p.homeIndex == index } as Letter
         sendLetterHome(lastLetter)
     }

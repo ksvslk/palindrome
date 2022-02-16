@@ -32,7 +32,7 @@ import kotlin.math.ln
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
-    private lateinit var binding: ActivityMainBinding
+    lateinit var binding: ActivityMainBinding
     private val levelViewModel: LevelViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {

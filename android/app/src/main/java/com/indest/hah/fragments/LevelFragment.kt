@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.TextView
+import androidx.core.animation.*
 import androidx.core.view.children
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
@@ -15,6 +17,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoTracker
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.indest.hah.MainActivity
 import com.indest.hah.R
 import com.indest.hah.components.Animations
 import com.indest.hah.components.LevelCreator
@@ -25,6 +29,7 @@ import com.indest.hah.game.LevelViewModel
 import com.indest.hah.game.LevelViewModel.Solution.*
 import com.indest.hah.game.MessageSnackBar
 import com.indest.hah.letter.Cell
+import com.indest.hah.persistance.LevelProgress
 import com.indest.hah.persistance.dto.Level
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -76,20 +81,22 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                             newLayoutInfo.displayFeatures.find { it is FoldingFeature } as? FoldingFeature
                         val isBookMode = foldingFeature?.state == FoldingFeature.State.FLAT
                         viewModel.isBookMode = isBookMode
-                        viewModel.latestLevelFlow().collect { latestLevel ->
-                            if (binding.levelFragment.childCount == 0) {
-                                initializeLevel(latestLevel, isBookMode)
+                        viewModel.latestLevelFlow().collect { level ->
+                            binding.levelFragment.removeAllViews()
+                            if (level.levelInfo.progress == LevelProgress.INTERMEDIATE) {
+                                displayFinishedLevel(level, isBookMode)
                             } else {
-                                binding.levelFragment.removeAllViewsInLayout()
-                                initializeLevel(latestLevel, isBookMode)
+                                displayRegularLevel(level, isBookMode)
                             }
+                            //TODO: Collect reward flow here?
                         }
                     }
             }
         }
     }
 
-    private fun initializeLevel(level: Level, isBookMode: Boolean) {
+    // TODO:  REFACTOR BELOW 2 functions
+    private fun displayRegularLevel(level: Level, isBookMode: Boolean) {
         val levelGridLayout = levelCreator.getLevel(
             level,
             layoutInflater,
@@ -107,28 +114,54 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                 )
             }
         }
+        binding.levelFragment.notClickable = false
         binding.levelFragment.addView(levelGridLayout)
-        //TODO: Collect reward flow here?
+    }
+
+    private fun displayFinishedLevel(level: Level, isBookMode: Boolean) {
+        val levelGridLayout = levelCreator.getLevel(
+            level,
+            layoutInflater,
+            binding.levelFragment,
+            isBookMode,
+            viewModel.windowSizeClassWidth
+        )
+        levelGridLayout.children.filterIsInstance<Cell<*, *>>().apply {
+            levelGridLayout.doOnPreDraw {
+                cellDirector = CellDirector(
+                    level,
+                    this,
+                    viewModel
+                )
+            }
+        }
+        binding.levelFragment.notClickable = true
+        binding.levelFragment.addView(levelGridLayout)
+        showContinueMessage()
     }
 
     private fun solutionUiUpdater() {
         lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
-                viewModel.solution.collect {
-                    when (it.first) {
+                viewModel.solution.collect { solutionData ->
+                    when (solutionData.solution) {
                         CORRECT -> {
-                            Log.d(TAG, "CORRECT")
+                            Log.d(TAG, "Solution is: CORRECT")
+                            binding.levelFragment.notClickable = true
+                            updateUiWhenCorrect(solutionData.score, solutionData.maxScore)
                         }
                         WRONG -> {
-                            cellDirector.sendWrongSolutionLetterHome(it.second)
+                            Log.d(TAG, "Solution is: WRONG")
+                            cellDirector.sendWrongSolutionLetterHome(solutionData.index)
                             updateUiWhenWrongMessage(WRONG)
                         }
                         BOGUS_PALINDROME -> {
-                            cellDirector.sendWrongSolutionLetterHome(it.second)
+                            Log.d(TAG, "Solution is: BOGUS_PALINDROME")
+                            cellDirector.sendWrongSolutionLetterHome(solutionData.index)
                             updateUiWhenWrongMessage(BOGUS_PALINDROME)
                         }
                         NONE -> {
-                            Log.d(TAG, "NONE")
+                            Log.d(TAG, "Solution is: NONE")
                         }
                     }
                 }
@@ -136,8 +169,107 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         }
     }
 
-    private fun updateUiWhenWrongMessage(solutionType: LevelViewModel.Solution)
-    {
+    private fun updateUiWhenCorrect(score: Int, maxScore: Int) {
+        val cells = cellDirector.getCells()
+        val cellsAnimation = animations.getCorrectSolutionAnimation(cells)
+        cellsAnimation.doOnEnd {
+            if (isAdded) {
+                playConfettiAnimation(score, maxScore)
+                val winningMessage = getWinningMessage(score, maxScore)
+                val scoreMessage = getScoreMessage()
+                val winningMessageCallBack = object :
+                    BaseTransientBottomBar.BaseCallback<MessageSnackBar>() {
+                    override fun onDismissed(transientBottomBar: MessageSnackBar?, event: Int) {
+                        if (isVisible) {
+                            super.onDismissed(transientBottomBar, event)
+                            scoreMessage.show()
+                            val scoreView = scoreMessage.view.findViewById<TextView>(R.id.message)
+                            val scoreAnimation =
+                                animations.getScoreAnimation(scoreView, score, maxScore)
+                            scoreAnimation.start()
+                        }
+                    }
+                }
+                winningMessage.addCallback(winningMessageCallBack)
+                val scoreMessageCallback = object :
+                    BaseTransientBottomBar.BaseCallback<MessageSnackBar>() {
+                    override fun onDismissed(transientBottomBar: MessageSnackBar?, event: Int) {
+                        if (isVisible) {
+                            super.onDismissed(transientBottomBar, event)
+                            showContinueMessage()
+                        }
+                    }
+                }
+                scoreMessage.addCallback(scoreMessageCallback)
+                winningMessage.show()
+            }
+        }
+        cellsAnimation.start()
+    }
+
+    private fun showContinueMessage() {
+        val continueMessage = getContinueMessage()
+        continueMessage.view.setOnClickListener {
+            if (isVisible) {
+                continueMessage.dismiss()
+                soundPlayer.play(soundPlayer.sounds.levelTransition)
+                viewModel.nextLevel()
+            }
+        }
+        continueMessage.show()
+    }
+
+    private fun playConfettiAnimation(score: Int, maxScore: Int) {
+        if (score == maxScore) {
+            val konfettiView = (requireActivity() as MainActivity).binding.konfettiView
+            val rain = animations.getRainConfetti()
+            konfettiView.start(rain)
+        }
+    }
+
+    private fun getContinueMessage(): MessageSnackBar {
+        val continueMessage = MessageSnackBar.make(
+            view = binding.levelFragment,
+            message = getString(R.string.tap_to_continue),
+            duration = Int.MAX_VALUE,
+            windowSizeClassWidth = viewModel.windowSizeClassWidth,
+            isBookMode = viewModel.isBookMode,
+            textSize = MessageSnackBar.Companion.TextSize.SMALL,
+        )
+        val tapToContinueAnimation = animations.getContinueAnimation(continueMessage)
+        tapToContinueAnimation.start()
+        return continueMessage
+    }
+
+    private fun getScoreMessage(): MessageSnackBar {
+        return MessageSnackBar.make(
+            view = binding.levelFragment,
+            message = "",
+            duration = 2000,
+            windowSizeClassWidth = viewModel.windowSizeClassWidth,
+            isBookMode = viewModel.isBookMode,
+            textSize = MessageSnackBar.Companion.TextSize.SMALL,
+        )
+    }
+
+    private fun getWinningMessage(score: Int, maxScore: Int): MessageSnackBar {
+        val randomCorrectMessage = if (score == maxScore) {
+            resources.getStringArray(R.array.very_good_texts).random()
+        } else {
+            resources.getStringArray(R.array.good_texts).random()
+        }
+
+        return MessageSnackBar.make(
+            view = binding.levelFragment,
+            message = randomCorrectMessage,
+            duration = 2000,
+            windowSizeClassWidth = viewModel.windowSizeClassWidth,
+            isBookMode = viewModel.isBookMode,
+            textSize = MessageSnackBar.Companion.TextSize.BIG,
+        )
+    }
+
+    private fun updateUiWhenWrongMessage(solutionType: LevelViewModel.Solution) {
         animations.getWrongSolutionAnimation(binding.levelFragment).start()
         soundPlayer.vibrateDoubleClick()
         val messageToDisplay =

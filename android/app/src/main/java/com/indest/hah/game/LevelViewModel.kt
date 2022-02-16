@@ -2,6 +2,7 @@ package com.indest.hah.game
 
 import android.app.Application
 import androidx.lifecycle.*
+import com.indest.hah.R
 import com.indest.hah.letter.Cell
 import com.indest.hah.letter.Letter
 import com.indest.hah.persistance.LevelProgress
@@ -26,7 +27,7 @@ class LevelViewModel @Inject constructor(
     private val _currentLevel = MutableStateFlow<Level?>(null)
     val currentLevel = _currentLevel.asStateFlow()
 
-    private val _solution = MutableStateFlow(Pair(Solution.NONE, -1))
+    private val _solution = MutableStateFlow(SolutionData(Solution.NONE, -1, -1, -1))
     val solution = _solution.asStateFlow()
 
     var windowSizeClassWidth: WindowSizeClass = WindowSizeClass.NOT_SET
@@ -50,17 +51,43 @@ class LevelViewModel @Inject constructor(
                 }.joinToString("")
 
                 when {
-                    guess == solution -> _solution.emit(Pair(Solution.CORRECT, index))
+                    guess == solution -> {
+                        updateLevelProgress(LevelProgress.INTERMEDIATE)
+                        _solution.emit(
+                            SolutionData(
+                                solution = Solution.CORRECT,
+                                index = index,
+                                score = _currentLevel.value?.levelInfo?.score!!,
+                                maxScore = _currentLevel.value?.levelInfo?.levelId!! * 100
+                            )
+                        )
+                    }
                     playerGuess.reversed() == playerGuess -> _solution.emit(
-                        Pair(
-                            Solution.BOGUS_PALINDROME,
-                            index
+                        SolutionData(
+                            solution = Solution.BOGUS_PALINDROME,
+                            index = index,
+                            score = _currentLevel.value?.levelInfo?.score!!,
+                            maxScore = _currentLevel.value?.levelInfo?.levelId!! * 100
                         )
                     )
-                    else -> _solution.emit(Pair(Solution.WRONG, index))
+                    else -> _solution.emit(
+                        SolutionData(
+                            solution = Solution.WRONG,
+                            index = index,
+                            score = _currentLevel.value?.levelInfo?.score!!,
+                            maxScore = _currentLevel.value?.levelInfo?.levelId!! * 100
+                        )
+                    )
                 }
             } else {
-                _solution.emit(Pair(Solution.NONE, -1))
+                _solution.emit(
+                    SolutionData(
+                        solution = Solution.NONE,
+                        index = -1,
+                        score = -1,
+                        maxScore = -1
+                    )
+                )
             }
         }
     }
@@ -120,13 +147,46 @@ class LevelViewModel @Inject constructor(
         }
     }
 
-    fun changeLevel(nr: Int, name: String) {
+    fun changeLevel(nr: Int) {
         viewModelScope.launch {
             currentLevel.value?.levelInfo?.let { levelInfo ->
-                levelRepository.setCountTo(name, 0)
+                val hintInterval = getApplication<Application>().getString(R.string.hint_suggestion)
+                levelRepository.setCountTo(hintInterval, 0)
                 levelRepository.updateNextLevelTimestamp(
                     levelInfo.levelId,
                     nr
+                )
+            }
+        }
+    }
+
+    private suspend fun updateLevelProgress(progress: LevelProgress) {
+        currentLevel.value?.levelInfo?.let { levelInfo ->
+            val updatedLevel = levelInfo.copy(
+                progress = progress,
+                puzzle = levelInfo.puzzle,
+                score = levelInfo.score
+            )
+            levelRepository.updateLevelAndBestScore(
+                updatedLevel,
+                levelInfo.score
+            )
+        }
+    }
+
+    fun nextLevel()
+    {
+        viewModelScope.launch {
+            currentLevel.value?.levelInfo?.let { levelInfo ->
+                val hintInterval = getApplication<Application>().getString(R.string.hint_suggestion)
+                levelRepository.setCountTo(hintInterval, 0)
+                levelRepository.resetLevelLettersInfo(levelInfo.levelId)
+                levelRepository.unlockNextLevel(levelInfo.levelId)
+                updateLevelProgress(LevelProgress.REPLAY)
+                val levelNr = levelInfo.levelId + 1
+                levelRepository.updateNextLevelTimestamp(
+                    levelInfo.levelId,
+                    levelNr
                 )
             }
         }
@@ -170,4 +230,6 @@ class LevelViewModel @Inject constructor(
         BOGUS_PALINDROME,
         NONE
     }
+
+    data class SolutionData(val solution: Solution, val index: Int, val score: Int, val maxScore: Int)
 }

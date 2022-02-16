@@ -12,8 +12,10 @@ import androidx.appcompat.widget.LinearLayoutCompat
 import com.indest.hah.MainActivity
 import com.indest.hah.R
 import com.indest.hah.game.CellContainer
+import com.indest.hah.game.MessageSnackBar
 import com.indest.hah.letter.Cell
 import com.indest.hah.letter.Letter
+import com.indest.hah.persistance.dto.LevelData
 import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.scopes.ActivityScoped
 import nl.dionsegijn.konfetti.core.Angle
@@ -71,7 +73,7 @@ class Animations @Inject constructor(
     }
 
     fun getCorrectSolutionAnimation(
-        cells: MutableList<Cell<*, *>>,
+        cells: Sequence<Cell<*, *>>,
     ): AnimatorSet {
         val animatorSet = AnimatorSet()
         val specialChars = ArrayList<Letter>()
@@ -86,6 +88,7 @@ class Animations @Inject constructor(
                 }
             }
             .sortedBy { it.friendIndex }
+            .toMutableList()
 
         val odd = letters.size % 2 != 0
         val count = letters.size / 2
@@ -247,16 +250,16 @@ class Animations @Inject constructor(
         return trainLinearLayout
     }
 
-    fun getScoreAnimation(scoreView: TextView, currentAndMaxScore: Pair<Int, Int>): ValueAnimator {
+    fun getScoreAnimation(scoreView: TextView, score: Int, maxScore: Int): ValueAnimator {
         val currentValue = 0
         val animator =
-            ValueAnimator.ofInt(currentValue, currentValue.plus(currentAndMaxScore.first))
-        val paddingLength = currentAndMaxScore.second.toString().length
+            ValueAnimator.ofInt(currentValue, currentValue.plus(score))
+        val paddingLength = if (score > 0) maxScore.toString().length else 0
         animator.duration = 1000
         animator.addUpdateListener { animation ->
             scoreView.text = StringBuilder()
                 .append(animation.animatedValue.toString().padStart(paddingLength, '0'))
-                .append(" of ${currentAndMaxScore.second} points")
+                .append(" of $maxScore points")
         }
         soundPlayer.play(soundPlayer.sounds.scoreSound)
         return animator
@@ -277,8 +280,7 @@ class Animations @Inject constructor(
         )
     }
 
-    fun getWrongSolutionAnimation(container:CellContainer):AnimatorSet
-    {
+    fun getWrongSolutionAnimation(container: CellContainer): AnimatorSet {
         val animatorSet = AnimatorSet()
         val shakeX = ObjectAnimator
             .ofFloat(
@@ -290,6 +292,15 @@ class Animations @Inject constructor(
             }
         animatorSet.play(shakeX)
         return animatorSet
+    }
+
+    fun getContinueAnimation(tapToContinue: MessageSnackBar): ObjectAnimator {
+        val tapToContinueAnimation =
+            ObjectAnimator.ofFloat(tapToContinue.view, View.ALPHA, 1f, 0.5f)
+        tapToContinueAnimation.duration = 1000
+        tapToContinueAnimation.repeatCount = ObjectAnimator.INFINITE
+        tapToContinueAnimation.repeatMode = ObjectAnimator.REVERSE
+        return tapToContinueAnimation
     }
 
 }

@@ -2,11 +2,12 @@ package com.indest.hah.game
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import androidx.appcompat.widget.LinearLayoutCompat
 
 class CellContainer : LinearLayoutCompat {
+
+    var notClickable:Boolean = false
 
     constructor(context: Context?) : super(context!!)
     constructor(context: Context?, attrs: AttributeSet?) : super(context!!, attrs)
@@ -17,12 +18,6 @@ class CellContainer : LinearLayoutCompat {
     )
 
     override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
-        Log.d("TEST", "onInterceptTouchEvent")
-        return false
-/*        val fragment = findFragment<GamePlayFragment>()
-        if (fragment.gameState == GameState.READY) {
-            return false
-        }
-        return true*/
+        return notClickable
     }
 }
