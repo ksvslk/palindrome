@@ -68,7 +68,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
     private fun levelUiUpdater() {
         lifecycleScope.launch(Dispatchers.Main) {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 WindowInfoTracker.getOrCreate(requireContext())
                     .windowLayoutInfo(requireActivity())
                     .collect { newLayoutInfo ->
@@ -113,7 +113,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
     private fun solutionUiUpdater() {
         lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.solution.collect {
                     when (it.first) {
                         CORRECT -> {

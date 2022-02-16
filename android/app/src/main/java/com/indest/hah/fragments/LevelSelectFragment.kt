@@ -48,7 +48,9 @@ class LevelSelectFragment : BottomSheetDialogFragment() {
     {
         lifecycleScope.launchWhenCreated {
                 levelViewModel.allLevelsFlow().collect { levels ->
-                    binding.levelSelectRecyclerview.adapter = LevelItemAdapter(levels) {
+                    val currentLevel = levelViewModel.currentLevel.value?.levelInfo?.levelId
+                    val currentLevelIcon = getCurrentLevelIcon(currentLevel)
+                    binding.levelSelectRecyclerview.adapter = LevelItemAdapter(currentLevelIcon, currentLevel, levels) {
                         it?.levelId?.let { nr ->
                             levelViewModel.changeLevel(nr, getString(R.string.hint_suggestion))
                             dismiss()
@@ -56,6 +58,21 @@ class LevelSelectFragment : BottomSheetDialogFragment() {
                     }
                 }
         }
+    }
+
+    private fun getCurrentLevelIcon(level:Int?):String
+    {
+        level?.let {
+            return when(it) {
+                in 1..20 -> getString(R.string.levels_1_20)
+                in 21..40 -> getString(R.string.levels_21_40)
+                in 41..60 -> getString(R.string.levels_41_60)
+                in 61..80 -> getString(R.string.levels_61_80)
+                in 81..100 -> getString(R.string.levels_81_100)
+                else -> getString(R.string.level_unknown)
+            }
+        }
+        return getString(R.string.level_unknown)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

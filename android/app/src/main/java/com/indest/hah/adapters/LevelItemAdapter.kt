@@ -1,16 +1,21 @@
 package com.indest.hah.adapters
 
+import android.graphics.Color
+import android.graphics.Typeface
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.indest.hah.R
 import com.indest.hah.persistance.LevelProgress
 import com.indest.hah.persistance.dto.LevelData
 
 class LevelItemAdapter(
+    private val currentLevelIcon: String,
+    private val currentLevel: Int?,
     private val dataSet: List<LevelData>,
     private val onItemClicked: (LevelData?) -> Unit
 ) :
@@ -60,6 +65,13 @@ class LevelItemAdapter(
                 levelItemViewHolder.textView.isEnabled = true
                 true
             }
+        currentLevel?.let {
+            if (it == dataSet[position].levelId)
+            {
+                levelItemViewHolder.setIsRecyclable(false)
+                levelItemViewHolder.textView.text = currentLevelIcon
+            }
+        }
     }
 
     // Return the size of your dataset (invoked by the layout manager)

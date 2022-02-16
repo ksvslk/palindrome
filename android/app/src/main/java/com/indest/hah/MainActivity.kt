@@ -40,9 +40,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        applyCustomWindowInsets()
-        windowSizeClassUpdater()
-        setUpNavController()
         MobileAds.initialize(applicationContext) {}
         RequestConfiguration.Builder().setTestDeviceIds(
             listOf(
@@ -50,6 +47,9 @@ class MainActivity : AppCompatActivity() {
                 "1C8B057289566E4B36BA860D0A8281CB"
             )
         )
+        applyCustomWindowInsets()
+        windowSizeClassUpdater()
+        setUpNavController()
         progressBarUpdater()
     }
 

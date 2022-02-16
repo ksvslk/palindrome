@@ -92,4 +92,12 @@
     <string name="back">Back</string>
     <string name="lets_go">Play</string>
 
+    <!-- LEVEL SELECT ICONS -->
+    <string name="levels_1_20">🐣</string>
+    <string name="levels_21_40">🐷</string>
+    <string name="levels_41_60">🦊</string>
+    <string name="levels_61_80">🐻</string>
+    <string name="levels_81_100">🦁</string>
+    <string name="level_unknown">🌖</string>
+
 </resources>
