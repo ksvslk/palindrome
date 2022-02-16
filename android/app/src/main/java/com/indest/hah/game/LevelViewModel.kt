@@ -24,6 +24,9 @@ class LevelViewModel @Inject constructor(
 
     private val TAG = "LevelViewModel"
 
+    private val _uiState = MutableStateFlow(UiState.TOUCH_DISABLED)
+    val uiState = _uiState.asStateFlow()
+
     private val _currentLevel = MutableStateFlow<Level?>(null)
     val currentLevel = _currentLevel.asStateFlow()
 
@@ -42,6 +45,13 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+    fun setState(newUiState:UiState)
+    {
+        viewModelScope.launch {
+            _uiState.emit(newUiState)
+        }
+    }
+
     private fun updateSolutionState(index: Int, guess: String) {
         viewModelScope.launch {
             val solution = _currentLevel.value?.levelInfo?.solution?.replace(" ", "")
@@ -52,6 +62,7 @@ class LevelViewModel @Inject constructor(
 
                 when {
                     guess == solution -> {
+                        _uiState.emit(UiState.TOUCH_DISABLED)
                         updateLevelProgress(LevelProgress.INTERMEDIATE)
                         _solution.emit(
                             SolutionData(
@@ -224,12 +235,19 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+    enum class UiState
+    {
+        LOADING,
+        TOUCH_ENABLED,
+        TOUCH_DISABLED
+    }
+
     enum class Solution {
         CORRECT,
         WRONG,
         BOGUS_PALINDROME,
         NONE
     }
-
     data class SolutionData(val solution: Solution, val index: Int, val score: Int, val maxScore: Int)
+
 }
