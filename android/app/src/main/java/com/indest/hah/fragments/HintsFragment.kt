@@ -18,8 +18,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.MainActivity
 import com.indest.hah.R
 import com.indest.hah.databinding.HintsFragmentBinding
-import com.indest.hah.fragments.HintsFragment.AvailablePurchase.*
-import com.indest.hah.game.GameViewModel
 import com.indest.hah.game.SkuDetailsWrapper
 import com.indest.hah.util.C.HINT_FRAGMENT_TAG
 import com.indest.hah.util.C.HINT_REQUEST_KEY
@@ -35,7 +33,7 @@ class HintsFragment : BottomSheetDialogFragment() {
     private val TAG = "HintsFragment"
     private var _binding: HintsFragmentBinding? = null
     private val binding get() = _binding!!
-    private val gameViewModel: GameViewModel by activityViewModels()
+
     private var bundle: Bundle = bundleOf()
     private var skuDetailsCollectionJob: Job? = null
     private var rewardedAdCollectionJob: Job? = null
@@ -53,10 +51,11 @@ class HintsFragment : BottomSheetDialogFragment() {
         requireActivity().window.addFlags(
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
         )
-        removeAllPurchaseButtons() // At first remove all to avoid flickering
+        //removeAllPurchaseButtons() // At first remove all to avoid flickering
         return b.root
     }
 
+/*
     override fun onResume() {
         super.onResume()
         binding.revealCategoryShown.hintRevealedTextview.text =
@@ -192,9 +191,11 @@ class HintsFragment : BottomSheetDialogFragment() {
                                 if (isAdded) {
                                     Log.d(TAG, "Set up clue reward button")
                                     //TODO: SHOW REWARDED VIDEO
-                                 /*   (requireActivity() as MainActivity).showRewardedVideo(
+                                 */
+/*   (requireActivity() as MainActivity).showRewardedVideo(
                                         RewardType.HINT
-                                    )*/
+                                    )*//*
+
                                 }
                             }
                         }
@@ -478,5 +479,6 @@ class HintsFragment : BottomSheetDialogFragment() {
         _binding = null
         super.onDestroyView()
     }
+*/
 
 }

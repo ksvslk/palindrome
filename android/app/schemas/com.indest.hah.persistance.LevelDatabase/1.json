@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "f8962e364bc6ff7385795113d8500cec",
+    "identityHash": "5ab7a81bf105433e25ce532970f8146b",
     "entities": [
       {
         "tableName": "level_info_table",
@@ -119,18 +119,7 @@
           ],
           "autoGenerate": true
         },
-        "indices": [
-          {
-            "name": "index_letter_info_table_owner_id_home_index",
-            "unique": true,
-            "columnNames": [
-              "owner_id",
-              "home_index"
-            ],
-            "orders": [],
-            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_letter_info_table_owner_id_home_index` ON `${TABLE_NAME}` (`owner_id`, `home_index`)"
-          }
-        ],
+        "indices": [],
         "foreignKeys": [
           {
             "table": "level_info_table",
@@ -207,7 +196,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f8962e364bc6ff7385795113d8500cec')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5ab7a81bf105433e25ce532970f8146b')"
     ]
   }
 }

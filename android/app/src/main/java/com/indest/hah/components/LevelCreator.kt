@@ -44,8 +44,6 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         val densitySettings = getDensitySettings(isBookMode, windowSizeClassWidth)
         val level = layoutInflater.inflate(R.layout.grid, container, false) as GridLayout
         level.columnCount = densitySettings.columnCount
-        info.levelInfo.puzzle =
-            if (info.levelInfo.puzzle == "") shuffledSolution(info.levelInfo.solution) else info.levelInfo.puzzle
         addLetters(level, densitySettings, info, context)
         addBlanks(densitySettings.columnCount, level, layoutInflater)
         addSlots(info.levelInfo.solution, level, densitySettings, context)
@@ -77,14 +75,6 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
             boxSize,
             textSize,
         )
-    }
-
-    //TODO: check for similarity of the result and do it again if too similar
-    private fun shuffledSolution(solution: String): String {
-        val solutionWithoutWhiteSpace = solution.replace(" ", "")
-        val shuffledChars = solutionWithoutWhiteSpace.toCharArray()
-        while (shuffledChars.concatToString() == solutionWithoutWhiteSpace) shuffledChars.shuffle()
-        return shuffledChars.concatToString()
     }
 
     private fun getBoxAndTextSize(
@@ -235,13 +225,18 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
 
     private fun addLetters(grid: GridLayout, ds: DensitySettings, info: Level, context: Context) {
         // Also part of restoring the state
-        val puzzle = if (info.lettersProperties.isEmpty()) info.levelInfo.puzzle
+  /*      val puzzle = if (info.lettersProperties.isEmpty()) info.levelInfo.puzzle
         else {
             info.lettersProperties
                 .sortedBy { it.homeIndex }
                 .fold("", { acc, li -> acc + li.letter }
                 )
         }
+*/
+        val puzzle = info.lettersProperties
+            .sortedBy { it.homeIndex }
+            .fold(""
+            ) { acc, li -> acc + li.letter }
 
         for ((_, l) in puzzle.withIndex()) {
             if (l.isWhitespace()) {

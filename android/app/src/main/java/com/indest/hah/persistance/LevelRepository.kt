@@ -1,10 +1,10 @@
 package com.indest.hah.persistance
 
-import com.android.billingclient.api.SkuDetails
+import android.util.Log
+import com.indest.hah.persistance.dto.LetterProperties
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
-import com.indest.hah.persistance.dto.Sku
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -12,80 +12,78 @@ import javax.inject.Singleton
 class LevelRepository @Inject constructor(
     private val levelDao: LevelDao
 ) {
-
     private val TAG = "LevelRepository"
-    suspend fun resetLevelLettersInfo(levelNr: Int) = levelDao.deleteLetterInfo(levelNr)
-    suspend fun updateLevelAndBestScore(level: LevelData, score: Int) =
-        levelDao.updateLevelDataAndBestScore(level, score)
 
-    suspend fun unlockNextLevel(current: Int) = levelDao.unlockNextLevel(current)
-    suspend fun getTotalScore() = levelDao.getTotalScore()
-    suspend fun getLatestLevel() = levelDao.getLatestLevel()
-    fun latestLevelFlow(): Flow<Level> = levelDao.getLastLevel()
-
-
-
-    suspend fun getAllLevels(): List<LevelData> = levelDao.getAllLevels().map {
-        it.levelInfo
+    suspend fun init()
+    {
+        levelDao.init()
     }
 
-    suspend fun getSaveGameData(): List<Level> = levelDao.getAllLevels()
-
-
-    suspend fun updateCategoryRewarded(value: Boolean, level: Int) {
-        levelDao.updateCategoryRewarded(value, level)
+    private suspend fun assertInvariant(functionName:String, level:Int)
+    {
+        Log.d(TAG, functionName)
+        assert(levelDao.checkLettersInvariant(level))
     }
-
-    suspend fun currentSolution(levelNr: Int?): String {
-        if (levelNr != null) {
-            return levelDao.getCurrentSolution(levelNr).joinToString("")
-        }
-        return ""
-    }
-
-    suspend fun isLettersInitialized(nr: Int) = levelDao.areLettersInitialized(nr) > 0
-
-    suspend fun updateNextLevelTimestamp(current: Int, next: Int) =
-        levelDao.updateNextLevelTimestamp(current, next)
-
-    suspend fun updateLevels(list: List<Level>) {
-        levelDao.updateLevels(list)
-    }
-
-    suspend fun grantSkuEntitlements(sku: String) = levelDao.grantSkuEntitlements(sku)
-    suspend fun getAllSkus(): List<Sku> = levelDao.getAllSkus()
-    suspend fun isCategoryRewarded(level:Int):Boolean = levelDao.isCategoryRewarded(level)
-
-    suspend fun increaseIntervalCount(name:String):Boolean = levelDao.increaseCount(name)
-    suspend fun setCountTo(name:String, count:Int) = levelDao.setCountTo(name, count)
-    suspend fun isLimitAttained(name:String):Boolean = levelDao.isLimitAttained(name)
 
     // REFACTOR
-
     suspend fun updateFriendIndex(homeIndex: Int, newFriendIndex: Int, level: Int):String {
-        return levelDao.updateFriendIndex(homeIndex, newFriendIndex, level)
+        val result = levelDao.updateFriendIndex(homeIndex, newFriendIndex, level)
+        assertInvariant("updateFriendIndex", level)
+        return result
     }
 
     suspend fun setLetterLocked(homeIndex: Int, level: Int) {
         levelDao.setLetterLocked(homeIndex, level)
+        assertInvariant("setLetterLocked", level)
     }
 
-    suspend fun updateLetters(homeIndex1: Int,homeIndex2: Int, letter1: Char,letter2: Char, level: Int):String {
-        return levelDao.updateLetters(homeIndex1, homeIndex2, letter1,letter2, level)
+    suspend fun switchLetters(
+        homeIndex1: Int,
+        homeIndex2: Int,
+        letter1: Char,
+        letter2: Char,
+        level: Int
+    ):String {
+        val result = levelDao.updateLetters(homeIndex1, homeIndex2, letter1,letter2, level)
+        assertInvariant("switchLetters", level)
+        return result
     }
 
-    suspend fun updateScore(newScore: Int, level: Int) = levelDao.updateScore(newScore, level)
-
-    suspend fun insertLetterInfo(
-        level: Int,
-        homeIndex: Int,
-        friendIndex: Int,
-        letter: Char,
-        locked: Boolean
-    ) {
-        levelDao.insertLetterData(level, homeIndex, friendIndex, letter, locked)
+    suspend fun updateScore(newScore: Int, level: Int) {
+        levelDao.updateScore(newScore, level)
+        assertInvariant("updateScore", level)
     }
 
-    suspend fun updateLevel(level: LevelData) = levelDao.updateLevelData(level)
+    suspend fun getAllLevels(): List<LevelData> {
+        val result = levelDao.getAllLevels().map {
+            it.levelInfo
+        }
+        return result
+    }
+
+    suspend fun nextLevelActions(current: Int, chosenLevel: Int) {
+        levelDao.nextLevelActions(current, chosenLevel)
+        assertInvariant("updateNextLevelTimestamp", current)
+    }
+
+    suspend fun setCountTo(name:String, count:Int) {
+        levelDao.setCountTo(name, count)
+    }
+
+    suspend fun executeLevelCompleteTransaction(current: Int, hintInterval:String)
+    {
+        levelDao.levelCompletedActions(current, hintInterval)
+        assertInvariant("executeLevelCompleteTransaction", current)
+    }
+
+    fun latestLevelFlow(): Flow<Level> {
+        val result = levelDao.getLastLevel()
+        return result
+    }
+
+    suspend fun updateLevelProgress(level:Int, progress: LevelProgress)
+    {
+        levelDao.updateProgress(level, progress)
+    }
 
 }

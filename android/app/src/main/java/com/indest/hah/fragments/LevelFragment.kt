@@ -109,7 +109,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             viewModel.windowSizeClassWidth
         )
         levelGridLayout.children.filterIsInstance<Cell<*, *>>().apply {
-            if (!isLevelFinished) viewModel.persistInitialLettersInfo(this)
             levelGridLayout.doOnPreDraw {
                 cellDirector = CellDirector(
                     level,
@@ -290,7 +289,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             if (isVisible) {
                 continueMessage.dismiss()
                 soundPlayer.play(soundPlayer.sounds.levelTransition)
-                viewModel.nextLevel()
+                viewModel.executeLevelCompleteActions()
             }
         }
         continueMessage.show()

@@ -1,9 +1,6 @@
 package com.indest.hah.persistance
 
-import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.indest.hah.persistance.dto.LetterProperties
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
 import kotlinx.coroutines.flow.Flow
@@ -13,34 +10,29 @@ import com.indest.hah.persistance.dto.Sku
 @Dao
 interface LevelDao {
 
-    @Transaction
     @Query("delete from letter_info_table where owner_id = :levelNr")
     suspend fun deleteLetterInfo(levelNr: Int)
-
-    @Transaction
-    @Query("select * from level_info_table where level_id = :nr")
-    suspend fun getLevel(nr: Int): Level
-
-    @Transaction
-    @Query("select *, max(time_modified) from level_info_table")
-    suspend fun getLatestLevel(): Level
 
     @Query("select letter from letter_info_table where owner_id=:levelNr and friend_index!=-666 order by friend_index asc")
     suspend fun getCurrentSolution(levelNr: Int): List<Char>
 
     @Query("select count(*) from letter_info_table where owner_id=:levelNr")
-    suspend fun areLettersInitialized(levelNr: Int): Int
+    suspend fun levelLettersCount(levelNr: Int): Int
 
-    @Query("update level_info_table set time_modified = (select time_modified + 1 from level_info_table where level_id=:currentLevelNr) where level_id=:nextLevelNr")
-    suspend fun updateNextLevelTimestamp(currentLevelNr: Int, nextLevelNr: Int)
+    @Query("update level_info_table set time_modified = (select time_modified + 1 from level_info_table where level_id=:currentLevelNr) where level_id=:chosenLevel")
+    suspend fun updateChosenLevelTimestamp(currentLevelNr: Int, chosenLevel: Int)
 
-    @Query("update letter_info_table set home_index = :newIndex where home_index = :oldIndex and owner_id = :level")
-    suspend fun updateHomeIndex(oldIndex: Int, newIndex: Int, level: Int)
+    @Transaction
+    suspend fun nextLevelActions(currentLevelNr: Int, chosenLevel: Int)
+    {
+        persistInitialLettersInfo(chosenLevel)
+        updateChosenLevelTimestamp(currentLevelNr, chosenLevel)
+    }
 
     @Update
     suspend fun updateLevelDataAndBestScore(levelInfo: LevelData, score: Int) {
         updateLevelData(levelInfo)
-        updateBestScore(score, levelInfo.levelId)
+        updateBestScoreQuery(score, levelInfo.levelId)
     }
 
     @Query("update level_info_table set progress = :progress where level_id = :current + 1")
@@ -54,11 +46,17 @@ interface LevelDao {
         if (getNextLevelProgress(current) == 0) {
             updateNextLevelProgress(current, LevelProgress.IN_PROGRESS)
         }
-        updateNextLevelTimestamp(current, current + 1)
+        updateChosenLevelTimestamp(current, current + 1)
     }
 
     @Query("update level_info_table set best_score = :score where best_score < :score and level_id = :level")
-    suspend fun updateBestScore(score: Int, level: Int)
+    suspend fun updateBestScoreQuery(score: Int, level: Int)
+
+    @Transaction
+    suspend fun updateBestScoreQuery(level: Int) {
+        val score = getTotalScore()
+        updateBestScoreQuery(score, level)
+    }
 
     @Query("select sum(best_score) from level_info_table")
     suspend fun getTotalScore(): Int
@@ -74,7 +72,7 @@ interface LevelDao {
             insert(level.levelInfo)
             level.lettersProperties.forEach { lp ->
                 insertLetterData(
-                    level = lp.ownerId,
+                    ownerId = lp.ownerId,
                     homeIndex = lp.homeIndex,
                     friendIndex = lp.friendIndex,
                     letter = lp.letter,
@@ -100,29 +98,28 @@ interface LevelDao {
     suspend fun grantSkuEntitlements(sku: String)
 
     @Query("select exists(select 1 from sku where sku=:sku and purchased=1)")
-    suspend fun isSkuPurchased(sku: String):Boolean
+    suspend fun isSkuPurchased(sku: String): Boolean
 
     @Query("select * from sku")
-    suspend fun getAllSkus():List<Sku>
+    suspend fun getAllSkus(): List<Sku>
 
     @Query("select category_rewarded from level_info_table where level_id=:level")
-    suspend fun isCategoryRewarded(level:Int):Boolean
+    suspend fun isCategoryRewarded(level: Int): Boolean
 
     @Query("update interval set current_count = (select current_count + 1 from interval where name=:name) where name=:name")
-    suspend fun increaseCurrentCount(name:String)
+    suspend fun increaseCurrentCount(name: String)
 
     @Query("update interval set current_count = 0 where name=:name and current_count = (select limit_count from interval where name=:name)")
-    suspend fun resetCount(name:String)
+    suspend fun resetCount(name: String)
 
     @Query("update interval set current_count = :count where name = :name")
-    suspend fun setCountTo(name:String, count:Int)
+    suspend fun setCountTo(name: String, count: Int)
 
     @Query("select exists (select 1 from interval where name = :name and current_count = limit_count)")
-    suspend fun isLimitAttained(name:String):Boolean
+    suspend fun isLimitAttained(name: String): Boolean
 
     @Transaction
-    suspend fun increaseCount(name:String):Boolean
-    {
+    suspend fun increaseCount(name: String): Boolean {
         increaseCurrentCount(name)
         val isLimit = isLimitAttained(name)
         if (isLimit) resetCount(name)
@@ -130,7 +127,6 @@ interface LevelDao {
     }
 
     // REFACTOR
-    @Transaction
     @Query("select *, max(time_modified) from level_info_table")
     fun getLastLevel(): Flow<Level>
 
@@ -138,8 +134,7 @@ interface LevelDao {
     suspend fun updateFriendIndexSub(homeIndex: Int, newFriendIndex: Int, level: Int)
 
     @Transaction
-    suspend fun updateFriendIndex(homeIndex: Int, newFriendIndex: Int, level: Int):String
-    {
+    suspend fun updateFriendIndex(homeIndex: Int, newFriendIndex: Int, level: Int): String {
         updateFriendIndexSub(homeIndex, newFriendIndex, level)
         return getCurrentSolution(level).joinToString("")
     }
@@ -151,7 +146,13 @@ interface LevelDao {
     suspend fun updateLetterQuery(homeIndex: Int, letter: Char, level: Int)
 
     @Transaction
-    suspend fun updateLetters(homeIndex1: Int,homeIndex2: Int, letter1: Char,letter2: Char, level: Int):String {
+    suspend fun updateLetters(
+        homeIndex1: Int,
+        homeIndex2: Int,
+        letter1: Char,
+        letter2: Char,
+        level: Int
+    ): String {
         updateLetterQuery(homeIndex1, letter1, level)
         updateLetterQuery(homeIndex2, letter2, level)
         return getCurrentSolution(level).joinToString("")
@@ -160,9 +161,9 @@ interface LevelDao {
     @Query("update level_info_table set score=:newScore where level_id=:level")
     suspend fun updateScore(newScore: Int, level: Int)
 
-    @Query("insert or ignore into letter_info_table (owner_id, home_index, friend_index, letter, locked) values(:level, :homeIndex, :friendIndex, :letter, :locked)")
+    @Query("insert or ignore into letter_info_table (owner_id, home_index, friend_index, letter, locked) values(:ownerId, :homeIndex, :friendIndex, :letter, :locked)")
     suspend fun insertLetterData(
-        level: Int,
+        ownerId: Int,
         homeIndex: Int,
         friendIndex: Int,
         letter: Char,
@@ -171,5 +172,77 @@ interface LevelDao {
 
     @Update
     suspend fun updateLevelData(levelInfo: LevelData)
+
+    @Query("select count(*) = (select length(puzzle) from level_info_table where level_id=:level) from letter_info_table where owner_id=:level")
+    suspend fun checkLettersInvariant(level: Int): Boolean
+
+    @Query("update level_info_table set progress = :progress where level_id = :level")
+    suspend fun updateProgress(level: Int, progress: LevelProgress)
+
+    @Query("update level_info_table set puzzle = :puzzle where level_id = :level")
+    suspend fun updatePuzzle(level: Int, puzzle: String)
+
+    @Transaction
+    suspend fun levelCompletedActions(currentLevel: Int, hintInterval: String) {
+        // reset hint interval
+        resetCount(hintInterval)
+        // delete current level letters info
+        deleteLetterInfo(currentLevel)
+        // update current level progress
+        updateProgress(currentLevel, LevelProgress.REPLAY)
+        // update current level best score
+        updateBestScoreQuery(currentLevel)
+        // unlock next level (change progress and increase timestamp)
+        updateProgress(currentLevel + 1, LevelProgress.IN_PROGRESS)
+        // update next level default letters and shuffled puzzle
+        persistInitialLettersInfo(currentLevel + 1)
+        // update next level timestamp
+        updateChosenLevelTimestamp(currentLevel, currentLevel + 1)
+    }
+
+    @Query("select solution from level_info_table where level_id=:level")
+    suspend fun getLevelSolution(level: Int): String
+
+    @Query("select progress from level_info_table where level_id=:level")
+    suspend fun getLevelProgress(level: Int): LevelProgress
+
+    @Transaction
+    suspend fun persistInitialLettersInfo(levelNr: Int) {
+        if (levelNr != 0)
+        {
+            val lettersCount = levelLettersCount(levelNr)
+            val isLevelFinished = getLevelProgress(levelNr)
+            if (lettersCount <= 0 && isLevelFinished != LevelProgress.INTERMEDIATE) {
+                val solution = getLevelSolution(levelNr)
+                val puzzle = getShuffledSolution(solution)
+                updatePuzzle(levelNr, puzzle)
+                puzzle.forEachIndexed { index, char ->
+                    insertLetterData(
+                        ownerId = levelNr,
+                        homeIndex = index,
+                        friendIndex = -666,
+                        letter = char,
+                        locked = false,
+                    )
+                }
+                updateProgress(levelNr, LevelProgress.IN_PROGRESS)
+            }
+        }
+    }
+
+    @Transaction
+    suspend fun init()
+    {
+        val firstLevelProgress = getLevelProgress(1)
+        if (firstLevelProgress == LevelProgress.TODO) persistInitialLettersInfo(1)
+    }
+
+    //TODO: check for similarity of the result and do it again if too similar
+    private fun getShuffledSolution(solution: String): String {
+        val solutionWithoutWhiteSpace = solution.replace(" ", "")
+        val shuffledChars = solutionWithoutWhiteSpace.toCharArray()
+        while (shuffledChars.concatToString() == solutionWithoutWhiteSpace) shuffledChars.shuffle()
+        return shuffledChars.concatToString()
+    }
 
 }

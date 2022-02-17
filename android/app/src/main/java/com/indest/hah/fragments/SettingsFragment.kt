@@ -27,7 +27,6 @@ import androidx.fragment.app.replace
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.Scope
-import com.indest.hah.game.GameViewModel
 import com.indest.hah.game.enums.InternetState
 import kotlinx.coroutines.launch
 
@@ -36,7 +35,6 @@ class SettingsFragment : BottomSheetDialogFragment() {
     private val TAG = "SettingsFragment"
     private var _binding: SettingsFragmentBinding? = null
     private val binding get() = _binding!!
-    private val gameViewModel: GameViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -58,7 +56,7 @@ class SettingsFragment : BottomSheetDialogFragment() {
             binding.googleSignOutButton.visibility = View.GONE
             binding.googleSignInButton.visibility = View.VISIBLE
             binding.googleSignInButton.setOnClickListener {
-                if (gameViewModel.internetState.value.state == InternetState.ONLINE) {
+                if (false) {
                     signInToGoogle()
                 } else {
                     Toast.makeText(requireContext().applicationContext,getString(R.string.no_internet),Toast.LENGTH_SHORT).show()
@@ -75,11 +73,8 @@ class SettingsFragment : BottomSheetDialogFragment() {
         }
 
         binding.rateGameButton.setOnClickListener {
-            lifecycleScope.launch {
-                gameViewModel.increaseIntervalCount(getString(R.string.player_centered_scores))
-            }
             return@setOnClickListener
-            if (gameViewModel.internetState.value.state == InternetState.ONLINE) {
+            if (false) { //TODO: is online
                 val intent = Intent(Intent.ACTION_VIEW).apply {
                     data = Uri.parse(
                         getString(R.string.app_package_url)
@@ -107,9 +102,6 @@ class SettingsFragment : BottomSheetDialogFragment() {
             changePreference(getString(R.string.vibration_on_pref), b)
         }
         binding.tutorialButton.setOnClickListener {
-            lifecycleScope.launch {
-                gameViewModel.increaseIntervalCount(getString(R.string.hint_suggestion))
-            }
             return@setOnClickListener
             parentFragmentManager.commit {
                 setReorderingAllowed(true)

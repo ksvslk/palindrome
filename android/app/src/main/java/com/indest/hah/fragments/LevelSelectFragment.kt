@@ -89,7 +89,7 @@ class LevelSelectFragment : BottomSheetDialogFragment() {
             bsd.behavior.state = STATE_EXPANDED
             if (isVisible)
             {
-                levelViewModel.currentLevel.value?.let {
+                levelViewModel.currentLevel.value.let {
                     binding.levelSelectRecyclerview.scrollToPosition(it.levelInfo.levelId - 1)
                 }
             }
