@@ -43,7 +43,6 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:animateLayoutChanges="true"
-        android:layoutAnimation="@anim/layout_anim"
         app:layout_constraintRight_toLeftOf="@id/container"
         app:layout_constraintBottom_toTopOf="@id/bottomNavView">
     </androidx.appcompat.widget.LinearLayoutCompat>

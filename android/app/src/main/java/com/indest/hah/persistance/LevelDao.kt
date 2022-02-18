@@ -30,12 +30,6 @@ interface LevelDao {
         updateChosenLevelTimestamp(currentLevelNr, chosenLevel)
     }
 
-    @Update
-    suspend fun updateLevelDataAndBestScore(levelInfo: LevelData, score: Int) {
-        updateLevelData(levelInfo)
-        updateBestScoreQuery(score, levelInfo.levelId)
-    }
-
     @Query("update level_info_table set progress = :progress where level_id = :current + 1")
     suspend fun updateNextLevelProgress(current: Int, progress: LevelProgress)
 
@@ -50,14 +44,8 @@ interface LevelDao {
         updateChosenLevelTimestamp(current, current + 1)
     }
 
-    @Query("update level_info_table set best_score = :score where best_score < :score and level_id = :level")
-    suspend fun updateBestScoreQuery(score: Int, level: Int)
-
-    @Transaction
-    suspend fun updateBestScoreQuery(level: Int) {
-        val score = getTotalScore()
-        updateBestScoreQuery(score, level)
-    }
+    @Query("update level_info_table set best_score = score where best_score < score and level_id = :level")
+    suspend fun updateBestScoreQuery(level: Int)
 
     @Query("select sum(best_score) from level_info_table")
     suspend fun getTotalScore(): Int
@@ -228,6 +216,7 @@ interface LevelDao {
                         locked = false,
                     )
                 }
+                updateScore(levelNr * 100, levelNr)
                 updateProgress(levelNr, LevelProgress.IN_PROGRESS)
             }
         }

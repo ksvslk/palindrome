@@ -6,6 +6,7 @@ import android.graphics.drawable.AnimationDrawable
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
+import android.view.animation.LinearInterpolator
 import android.view.animation.OvershootInterpolator
 import android.widget.TextView
 import androidx.appcompat.widget.LinearLayoutCompat
@@ -181,7 +182,6 @@ class Animations @Inject constructor(
         )
         scaleDown.duration = 300
         scaleDown.interpolator = DecelerateInterpolator()
-
         val scaleUp: Animator = ObjectAnimator.ofPropertyValuesHolder(
             null as Any?,
             PropertyValuesHolder.ofFloat(View.SCALE_X, 0f, 1f),

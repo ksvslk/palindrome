@@ -193,7 +193,5 @@ class MessageSnackBar(
             SMALL,
             BIG
         }
-
     }
-
 }

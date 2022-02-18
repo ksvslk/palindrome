@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.TextView
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.animation.*
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
@@ -273,13 +274,13 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                 resources.getStringArray(R.array.solution_wrong_texts).random()
 
         val message = MessageSnackBar.make(
-            binding.levelFragment,
-            messageToDisplay,
-            2000,
-            viewModel.windowSizeClassWidth,
-            viewModel.isBookMode,
-            MessageSnackBar.Companion.TextSize.SMALL,
-            false
+            view = binding.levelFragment,
+            message = messageToDisplay,
+            duration = 2000,
+            windowSizeClassWidth = viewModel.windowSizeClassWidth,
+            isBookMode = viewModel.isBookMode,
+            textSize = MessageSnackBar.Companion.TextSize.SMALL,
+            animateText = false
         )
         message.show()
         if (showHintBadge) showHintsBadge()
@@ -295,6 +296,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             textSize = MessageSnackBar.Companion.TextSize.SMALL,
         )
         val tapToContinueAnimation = animations.getContinueAnimation(continueMessage)
+        allAnimations.add(tapToContinueAnimation)
         tapToContinueAnimation.start()
 
         continueMessage.view.setOnClickListener {
@@ -309,7 +311,8 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     }
 
     private fun playTrainAnimation() {
-        if (VaryingProbability.isAnimationPlayed(viewModel.currentLevel.value.levelInfo.levelId)) {
+        val childCount = activity?.findViewById<LinearLayoutCompat>(R.id.trainLinearLayout)?.childCount
+        if (VaryingProbability.isAnimationPlayed(viewModel.currentLevel.value.levelInfo.levelId) && childCount == 0) {
             val trainLinearLayout = animations.getTrainAnimation()
             trainLinearLayout.doOnNextLayout {
                 val offscreenX = resources.displayMetrics.widthPixels + trainLinearLayout.width
@@ -319,8 +322,11 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                     (0f - it.width),
                     offscreenX.toFloat()
                 )
-                //allAnimations.add(trainAnimator)
                 trainAnimator.duration = 20000
+                allAnimations.add(trainAnimator)
+                trainAnimator.doOnEnd {
+                    activity?.findViewById<LinearLayoutCompat>(R.id.trainLinearLayout)?.removeAllViews()
+                }
                 trainAnimator.start()
             }
         }
@@ -349,6 +355,10 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     }
 
     override fun onDestroy() {
+        allAnimations.forEach {
+            it.cancel()
+            it.removeAllListeners()
+        }
         super.onDestroy()
     }
 }

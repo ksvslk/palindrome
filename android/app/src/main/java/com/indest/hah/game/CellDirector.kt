@@ -153,8 +153,11 @@ class CellDirector constructor(
         switchFriends(bottom, top)
         switchIndex(bottom, top)
 
-        if (top.text.first() != top.friend?.realChar) viewModel.increaseMistakes()
-        if (bottom.text.first() != bottom.friend?.realChar) viewModel.increaseMistakes()
+        if ((top.hasFriend() || bottom.hasFriend())
+            && top.text.first() != top.friend?.realChar
+            && bottom.text.first() != bottom.friend?.realChar) {
+            viewModel.increaseMistakes()
+        }
 
         bottom.translationZ = MIDDLE_LAYER
 
