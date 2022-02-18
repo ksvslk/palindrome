@@ -192,6 +192,8 @@ interface LevelDao {
         updateProgress(currentLevel, LevelProgress.REPLAY)
         // update current level best score
         updateBestScoreQuery(currentLevel)
+        // update current level best score
+        updatePuzzle(currentLevel, "")
         // unlock next level (change progress and increase timestamp)
         updateProgress(currentLevel + 1, LevelProgress.IN_PROGRESS)
         // update next level default letters and shuffled puzzle

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.TextView
 import androidx.core.animation.*
+import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
@@ -17,6 +18,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoTracker
+import com.google.android.material.badge.BadgeDrawable
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.indest.hah.MainActivity
 import com.indest.hah.R
@@ -37,6 +40,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class LevelFragment : Fragment(R.layout.level_fragment) {
@@ -92,6 +96,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                                 } else {
                                     displayLevel(level, isBookMode)
                                 }
+                                hideHintsBadge()
                                 //TODO: Collect reward flow here?
                             }
                         }
@@ -161,11 +166,11 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                         }
                         WRONG -> {
                             cellDirector.sendWrongSolutionLetterHome(solutionData.index)
-                            showWrongMessage(WRONG)
+                            showWrongEffects(WRONG, solutionData.showHintsBadge)
                         }
                         BOGUS_PALINDROME -> {
                             cellDirector.sendWrongSolutionLetterHome(solutionData.index)
-                            showWrongMessage(BOGUS_PALINDROME)
+                            showWrongEffects(BOGUS_PALINDROME, solutionData.showHintsBadge)
                         }
                         NONE -> {
                             Log.d(TAG, "Solution is: NONE")
@@ -252,7 +257,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         )
     }
 
-    private fun showWrongMessage(solutionType: LevelViewModel.Solution) {
+    private fun showWrongEffects(solutionType: LevelViewModel.Solution, showHintBadge:Boolean) {
         animations.getWrongSolutionAnimation(binding.levelFragment).start()
         soundPlayer.vibrateDoubleClick()
         val messageToDisplay =
@@ -271,6 +276,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             false
         )
         message.show()
+        if (showHintBadge) showHintsBadge()
     }
 
     private fun showContinueMessage() {
@@ -295,4 +301,27 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         continueMessage.show()
     }
 
+    private fun showHintsBadge() {
+        if (isVisible)
+        {
+            val hintBadge = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView)
+                .getOrCreateBadge(R.id.navigation_hints)
+            hintBadge.backgroundColor =
+                ContextCompat.getColor(requireContext(), R.color.hintsNotificationColor)
+            hintBadge.badgeGravity = BadgeDrawable.TOP_END
+            if(!hintBadge.isVisible){
+                soundPlayer.play(soundPlayer.sounds.hintNotification)
+                hintBadge.isVisible = true
+            }
+        }
+    }
+
+    private fun hideHintsBadge() {
+        if (isVisible)
+        {
+            val hintBadge = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView)
+                .getOrCreateBadge(R.id.navigation_hints)
+            hintBadge.isVisible = false
+        }
+    }
 }

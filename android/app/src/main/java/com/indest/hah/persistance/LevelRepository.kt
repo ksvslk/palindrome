@@ -70,6 +70,10 @@ class LevelRepository @Inject constructor(
         levelDao.setCountTo(name, count)
     }
 
+    suspend fun increaseCount(name:String):Boolean {
+        return levelDao.increaseCount(name)
+    }
+
     suspend fun executeLevelCompleteTransaction(current: Int, hintInterval:String)
     {
         levelDao.levelCompletedActions(current, hintInterval)

@@ -224,15 +224,6 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
     }
 
     private fun addLetters(grid: GridLayout, ds: DensitySettings, info: Level, context: Context) {
-        // Also part of restoring the state
-  /*      val puzzle = if (info.lettersProperties.isEmpty()) info.levelInfo.puzzle
-        else {
-            info.lettersProperties
-                .sortedBy { it.homeIndex }
-                .fold("", { acc, li -> acc + li.letter }
-                )
-        }
-*/
         val puzzle = info.lettersProperties
             .sortedBy { it.homeIndex }
             .fold(""

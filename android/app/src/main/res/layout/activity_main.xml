@@ -60,7 +60,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:menu="@menu/bottom_appbar_menu" />
+        app:menu="@menu/bottom_appbar_menu"
+        />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragments_container"

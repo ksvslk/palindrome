@@ -30,7 +30,7 @@ class LevelViewModel @Inject constructor(
     private val _currentLevel = MutableStateFlow(Level())
     val currentLevel = _currentLevel.asStateFlow()
 
-    private val _solution = MutableStateFlow(SolutionData(Solution.NONE, -1, -1, -1))
+    private val _solution = MutableStateFlow(SolutionData(Solution.NONE, -1, -1, -1, false))
     val solution = _solution.asStateFlow()
 
     var windowSizeClassWidth: WindowSizeClass = WindowSizeClass.NOT_SET
@@ -60,6 +60,8 @@ class LevelViewModel @Inject constructor(
                     if ("^([?!.,’])".contains(char)) "" else char
                 }.joinToString("")
                 Log.d(TAG, "guess: $guess, solution: $solution")
+                val hintsInterval = getApplication<Application>().getString(R.string.hint_suggestion)
+
                 when {
                     guess == solution -> {
                         _uiState.emit(UiState.TOUCH_DISABLED)
@@ -72,26 +74,36 @@ class LevelViewModel @Inject constructor(
                                 solution = Solution.CORRECT,
                                 index = index,
                                 score = _currentLevel.value.levelInfo.score,
-                                maxScore = _currentLevel.value.levelInfo.levelId * 100
+                                maxScore = _currentLevel.value.levelInfo.levelId * 100,
+                                showHintsBadge = false
+                            )
+                        )
+                        levelRepository.setCountTo(hintsInterval, 0)
+                    }
+                    playerGuess.reversed() == playerGuess -> {
+                        val showHintsBadge = levelRepository.increaseCount(hintsInterval)
+                        _solution.emit(
+                            SolutionData(
+                                solution = Solution.BOGUS_PALINDROME,
+                                index = index,
+                                score = _currentLevel.value.levelInfo.score,
+                                maxScore = _currentLevel.value.levelInfo.levelId * 100,
+                                showHintsBadge = showHintsBadge
                             )
                         )
                     }
-                    playerGuess.reversed() == playerGuess -> _solution.emit(
-                        SolutionData(
-                            solution = Solution.BOGUS_PALINDROME,
-                            index = index,
-                            score = _currentLevel.value.levelInfo.score,
-                            maxScore = _currentLevel.value.levelInfo.levelId * 100
+                    else -> {
+                        val showHintsBadge = levelRepository.increaseCount(hintsInterval)
+                        _solution.emit(
+                            SolutionData(
+                                solution = Solution.WRONG,
+                                index = index,
+                                score = _currentLevel.value.levelInfo.score,
+                                maxScore = _currentLevel.value.levelInfo.levelId * 100,
+                                showHintsBadge = showHintsBadge
+                            )
                         )
-                    )
-                    else -> _solution.emit(
-                        SolutionData(
-                            solution = Solution.WRONG,
-                            index = index,
-                            score = _currentLevel.value.levelInfo.score,
-                            maxScore = _currentLevel.value.levelInfo.levelId * 100
-                        )
-                    )
+                    }
                 }
             } else {
                 _solution.emit(
@@ -99,7 +111,8 @@ class LevelViewModel @Inject constructor(
                         solution = Solution.NONE,
                         index = -1,
                         score = -1,
-                        maxScore = -1
+                        maxScore = -1,
+                        showHintsBadge = false
                     )
                 )
             }
@@ -206,7 +219,8 @@ class LevelViewModel @Inject constructor(
         val solution: Solution,
         val index: Int,
         val score: Int,
-        val maxScore: Int
+        val maxScore: Int,
+        val showHintsBadge: Boolean
     )
 
 }
