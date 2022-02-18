@@ -229,10 +229,15 @@ class CellDirector constructor(
     private fun sendLetterHome(letter: Letter, isRewarded: Boolean = false) {
         if (isRewarded) letter.translationZ = MIDDLE_LAYER
         if (letter.hasFriend()) {
+
+            if (letter.text.first() == letter.friend?.realChar)
+            {
+                viewModel.increaseMistakes()
+            }
+
             letter.getTheFriend()?.setFriend(null)
             letter.setFriend(null)
 
-            viewModel.increaseMistakes()
             viewModel.updateFriendIndex(
                 index = letter.homeIndex,
                 newIndex = -666
