@@ -37,6 +37,8 @@ class MessageSnackBar(
 
     companion object {
 
+        private var tapToContinueAnimation:ObjectAnimator? = null
+
         fun make(
             view: View,
             message: String,
@@ -66,13 +68,21 @@ class MessageSnackBar(
             return snackBar
         }
 
+        fun removeBlinkingAnimation()
+        {
+            tapToContinueAnimation?.cancel()
+            tapToContinueAnimation = null
+        }
+
         private fun addBlinkingTextAnimation(view: SnackbarBaseLayout) {
-            val tapToContinueAnimation =
+           tapToContinueAnimation =
                 ObjectAnimator.ofFloat(view, View.ALPHA, 1f, 0.5f)
-            tapToContinueAnimation.duration = 1000
-            tapToContinueAnimation.repeatCount = ObjectAnimator.INFINITE
-            tapToContinueAnimation.repeatMode = ObjectAnimator.REVERSE
-            tapToContinueAnimation.start()
+            tapToContinueAnimation?.let {
+                it.duration = 1000
+                it.repeatCount = ObjectAnimator.INFINITE
+                it.repeatMode = ObjectAnimator.REVERSE
+                it.start()
+            }
         }
 
         private fun getTextSize(

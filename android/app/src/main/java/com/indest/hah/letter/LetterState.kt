@@ -1,6 +1,7 @@
 package com.indest.hah.letter
 
 import android.animation.ObjectAnimator
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -11,6 +12,8 @@ import com.indest.hah.fragments.LevelFragment
 import com.indest.hah.letter.effects.ColorSelector
 import com.indest.hah.util.C.NEUTRAL_LAYER
 import com.indest.hah.util.C.TOP_LAYER
+import dagger.hilt.android.AndroidEntryPoint
+import java.lang.IllegalStateException
 import kotlin.math.abs
 import kotlin.math.log2
 
@@ -92,7 +95,13 @@ enum class LetterState : ILetterState {
         override fun executeActionDownBehaviour(letter: Letter, view: View, event: MotionEvent) {}
         override fun executeActionMoveBehaviour(letter: Letter, view: View, event: MotionEvent) {}
         override fun executeActionUpBehaviour(letter: Letter) {
-            letter.findFragment<LevelFragment>().cellDirector.handleCollisions(letter)
+            try {
+                letter.findFragment<LevelFragment>().cellDirector?.handleCollisions(letter)
+            }
+            catch (e:IllegalStateException)
+            {
+                Log.e(TAG, e.message.toString())
+            }
         }
 
         override fun executeAnimationBehaviour(

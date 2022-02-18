@@ -1,5 +1,7 @@
 package com.indest.hah.fragments
 
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,6 +12,7 @@ import android.widget.TextView
 import androidx.core.animation.*
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
+import androidx.core.view.doOnNextLayout
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -35,6 +38,7 @@ import com.indest.hah.game.MessageSnackBar
 import com.indest.hah.letter.Cell
 import com.indest.hah.persistance.LevelProgress
 import com.indest.hah.persistance.dto.Level
+import com.indest.hah.util.VaryingProbability
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
@@ -48,7 +52,10 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
     private val viewModel: LevelViewModel by activityViewModels()
     private lateinit var binding: LevelFragmentBinding
-    lateinit var cellDirector: CellDirector
+    var cellDirector: CellDirector? = null
+    private var allAnimations = mutableSetOf<ValueAnimator>()
+    private var snackBars =
+        hashMapOf<MessageSnackBar, BaseTransientBottomBar.BaseCallback<MessageSnackBar>>()
 
     @Inject
     lateinit var levelCreator: LevelCreator
@@ -88,8 +95,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                         val isBookMode = foldingFeature?.state == FoldingFeature.State.FLAT
                         viewModel.isBookMode = isBookMode
                         viewModel.latestLevelFlow().collect { level ->
-                            if (level.levelInfo.levelId != 0)
-                            {
+                            if (level.levelInfo.levelId != 0) {
                                 binding.levelFragment.removeAllViews()
                                 if (level.levelInfo.progress == LevelProgress.INTERMEDIATE) {
                                     displayLevel(level, isBookMode, isLevelFinished = true)
@@ -105,7 +111,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         }
     }
 
-    private fun displayLevel(level: Level, isBookMode: Boolean, isLevelFinished:Boolean = false) {
+    private fun displayLevel(level: Level, isBookMode: Boolean, isLevelFinished: Boolean = false) {
         val levelGridLayout = levelCreator.getLevel(
             level,
             layoutInflater,
@@ -128,15 +134,13 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         viewModel.setState(TOUCH_ENABLED)
     }
 
-    private fun containerStateUpdater()
-    {
+    private fun containerStateUpdater() {
         lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.uiState.collect { uiState ->
                     with(binding)
                     {
-                        when(uiState)
-                        {
+                        when (uiState) {
                             LOADING -> {
                                 progressCircular.visibility = View.VISIBLE
                                 levelFragment.notClickable = true
@@ -165,11 +169,11 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                             showCorrectEffects(solutionData.score, solutionData.maxScore)
                         }
                         WRONG -> {
-                            cellDirector.sendWrongSolutionLetterHome(solutionData.index)
+                            cellDirector?.sendWrongSolutionLetterHome(solutionData.index)
                             showWrongEffects(WRONG, solutionData.showHintsBadge)
                         }
                         BOGUS_PALINDROME -> {
-                            cellDirector.sendWrongSolutionLetterHome(solutionData.index)
+                            cellDirector?.sendWrongSolutionLetterHome(solutionData.index)
                             showWrongEffects(BOGUS_PALINDROME, solutionData.showHintsBadge)
                         }
                         NONE -> {
@@ -182,42 +186,44 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     }
 
     private fun showCorrectEffects(score: Int, maxScore: Int) {
-        val cells = cellDirector.getCells()
-        val cellsAnimation = animations.getCorrectSolutionAnimation(cells)
-        cellsAnimation.doOnEnd {
-            if (isAdded) {
-                playMaxScoreAnimation(score, maxScore)
-                val winningMessage = getWinningMessage(score, maxScore)
-                val scoreMessage = getScoreMessage()
-                val winningMessageCallBack = object :
-                    BaseTransientBottomBar.BaseCallback<MessageSnackBar>() {
-                    override fun onDismissed(transientBottomBar: MessageSnackBar?, event: Int) {
-                        if (isVisible) {
-                            super.onDismissed(transientBottomBar, event)
-                            scoreMessage.show()
-                            val scoreView = scoreMessage.view.findViewById<TextView>(R.id.message)
-                            val scoreAnimation =
-                                animations.getScoreAnimation(scoreView, score, maxScore)
-                            scoreAnimation.start()
+        cellDirector?.getCells()?.let { cells ->
+            val cellsAnimation = animations.getCorrectSolutionAnimation(cells)
+            cellsAnimation.doOnEnd {
+                if (isAdded) {
+                    playMaxScoreAnimation(score, maxScore)
+                    val winningMessage = getWinningMessage(score, maxScore)
+                    val scoreMessage = getScoreMessage()
+                    val winningMessageCallBack = object :
+                        BaseTransientBottomBar.BaseCallback<MessageSnackBar>() {
+                        override fun onDismissed(transientBottomBar: MessageSnackBar?, event: Int) {
+                            if (isVisible) {
+                                super.onDismissed(transientBottomBar, event)
+                                scoreMessage.show()
+                                val scoreView =
+                                    scoreMessage.view.findViewById<TextView>(R.id.message)
+                                val scoreAnimation =
+                                    animations.getScoreAnimation(scoreView, score, maxScore)
+                                scoreAnimation.start()
+                            }
                         }
                     }
-                }
-                winningMessage.addCallback(winningMessageCallBack)
-                val scoreMessageCallback = object :
-                    BaseTransientBottomBar.BaseCallback<MessageSnackBar>() {
-                    override fun onDismissed(transientBottomBar: MessageSnackBar?, event: Int) {
-                        if (isVisible) {
-                            super.onDismissed(transientBottomBar, event)
-                            showContinueMessage()
+                    winningMessage.addCallback(winningMessageCallBack)
+                    val scoreMessageCallback = object :
+                        BaseTransientBottomBar.BaseCallback<MessageSnackBar>() {
+                        override fun onDismissed(transientBottomBar: MessageSnackBar?, event: Int) {
+                            if (isVisible) {
+                                super.onDismissed(transientBottomBar, event)
+                                showContinueMessage()
+                            }
                         }
                     }
+                    scoreMessage.addCallback(scoreMessageCallback)
+                    winningMessage.show()
+                    soundPlayer.play(soundPlayer.sounds.correctSound)
                 }
-                scoreMessage.addCallback(scoreMessageCallback)
-                winningMessage.show()
-                soundPlayer.play(soundPlayer.sounds.correctSound)
             }
+            cellsAnimation.start()
         }
-        cellsAnimation.start()
     }
 
     private fun playMaxScoreAnimation(score: Int, maxScore: Int) {
@@ -257,7 +263,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         )
     }
 
-    private fun showWrongEffects(solutionType: LevelViewModel.Solution, showHintBadge:Boolean) {
+    private fun showWrongEffects(solutionType: LevelViewModel.Solution, showHintBadge: Boolean) {
         animations.getWrongSolutionAnimation(binding.levelFragment).start()
         soundPlayer.vibrateDoubleClick()
         val messageToDisplay =
@@ -295,21 +301,39 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             if (isVisible) {
                 continueMessage.dismiss()
                 soundPlayer.play(soundPlayer.sounds.levelTransition)
+                playTrainAnimation()
                 viewModel.executeLevelCompleteActions()
             }
         }
         continueMessage.show()
     }
 
+    private fun playTrainAnimation() {
+        if (VaryingProbability.isAnimationPlayed(viewModel.currentLevel.value.levelInfo.levelId)) {
+            val trainLinearLayout = animations.getTrainAnimation()
+            trainLinearLayout.doOnNextLayout {
+                val offscreenX = resources.displayMetrics.widthPixels + trainLinearLayout.width
+                val trainAnimator = ObjectAnimator.ofFloat(
+                    trainLinearLayout,
+                    "x",
+                    (0f - it.width),
+                    offscreenX.toFloat()
+                )
+                //allAnimations.add(trainAnimator)
+                trainAnimator.duration = 20000
+                trainAnimator.start()
+            }
+        }
+    }
+
     private fun showHintsBadge() {
-        if (isVisible)
-        {
+        if (isVisible) {
             val hintBadge = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView)
                 .getOrCreateBadge(R.id.navigation_hints)
             hintBadge.backgroundColor =
                 ContextCompat.getColor(requireContext(), R.color.hintsNotificationColor)
             hintBadge.badgeGravity = BadgeDrawable.TOP_END
-            if(!hintBadge.isVisible){
+            if (!hintBadge.isVisible) {
                 soundPlayer.play(soundPlayer.sounds.hintNotification)
                 hintBadge.isVisible = true
             }
@@ -317,11 +341,14 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     }
 
     private fun hideHintsBadge() {
-        if (isVisible)
-        {
+        if (isVisible) {
             val hintBadge = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView)
                 .getOrCreateBadge(R.id.navigation_hints)
             hintBadge.isVisible = false
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
 }

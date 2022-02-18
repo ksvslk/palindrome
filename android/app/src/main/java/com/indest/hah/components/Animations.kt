@@ -189,7 +189,7 @@ class Animations @Inject constructor(
         )
         scaleUp.duration = 300
         scaleUp.startDelay = 300
-        scaleUp.interpolator = OvershootInterpolator()
+        scaleUp.interpolator = OvershootInterpolator(1.2f)
 
         val itemLayoutTransition = LayoutTransition()
         itemLayoutTransition.setAnimator(LayoutTransition.APPEARING, scaleUp)

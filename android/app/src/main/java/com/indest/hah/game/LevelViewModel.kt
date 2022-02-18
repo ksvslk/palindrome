@@ -24,7 +24,7 @@ class LevelViewModel @Inject constructor(
 
     private val TAG = "LevelViewModel"
 
-    private val _uiState = MutableStateFlow(UiState.TOUCH_DISABLED)
+    private val _uiState = MutableStateFlow(UiState.LOADING)
     val uiState = _uiState.asStateFlow()
 
     private val _currentLevel = MutableStateFlow(Level())

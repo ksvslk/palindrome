@@ -2,6 +2,7 @@ package com.indest.hah
 
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
@@ -25,7 +26,9 @@ import com.indest.hah.persistance.dto.LevelData
 import com.indest.hah.util.WindowSizeClass
 import com.indest.hah.util.hideSystemBars
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.math.ln
 
@@ -111,7 +114,7 @@ class MainActivity : AppCompatActivity() {
     private fun progressBarUpdater()
     {
         lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 levelViewModel.latestLevelFlow().collect {
                     setLevelProgressIndicator(it.levelInfo)
                 }
@@ -120,14 +123,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setLevelProgressIndicator(level: LevelData) {
-        val levelNumber = level.levelId
         val levelsCount = 100
-        val levelNrView = binding.levelNumber
-        val progressIndicatorWidth = binding.gameProgress.measuredWidth
-        val progressX = (levelNumber * progressIndicatorWidth / levelsCount) - ln(levelNumber.toFloat()) * 15
-        levelNrView.text = levelNumber.toString()
-        levelNrView.x = progressX
-        binding.gameProgress.progress = (levelNumber.toFloat() / levelsCount.toFloat() * 100.0).toInt()
+        //val progressX = (level.levelId * resources.displayMetrics.widthPixels / levelsCount) - ln(level.levelId.toFloat()) * 15
+        binding.levelNumber.text = level.levelId.toString()
+        //val progressX = (level.levelId * resources.displayMetrics.widthPixels / levelsCount).toFloat()
+        //binding.levelNumber.x = progressX
+        binding.gameProgress.progress = (level.levelId.toFloat() / levelsCount.toFloat() * 100.0).toInt()
     }
 
 }
