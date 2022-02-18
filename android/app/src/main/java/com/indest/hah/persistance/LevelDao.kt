@@ -1,11 +1,12 @@
 package com.indest.hah.persistance
 
 import androidx.room.*
+import com.indest.hah.letter.effects.Shuffler
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
-import kotlinx.coroutines.flow.Flow
-import androidx.room.Update
 import com.indest.hah.persistance.dto.Sku
+import kotlinx.coroutines.flow.Flow
+
 
 @Dao
 interface LevelDao {
@@ -216,7 +217,7 @@ interface LevelDao {
             val isLevelFinished = getLevelProgress(levelNr)
             if (lettersCount <= 0 && isLevelFinished != LevelProgress.INTERMEDIATE) {
                 val solution = getLevelSolution(levelNr)
-                val puzzle = getShuffledSolution(solution)
+                val puzzle = Shuffler.getShuffledSolution(solution)
                 updatePuzzle(levelNr, puzzle)
                 puzzle.forEachIndexed { index, char ->
                     insertLetterData(
@@ -237,14 +238,6 @@ interface LevelDao {
     {
         val firstLevelProgress = getLevelProgress(1)
         if (firstLevelProgress == LevelProgress.TODO) persistInitialLettersInfo(1)
-    }
-
-    //TODO: check for similarity of the result and do it again if too similar
-    private fun getShuffledSolution(solution: String): String {
-        val solutionWithoutWhiteSpace = solution.replace(" ", "")
-        val shuffledChars = solutionWithoutWhiteSpace.toCharArray()
-        while (shuffledChars.concatToString() == solutionWithoutWhiteSpace) shuffledChars.shuffle()
-        return shuffledChars.concatToString()
     }
 
 }
