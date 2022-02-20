@@ -13,5 +13,6 @@ object C {
     const val HINT_TEST = "hint_Test"
     const val GAMEPLAY_FRAGMENT_TAG ="gameplay_fragment_Tag"
     const val HINT_FRAGMENT_TAG ="hints_fragment_tag"
+    const val EXIT_GAME_DIALOG_FRAGMENT="ExitGameDialogFragment"
 }
 

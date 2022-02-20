@@ -35,6 +35,7 @@ class ExitGameDialogFragment : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val randomQuote = resources.getStringArray(R.array.quitting_quotes).random()
         return activity?.let {
             val builder = MaterialAlertDialogBuilder(it)
             builder
@@ -45,7 +46,7 @@ class ExitGameDialogFragment : DialogFragment() {
                     )
                 )
                 .setTitle(R.string.exit_game_title)
-                .setMessage(R.string.exit_game_message)
+                .setMessage(randomQuote)
                 .setPositiveButton(R.string.yes)
                 { _, _ -> listener.onDialogPositiveClick(this) }
                 .setNegativeButton(R.string.cancel)

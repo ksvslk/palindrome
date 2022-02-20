@@ -1,10 +1,29 @@
 <resources>
     <string name="app_name">hah</string>
     <string name="title_activity_main">hah</string>
-    <string name="exit_game_title">Exit game?</string>
-    <string name="exit_game_message">Your progress will be saved when leaving the game.</string>
+    <string name="exit_game_title">Quit game?</string>
+    <string name="exit_game_message">Ok :(</string>
     <string name="cancel">Continue</string>
-    <string name="yes">Exit</string>
+    <string name="yes">Quit</string>
+
+    <string-array name="quitting_quotes">
+        <item>\"Effort only fully releases its reward after a person refuses to quit.\" ― Napoleon Hill</item>
+        <item>\"Our greatest glory is not in never falling but in rising every time we fall.\" ― Confucius</item>
+        <item>\"You can never quit. Winners never quit, and quitters never win.\" ― Ted Turner</item>
+        <item>\"A quitter never wins and a winner never quits.\" ― Napoleon Hill</item>
+        <item>\"Some quit due to slow progress. Never grasping the fact that slow progress is still progress.\" ― Anonymous</item>
+        <item>\"Cowards never start. The weak never finish. Winners never quit.\" ― Anonymous</item>
+        <item>\"Pain is temporary. Quitting is forever.\" ― Lance Armstrong</item>
+        <item>\"No man is ever whipped until he quits in his own mind.\" ― Napoleon Hill</item>
+        <item>\"It’s hard to beat a person who never gives up.\" ― Babe Ruth</item>
+        <item>\"If you get tired, learn to rest, not to quit.\" ― Banksy</item>
+        <item>\"If you quit once it becomes a habit. Never quit.\" ― Michael Jordan</item>
+        <item>\"Age wrinkles the body; quitting wrinkles the soul.\" ― Douglas MacArthur</item>
+        <item>\"The difference in winning and losing is most often not quitting.\" ― Walt Disney</item>
+        <item>\"It’s not that I’m so smart, it’s just that I stay with problems longer.\" ― Albert Einstein</item>
+        <item>\"Many of life’s failures are people who did not realize how close they were to success when they gave up.\" ― Thomas Edison </item>
+    </string-array>
+
     <string name="hints">Hints</string>
     <string name="scores">Scores</string>
     <string name="tutorial">Tutorial</string>

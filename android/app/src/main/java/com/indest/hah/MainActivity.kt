@@ -11,6 +11,7 @@ import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.forEach
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -21,8 +22,10 @@ import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.indest.hah.databinding.ActivityMainBinding
+import com.indest.hah.fragments.ExitGameDialogFragment
 import com.indest.hah.game.LevelViewModel
 import com.indest.hah.persistance.dto.LevelData
+import com.indest.hah.util.C
 import com.indest.hah.util.WindowSizeClass
 import com.indest.hah.util.hideSystemBars
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,7 +36,7 @@ import kotlinx.coroutines.launch
 import kotlin.math.ln
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogListener {
     private val TAG = "MainActivity"
     lateinit var binding: ActivityMainBinding
     private val levelViewModel: LevelViewModel by viewModels()
@@ -129,6 +132,19 @@ class MainActivity : AppCompatActivity() {
         //val progressX = (level.levelId * resources.displayMetrics.widthPixels / levelsCount).toFloat()
         //binding.levelNumber.x = progressX
         binding.gameProgress.progress = (level.levelId.toFloat() / levelsCount.toFloat() * 100.0).toInt()
+    }
+
+    override fun onBackPressed() {
+        val dialog = ExitGameDialogFragment()
+        dialog.show(supportFragmentManager, C.EXIT_GAME_DIALOG_FRAGMENT)
+    }
+
+    override fun onDialogPositiveClick(dialog: DialogFragment) {
+        finish()
+    }
+
+    override fun onDialogNegativeClick(dialog: DialogFragment) {
+        dialog.dismiss()
     }
 
 }

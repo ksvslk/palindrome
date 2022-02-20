@@ -55,8 +55,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     private lateinit var binding: LevelFragmentBinding
     var cellDirector: CellDirector? = null
     private var allAnimations = mutableSetOf<ValueAnimator>()
-    private var snackBars =
-        hashMapOf<MessageSnackBar, BaseTransientBottomBar.BaseCallback<MessageSnackBar>>()
 
     @Inject
     lateinit var levelCreator: LevelCreator
