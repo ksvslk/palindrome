@@ -47,9 +47,9 @@ class ExitGameDialogFragment : DialogFragment() {
                 )
                 .setTitle(R.string.exit_game_title)
                 .setMessage(randomQuote)
-                .setPositiveButton(R.string.yes)
+                .setPositiveButton(R.string.quit)
                 { _, _ -> listener.onDialogPositiveClick(this) }
-                .setNegativeButton(R.string.cancel)
+                .setNegativeButton(R.string.continue_game)
                 { _, _ -> listener.onDialogNegativeClick(this) }
             builder.create()
         } ?: throw IllegalStateException("Activity cannot be null")

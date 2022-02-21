@@ -1,33 +1,15 @@
 package com.indest.hah.fragments
 
-import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import androidx.appcompat.widget.AppCompatTextView
-import androidx.appcompat.widget.LinearLayoutCompat
-import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.setFragmentResult
-import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.indest.hah.MainActivity
-import com.indest.hah.R
 import com.indest.hah.databinding.HintsFragmentBinding
-import com.indest.hah.game.SkuDetailsWrapper
-import com.indest.hah.util.C.HINT_FRAGMENT_TAG
-import com.indest.hah.util.C.HINT_REQUEST_KEY
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.collect
-import com.indest.hah.game.enums.InternetState
-import com.indest.hah.game.enums.RewardType
-
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 class HintsFragment : BottomSheetDialogFragment() {
     private val TAG = "HintsFragment"

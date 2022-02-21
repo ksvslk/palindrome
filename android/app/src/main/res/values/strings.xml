@@ -3,8 +3,8 @@
     <string name="title_activity_main">hah</string>
     <string name="exit_game_title">Quit game?</string>
     <string name="exit_game_message">Ok :(</string>
-    <string name="cancel">Continue</string>
-    <string name="yes">Quit</string>
+    <string name="continue_game">Continue</string>
+    <string name="quit">Quit</string>
 
     <string-array name="quitting_quotes">
         <item>\"Effort only fully releases its reward after a person refuses to quit.\" ― Napoleon Hill</item>

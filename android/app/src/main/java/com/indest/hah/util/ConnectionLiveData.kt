@@ -8,38 +8,36 @@ import android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET
 import android.net.NetworkRequest
 import android.util.Log
 import androidx.lifecycle.LiveData
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import android.R.attr.name
+import com.indest.hah.game.enums.Internet
 import java.net.HttpURLConnection
 import java.net.URL
+import javax.net.ssl.HttpsURLConnection
 
+val TAG = "ConnectionLiveData"
 
-val TAG = "C-Manager"
-
-/**
- * Save all available networks with an internet connection to a set (@validNetworks).
- * As long as the size of the set > 0, this LiveData emits true.
- * MinSdk = 21.
- *
- * Inspired by:
- * https://github.com/AlexSheva-mason/Rick-Morty-Database/blob/master/app/src/main/java/com/shevaalex/android/rickmortydatabase/utils/networking/ConnectionLiveData.kt
- */
-class ConnectionLiveData(context: Context) : LiveData<Boolean>() {
+class ConnectionLiveData(context: Context) : LiveData<Internet>() {
 
     private lateinit var networkCallback: ConnectivityManager.NetworkCallback
     private val cm = context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
     private val validNetworks: MutableSet<Network> = HashSet()
 
     init {
-        postValue(false)
+        postValue(Internet.OFFLINE)
     }
 
-    private fun checkValidNetworks() {
-        Log.d(TAG,validNetworks.toString())
-        postValue(validNetworks.size > 0)
+    private fun postInternetStateValue() {
+        if (validNetworks.size > 0) {
+            if (isConnectedToInternet()) {
+                postValue(Internet.ONLINE)
+                Log.d(TAG, "Internet connection: ${Internet.ONLINE}.")
+            } else {
+                postValue(Internet.OFFLINE)
+                Log.d(TAG, "Internet connection: ${Internet.OFFLINE}.")
+            }
+        } else {
+            postValue(Internet.OFFLINE)
+            Log.d(TAG, "Internet connection: ${Internet.OFFLINE}.")
+        }
     }
 
     override fun onActive() {
@@ -55,35 +53,34 @@ class ConnectionLiveData(context: Context) : LiveData<Boolean>() {
     }
 
     private fun createNetworkCallback() = object : ConnectivityManager.NetworkCallback() {
-
-        /*
-          Called when a network is detected. If that network has internet, save it in the Set.
-          Source: https://developer.android.com/reference/android/net/ConnectivityManager.NetworkCallback#onAvailable(android.net.Network)
-         */
-
         override fun onAvailable(network: Network) {
-            Log.d(TAG, "onAvailable: ${network}")
             val networkCapabilities = cm.getNetworkCapabilities(network)
             val hasInternetCapability = networkCapabilities?.hasCapability(NET_CAPABILITY_INTERNET)
-            Log.d(TAG, "onAvailable: ${network}, $hasInternetCapability")
             if (hasInternetCapability == true) {
-                // check if this network actually has internet
-                Log.d(TAG, "adding network. ${network}")
                 validNetworks.add(network)
-                checkValidNetworks()
+                postInternetStateValue()
             }
         }
 
-        /*
-          If the callback was registered with registerNetworkCallback() it will be called for each network which no longer satisfies the criteria of the callback.
-          Source: https://developer.android.com/reference/android/net/ConnectivityManager.NetworkCallback#onLost(android.net.Network)
-         */
         override fun onLost(network: Network) {
-            Log.d(TAG, "onLost: ${network}")
             validNetworks.remove(network)
-            checkValidNetworks()
+            postInternetStateValue()
         }
+    }
 
+    private fun isConnectedToInternet(): Boolean {
+        val url = URL("https://www.google.com")
+        (url.openConnection() as? HttpURLConnection)?.runCatching {
+            requestMethod = "GET"
+            val hasInternet = responseCode == HttpsURLConnection.HTTP_OK
+            inputStream.close()
+            disconnect()
+            return hasInternet
+        }?.onFailure {
+            Log.e(TAG, "URL openConnection onFailure: ${it.message}")
+            return false
+        }
+        return false
     }
 
 }

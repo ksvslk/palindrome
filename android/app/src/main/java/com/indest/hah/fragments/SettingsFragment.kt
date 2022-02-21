@@ -22,13 +22,9 @@ import com.indest.hah.databinding.SettingsFragmentBinding
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.replace
-import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.Scope
-import com.indest.hah.game.enums.InternetState
-import kotlinx.coroutines.launch
 
 
 class SettingsFragment : BottomSheetDialogFragment() {

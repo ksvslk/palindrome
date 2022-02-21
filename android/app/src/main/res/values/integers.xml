@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <integer name="guessesBeforeHint">3</integer>
-    <integer name="showScoresWhenLevels">5</integer>
+    <integer name="defaultColumnsCount">7</integer>
 </resources>

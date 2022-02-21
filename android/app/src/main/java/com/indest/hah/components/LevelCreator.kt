@@ -71,7 +71,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         textSize = boxAndText.second
 
         return DensitySettings(
-            C.DEFAULT_COLUMNS_COUNT,
+            context.resources.getInteger(R.integer.defaultColumnsCount),
             boxSize,
             textSize,
         )
