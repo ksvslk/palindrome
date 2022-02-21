@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.Insets
@@ -19,14 +20,19 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.window.layout.WindowMetricsCalculator
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.games.Games
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.indest.hah.databinding.ActivityMainBinding
 import com.indest.hah.fragments.ExitGameDialogFragment
 import com.indest.hah.game.LevelViewModel
 import com.indest.hah.persistance.dto.LevelData
+import com.indest.hah.signin.SignInLifecycleObserver
 import com.indest.hah.util.C
 import com.indest.hah.util.WindowSizeClass
 import com.indest.hah.util.hideSystemBars
+import com.indest.hah.util.saveBooleanPreference
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -37,12 +43,17 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
     lateinit var binding: ActivityMainBinding
     private val levelViewModel: LevelViewModel by viewModels()
     private val generalViewModel: GeneralViewModel by viewModels()
+    private lateinit var signInObserver : SignInLifecycleObserver
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate")
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        signInObserver = SignInLifecycleObserver(activityResultRegistry)
+        lifecycle.addObserver(signInObserver)
+
         MobileAds.initialize(applicationContext) {}
         RequestConfiguration.Builder().setTestDeviceIds(
             listOf(
@@ -61,8 +72,12 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
         }
     }
 
-    private fun windowSizeClassUpdater()
-    {
+    override fun onResume() {
+        super.onResume()
+        tryToSignInSilently()
+    }
+
+    private fun windowSizeClassUpdater() {
         binding.container.addView(object : View(this) {
             override fun onConfigurationChanged(newConfig: Configuration?) {
                 super.onConfigurationChanged(newConfig)
@@ -72,8 +87,7 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
         computeWindowSizeClasses()
     }
 
-    private fun applyCustomWindowInsets()
-    {
+    private fun applyCustomWindowInsets() {
         ViewCompat.setOnApplyWindowInsetsListener(binding.container) { _, insets ->
             WindowInsetsCompat.Builder().setInsets(
                 WindowInsetsCompat.Type.systemBars(),
@@ -116,8 +130,7 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
         levelViewModel.windowSizeClassWidth = widthWindowSizeClass
     }
 
-    private fun progressBarUpdater()
-    {
+    private fun progressBarUpdater() {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 levelViewModel.latestLevelFlow().collect {
@@ -130,7 +143,51 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
     private fun setLevelProgressIndicator(level: LevelData) {
         val levelsCount = 100
         binding.levelNumber.text = level.levelId.toString()
-        binding.gameProgress.progress = (level.levelId.toFloat() / levelsCount.toFloat() * 100.0).toInt()
+        binding.gameProgress.progress =
+            (level.levelId.toFloat() / levelsCount.toFloat() * 100.0).toInt()
+    }
+
+    private fun tryToSignInSilently() {
+        val signInOptions =
+            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
+                .requestScopes(Games.SCOPE_GAMES_SNAPSHOTS)
+                .build()
+        val account = GoogleSignIn.getLastSignedInAccount(this)
+        if (GoogleSignIn.hasPermissions(account, *signInOptions.scopeArray)) {
+            // Already signed in.
+            // The signed in account is stored in the 'account' variable.
+            if (account != null) {
+                Games.getGamesClient(this, account)
+                    .setViewForPopups(findViewById(android.R.id.content))
+            }
+        } else {
+            // Haven't been signed-in before. Try the silent sign-in first.
+            val signInClient = GoogleSignIn.getClient(this, signInOptions)
+            signInClient
+                .silentSignIn()
+                .addOnCompleteListener(
+                    this
+                ) { task ->
+                    if (task.isSuccessful) {
+                        // The signed in account is stored in the task's result.
+                        val signedInAccount = task.result
+                        Games.getGamesClient(this, signedInAccount)
+                            .setViewForPopups(findViewById(android.R.id.content))
+                        Log.d(TAG, "Signed in successfully.")
+                    } else {
+                        Log.d(TAG, "Sign-in explicitly using via UI. ${task.exception}")
+                        val oldPreference = saveBooleanPreference(
+                            getString(R.string.interactive_sign_in_done),
+                            true
+                        )
+                        if (!oldPreference) {
+                            signInObserver.signIn(signInClient.signInIntent)
+                        }
+                        // else preferences were already saved (true) and we do not display sign
+                        // in dialog for user anymore as per requirements
+                    }
+                }
+        }
     }
 
     override fun onBackPressed() {

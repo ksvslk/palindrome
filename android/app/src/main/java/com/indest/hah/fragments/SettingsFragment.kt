@@ -22,15 +22,80 @@ import com.indest.hah.databinding.SettingsFragmentBinding
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.replace
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.api.Scope
+import com.google.android.gms.games.Games.SCOPE_GAMES_SNAPSHOTS
+import com.indest.hah.GeneralViewModel
+import com.indest.hah.MainActivity
+import com.indest.hah.game.enums.Internet
+import com.indest.hah.game.enums.Internet.*
+import com.indest.hah.signin.SignInLifecycleObserver
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 
 class SettingsFragment : BottomSheetDialogFragment() {
     private val TAG = "SettingsFragment"
     private var _binding: SettingsFragmentBinding? = null
     private val binding get() = _binding!!
+    private val generalViewModel: GeneralViewModel by activityViewModels()
+    private lateinit var signInObserver: SignInLifecycleObserver
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        signInObserver = SignInLifecycleObserver(requireActivity().activityResultRegistry)
+        lifecycle.addObserver(signInObserver)
+        lifecycleScope.launchWhenStarted {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED)
+            {
+                generalViewModel.internetState.collect { internet ->
+                    binding.rateGameButton.setOnClickListener {
+                        when (internet) {
+                            ONLINE -> {
+                                val intent = Intent(Intent.ACTION_VIEW).apply {
+                                    data = Uri.parse(getString(R.string.app_package_url))
+                                    setPackage(getString(R.string.vending_package))
+                                }
+                                if (intent.resolveActivity(requireContext().packageManager) != null) {
+                                    startActivity(intent)
+                                }
+                            }
+                            OFFLINE -> {
+                                Toast.makeText(
+                                    requireContext().applicationContext,
+                                    getString(R.string.no_internet),
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                    }
+
+                    binding.googleSignInButton.setOnClickListener {
+                        when (internet) {
+                            ONLINE -> {
+                                signInToGoogle()
+                            }
+                            OFFLINE -> {
+                                Toast.makeText(
+                                    requireContext().applicationContext,
+                                    getString(R.string.no_internet),
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -51,13 +116,6 @@ class SettingsFragment : BottomSheetDialogFragment() {
         } else {
             binding.googleSignOutButton.visibility = View.GONE
             binding.googleSignInButton.visibility = View.VISIBLE
-            binding.googleSignInButton.setOnClickListener {
-                if (false) {
-                    signInToGoogle()
-                } else {
-                    Toast.makeText(requireContext().applicationContext,getString(R.string.no_internet),Toast.LENGTH_SHORT).show()
-                }
-            }
         }
 
         binding.levelSelectButton.setOnClickListener {
@@ -65,23 +123,6 @@ class SettingsFragment : BottomSheetDialogFragment() {
             parentFragmentManager.commit {
                 addToBackStack(LevelSelectFragment().tag)
                 add(LevelSelectFragment(), LevelSelectFragment().tag)
-            }
-        }
-
-        binding.rateGameButton.setOnClickListener {
-            return@setOnClickListener
-            if (false) { //TODO: is online
-                val intent = Intent(Intent.ACTION_VIEW).apply {
-                    data = Uri.parse(
-                        getString(R.string.app_package_url)
-                    )
-                    setPackage(getString(R.string.vending_package))
-                }
-                if (intent.resolveActivity(requireContext().packageManager) != null) {
-                    startActivity(intent)
-                }
-            } else {
-                Toast.makeText(requireContext().applicationContext,getString(R.string.no_internet),Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -98,7 +139,6 @@ class SettingsFragment : BottomSheetDialogFragment() {
             changePreference(getString(R.string.vibration_on_pref), b)
         }
         binding.tutorialButton.setOnClickListener {
-            return@setOnClickListener
             parentFragmentManager.commit {
                 setReorderingAllowed(true)
                 replace<TutorialFragment>(R.id.fragments_container)
@@ -114,48 +154,46 @@ class SettingsFragment : BottomSheetDialogFragment() {
         return b.root
     }
 
-    private val activityResultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (it.resultCode == Activity.RESULT_OK) {
-                Log.d(TAG, "it.resultCode == Activity.RESULT_OK")
-                dismiss()
-            }
-            else {
-                dismiss()
-                Log.d(TAG, "Activity left without RESULT_OK ${it.resultCode}")
-            }
-        }
-
     private fun signInToGoogle() {
         val signInOptions =
             GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
-                .requestScopes(Scope(Scopes.DRIVE_APPFOLDER))
+                .requestScopes(SCOPE_GAMES_SNAPSHOTS)
                 .build()
 
         val signInClient = GoogleSignIn.getClient(
             requireActivity(),
             signInOptions
         )
-       activityResultLauncher.launch(signInClient.signInIntent)
+        dismiss()
+        signInObserver.signIn(signInClient.signInIntent)
     }
 
     private fun signOut() {
-        val signInClient = GoogleSignIn.getClient(
-            requireActivity(),
-            GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN
-        )
-        signInClient.signOut().addOnCompleteListener {
+        val signInOptions =
+            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
+                .build()
+        val client = GoogleSignIn.getClient(requireActivity(), signInOptions)
+        client.signOut().addOnCompleteListener(requireActivity()) {
             if (it.isSuccessful) {
-                Toast.makeText(requireContext().applicationContext,"Successfully signed out.",Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    requireContext().applicationContext,
+                    "Successfully signed out.",
+                    Toast.LENGTH_LONG
+                ).show()
                 dismiss()
             } else {
-                Toast.makeText(requireContext().applicationContext,"Something went wrong when trying to sign out.",Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    requireContext().applicationContext,
+                    "Something went wrong when trying to sign out.",
+                    Toast.LENGTH_LONG
+                ).show()
+                dismiss()
             }
         }
     }
 
     private fun changePreference(setting: String, value: Boolean) {
-        requireActivity().getSharedPreferences(
+        requireContext().applicationContext.getSharedPreferences(
             getString(R.string.app_preferences),
             Context.MODE_PRIVATE
         )?.let {
@@ -167,7 +205,7 @@ class SettingsFragment : BottomSheetDialogFragment() {
     }
 
     private fun setInitialPreference(button: CompoundButton, setting: String) {
-        requireActivity().getSharedPreferences(
+        requireContext().applicationContext.getSharedPreferences(
             getString(R.string.app_preferences),
             Context.MODE_PRIVATE
         )?.let {
@@ -176,7 +214,6 @@ class SettingsFragment : BottomSheetDialogFragment() {
     }
 
     override fun onDestroyView() {
-        activityResultLauncher.unregister()
         _binding = null
         super.onDestroyView()
     }

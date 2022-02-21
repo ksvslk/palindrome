@@ -1,8 +1,6 @@
 package com.indest.hah.util
 
 import android.content.Context
-import android.media.AudioManager
-import android.media.SoundPool
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -10,13 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
 import com.indest.hah.R
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
 
 fun AppCompatActivity.hideSystemBars(viewGroup: ViewGroup) {
     val insetsController = WindowInsetsControllerCompat(window, viewGroup)
@@ -25,26 +17,20 @@ fun AppCompatActivity.hideSystemBars(viewGroup: ViewGroup) {
     insetsController.hide(WindowInsetsCompat.Type.systemBars())
 }
 
-fun Fragment.hideSystemBars(viewGroup: ViewGroup) {
-    val insetsController = WindowInsetsControllerCompat(requireActivity().window, viewGroup)
-    insetsController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-    insetsController.hide(WindowInsetsCompat.Type.navigationBars())
-}
-
-fun SoundPool.playWhileSoundOn(
-    context: Context,
-    sound: Int,
-    priority: Int,
-    loop: Int = 0,
-    audioManager: AudioManager
-) {
-    context.getSharedPreferences(context.getString(R.string.app_preferences), Context.MODE_PRIVATE)?.let {
-        if (audioManager.ringerMode != AudioManager.RINGER_MODE_NORMAL ||
-            !it.getBoolean(context.getString(R.string.sound_on_pref), true)
-        ) return
-        play(sound, 1f, 1f, priority, 0, 1.0f)
+// Return old value
+fun AppCompatActivity.saveBooleanPreference(preference: String, newValue: Boolean): Boolean {
+    var oldValue = false
+    getSharedPreferences(
+        getString(R.string.app_preferences),
+        Context.MODE_PRIVATE
+    )?.let {
+        oldValue = it.getBoolean(preference, false)
+        with(it.edit()) {
+            putBoolean(preference, newValue)
+            apply()
+        }
     }
-
+    return oldValue
 }
 
 internal fun View?.findSuitableParent(): ViewGroup? {
