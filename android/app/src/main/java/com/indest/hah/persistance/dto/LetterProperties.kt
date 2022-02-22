@@ -11,10 +11,6 @@ import androidx.room.*
         )
     ],
     tableName = "letter_info_table",
-
-   /* indices = [
-        Index(value = ["owner_id", "home_index"], unique = true)
-    ],*/
 )
 data class LetterProperties(
     @PrimaryKey(autoGenerate = true)

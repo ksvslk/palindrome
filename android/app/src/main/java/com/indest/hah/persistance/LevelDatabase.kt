@@ -55,9 +55,6 @@ abstract class LevelDatabase : RoomDatabase() {
                                 val levels = gson.fromJson(json, Array<LevelData>::class.java)
 
                                 for (i in levels.indices) {
-                                    //val sol = levels[i].solution.replace(" ", "")
-                                    //val shuffledChars = sol.toCharArray()
-                                    //while (shuffledChars.concatToString() == sol) shuffledChars.shuffle()
                                     val puzzle = ""
                                     val category = levels[i].category
                                     val progress = LevelProgress.TODO

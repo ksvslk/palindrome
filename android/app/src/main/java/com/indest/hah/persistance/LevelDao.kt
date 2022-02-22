@@ -51,14 +51,14 @@ interface LevelDao {
     suspend fun getTotalScore(): Int
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(levels: LevelData)
+    suspend fun insertLevelInfo(levels: LevelData)
 
     @Transaction
     suspend fun updateLevels(levels: List<Level>) {
         deleteLettersInfo()
         deleteLevels()
         levels.forEach { level ->
-            insert(level.levelInfo)
+            insertLevelInfo(level.levelInfo)
             level.lettersProperties.forEach { lp ->
                 insertLetterData(
                     ownerId = lp.ownerId,
@@ -101,6 +101,9 @@ interface LevelDao {
     @Query("update interval set current_count = 0 where name=:name and current_count = (select limit_count from interval where name=:name)")
     suspend fun resetCount(name: String)
 
+    @Query("select current_count from interval where name = :name")
+    suspend fun getCount(name: String):Int
+
     @Query("update interval set current_count = :count where name = :name")
     suspend fun setCountTo(name: String, count: Int)
 
@@ -108,7 +111,7 @@ interface LevelDao {
     suspend fun isLimitAttained(name: String): Boolean
 
     @Transaction
-    suspend fun increaseCount(name: String): Boolean {
+    suspend fun increaseCountTransaction(name: String): Boolean {
         increaseCurrentCount(name)
         val isLimit = isLimitAttained(name)
         if (isLimit) resetCount(name)
@@ -179,8 +182,6 @@ interface LevelDao {
         deleteLetterInfo(currentLevel)
         // update current level progress
         updateProgress(currentLevel, LevelProgress.REPLAY)
-        // update current level best score
-        updateBestScoreQuery(currentLevel)
         // update current level best score
         updatePuzzle(currentLevel, "")
         // unlock next level (change progress and increase timestamp)

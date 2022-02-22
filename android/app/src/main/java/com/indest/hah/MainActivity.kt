@@ -4,7 +4,6 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.Insets
@@ -133,7 +132,7 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
     private fun progressBarUpdater() {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                levelViewModel.latestLevelFlow().collect {
+                levelViewModel.latestDistinctLevelFlow().collect {
                     setLevelProgressIndicator(it.levelInfo)
                 }
             }

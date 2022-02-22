@@ -4,6 +4,8 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.games.Games
 import com.indest.hah.R
 import com.indest.hah.persistance.LevelProgress
 import com.indest.hah.persistance.LevelRepository
@@ -52,6 +54,22 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+    private fun submitScore()
+    {
+        viewModelScope.launch {
+            val context = getApplication<Application>()
+            GoogleSignIn.getLastSignedInAccount(context)?.let {
+                val totalScore = levelRepository.getTotalUpdatedScore(
+                    _currentLevel.value.levelInfo.levelId)
+                Games.getLeaderboardsClient(context, it)
+                    .submitScore(
+                        context.getString(R.string.leaderboard_crme_de_la_crme),
+                        totalScore
+                    )
+            }
+        }
+    }
+
     private fun updateSolutionState(index: Int, guess: String) {
         viewModelScope.launch {
             val solution = _currentLevel.value.levelInfo.solution.replace(" ", "")
@@ -60,11 +78,13 @@ class LevelViewModel @Inject constructor(
                     if ("^([?!.,’])".contains(char)) "" else char
                 }.joinToString("")
                 Log.d(TAG, "guess: $guess, solution: $solution")
-                val hintsInterval = getApplication<Application>().getString(R.string.hint_suggestion)
+                val hintsInterval =
+                    getApplication<Application>().getString(R.string.hint_suggestion)
 
                 when {
                     guess == solution -> {
                         _uiState.emit(UiState.TOUCH_DISABLED)
+                        submitScore()
                         levelRepository.updateLevelProgress(
                             _currentLevel.value.levelInfo.levelId,
                             LevelProgress.INTERMEDIATE
@@ -119,7 +139,7 @@ class LevelViewModel @Inject constructor(
         }
     }
 
-    fun latestLevelFlow(): Flow<Level> {
+    fun latestDistinctLevelFlow(): Flow<Level> {
         return _currentLevel.distinctUntilChangedBy(keySelector = { level ->
             level.levelInfo.levelId
         })
@@ -179,6 +199,16 @@ class LevelViewModel @Inject constructor(
         viewModelScope.launch {
             _currentLevel.value.levelInfo.let { levelInfo ->
                 val hintInterval = getApplication<Application>().getString(R.string.hint_suggestion)
+                val scoreInterval =
+                    getApplication<Application>().getString(R.string.player_centered_scores)
+                val currentScoreIntervalCount = levelRepository.getCount(scoreInterval)
+
+                // Loading each level gives +1 so to balance it out we will -1 each level
+                // change made from "Level Select" screen as this is not part of the intended gameplay.
+                if (currentScoreIntervalCount > 0) {
+                    levelRepository.setCountTo(scoreInterval, currentScoreIntervalCount - 1)
+                }
+
                 levelRepository.setCountTo(hintInterval, 0)
                 levelRepository.nextLevelActions(
                     levelInfo.levelId,
@@ -186,6 +216,10 @@ class LevelViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    suspend fun isIntervalAttained(interval: String): Boolean {
+        return levelRepository.increaseCount(interval)
     }
 
     fun executeLevelCompleteActions() {
@@ -213,6 +247,7 @@ class LevelViewModel @Inject constructor(
         WRONG,
         BOGUS_PALINDROME,
         NONE
+
     }
 
     data class SolutionData(

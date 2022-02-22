@@ -1,6 +1,7 @@
 package com.indest.hah.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,8 @@ import android.view.WindowManager
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.images.ImageManager
 import com.google.android.gms.games.Games
@@ -16,11 +19,17 @@ import com.google.android.gms.games.leaderboard.LeaderboardVariant.TIME_SPAN_ALL
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.databinding.ScoreFragmentBinding
-import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.launch
 
 class ScoresFragment : BottomSheetDialogFragment() {
     private var _binding: ScoreFragmentBinding? = null
     private val binding get() = _binding!!
+    private val TAG = "ScoresFragment"
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        Log.e(TAG, throwable.message.toString())
+        if (isAdded) dismiss()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,22 +49,23 @@ class ScoresFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        GoogleSignIn.getLastSignedInAccount(requireActivity())?.let { googleSignInAccount ->
-            Games.getLeaderboardsClient(requireActivity(), googleSignInAccount)
-                .loadPlayerCenteredScores(
-                    getString(R.string.leaderboard_crme_de_la_crme),
-                    TIME_SPAN_ALL_TIME,
-                    COLLECTION_PUBLIC,
-                    3,
-                    true
-                ).addOnSuccessListener { data ->
-                    val lifeCycleValid =
-                        lifecycle.currentState in Lifecycle.State.CREATED..Lifecycle.State.DESTROYED
-                    if (lifeCycleValid) {
-                        binding.let { binding ->
-                            binding.scoreFragment.removeViewAt(1)
-                            data.get()?.let {
-                                it.scores.forEachIndexed { index, score ->
+        lifecycleScope.launch(exceptionHandler) {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED)
+            {
+                val lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(requireActivity())
+                if (lastSignedInAccount != null) {
+                    Games.getLeaderboardsClient(requireActivity(), lastSignedInAccount)
+                        .loadPlayerCenteredScores(
+                            getString(R.string.leaderboard_crme_de_la_crme),
+                            TIME_SPAN_ALL_TIME,
+                            COLLECTION_PUBLIC,
+                            3,
+                            true
+                        ).addOnSuccessListener(requireActivity()) { result ->
+                            val leaderBoardScores = result.get()
+                            if (leaderBoardScores != null && isAdded) {
+                                binding.scoreFragment.removeViewAt(1)
+                                leaderBoardScores.scores.forEachIndexed { index, score ->
                                     val isCurrentPlayer =
                                         score.scoreHolder?.relationshipInfo?.friendStatus
 
@@ -83,9 +93,8 @@ class ScoresFragment : BottomSheetDialogFragment() {
                                                 "You rank first!"
                                         } else {
                                             binding.playerScoreImproveMessage.text =
-                                                "Earn ${it.scores[index - 1].rawScore - score.rawScore + 1} points to rank up!"
+                                                "Earn ${leaderBoardScores.scores[index - 1].rawScore - score.rawScore + 1} points to rank up!"
                                         }
-
                                         binding.scoreFlipper.showNext()
                                         binding.scoreFragment.addView(scoreLayout)
                                     } else {
@@ -108,13 +117,13 @@ class ScoresFragment : BottomSheetDialogFragment() {
                                         binding.scoreFragment.addView(scoreLayout)
                                     }
                                 }
-                                it.release()
                             }
+                            leaderBoardScores?.release()
                         }
-                    }
-                }.addOnFailureListener {
+                } else {
                     dismiss()
                 }
+            }
         }
     }
 }

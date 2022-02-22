@@ -17,6 +17,7 @@ import androidx.core.view.doOnNextLayout
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -93,7 +94,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                             newLayoutInfo.displayFeatures.find { it is FoldingFeature } as? FoldingFeature
                         val isBookMode = foldingFeature?.state == FoldingFeature.State.FLAT
                         viewModel.isBookMode = isBookMode
-                        viewModel.latestLevelFlow().collect { level ->
+                        viewModel.latestDistinctLevelFlow().collect { level ->
                             if (level.levelInfo.levelId != 0) {
                                 binding.levelFragment.removeAllViews()
                                 if (level.levelInfo.progress == LevelProgress.INTERMEDIATE) {
@@ -102,10 +103,22 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                                     displayLevel(level, isBookMode)
                                 }
                                 hideHintsBadge()
+                                showPlayerCenteredScores()
                                 //TODO: Collect reward flow here?
                             }
                         }
                     }
+            }
+        }
+    }
+
+    private fun showPlayerCenteredScores() {
+        lifecycleScope.launch {
+            if (viewModel.isIntervalAttained(getString(R.string.player_centered_scores))) {
+                parentFragmentManager.commit {
+                    addToBackStack(ScoresFragment().tag)
+                    add(ScoresFragment(), ScoresFragment().tag)
+                }
             }
         }
     }
@@ -309,7 +322,8 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     }
 
     private fun playTrainAnimation() {
-        val childCount = activity?.findViewById<LinearLayoutCompat>(R.id.trainLinearLayout)?.childCount
+        val childCount =
+            activity?.findViewById<LinearLayoutCompat>(R.id.trainLinearLayout)?.childCount
         if (VaryingProbability.isAnimationPlayed(viewModel.currentLevel.value.levelInfo.levelId) && childCount == 0) {
             val trainLinearLayout = animations.getTrainAnimation()
             trainLinearLayout.doOnNextLayout {
@@ -323,7 +337,8 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                 trainAnimator.duration = 20000
                 allAnimations.add(trainAnimator)
                 trainAnimator.doOnEnd {
-                    activity?.findViewById<LinearLayoutCompat>(R.id.trainLinearLayout)?.removeAllViews()
+                    activity?.findViewById<LinearLayoutCompat>(R.id.trainLinearLayout)
+                        ?.removeAllViews()
                 }
                 trainAnimator.start()
             }
