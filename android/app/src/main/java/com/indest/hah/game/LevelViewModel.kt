@@ -6,6 +6,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.games.Games
+import com.google.android.gms.games.achievement.Achievement
 import com.indest.hah.R
 import com.indest.hah.persistance.LevelProgress
 import com.indest.hah.persistance.LevelRepository
@@ -54,18 +55,44 @@ class LevelViewModel @Inject constructor(
         }
     }
 
-    private fun submitScore()
-    {
+    private fun submitScore() {
         viewModelScope.launch {
             val context = getApplication<Application>()
             GoogleSignIn.getLastSignedInAccount(context)?.let {
                 val totalScore = levelRepository.getTotalUpdatedScore(
-                    _currentLevel.value.levelInfo.levelId)
+                    _currentLevel.value.levelInfo.levelId
+                )
                 Games.getLeaderboardsClient(context, it)
                     .submitScore(
                         context.getString(R.string.leaderboard_crme_de_la_crme),
                         totalScore
                     )
+            }
+        }
+    }
+
+    private fun unlockAchievement(achievement: String)
+    {
+        val context = getApplication<Application>()
+        GoogleSignIn.getLastSignedInAccount(context)?.let { signedInAccount ->
+            Games.getAchievementsClient(context, signedInAccount)
+                .unlock(achievement)
+        }
+    }
+
+    private fun updateFlawlessIntervals(solutionData: SolutionData) {
+        val context = getApplication<Application>()
+        viewModelScope.launch {
+            if (solutionData.score == solutionData.maxScore) {
+                if (levelRepository.increaseCount(context.getString(R.string.achievement_flawless_5))) {
+                    unlockAchievement(context.getString(R.string.achievement_flawless_5))
+                }
+                if (levelRepository.increaseCount(context.getString(R.string.achievement_flawless_15))) {
+                    unlockAchievement(context.getString(R.string.achievement_flawless_15))
+                }
+            } else {
+                levelRepository.setCountTo(context.getString(R.string.achievement_flawless_5), 0)
+                levelRepository.setCountTo(context.getString(R.string.achievement_flawless_15), 0)
             }
         }
     }
@@ -89,15 +116,15 @@ class LevelViewModel @Inject constructor(
                             _currentLevel.value.levelInfo.levelId,
                             LevelProgress.INTERMEDIATE
                         )
-                        _solution.emit(
-                            SolutionData(
-                                solution = Solution.CORRECT,
-                                index = index,
-                                score = _currentLevel.value.levelInfo.score,
-                                maxScore = _currentLevel.value.levelInfo.levelId * 100,
-                                showHintsBadge = false
-                            )
+                        val solutionData = SolutionData(
+                            solution = Solution.CORRECT,
+                            index = index,
+                            score = _currentLevel.value.levelInfo.score,
+                            maxScore = _currentLevel.value.levelInfo.levelId * 100,
+                            showHintsBadge = false
                         )
+                        _solution.emit(solutionData)
+                        updateFlawlessIntervals(solutionData)
                         levelRepository.setCountTo(hintsInterval, 0)
                     }
                     playerGuess.reversed() == playerGuess -> {

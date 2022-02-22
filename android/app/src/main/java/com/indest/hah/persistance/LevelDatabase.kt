@@ -106,6 +106,8 @@ abstract class LevelDatabase : RoomDatabase() {
                                         context.getString(com.indest.hah.R.string.intermediate_ads) -> 2
                                         context.getString(com.indest.hah.R.string.player_centered_scores) -> 5
                                         context.getString(com.indest.hah.R.string.hint_suggestion) -> 3
+                                        context.getString(com.indest.hah.R.string.achievement_flawless_5) -> 5
+                                        context.getString(com.indest.hah.R.string.achievement_flawless_15) -> 15
                                         else -> 7
                                     }
                                     interval.put("name", it)
