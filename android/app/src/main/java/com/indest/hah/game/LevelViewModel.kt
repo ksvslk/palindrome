@@ -7,6 +7,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.games.Games
+import com.google.android.play.core.review.ReviewManager
+import com.google.android.play.core.review.ReviewManagerFactory
+import com.google.android.play.core.review.testing.FakeReviewManager
 import com.indest.hah.R
 import com.indest.hah.persistance.LevelProgress
 import com.indest.hah.persistance.LevelRepository
@@ -105,14 +108,14 @@ class LevelViewModel @Inject constructor(
         updateAndConsiderFlawlessAchievements(solutionData)
 
         // Zero mistakes achievement
-        if (currentLevel.value.levelInfo.levelId >= 21 &&
+        if (_currentLevel.value.levelInfo.levelId >= 21 &&
             solutionData.score == solutionData.maxScore
         ) {
             unlockAchievement(context.getString(R.string.achievement_zero_mistakes))
         }
 
         // Complete Level achievement
-        if (currentLevel.value.levelInfo.solution == "LEVEL")
+        if (_currentLevel.value.levelInfo.solution == "LEVEL")
         {
             unlockAchievement(context.getString(R.string.achievement_complete_level))
         }

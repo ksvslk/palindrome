@@ -26,6 +26,8 @@ import androidx.window.layout.WindowInfoTracker
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.play.core.review.ReviewManagerFactory
+import com.google.android.play.core.review.testing.FakeReviewManager
 import com.indest.hah.MainActivity
 import com.indest.hah.R
 import com.indest.hah.components.Animations
@@ -226,6 +228,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                             if (isVisible) {
                                 super.onDismissed(transientBottomBar, event)
                                 showContinueMessage()
+                                askForReview(level = viewModel.currentLevel.value.levelInfo.levelId)
                             }
                         }
                     }
@@ -355,6 +358,26 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             if (!hintBadge.isVisible) {
                 soundPlayer.play(soundPlayer.sounds.hintNotification)
                 hintBadge.isVisible = true
+            }
+        }
+    }
+
+    private fun askForReview(level:Int)
+    {
+        if (level == 10)
+        {
+            val reviewManager = ReviewManagerFactory.create(requireContext())
+            val request = reviewManager.requestReviewFlow()
+            request.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val reviewInfo = task.result
+                    val flow = reviewManager.launchReviewFlow(requireActivity(), reviewInfo)
+                    flow.addOnCompleteListener { _ ->
+                        Log.d(TAG, "Review flow completed.")
+                    }
+                } else {
+                    Log.e(TAG, "Error requesting review flow: ${task.exception?.message}")
+                }
             }
         }
     }
