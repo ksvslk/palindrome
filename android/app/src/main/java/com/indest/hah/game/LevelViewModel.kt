@@ -1,12 +1,12 @@
 package com.indest.hah.game
 
 import android.app.Application
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.games.Games
-import com.google.android.gms.games.achievement.Achievement
 import com.indest.hah.R
 import com.indest.hah.persistance.LevelProgress
 import com.indest.hah.persistance.LevelRepository
@@ -71,8 +71,7 @@ class LevelViewModel @Inject constructor(
         }
     }
 
-    private fun unlockAchievement(achievement: String)
-    {
+    private fun unlockAchievement(achievement: String) {
         val context = getApplication<Application>()
         GoogleSignIn.getLastSignedInAccount(context)?.let { signedInAccount ->
             Games.getAchievementsClient(context, signedInAccount)
@@ -80,7 +79,9 @@ class LevelViewModel @Inject constructor(
         }
     }
 
-    private fun updateFlawlessIntervals(solutionData: SolutionData) {
+    private fun updateAndConsiderFlawlessAchievements(
+        solutionData: SolutionData
+    ) {
         val context = getApplication<Application>()
         viewModelScope.launch {
             if (solutionData.score == solutionData.maxScore) {
@@ -94,6 +95,35 @@ class LevelViewModel @Inject constructor(
                 levelRepository.setCountTo(context.getString(R.string.achievement_flawless_5), 0)
                 levelRepository.setCountTo(context.getString(R.string.achievement_flawless_15), 0)
             }
+        }
+    }
+
+    private fun resolveLevelCompleteAchievements(solutionData: SolutionData) {
+        val context = getApplication<Application>()
+
+        // Flawless 5 and Flawless 15 achievements
+        updateAndConsiderFlawlessAchievements(solutionData)
+
+        // Zero mistakes achievement
+        if (currentLevel.value.levelInfo.levelId >= 21 &&
+            solutionData.score == solutionData.maxScore
+        ) {
+            unlockAchievement(context.getString(R.string.achievement_zero_mistakes))
+        }
+
+        // Complete Level achievement
+        if (currentLevel.value.levelInfo.solution == "LEVEL")
+        {
+            unlockAchievement(context.getString(R.string.achievement_complete_level))
+        }
+
+        // Greenhorn, Proficient, Crackerjack, Chief and Authority achievements
+        when (_currentLevel.value.levelInfo.levelId) {
+            20 -> unlockAchievement(context.getString(R.string.achievement_greenhorn))
+            40 -> unlockAchievement(context.getString(R.string.achievement_proficient))
+            60 -> unlockAchievement(context.getString(R.string.achievement_crackerjack))
+            80 -> unlockAchievement(context.getString(R.string.achievement_chief))
+            100 -> unlockAchievement(context.getString(R.string.achievement_authority))
         }
     }
 
@@ -124,7 +154,7 @@ class LevelViewModel @Inject constructor(
                             showHintsBadge = false
                         )
                         _solution.emit(solutionData)
-                        updateFlawlessIntervals(solutionData)
+                        resolveLevelCompleteAchievements(solutionData)
                         levelRepository.setCountTo(hintsInterval, 0)
                     }
                     playerGuess.reversed() == playerGuess -> {
@@ -138,6 +168,8 @@ class LevelViewModel @Inject constructor(
                                 showHintsBadge = showHintsBadge
                             )
                         )
+                        // Wrong Palindrome achievement
+                        unlockAchievement(getApplication<Application>().getString(R.string.achievement_wrong_palindrome))
                     }
                     else -> {
                         val showHintsBadge = levelRepository.increaseCount(hintsInterval)

@@ -98,6 +98,8 @@ abstract class LevelDatabase : RoomDatabase() {
                                 intervals.add(context.getString(com.indest.hah.R.string.intermediate_ads))
                                 intervals.add(context.getString(com.indest.hah.R.string.player_centered_scores))
                                 intervals.add(context.getString(com.indest.hah.R.string.hint_suggestion))
+                                intervals.add(context.getString(com.indest.hah.R.string.achievement_flawless_5))
+                                intervals.add(context.getString(com.indest.hah.R.string.achievement_flawless_15))
 
                                 intervals.forEach {
                                     val interval = ContentValues()
