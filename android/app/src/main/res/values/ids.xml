@@ -21,4 +21,16 @@
     <string name="instant_letters">instant_letters</string>
     <string name="instant_clues">instant_clues</string>
     <string name="no_intermediate_ads">no_intermediate_ads</string>
+
+    <!-- BOTH UNLOCKERS -->
+    <string-array name="iap_group_that_unlock_clues">
+        <item>@string/full_no_ads</item>
+        <item>@string/instant_clues</item>
+    </string-array>
+
+    <string-array name="iap_group_that_unlock_letters">
+        <item>@string/full_no_ads</item>
+        <item>@string/instant_letters</item>
+    </string-array>
+
 </resources>

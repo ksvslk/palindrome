@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <attr name="animating" format="boolean" />
+    <declare-styleable name="RewardButton">
+        <attr name="skus" format="reference" />
+        <attr name="custom_icon" format="reference" />
+        <attr name="main_title" format="string" />
+        <attr name="subtitle_reward_unlocked" format="string" />
+        <attr name="subtitle_ad_available" format="string" />
+        <attr name="subtitle_ad_unavailable" format="string" />
+    </declare-styleable>
 </resources>

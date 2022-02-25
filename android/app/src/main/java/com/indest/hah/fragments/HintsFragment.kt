@@ -7,9 +7,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.core.os.bundleOf
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.indest.hah.GeneralViewModel
+import com.indest.hah.R
 import com.indest.hah.databinding.HintsFragmentBinding
+import com.indest.hah.persistance.dto.Sku
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+
 
 class HintsFragment : BottomSheetDialogFragment() {
     private val TAG = "HintsFragment"
@@ -19,6 +29,21 @@ class HintsFragment : BottomSheetDialogFragment() {
     private var bundle: Bundle = bundleOf()
     private var skuDetailsCollectionJob: Job? = null
     private var rewardedAdCollectionJob: Job? = null
+
+    private val viewModel: GeneralViewModel by activityViewModels()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED)
+            {
+                viewModel.buttonState.collect() {
+                    binding.rewardCategoryButton.updateButtonUi(it)
+                    binding.rewardPlaceLetter.updateButtonUi(it)
+                }
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,6 +60,28 @@ class HintsFragment : BottomSheetDialogFragment() {
         )
         //removeAllPurchaseButtons() // At first remove all to avoid flickering
         return b.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.adSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+            viewModel.setAd(isChecked)
+        }
+        binding.internetSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+            viewModel.setInternet(isChecked)
+        }
+        binding.addRemoveClues.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) viewModel.addPurchase(getString(R.string.instant_clues))
+            else viewModel.removePurchase(getString(R.string.instant_clues))
+        }
+        binding.addRemoveLetters.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) viewModel.addPurchase(getString(R.string.instant_letters))
+            else viewModel.removePurchase(getString(R.string.instant_letters))
+        }
+        binding.addRemoveFull.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) viewModel.addPurchase(getString(R.string.full_no_ads))
+            else viewModel.removePurchase(getString(R.string.full_no_ads))
+        }
     }
 
 /*
@@ -273,7 +320,8 @@ class HintsFragment : BottomSheetDialogFragment() {
     }
 
     private fun setUpPurchasedGoods(rewardType: RewardType, categoryRevealed: Boolean = false) {
-        val subtitleText = getString(R.string.unlimited)
+        val subtitleText = getString(R.string.unlim
+        ited)
         val subtitleTextColor =
             ContextCompat.getColor(
                 requireContext(),
