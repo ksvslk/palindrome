@@ -62,11 +62,6 @@
         <item>@string/instant_clues</item>
     </string-array>
     <string-array name="full_ads_case_3">
-        <item>@string/intermediate_ads</item>
-        <item>@string/instant_letters</item>
-    </string-array>
-    <string-array name="full_ads_case_4">
-        <item>@string/instant_clues</item>
         <item>@string/instant_letters</item>
     </string-array>
 

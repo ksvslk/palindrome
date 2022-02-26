@@ -3,7 +3,6 @@ package com.indest.hah
 import android.content.Context
 import android.content.res.TypedArray
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.AppCompatImageView
@@ -54,8 +53,7 @@ class RewardButton : LinearLayoutCompat {
     }
 
     private fun initializeViews(context: Context) {
-        val inflater = context
-            .getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         inflater.inflate(R.layout.reward_button, this)
     }
 
@@ -93,7 +91,9 @@ class RewardButton : LinearLayoutCompat {
             }
             ButtonState.NO_AD -> {
                 findViewById<AppCompatTextView>(R.id.reward_button_flipper_revealed_subtitle).apply {
-                    this.text = subtitleAdUnavailable
+                    if (info.internet) this.text = subtitleAdUnavailable
+                    else this.text = context.getString(R.string.no_internet)
+
                     setBackgroundColor(
                         ContextCompat.getColor(
                             context,

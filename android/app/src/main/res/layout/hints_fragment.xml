@@ -148,7 +148,7 @@
         purchasebutton:visibility_case_1="@array/full_ads_case_1"
         purchasebutton:visibility_case_2="@array/full_ads_case_2"
         purchasebutton:visibility_case_3="@array/full_ads_case_3"
-        purchasebutton:visibility_case_4="@array/full_ads_case_4"
+        purchasebutton:labels="@array/save_24_percent_label"
         />
 <!--
         <androidx.appcompat.widget.LinearLayoutCompat
