@@ -2,6 +2,7 @@
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:rewardbutton="http://schemas.android.com/apk/res-auto"
+    xmlns:purchasebutton="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
@@ -26,36 +27,48 @@
             android:textAppearance="@style/TextAppearance.OC.Headline5" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/internet_switch"
-        android:layout_margin="@dimen/_8sdp"
-        android:text="internet"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_20sdp"/>
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/ad_switch"
-        android:layout_margin="@dimen/_8sdp"
-        android:text="ad"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_20sdp"/>
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/add_remove_clues"
-        android:layout_margin="@dimen/_8sdp"
-        android:text="add/remove clues"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_20sdp"/>
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/add_remove_letters"
-        android:layout_margin="@dimen/_8sdp"
-        android:text="add/remove letters"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_20sdp"/>
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/add_remove_full"
-        android:layout_margin="@dimen/_8sdp"
-        android:text="add/remove full"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_20sdp"/>
+    <androidx.gridlayout.widget.GridLayout
+        app:columnCount="3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/internet_switch"
+            android:layout_margin="@dimen/_8sdp"
+            android:text="internet"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_20sdp"/>
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/ad_switch"
+            android:layout_margin="@dimen/_8sdp"
+            android:text="ad"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_20sdp"/>
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/add_remove_clues"
+            android:layout_margin="@dimen/_8sdp"
+            android:text="clues"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_20sdp"/>
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/add_remove_letters"
+            android:layout_margin="@dimen/_8sdp"
+            android:text="letters"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_20sdp"/>
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/add_remove_intermediate"
+            android:layout_margin="@dimen/_8sdp"
+            android:text="inter"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_20sdp"/>
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/add_remove_full"
+            android:layout_margin="@dimen/_8sdp"
+            android:text="full"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_20sdp"/>
+    </androidx.gridlayout.widget.GridLayout>
+
 
     <com.indest.hah.RewardButton
         android:id="@+id/reward_category_button"
@@ -88,7 +101,56 @@
         rewardbutton:subtitle_ad_available="@string/watch_rewarded_video"
         rewardbutton:subtitle_ad_unavailable="@string/no_ad_available"
         rewardbutton:subtitle_reward_unlocked="@string/instantly" />
-    <!--
+
+    <com.indest.hah.PurchaseButton
+        android:id="@+id/purchase_button_clues"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/simple_dialog_item_height"
+        android:layout_margin="@dimen/_2sdp"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="horizontal"
+        purchasebutton:visibility_case_1="@array/clues_case_1"
+        />
+    <com.indest.hah.PurchaseButton
+        android:id="@+id/purchase_button_letters"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/simple_dialog_item_height"
+        android:layout_margin="@dimen/_2sdp"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="horizontal"
+        purchasebutton:visibility_case_1="@array/letters_case_1"
+        purchasebutton:labels="@array/best_loved_label"
+        />
+    <com.indest.hah.PurchaseButton
+        android:id="@+id/purchase_intermediate_ads"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/simple_dialog_item_height"
+        android:layout_margin="@dimen/_2sdp"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="horizontal"
+        purchasebutton:visibility_case_1="@array/intermediate_case_1"
+        />
+    <com.indest.hah.PurchaseButton
+        android:id="@+id/purchase_full_ads"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/simple_dialog_item_height"
+        android:layout_margin="@dimen/_2sdp"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="horizontal"
+        purchasebutton:visibility_case_1="@array/full_ads_case_1"
+        purchasebutton:visibility_case_2="@array/full_ads_case_2"
+        purchasebutton:visibility_case_3="@array/full_ads_case_3"
+        purchasebutton:visibility_case_4="@array/full_ads_case_4"
+        />
+<!--
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/category_reveal_button"
             android:layout_width="match_parent"
@@ -469,7 +531,9 @@
                         android:textAppearance="@style/TextAppearance.OC.Caption" />
                 </androidx.appcompat.widget.LinearLayoutCompat>
             </androidx.appcompat.widget.LinearLayoutCompat>
+
         </androidx.appcompat.widget.LinearLayoutCompat>
-    -->
+                -->
+
 
 </androidx.appcompat.widget.LinearLayoutCompat>

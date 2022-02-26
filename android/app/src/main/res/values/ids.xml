@@ -22,14 +22,51 @@
     <string name="instant_clues">instant_clues</string>
     <string name="no_intermediate_ads">no_intermediate_ads</string>
 
-    <!-- BOTH UNLOCKERS -->
+    <!-- IAPs that will unlock clues. ANY match will do. -->
     <string-array name="iap_group_that_unlock_clues">
         <item>@string/full_no_ads</item>
         <item>@string/instant_clues</item>
     </string-array>
 
+    <!-- IAPs that will unlock letters. ANY match will do. -->
     <string-array name="iap_group_that_unlock_letters">
         <item>@string/full_no_ads</item>
+        <item>@string/instant_letters</item>
+    </string-array>
+
+    <!-- IAPs that will hide letters purchase button from menu. ANY match will do -->
+    <string-array name="letters_case_1">
+        <item>@string/full_no_ads</item>
+        <item>@string/instant_letters</item>
+    </string-array>
+
+    <!-- IAPs that will hide clue purchase button from menu. ANY match will do. -->
+    <string-array name="clues_case_1">
+        <item>@string/full_no_ads</item>
+        <item>@string/instant_clues</item>
+    </string-array>
+
+    <!-- IAPs that will hide intermediate ads removal purchase button from menu. ANY match will do. -->
+    <string-array name="intermediate_case_1">
+        <item>@string/full_no_ads</item>
+        <item>@string/intermediate_ads</item>
+    </string-array>
+
+
+    <!-- IAPs that will hide full ads purchase button from menu. ALL must occurs at same time in one array. -->
+    <string-array name="full_ads_case_1">
+        <item>@string/full_no_ads</item>
+    </string-array>
+    <string-array name="full_ads_case_2">
+        <item>@string/intermediate_ads</item>
+        <item>@string/instant_clues</item>
+    </string-array>
+    <string-array name="full_ads_case_3">
+        <item>@string/intermediate_ads</item>
+        <item>@string/instant_letters</item>
+    </string-array>
+    <string-array name="full_ads_case_4">
+        <item>@string/instant_clues</item>
         <item>@string/instant_letters</item>
     </string-array>
 

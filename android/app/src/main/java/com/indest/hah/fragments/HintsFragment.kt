@@ -40,6 +40,10 @@ class HintsFragment : BottomSheetDialogFragment() {
                 viewModel.buttonState.collect() {
                     binding.rewardCategoryButton.updateButtonUi(it)
                     binding.rewardPlaceLetter.updateButtonUi(it)
+                    binding.purchaseButtonClues.updateButtonUi(it)
+                    binding.purchaseButtonLetters.updateButtonUi(it)
+                    binding.purchaseIntermediateAds.updateButtonUi(it)
+                    binding.purchaseFullAds.updateButtonUi(it)
                 }
             }
         }
@@ -81,6 +85,10 @@ class HintsFragment : BottomSheetDialogFragment() {
         binding.addRemoveFull.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) viewModel.addPurchase(getString(R.string.full_no_ads))
             else viewModel.removePurchase(getString(R.string.full_no_ads))
+        }
+        binding.addRemoveIntermediate.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) viewModel.addPurchase(getString(R.string.intermediate_ads))
+            else viewModel.removePurchase(getString(R.string.intermediate_ads))
         }
     }
 

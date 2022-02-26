@@ -1,0 +1,93 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/purchase_button_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="@dimen/simple_dialog_left_margin"
+        android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
+        android:clickable="false"
+        android:contentDescription="@string/remove_letter_ads_text"
+        tools:ignore="RtlSymmetry" />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="false"
+        android:layout_marginRight="@dimen/simple_dialog_left_margin"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:clickable="false"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/purchase_button_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="@string/placeholder"
+                android:textAppearance="@style/TextAppearance.OC.Body1" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/purchase_button_subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:background="@color/colorSecondary"
+                android:paddingHorizontal="@dimen/_3sdp"
+                android:text="@string/placeholder"
+                android:textAppearance="@style/TextAppearance.OC.Caption"
+                android:textColor="@color/colorOnPrimary" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/purchase_button_label_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/purchase_button_label_first"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:background="@color/colorSecondary"
+                android:padding="@dimen/_3sdp"
+                android:text="@string/placeholder"
+                android:textAppearance="@style/TextAppearance.OC.Caption"
+                android:textColor="@color/colorOnPrimary" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/purchase_button_label_space"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text=" "
+                android:textAppearance="@style/TextAppearance.OC.Caption" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/purchase_button_label_second"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:background="@color/colorOnPrimary"
+                android:padding="@dimen/_3sdp"
+                android:text="@string/placeholder"
+                android:textAppearance="@style/TextAppearance.OC.Caption"
+                android:textColor="@color/colorPrimary" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</merge>
