@@ -6,12 +6,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.indest.hah.ButtonState
+import com.indest.hah.ButtonState.*
 import com.indest.hah.GeneralViewModel
 import com.indest.hah.R
 import com.indest.hah.databinding.HintsFragmentBinding
@@ -62,6 +65,33 @@ class HintsFragment : BottomSheetDialogFragment() {
         requireActivity().window.addFlags(
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
         )
+
+        binding.rewardCategoryButton.setOnClickListener {
+            when (binding.rewardCategoryButton.buttonState)
+            {
+                AD -> {
+                    Toast.makeText(context,"CATEGORY: Show rewarded ad.", Toast.LENGTH_SHORT).show()
+                }
+                PURCHASED -> {
+                    Toast.makeText(context,"CATEGORY: Purchased - show category.", Toast.LENGTH_SHORT).show()
+                }
+                NO_AD -> { }
+            }
+        }
+
+        binding.rewardPlaceLetter.setOnClickListener {
+            when (binding.rewardCategoryButton.buttonState)
+            {
+                AD -> {
+                    Toast.makeText(context,"LETTER: Show rewarded ad.", Toast.LENGTH_SHORT).show()
+                }
+                PURCHASED -> {
+                    Toast.makeText(context,"LETTER: Purchased - put letter to place.", Toast.LENGTH_SHORT).show()
+                }
+                NO_AD -> { }
+
+            }
+        }
         //removeAllPurchaseButtons() // At first remove all to avoid flickering
         return b.root
     }

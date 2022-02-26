@@ -9,6 +9,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
+import com.indest.hah.ButtonState.*
 
 class RewardButton : LinearLayoutCompat {
 
@@ -18,6 +19,7 @@ class RewardButton : LinearLayoutCompat {
     private lateinit var subtitleAdAvailable: String
     private lateinit var subtitleAdUnavailable: String
     private var customIcon: Int = -1
+    var buttonState:ButtonState = NO_AD
 
     constructor(context: Context) : super(context) {
         initializeViews(context)
@@ -73,6 +75,8 @@ class RewardButton : LinearLayoutCompat {
     fun updateButtonUi(info: GeneralViewModel.ButtonInfo) {
         val purchased = info.skus.intersect(unlockingSkus).isNotEmpty()
         if (purchased) {
+            this.isClickable = true
+            buttonState = PURCHASED
             findViewById<AppCompatTextView>(R.id.reward_button_flipper_revealed_subtitle).apply {
                 this.text = subtitleRewardUnlocked
                 setBackgroundColor(ContextCompat.getColor(context, R.color.successBoxColor))
@@ -82,14 +86,18 @@ class RewardButton : LinearLayoutCompat {
         }
 
         when (info.state) {
-            ButtonState.AD -> {
+            AD -> {
+                this.isClickable = true
+                buttonState = AD
                 findViewById<AppCompatTextView>(R.id.reward_button_flipper_revealed_subtitle).apply {
                     this.text = subtitleAdAvailable
                     setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary))
                     setTextColor(ContextCompat.getColor(context, R.color.colorOnPrimary))
                 }
             }
-            ButtonState.NO_AD -> {
+            NO_AD -> {
+                this.isClickable = false
+                buttonState = NO_AD
                 findViewById<AppCompatTextView>(R.id.reward_button_flipper_revealed_subtitle).apply {
                     if (info.internet) this.text = subtitleAdUnavailable
                     else this.text = context.getString(R.string.no_internet)
@@ -103,11 +111,13 @@ class RewardButton : LinearLayoutCompat {
                     setTextColor(ContextCompat.getColor(context, R.color.colorOnError))
                 }
             }
+            PURCHASED -> { }
         }
     }
 }
 
 enum class ButtonState {
     AD,
-    NO_AD
+    NO_AD,
+    PURCHASED
 }
