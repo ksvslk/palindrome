@@ -1,18 +1,14 @@
 package com.indest.hah.game
 
 import android.app.Application
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.games.Games
-import com.google.android.play.core.review.ReviewManager
-import com.google.android.play.core.review.ReviewManagerFactory
-import com.google.android.play.core.review.testing.FakeReviewManager
 import com.indest.hah.R
-import com.indest.hah.persistance.LevelProgress
-import com.indest.hah.persistance.LevelRepository
+import com.indest.hah.persistance.level.LevelProgress
+import com.indest.hah.persistance.level.LevelRepository
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
 import com.indest.hah.util.WindowSizeClass

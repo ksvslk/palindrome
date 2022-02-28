@@ -1,10 +1,12 @@
-package com.indest.hah.persistance
+package com.indest.hah.persistance.level
 
 import android.content.ContentValues
 import android.content.Context
 import androidx.room.*
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.google.gson.Gson
+import com.indest.hah.persistance.Converters
+import com.indest.hah.persistance.billing.BillingDao
 import com.indest.hah.persistance.dto.Interval
 import com.indest.hah.persistance.dto.LetterProperties
 import com.indest.hah.persistance.dto.LevelData
@@ -21,6 +23,7 @@ import java.util.ArrayList
 abstract class LevelDatabase : RoomDatabase() {
 
     abstract val levelDao: LevelDao
+    abstract val billingDao: BillingDao
 
     companion object {
 

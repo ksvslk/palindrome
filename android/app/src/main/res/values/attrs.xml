@@ -10,6 +10,7 @@
         <attr name="subtitle_ad_unavailable" format="string" />
     </declare-styleable>
     <declare-styleable name="PurchaseButton">
+        <attr name="sku" format="string" />
         <attr name="visibility_case_1" format="reference" />
         <attr name="visibility_case_2" format="reference" />
         <attr name="visibility_case_3" format="reference" />

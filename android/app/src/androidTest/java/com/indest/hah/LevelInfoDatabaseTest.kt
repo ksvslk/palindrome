@@ -3,8 +3,8 @@ package com.indest.hah
 import androidx.room.Room
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.indest.hah.persistance.LevelDatabase
-import com.indest.hah.persistance.LevelDao
+import com.indest.hah.persistance.level.LevelDatabase
+import com.indest.hah.persistance.level.LevelDao
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.test.TestCoroutineDispatcher

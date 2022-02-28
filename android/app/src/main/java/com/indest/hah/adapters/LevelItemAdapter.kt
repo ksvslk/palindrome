@@ -1,16 +1,13 @@
 package com.indest.hah.adapters
 
-import android.graphics.Color
-import android.graphics.Typeface
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.indest.hah.R
-import com.indest.hah.persistance.LevelProgress
+import com.indest.hah.persistance.level.LevelProgress
 import com.indest.hah.persistance.dto.LevelData
 
 class LevelItemAdapter(

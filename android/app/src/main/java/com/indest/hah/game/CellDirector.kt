@@ -4,7 +4,7 @@ import android.util.Log
 import com.indest.hah.letter.*
 import com.indest.hah.letter.effects.ColorSelector
 import com.indest.hah.letter.effects.SoundSelector
-import com.indest.hah.persistance.LevelProgress
+import com.indest.hah.persistance.level.LevelProgress
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.util.C.BOTTOM_LAYER
 import com.indest.hah.util.C.MIDDLE_LAYER

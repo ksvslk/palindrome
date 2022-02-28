@@ -1,4 +1,4 @@
-package com.indest.hah.persistance
+package com.indest.hah.persistance.level
 
 enum class LevelProgress {
     TODO,

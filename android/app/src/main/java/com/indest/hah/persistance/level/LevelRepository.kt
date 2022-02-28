@@ -1,4 +1,4 @@
-package com.indest.hah.persistance
+package com.indest.hah.persistance.level
 
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData

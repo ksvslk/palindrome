@@ -111,6 +111,7 @@
         android:clickable="true"
         android:focusable="true"
         android:orientation="horizontal"
+        purchasebutton:sku="@string/instant_clues"
         purchasebutton:visibility_case_1="@array/clues_case_1"
         />
     <com.indest.hah.PurchaseButton
@@ -122,6 +123,7 @@
         android:clickable="true"
         android:focusable="true"
         android:orientation="horizontal"
+        purchasebutton:sku="@string/instant_letters"
         purchasebutton:visibility_case_1="@array/letters_case_1"
         purchasebutton:labels="@array/best_loved_label"
         />
@@ -134,6 +136,7 @@
         android:clickable="true"
         android:focusable="true"
         android:orientation="horizontal"
+        purchasebutton:sku="@string/no_intermediate_ads"
         purchasebutton:visibility_case_1="@array/intermediate_case_1"
         />
     <com.indest.hah.PurchaseButton
@@ -145,6 +148,7 @@
         android:clickable="true"
         android:focusable="true"
         android:orientation="horizontal"
+        purchasebutton:sku="@string/full_no_ads"
         purchasebutton:visibility_case_1="@array/full_ads_case_1"
         purchasebutton:visibility_case_2="@array/full_ads_case_2"
         purchasebutton:visibility_case_3="@array/full_ads_case_3"

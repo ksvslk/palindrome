@@ -49,7 +49,7 @@
     <!-- IAPs that will hide intermediate ads removal purchase button from menu. ANY match will do. -->
     <string-array name="intermediate_case_1">
         <item>@string/full_no_ads</item>
-        <item>@string/intermediate_ads</item>
+        <item>@string/no_intermediate_ads</item>
     </string-array>
 
 
@@ -58,7 +58,7 @@
         <item>@string/full_no_ads</item>
     </string-array>
     <string-array name="full_ads_case_2">
-        <item>@string/intermediate_ads</item>
+        <item>@string/no_intermediate_ads</item>
         <item>@string/instant_clues</item>
     </string-array>
     <string-array name="full_ads_case_3">

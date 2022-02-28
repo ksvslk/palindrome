@@ -3,7 +3,7 @@ package com.indest.hah.persistance.dto
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.indest.hah.persistance.LevelProgress
+import com.indest.hah.persistance.level.LevelProgress
 
 @Entity(tableName = "level_info_table")
 data class LevelData(

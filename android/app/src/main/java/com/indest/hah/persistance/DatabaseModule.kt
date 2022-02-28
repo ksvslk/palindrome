@@ -1,6 +1,9 @@
 package com.indest.hah.persistance
 
 import android.content.Context
+import com.indest.hah.persistance.billing.BillingDao
+import com.indest.hah.persistance.level.LevelDao
+import com.indest.hah.persistance.level.LevelDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,6 +24,11 @@ class DatabaseModule {
     @Provides
     fun provideLevelDao(levelDatabase: LevelDatabase): LevelDao {
         return levelDatabase.levelDao
+    }
+
+    @Provides
+    fun provideBillingDao(levelDatabase: LevelDatabase): BillingDao {
+        return levelDatabase.billingDao
     }
 
 }

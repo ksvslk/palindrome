@@ -20,6 +20,7 @@ class PurchaseButton : LinearLayoutCompat {
 
     private var visibilityChangingSkus: MutableList<Set<String>> = mutableListOf()
     private var labels: Array<CharSequence>? = null
+    var sku: String? = null
 
     constructor(context: Context) : super(context) {
         initializeViews(context)
@@ -51,6 +52,7 @@ class PurchaseButton : LinearLayoutCompat {
             }
         }
         labels = typedArray.getTextArray(R.styleable.PurchaseButton_labels)
+        sku = typedArray.getString(R.styleable.PurchaseButton_sku)
         typedArray.recycle()
     }
 
@@ -94,24 +96,38 @@ class PurchaseButton : LinearLayoutCompat {
             View.GONE
     }
 
+    private fun setTitle(title: String)
+    {
+        findViewById<AppCompatTextView>(R.id.purchase_button_title).text = title
+    }
+
+    private fun setPrice(price: String)
+    {
+        findViewById<AppCompatTextView>(R.id.purchase_button_subtitle).text = price
+    }
+
     fun updateButtonUi(info: GeneralViewModel.ButtonInfo) {
         if (!info.internet) {
             this.visibility = View.GONE
             return
         }
-
+        info.skus[sku]?.let {
+            setTitle(it.title)
+            setPrice(it.price)
+        }
+        val skus = info.skus.values.map { if (it.isPurchased) it.sku }
         var purchased = false
 
         // Regular purchase button
         if (visibilityChangingSkus.size == REGULAR_VISIBILITY_CASES) {
-            purchased = info.skus.intersect(visibilityChangingSkus[0]).isNotEmpty()
+            purchased = skus.intersect(visibilityChangingSkus[0]).isNotEmpty()
         }
         // Full ads purchase button
         else if (visibilityChangingSkus.size == SPECIAL_VISIBILITY_CASES) {
-            if (info.skus.isNotEmpty()) hideLabel()
+            if (skus.isNotEmpty()) hideLabel()
             else showLabelIfApplicable()
             visibilityChangingSkus.forEach {
-                if (it.intersect(info.skus) == it) {
+                if (it.intersect(skus) == it) {
                     purchased = true
                     return@forEach
                 }

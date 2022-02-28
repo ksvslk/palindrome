@@ -27,7 +27,6 @@ import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.play.core.review.ReviewManagerFactory
-import com.google.android.play.core.review.testing.FakeReviewManager
 import com.indest.hah.MainActivity
 import com.indest.hah.R
 import com.indest.hah.components.Animations
@@ -40,7 +39,7 @@ import com.indest.hah.game.LevelViewModel.Solution.*
 import com.indest.hah.game.LevelViewModel.UiState.*
 import com.indest.hah.game.MessageSnackBar
 import com.indest.hah.letter.Cell
-import com.indest.hah.persistance.LevelProgress
+import com.indest.hah.persistance.level.LevelProgress
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.util.VaryingProbability
 import dagger.hilt.android.AndroidEntryPoint

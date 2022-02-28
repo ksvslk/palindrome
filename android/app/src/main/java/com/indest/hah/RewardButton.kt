@@ -73,10 +73,10 @@ class RewardButton : LinearLayoutCompat {
     }
 
     fun updateButtonUi(info: GeneralViewModel.ButtonInfo) {
-        val purchased = info.skus.intersect(unlockingSkus).isNotEmpty()
+        val purchased = info.skus.values.map { if(it.isPurchased) it.sku }.intersect(unlockingSkus).isNotEmpty()
         if (purchased) {
             this.isClickable = true
-            buttonState = PURCHASED
+            buttonState = NOTHING
             findViewById<AppCompatTextView>(R.id.reward_button_flipper_revealed_subtitle).apply {
                 this.text = subtitleRewardUnlocked
                 setBackgroundColor(ContextCompat.getColor(context, R.color.successBoxColor))
@@ -111,7 +111,7 @@ class RewardButton : LinearLayoutCompat {
                     setTextColor(ContextCompat.getColor(context, R.color.colorOnError))
                 }
             }
-            PURCHASED -> { }
+            NOTHING -> { }
         }
     }
 }
@@ -119,5 +119,5 @@ class RewardButton : LinearLayoutCompat {
 enum class ButtonState {
     AD,
     NO_AD,
-    PURCHASED
+    NOTHING
 }

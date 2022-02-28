@@ -2,7 +2,7 @@ package com.indest.hah.persistance.dto
 
 import androidx.room.Embedded
 import androidx.room.Relation
-import com.indest.hah.persistance.LevelProgress
+import com.indest.hah.persistance.level.LevelProgress
 import java.io.Serializable
 
 class Level(
@@ -14,7 +14,7 @@ class Level(
     val lettersProperties: List<LetterProperties>,
 ):Serializable {
     constructor() : this(
-        LevelData(0,"_EMPTY_CONSTRUCTOR_","","",false,LevelProgress.IN_PROGRESS,0, 0, 0),
+        LevelData(0,"_EMPTY_CONSTRUCTOR_","","",false, LevelProgress.IN_PROGRESS,0, 0, 0),
         emptyList()
     )
 }
