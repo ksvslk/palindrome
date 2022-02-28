@@ -34,9 +34,8 @@ class GeneralViewModel @Inject constructor(
     private var _internetTest = false
     private var _adTest = false
 
-    private val _buttonState =
-        MutableStateFlow(ButtonInfo(ButtonState.NO_AD, mutableMapOf(), _internetTest))
-    val buttonState = _buttonState.asStateFlow()
+    private val _buttonState = MutableSharedFlow<ButtonInfo>(1)
+    val buttonState = _buttonState.asSharedFlow()
 
     init {
         viewModelScope.launch {
@@ -47,28 +46,36 @@ class GeneralViewModel @Inject constructor(
                 skus
             )
             viewModelScope.launch {
-                combineMinSkuDetails(application.getString(R.string.instant_letters)).collectLatest {
-                    minSkuDetailsMap[it.sku] = it
-                    updateButtonState()
-                }
+                combineMinSkuDetails(application.getString(R.string.instant_letters)).distinctUntilChanged()
+                    .collect {
+                        minSkuDetailsMap[it.sku] = it
+                        Log.d(TAG, "instant_letters changed: ${it}")
+                        updateButtonState()
+                    }
             }
             viewModelScope.launch {
-                combineMinSkuDetails(application.getString(R.string.instant_clues)).collectLatest {
-                    minSkuDetailsMap[it.sku] = it
-                    updateButtonState()
-                }
+                combineMinSkuDetails(application.getString(R.string.instant_clues)).distinctUntilChanged()
+                    .collect {
+                        minSkuDetailsMap[it.sku] = it
+                        Log.d(TAG, "instant_clues changed: ${it}")
+                        updateButtonState()
+                    }
             }
             viewModelScope.launch {
-                combineMinSkuDetails(application.getString(R.string.no_intermediate_ads)).collectLatest {
-                    minSkuDetailsMap[it.sku] = it
-                    updateButtonState()
-                }
+                combineMinSkuDetails(application.getString(R.string.no_intermediate_ads)).distinctUntilChanged()
+                    .collect {
+                        minSkuDetailsMap[it.sku] = it
+                        Log.d(TAG, "no_intermediate_ads changed: ${it}")
+                        updateButtonState()
+                    }
             }
             viewModelScope.launch {
-                combineMinSkuDetails(application.getString(R.string.full_no_ads)).collectLatest {
-                    minSkuDetailsMap[it.sku] = it
-                    updateButtonState()
-                }
+                combineMinSkuDetails(application.getString(R.string.full_no_ads)).distinctUntilChanged()
+                    .collect {
+                        minSkuDetailsMap[it.sku] = it
+                        Log.d(TAG, "full_no_ads changed: ${it}")
+                        updateButtonState()
+                    }
             }
         }
     }
@@ -121,17 +128,21 @@ class GeneralViewModel @Inject constructor(
     }
 
     private fun updateButtonState() {
-        Log.d(TAG, minSkuDetailsMap.toString())
+        Log.d(TAG, "set buttonstate new value: ${minSkuDetailsMap.toString()}")
         if (_internetTest && _adTest) {
-            _buttonState.value =
-                ButtonInfo(
-                    ButtonState.AD,
-                    minSkuDetailsMap,
-                    _internetTest
+            viewModelScope.launch {
+                _buttonState.emit(
+                    ButtonInfo(
+                        ButtonState.AD,
+                        minSkuDetailsMap,
+                        _internetTest
+                    )
                 )
+            }
         } else {
-            _buttonState.value =
-                ButtonInfo(ButtonState.NO_AD, minSkuDetailsMap, _internetTest)
+            viewModelScope.launch {
+                _buttonState.emit(ButtonInfo(ButtonState.NO_AD, minSkuDetailsMap, _internetTest))
+            }
         }
     }
 

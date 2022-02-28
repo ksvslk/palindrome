@@ -18,6 +18,7 @@ import com.indest.hah.PurchaseButton
 import com.indest.hah.R
 import com.indest.hah.databinding.HintsFragmentBinding
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 
@@ -30,9 +31,10 @@ class HintsFragment : BottomSheetDialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED)
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED)
             {
                 viewModel.buttonState.collect() {
+                    Log.d(TAG, "Update buttons!")
                     binding.rewardCategoryButton.updateButtonUi(it)
                     binding.rewardPlaceLetter.updateButtonUi(it)
                     binding.purchaseButtonClues.updateButtonUi(it)

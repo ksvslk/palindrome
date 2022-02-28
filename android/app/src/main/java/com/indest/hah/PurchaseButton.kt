@@ -116,6 +116,8 @@ class PurchaseButton : LinearLayoutCompat {
             setPrice(it.price)
         }
         val skus = info.skus.values.filter { it.isPurchased }.map { it.sku }
+        Log.d(this.sku, skus.toString())
+        Log.d(this.sku, visibilityChangingSkus[0].toString())
         var purchased = false
 
         // Regular purchase button
