@@ -73,7 +73,7 @@ class RewardButton : LinearLayoutCompat {
     }
 
     fun updateButtonUi(info: GeneralViewModel.ButtonInfo) {
-        val purchased = info.skus.values.map { if(it.isPurchased) it.sku }.intersect(unlockingSkus).isNotEmpty()
+        val purchased = info.skus.values.filter { it.isPurchased }.map { it.sku }.intersect(unlockingSkus).isNotEmpty()
         if (purchased) {
             this.isClickable = true
             buttonState = NOTHING

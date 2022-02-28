@@ -76,9 +76,6 @@ class BillingDataSource private constructor(
     DefaultLifecycleObserver, PurchasesUpdatedListener, BillingClientStateListener,
     SkuDetailsResponseListener {
 
-    @Inject
-    lateinit var billingRepository: BillingRepository
-
     // Billing client, connection, cached data
     private val billingClient: BillingClient
 
@@ -370,7 +367,6 @@ class BillingDataSource private constructor(
                                     .setPurchaseToken(purchase.purchaseToken)
                                     .build()
                             )
-                            billingRepository.setSkuPurchased(purchase.skus.first())
                             if (billingResult.responseCode != BillingClient.BillingResponseCode.OK) {
                                 Log.e(
                                     TAG,
