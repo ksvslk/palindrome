@@ -38,6 +38,7 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogListener {
+
     private val TAG = "MainActivity"
     lateinit var binding: ActivityMainBinding
     private val levelViewModel: LevelViewModel by viewModels()
