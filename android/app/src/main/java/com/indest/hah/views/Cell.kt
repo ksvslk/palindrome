@@ -1,12 +1,12 @@
-package com.indest.hah.letter
+package com.indest.hah.views
 
 import android.content.Context
 import android.graphics.Rect
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.gridlayout.widget.GridLayout
 import com.indest.hah.R
+import com.indest.hah.letter.data.GlobalPosition
 import kotlin.math.roundToInt
 
 abstract class Cell<T, F>(context: Context) : AppCompatTextView(context) {

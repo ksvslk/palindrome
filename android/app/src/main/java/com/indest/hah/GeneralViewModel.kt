@@ -6,15 +6,15 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
+import com.indest.hah.global.ConnectionLiveData
 import com.indest.hah.persistance.billing.BillingRepository
 import com.indest.hah.persistance.dto.MinSkuDetails
-import com.indest.hah.util.ConnectionLiveData
+import com.indest.hah.views.ButtonState
 import com.sample.android.trivialdrivesample.billing.BillingDataSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.math.min
 
 @HiltViewModel
 class GeneralViewModel @Inject constructor(
@@ -27,15 +27,14 @@ class GeneralViewModel @Inject constructor(
     private lateinit var _billingDataSource: BillingDataSource
     private val minSkuDetailsMap: MutableMap<String, MinSkuDetails> = mutableMapOf()
 
-    private val _internetState: ConnectionLiveData =
+    private val _internet: ConnectionLiveData =
         ConnectionLiveData(application.applicationContext)
-    val internetState = _internetState.asFlow()
-
-    private var _internetTest = false
-    private var _adTest = false
+    val internet = _internet.asFlow()
 
     private val _buttonState = MutableSharedFlow<ButtonInfo>(1)
     val buttonState = _buttonState.asSharedFlow()
+
+    private var _adTest = false
 
     init {
         viewModelScope.launch {
@@ -46,42 +45,27 @@ class GeneralViewModel @Inject constructor(
                 skus
             )
             viewModelScope.launch {
-                combineMinSkuDetails(application.getString(R.string.instant_letters)).distinctUntilChanged()
-                    .collect {
-                        minSkuDetailsMap[it.sku] = it
-                        Log.d(TAG, "instant_letters changed: ${it}")
-                        updateButtonState()
-                    }
+                combineAndUpdateMinSkuDetails(application.getString(R.string.instant_letters))
             }
             viewModelScope.launch {
-                combineMinSkuDetails(application.getString(R.string.instant_clues)).distinctUntilChanged()
-                    .collect {
-                        minSkuDetailsMap[it.sku] = it
-                        Log.d(TAG, "instant_clues changed: ${it}")
-                        updateButtonState()
-                    }
+                combineAndUpdateMinSkuDetails(application.getString(R.string.instant_clues))
             }
             viewModelScope.launch {
-                combineMinSkuDetails(application.getString(R.string.no_intermediate_ads)).distinctUntilChanged()
-                    .collect {
-                        minSkuDetailsMap[it.sku] = it
-                        Log.d(TAG, "no_intermediate_ads changed: ${it}")
-                        updateButtonState()
-                    }
+                combineAndUpdateMinSkuDetails(application.getString(R.string.no_intermediate_ads))
             }
             viewModelScope.launch {
-                combineMinSkuDetails(application.getString(R.string.full_no_ads)).distinctUntilChanged()
-                    .collect {
-                        minSkuDetailsMap[it.sku] = it
-                        Log.d(TAG, "full_no_ads changed: ${it}")
-                        updateButtonState()
-                    }
+                combineAndUpdateMinSkuDetails(application.getString(R.string.full_no_ads))
+            }
+            viewModelScope.launch {
+                internet.collect {
+                    updateButtonState()
+                }
             }
         }
     }
 
-    private fun combineMinSkuDetails(sku: String): Flow<MinSkuDetails> {
-        return combine(
+    private suspend fun combineAndUpdateMinSkuDetails(sku: String) {
+        combine(
             _billingDataSource.getSkuTitle(sku),
             _billingDataSource.getSkuPrice(sku),
             _billingDataSource.canPurchase(sku),
@@ -94,18 +78,14 @@ class GeneralViewModel @Inject constructor(
                 canPurchase = canPurchase,
                 isPurchased = isPurchased
             )
+        }.distinctUntilChanged().collect {
+            minSkuDetailsMap[it.sku] = it
+            updateButtonState()
         }
     }
 
     fun makePurchase(activity: Activity, sku: String) {
         _billingDataSource.launchBillingFlow(activity, sku)
-    }
-
-    fun setInternet(newValue: Boolean) {
-        viewModelScope.launch {
-            _internetTest = newValue
-            updateButtonState()
-        }
     }
 
     fun setAd(newValue: Boolean) {
@@ -115,33 +95,21 @@ class GeneralViewModel @Inject constructor(
         }
     }
 
-    fun addPurchase(sku: String) {
-        viewModelScope.launch {
-            billingRepository.setSkuPurchased(sku)
-        }
-    }
-
-    fun removePurchase(sku: String) {
-        viewModelScope.launch {
-            billingRepository.setSkuPurchased(sku, value = false)
-        }
-    }
-
     private fun updateButtonState() {
-        Log.d(TAG, "set buttonstate new value: ${minSkuDetailsMap.toString()}")
-        if (_internetTest && _adTest) {
+        val internetState = _internet.value == true
+        if (_internet.value == true && _adTest) {
             viewModelScope.launch {
                 _buttonState.emit(
                     ButtonInfo(
                         ButtonState.AD,
                         minSkuDetailsMap,
-                        _internetTest
+                        internetState
                     )
                 )
             }
         } else {
             viewModelScope.launch {
-                _buttonState.emit(ButtonInfo(ButtonState.NO_AD, minSkuDetailsMap, _internetTest))
+                _buttonState.emit(ButtonInfo(ButtonState.NO_AD, minSkuDetailsMap, internetState))
             }
         }
     }

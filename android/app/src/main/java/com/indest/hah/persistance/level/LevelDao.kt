@@ -1,7 +1,7 @@
 package com.indest.hah.persistance.level
 
 import androidx.room.*
-import com.indest.hah.letter.effects.Shuffler
+import com.indest.hah.game.levelcreation.Shuffler
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
 import kotlinx.coroutines.flow.Flow

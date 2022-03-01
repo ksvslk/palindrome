@@ -2,7 +2,7 @@ package com.indest.hah.letter
 
 import android.view.MotionEvent
 import android.view.View
-import com.indest.hah.util.C
+import com.indest.hah.views.Letter
 
 sealed interface ILetterState {
     fun draw(letter: Letter)

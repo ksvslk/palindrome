@@ -1,17 +1,16 @@
-package com.indest.hah.modules
+package com.indest.hah.global
 
 import android.content.Context
 import android.media.AudioManager
 import android.media.SoundPool
 import androidx.core.content.res.ResourcesCompat
 import com.indest.hah.R
-import com.indest.hah.components.Colors
-import com.indest.hah.components.Sounds
+import com.indest.hah.global.data.Colors
+import com.indest.hah.global.data.Sounds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
-import dagger.hilt.android.internal.builders.ViewModelComponentBuilder
 import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityScoped

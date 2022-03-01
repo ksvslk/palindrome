@@ -1,4 +1,4 @@
-package com.indest.hah.util
+package com.indest.hah.global
 
 import android.content.Context
 import android.content.Context.CONNECTIVITY_SERVICE
@@ -8,35 +8,34 @@ import android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET
 import android.net.NetworkRequest
 import android.util.Log
 import androidx.lifecycle.LiveData
-import com.indest.hah.game.enums.Internet
 import java.net.HttpURLConnection
 import java.net.URL
 import javax.net.ssl.HttpsURLConnection
 
 val TAG = "ConnectionLiveData"
 
-class ConnectionLiveData(context: Context) : LiveData<Internet>() {
+class ConnectionLiveData(context: Context) : LiveData<Boolean>() {
 
     private lateinit var networkCallback: ConnectivityManager.NetworkCallback
     private val cm = context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
     private val validNetworks: MutableSet<Network> = HashSet()
 
     init {
-        postValue(Internet.OFFLINE)
+        postValue(false)
     }
 
     private fun postInternetStateValue() {
         if (validNetworks.size > 0) {
             if (isConnectedToInternet()) {
-                postValue(Internet.ONLINE)
-                Log.d(TAG, "Internet connection: ${Internet.ONLINE}.")
+                postValue(true)
+                Log.d(TAG, "Internet connection: YES.")
             } else {
-                postValue(Internet.OFFLINE)
-                Log.d(TAG, "Internet connection: ${Internet.OFFLINE}.")
+                postValue(false)
+                Log.d(TAG, "Internet connection: NO.")
             }
         } else {
-            postValue(Internet.OFFLINE)
-            Log.d(TAG, "Internet connection: ${Internet.OFFLINE}.")
+            postValue(false)
+            Log.d(TAG, "Internet connection: NO.")
         }
     }
 

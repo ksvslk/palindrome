@@ -18,8 +18,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.GeneralViewModel
 import com.indest.hah.R
 import com.indest.hah.databinding.GoogleGamesFragmentBinding
-import com.indest.hah.game.enums.Internet
-import com.indest.hah.game.enums.Internet.*
 import kotlinx.coroutines.flow.collect
 
 class GoogleGamesFragment : BottomSheetDialogFragment() {
@@ -36,9 +34,9 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
         lifecycleScope.launchWhenStarted {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED)
             {
-                generalViewModel.internetState.collect { internet ->
+                generalViewModel.internet.collect { internet ->
                     when (internet) {
-                        ONLINE -> {
+                        true -> {
                             val lastSignedInAccount =
                                 GoogleSignIn.getLastSignedInAccount(requireContext().applicationContext)
                             if (lastSignedInAccount == null) {
@@ -56,7 +54,7 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
                                 }
                             }
                         }
-                        OFFLINE -> {
+                        false -> {
                             binding.achievementsButton.setOnClickListener(null)
                             binding.leaderboardsButton.setOnClickListener(null)
                             binding.achievementsButton.visibility = View.GONE

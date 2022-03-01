@@ -1,4 +1,4 @@
-package com.indest.hah.components
+package com.indest.hah.global
 
 import android.animation.*
 import android.content.Context
@@ -6,17 +6,16 @@ import android.graphics.drawable.AnimationDrawable
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
-import android.view.animation.LinearInterpolator
 import android.view.animation.OvershootInterpolator
 import android.widget.TextView
 import androidx.appcompat.widget.LinearLayoutCompat
 import com.indest.hah.MainActivity
 import com.indest.hah.R
-import com.indest.hah.game.CellContainer
-import com.indest.hah.game.MessageSnackBar
-import com.indest.hah.letter.Cell
-import com.indest.hah.letter.Letter
-import com.indest.hah.persistance.dto.LevelData
+import com.indest.hah.views.CellContainer
+import com.indest.hah.views.MessageSnackBar
+import com.indest.hah.views.Cell
+import com.indest.hah.views.Letter
+import com.indest.hah.global.data.Colors
 import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.scopes.ActivityScoped
 import nl.dionsegijn.konfetti.core.Angle
@@ -24,7 +23,6 @@ import nl.dionsegijn.konfetti.core.Party
 import nl.dionsegijn.konfetti.core.Position
 import nl.dionsegijn.konfetti.core.Spread
 import nl.dionsegijn.konfetti.core.emitter.Emitter
-import java.time.Duration
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 

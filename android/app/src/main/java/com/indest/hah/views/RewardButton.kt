@@ -1,4 +1,4 @@
-package com.indest.hah
+package com.indest.hah.views
 
 import android.content.Context
 import android.content.res.TypedArray
@@ -9,7 +9,9 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
-import com.indest.hah.ButtonState.*
+import com.indest.hah.GeneralViewModel
+import com.indest.hah.R
+import com.indest.hah.views.ButtonState.*
 
 class RewardButton : LinearLayoutCompat {
 
@@ -19,7 +21,7 @@ class RewardButton : LinearLayoutCompat {
     private lateinit var subtitleAdAvailable: String
     private lateinit var subtitleAdUnavailable: String
     private var customIcon: Int = -1
-    var buttonState:ButtonState = NO_AD
+    var buttonState: ButtonState = NO_AD
 
     constructor(context: Context) : super(context) {
         initializeViews(context)

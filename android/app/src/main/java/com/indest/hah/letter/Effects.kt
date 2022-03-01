@@ -1,17 +1,18 @@
-package com.indest.hah.letter.effects
+package com.indest.hah.letter
 
 import android.content.Context
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import com.indest.hah.R
-import com.indest.hah.components.SoundPlayer
-import com.indest.hah.letter.effects.ColorSelector.*
+import com.indest.hah.global.SoundPlayer
+import com.indest.hah.letter.data.AnimationColor
+import com.indest.hah.letter.enums.ColorSelector
+import com.indest.hah.letter.enums.ColorSelector.*
+import com.indest.hah.letter.enums.SoundSelector
 import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.scopes.ActivityScoped
-import dagger.hilt.android.scopes.FragmentScoped
 import javax.inject.Inject
 
 @ActivityScoped

@@ -1,4 +1,4 @@
-package com.indest.hah.letter.effects
+package com.indest.hah.letter.enums
 
 enum class ColorSelector {
     ACTION_DOWN_NO_FRIEND,

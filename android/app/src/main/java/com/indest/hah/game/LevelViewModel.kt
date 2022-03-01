@@ -11,7 +11,7 @@ import com.indest.hah.persistance.level.LevelProgress
 import com.indest.hah.persistance.level.LevelRepository
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
-import com.indest.hah.util.WindowSizeClass
+import com.indest.hah.game.levelcreation.WindowSizeClass
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch

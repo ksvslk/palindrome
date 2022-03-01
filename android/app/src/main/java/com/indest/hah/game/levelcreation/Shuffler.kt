@@ -1,4 +1,4 @@
-package com.indest.hah.letter.effects
+package com.indest.hah.game.levelcreation
 
 
 object Shuffler {

@@ -1,4 +1,4 @@
-package com.indest.hah.components
+package com.indest.hah.global.data
 
 data class Colors(
     val successTextColor: Int,

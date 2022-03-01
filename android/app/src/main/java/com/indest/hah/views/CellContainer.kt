@@ -1,4 +1,4 @@
-package com.indest.hah.game
+package com.indest.hah.views
 
 import android.content.Context
 import android.util.AttributeSet

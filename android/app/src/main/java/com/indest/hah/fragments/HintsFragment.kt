@@ -12,13 +12,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.indest.hah.ButtonState.*
+import com.indest.hah.views.ButtonState.*
 import com.indest.hah.GeneralViewModel
-import com.indest.hah.PurchaseButton
-import com.indest.hah.R
 import com.indest.hah.databinding.HintsFragmentBinding
+import com.indest.hah.views.PurchaseButton
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 
@@ -110,7 +108,7 @@ class HintsFragment : BottomSheetDialogFragment() {
         binding.adSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
             viewModel.setAd(isChecked)
         }
-        binding.internetSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+       /* binding.internetSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
             viewModel.setInternet(isChecked)
         }
         binding.addRemoveClues.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -128,7 +126,7 @@ class HintsFragment : BottomSheetDialogFragment() {
         binding.addRemoveIntermediate.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) viewModel.addPurchase(getString(R.string.no_intermediate_ads))
             else viewModel.removePurchase(getString(R.string.no_intermediate_ads))
-        }
+        }*/
     }
 
 }

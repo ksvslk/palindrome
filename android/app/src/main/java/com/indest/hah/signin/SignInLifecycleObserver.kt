@@ -3,13 +3,11 @@ package com.indest.hah.signin
 import android.app.Activity
 import android.content.Intent
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
 
 class SignInLifecycleObserver(private val registry: ActivityResultRegistry) :
     DefaultLifecycleObserver {

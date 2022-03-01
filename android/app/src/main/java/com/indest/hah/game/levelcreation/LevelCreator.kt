@@ -1,4 +1,4 @@
-package com.indest.hah.components
+package com.indest.hah.game.levelcreation
 
 import android.content.Context
 import android.util.DisplayMetrics
@@ -11,12 +11,10 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.gridlayout.widget.GridLayout
 import com.indest.hah.R
-import com.indest.hah.letter.Letter
+import com.indest.hah.views.Letter
 import com.indest.hah.letter.LetterState
-import com.indest.hah.letter.Slot
+import com.indest.hah.views.Slot
 import com.indest.hah.persistance.dto.Level
-import com.indest.hah.util.DensitySettings
-import com.indest.hah.util.WindowSizeClass
 import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Inject

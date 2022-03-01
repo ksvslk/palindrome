@@ -1,9 +1,8 @@
-package com.indest.hah
+package com.indest.hah.views
 
 import android.content.Context
 import android.content.res.TypedArray
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.content.res.AppCompatResources
@@ -11,6 +10,8 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
+import com.indest.hah.GeneralViewModel
+import com.indest.hah.R
 
 private const val REGULAR_VISIBILITY_CASES = 1
 private const val SPECIAL_VISIBILITY_CASES = 3
@@ -116,13 +117,11 @@ class PurchaseButton : LinearLayoutCompat {
             setPrice(it.price)
         }
         val skus = info.skus.values.filter { it.isPurchased }.map { it.sku }
-        Log.d(this.sku, skus.toString())
-        Log.d(this.sku, visibilityChangingSkus[0].toString())
-        var purchased = false
+        var purchasedInSomeWay = false
 
         // Regular purchase button
         if (visibilityChangingSkus.size == REGULAR_VISIBILITY_CASES) {
-            purchased = skus.intersect(visibilityChangingSkus[0]).isNotEmpty()
+            purchasedInSomeWay = skus.intersect(visibilityChangingSkus[0]).isNotEmpty()
         }
         // Full ads purchase button
         else if (visibilityChangingSkus.size == SPECIAL_VISIBILITY_CASES) {
@@ -130,15 +129,15 @@ class PurchaseButton : LinearLayoutCompat {
             else showLabelIfApplicable()
             visibilityChangingSkus.forEach {
                 if (it.intersect(skus) == it) {
-                    purchased = true
+                    purchasedInSomeWay = true
                     return@forEach
                 }
             }
         }
-        if (purchased) {
+        if (purchasedInSomeWay) {
             this.visibility = View.GONE
         }
-        else {
+        else if (info.skus[sku]?.canPurchase == true) {
             this.visibility = View.VISIBLE
         }
     }

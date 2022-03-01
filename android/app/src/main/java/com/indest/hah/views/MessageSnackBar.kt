@@ -1,4 +1,4 @@
-package com.indest.hah.game
+package com.indest.hah.views
 
 import android.animation.ObjectAnimator
 import android.content.Context
@@ -12,8 +12,8 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.indest.hah.R
-import com.indest.hah.game.MessageSnackBar.Companion.TextSize.*
-import com.indest.hah.util.WindowSizeClass
+import com.indest.hah.views.MessageSnackBar.Companion.TextSize.*
+import com.indest.hah.game.levelcreation.WindowSizeClass
 import com.indest.hah.util.findSuitableParent
 
 class MessageSnackBar(

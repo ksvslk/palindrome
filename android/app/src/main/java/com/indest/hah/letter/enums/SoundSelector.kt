@@ -1,4 +1,4 @@
-package com.indest.hah.letter.effects
+package com.indest.hah.letter.enums
 
 enum class SoundSelector {
     PLACE_LETTER_IN_EMPTY_BOX,

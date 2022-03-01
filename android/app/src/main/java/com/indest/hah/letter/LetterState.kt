@@ -9,10 +9,10 @@ import androidx.fragment.app.findFragment
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.indest.hah.R
 import com.indest.hah.fragments.LevelFragment
-import com.indest.hah.letter.effects.ColorSelector
+import com.indest.hah.letter.enums.ColorSelector
+import com.indest.hah.views.Letter
 import com.indest.hah.util.C.NEUTRAL_LAYER
 import com.indest.hah.util.C.TOP_LAYER
-import dagger.hilt.android.AndroidEntryPoint
 import java.lang.IllegalStateException
 import kotlin.math.abs
 import kotlin.math.log2

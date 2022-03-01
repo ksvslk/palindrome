@@ -29,7 +29,7 @@ import com.indest.hah.game.LevelViewModel
 import com.indest.hah.persistance.dto.LevelData
 import com.indest.hah.signin.SignInLifecycleObserver
 import com.indest.hah.util.C
-import com.indest.hah.util.WindowSizeClass
+import com.indest.hah.game.levelcreation.WindowSizeClass
 import com.indest.hah.util.hideSystemBars
 import com.indest.hah.util.saveBooleanPreference
 import dagger.hilt.android.AndroidEntryPoint
@@ -64,11 +64,6 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
         windowSizeClassUpdater()
         setUpNavController()
         progressBarUpdater()
-        lifecycleScope.launchWhenResumed {
-            generalViewModel.internetState.collect {
-                Log.d(TAG, "Intenet is: ${it.name}")
-            }
-        }
     }
 
     override fun onResume() {

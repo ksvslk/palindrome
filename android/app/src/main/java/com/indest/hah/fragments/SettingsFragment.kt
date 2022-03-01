@@ -1,6 +1,5 @@
 package com.indest.hah.fragments
 
-import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -9,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.CompoundButton
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.commit
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -24,22 +22,13 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.replace
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.common.Scopes
-import com.google.android.gms.common.api.Scope
 import com.google.android.gms.games.Games.SCOPE_GAMES_SNAPSHOTS
 import com.indest.hah.GeneralViewModel
-import com.indest.hah.MainActivity
-import com.indest.hah.game.enums.Internet
-import com.indest.hah.game.enums.Internet.*
 import com.indest.hah.signin.SignInLifecycleObserver
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 
 
 class SettingsFragment : BottomSheetDialogFragment() {
@@ -56,10 +45,10 @@ class SettingsFragment : BottomSheetDialogFragment() {
         lifecycleScope.launchWhenStarted {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED)
             {
-                generalViewModel.internetState.collect { internet ->
+                generalViewModel.internet.collect { internet ->
                     binding.rateGameButton.setOnClickListener {
                         when (internet) {
-                            ONLINE -> {
+                            true -> {
                                 val intent = Intent(Intent.ACTION_VIEW).apply {
                                     data = Uri.parse(getString(R.string.app_package_url))
                                     setPackage(getString(R.string.vending_package))
@@ -68,7 +57,7 @@ class SettingsFragment : BottomSheetDialogFragment() {
                                     startActivity(intent)
                                 }
                             }
-                            OFFLINE -> {
+                            false -> {
                                 Toast.makeText(
                                     requireContext().applicationContext,
                                     getString(R.string.no_internet),
@@ -80,10 +69,10 @@ class SettingsFragment : BottomSheetDialogFragment() {
 
                     binding.googleSignInButton.setOnClickListener {
                         when (internet) {
-                            ONLINE -> {
+                            true -> {
                                 signInToGoogle()
                             }
-                            OFFLINE -> {
+                            false -> {
                                 Toast.makeText(
                                     requireContext().applicationContext,
                                     getString(R.string.no_internet),

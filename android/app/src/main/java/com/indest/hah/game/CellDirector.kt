@@ -2,8 +2,12 @@ package com.indest.hah.game
 
 import android.util.Log
 import com.indest.hah.letter.*
-import com.indest.hah.letter.effects.ColorSelector
-import com.indest.hah.letter.effects.SoundSelector
+import com.indest.hah.letter.data.GlobalPosition
+import com.indest.hah.letter.enums.ColorSelector
+import com.indest.hah.letter.enums.SoundSelector
+import com.indest.hah.views.Cell
+import com.indest.hah.views.Letter
+import com.indest.hah.views.Slot
 import com.indest.hah.persistance.level.LevelProgress
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.util.C.BOTTOM_LAYER

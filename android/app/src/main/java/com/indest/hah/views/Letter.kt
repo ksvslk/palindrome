@@ -1,16 +1,17 @@
-package com.indest.hah.letter
+package com.indest.hah.views
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.view.MotionEvent
 import android.view.View.OnTouchListener
-import com.indest.hah.letter.effects.Effects
 import com.indest.hah.util.C.NEUTRAL_LAYER
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import androidx.gridlayout.widget.GridLayout
-
+import com.indest.hah.letter.Effects
+import com.indest.hah.letter.LetterState
+import com.indest.hah.letter.data.GlobalPosition
 
 @SuppressLint("ViewConstructor")
 @AndroidEntryPoint

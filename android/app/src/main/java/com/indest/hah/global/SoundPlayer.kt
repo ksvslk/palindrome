@@ -1,4 +1,4 @@
-package com.indest.hah.components
+package com.indest.hah.global
 
 import android.content.Context
 import android.media.AudioManager
@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import com.indest.hah.R
+import com.indest.hah.global.data.Sounds
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Inject
