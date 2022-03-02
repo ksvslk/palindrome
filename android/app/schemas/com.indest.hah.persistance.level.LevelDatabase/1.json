@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "5ab7a81bf105433e25ce532970f8146b",
+    "identityHash": "fdad34580e4d86b4860d58716eeeb2bd",
     "entities": [
       {
         "tableName": "level_info_table",
@@ -135,32 +135,6 @@
         ]
       },
       {
-        "tableName": "sku",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`sku` TEXT NOT NULL, `purchased` INTEGER NOT NULL, PRIMARY KEY(`sku`))",
-        "fields": [
-          {
-            "fieldPath": "sku",
-            "columnName": "sku",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "purchased",
-            "columnName": "purchased",
-            "affinity": "INTEGER",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "columnNames": [
-            "sku"
-          ],
-          "autoGenerate": false
-        },
-        "indices": [],
-        "foreignKeys": []
-      },
-      {
         "tableName": "interval",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `current_count` INTEGER NOT NULL, `limit_count` INTEGER NOT NULL, PRIMARY KEY(`name`))",
         "fields": [
@@ -196,7 +170,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5ab7a81bf105433e25ce532970f8146b')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'fdad34580e4d86b4860d58716eeeb2bd')"
     ]
   }
 }

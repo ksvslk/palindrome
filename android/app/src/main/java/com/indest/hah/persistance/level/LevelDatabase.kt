@@ -6,15 +6,13 @@ import androidx.room.*
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.google.gson.Gson
 import com.indest.hah.persistance.Converters
-import com.indest.hah.persistance.billing.BillingDao
 import com.indest.hah.persistance.dto.Interval
 import com.indest.hah.persistance.dto.LetterProperties
 import com.indest.hah.persistance.dto.LevelData
-import com.indest.hah.persistance.dto.Sku
 import java.util.ArrayList
 
 @Database(
-    entities = [LevelData::class, LetterProperties::class, Sku::class, Interval::class],
+    entities = [LevelData::class, LetterProperties::class, Interval::class],
     version = 1,
     exportSchema = true
 )
@@ -23,7 +21,6 @@ import java.util.ArrayList
 abstract class LevelDatabase : RoomDatabase() {
 
     abstract val levelDao: LevelDao
-    abstract val billingDao: BillingDao
 
     companion object {
 
@@ -78,22 +75,6 @@ abstract class LevelDatabase : RoomDatabase() {
                                         "level_info_table",
                                         OnConflictStrategy.IGNORE,
                                         contentValues
-                                    )
-                                }
-                                val skuList = ArrayList<String>()
-                                skuList.add(context.getString(com.indest.hah.R.string.full_no_ads))
-                                skuList.add(context.getString(com.indest.hah.R.string.instant_clues))
-                                skuList.add(context.getString(com.indest.hah.R.string.no_intermediate_ads))
-                                skuList.add(context.getString(com.indest.hah.R.string.instant_letters))
-
-                                skuList.forEach {
-                                    val skuValue = ContentValues()
-                                    skuValue.put("sku", it)
-                                    skuValue.put("purchased", false)
-                                    db.insert(
-                                        "sku",
-                                        OnConflictStrategy.IGNORE,
-                                        skuValue
                                     )
                                 }
 

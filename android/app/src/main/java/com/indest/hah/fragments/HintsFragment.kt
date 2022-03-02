@@ -97,7 +97,7 @@ class HintsFragment : BottomSheetDialogFragment() {
         view?.setOnClickListener {
             (view as? PurchaseButton)?.let { pb ->
                 pb.sku?.let { sku ->
-                    viewModel.makePurchase(requireActivity(), sku)
+                    viewModel.launchBillingFlow(requireActivity(), sku)
                 }
             }
         }

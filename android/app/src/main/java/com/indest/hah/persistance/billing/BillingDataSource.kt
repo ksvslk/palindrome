@@ -24,11 +24,9 @@ import android.os.SystemClock
 import android.util.Log
 import androidx.lifecycle.*
 import com.android.billingclient.api.*
-import com.indest.hah.persistance.billing.BillingRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 import kotlin.math.min
 
 /**

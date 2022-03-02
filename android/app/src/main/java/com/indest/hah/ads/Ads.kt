@@ -12,6 +12,7 @@ import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.indest.hah.R
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.android.scopes.ActivityScoped
 import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
 
@@ -109,5 +110,5 @@ class Ads @Inject constructor(
                 _rewardEarned = true
             }
         }
-    }
+
 }

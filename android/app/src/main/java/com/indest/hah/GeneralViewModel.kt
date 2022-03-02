@@ -2,12 +2,11 @@ package com.indest.hah
 
 import android.app.Activity
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
+import com.indest.hah.ads.Ads
 import com.indest.hah.global.ConnectionLiveData
-import com.indest.hah.persistance.billing.BillingRepository
 import com.indest.hah.persistance.dto.MinSkuDetails
 import com.indest.hah.views.ButtonState
 import com.sample.android.trivialdrivesample.billing.BillingDataSource
@@ -18,8 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GeneralViewModel @Inject constructor(
-    application: Application,
-    private val billingRepository: BillingRepository,
+    application: Application
 ) : AndroidViewModel(application) {
 
     private val TAG = "GeneralViewModel"
@@ -36,9 +34,16 @@ class GeneralViewModel @Inject constructor(
 
     private var _adTest = false
 
+    @Inject lateinit var ads: Ads
+
     init {
         viewModelScope.launch {
-            val skus = billingRepository.getAllSkuNames().toTypedArray()
+            val skus = arrayOf(
+                application.getString(R.string.full_no_ads),
+                application.getString(R.string.instant_clues),
+                application.getString(R.string.no_intermediate_ads),
+                application.getString(R.string.instant_letters)
+            )
             _billingDataSource = BillingDataSource.getInstance(
                 application,
                 viewModelScope,
@@ -84,7 +89,7 @@ class GeneralViewModel @Inject constructor(
         }
     }
 
-    fun makePurchase(activity: Activity, sku: String) {
+    fun launchBillingFlow(activity: Activity, sku: String) {
         _billingDataSource.launchBillingFlow(activity, sku)
     }
 
