@@ -1,5 +1,6 @@
 package com.indest.hah.persistance.level
 
+import androidx.room.Query
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
 import kotlinx.coroutines.flow.*
@@ -39,7 +40,7 @@ class LevelRepository @Inject constructor(
         levelDao.updateScore(newScore, level)
     }
 
-    suspend fun getTotalUpdatedScore(level:Int): Long {
+    suspend fun getTotalUpdatedScore(level: Int): Long {
         levelDao.updateBestScoreQuery(level)
         return levelDao.getTotalScore().toLong()
     }
@@ -86,5 +87,8 @@ class LevelRepository @Inject constructor(
     suspend fun updateLevels(levels: List<Level>) {
         levelDao.updateLevels(levels)
     }
+
+    suspend fun updateCategoryRewarded(value: Boolean, level: Int) =
+        levelDao.updateCategoryRewarded(value, level)
 
 }

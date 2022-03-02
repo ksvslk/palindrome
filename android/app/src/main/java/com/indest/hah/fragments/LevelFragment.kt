@@ -12,12 +12,11 @@ import android.widget.TextView
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.animation.*
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.children
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.doOnPreDraw
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.commit
+import androidx.fragment.app.*
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -29,6 +28,7 @@ import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.indest.hah.MainActivity
 import com.indest.hah.R
+import com.indest.hah.ads.RewardType
 import com.indest.hah.fx.Animations
 import com.indest.hah.game.levelcreation.LevelCreator
 import com.indest.hah.fx.SoundPlayer
@@ -36,7 +36,9 @@ import com.indest.hah.databinding.LevelFragmentBinding
 import com.indest.hah.game.CellDirector
 import com.indest.hah.game.LevelViewModel
 import com.indest.hah.game.LevelViewModel.Solution.*
+import com.indest.hah.game.LevelViewModel.Solution.NONE
 import com.indest.hah.game.LevelViewModel.UiState.*
+import com.indest.hah.other.C
 import com.indest.hah.views.MessageSnackBar
 import com.indest.hah.views.Cell
 import com.indest.hah.persistance.level.LevelProgress
@@ -132,7 +134,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             isBookMode,
             viewModel.windowSizeClassWidth
         )
-        levelGridLayout.children.filterIsInstance<Cell<*, *>>().apply {
+        levelGridLayout.children.filterIsInstance<Cell<*, *>>().toMutableList().apply {
             levelGridLayout.doOnPreDraw {
                 cellDirector = CellDirector(
                     level,
@@ -387,6 +389,38 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                 .getOrCreateBadge(R.id.navigation_hints)
             hintBadge.isVisible = false
         }
+    }
+
+    private fun rewardUserWithLetter(rewardType: RewardType = RewardType.NONE)
+    {
+        when(rewardType){
+            RewardType.LETTER -> {
+                Log.d(TAG, "LETTER reward.")
+                binding.levelFragment.notClickable = true
+                cellDirector?.rewardWithRandomLetter()
+            }
+            RewardType.NEXT_LEVEL -> {
+                Log.d(TAG, "NEXT_LEVEL reward.")
+            }
+            RewardType.CLUE -> { }
+            RewardType.NONE -> { }
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setFragmentResultListener(C.HINTS_REQUEST_KEY) { _, bundle ->
+            val premiumLetter = bundle.getBoolean(C.LETTER_PREMIUM_BUNDLE)
+            if (!premiumLetter)
+            {
+                val rewardType = RewardType.values()[bundle.getInt(C.LETTER_REWARD_TYPE_BUNDLE)]
+                rewardUserWithLetter(rewardType)
+            }
+            else {
+                rewardUserWithLetter(RewardType.LETTER)
+            }
+        }
+
     }
 
     override fun onDestroy() {

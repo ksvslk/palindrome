@@ -135,6 +135,7 @@ class PurchaseButton : LinearLayoutCompat {
             }
         }
         if (purchasedInSomeWay) {
+            this.setOnClickListener(null)
             this.visibility = View.GONE
         }
         else if (info.skus[sku]?.canPurchase == true) {

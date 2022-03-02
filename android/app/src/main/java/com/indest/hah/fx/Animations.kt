@@ -72,7 +72,7 @@ class Animations @Inject constructor(
     }
 
     fun getCorrectSolutionAnimation(
-        cells: Sequence<Cell<*, *>>,
+        cells: MutableList<Cell<*, *>>,
     ): AnimatorSet {
         val animatorSet = AnimatorSet()
         val specialChars = ArrayList<Letter>()

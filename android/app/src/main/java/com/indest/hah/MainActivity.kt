@@ -53,14 +53,15 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
 
         signInObserver = SignInLifecycleObserver(activityResultRegistry)
         lifecycle.addObserver(signInObserver)
-
-        MobileAds.initialize(applicationContext) {}
         RequestConfiguration.Builder().setTestDeviceIds(
             listOf(
                 "6C6A719C306FBA0A0FBE4D81600B8AB1",
                 "1C8B057289566E4B36BA860D0A8281CB"
             )
         )
+        MobileAds.initialize(applicationContext) {}
+        generalViewModel.startCollectingAdsInfo()
+
         applyCustomWindowInsets()
         windowSizeClassUpdater()
         setUpNavController()

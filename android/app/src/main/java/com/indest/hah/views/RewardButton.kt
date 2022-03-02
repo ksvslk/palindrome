@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.widget.ViewFlipper
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
@@ -51,7 +52,8 @@ class RewardButton : LinearLayoutCompat {
             typedArray.getString(R.styleable.RewardButton_subtitle_ad_unavailable).toString()
         subtitleRewardUnlocked =
             typedArray.getString(R.styleable.RewardButton_subtitle_reward_unlocked).toString()
-        unlockingSkus = typedArray.getTextArray(R.styleable.RewardButton_skus).map { it.toString() }.toMutableSet()
+        unlockingSkus = typedArray.getTextArray(R.styleable.RewardButton_skus).map { it.toString() }
+            .toMutableSet()
         customIcon = typedArray.getResourceId(R.styleable.RewardButton_custom_icon, -1)
         typedArray.recycle()
     }
@@ -74,20 +76,26 @@ class RewardButton : LinearLayoutCompat {
         }
     }
 
-    fun updateButtonUi(info: GeneralViewModel.ButtonInfo) {
-        val purchased = info.skus.values.filter { it.isPurchased }.map { it.sku }.intersect(unlockingSkus).isNotEmpty()
-        if (purchased) {
-            this.isClickable = true
-            buttonState = NOTHING
-            findViewById<AppCompatTextView>(R.id.reward_button_flipper_revealed_subtitle).apply {
-                this.text = subtitleRewardUnlocked
-                setBackgroundColor(ContextCompat.getColor(context, R.color.successBoxColor))
-                setTextColor(ContextCompat.getColor(context, R.color.successTextColor))
-            }
-            return
-        }
+    fun showClue()
+    {
+        findViewById<ViewFlipper>(R.id.reward_button_flipper).showNext()
+        this.isClickable = false
+    }
 
-        when (info.state) {
+    fun setClue(clue:String)
+    {
+        findViewById<AppCompatTextView>(R.id.reward_button_flipper_hidden_title).text = clue
+    }
+
+    fun updateButtonUi(info: GeneralViewModel.ButtonInfo) {
+        val state = if (info.skus.values
+                .filter { it.isPurchased }
+                .map { it.sku }
+                .intersect(unlockingSkus)
+                .isNotEmpty()
+        ) PREMIUM else info.state
+
+        when (state) {
             AD -> {
                 this.isClickable = true
                 buttonState = AD
@@ -113,7 +121,15 @@ class RewardButton : LinearLayoutCompat {
                     setTextColor(ContextCompat.getColor(context, R.color.colorOnError))
                 }
             }
-            NOTHING -> { }
+            PREMIUM -> {
+                this.isClickable = true
+                buttonState = PREMIUM
+                findViewById<AppCompatTextView>(R.id.reward_button_flipper_revealed_subtitle).apply {
+                    this.text = subtitleRewardUnlocked
+                    setBackgroundColor(ContextCompat.getColor(context, R.color.successBoxColor))
+                    setTextColor(ContextCompat.getColor(context, R.color.successTextColor))
+                }
+            }
         }
     }
 }
@@ -121,5 +137,5 @@ class RewardButton : LinearLayoutCompat {
 enum class ButtonState {
     AD,
     NO_AD,
-    NOTHING
+    PREMIUM
 }

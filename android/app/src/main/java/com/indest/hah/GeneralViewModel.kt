@@ -2,12 +2,16 @@ package com.indest.hah
 
 import android.app.Activity
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
-import com.indest.hah.ads.Ads
+import com.indest.hah.ads.AdsLiveData
+import com.indest.hah.ads.RewardType
 import com.indest.hah.other.ConnectionLiveData
+import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.MinSkuDetails
+import com.indest.hah.persistance.level.LevelRepository
 import com.indest.hah.views.ButtonState
 import com.sample.android.trivialdrivesample.billing.BillingDataSource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,6 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GeneralViewModel @Inject constructor(
+    private val levelRepository: LevelRepository,
     application: Application
 ) : AndroidViewModel(application) {
 
@@ -32,9 +37,11 @@ class GeneralViewModel @Inject constructor(
     private val _buttonState = MutableSharedFlow<ButtonInfo>(1)
     val buttonState = _buttonState.asSharedFlow()
 
-    private var _adTest = false
+    private val _adsLiveData: AdsLiveData = AdsLiveData(application.applicationContext)
+    val adsLiveData = _adsLiveData.asFlow()
 
-    @Inject lateinit var ads: Ads
+    private val _currentLevel = MutableStateFlow(Level())
+    val currentLevel = _currentLevel.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -49,24 +56,51 @@ class GeneralViewModel @Inject constructor(
                 viewModelScope,
                 skus
             )
-            viewModelScope.launch {
+
+            // Collect and react to purchase button updates from BillingDataSource
+            launch {
                 combineAndUpdateMinSkuDetails(application.getString(R.string.instant_letters))
             }
-            viewModelScope.launch {
+            launch {
                 combineAndUpdateMinSkuDetails(application.getString(R.string.instant_clues))
             }
-            viewModelScope.launch {
+            launch {
                 combineAndUpdateMinSkuDetails(application.getString(R.string.no_intermediate_ads))
             }
-            viewModelScope.launch {
+            launch {
                 combineAndUpdateMinSkuDetails(application.getString(R.string.full_no_ads))
             }
-            viewModelScope.launch {
+
+            // Collect and react to internet state updates from ConnectionLiveData
+            launch {
                 internet.collect {
-                    updateButtonState()
+                    updateUiState()
                 }
             }
+
+            launch {
+                levelRepository.latestLevelFlow()
+                    .collect {
+                        _currentLevel.value = it
+                    }
+            }
+
         }
+    }
+
+    fun startCollectingAdsInfo()
+    {
+        viewModelScope.launch {
+            adsLiveData.distinctUntilChanged().collect {
+                Log.d(TAG, "Reward given: ${it.second}")
+                updateUiState(it.second)
+            }
+        }
+    }
+
+    fun showRewardedVideo(activity: Activity, rewardType: RewardType)
+    {
+        _adsLiveData.showRewardedVideo(activity, rewardType)
     }
 
     private suspend fun combineAndUpdateMinSkuDetails(sku: String) {
@@ -85,7 +119,7 @@ class GeneralViewModel @Inject constructor(
             )
         }.distinctUntilChanged().collect {
             minSkuDetailsMap[it.sku] = it
-            updateButtonState()
+            updateUiState()
         }
     }
 
@@ -93,36 +127,41 @@ class GeneralViewModel @Inject constructor(
         _billingDataSource.launchBillingFlow(activity, sku)
     }
 
-    fun setAd(newValue: Boolean) {
-        viewModelScope.launch {
-            _adTest = newValue
-            updateButtonState()
-        }
-    }
+    private fun updateUiState(rewardType: RewardType = RewardType.NONE) {
 
-    private fun updateButtonState() {
+        if (rewardType == RewardType.CLUE) updateCategoryRewarded()
+
         val internetState = _internet.value == true
-        if (_internet.value == true && _adTest) {
+        if (_internet.value == true && _adsLiveData.value?.first == true) {
             viewModelScope.launch {
                 _buttonState.emit(
                     ButtonInfo(
                         ButtonState.AD,
                         minSkuDetailsMap,
-                        internetState
+                        internetState,
+                        rewardType
                     )
                 )
             }
         } else {
             viewModelScope.launch {
-                _buttonState.emit(ButtonInfo(ButtonState.NO_AD, minSkuDetailsMap, internetState))
+                _buttonState.emit(ButtonInfo(ButtonState.NO_AD, minSkuDetailsMap, internetState, rewardType))
             }
+        }
+    }
+
+    fun updateCategoryRewarded()
+    {
+        viewModelScope.launch {
+            levelRepository.updateCategoryRewarded(true, currentLevel.value.levelInfo.levelId)
         }
     }
 
     data class ButtonInfo(
         val state: ButtonState,
         val skus: MutableMap<String, MinSkuDetails>,
-        val internet: Boolean
+        val internet: Boolean,
+        val rewardType: RewardType = RewardType.NONE
     )
 
 }

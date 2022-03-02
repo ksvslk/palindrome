@@ -20,7 +20,7 @@ import kotlin.math.abs
 
 class CellDirector constructor(
     info: Level,
-    private val cells: Sequence<Cell<*, *>>,
+    private val cells: MutableList<Cell<*, *>>,
     private val viewModel: LevelViewModel
 ) {
 
@@ -30,7 +30,7 @@ class CellDirector constructor(
         restoreSlotPlacements(info)
     }
 
-    fun getCells(): Sequence<Cell<*, *>> = cells
+    fun getCells(): MutableList<Cell<*, *>> = cells
 
     fun handleCollisions(letter: Letter) {
         when (val closestCell = getClosestCell(to = letter, from = getCandidateCells(letter))) {
@@ -301,6 +301,63 @@ class CellDirector constructor(
             bottom.setFriend(topFriend)
             topFriend?.setFriend(bottom)
             top.setFriend(null)
+        }
+    }
+
+    fun rewardWithRandomLetter()
+    {
+        val candidateLetters = cells
+            .filterIsInstance<Letter>()
+            .filter { !it.hasFriend() }
+
+        if (candidateLetters.isNotEmpty()) {
+            val randomLetter = candidateLetters.random()
+            val correctSlot = cells.filterIsInstance<Slot>().first {
+                (it.realChar == randomLetter.text.first() && !it.hasFriend()) ||
+                        (it.realChar == randomLetter.text.first() &&
+                                it.hasFriend() &&
+                                it.getTheFriend()?.text?.first() != it.realChar)
+            }
+            val incorrectSlot =
+                cells.filterIsInstance<Slot>().firstOrNull {
+                    it.hasFriend() &&
+                            it.getTheFriend()?.text?.first() != it.realChar
+                }
+            randomLetter.isLocked = true
+
+            if (correctSlot.hasFriend()) {
+                correctSlot.friend?.let {
+                    switchLetterPositions(
+                        randomLetter,
+                        it,
+                        isRewarded = true
+                    )
+                }
+            } else {
+                if (candidateLetters.size == 1 && incorrectSlot == null) { // Last letter to be placed in the slot
+                    placeLetterInEmptyBox(
+                        randomLetter, correctSlot,
+                        isRewarded = true,
+                        isLastRewardedLetter = true
+                    )
+                } else if (candidateLetters.size == 1 && incorrectSlot != null) {
+                    incorrectSlot.getTheFriend()
+                        ?.let {
+                            sendLetterHome(it, isRewarded = true)
+                            placeLetterInEmptyBox(
+                                randomLetter, correctSlot,
+                                isRewarded = true
+                            )
+                        }
+                } else {
+                    placeLetterInEmptyBox(randomLetter, correctSlot, true)
+                }
+            }
+        } else {
+            Log.e(
+                TAG,
+                "Something went terribly wrong while trying to reward with letter. No letters available :("
+            )
         }
     }
 

@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:rewardbutton="http://schemas.android.com/apk/res-auto"
     xmlns:purchasebutton="http://schemas.android.com/apk/res-auto"
+    xmlns:rewardbutton="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
     android:orientation="vertical"
     android:paddingVertical="@dimen/default_large_margin"
+    android:animateLayoutChanges="true"
     app:divider="@drawable/divider"
     app:dividerPadding="@dimen/simple_dialog_left_margin"
     app:showDividers="middle">
@@ -27,48 +28,6 @@
             android:textAppearance="@style/TextAppearance.OC.Headline5" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <androidx.gridlayout.widget.GridLayout
-        app:columnCount="3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/ad_switch"
-            android:layout_margin="@dimen/_8sdp"
-            android:text="ad"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/_20sdp"/>
-       <!-- <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/internet_switch"
-            android:layout_margin="@dimen/_8sdp"
-            android:text="internet"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/_20sdp"/>
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/add_remove_clues"
-            android:layout_margin="@dimen/_8sdp"
-            android:text="clues"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/_20sdp"/>
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/add_remove_letters"
-            android:layout_margin="@dimen/_8sdp"
-            android:text="letters"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/_20sdp"/>
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/add_remove_intermediate"
-            android:layout_margin="@dimen/_8sdp"
-            android:text="inter"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/_20sdp"/>
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/add_remove_full"
-            android:layout_margin="@dimen/_8sdp"
-            android:text="full"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/_20sdp"/>-->
-    </androidx.gridlayout.widget.GridLayout>
-
     <com.indest.hah.views.RewardButton
         android:id="@+id/reward_category_button"
         android:layout_width="match_parent"
@@ -78,9 +37,9 @@
         android:clickable="true"
         android:focusable="true"
         android:orientation="horizontal"
-        rewardbutton:skus="@array/iap_group_that_unlock_clues"
         rewardbutton:custom_icon="@drawable/baseline_category_black_36"
         rewardbutton:main_title="@string/rewarded_reveal_clue"
+        rewardbutton:skus="@array/iap_group_that_unlock_clues"
         rewardbutton:subtitle_ad_available="@string/watch_rewarded_video"
         rewardbutton:subtitle_ad_unavailable="@string/no_ad_available"
         rewardbutton:subtitle_reward_unlocked="@string/instantly" />
@@ -94,16 +53,16 @@
         android:clickable="true"
         android:focusable="true"
         android:orientation="horizontal"
-        rewardbutton:skus="@array/iap_group_that_unlock_letters"
         rewardbutton:custom_icon="@drawable/letter_icon"
         rewardbutton:main_title="@string/rewarded_place_letter"
+        rewardbutton:skus="@array/iap_group_that_unlock_letters"
         rewardbutton:subtitle_ad_available="@string/watch_rewarded_video"
         rewardbutton:subtitle_ad_unavailable="@string/no_ad_available"
         rewardbutton:subtitle_reward_unlocked="@string/instantly" />
 
+
     <com.indest.hah.views.PurchaseButton
         android:id="@+id/purchase_button_clues"
-        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
         android:layout_margin="@dimen/_2sdp"
@@ -112,11 +71,10 @@
         android:focusable="true"
         android:orientation="horizontal"
         purchasebutton:sku="@string/instant_clues"
-        purchasebutton:visibility_case_1="@array/clues_case_1"
-        />
+        purchasebutton:visibility_case_1="@array/clues_case_1" />
+
     <com.indest.hah.views.PurchaseButton
         android:id="@+id/purchase_button_letters"
-        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
         android:layout_margin="@dimen/_2sdp"
@@ -124,13 +82,12 @@
         android:clickable="true"
         android:focusable="true"
         android:orientation="horizontal"
-        purchasebutton:sku="@string/instant_letters"
-        purchasebutton:visibility_case_1="@array/letters_case_1"
         purchasebutton:labels="@array/best_loved_label"
-        />
+        purchasebutton:sku="@string/instant_letters"
+        purchasebutton:visibility_case_1="@array/letters_case_1" />
+
     <com.indest.hah.views.PurchaseButton
         android:id="@+id/purchase_intermediate_ads"
-        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
         android:layout_margin="@dimen/_2sdp"
@@ -139,11 +96,10 @@
         android:focusable="true"
         android:orientation="horizontal"
         purchasebutton:sku="@string/no_intermediate_ads"
-        purchasebutton:visibility_case_1="@array/intermediate_case_1"
-        />
+        purchasebutton:visibility_case_1="@array/intermediate_case_1" />
+
     <com.indest.hah.views.PurchaseButton
         android:id="@+id/purchase_full_ads"
-        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
         android:layout_margin="@dimen/_2sdp"
@@ -151,10 +107,10 @@
         android:clickable="true"
         android:focusable="true"
         android:orientation="horizontal"
+        purchasebutton:labels="@array/save_24_percent_label"
         purchasebutton:sku="@string/full_no_ads"
         purchasebutton:visibility_case_1="@array/full_ads_case_1"
         purchasebutton:visibility_case_2="@array/full_ads_case_2"
-        purchasebutton:visibility_case_3="@array/full_ads_case_3"
-        purchasebutton:labels="@array/save_24_percent_label"
-        />
+        purchasebutton:visibility_case_3="@array/full_ads_case_3" />
+
 </androidx.appcompat.widget.LinearLayoutCompat>
