@@ -1,4 +1,4 @@
-package com.indest.hah.global.data
+package com.indest.hah.fx
 
 data class Sounds(
     val scoreSound:Int,

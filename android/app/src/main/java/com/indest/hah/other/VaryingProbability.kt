@@ -1,4 +1,4 @@
-package com.indest.hah.util
+package com.indest.hah.other
 
 object VaryingProbability {
     fun isAnimationPlayed(level:Int):Boolean{

@@ -12,7 +12,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.gridlayout.widget.GridLayout
 import com.indest.hah.R
 import com.indest.hah.views.Letter
-import com.indest.hah.letter.LetterState
+import com.indest.hah.game.letter.LetterState
 import com.indest.hah.views.Slot
 import com.indest.hah.persistance.dto.Level
 import dagger.hilt.android.qualifiers.ActivityContext

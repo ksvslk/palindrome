@@ -1,4 +1,4 @@
-package com.indest.hah.util
+package com.indest.hah.other
 
 import android.content.Context
 import android.view.View

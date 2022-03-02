@@ -2,7 +2,7 @@ package com.indest.hah.views
 
 import android.content.Context
 import android.view.View
-import com.indest.hah.util.C.BOTTOM_LAYER
+import com.indest.hah.other.C.BOTTOM_LAYER
 
 class Slot constructor(
     context: Context?, realFriendChar: Char

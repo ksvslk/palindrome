@@ -1,12 +1,10 @@
-package com.indest.hah.global
+package com.indest.hah.fx
 
 import android.content.Context
 import android.media.AudioManager
 import android.media.SoundPool
 import androidx.core.content.res.ResourcesCompat
 import com.indest.hah.R
-import com.indest.hah.global.data.Colors
-import com.indest.hah.global.data.Sounds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,7 +15,7 @@ import dagger.hilt.android.scopes.ActivityScoped
 
 @Module
 @InstallIn(ActivityComponent::class)
-object AppModule {
+object EffectsModule {
 
     @Provides
     @ActivityScoped

@@ -1,4 +1,4 @@
-package com.indest.hah.global
+package com.indest.hah.fx
 
 import android.animation.*
 import android.content.Context
@@ -15,7 +15,6 @@ import com.indest.hah.views.CellContainer
 import com.indest.hah.views.MessageSnackBar
 import com.indest.hah.views.Cell
 import com.indest.hah.views.Letter
-import com.indest.hah.global.data.Colors
 import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.scopes.ActivityScoped
 import nl.dionsegijn.konfetti.core.Angle
@@ -260,7 +259,7 @@ class Animations @Inject constructor(
                 .append(animation.animatedValue.toString().padStart(paddingLength, '0'))
                 .append(" of $maxScore points")
         }
-        if (score > 0) soundPlayer.play(soundPlayer.sounds.scoreSound)
+        if (score > 0) soundPlayer.play(soundPlayer.sounds.scoreSound, volume = 0.2f)
         return animator
     }
 

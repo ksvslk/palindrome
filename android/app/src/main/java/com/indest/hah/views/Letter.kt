@@ -5,13 +5,13 @@ import android.content.Context
 import android.graphics.Canvas
 import android.view.MotionEvent
 import android.view.View.OnTouchListener
-import com.indest.hah.util.C.NEUTRAL_LAYER
+import com.indest.hah.other.C.NEUTRAL_LAYER
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import androidx.gridlayout.widget.GridLayout
-import com.indest.hah.letter.Effects
-import com.indest.hah.letter.LetterState
-import com.indest.hah.letter.data.GlobalPosition
+import com.indest.hah.game.letter.Effects
+import com.indest.hah.game.letter.LetterState
+import com.indest.hah.game.letter.data.GlobalPosition
 
 @SuppressLint("ViewConstructor")
 @AndroidEntryPoint

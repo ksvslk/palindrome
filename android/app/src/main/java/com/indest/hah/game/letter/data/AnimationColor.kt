@@ -1,4 +1,4 @@
-package com.indest.hah.letter.data
+package com.indest.hah.game.letter.data
 
 data class AnimationColor(
     val viewStart: Int,

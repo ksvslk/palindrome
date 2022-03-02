@@ -1,4 +1,4 @@
-package com.indest.hah.adapters
+package com.indest.hah.other
 
 import android.util.Log
 import android.view.LayoutInflater

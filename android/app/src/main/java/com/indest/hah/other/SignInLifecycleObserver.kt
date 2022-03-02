@@ -1,4 +1,4 @@
-package com.indest.hah.signin
+package com.indest.hah.other
 
 import android.app.Activity
 import android.content.Intent

@@ -27,11 +27,11 @@ import com.indest.hah.databinding.ActivityMainBinding
 import com.indest.hah.fragments.ExitGameDialogFragment
 import com.indest.hah.game.LevelViewModel
 import com.indest.hah.persistance.dto.LevelData
-import com.indest.hah.signin.SignInLifecycleObserver
-import com.indest.hah.util.C
+import com.indest.hah.other.SignInLifecycleObserver
+import com.indest.hah.other.C
 import com.indest.hah.game.levelcreation.WindowSizeClass
-import com.indest.hah.util.hideSystemBars
-import com.indest.hah.util.saveBooleanPreference
+import com.indest.hah.other.hideSystemBars
+import com.indest.hah.other.saveBooleanPreference
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch

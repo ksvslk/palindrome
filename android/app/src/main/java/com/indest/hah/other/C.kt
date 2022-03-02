@@ -1,4 +1,4 @@
-package com.indest.hah.util
+package com.indest.hah.other
 
 object C {
     const val TOP_LAYER = 3f

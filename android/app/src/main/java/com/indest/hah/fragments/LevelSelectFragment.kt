@@ -12,7 +12,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.indest.hah.adapters.LevelItemAdapter
+import com.indest.hah.other.LevelItemAdapter
 import com.indest.hah.databinding.LevelSelectFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
 import com.google.android.material.bottomsheet.BottomSheetDialog

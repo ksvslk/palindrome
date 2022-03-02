@@ -1,4 +1,4 @@
-package com.indest.hah.letter
+package com.indest.hah.game.letter
 
 import android.animation.ObjectAnimator
 import android.util.Log
@@ -9,10 +9,10 @@ import androidx.fragment.app.findFragment
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.indest.hah.R
 import com.indest.hah.fragments.LevelFragment
-import com.indest.hah.letter.enums.ColorSelector
+import com.indest.hah.game.letter.enums.ColorSelector
 import com.indest.hah.views.Letter
-import com.indest.hah.util.C.NEUTRAL_LAYER
-import com.indest.hah.util.C.TOP_LAYER
+import com.indest.hah.other.C.NEUTRAL_LAYER
+import com.indest.hah.other.C.TOP_LAYER
 import java.lang.IllegalStateException
 import kotlin.math.abs
 import kotlin.math.log2

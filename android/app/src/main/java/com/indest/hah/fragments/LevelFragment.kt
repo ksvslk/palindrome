@@ -29,9 +29,9 @@ import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.indest.hah.MainActivity
 import com.indest.hah.R
-import com.indest.hah.global.Animations
+import com.indest.hah.fx.Animations
 import com.indest.hah.game.levelcreation.LevelCreator
-import com.indest.hah.global.SoundPlayer
+import com.indest.hah.fx.SoundPlayer
 import com.indest.hah.databinding.LevelFragmentBinding
 import com.indest.hah.game.CellDirector
 import com.indest.hah.game.LevelViewModel
@@ -41,7 +41,7 @@ import com.indest.hah.views.MessageSnackBar
 import com.indest.hah.views.Cell
 import com.indest.hah.persistance.level.LevelProgress
 import com.indest.hah.persistance.dto.Level
-import com.indest.hah.util.VaryingProbability
+import com.indest.hah.other.VaryingProbability
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
@@ -233,7 +233,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                     }
                     scoreMessage.addCallback(scoreMessageCallback)
                     winningMessage.show()
-                    soundPlayer.play(soundPlayer.sounds.correctSound)
+                    soundPlayer.play(soundPlayer.sounds.correctSound, 0.1f)
                 }
             }
             cellsAnimation.start()
@@ -315,7 +315,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         continueMessage.view.setOnClickListener {
             if (isVisible) {
                 continueMessage.dismiss()
-                soundPlayer.play(soundPlayer.sounds.levelTransition)
+                soundPlayer.play(soundPlayer.sounds.levelTransition, volume = 0.2f)
                 playTrainAnimation()
                 viewModel.executeLevelCompleteActions()
             }

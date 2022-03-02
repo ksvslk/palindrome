@@ -1,4 +1,4 @@
-package com.indest.hah.global
+package com.indest.hah.fx
 
 import android.content.Context
 import android.media.AudioManager
@@ -7,7 +7,6 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import com.indest.hah.R
-import com.indest.hah.global.data.Sounds
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Inject
@@ -20,7 +19,7 @@ class SoundPlayer @Inject constructor(
     val sounds: Sounds
 ) {
 
-    fun play(id: Int) {
+    fun play(id: Int, volume:Float = 1f) {
         context.getSharedPreferences(
             context.getString(R.string.app_preferences),
             Context.MODE_PRIVATE
@@ -28,11 +27,11 @@ class SoundPlayer @Inject constructor(
             if (audioManager.ringerMode != AudioManager.RINGER_MODE_NORMAL ||
                 !it.getBoolean(context.getString(R.string.sound_on_pref), true)
             ) return
-            soundPool.play(id, 1f, 1f, 1, 0, 1.0f)
+            soundPool.play(id, volume, volume, 1, 0, 1.0f)
         }
     }
 
-    fun playNote(index: Int) {
+    fun playNote(index: Int, volume: Float = 0.1f) {
         context.getSharedPreferences(
             context.getString(R.string.app_preferences),
             Context.MODE_PRIVATE
@@ -40,7 +39,7 @@ class SoundPlayer @Inject constructor(
             if (audioManager.ringerMode != AudioManager.RINGER_MODE_NORMAL ||
                 !it.getBoolean(context.getString(R.string.sound_on_pref), true)
             ) return
-            soundPool.play(sounds.noteSounds[index], 1f, 1f, 1, 0, 1.0f)
+            soundPool.play(sounds.noteSounds[index], volume, volume, 1, 0, 1.0f)
         }
     }
 

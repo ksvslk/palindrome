@@ -6,7 +6,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import com.indest.hah.ads.Ads
-import com.indest.hah.global.ConnectionLiveData
+import com.indest.hah.other.ConnectionLiveData
 import com.indest.hah.persistance.dto.MinSkuDetails
 import com.indest.hah.views.ButtonState
 import com.sample.android.trivialdrivesample.billing.BillingDataSource

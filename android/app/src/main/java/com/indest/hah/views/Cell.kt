@@ -6,7 +6,7 @@ import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.gridlayout.widget.GridLayout
 import com.indest.hah.R
-import com.indest.hah.letter.data.GlobalPosition
+import com.indest.hah.game.letter.data.GlobalPosition
 import kotlin.math.roundToInt
 
 abstract class Cell<T, F>(context: Context) : AppCompatTextView(context) {

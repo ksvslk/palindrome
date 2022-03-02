@@ -27,7 +27,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.games.Games.SCOPE_GAMES_SNAPSHOTS
 import com.indest.hah.GeneralViewModel
-import com.indest.hah.signin.SignInLifecycleObserver
+import com.indest.hah.other.SignInLifecycleObserver
 import kotlinx.coroutines.flow.collect
 
 

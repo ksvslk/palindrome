@@ -1,4 +1,4 @@
-package com.indest.hah.letter
+package com.indest.hah.game.letter
 
 import android.view.MotionEvent
 import android.view.View
