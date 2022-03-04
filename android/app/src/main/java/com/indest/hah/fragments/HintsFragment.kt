@@ -42,7 +42,7 @@ class HintsFragment : BottomSheetDialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED)
+            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED)
             {
                 viewModel.buttonState.collect() {
                     Log.d(TAG, "Update buttons!")

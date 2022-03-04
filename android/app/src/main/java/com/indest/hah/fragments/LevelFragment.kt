@@ -106,8 +106,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                                     displayLevel(level, isBookMode)
                                 }
                                 hideHintsBadge()
-                                showPlayerCenteredScores()
-                                //TODO: Collect reward flow here?
+                                //turn this on again showPlayerCenteredScores()
                             }
                         }
                     }
