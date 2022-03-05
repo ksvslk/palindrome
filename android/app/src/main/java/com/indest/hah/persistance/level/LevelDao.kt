@@ -4,7 +4,9 @@ import androidx.room.*
 import com.indest.hah.game.levelcreation.Shuffler
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 
 @Dao
 interface LevelDao {
@@ -188,7 +190,7 @@ interface LevelDao {
     suspend fun getLevelProgress(level: Int): LevelProgress
 
     @Transaction
-    suspend fun persistInitialLettersInfo(levelNr: Int) {
+    suspend fun persistInitialLettersInfo(levelNr: Int) = withContext(Dispatchers.Default) {
         if (levelNr != 0)
         {
             val lettersCount = levelLettersCount(levelNr)

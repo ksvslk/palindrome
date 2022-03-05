@@ -3,7 +3,10 @@ package com.indest.hah.persistance.level
 import androidx.room.Query
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -91,4 +94,7 @@ class LevelRepository @Inject constructor(
     suspend fun updateCategoryRewarded(value: Boolean, level: Int) =
         levelDao.updateCategoryRewarded(value, level)
 
+    suspend fun fakeUpdateLevels(de: Long) = withContext(Dispatchers.Default) {
+        delay(de)
+    }
 }

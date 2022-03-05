@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
             )
         )
         MobileAds.initialize(applicationContext) {}
-        generalViewModel.startCollectingAdsInfo()
+        generalViewModel.toString()
 
         applyCustomWindowInsets()
         windowSizeClassUpdater()
@@ -129,7 +129,7 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
     private fun progressBarUpdater() {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                levelViewModel.latestDistinctLevelFlow().collect {
+                levelViewModel.latestDistinctLevelFlow.collect {
                     setLevelProgressIndicator(it.levelInfo)
                 }
             }

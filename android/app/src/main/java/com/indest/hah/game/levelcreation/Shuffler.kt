@@ -1,9 +1,12 @@
 package com.indest.hah.game.levelcreation
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+
 
 object Shuffler {
 
-    fun getShuffledSolution(solution: String): String {
+    suspend fun getShuffledSolution(solution: String): String = withContext(Dispatchers.Default) {
         val solutionWithoutWhiteSpace = solution.replace(" ", "")
         val shuffledChars = solutionWithoutWhiteSpace.toCharArray()
         var shuffledSolution = solution
@@ -13,7 +16,7 @@ object Shuffler {
             shuffledSolution = shuffledChars.concatToString()
             similarityValue = similarity(solutionWithoutWhiteSpace, shuffledSolution)
         }
-        return shuffledChars.concatToString()
+        return@withContext shuffledChars.concatToString()
     }
 
     /**

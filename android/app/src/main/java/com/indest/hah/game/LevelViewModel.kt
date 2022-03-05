@@ -1,20 +1,22 @@
 package com.indest.hah.game
 
+import android.app.Activity
 import android.app.Application
+import android.os.Bundle
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.games.Games
 import com.indest.hah.R
-import com.indest.hah.persistance.level.LevelProgress
-import com.indest.hah.persistance.level.LevelRepository
+import com.indest.hah.game.levelcreation.WindowSizeClass
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
-import com.indest.hah.game.levelcreation.WindowSizeClass
+import com.indest.hah.persistance.level.LevelProgress
+import com.indest.hah.persistance.level.LevelRepository
+import com.indest.hah.savegame.SnapshotHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -38,15 +40,55 @@ class LevelViewModel @Inject constructor(
     var windowSizeClassWidth: WindowSizeClass = WindowSizeClass.NOT_SET
     var isBookMode: Boolean = false
 
+    @Inject lateinit var snapshotHelper:SnapshotHelper
+
+    //private var latestLevelJob: Job? = null
+
+    private val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
+        Log.e(
+            TAG,
+            "Error syncing cloud with local. Start collecting level from  local database without up to date information."
+        )
+        collectLevels()
+    }
+
+
     init {
         viewModelScope.launch {
             levelRepository.init() // First time app starts
-            levelRepository.latestLevelFlow()
-                .collect {
-                    _currentLevel.value = it
-                }
+            loadLatestLevelFromCloudOrLocal()
         }
     }
+
+    private fun loadLatestLevelFromCloudOrLocal() {
+        viewModelScope.launch(exceptionHandler) {
+            _uiState.value = UiState.LOADING
+            //latestLevelJob?.cancel()
+            val result = snapshotHelper.loadGameFromCloud()
+            levelRepository.fakeUpdateLevels(result)
+            //startCollectingLastLevel()
+            collectLevels()
+        }
+    }
+
+    private fun collectLevels()
+    {
+        viewModelScope.launch {
+            levelRepository.latestLevelFlow().cancellable()
+                .collect { _currentLevel.value = it }
+        }
+    }
+
+/*    private fun startCollectingLastLevel() {
+        if (latestLevelJob == null) {
+            latestLevelJob = viewModelScope.launch {
+                levelRepository.latestLevelFlow().cancellable()
+                    .collect { _currentLevel.value = it }
+            }
+        } else {
+            latestLevelJob?.start()
+        }
+    }*/
 
     fun setState(newUiState: UiState) {
         viewModelScope.launch {
@@ -111,8 +153,7 @@ class LevelViewModel @Inject constructor(
         }
 
         // Complete Level achievement
-        if (_currentLevel.value.levelInfo.solution == "LEVEL")
-        {
+        if (_currentLevel.value.levelInfo.solution == "LEVEL") {
             unlockAchievement(context.getString(R.string.achievement_complete_level))
         }
 
@@ -139,7 +180,7 @@ class LevelViewModel @Inject constructor(
 
                 when {
                     guess == solution -> {
-                        _uiState.emit(UiState.TOUCH_DISABLED)
+                        _uiState.emit(UiState.BUSY)
                         submitScore()
                         levelRepository.updateLevelProgress(
                             _currentLevel.value.levelInfo.levelId,
@@ -197,13 +238,23 @@ class LevelViewModel @Inject constructor(
         }
     }
 
-    fun latestDistinctLevelFlow(): Flow<Level> {
-        return _currentLevel.distinctUntilChangedBy(keySelector = { level ->
-            level.levelInfo.levelId
-        })
-    }
+    val latestDistinctLevelFlow =
+        _currentLevel
+            .mapNotNull { if (it.levelInfo.levelId != 0) it else null }
+            .distinctUntilChangedBy(keySelector = { level -> level.levelInfo.levelId })
+            .onEach {
+                if (it.levelInfo.progress == LevelProgress.INTERMEDIATE) {
+                    Log.d(TAG, "Emit state: ${UiState.LEVEL_FINISHED}, ${it.levelInfo.solution}")
+                    _uiState.value = UiState.LEVEL_FINISHED
+                } else {
+                    Log.d(TAG, "Emit state: ${UiState.READY}, ${it.levelInfo.solution}")
+                    _uiState.value = UiState.READY
+                }
+            }
+
 
     fun updateLetters(topIndex: Int, bottomLetter: Char, bottomIndex: Int, topLetter: Char) {
+
         viewModelScope.launch {
             _currentLevel.value.levelInfo.let { levelInfo ->
                 val currentSolution = levelRepository.switchLetters(
@@ -296,8 +347,9 @@ class LevelViewModel @Inject constructor(
 
     enum class UiState {
         LOADING,
-        TOUCH_ENABLED,
-        TOUCH_DISABLED
+        READY,
+        LEVEL_FINISHED,
+        BUSY
     }
 
     enum class Solution {
@@ -315,5 +367,6 @@ class LevelViewModel @Inject constructor(
         val maxScore: Int,
         val showHintsBadge: Boolean
     )
+
 
 }

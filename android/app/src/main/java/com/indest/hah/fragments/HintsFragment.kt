@@ -27,6 +27,9 @@ import com.indest.hah.views.ButtonState.*
 import com.indest.hah.views.PurchaseButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -44,15 +47,23 @@ class HintsFragment : BottomSheetDialogFragment() {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED)
             {
-                viewModel.buttonState.collect() {
-                    Log.d(TAG, "Update buttons!")
-                    handleRewards(it.rewardType)
-                    binding.rewardCategoryButton.updateButtonUi(it)
-                    binding.rewardPlaceLetter.updateButtonUi(it)
-                    binding.purchaseButtonClues.updateButtonUi(it)
-                    binding.purchaseButtonLetters.updateButtonUi(it)
-                    binding.purchaseIntermediateAds.updateButtonUi(it)
-                    binding.purchaseFullAds.updateButtonUi(it)
+                launch {
+                    viewModel.buttonState.collect {
+                        Log.d(TAG, "Update buttons!: ${it}")
+                        binding.rewardCategoryButton.updateButtonUi(it)
+                        binding.rewardPlaceLetter.updateButtonUi(it)
+                        binding.purchaseButtonClues.updateButtonUi(it)
+                        binding.purchaseButtonLetters.updateButtonUi(it)
+                        binding.purchaseIntermediateAds.updateButtonUi(it)
+                        binding.purchaseFullAds.updateButtonUi(it)
+                    }
+                }
+                launch {
+                    viewModel.rewardState.collect {
+                        Log.d(TAG, "Reward actually given: $it")
+                        handleRewards(it)
+                        viewModel.updateRewardState(NONE)
+                    }
                 }
             }
         }
@@ -73,7 +84,9 @@ class HintsFragment : BottomSheetDialogFragment() {
         {
             NEXT_LEVEL -> {/*_*/}
             NONE -> {/*_*/}
-            CLUE -> revealClue()
+            CLUE -> {
+                revealClue()
+            }
             LETTER -> {
                 setFragmentResult(
                     C.HINTS_REQUEST_KEY,

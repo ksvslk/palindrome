@@ -9,11 +9,11 @@ import androidx.fragment.app.findFragment
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.indest.hah.R
 import com.indest.hah.fragments.LevelFragment
+import com.indest.hah.game.LevelViewModel
 import com.indest.hah.game.letter.enums.ColorSelector
 import com.indest.hah.views.Letter
 import com.indest.hah.other.C.NEUTRAL_LAYER
 import com.indest.hah.other.C.TOP_LAYER
-import com.indest.hah.views.CellContainer
 import java.lang.IllegalStateException
 import kotlin.math.abs
 import kotlin.math.log2
@@ -178,11 +178,14 @@ enum class LetterState : ILetterState {
                     letter.currentPos.y = letter.pos.y
 
                     if (durationModifier != 1) {
-                        (letter.parent?.parent as? CellContainer)?.let {
-                            it.notClickable = false
+                        try {
+                            letter.findFragment<LevelFragment>().cellDirector?.setLevelState(LevelViewModel.UiState.READY)
+                        }
+                        catch (e:IllegalStateException)
+                        {
+                            Log.e(TAG, e.message.toString())
                         }
                     }
-
                 }
                 .start()
         }

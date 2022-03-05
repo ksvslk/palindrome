@@ -48,7 +48,7 @@ class LevelSelectFragment : BottomSheetDialogFragment() {
     {
         lifecycleScope.launchWhenCreated {
                 levelViewModel.allLevelsFlow().collect { levels ->
-                    val currentLevel = levelViewModel.currentLevel.value?.levelInfo?.levelId
+                    val currentLevel = levelViewModel.currentLevel.replayCache.first()?.levelInfo?.levelId
                     val currentLevelIcon = getCurrentLevelIcon(currentLevel)
                     binding.levelSelectRecyclerview.adapter = LevelItemAdapter(currentLevelIcon, currentLevel, levels) {
                         it?.levelId?.let { nr ->
@@ -89,7 +89,7 @@ class LevelSelectFragment : BottomSheetDialogFragment() {
             bsd.behavior.state = STATE_EXPANDED
             if (isVisible)
             {
-                levelViewModel.currentLevel.value.let {
+                levelViewModel.currentLevel.replayCache.first().let {
                     binding.levelSelectRecyclerview.scrollToPosition(it.levelInfo.levelId - 1)
                 }
             }

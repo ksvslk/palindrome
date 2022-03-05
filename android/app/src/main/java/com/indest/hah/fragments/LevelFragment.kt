@@ -12,7 +12,6 @@ import android.widget.TextView
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.animation.*
 import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
 import androidx.core.view.children
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.doOnPreDraw
@@ -41,12 +40,12 @@ import com.indest.hah.game.LevelViewModel.UiState.*
 import com.indest.hah.other.C
 import com.indest.hah.views.MessageSnackBar
 import com.indest.hah.views.Cell
-import com.indest.hah.persistance.level.LevelProgress
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.other.VaryingProbability
+import com.indest.hah.persistance.level.LevelProgress
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -97,21 +96,24 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                             newLayoutInfo.displayFeatures.find { it is FoldingFeature } as? FoldingFeature
                         val isBookMode = foldingFeature?.state == FoldingFeature.State.FLAT
                         viewModel.isBookMode = isBookMode
-                        viewModel.latestDistinctLevelFlow().collect { level ->
-                            if (level.levelInfo.levelId != 0) {
-                                binding.levelFragment.removeAllViews()
-                                if (level.levelInfo.progress == LevelProgress.INTERMEDIATE) {
-                                    displayLevel(level, isBookMode, isLevelFinished = true)
-                                } else {
-                                    displayLevel(level, isBookMode)
-                                }
-                                hideHintsBadge()
-                                //turn this on again showPlayerCenteredScores()
+                        viewModel.latestDistinctLevelFlow.collect { level ->
+                            loadLevel(level, viewModel.isBookMode)
+                            if (level.levelInfo.progress == LevelProgress.INTERMEDIATE)
+                            {
+                                viewModel.setState(LEVEL_FINISHED)
                             }
+                            //turn this on again showPlayerCenteredScores()
                         }
                     }
             }
         }
+    }
+
+    private fun loadLevel(level: Level, isBookMode: Boolean) {
+        Log.d(TAG, "Load level: ${level.levelInfo.solution}")
+        binding.levelFragment.removeAllViews()
+        displayLevel(level, isBookMode)
+        hideHintsBadge()
     }
 
     private fun showPlayerCenteredScores() {
@@ -125,7 +127,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         }
     }
 
-    private fun displayLevel(level: Level, isBookMode: Boolean, isLevelFinished: Boolean = false) {
+    private fun displayLevel(level: Level, isBookMode: Boolean) {
         val levelGridLayout = levelCreator.getLevel(
             level,
             layoutInflater,
@@ -142,30 +144,37 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                 )
             }
         }
-        binding.levelFragment.notClickable = isLevelFinished
         binding.levelFragment.addView(levelGridLayout)
-        if (isLevelFinished) showContinueMessage()
-        viewModel.setState(TOUCH_ENABLED)
     }
 
     private fun containerStateUpdater() {
         lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.uiState.collect { uiState ->
+                    Log.d(TAG, "UI state set: ${uiState.name}")
                     with(binding)
                     {
                         when (uiState) {
                             LOADING -> {
                                 progressCircular.visibility = View.VISIBLE
                                 levelFragment.notClickable = true
+                                levelFragment.alpha = .2f
                             }
-                            TOUCH_ENABLED -> {
+                            READY -> {
                                 progressCircular.visibility = View.GONE
                                 levelFragment.notClickable = false
+                                levelFragment.alpha = 1f
                             }
-                            TOUCH_DISABLED -> {
+                            LEVEL_FINISHED -> {
+                                showContinueMessage()
                                 progressCircular.visibility = View.GONE
                                 levelFragment.notClickable = true
+                                levelFragment.alpha = 1f
+                            }
+                            BUSY -> {
+                                progressCircular.visibility = View.GONE
+                                levelFragment.notClickable = true
+                                levelFragment.alpha = 1f
                             }
                         }
                     }
@@ -228,7 +237,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                             if (isVisible) {
                                 super.onDismissed(transientBottomBar, event)
                                 showContinueMessage()
-                                askForReview(level = viewModel.currentLevel.value.levelInfo.levelId)
+                                askForReview(level = viewModel.currentLevel.replayCache.first().levelInfo.levelId)
                             }
                         }
                     }
@@ -327,7 +336,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     private fun playTrainAnimation() {
         val childCount =
             activity?.findViewById<LinearLayoutCompat>(R.id.trainLinearLayout)?.childCount
-        if (VaryingProbability.isAnimationPlayed(viewModel.currentLevel.value.levelInfo.levelId) && childCount == 0) {
+        if (VaryingProbability.isAnimationPlayed(viewModel.currentLevel.replayCache.first().levelInfo.levelId) && childCount == 0) {
             val trainLinearLayout = animations.getTrainAnimation()
             trainLinearLayout.doOnNextLayout {
                 val offscreenX = resources.displayMetrics.widthPixels + trainLinearLayout.width
@@ -362,10 +371,8 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         }
     }
 
-    private fun askForReview(level:Int)
-    {
-        if (level == 10)
-        {
+    private fun askForReview(level: Int) {
+        if (level == 10) {
             val reviewManager = ReviewManagerFactory.create(requireContext())
             val request = reviewManager.requestReviewFlow()
             request.addOnCompleteListener { task ->
@@ -390,36 +397,36 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         }
     }
 
-    private fun rewardUserWithLetter(rewardType: RewardType = RewardType.NONE)
-    {
-        when(rewardType){
+    private fun rewardUserWithLetter(rewardType: RewardType = RewardType.NONE) {
+        when (rewardType) {
             RewardType.LETTER -> {
                 Log.d(TAG, "LETTER reward.")
-                binding.levelFragment.notClickable = true
+                viewModel.setState(BUSY)
                 cellDirector?.rewardWithRandomLetter()
             }
             RewardType.NEXT_LEVEL -> {
                 Log.d(TAG, "NEXT_LEVEL reward.")
             }
-            RewardType.CLUE -> { }
-            RewardType.NONE -> { }
+            RewardType.CLUE -> {}
+            RewardType.NONE -> {}
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setFragmentResultListener(C.HINTS_REQUEST_KEY) { _, bundle ->
-            val premiumLetter = bundle.getBoolean(C.LETTER_PREMIUM_BUNDLE)
-            if (!premiumLetter)
+            Log.d(TAG, bundle.toString())
+            if (viewModel.uiState.value != LEVEL_FINISHED)
             {
-                val rewardType = RewardType.values()[bundle.getInt(C.LETTER_REWARD_TYPE_BUNDLE)]
-                rewardUserWithLetter(rewardType)
-            }
-            else {
-                rewardUserWithLetter(RewardType.LETTER)
+                val premiumLetter = bundle.getBoolean(C.LETTER_PREMIUM_BUNDLE)
+                if (!premiumLetter) {
+                    val rewardType = RewardType.values()[bundle.getInt(C.LETTER_REWARD_TYPE_BUNDLE)]
+                    rewardUserWithLetter(rewardType)
+                } else {
+                    rewardUserWithLetter(RewardType.LETTER)
+                }
             }
         }
-
     }
 
     override fun onDestroy() {
@@ -429,4 +436,5 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         }
         super.onDestroy()
     }
+
 }

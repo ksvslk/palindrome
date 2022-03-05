@@ -361,4 +361,9 @@ class CellDirector constructor(
         }
     }
 
+    fun setLevelState(state: LevelViewModel.UiState)
+    {
+        viewModel.setState(state)
+    }
+
 }

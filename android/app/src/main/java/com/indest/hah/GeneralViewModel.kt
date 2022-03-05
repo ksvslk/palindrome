@@ -37,6 +37,9 @@ class GeneralViewModel @Inject constructor(
     private val _buttonState = MutableSharedFlow<ButtonInfo>(1)
     val buttonState = _buttonState.asSharedFlow()
 
+    private val _rewardState = MutableStateFlow(RewardType.NONE)
+    val rewardState = _rewardState.asStateFlow()
+
     private val _adsLiveData: AdsLiveData = AdsLiveData(application.applicationContext)
     val adsLiveData = _adsLiveData.asFlow()
 
@@ -84,22 +87,22 @@ class GeneralViewModel @Inject constructor(
                         _currentLevel.value = it
                     }
             }
-
-        }
-    }
-
-    fun startCollectingAdsInfo()
-    {
-        viewModelScope.launch {
-            adsLiveData.distinctUntilChanged().collect {
-                Log.d(TAG, "Reward given: ${it.second}")
-                updateUiState(it.second)
+            launch {
+                adsLiveData.distinctUntilChanged().collect {
+                    Log.d(TAG, "Reward given: ${it.second}")
+                    _rewardState.value = it.second
+                    if (it.second == RewardType.CLUE) updateCategoryRewarded()
+                    updateUiState()
+                }
             }
         }
     }
 
-    fun showRewardedVideo(activity: Activity, rewardType: RewardType)
-    {
+    fun updateRewardState(rewardType: RewardType) {
+        _rewardState.value = rewardType
+    }
+
+    fun showRewardedVideo(activity: Activity, rewardType: RewardType) {
         _adsLiveData.showRewardedVideo(activity, rewardType)
     }
 
@@ -127,10 +130,7 @@ class GeneralViewModel @Inject constructor(
         _billingDataSource.launchBillingFlow(activity, sku)
     }
 
-    private fun updateUiState(rewardType: RewardType = RewardType.NONE) {
-
-        if (rewardType == RewardType.CLUE) updateCategoryRewarded()
-
+    private fun updateUiState() {
         val internetState = _internet.value == true
         if (_internet.value == true && _adsLiveData.value?.first == true) {
             viewModelScope.launch {
@@ -138,20 +138,18 @@ class GeneralViewModel @Inject constructor(
                     ButtonInfo(
                         ButtonState.AD,
                         minSkuDetailsMap,
-                        internetState,
-                        rewardType
+                        internetState
                     )
                 )
             }
         } else {
             viewModelScope.launch {
-                _buttonState.emit(ButtonInfo(ButtonState.NO_AD, minSkuDetailsMap, internetState, rewardType))
+                _buttonState.emit(ButtonInfo(ButtonState.NO_AD, minSkuDetailsMap, internetState))
             }
         }
     }
 
-    fun updateCategoryRewarded()
-    {
+    fun updateCategoryRewarded() {
         viewModelScope.launch {
             levelRepository.updateCategoryRewarded(true, currentLevel.value.levelInfo.levelId)
         }
@@ -160,8 +158,6 @@ class GeneralViewModel @Inject constructor(
     data class ButtonInfo(
         val state: ButtonState,
         val skus: MutableMap<String, MinSkuDetails>,
-        val internet: Boolean,
-        val rewardType: RewardType = RewardType.NONE
+        val internet: Boolean
     )
-
 }
