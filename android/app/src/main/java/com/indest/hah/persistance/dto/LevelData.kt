@@ -25,5 +25,5 @@ data class LevelData(
     @ColumnInfo(name = "best_score")
     val best_score: Int,
     @ColumnInfo(name = "time_modified")
-    val timeModified: Long,
+    val timeModified: Long
 )

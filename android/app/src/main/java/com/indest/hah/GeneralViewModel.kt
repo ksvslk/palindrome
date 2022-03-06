@@ -41,7 +41,6 @@ class GeneralViewModel @Inject constructor(
     val rewardState = _rewardState.asStateFlow()
 
     private val _adsLiveData: AdsLiveData = AdsLiveData(application.applicationContext)
-    val adsLiveData = _adsLiveData.asFlow()
 
     private val _currentLevel = MutableStateFlow(Level())
     val currentLevel = _currentLevel.asStateFlow()
@@ -88,13 +87,22 @@ class GeneralViewModel @Inject constructor(
                     }
             }
             launch {
-                adsLiveData.distinctUntilChanged().collect {
+                _adsLiveData.asFlow().distinctUntilChanged().collect {
                     Log.d(TAG, "Reward given: ${it.second}")
+                    if (it.second == RewardType.CLUE) {
+                        updateCategoryRewarded()
+                    }
                     _rewardState.value = it.second
-                    if (it.second == RewardType.CLUE) updateCategoryRewarded()
                     updateUiState()
                 }
             }
+        }
+    }
+
+    fun refreshPurchases()
+    {
+        viewModelScope.launch {
+            _billingDataSource.refreshPurchases()
         }
     }
 
@@ -106,28 +114,14 @@ class GeneralViewModel @Inject constructor(
         _adsLiveData.showRewardedVideo(activity, rewardType)
     }
 
-    private suspend fun combineAndUpdateMinSkuDetails(sku: String) {
-        combine(
-            _billingDataSource.getSkuTitle(sku),
-            _billingDataSource.getSkuPrice(sku),
-            _billingDataSource.canPurchase(sku),
-            _billingDataSource.isPurchased(sku)
-        ) { title, price, canPurchase, isPurchased ->
-            MinSkuDetails(
-                sku = sku,
-                title = title.substringBefore(" ("),
-                price = price,
-                canPurchase = canPurchase,
-                isPurchased = isPurchased
-            )
-        }.distinctUntilChanged().collect {
-            minSkuDetailsMap[it.sku] = it
-            updateUiState()
-        }
-    }
-
     fun launchBillingFlow(activity: Activity, sku: String) {
         _billingDataSource.launchBillingFlow(activity, sku)
+    }
+
+    fun updateCategoryRewarded() {
+        viewModelScope.launch {
+            levelRepository.updateCategoryRewarded(true, currentLevel.value.levelInfo.levelId)
+        }
     }
 
     private fun updateUiState() {
@@ -149,9 +143,23 @@ class GeneralViewModel @Inject constructor(
         }
     }
 
-    fun updateCategoryRewarded() {
-        viewModelScope.launch {
-            levelRepository.updateCategoryRewarded(true, currentLevel.value.levelInfo.levelId)
+    private suspend fun combineAndUpdateMinSkuDetails(sku: String) {
+        combine(
+            _billingDataSource.getSkuTitle(sku),
+            _billingDataSource.getSkuPrice(sku),
+            _billingDataSource.canPurchase(sku),
+            _billingDataSource.isPurchased(sku)
+        ) { title, price, canPurchase, isPurchased ->
+            MinSkuDetails(
+                sku = sku,
+                title = title.substringBefore(" ("),
+                price = price,
+                canPurchase = canPurchase,
+                isPurchased = isPurchased
+            )
+        }.distinctUntilChanged().collect {
+            minSkuDetailsMap[it.sku] = it
+            updateUiState()
         }
     }
 

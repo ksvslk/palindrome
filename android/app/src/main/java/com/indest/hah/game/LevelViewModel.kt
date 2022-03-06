@@ -1,8 +1,6 @@
 package com.indest.hah.game
 
-import android.app.Activity
 import android.app.Application
-import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.*
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -11,6 +9,7 @@ import com.indest.hah.R
 import com.indest.hah.game.levelcreation.WindowSizeClass
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
+import com.indest.hah.persistance.dto.SaveGame
 import com.indest.hah.persistance.level.LevelProgress
 import com.indest.hah.persistance.level.LevelRepository
 import com.indest.hah.savegame.SnapshotHelper
@@ -34,15 +33,28 @@ class LevelViewModel @Inject constructor(
     private val _currentLevel = MutableStateFlow(Level())
     val currentLevel = _currentLevel.asStateFlow()
 
-    private val _solution = MutableStateFlow(SolutionData(Solution.NONE, -1, -1, -1, false))
+    val latestDistinctLevelFlow =
+        _currentLevel
+            .mapNotNull { if (it.levelInfo.levelId != 0) it else null }
+            .distinctUntilChangedBy(keySelector = { level -> level.levelInfo.levelId  })
+            .onEach {
+                if (it.levelInfo.progress == LevelProgress.INTERMEDIATE) {
+                    _uiState.value = UiState.LEVEL_FINISHED
+                } else {
+                    _uiState.value = UiState.READY
+                }
+            }
+
+    private val _solution = MutableStateFlow(
+        SolutionData(Solution.NONE, -1, -1, -1, false)
+    )
     val solution = _solution.asStateFlow()
 
     var windowSizeClassWidth: WindowSizeClass = WindowSizeClass.NOT_SET
     var isBookMode: Boolean = false
 
-    @Inject lateinit var snapshotHelper:SnapshotHelper
-
-    //private var latestLevelJob: Job? = null
+    @Inject lateinit var cloudSave:SnapshotHelper
+    private var saveGameJob:Job? = null
 
     private val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
         Log.e(
@@ -52,47 +64,167 @@ class LevelViewModel @Inject constructor(
         collectLevels()
     }
 
-
     init {
         viewModelScope.launch {
-            levelRepository.init() // First time app starts
-            loadLatestLevelFromCloudOrLocal()
-        }
-    }
-
-    private fun loadLatestLevelFromCloudOrLocal() {
-        viewModelScope.launch(exceptionHandler) {
             _uiState.value = UiState.LOADING
-            //latestLevelJob?.cancel()
-            val result = snapshotHelper.loadGameFromCloud()
-            levelRepository.fakeUpdateLevels(result)
-            //startCollectingLastLevel()
-            collectLevels()
+            levelRepository.init() // First time app starts
         }
     }
 
-    private fun collectLevels()
+    fun loadLatestLevelFromCloudOrLocal() {
+        viewModelScope.launch(exceptionHandler) {
+            val saveGame = cloudSave.load()
+            Log.d(TAG, "Get save game from cloud.")
+            levelRepository.updateLocalGame(saveGame)
+            Log.d(TAG, "Update local game to: ${saveGame.game.findLast { it.levelInfo.progress == LevelProgress.IN_PROGRESS }?.levelInfo}")
+            collectLevels()
+            startSavingGame()
+        }
+    }
+
+    fun stopSavingGame()
     {
+        Log.d(TAG, "Stop saving game.")
+        saveGameJob?.cancel()
+    }
+
+    fun collectLevels()
+    {
+        Log.d(TAG, "Start collecting levels (_currentLevel flow).")
+        _uiState.value = UiState.READY
         viewModelScope.launch {
-            levelRepository.latestLevelFlow().cancellable()
+            levelRepository.latestLevelFlow()
                 .collect { _currentLevel.value = it }
         }
+        startSavingGame()
     }
-
-/*    private fun startCollectingLastLevel() {
-        if (latestLevelJob == null) {
-            latestLevelJob = viewModelScope.launch {
-                levelRepository.latestLevelFlow().cancellable()
-                    .collect { _currentLevel.value = it }
-            }
-        } else {
-            latestLevelJob?.start()
-        }
-    }*/
 
     fun setState(newUiState: UiState) {
         viewModelScope.launch {
             _uiState.emit(newUiState)
+        }
+    }
+
+    fun updateLetters(topIndex: Int, bottomLetter: Char, bottomIndex: Int, topLetter: Char) {
+
+        viewModelScope.launch {
+            _currentLevel.value.levelInfo.let { levelInfo ->
+                val currentSolution = levelRepository.switchLetters(
+                    homeIndex1 = topIndex,
+                    homeIndex2 = bottomIndex,
+                    letter1 = bottomLetter,
+                    letter2 = topLetter,
+                    level = levelInfo.levelId
+                )
+                updateSolutionState(topIndex, currentSolution)
+            }
+        }
+    }
+
+    fun increaseMistakes() {
+        viewModelScope.launch {
+            _currentLevel.value.levelInfo.let { levelInfo ->
+                val pointsToSubtract = levelInfo.levelId * 100 / 20
+                val newScore = if (levelInfo.score - pointsToSubtract < 0) 0
+                else levelInfo.score - pointsToSubtract
+                levelRepository.updateScore(newScore, levelInfo.levelId)
+            }
+        }
+    }
+
+    fun setLetterLocked(index: Int) {
+        viewModelScope.launch {
+            _currentLevel.value.levelInfo.let { levelInfo ->
+                levelRepository.setLetterLocked(
+                    homeIndex = index,
+                    level = levelInfo.levelId
+                )
+                saveGameImmediately()
+                startSavingGame()
+            }
+        }
+    }
+
+    fun updateFriendIndex(index: Int, newIndex: Int) {
+        viewModelScope.launch {
+            _currentLevel.value.levelInfo.let { levelInfo ->
+                val currentSolution = levelRepository.updateFriendIndex(
+                    homeIndex = index,
+                    newFriendIndex = newIndex,
+                    level = levelInfo.levelId
+                )
+                updateSolutionState(index, currentSolution)
+            }
+        }
+    }
+
+    fun changeLevel(chosenLevel: Int) {
+        viewModelScope.launch {
+            _currentLevel.value.levelInfo.let { levelInfo ->
+                val hintInterval = getApplication<Application>().getString(R.string.hint_suggestion)
+                val scoreInterval =
+                    getApplication<Application>().getString(R.string.player_centered_scores)
+                val currentScoreIntervalCount = levelRepository.getCount(scoreInterval)
+
+                // Loading each level gives +1 so to balance it out we will -1 each level
+                // change made from "Level Select" screen as this is not part of the intended gameplay.
+                if (currentScoreIntervalCount > 0) {
+                    levelRepository.setCountTo(scoreInterval, currentScoreIntervalCount - 1)
+                }
+
+                levelRepository.setCountTo(hintInterval, 0)
+                levelRepository.nextLevelActions(
+                    levelInfo.levelId,
+                    chosenLevel
+                )
+            }
+        }
+    }
+
+    suspend fun isIntervalAttained(interval: String): Boolean {
+        return levelRepository.increaseCount(interval)
+    }
+
+    fun executeLevelCompleteActions() {
+        val levelNr = _currentLevel.value.levelInfo.levelId
+        val hintInterval = getApplication<Application>().getString(R.string.hint_suggestion)
+        viewModelScope.launch {
+            levelRepository.executeLevelCompleteTransaction(levelNr, hintInterval)
+        }
+    }
+
+    fun allLevelsFlow(): Flow<List<LevelData>> {
+        return flow {
+            emit(levelRepository.getAllLevels())
+        }
+    }
+
+    fun startSavingGame()
+    {
+        if (saveGameJob == null || saveGameJob?.isCompleted == true)
+        {
+            Log.d(TAG, "Start saving game. Job was null/completed.")
+
+            saveGameJob = viewModelScope.launch {
+                while(isActive) {
+                    delay(30000)
+                    Log.d(TAG, "Save game to cloud.")
+                    val saveGame = levelRepository.getLocalSaveGame()
+                    cloudSave.save(saveGame)
+                }
+            }
+        }
+        else if (saveGameJob?.isCancelled == true) {
+            Log.d(TAG, "Start saving game (job was Cancelled")
+            saveGameJob?.start()
+        }
+    }
+
+    fun saveGameImmediately()
+    {
+        viewModelScope.launch {
+            val saveGame = levelRepository.getLocalSaveGame()
+            cloudSave.save(saveGame)
         }
     }
 
@@ -238,113 +370,6 @@ class LevelViewModel @Inject constructor(
         }
     }
 
-    val latestDistinctLevelFlow =
-        _currentLevel
-            .mapNotNull { if (it.levelInfo.levelId != 0) it else null }
-            .distinctUntilChangedBy(keySelector = { level -> level.levelInfo.levelId })
-            .onEach {
-                if (it.levelInfo.progress == LevelProgress.INTERMEDIATE) {
-                    Log.d(TAG, "Emit state: ${UiState.LEVEL_FINISHED}, ${it.levelInfo.solution}")
-                    _uiState.value = UiState.LEVEL_FINISHED
-                } else {
-                    Log.d(TAG, "Emit state: ${UiState.READY}, ${it.levelInfo.solution}")
-                    _uiState.value = UiState.READY
-                }
-            }
-
-
-    fun updateLetters(topIndex: Int, bottomLetter: Char, bottomIndex: Int, topLetter: Char) {
-
-        viewModelScope.launch {
-            _currentLevel.value.levelInfo.let { levelInfo ->
-                val currentSolution = levelRepository.switchLetters(
-                    homeIndex1 = topIndex,
-                    homeIndex2 = bottomIndex,
-                    letter1 = bottomLetter,
-                    letter2 = topLetter,
-                    level = levelInfo.levelId
-                )
-                updateSolutionState(topIndex, currentSolution)
-            }
-        }
-    }
-
-    fun increaseMistakes() {
-        viewModelScope.launch {
-            _currentLevel.value.levelInfo.let { levelInfo ->
-                val pointsToSubtract = levelInfo.levelId * 100 / 20
-                val newScore = if (levelInfo.score - pointsToSubtract < 0) 0
-                else levelInfo.score - pointsToSubtract
-                levelRepository.updateScore(newScore, levelInfo.levelId)
-            }
-        }
-    }
-
-    fun setLetterLocked(index: Int) {
-        viewModelScope.launch {
-            _currentLevel.value.levelInfo.let { levelInfo ->
-                levelRepository.setLetterLocked(
-                    homeIndex = index,
-                    level = levelInfo.levelId
-                )
-            }
-        }
-    }
-
-    fun updateFriendIndex(index: Int, newIndex: Int) {
-        viewModelScope.launch {
-            _currentLevel.value.levelInfo.let { levelInfo ->
-                val currentSolution = levelRepository.updateFriendIndex(
-                    homeIndex = index,
-                    newFriendIndex = newIndex,
-                    level = levelInfo.levelId
-                )
-                updateSolutionState(index, currentSolution)
-            }
-        }
-    }
-
-    fun changeLevel(chosenLevel: Int) {
-        viewModelScope.launch {
-            _currentLevel.value.levelInfo.let { levelInfo ->
-                val hintInterval = getApplication<Application>().getString(R.string.hint_suggestion)
-                val scoreInterval =
-                    getApplication<Application>().getString(R.string.player_centered_scores)
-                val currentScoreIntervalCount = levelRepository.getCount(scoreInterval)
-
-                // Loading each level gives +1 so to balance it out we will -1 each level
-                // change made from "Level Select" screen as this is not part of the intended gameplay.
-                if (currentScoreIntervalCount > 0) {
-                    levelRepository.setCountTo(scoreInterval, currentScoreIntervalCount - 1)
-                }
-
-                levelRepository.setCountTo(hintInterval, 0)
-                levelRepository.nextLevelActions(
-                    levelInfo.levelId,
-                    chosenLevel
-                )
-            }
-        }
-    }
-
-    suspend fun isIntervalAttained(interval: String): Boolean {
-        return levelRepository.increaseCount(interval)
-    }
-
-    fun executeLevelCompleteActions() {
-        val levelNr = _currentLevel.value.levelInfo.levelId
-        val hintInterval = getApplication<Application>().getString(R.string.hint_suggestion)
-        viewModelScope.launch {
-            levelRepository.executeLevelCompleteTransaction(levelNr, hintInterval)
-        }
-    }
-
-    fun allLevelsFlow(): Flow<List<LevelData>> {
-        return flow {
-            emit(levelRepository.getAllLevels())
-        }
-    }
-
     enum class UiState {
         LOADING,
         READY,
@@ -367,6 +392,5 @@ class LevelViewModel @Inject constructor(
         val maxScore: Int,
         val showHintsBadge: Boolean
     )
-
 
 }

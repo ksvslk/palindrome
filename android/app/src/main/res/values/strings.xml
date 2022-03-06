@@ -55,6 +55,8 @@
     <string name="tap_to_continue">Tap to continue</string>
     <string name="watch_ad_and_continue">Watch ad and continue</string>
     <string name="placeholder">...</string>
+    <string name="ok">OK</string>
+    <string name="sign_in_other_error">Something went wrong while signing in.</string>
     <string-array name="save_24_percent_label">
         <item>SAVE</item>
         <item>24%</item>

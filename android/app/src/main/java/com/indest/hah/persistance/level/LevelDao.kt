@@ -1,9 +1,12 @@
 package com.indest.hah.persistance.level
 
+import android.util.Log
 import androidx.room.*
 import com.indest.hah.game.levelcreation.Shuffler
+import com.indest.hah.persistance.dto.Interval
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
+import com.indest.hah.persistance.dto.SaveGame
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -24,8 +27,7 @@ interface LevelDao {
     suspend fun updateChosenLevelTimestamp(currentLevelNr: Int, chosenLevel: Int)
 
     @Transaction
-    suspend fun nextLevelActions(currentLevelNr: Int, chosenLevel: Int)
-    {
+    suspend fun nextLevelActions(currentLevelNr: Int, chosenLevel: Int) {
         persistInitialLettersInfo(chosenLevel)
         updateChosenLevelTimestamp(currentLevelNr, chosenLevel)
     }
@@ -50,7 +52,7 @@ interface LevelDao {
     @Query("select sum(best_score) from level_info_table")
     suspend fun getTotalScore(): Int
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert
     suspend fun insertLevelInfo(levels: LevelData)
 
     @Transaction
@@ -71,6 +73,20 @@ interface LevelDao {
         }
     }
 
+    @Transaction
+    suspend fun updateIntervals(intervals: List<Interval>) {
+        deleteIntervals()
+        intervals.forEach { interval ->
+            insertInterval(interval)
+        }
+    }
+
+    @Insert
+    suspend fun insertInterval(interval: Interval)
+
+    @Query("DELETE FROM interval")
+    suspend fun deleteIntervals()
+
     @Query("DELETE FROM letter_info_table")
     suspend fun deleteLettersInfo()
 
@@ -79,6 +95,9 @@ interface LevelDao {
 
     @Query("select * from level_info_table")
     suspend fun getAllLevels(): List<Level>
+
+    @Query("select * from interval")
+    suspend fun getAllIntervals(): List<Interval>
 
     @Query("update level_info_table set category_rewarded=:value where level_id=:level")
     suspend fun updateCategoryRewarded(value: Boolean, level: Int)
@@ -93,7 +112,7 @@ interface LevelDao {
     suspend fun resetCount(name: String)
 
     @Query("select current_count from interval where name = :name")
-    suspend fun getCount(name: String):Int
+    suspend fun getCount(name: String): Int
 
     @Query("update interval set current_count = :count where name = :name")
     suspend fun setCountTo(name: String, count: Int)
@@ -109,7 +128,6 @@ interface LevelDao {
         return isLimit
     }
 
-    // REFACTOR
     @Query("select *, max(time_modified) from level_info_table")
     fun getLastLevel(): Flow<Level>
 
@@ -156,9 +174,6 @@ interface LevelDao {
     @Update
     suspend fun updateLevelData(levelInfo: LevelData)
 
-    @Query("select count(*) = (select length(puzzle) from level_info_table where level_id=:level) from letter_info_table where owner_id=:level")
-    suspend fun checkLettersInvariant(level: Int): Boolean
-
     @Query("update level_info_table set progress = :progress where level_id = :level")
     suspend fun updateProgress(level: Int, progress: LevelProgress)
 
@@ -191,8 +206,7 @@ interface LevelDao {
 
     @Transaction
     suspend fun persistInitialLettersInfo(levelNr: Int) = withContext(Dispatchers.Default) {
-        if (levelNr != 0)
-        {
+        if (levelNr != 0) {
             val lettersCount = levelLettersCount(levelNr)
             val isLevelFinished = getLevelProgress(levelNr)
             if (lettersCount <= 0 && isLevelFinished != LevelProgress.INTERMEDIATE) {
@@ -215,10 +229,22 @@ interface LevelDao {
     }
 
     @Transaction
-    suspend fun init()
-    {
+    suspend fun init() {
         val firstLevelProgress = getLevelProgress(1)
         if (firstLevelProgress == LevelProgress.TODO) persistInitialLettersInfo(1)
+    }
+
+    @Transaction
+    suspend fun getLocalSaveGame(): SaveGame {
+        val levels = getAllLevels()
+        val intervals = getAllIntervals()
+        return SaveGame(levels, intervals)
+    }
+
+    @Transaction
+    suspend fun updateLocalGame(saveGame: SaveGame) {
+        updateLevels(saveGame.game)
+        updateIntervals(saveGame.interval)
     }
 
 }

@@ -2,20 +2,26 @@ package com.indest.hah.ads
 
 import android.app.Activity
 import android.content.Context
-import android.os.CountDownTimer
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.LiveData
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.indest.hah.R
+import kotlin.math.min
+
+private const val AD_RELOAD_TIMER_START_MILLISECONDS = 1L * 1000L
+private const val AD_RELOAD_TIMER_MAX_TIME_MILLISECONDS = 1000L * 60L * 5L // 5 minutes
 
 class AdsLiveData (private val context: Context) : LiveData<Pair<Boolean, RewardType>>() {
     private val TAG = "AdsLiveData"
 
-    private var _adReloadTimer: CountDownTimer? = null
     private var _rewardedAd: RewardedAd? = null
     private var _rewardEarned = false
+    private val handler = Handler(Looper.getMainLooper())
+    private var adReloadMilliseconds = AD_RELOAD_TIMER_START_MILLISECONDS
 
     init {
         postValue(Pair(false, RewardType.NONE))
@@ -28,21 +34,9 @@ class AdsLiveData (private val context: Context) : LiveData<Pair<Boolean, Reward
 
     override fun onInactive() {
         Log.d(TAG, "onInactive")
+        handler.looper.quitSafely()
         _rewardedAd = null
-        _adReloadTimer?.cancel()
-        _adReloadTimer = null
         postValue(Pair(false, RewardType.NONE))
-    }
-
-    private fun startAdReloadTimer() {
-        _adReloadTimer?.cancel()
-        _adReloadTimer = object : CountDownTimer(15000, 1000) {
-            override fun onTick(millisUntilFinished: Long) {}
-            override fun onFinish() {
-                Log.d(TAG, "Ad reload timer completed.")
-                loadRewardedAd()
-            }
-        }.start()
     }
 
     // CLEAN
@@ -54,7 +48,7 @@ class AdsLiveData (private val context: Context) : LiveData<Pair<Boolean, Reward
                 object : RewardedAdLoadCallback() {
                     override fun onAdFailedToLoad(adError: LoadAdError) {
                         Log.d(TAG, adError.message)
-                        startAdReloadTimer()
+                        retryReloadingAdsWithExponentialBackoff()
                     }
 
                     override fun onAdLoaded(rewardedAd: RewardedAd) {
@@ -65,6 +59,20 @@ class AdsLiveData (private val context: Context) : LiveData<Pair<Boolean, Reward
                 }
             )
         }
+    }
+
+    private fun retryReloadingAdsWithExponentialBackoff() {
+        handler.postDelayed(
+            {
+                Log.d(TAG, "Trying to reload ads. adReloadMilliseconds: $adReloadMilliseconds ")
+                loadRewardedAd()
+            },
+            adReloadMilliseconds
+        )
+        adReloadMilliseconds = min(
+            adReloadMilliseconds * 2,
+            AD_RELOAD_TIMER_MAX_TIME_MILLISECONDS
+        )
     }
 
     fun showRewardedVideo(activity: Activity, rewardedType: RewardType) {

@@ -1,12 +1,9 @@
 package com.indest.hah.persistance.level
 
-import androidx.room.Query
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import com.indest.hah.persistance.dto.SaveGame
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -83,18 +80,9 @@ class LevelRepository @Inject constructor(
         levelDao.updateProgress(level, progress)
     }
 
-    suspend fun getLocalLevels(): List<Level> {
-        return levelDao.getAllLevels()
-    }
-
-    suspend fun updateLevels(levels: List<Level>) {
-        levelDao.updateLevels(levels)
-    }
-
     suspend fun updateCategoryRewarded(value: Boolean, level: Int) =
         levelDao.updateCategoryRewarded(value, level)
 
-    suspend fun fakeUpdateLevels(de: Long) = withContext(Dispatchers.Default) {
-        delay(de)
-    }
+    suspend fun getLocalSaveGame(): SaveGame = levelDao.getLocalSaveGame()
+    suspend fun updateLocalGame(saveGame: SaveGame) = levelDao.updateLocalGame(saveGame)
 }

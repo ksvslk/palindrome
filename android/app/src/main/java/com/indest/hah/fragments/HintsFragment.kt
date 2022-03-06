@@ -18,10 +18,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.GeneralViewModel
+import com.indest.hah.MainActivity
 import com.indest.hah.ads.RewardType
 import com.indest.hah.ads.RewardType.*
 import com.indest.hah.databinding.HintsFragmentBinding
 import com.indest.hah.fx.SoundPlayer
+import com.indest.hah.game.LevelViewModel
 import com.indest.hah.other.C
 import com.indest.hah.views.ButtonState.*
 import com.indest.hah.views.PurchaseButton
@@ -39,6 +41,7 @@ class HintsFragment : BottomSheetDialogFragment() {
     private var _binding: HintsFragmentBinding? = null
     private val binding get() = _binding!!
     private val viewModel: GeneralViewModel by activityViewModels()
+    private val levelViewModel: LevelViewModel by activityViewModels()
     @Inject
     lateinit var soundPlayer: SoundPlayer
 
@@ -86,6 +89,8 @@ class HintsFragment : BottomSheetDialogFragment() {
             NONE -> {/*_*/}
             CLUE -> {
                 revealClue()
+                levelViewModel.saveGameImmediately()
+                levelViewModel.startSavingGame()
             }
             LETTER -> {
                 setFragmentResult(
@@ -142,6 +147,7 @@ class HintsFragment : BottomSheetDialogFragment() {
                 when (binding.rewardCategoryButton.buttonState)
                 {
                     AD -> {
+                        levelViewModel.setState(LevelViewModel.UiState.BUSY)
                         viewModel.showRewardedVideo(requireActivity(), CLUE)
                     }
                     PREMIUM -> {
@@ -157,6 +163,7 @@ class HintsFragment : BottomSheetDialogFragment() {
             when (binding.rewardPlaceLetter.buttonState)
             {
                 AD -> {
+                    levelViewModel.setState(LevelViewModel.UiState.BUSY)
                     viewModel.showRewardedVideo(requireActivity(), LETTER)
                 }
                 PREMIUM -> {

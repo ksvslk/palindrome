@@ -154,14 +154,11 @@ class SettingsFragment : BottomSheetDialogFragment() {
             signInOptions
         )
         dismiss()
-        signInObserver.signIn(signInClient.signInIntent)
+        signInObserver.signIn(signInClient.signInIntent, requireActivity())
     }
 
     private fun signOut() {
-        val signInOptions =
-            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
-                .build()
-        val client = GoogleSignIn.getClient(requireActivity(), signInOptions)
+        val client = GoogleSignIn.getClient(requireActivity(),  GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
         client.signOut().addOnCompleteListener(requireActivity()) {
             if (it.isSuccessful) {
                 Toast.makeText(

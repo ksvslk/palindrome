@@ -17,4 +17,22 @@ class Level(
         LevelData(0,"_EMPTY_CONSTRUCTOR_","","",false, LevelProgress.IN_PROGRESS,0, 0, 0),
         emptyList()
     )
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Level
+
+        if (levelInfo != other.levelInfo) return false
+        if (lettersProperties != other.lettersProperties) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = levelInfo.hashCode()
+        result = 31 * result + lettersProperties.hashCode()
+        return result
+    }
 }

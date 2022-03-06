@@ -3,6 +3,7 @@ package com.indest.hah.persistance.dto
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.io.Serializable
 
 @Entity(tableName = "interval")
 data class Interval(
@@ -15,4 +16,4 @@ data class Interval(
     // Constant - when reached, currentCount will reset
     @ColumnInfo(name = "limit_count")
     val limitCount: Int = 0
-)
+):Serializable

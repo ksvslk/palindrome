@@ -87,24 +87,13 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     }
 
     private fun levelUpdater() {
-        lifecycleScope.launch(Dispatchers.Main) {
+        lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
-                WindowInfoTracker.getOrCreate(requireContext())
-                    .windowLayoutInfo(requireActivity())
-                    .collect { newLayoutInfo ->
-                        val foldingFeature: FoldingFeature? =
-                            newLayoutInfo.displayFeatures.find { it is FoldingFeature } as? FoldingFeature
-                        val isBookMode = foldingFeature?.state == FoldingFeature.State.FLAT
-                        viewModel.isBookMode = isBookMode
-                        viewModel.latestDistinctLevelFlow.collect { level ->
-                            loadLevel(level, viewModel.isBookMode)
-                            if (level.levelInfo.progress == LevelProgress.INTERMEDIATE)
-                            {
-                                viewModel.setState(LEVEL_FINISHED)
-                            }
-                            //turn this on again showPlayerCenteredScores()
-                        }
-                    }
+                viewModel.latestDistinctLevelFlow.collect { level ->
+                    Log.d(TAG, "Collecting level: ${level.levelInfo.levelId}")
+                    loadLevel(level, viewModel.isBookMode)
+                    //turn this on again showPlayerCenteredScores()
+                }
             }
         }
     }
@@ -151,7 +140,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.uiState.collect { uiState ->
-                    Log.d(TAG, "UI state set: ${uiState.name}")
+                    Log.d(TAG, "UI state: ${uiState.name}")
                     with(binding)
                     {
                         when (uiState) {
@@ -401,7 +390,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         when (rewardType) {
             RewardType.LETTER -> {
                 Log.d(TAG, "LETTER reward.")
-                viewModel.setState(BUSY)
                 cellDirector?.rewardWithRandomLetter()
             }
             RewardType.NEXT_LEVEL -> {
@@ -415,9 +403,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setFragmentResultListener(C.HINTS_REQUEST_KEY) { _, bundle ->
-            Log.d(TAG, bundle.toString())
-            if (viewModel.uiState.value != LEVEL_FINISHED)
-            {
+            if (viewModel.uiState.value != LEVEL_FINISHED) {
                 val premiumLetter = bundle.getBoolean(C.LETTER_PREMIUM_BUNDLE)
                 if (!premiumLetter) {
                     val rewardType = RewardType.values()[bundle.getInt(C.LETTER_REWARD_TYPE_BUNDLE)]

@@ -1,6 +1,7 @@
 package com.indest.hah.other
 
 object C {
+    const val SAVE_GAME = "SAVE_GAME"
     const val TOP_LAYER = 3f
     const val MIDDLE_LAYER = 2f
     const val NEUTRAL_LAYER = 1f
@@ -13,5 +14,6 @@ object C {
     const val LETTER_PREMIUM_BUNDLE="LETTER_PREMIUM_BUNDLE"
     const val LEVEL_FRAGMENT_KEY="LEVEL_FRAGMENT_KEY"
     const val CLUE_BUNDLE="CLUE_BUNDLE"
+    const val SIGN_IN="SIGN_IN"
 }
 
