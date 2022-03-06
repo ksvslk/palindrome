@@ -2,6 +2,7 @@ package com.indest.hah
 
 import android.content.res.Configuration
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
@@ -42,6 +43,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.util.*
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogListener {
@@ -62,13 +64,13 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
 
         signInObserver = SignInLifecycleObserver(activityResultRegistry)
         lifecycle.addObserver(signInObserver)
-        RequestConfiguration.Builder().setTestDeviceIds(
-            listOf(
-                "6C6A719C306FBA0A0FBE4D81600B8AB1",
-                "1C8B057289566E4B36BA860D0A8281CB"
-            )
-        )
-        MobileAds.initialize(applicationContext) {}
+
+        MobileAds.initialize(applicationContext) {
+        }
+
+        val testDeviceIds = listOf("6C6A719C306FBA0A0FBE4D81600B8AB1", "1C8B057289566E4B36BA860D0A8281CB", "06F9B7BCACB746B35A407A17B4D161D9")
+        val configuration = RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build()
+        MobileAds.setRequestConfiguration(configuration)
         generalViewModel.toString()
 
         applyCustomWindowInsets()
@@ -80,13 +82,15 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
     override fun onResume() {
         super.onResume()
         Log.d(TAG, "onResume")
-        tryToSignInSilently()
+        if (levelViewModel.uiState.value != LevelViewModel.UiState.PAUSED) tryToSignInSilently()
+        else if (levelViewModel.uiState.value == LevelViewModel.UiState.PAUSED) levelViewModel.setState(LevelViewModel.UiState.READY)
     }
 
     override fun onPause() {
         super.onPause()
         Log.d(TAG, "onPause")
         levelViewModel.stopSavingGame()
+        if (levelViewModel.uiState.value != LevelViewModel.UiState.BUSY) levelViewModel.setState(LevelViewModel.UiState.PAUSED)
     }
 
     private fun updateFoldModeInfo()
@@ -179,6 +183,7 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
         Log.d(TAG, "tryToSignInSilently: ${levelViewModel.uiState.value}")
         if (levelViewModel.uiState.value != LevelViewModel.UiState.BUSY)
         {
+            levelViewModel.setState(LevelViewModel.UiState.LOADING)
             val signInOptions =
                 GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
                     .requestScopes(Games.SCOPE_GAMES_SNAPSHOTS)
@@ -220,12 +225,16 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
+        Log.d(TAG, "onSaveInstanceState")
+        super.onSaveInstanceState(outState, outPersistentState)
+    }
+
     fun startWithCloudSave(signInAccount: GoogleSignInAccount)
     {
         Games.getGamesClient(this, signInAccount)
             .setViewForPopups(findViewById(android.R.id.content))
         levelViewModel.loadLatestLevelFromCloudOrLocal()
-        generalViewModel.refreshPurchases()
     }
 
     fun setState(uiState:LevelViewModel.UiState)
@@ -237,7 +246,6 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
     {
         Log.d(TAG, "Signed in was canceled or failed. Start local game.")
         levelViewModel.collectLevels()
-        generalViewModel.refreshPurchases()
     }
 
     override fun onBackPressed() {

@@ -2,6 +2,7 @@ package com.indest.hah.fragments
 
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -165,6 +166,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                                 levelFragment.notClickable = true
                                 levelFragment.alpha = 1f
                             }
+                            PAUSED -> { }
                         }
                     }
                 }

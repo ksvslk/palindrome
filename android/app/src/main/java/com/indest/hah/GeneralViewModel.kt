@@ -99,13 +99,6 @@ class GeneralViewModel @Inject constructor(
         }
     }
 
-    fun refreshPurchases()
-    {
-        viewModelScope.launch {
-            _billingDataSource.refreshPurchases()
-        }
-    }
-
     fun updateRewardState(rewardType: RewardType) {
         _rewardState.value = rewardType
     }

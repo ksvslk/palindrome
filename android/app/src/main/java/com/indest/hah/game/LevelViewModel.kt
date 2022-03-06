@@ -40,8 +40,6 @@ class LevelViewModel @Inject constructor(
             .onEach {
                 if (it.levelInfo.progress == LevelProgress.INTERMEDIATE) {
                     _uiState.value = UiState.LEVEL_FINISHED
-                } else {
-                    _uiState.value = UiState.READY
                 }
             }
 
@@ -66,6 +64,9 @@ class LevelViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
+            _uiState.collect {
+                Log.d(TAG, "Ui state changed: $it")
+            }
             _uiState.value = UiState.LOADING
             levelRepository.init() // First time app starts
         }
@@ -374,7 +375,8 @@ class LevelViewModel @Inject constructor(
         LOADING,
         READY,
         LEVEL_FINISHED,
-        BUSY
+        BUSY,
+        PAUSED
     }
 
     enum class Solution {

@@ -34,7 +34,6 @@ class AdsLiveData (private val context: Context) : LiveData<Pair<Boolean, Reward
 
     override fun onInactive() {
         Log.d(TAG, "onInactive")
-        handler.looper.quitSafely()
         _rewardedAd = null
         postValue(Pair(false, RewardType.NONE))
     }
@@ -62,17 +61,20 @@ class AdsLiveData (private val context: Context) : LiveData<Pair<Boolean, Reward
     }
 
     private fun retryReloadingAdsWithExponentialBackoff() {
-        handler.postDelayed(
-            {
-                Log.d(TAG, "Trying to reload ads. adReloadMilliseconds: $adReloadMilliseconds ")
-                loadRewardedAd()
-            },
-            adReloadMilliseconds
-        )
-        adReloadMilliseconds = min(
-            adReloadMilliseconds * 2,
-            AD_RELOAD_TIMER_MAX_TIME_MILLISECONDS
-        )
+        if (hasActiveObservers())
+        {
+            handler.postDelayed(
+                {
+                    Log.d(TAG, "Trying to reload ads. adReloadMilliseconds: $adReloadMilliseconds ")
+                    loadRewardedAd()
+                },
+                adReloadMilliseconds
+            )
+            adReloadMilliseconds = min(
+                adReloadMilliseconds * 2,
+                AD_RELOAD_TIMER_MAX_TIME_MILLISECONDS
+            )
+        }
     }
 
     fun showRewardedVideo(activity: Activity, rewardedType: RewardType) {
