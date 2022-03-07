@@ -41,6 +41,9 @@ class LevelViewModel @Inject constructor(
                 if (it.levelInfo.progress == LevelProgress.INTERMEDIATE) {
                     _uiState.value = UiState.LEVEL_FINISHED
                 }
+                else {
+                    _uiState.value = UiState.READY
+                }
             }
 
     private val _solution = MutableStateFlow(

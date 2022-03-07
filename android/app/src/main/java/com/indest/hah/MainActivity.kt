@@ -82,15 +82,23 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
     override fun onResume() {
         super.onResume()
         Log.d(TAG, "onResume")
-        if (levelViewModel.uiState.value != LevelViewModel.UiState.PAUSED) tryToSignInSilently()
-        else if (levelViewModel.uiState.value == LevelViewModel.UiState.PAUSED) levelViewModel.setState(LevelViewModel.UiState.READY)
+        if (levelViewModel.uiState.value != LevelViewModel.UiState.PAUSED &&
+            levelViewModel.uiState.value != LevelViewModel.UiState.LEVEL_FINISHED){
+                tryToSignInSilently()
+        }
+        else if (levelViewModel.uiState.value == LevelViewModel.UiState.PAUSED) {
+         levelViewModel.setState(LevelViewModel.UiState.READY)
+        }
     }
 
     override fun onPause() {
         super.onPause()
         Log.d(TAG, "onPause")
         levelViewModel.stopSavingGame()
-        if (levelViewModel.uiState.value != LevelViewModel.UiState.BUSY) levelViewModel.setState(LevelViewModel.UiState.PAUSED)
+        if (levelViewModel.uiState.value != LevelViewModel.UiState.BUSY &&
+            levelViewModel.uiState.value != LevelViewModel.UiState.LEVEL_FINISHED) {
+            levelViewModel.setState(LevelViewModel.UiState.PAUSED)
+        }
     }
 
     private fun updateFoldModeInfo()
@@ -225,11 +233,6 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
-        Log.d(TAG, "onSaveInstanceState")
-        super.onSaveInstanceState(outState, outPersistentState)
-    }
-
     fun startWithCloudSave(signInAccount: GoogleSignInAccount)
     {
         Games.getGamesClient(this, signInAccount)
@@ -264,7 +267,6 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
     override fun onDestroy() {
         super.onDestroy()
         Log.d(TAG, "onDestroy")
-        levelViewModel.stopSavingGame()
     }
 
 }
