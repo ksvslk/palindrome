@@ -99,6 +99,9 @@ class HintsFragment : BottomSheetDialogFragment() {
                 )
                 dismiss()
             }
+            AD_FAILED -> {
+                levelViewModel.setState(LevelViewModel.UiState.READY)
+            }
         }
     }
 

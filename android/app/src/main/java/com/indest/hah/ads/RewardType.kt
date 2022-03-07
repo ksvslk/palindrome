@@ -4,5 +4,6 @@ enum class RewardType {
     CLUE,
     LETTER,
     NEXT_LEVEL,
-    NONE
+    NONE,
+    AD_FAILED
 }
