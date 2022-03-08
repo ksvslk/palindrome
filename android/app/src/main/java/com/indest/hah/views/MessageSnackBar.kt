@@ -14,6 +14,7 @@ import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.indest.hah.R
 import com.indest.hah.views.MessageSnackBar.Companion.TextSize.*
 import com.indest.hah.game.levelcreation.WindowSizeClass
+import com.indest.hah.other.BookMode
 import com.indest.hah.other.findSuitableParent
 
 class MessageSnackBar(
@@ -44,7 +45,7 @@ class MessageSnackBar(
             message: String,
             duration: Int,
             windowSizeClassWidth: WindowSizeClass,
-            isBookMode: Boolean,
+            isBookMode: BookMode,
             textSize: TextSize,
             animateText: Boolean = false
         ): MessageSnackBar {
@@ -89,7 +90,7 @@ class MessageSnackBar(
             context: Context,
             textSize: TextSize,
             windowSizeClassWidth: WindowSizeClass,
-            isBookMode: Boolean
+            isBookMode: BookMode
         ): Float {
 
             var textBig = 0
@@ -112,7 +113,7 @@ class MessageSnackBar(
                             textSmall = context.resources.getDimensionPixelSize(R.dimen._9ssp)
                         }
                         densityDpi in DisplayMetrics.DENSITY_XHIGH.rangeTo(DisplayMetrics.DENSITY_XXHIGH) -> {
-                            if (isBookMode) {
+                            if (isBookMode == BookMode.BOOK_MODE) {
                                 textBig = context.resources.getDimensionPixelSize(R.dimen._5ssp)
                                 textSmall = context.resources.getDimensionPixelSize(R.dimen._4ssp)
                             } else {
@@ -151,7 +152,7 @@ class MessageSnackBar(
                             textSmall = context.resources.getDimensionPixelSize(R.dimen._7ssp)
                         }
                         in DisplayMetrics.DENSITY_XHIGH.rangeTo(DisplayMetrics.DENSITY_XXHIGH) -> {
-                            if (isBookMode) {
+                            if (isBookMode == BookMode.BOOK_MODE) {
                                 textBig = context.resources.getDimensionPixelSize(R.dimen._5ssp)
                                 textSmall = context.resources.getDimensionPixelSize(R.dimen._4ssp)
                             } else {

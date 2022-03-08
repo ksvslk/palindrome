@@ -7,9 +7,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.games.Games
 import com.indest.hah.R
 import com.indest.hah.game.levelcreation.WindowSizeClass
+import com.indest.hah.other.AccountStatus
+import com.indest.hah.other.BookMode
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
-import com.indest.hah.persistance.dto.SaveGame
 import com.indest.hah.persistance.level.LevelProgress
 import com.indest.hah.persistance.level.LevelRepository
 import com.indest.hah.savegame.SnapshotHelper
@@ -27,35 +28,24 @@ class LevelViewModel @Inject constructor(
 
     private val TAG = "LevelViewModel"
 
-    private val _uiState = MutableStateFlow(UiState.LOADING)
+    private val _uiState = MutableStateFlow(UiState(level = Level(), solutionData = SolutionData()))
     val uiState = _uiState.asStateFlow()
+
+    private var _windowSizeClassWidth = MutableStateFlow(WindowSizeClass.NOT_SET)
+
+    //val windowSizeClassWidth = _windowSizeClassWidth.asStateFlow()
+    private var _bookMode: MutableStateFlow<BookMode> = MutableStateFlow(BookMode.NOT_SET)
+
+    //var isBookMode = _isBookMode.asStateFlow()
+    private val _accountStatus = MutableStateFlow(AccountStatus.NOT_SET)
+    //val accountStatus = _accountStatus.asStateFlow()
 
     private val _currentLevel = MutableStateFlow(Level())
     val currentLevel = _currentLevel.asStateFlow()
 
-    val latestDistinctLevelFlow =
-        _currentLevel
-            .mapNotNull { if (it.levelInfo.levelId != 0) it else null }
-            .distinctUntilChangedBy(keySelector = { level -> level.levelInfo.levelId  })
-            .onEach {
-                if (it.levelInfo.progress == LevelProgress.INTERMEDIATE) {
-                    _uiState.value = UiState.LEVEL_FINISHED
-                }
-                else {
-                    _uiState.value = UiState.READY
-                }
-            }
-
-    private val _solution = MutableStateFlow(
-        SolutionData(Solution.NONE, -1, -1, -1, false)
-    )
-    val solution = _solution.asStateFlow()
-
-    var windowSizeClassWidth: WindowSizeClass = WindowSizeClass.NOT_SET
-    var isBookMode: Boolean = false
-
-    @Inject lateinit var cloudSave:SnapshotHelper
-    private var saveGameJob:Job? = null
+    @Inject
+    lateinit var cloudSave: SnapshotHelper
+    private var saveGameJob: Job? = null
 
     private val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
         Log.e(
@@ -65,13 +55,39 @@ class LevelViewModel @Inject constructor(
         collectLevels()
     }
 
+    fun setAccountStatus(accountStatus: AccountStatus) {
+        _accountStatus.value = accountStatus
+    }
+
+    fun setWindowSizeClass(windowSizeClass: WindowSizeClass) {
+        _windowSizeClassWidth.value = windowSizeClass
+    }
+
+    fun setBookMode(bookMode: BookMode) {
+        _bookMode.value = bookMode
+    }
+
     init {
         viewModelScope.launch {
-            _uiState.collect {
-                Log.d(TAG, "Ui state changed: $it")
-            }
-            _uiState.value = UiState.LOADING
             levelRepository.init() // First time app starts
+        }
+        viewModelScope.launch {
+            combine(
+                _accountStatus,
+                _windowSizeClassWidth,
+                _bookMode
+            ) { accounStatus, windowSizeClass, bookMode ->
+                {
+                    Triple(accounStatus, bookMode, windowSizeClass)
+                }
+            }.collect {
+                _uiState.value = _uiState.value.copy(
+                    accountStatus = it().first,
+                    bookMode = it().second,
+                    windowSizeClass = it().third,
+                )
+                Log.d(TAG, _uiState.value.toString())
+            }
         }
     }
 
@@ -80,33 +96,26 @@ class LevelViewModel @Inject constructor(
             val saveGame = cloudSave.load()
             Log.d(TAG, "Get save game from cloud.")
             levelRepository.updateLocalGame(saveGame)
-            Log.d(TAG, "Update local game to: ${saveGame.game.findLast { it.levelInfo.progress == LevelProgress.IN_PROGRESS }?.levelInfo}")
+            Log.d(
+                TAG,
+                "Update local game to: ${saveGame.game.findLast { it.levelInfo.progress == LevelProgress.IN_PROGRESS }?.levelInfo}"
+            )
             collectLevels()
             startSavingGame()
         }
     }
 
-    fun stopSavingGame()
-    {
+    fun stopSavingGame() {
         Log.d(TAG, "Stop saving game.")
         saveGameJob?.cancel()
     }
 
-    fun collectLevels()
-    {
-        Log.d(TAG, "Start collecting levels (_currentLevel flow).")
-        _uiState.value = UiState.READY
+    private fun collectLevels() {
         viewModelScope.launch {
             levelRepository.latestLevelFlow()
                 .collect { _currentLevel.value = it }
         }
         startSavingGame()
-    }
-
-    fun setState(newUiState: UiState) {
-        viewModelScope.launch {
-            _uiState.emit(newUiState)
-        }
     }
 
     fun updateLetters(topIndex: Int, bottomLetter: Char, bottomIndex: Int, topLetter: Char) {
@@ -203,29 +212,25 @@ class LevelViewModel @Inject constructor(
         }
     }
 
-    fun startSavingGame()
-    {
-        if (saveGameJob == null || saveGameJob?.isCompleted == true)
-        {
+    fun startSavingGame() {
+        if (saveGameJob == null || saveGameJob?.isCompleted == true) {
             Log.d(TAG, "Start saving game. Job was null/completed.")
 
             saveGameJob = viewModelScope.launch {
-                while(isActive) {
+                while (isActive) {
                     delay(30000)
                     Log.d(TAG, "Save game to cloud.")
                     val saveGame = levelRepository.getLocalSaveGame()
                     cloudSave.save(saveGame)
                 }
             }
-        }
-        else if (saveGameJob?.isCancelled == true) {
+        } else if (saveGameJob?.isCancelled == true) {
             Log.d(TAG, "Start saving game (job was Cancelled")
             saveGameJob?.start()
         }
     }
 
-    fun saveGameImmediately()
-    {
+    fun saveGameImmediately() {
         viewModelScope.launch {
             val saveGame = levelRepository.getLocalSaveGame()
             cloudSave.save(saveGame)
@@ -316,7 +321,6 @@ class LevelViewModel @Inject constructor(
 
                 when {
                     guess == solution -> {
-                        _uiState.emit(UiState.BUSY)
                         submitScore()
                         levelRepository.updateLevelProgress(
                             _currentLevel.value.levelInfo.levelId,
@@ -329,73 +333,55 @@ class LevelViewModel @Inject constructor(
                             maxScore = _currentLevel.value.levelInfo.levelId * 100,
                             showHintsBadge = false
                         )
-                        _solution.emit(solutionData)
+                        _uiState.value = _uiState.value.copy(
+                            state = ContainerState.BUSY,
+                            solutionData = solutionData
+                        )
                         resolveLevelCompleteAchievements(solutionData)
                         levelRepository.setCountTo(hintsInterval, 0)
                     }
                     playerGuess.reversed() == playerGuess -> {
                         val showHintsBadge = levelRepository.increaseCount(hintsInterval)
-                        _solution.emit(
-                            SolutionData(
-                                solution = Solution.BOGUS_PALINDROME,
-                                index = index,
-                                score = _currentLevel.value.levelInfo.score,
-                                maxScore = _currentLevel.value.levelInfo.levelId * 100,
-                                showHintsBadge = showHintsBadge
-                            )
+                        val solutionData = SolutionData(
+                            solution = Solution.BOGUS_PALINDROME,
+                            index = index,
+                            score = _currentLevel.value.levelInfo.score,
+                            maxScore = _currentLevel.value.levelInfo.levelId * 100,
+                            showHintsBadge = showHintsBadge
+                        )
+                        _uiState.value = _uiState.value.copy(
+                            solutionData = solutionData
                         )
                         // Wrong Palindrome achievement
                         unlockAchievement(getApplication<Application>().getString(R.string.achievement_wrong_palindrome))
                     }
                     else -> {
                         val showHintsBadge = levelRepository.increaseCount(hintsInterval)
-                        _solution.emit(
-                            SolutionData(
-                                solution = Solution.WRONG,
-                                index = index,
-                                score = _currentLevel.value.levelInfo.score,
-                                maxScore = _currentLevel.value.levelInfo.levelId * 100,
-                                showHintsBadge = showHintsBadge
-                            )
+                        val solutionData = SolutionData(
+                            solution = Solution.WRONG,
+                            index = index,
+                            score = _currentLevel.value.levelInfo.score,
+                            maxScore = _currentLevel.value.levelInfo.levelId * 100,
+                            showHintsBadge = showHintsBadge
+                        )
+                        _uiState.value = _uiState.value.copy(
+                            solutionData = solutionData
                         )
                     }
                 }
             } else {
-                _solution.emit(
-                    SolutionData(
-                        solution = Solution.NONE,
-                        index = -1,
-                        score = -1,
-                        maxScore = -1,
-                        showHintsBadge = false
-                    )
+                val solutionData = SolutionData(
+                    solution = Solution.NONE,
+                    index = -1,
+                    score = -1,
+                    maxScore = -1,
+                    showHintsBadge = false
+                )
+                _uiState.value = _uiState.value.copy(
+                    solutionData = solutionData
                 )
             }
         }
     }
-
-    enum class UiState {
-        LOADING,
-        READY,
-        LEVEL_FINISHED,
-        BUSY,
-        PAUSED
-    }
-
-    enum class Solution {
-        CORRECT,
-        WRONG,
-        BOGUS_PALINDROME,
-        NONE
-
-    }
-
-    data class SolutionData(
-        val solution: Solution,
-        val index: Int,
-        val score: Int,
-        val maxScore: Int,
-        val showHintsBadge: Boolean
-    )
 
 }

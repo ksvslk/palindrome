@@ -225,8 +225,8 @@ class CellDirector constructor(
         if (isCorrectMove == false) viewModel.increaseMistakes()
     }
 
-    fun sendWrongSolutionLetterHome(index: Int) {
-        val lastLetter = cells.find { p -> p.homeIndex == index } as Letter
+    fun sendWrongSolutionLetterHome(uiState: UiState) {
+        val lastLetter = cells.find { p -> p.homeIndex == uiState.solutionData.index } as Letter
         sendLetterHome(lastLetter)
     }
 
@@ -359,11 +359,6 @@ class CellDirector constructor(
                 "Something went terribly wrong while trying to reward with letter. No letters available :("
             )
         }
-    }
-
-    fun setLevelState(state: LevelViewModel.UiState)
-    {
-        viewModel.setState(state)
     }
 
 }

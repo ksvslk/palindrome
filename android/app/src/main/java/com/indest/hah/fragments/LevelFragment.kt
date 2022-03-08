@@ -2,7 +2,6 @@ package com.indest.hah.fragments
 
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
-import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -20,8 +19,6 @@ import androidx.fragment.app.*
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.window.layout.FoldingFeature
-import androidx.window.layout.WindowInfoTracker
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.BaseTransientBottomBar
@@ -29,27 +26,21 @@ import com.google.android.play.core.review.ReviewManagerFactory
 import com.indest.hah.MainActivity
 import com.indest.hah.R
 import com.indest.hah.ads.RewardType
-import com.indest.hah.fx.Animations
-import com.indest.hah.game.levelcreation.LevelCreator
-import com.indest.hah.fx.SoundPlayer
 import com.indest.hah.databinding.LevelFragmentBinding
-import com.indest.hah.game.CellDirector
-import com.indest.hah.game.LevelViewModel
-import com.indest.hah.game.LevelViewModel.Solution.*
-import com.indest.hah.game.LevelViewModel.Solution.NONE
-import com.indest.hah.game.LevelViewModel.UiState.*
+import com.indest.hah.fx.Animations
+import com.indest.hah.fx.SoundPlayer
+import com.indest.hah.game.*
+import com.indest.hah.game.Solution.*
+import com.indest.hah.game.ContainerState.*
+import com.indest.hah.game.levelcreation.LevelCreator
 import com.indest.hah.other.C
-import com.indest.hah.views.MessageSnackBar
-import com.indest.hah.views.Cell
-import com.indest.hah.persistance.dto.Level
 import com.indest.hah.other.VaryingProbability
-import com.indest.hah.persistance.level.LevelProgress
+import com.indest.hah.views.Cell
+import com.indest.hah.views.MessageSnackBar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
 
 @AndroidEntryPoint
 class LevelFragment : Fragment(R.layout.level_fragment) {
@@ -82,28 +73,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        containerStateUpdater()
-        levelUpdater()
-        solutionEffectsUpdater()
-    }
-
-    private fun levelUpdater() {
-        lifecycleScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
-                viewModel.latestDistinctLevelFlow.collect { level ->
-                    Log.d(TAG, "Collecting level: ${level.levelInfo.levelId}")
-                    loadLevel(level, viewModel.isBookMode)
-                    //turn this on again showPlayerCenteredScores()
-                }
-            }
-        }
-    }
-
-    private fun loadLevel(level: Level, isBookMode: Boolean) {
-        Log.d(TAG, "Load level: ${level.levelInfo.solution}")
-        binding.levelFragment.removeAllViews()
-        displayLevel(level, isBookMode)
-        hideHintsBadge()
+        uiStateUpdater()
     }
 
     private fun showPlayerCenteredScores() {
@@ -117,18 +87,19 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         }
     }
 
-    private fun displayLevel(level: Level, isBookMode: Boolean) {
+    private fun displayLevel(uiState: UiState) {
+        binding.levelFragment.removeAllViews()
         val levelGridLayout = levelCreator.getLevel(
-            level,
+            uiState.level,
             layoutInflater,
             binding.levelFragment,
-            isBookMode,
-            viewModel.windowSizeClassWidth
+            uiState.bookMode,
+            uiState.windowSizeClass
         )
         levelGridLayout.children.filterIsInstance<Cell<*, *>>().toMutableList().apply {
             levelGridLayout.doOnPreDraw {
                 cellDirector = CellDirector(
-                    level,
+                    uiState.level,
                     this,
                     viewModel
                 )
@@ -137,26 +108,43 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         binding.levelFragment.addView(levelGridLayout)
     }
 
-    private fun containerStateUpdater() {
+    private fun uiStateUpdater() {
         lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.uiState.collect { uiState ->
-                    Log.d(TAG, "UI state: ${uiState.name}")
                     with(binding)
                     {
-                        when (uiState) {
+                        when (uiState.state) {
                             LOADING -> {
                                 progressCircular.visibility = View.VISIBLE
                                 levelFragment.notClickable = true
                                 levelFragment.alpha = .2f
+                                displayLevel(uiState)
+                                hideHintsBadge()
                             }
                             READY -> {
                                 progressCircular.visibility = View.GONE
                                 levelFragment.notClickable = false
                                 levelFragment.alpha = 1f
+                                when (uiState.solutionData.solution) {
+                                    CORRECT -> {
+                                        showCorrectEffects(uiState)
+                                    }
+                                    WRONG -> {
+                                        cellDirector?.sendWrongSolutionLetterHome(uiState)
+                                        showWrongEffects(uiState)
+                                    }
+                                    BOGUS_PALINDROME -> {
+                                        cellDirector?.sendWrongSolutionLetterHome(uiState)
+                                        showWrongEffects(uiState)
+                                    }
+                                    NONE -> {
+                                        Log.d(TAG, "Solution is: NONE")
+                                    }
+                                }
                             }
                             LEVEL_FINISHED -> {
-                                showContinueMessage()
+                                showContinueMessage(uiState)
                                 progressCircular.visibility = View.GONE
                                 levelFragment.notClickable = true
                                 levelFragment.alpha = 1f
@@ -174,39 +162,14 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         }
     }
 
-    private fun solutionEffectsUpdater() {
-        lifecycleScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
-                viewModel.solution.collect { solutionData ->
-                    when (solutionData.solution) {
-                        CORRECT -> {
-                            showCorrectEffects(solutionData.score, solutionData.maxScore)
-                        }
-                        WRONG -> {
-                            cellDirector?.sendWrongSolutionLetterHome(solutionData.index)
-                            showWrongEffects(WRONG, solutionData.showHintsBadge)
-                        }
-                        BOGUS_PALINDROME -> {
-                            cellDirector?.sendWrongSolutionLetterHome(solutionData.index)
-                            showWrongEffects(BOGUS_PALINDROME, solutionData.showHintsBadge)
-                        }
-                        NONE -> {
-                            Log.d(TAG, "Solution is: NONE")
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private fun showCorrectEffects(score: Int, maxScore: Int) {
+    private fun showCorrectEffects(uiState: UiState) {
         cellDirector?.getCells()?.let { cells ->
             val cellsAnimation = animations.getCorrectSolutionAnimation(cells)
             cellsAnimation.doOnEnd {
                 if (isAdded) {
-                    playMaxScoreAnimation(score, maxScore)
-                    val winningMessage = getWinningMessage(score, maxScore)
-                    val scoreMessage = getScoreMessage()
+                    playMaxScoreAnimation(uiState.solutionData.score, uiState.solutionData.maxScore)
+                    val winningMessage = getWinningMessage(uiState)
+                    val scoreMessage = getScoreMessage(uiState)
                     val winningMessageCallBack = object :
                         BaseTransientBottomBar.BaseCallback<MessageSnackBar>() {
                         override fun onDismissed(transientBottomBar: MessageSnackBar?, event: Int) {
@@ -216,7 +179,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                                 val scoreView =
                                     scoreMessage.view.findViewById<TextView>(R.id.message)
                                 val scoreAnimation =
-                                    animations.getScoreAnimation(scoreView, score, maxScore)
+                                    animations.getScoreAnimation(scoreView, uiState.solutionData.score, uiState.solutionData.maxScore)
                                 scoreAnimation.start()
                             }
                         }
@@ -227,7 +190,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                         override fun onDismissed(transientBottomBar: MessageSnackBar?, event: Int) {
                             if (isVisible) {
                                 super.onDismissed(transientBottomBar, event)
-                                showContinueMessage()
+                                showContinueMessage(uiState)
                                 askForReview(level = viewModel.currentLevel.replayCache.first().levelInfo.levelId)
                             }
                         }
@@ -250,8 +213,8 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         }
     }
 
-    private fun getWinningMessage(score: Int, maxScore: Int): MessageSnackBar {
-        val randomCorrectMessage = if (score == maxScore) {
+    private fun getWinningMessage(uiState: UiState): MessageSnackBar {
+        val randomCorrectMessage = if (uiState.solutionData.score == uiState.solutionData.maxScore) {
             resources.getStringArray(R.array.very_good_texts).random()
         } else {
             resources.getStringArray(R.array.good_texts).random()
@@ -261,28 +224,28 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             view = binding.levelFragment,
             message = randomCorrectMessage,
             duration = 2000,
-            windowSizeClassWidth = viewModel.windowSizeClassWidth,
-            isBookMode = viewModel.isBookMode,
+            windowSizeClassWidth = uiState.windowSizeClass,
+            isBookMode = uiState.bookMode,
             textSize = MessageSnackBar.Companion.TextSize.BIG,
         )
     }
 
-    private fun getScoreMessage(): MessageSnackBar {
+    private fun getScoreMessage(uiState: UiState): MessageSnackBar {
         return MessageSnackBar.make(
             view = binding.levelFragment,
             message = "",
             duration = 2000,
-            windowSizeClassWidth = viewModel.windowSizeClassWidth,
-            isBookMode = viewModel.isBookMode,
+            windowSizeClassWidth = uiState.windowSizeClass,
+            isBookMode = uiState.bookMode,
             textSize = MessageSnackBar.Companion.TextSize.SMALL,
         )
     }
 
-    private fun showWrongEffects(solutionType: LevelViewModel.Solution, showHintBadge: Boolean) {
+    private fun showWrongEffects(uiState: UiState) {
         animations.getWrongSolutionAnimation(binding.levelFragment).start()
         soundPlayer.vibrateDoubleClick()
         val messageToDisplay =
-            if (solutionType == BOGUS_PALINDROME)
+            if (uiState.solutionData.solution == BOGUS_PALINDROME)
                 resources.getStringArray(R.array.palindrome_wrong_texts).random()
             else
                 resources.getStringArray(R.array.solution_wrong_texts).random()
@@ -291,22 +254,22 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             view = binding.levelFragment,
             message = messageToDisplay,
             duration = 2000,
-            windowSizeClassWidth = viewModel.windowSizeClassWidth,
-            isBookMode = viewModel.isBookMode,
+            windowSizeClassWidth = uiState.windowSizeClass,
+            isBookMode = uiState.bookMode,
             textSize = MessageSnackBar.Companion.TextSize.SMALL,
             animateText = false
         )
         message.show()
-        if (showHintBadge) showHintsBadge()
+        if (uiState.solutionData.showHintsBadge) showHintsBadge()
     }
 
-    private fun showContinueMessage() {
+    private fun showContinueMessage(uiState: UiState) {
         val continueMessage = MessageSnackBar.make(
             view = binding.levelFragment,
             message = getString(R.string.tap_to_continue),
             duration = Int.MAX_VALUE,
-            windowSizeClassWidth = viewModel.windowSizeClassWidth,
-            isBookMode = viewModel.isBookMode,
+            windowSizeClassWidth = uiState.windowSizeClass,
+            isBookMode = uiState.bookMode,
             textSize = MessageSnackBar.Companion.TextSize.SMALL,
         )
         val tapToContinueAnimation = animations.getContinueAnimation(continueMessage)
@@ -405,7 +368,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setFragmentResultListener(C.HINTS_REQUEST_KEY) { _, bundle ->
-            if (viewModel.uiState.value != LEVEL_FINISHED) {
+            if (viewModel.uiState.value.state != LEVEL_FINISHED) {
                 val premiumLetter = bundle.getBoolean(C.LETTER_PREMIUM_BUNDLE)
                 if (!premiumLetter) {
                     val rewardType = RewardType.values()[bundle.getInt(C.LETTER_REWARD_TYPE_BUNDLE)]

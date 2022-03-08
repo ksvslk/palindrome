@@ -9,7 +9,8 @@ import androidx.fragment.app.findFragment
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.indest.hah.R
 import com.indest.hah.fragments.LevelFragment
-import com.indest.hah.game.LevelViewModel
+import com.indest.hah.game.ContainerState
+import com.indest.hah.game.UiState
 import com.indest.hah.game.letter.enums.ColorSelector
 import com.indest.hah.views.Letter
 import com.indest.hah.other.C.NEUTRAL_LAYER
@@ -179,7 +180,10 @@ enum class LetterState : ILetterState {
 
                     if (durationModifier != 1) {
                         try {
-                            letter.findFragment<LevelFragment>().cellDirector?.setLevelState(LevelViewModel.UiState.READY)
+                            TODO()
+                          /*  letter.findFragment<LevelFragment>().cellDirector?.setLevelState(
+                                UiState(state = ContainerState.READY)
+                            )*/
                         }
                         catch (e:IllegalStateException)
                         {

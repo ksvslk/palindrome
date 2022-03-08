@@ -12,7 +12,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import javax.net.ssl.HttpsURLConnection
 
-val TAG = "ConnectionLiveData"
+private const val TAG = "ConnectionLiveData"
 
 class ConnectionLiveData(context: Context) : LiveData<Boolean>() {
 

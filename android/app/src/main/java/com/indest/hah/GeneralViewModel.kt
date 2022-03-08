@@ -8,6 +8,7 @@ import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import com.indest.hah.ads.AdsLiveData
 import com.indest.hah.ads.RewardType
+import com.indest.hah.other.AccountStatus
 import com.indest.hah.other.ConnectionLiveData
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.MinSkuDetails
@@ -44,6 +45,9 @@ class GeneralViewModel @Inject constructor(
 
     private val _currentLevel = MutableStateFlow(Level())
     val currentLevel = _currentLevel.asStateFlow()
+
+    private val _accountStatus = MutableStateFlow(AccountStatus.SIGNED_OUT)
+    val accountStatus = _accountStatus.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -96,7 +100,17 @@ class GeneralViewModel @Inject constructor(
                     updateUiState()
                 }
             }
+            launch {
+                _accountStatus.collect {
+                    Log.d(TAG, "Signed in state changed to: $it")
+                }
+            }
         }
+    }
+
+    fun setAccountStatus(accountStatus: AccountStatus)
+    {
+        _accountStatus.value = accountStatus
     }
 
     fun updateRewardState(rewardType: RewardType) {

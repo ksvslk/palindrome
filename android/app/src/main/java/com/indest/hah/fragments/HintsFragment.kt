@@ -18,20 +18,18 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.GeneralViewModel
-import com.indest.hah.MainActivity
 import com.indest.hah.ads.RewardType
 import com.indest.hah.ads.RewardType.*
 import com.indest.hah.databinding.HintsFragmentBinding
 import com.indest.hah.fx.SoundPlayer
 import com.indest.hah.game.LevelViewModel
+import com.indest.hah.game.ContainerState
+import com.indest.hah.game.UiState
 import com.indest.hah.other.C
 import com.indest.hah.views.ButtonState.*
 import com.indest.hah.views.PurchaseButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -100,7 +98,8 @@ class HintsFragment : BottomSheetDialogFragment() {
                 dismiss()
             }
             AD_FAILED -> {
-                levelViewModel.setState(LevelViewModel.UiState.READY)
+                TODO()
+                //levelViewModel.setState(UiState(state = ContainerState.READY))
             }
         }
     }
@@ -150,7 +149,8 @@ class HintsFragment : BottomSheetDialogFragment() {
                 when (binding.rewardCategoryButton.buttonState)
                 {
                     AD -> {
-                        levelViewModel.setState(LevelViewModel.UiState.BUSY)
+                        TODO()
+                       // levelViewModel.setState(UiState(state = ContainerState.BUSY))
                         viewModel.showRewardedVideo(requireActivity(), CLUE)
                     }
                     PREMIUM -> {
@@ -166,7 +166,8 @@ class HintsFragment : BottomSheetDialogFragment() {
             when (binding.rewardPlaceLetter.buttonState)
             {
                 AD -> {
-                    levelViewModel.setState(LevelViewModel.UiState.BUSY)
+                    TODO()
+                     //levelViewModel.setState(UiState(state = ContainerState.BUSY))
                     viewModel.showRewardedVideo(requireActivity(), LETTER)
                 }
                 PREMIUM -> {

@@ -27,25 +27,31 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.games.Games.SCOPE_GAMES_SNAPSHOTS
 import com.indest.hah.GeneralViewModel
-import com.indest.hah.other.SignInLifecycleObserver
+import com.indest.hah.MainActivity
+import com.indest.hah.other.AccountStatus
+import com.indest.hah.other.SignInLiveData
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class SettingsFragment : BottomSheetDialogFragment() {
     private val TAG = "SettingsFragment"
     private var _binding: SettingsFragmentBinding? = null
     private val binding get() = _binding!!
     private val generalViewModel: GeneralViewModel by activityViewModels()
-    private lateinit var signInObserver: SignInLifecycleObserver
+    @Inject lateinit var signInObserver: SignInLiveData
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        signInObserver = SignInLifecycleObserver(requireActivity().activityResultRegistry)
         lifecycle.addObserver(signInObserver)
         lifecycleScope.launchWhenStarted {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED)
             {
-                generalViewModel.internet.collect { internet ->
+                generalViewModel.internet.combine(generalViewModel.accountStatus) { i, a ->
+                    Pair(i, a)
+                }.collect { (internet, accountStatus) ->
                     binding.rateGameButton.setOnClickListener {
                         when (internet) {
                             true -> {
@@ -64,6 +70,20 @@ class SettingsFragment : BottomSheetDialogFragment() {
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
+                        }
+                    }
+
+                    when (accountStatus) {
+                        AccountStatus.SIGNED_IN -> {
+                            binding.googleSignInButton.visibility = View.GONE
+                            binding.googleSignOutButton.visibility = View.VISIBLE
+                            binding.googleSignOutButton.setOnClickListener {
+                                signOut()
+                            }
+                        }
+                        AccountStatus.SIGNED_OUT -> {
+                            binding.googleSignOutButton.visibility = View.GONE
+                            binding.googleSignInButton.visibility = View.VISIBLE
                         }
                     }
 
@@ -94,18 +114,6 @@ class SettingsFragment : BottomSheetDialogFragment() {
         Log.d(TAG, "onCreateView")
         val b = SettingsFragmentBinding.inflate(layoutInflater, container, false)
         _binding = b
-
-        val lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(requireActivity())
-        if (lastSignedInAccount != null) {
-            binding.googleSignInButton.visibility = View.GONE
-            binding.googleSignOutButton.visibility = View.VISIBLE
-            binding.googleSignOutButton.setOnClickListener {
-                signOut()
-            }
-        } else {
-            binding.googleSignOutButton.visibility = View.GONE
-            binding.googleSignInButton.visibility = View.VISIBLE
-        }
 
         binding.levelSelectButton.setOnClickListener {
             findNavController().popBackStack()
@@ -150,17 +158,17 @@ class SettingsFragment : BottomSheetDialogFragment() {
                 .build()
 
         val signInClient = GoogleSignIn.getClient(
-            requireActivity(),
+            requireContext().applicationContext,
             signInOptions
         )
-        dismiss()
-        signInObserver.signIn(signInClient.signInIntent, requireActivity())
+        signInObserver.signIn(signInClient.signInIntent)
     }
 
     private fun signOut() {
         val client = GoogleSignIn.getClient(requireActivity(),  GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
         client.signOut().addOnCompleteListener(requireActivity()) {
             if (it.isSuccessful) {
+                signInObserver.setSignedOutState()
                 Toast.makeText(
                     requireContext().applicationContext,
                     "Successfully signed out.",

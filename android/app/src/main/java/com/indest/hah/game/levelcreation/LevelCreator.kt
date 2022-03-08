@@ -13,6 +13,7 @@ import androidx.gridlayout.widget.GridLayout
 import com.indest.hah.R
 import com.indest.hah.views.Letter
 import com.indest.hah.game.letter.LetterState
+import com.indest.hah.other.BookMode
 import com.indest.hah.views.Slot
 import com.indest.hah.persistance.dto.Level
 import dagger.hilt.android.qualifiers.ActivityContext
@@ -28,7 +29,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         info: Level,
         layoutInflater: LayoutInflater,
         container: ViewGroup,
-        isBookMode: Boolean,
+        isBookMode: BookMode,
         windowSizeClassWidth: WindowSizeClass
     ): GridLayout {
 
@@ -42,7 +43,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
     }
 
     private fun getDensitySettings(
-        isBookMode: Boolean,
+        isBookMode: BookMode,
         sizeClassWidth: WindowSizeClass
     ): DensitySettings {
         var boxSize = 0
@@ -71,7 +72,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
     private fun getBoxAndTextSize(
         widthPixels: Int,
         margin: Int,
-        isBookMode: Boolean,
+        isBookMode: BookMode,
         sizeClassWidth: WindowSizeClass,
         densityDpi: Int?
     ): Pair<Int, Int> {
@@ -107,7 +108,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                         return Pair(box, text)
                     }
                     in DisplayMetrics.DENSITY_XHIGH.rangeTo(DisplayMetrics.DENSITY_XXHIGH) -> {
-                        return if (isBookMode) {
+                        return if (isBookMode == BookMode.BOOK_MODE) {
                             Log.d(
                                 TAG,
                                 "DisplayMetrics.DENSITY_XHIGH.rangeTo(DisplayMetrics.DENSITY_XXHIGH) - COMPAT and BOOK MODE"
@@ -173,7 +174,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                     }
                     in DisplayMetrics.DENSITY_XHIGH.rangeTo(DisplayMetrics.DENSITY_XXHIGH) -> {
 
-                        return if (isBookMode) {
+                        return if (isBookMode == BookMode.BOOK_MODE) {
                             Log.d(
                                 TAG,
                                 "DisplayMetrics.DENSITY_XHIGH.rangeTo(DisplayMetrics.DENSITY_XXHIGH) - MEDIUM and BOOK MODE"
