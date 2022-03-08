@@ -83,6 +83,7 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
         super.onPause()
         Log.d(TAG, "onPause")
         levelViewModel.stopSavingGame()
+        levelViewModel.pauseUiContainerState()
     }
 
     private fun updateFoldModeInfo()

@@ -6,6 +6,7 @@ import androidx.lifecycle.*
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.games.Games
 import com.indest.hah.R
+import com.indest.hah.game.ContainerState.*
 import com.indest.hah.game.levelcreation.WindowSizeClass
 import com.indest.hah.other.AccountStatus
 import com.indest.hah.other.BookMode
@@ -69,25 +70,152 @@ class LevelViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            levelRepository.init() // First time app starts
-        }
-        viewModelScope.launch {
+            Log.d(TAG, "INIT")
+            levelRepository.init()
             combine(
                 _accountStatus,
                 _windowSizeClassWidth,
-                _bookMode
-            ) { accounStatus, windowSizeClass, bookMode ->
+                _bookMode,
+                _currentLevel
+            ) { accountStatus, windowSizeClass, bookMode, level ->
                 {
-                    Triple(accounStatus, bookMode, windowSizeClass)
+                    Pair(level, Triple(accountStatus, bookMode, windowSizeClass))
                 }
             }.collect {
-                _uiState.value = _uiState.value.copy(
-                    accountStatus = it().first,
-                    bookMode = it().second,
-                    windowSizeClass = it().third,
-                )
-                Log.d(TAG, _uiState.value.toString())
+                if (it().second.first != AccountStatus.NOT_SET &&
+                    it().second.second != BookMode.NOT_SET &&
+                    it().second.third != WindowSizeClass.NOT_SET &&
+                    _uiState.value.state == LOADING &&
+                    it().first.levelInfo.levelId == 0
+                ) {
+                    Log.d(TAG, "Activate latest level flow.")
+                    launch {
+                        levelRepository.latestLevelFlow()
+                            .collect { _currentLevel.value = it }
+                    }
+                }
+                else if(
+                    it().first.levelInfo.levelId != 0 &&
+                    it().second.first != AccountStatus.NOT_SET &&
+                    it().second.second != BookMode.NOT_SET &&
+                    it().second.third != WindowSizeClass.NOT_SET) {
+
+                   if (it().first.levelInfo.progress == LevelProgress.INTERMEDIATE && _uiState.value.state != LEVEL_COMPLETE)
+                    {
+                        _uiState.value = _uiState.value.copy(
+                            level = it().first,
+                            state = INTERMEDIATE,
+                            accountStatus = it().second.first,
+                            bookMode = it().second.second,
+                            windowSizeClass = it().second.third,
+                            solutionData = SolutionData(),
+                            refreshLevelUi = true
+                        )
+                    }
+                    else if (_uiState.value.state == LEVEL_COMPLETE)
+                    {
+                        _uiState.value = _uiState.value.copy(
+                            level = it().first,
+                            state = LEVEL_COMPLETE,
+                            accountStatus = it().second.first,
+                            bookMode = it().second.second,
+                            windowSizeClass = it().second.third,
+                            solutionData = SolutionData(),
+                            refreshLevelUi = true
+                        )
+                    }
+                    else if (_uiState.value.state == PLAY) {
+                        _uiState.value = _uiState.value.copy(
+                            level = it().first,
+                            state = PLAY,
+                            accountStatus = it().second.first,
+                            bookMode = it().second.second,
+                            windowSizeClass = it().second.third,
+                            solutionData = SolutionData(),
+                            refreshLevelUi = false
+                        )
+                    }
+                    else if (_uiState.value.state == PAUSED) {
+                        _uiState.value = _uiState.value.copy(
+                            level = it().first,
+                            state = PLAY,
+                            accountStatus = it().second.first,
+                            bookMode = it().second.second,
+                            windowSizeClass = it().second.third,
+                            solutionData = SolutionData(),
+                            refreshLevelUi = true
+                        )
+                    }
+                    else if(_uiState.value.state == LOADING) {
+                        _uiState.value = _uiState.value.copy(
+                            level = it().first,
+                            state = PLAY,
+                            accountStatus = it().second.first,
+                            bookMode = it().second.second,
+                            windowSizeClass = it().second.third,
+                            solutionData = SolutionData(),
+                            refreshLevelUi = true
+                        )
+                    }
+                   else if(_uiState.value.state == BUSY) {
+                       _uiState.value = _uiState.value.copy(
+                           level = it().first,
+                           state = PLAY,
+                           accountStatus = it().second.first,
+                           bookMode = it().second.second,
+                           windowSizeClass = it().second.third,
+                           solutionData = SolutionData(),
+                           refreshLevelUi = false
+                       )
+                   }
+                }
             }
+        }
+    }
+
+    fun resetSolutionState()
+    {
+        val newState = if (_uiState.value.state == BUSY) {
+            PLAY
+        } else {
+            _uiState.value.state
+        }
+        _uiState.value = _uiState.value.copy(
+            state = newState,
+            solutionData = SolutionData(),
+            refreshLevelUi = false
+        )
+    }
+
+    fun pauseUiContainerState()
+    {
+        if (_uiState.value.state == PLAY)
+        {
+            _uiState.value = _uiState.value.copy(
+                state = PAUSED,
+                solutionData = SolutionData(),
+                refreshLevelUi = false
+            )
+        }
+    }
+
+    fun busyUiContainerState()
+    {
+            _uiState.value = _uiState.value.copy(
+                state = BUSY,
+                solutionData = SolutionData(),
+                refreshLevelUi = false
+            )
+    }
+
+    fun playUiContainerState()
+    {
+        if (_uiState.value.state == PAUSED)
+        {
+            _uiState.value = _uiState.value.copy(
+                state = PLAY,
+                solutionData = SolutionData()
+            )
         }
     }
 
@@ -199,6 +327,7 @@ class LevelViewModel @Inject constructor(
     }
 
     fun executeLevelCompleteActions() {
+        _uiState.value = _uiState.value.copy(state = PAUSED)
         val levelNr = _currentLevel.value.levelInfo.levelId
         val hintInterval = getApplication<Application>().getString(R.string.hint_suggestion)
         viewModelScope.launch {
@@ -334,7 +463,7 @@ class LevelViewModel @Inject constructor(
                             showHintsBadge = false
                         )
                         _uiState.value = _uiState.value.copy(
-                            state = ContainerState.BUSY,
+                            state = LEVEL_COMPLETE,
                             solutionData = solutionData
                         )
                         resolveLevelCompleteAchievements(solutionData)
@@ -350,6 +479,7 @@ class LevelViewModel @Inject constructor(
                             showHintsBadge = showHintsBadge
                         )
                         _uiState.value = _uiState.value.copy(
+                            state = BUSY,
                             solutionData = solutionData
                         )
                         // Wrong Palindrome achievement
@@ -365,6 +495,7 @@ class LevelViewModel @Inject constructor(
                             showHintsBadge = showHintsBadge
                         )
                         _uiState.value = _uiState.value.copy(
+                            state = BUSY,
                             solutionData = solutionData
                         )
                     }

@@ -149,8 +149,6 @@ class HintsFragment : BottomSheetDialogFragment() {
                 when (binding.rewardCategoryButton.buttonState)
                 {
                     AD -> {
-                        TODO()
-                       // levelViewModel.setState(UiState(state = ContainerState.BUSY))
                         viewModel.showRewardedVideo(requireActivity(), CLUE)
                     }
                     PREMIUM -> {
@@ -166,8 +164,6 @@ class HintsFragment : BottomSheetDialogFragment() {
             when (binding.rewardPlaceLetter.buttonState)
             {
                 AD -> {
-                    TODO()
-                     //levelViewModel.setState(UiState(state = ContainerState.BUSY))
                     viewModel.showRewardedVideo(requireActivity(), LETTER)
                 }
                 PREMIUM -> {

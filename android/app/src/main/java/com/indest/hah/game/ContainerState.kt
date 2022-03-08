@@ -2,8 +2,9 @@ package com.indest.hah.game
 
 enum class ContainerState {
     LOADING,
-    READY,
-    LEVEL_FINISHED,
+    PLAY,
+    LEVEL_COMPLETE,
+    INTERMEDIATE,
     BUSY,
     PAUSED
 }

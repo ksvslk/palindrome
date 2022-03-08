@@ -180,10 +180,7 @@ enum class LetterState : ILetterState {
 
                     if (durationModifier != 1) {
                         try {
-                            TODO()
-                          /*  letter.findFragment<LevelFragment>().cellDirector?.setLevelState(
-                                UiState(state = ContainerState.READY)
-                            )*/
+                            letter.findFragment<LevelFragment>().playUiContainerState()
                         }
                         catch (e:IllegalStateException)
                         {

@@ -52,6 +52,7 @@ class LevelSelectFragment : BottomSheetDialogFragment() {
                     val currentLevelIcon = getCurrentLevelIcon(currentLevel)
                     binding.levelSelectRecyclerview.adapter = LevelItemAdapter(currentLevelIcon, currentLevel, levels) {
                         it?.levelId?.let { nr ->
+                            levelViewModel.pauseUiContainerState()
                             levelViewModel.changeLevel(nr)
                             dismiss()
                         }

@@ -11,5 +11,6 @@ data class UiState(
     val accountStatus: AccountStatus = AccountStatus.NOT_SET,
     val bookMode: BookMode = BookMode.NOT_SET,
     val windowSizeClass: WindowSizeClass = WindowSizeClass.NOT_SET,
-    val solutionData: SolutionData
+    val solutionData: SolutionData,
+    val refreshLevelUi: Boolean = false
 )

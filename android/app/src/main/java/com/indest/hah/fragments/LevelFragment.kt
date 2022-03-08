@@ -111,7 +111,8 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     private fun uiStateUpdater() {
         lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
-                viewModel.uiState.collect { uiState ->
+                viewModel.uiState.distinctUntilChangedBy { it.state }.collect { uiState ->
+                    Log.d(TAG, "${uiState}")
                     with(binding)
                     {
                         when (uiState.state) {
@@ -119,22 +120,34 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                                 progressCircular.visibility = View.VISIBLE
                                 levelFragment.notClickable = true
                                 levelFragment.alpha = .2f
-                                displayLevel(uiState)
-                                hideHintsBadge()
                             }
-                            READY -> {
+                            PLAY -> {
                                 progressCircular.visibility = View.GONE
                                 levelFragment.notClickable = false
                                 levelFragment.alpha = 1f
+                                if (uiState.refreshLevelUi) displayLevel(uiState)
+                                hideHintsBadge()
+                            }
+                            INTERMEDIATE -> {
+                                progressCircular.visibility = View.GONE
+                                levelFragment.notClickable = true
+                                levelFragment.alpha = 1f
+                                if (uiState.refreshLevelUi) displayLevel(uiState)
+                                showContinueMessage(uiState)
+                            }
+                            BUSY -> {
+                                progressCircular.visibility = View.GONE
+                                levelFragment.notClickable = true
+                                levelFragment.alpha = 1f
                                 when (uiState.solutionData.solution) {
-                                    CORRECT -> {
-                                        showCorrectEffects(uiState)
-                                    }
+                                    CORRECT -> { Log.e(TAG, "Invalid state $uiState")}
                                     WRONG -> {
+                                        viewModel.resetSolutionState()
                                         cellDirector?.sendWrongSolutionLetterHome(uiState)
                                         showWrongEffects(uiState)
                                     }
                                     BOGUS_PALINDROME -> {
+                                        viewModel.resetSolutionState()
                                         cellDirector?.sendWrongSolutionLetterHome(uiState)
                                         showWrongEffects(uiState)
                                     }
@@ -143,18 +156,21 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                                     }
                                 }
                             }
-                            LEVEL_FINISHED -> {
-                                showContinueMessage(uiState)
+                            LEVEL_COMPLETE -> {
+                                if (uiState.refreshLevelUi){
+                                    displayLevel(uiState)
+                                    showContinueMessage(uiState)
+                                }
+                                else showCorrectEffects(uiState)
                                 progressCircular.visibility = View.GONE
                                 levelFragment.notClickable = true
                                 levelFragment.alpha = 1f
                             }
-                            BUSY -> {
+                            PAUSED -> {
                                 progressCircular.visibility = View.GONE
                                 levelFragment.notClickable = true
                                 levelFragment.alpha = 1f
                             }
-                            PAUSED -> { }
                         }
                     }
                 }
@@ -179,7 +195,11 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                                 val scoreView =
                                     scoreMessage.view.findViewById<TextView>(R.id.message)
                                 val scoreAnimation =
-                                    animations.getScoreAnimation(scoreView, uiState.solutionData.score, uiState.solutionData.maxScore)
+                                    animations.getScoreAnimation(
+                                        scoreView,
+                                        uiState.solutionData.score,
+                                        uiState.solutionData.maxScore
+                                    )
                                 scoreAnimation.start()
                             }
                         }
@@ -214,11 +234,12 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     }
 
     private fun getWinningMessage(uiState: UiState): MessageSnackBar {
-        val randomCorrectMessage = if (uiState.solutionData.score == uiState.solutionData.maxScore) {
-            resources.getStringArray(R.array.very_good_texts).random()
-        } else {
-            resources.getStringArray(R.array.good_texts).random()
-        }
+        val randomCorrectMessage =
+            if (uiState.solutionData.score == uiState.solutionData.maxScore) {
+                resources.getStringArray(R.array.very_good_texts).random()
+            } else {
+                resources.getStringArray(R.array.good_texts).random()
+            }
 
         return MessageSnackBar.make(
             view = binding.levelFragment,
@@ -355,6 +376,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         when (rewardType) {
             RewardType.LETTER -> {
                 Log.d(TAG, "LETTER reward.")
+                viewModel.busyUiContainerState()
                 cellDirector?.rewardWithRandomLetter()
             }
             RewardType.NEXT_LEVEL -> {
@@ -368,7 +390,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setFragmentResultListener(C.HINTS_REQUEST_KEY) { _, bundle ->
-            if (viewModel.uiState.value.state != LEVEL_FINISHED) {
+            if (viewModel.uiState.value.state != INTERMEDIATE) {
                 val premiumLetter = bundle.getBoolean(C.LETTER_PREMIUM_BUNDLE)
                 if (!premiumLetter) {
                     val rewardType = RewardType.values()[bundle.getInt(C.LETTER_REWARD_TYPE_BUNDLE)]
@@ -378,6 +400,11 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                 }
             }
         }
+    }
+
+    fun playUiContainerState()
+    {
+        viewModel.playUiContainerState()
     }
 
     override fun onDestroy() {
