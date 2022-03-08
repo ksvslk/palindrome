@@ -80,8 +80,7 @@ class LevelViewModel @Inject constructor(
         }
     }
 
-    private fun uiUpdater() {
-        viewModelScope.launch {
+    private suspend fun uiUpdater() {
             combine(
                 _accountStatus,
                 _windowSizeClassWidth,
@@ -105,7 +104,6 @@ class LevelViewModel @Inject constructor(
                     it().second.second != BookMode.NOT_SET &&
                     it().second.third != WindowSizeClass.NOT_SET
                 ) {
-
                     if (it().first.levelInfo.progress == LevelProgress.INTERMEDIATE && _uiState.value.state != LEVEL_COMPLETE) {
                         _uiState.value = _uiState.value.copy(
                             level = it().first,
@@ -166,7 +164,6 @@ class LevelViewModel @Inject constructor(
                             solutionData = SolutionData(),
                             refreshLevelUi = false
                         )
-                    }
                 }
             }
         }
@@ -205,6 +202,16 @@ class LevelViewModel @Inject constructor(
 
     fun playUiContainerState() {
         if (_uiState.value.state == PAUSED) {
+            _uiState.value = _uiState.value.copy(
+                state = PLAY,
+                solutionData = SolutionData(),
+                refreshLevelUi = true
+            )
+        }
+    }
+
+    fun playWhenBusyUiContainerState() {
+        if (_uiState.value.state == BUSY) {
             _uiState.value = _uiState.value.copy(
                 state = PLAY,
                 solutionData = SolutionData()

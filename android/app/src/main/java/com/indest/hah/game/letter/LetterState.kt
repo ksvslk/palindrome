@@ -178,15 +178,15 @@ enum class LetterState : ILetterState {
                     letter.currentPos.x = letter.pos.x
                     letter.currentPos.y = letter.pos.y
 
-                    if (durationModifier != 1) {
+                  /*  if (durationModifier != 1) {
                         try {
-                            letter.findFragment<LevelFragment>().playUiContainerState()
+                            //letter.findFragment<LevelFragment>().playUiContainerState()
                         }
                         catch (e:IllegalStateException)
                         {
                             Log.e(TAG, e.message.toString())
                         }
-                    }
+                    }*/
                 }
                 .start()
         }

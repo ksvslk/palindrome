@@ -77,6 +77,7 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
     override fun onResume() {
         super.onResume()
         levelViewModel.startSavingGame()
+        levelViewModel.playUiContainerState()
         Log.d(TAG, "onResume")
     }
 

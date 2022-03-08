@@ -98,8 +98,7 @@ class HintsFragment : BottomSheetDialogFragment() {
                 dismiss()
             }
             AD_FAILED -> {
-                TODO()
-                //levelViewModel.setState(UiState(state = ContainerState.READY))
+                levelViewModel.playWhenBusyUiContainerState()
             }
         }
     }
@@ -149,6 +148,7 @@ class HintsFragment : BottomSheetDialogFragment() {
                 when (binding.rewardCategoryButton.buttonState)
                 {
                     AD -> {
+                        levelViewModel.busyUiContainerState()
                         viewModel.showRewardedVideo(requireActivity(), CLUE)
                     }
                     PREMIUM -> {
@@ -164,6 +164,7 @@ class HintsFragment : BottomSheetDialogFragment() {
             when (binding.rewardPlaceLetter.buttonState)
             {
                 AD -> {
+                    levelViewModel.busyUiContainerState()
                     viewModel.showRewardedVideo(requireActivity(), LETTER)
                 }
                 PREMIUM -> {

@@ -375,12 +375,9 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     private fun rewardUserWithLetter(rewardType: RewardType = RewardType.NONE) {
         when (rewardType) {
             RewardType.LETTER -> {
-                Log.d(TAG, "LETTER reward.")
-                viewModel.busyUiContainerState()
                 cellDirector?.rewardWithRandomLetter()
             }
             RewardType.NEXT_LEVEL -> {
-                Log.d(TAG, "NEXT_LEVEL reward.")
             }
             RewardType.CLUE -> {}
             RewardType.NONE -> {}
@@ -400,11 +397,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                 }
             }
         }
-    }
-
-    fun playUiContainerState()
-    {
-        viewModel.playUiContainerState()
     }
 
     override fun onDestroy() {
