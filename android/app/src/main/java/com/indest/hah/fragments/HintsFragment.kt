@@ -23,8 +23,6 @@ import com.indest.hah.ads.RewardType.*
 import com.indest.hah.databinding.HintsFragmentBinding
 import com.indest.hah.fx.SoundPlayer
 import com.indest.hah.game.LevelViewModel
-import com.indest.hah.game.ContainerState
-import com.indest.hah.game.UiState
 import com.indest.hah.other.C
 import com.indest.hah.views.ButtonState.*
 import com.indest.hah.views.PurchaseButton
@@ -98,7 +96,7 @@ class HintsFragment : BottomSheetDialogFragment() {
                 dismiss()
             }
             AD_FAILED -> {
-                levelViewModel.playWhenBusyUiContainerState()
+                levelViewModel.setUiStatePlayWhenBusy()
             }
         }
     }
@@ -148,7 +146,7 @@ class HintsFragment : BottomSheetDialogFragment() {
                 when (binding.rewardCategoryButton.buttonState)
                 {
                     AD -> {
-                        levelViewModel.busyUiContainerState()
+                        levelViewModel.setUiStateBusy()
                         viewModel.showRewardedVideo(requireActivity(), CLUE)
                     }
                     PREMIUM -> {
@@ -164,7 +162,7 @@ class HintsFragment : BottomSheetDialogFragment() {
             when (binding.rewardPlaceLetter.buttonState)
             {
                 AD -> {
-                    levelViewModel.busyUiContainerState()
+                    levelViewModel.setUiStateBusy()
                     viewModel.showRewardedVideo(requireActivity(), LETTER)
                 }
                 PREMIUM -> {
@@ -187,6 +185,7 @@ class HintsFragment : BottomSheetDialogFragment() {
         view?.setOnClickListener {
             (view as? PurchaseButton)?.let { pb ->
                 pb.sku?.let { sku ->
+                    levelViewModel.setUiStateMenuAction()
                     viewModel.launchBillingFlow(requireActivity(), sku)
                 }
             }

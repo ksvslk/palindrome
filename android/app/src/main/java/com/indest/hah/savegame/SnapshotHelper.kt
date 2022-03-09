@@ -26,6 +26,7 @@ import javax.inject.Inject
 class SnapshotHelper @Inject constructor(private val context: Context) {
 
     private val TAG = "SnapshotHelper"
+    private val MY_RESOLUTION_POLICY = RESOLUTION_POLICY_HIGHEST_PROGRESS
 
     suspend fun save(saveGame: SaveGame) = withContext(Dispatchers.Default) {
         GoogleSignIn.getLastSignedInAccount(context)?.let { signInAccount ->
@@ -33,7 +34,7 @@ class SnapshotHelper @Inject constructor(private val context: Context) {
             snapshotsClient.open(
                 C.SAVE_GAME,
                 true,
-                RESOLUTION_POLICY_MOST_RECENTLY_MODIFIED
+                MY_RESOLUTION_POLICY
             ).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     task.result.data?.let { snapshot ->
@@ -76,7 +77,7 @@ class SnapshotHelper @Inject constructor(private val context: Context) {
             context,
             GoogleSignIn.getLastSignedInAccount(context)!!
         )
-        return snapshotsClient.open(C.SAVE_GAME, true, RESOLUTION_POLICY_MOST_RECENTLY_MODIFIED)
+        return snapshotsClient.open(C.SAVE_GAME, true, MY_RESOLUTION_POLICY)
             .addOnFailureListener { Log.e(TAG, "Error while opening Snapshot.", it.cause) }
             .continueWith(object : Continuation<DataOrConflict<Snapshot?>?, ByteArray?> {
                 override fun then(task: Task<DataOrConflict<Snapshot?>?>): ByteArray? {

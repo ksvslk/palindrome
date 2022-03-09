@@ -167,9 +167,10 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                                 levelFragment.alpha = 1f
                             }
                             PAUSED -> {
-                                progressCircular.visibility = View.GONE
-                                levelFragment.notClickable = true
-                                levelFragment.alpha = 1f
+
+                            }
+                            MENU_ACTION -> {
+
                             }
                         }
                     }

@@ -81,92 +81,72 @@ class LevelViewModel @Inject constructor(
     }
 
     private suspend fun uiUpdater() {
-            combine(
-                _accountStatus,
-                _windowSizeClassWidth,
-                _bookMode,
-                _currentLevel
-            ) { accountStatus, windowSizeClass, bookMode, level ->
-                {
-                    Pair(level, Triple(accountStatus, bookMode, windowSizeClass))
-                }
-            }.collect {
-                if (it().second.first != AccountStatus.NOT_SET &&
-                    it().second.second != BookMode.NOT_SET &&
-                    it().second.third != WindowSizeClass.NOT_SET &&
-                    _uiState.value.state == LOADING &&
-                    it().first.levelInfo.levelId == 0
-                ) {
-                    loadLatestLevelFromCloudOrLocal()
-                } else if (
-                    it().first.levelInfo.levelId != 0 &&
-                    it().second.first != AccountStatus.NOT_SET &&
-                    it().second.second != BookMode.NOT_SET &&
-                    it().second.third != WindowSizeClass.NOT_SET
-                ) {
-                    if (it().first.levelInfo.progress == LevelProgress.INTERMEDIATE && _uiState.value.state != LEVEL_COMPLETE) {
-                        _uiState.value = _uiState.value.copy(
-                            level = it().first,
-                            state = INTERMEDIATE,
-                            accountStatus = it().second.first,
-                            bookMode = it().second.second,
-                            windowSizeClass = it().second.third,
-                            solutionData = SolutionData(),
-                            refreshLevelUi = true
-                        )
-                    } else if (_uiState.value.state == LEVEL_COMPLETE) {
-                        _uiState.value = _uiState.value.copy(
-                            level = it().first,
-                            state = LEVEL_COMPLETE,
-                            accountStatus = it().second.first,
-                            bookMode = it().second.second,
-                            windowSizeClass = it().second.third,
-                            solutionData = SolutionData(),
-                            refreshLevelUi = true
-                        )
-                    } else if (_uiState.value.state == PLAY) {
-                        _uiState.value = _uiState.value.copy(
-                            level = it().first,
-                            state = PLAY,
-                            accountStatus = it().second.first,
-                            bookMode = it().second.second,
-                            windowSizeClass = it().second.third,
-                            solutionData = SolutionData(),
-                            refreshLevelUi = false
-                        )
-                    } else if (_uiState.value.state == PAUSED) {
-                        _uiState.value = _uiState.value.copy(
-                            level = it().first,
-                            state = PLAY,
-                            accountStatus = it().second.first,
-                            bookMode = it().second.second,
-                            windowSizeClass = it().second.third,
-                            solutionData = SolutionData(),
-                            refreshLevelUi = true
-                        )
-                    } else if (_uiState.value.state == LOADING) {
-                        _uiState.value = _uiState.value.copy(
-                            level = it().first,
-                            state = PLAY,
-                            accountStatus = it().second.first,
-                            bookMode = it().second.second,
-                            windowSizeClass = it().second.third,
-                            solutionData = SolutionData(),
-                            refreshLevelUi = true
-                        )
-                    } else if (_uiState.value.state == BUSY) {
-                        _uiState.value = _uiState.value.copy(
-                            level = it().first,
-                            state = PLAY,
-                            accountStatus = it().second.first,
-                            bookMode = it().second.second,
-                            windowSizeClass = it().second.third,
-                            solutionData = SolutionData(),
-                            refreshLevelUi = false
-                        )
+        combine(
+            _accountStatus,
+            _windowSizeClassWidth,
+            _bookMode,
+            _currentLevel
+        ) { accountStatus, windowSizeClass, bookMode, level ->
+            {
+                Pair(level, Triple(accountStatus, bookMode, windowSizeClass))
+            }
+        }.collect {
+            if (it().second.first != AccountStatus.NOT_SET &&
+                it().second.second != BookMode.NOT_SET &&
+                it().second.third != WindowSizeClass.NOT_SET &&
+                _uiState.value.state == LOADING &&
+                it().first.levelInfo.levelId == 0
+            ) {
+                loadLatestLevelFromCloudOrLocal()
+            } else if (
+                it().first.levelInfo.levelId != 0 &&
+                it().second.first != AccountStatus.NOT_SET &&
+                it().second.second != BookMode.NOT_SET &&
+                it().second.third != WindowSizeClass.NOT_SET
+            ) {
+                if (it().first.levelInfo.progress == LevelProgress.INTERMEDIATE && _uiState.value.state != LEVEL_COMPLETE) {
+                    _uiState.value = getNewUiState(
+                        newState = INTERMEDIATE,
+                        refreshLevelUi = true,
+                        info = it()
+                    )
+                } else if (_uiState.value.state == LEVEL_COMPLETE) {
+                    _uiState.value = getNewUiState(
+                        newState = LEVEL_COMPLETE,
+                        refreshLevelUi = true,
+                        info = it()
+                    )
+                } else if (_uiState.value.state == PLAY || _uiState.value.state == BUSY || _uiState.value.state == MENU_ACTION) {
+                    _uiState.value = getNewUiState(
+                        newState = PLAY,
+                        refreshLevelUi = false,
+                        info = it()
+                    )
+                } else if (_uiState.value.state == PAUSED || _uiState.value.state == LOADING) {
+                    _uiState.value = getNewUiState(
+                        newState = PLAY,
+                        refreshLevelUi = true,
+                        info = it()
+                    )
                 }
             }
         }
+    }
+
+    private fun getNewUiState(
+        newState: ContainerState,
+        refreshLevelUi: Boolean = false,
+        info: Pair<Level, Triple<AccountStatus, BookMode, WindowSizeClass>>
+    ): UiState {
+        return _uiState.value.copy(
+            level = info.first,
+            state = newState,
+            accountStatus = info.second.first,
+            bookMode = info.second.second,
+            windowSizeClass = info.second.third,
+            solutionData = SolutionData(),
+            refreshLevelUi = refreshLevelUi
+        )
     }
 
     fun resetSolutionState() {
@@ -182,7 +162,41 @@ class LevelViewModel @Inject constructor(
         )
     }
 
-    fun pauseUiContainerState() {
+    fun setUiStateBusy() {
+        _uiState.value = _uiState.value.copy(
+            state = BUSY,
+            solutionData = SolutionData(),
+            refreshLevelUi = false
+        )
+    }
+
+    fun setUiStateMenuAction() {
+        _uiState.value = _uiState.value.copy(
+            state = MENU_ACTION,
+            solutionData = SolutionData(),
+            refreshLevelUi = false
+        )
+    }
+
+    fun setUiStateWhenOnResume() {
+        if (_uiState.value.state == PAUSED) {
+            _uiState.value = _uiState.value.copy(
+                state = PLAY,
+                solutionData = SolutionData(),
+                refreshLevelUi = true
+            )
+        }
+        else if (_uiState.value.state == MENU_ACTION)
+        {
+            _uiState.value = _uiState.value.copy(
+                state = PLAY,
+                solutionData = SolutionData(),
+                refreshLevelUi = false
+            )
+        }
+    }
+
+    fun setUiStateWhenOnPause() {
         if (_uiState.value.state == PLAY) {
             _uiState.value = _uiState.value.copy(
                 state = PAUSED,
@@ -192,25 +206,7 @@ class LevelViewModel @Inject constructor(
         }
     }
 
-    fun busyUiContainerState() {
-        _uiState.value = _uiState.value.copy(
-            state = BUSY,
-            solutionData = SolutionData(),
-            refreshLevelUi = false
-        )
-    }
-
-    fun playUiContainerState() {
-        if (_uiState.value.state == PAUSED) {
-            _uiState.value = _uiState.value.copy(
-                state = PLAY,
-                solutionData = SolutionData(),
-                refreshLevelUi = true
-            )
-        }
-    }
-
-    fun playWhenBusyUiContainerState() {
+    fun setUiStatePlayWhenBusy() {
         if (_uiState.value.state == BUSY) {
             _uiState.value = _uiState.value.copy(
                 state = PLAY,
@@ -341,8 +337,7 @@ class LevelViewModel @Inject constructor(
             saveGameJob = viewModelScope.launch {
                 while (isActive) {
                     delay(30000)
-                    if (_uiState.value.state != BUSY && _uiState.value.state != LEVEL_COMPLETE  && _uiState.value.state != LOADING)
-                    {
+                    if (_uiState.value.state != BUSY && _uiState.value.state != LEVEL_COMPLETE && _uiState.value.state != LOADING) {
                         Log.d(TAG, "Save game to cloud.")
                         val saveGame = levelRepository.getLocalSaveGame()
                         cloudSave.save(saveGame)
@@ -451,6 +446,7 @@ class LevelViewModel @Inject constructor(
                             _currentLevel.value.levelInfo.levelId,
                             LevelProgress.INTERMEDIATE
                         )
+                        saveGameImmediately()
                         val solutionData = SolutionData(
                             solution = Solution.CORRECT,
                             index = index,

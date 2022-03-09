@@ -18,6 +18,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.GeneralViewModel
 import com.indest.hah.R
 import com.indest.hah.databinding.GoogleGamesFragmentBinding
+import com.indest.hah.game.LevelViewModel
 import kotlinx.coroutines.flow.collect
 
 class GoogleGamesFragment : BottomSheetDialogFragment() {
@@ -28,6 +29,7 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
     private var _binding: GoogleGamesFragmentBinding? = null
     private val binding get() = _binding!!
     private val generalViewModel: GeneralViewModel by activityViewModels()
+    private val levelViewModel: LevelViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,6 +84,7 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
     }
 
     private fun showLeaderBoard() {
+        levelViewModel.setUiStateMenuAction()
         dismiss()
         val lastSignedInAccount =
             GoogleSignIn.getLastSignedInAccount(requireContext().applicationContext)
@@ -100,6 +103,7 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
     }
 
     private fun showAchievements() {
+        levelViewModel.setUiStateMenuAction()
         dismiss()
         val lastSignedInAccount =
             GoogleSignIn.getLastSignedInAccount(requireContext().applicationContext)

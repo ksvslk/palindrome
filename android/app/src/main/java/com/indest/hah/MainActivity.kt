@@ -1,5 +1,6 @@
 package com.indest.hah
 
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
@@ -24,6 +25,7 @@ import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.indest.hah.databinding.ActivityMainBinding
 import com.indest.hah.fragments.ExitGameDialogFragment
+import com.indest.hah.game.ContainerState
 import com.indest.hah.game.LevelViewModel
 import com.indest.hah.persistance.dto.LevelData
 import com.indest.hah.game.levelcreation.WindowSizeClass
@@ -77,7 +79,7 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
     override fun onResume() {
         super.onResume()
         levelViewModel.startSavingGame()
-        levelViewModel.playUiContainerState()
+        levelViewModel.setUiStateWhenOnResume()
         Log.d(TAG, "onResume")
     }
 
@@ -85,7 +87,7 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
         super.onPause()
         Log.d(TAG, "onPause")
         levelViewModel.stopSavingGame()
-        levelViewModel.pauseUiContainerState()
+        levelViewModel.setUiStateWhenOnPause()
     }
 
     private fun updateFoldModeInfo()
@@ -188,9 +190,16 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
         dialog.dismiss()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d(TAG, "onDestroy")
-    }
+  /*  override fun onTopResumedActivityChanged(isTopResumedActivity: Boolean) {
+        super.onTopResumedActivityChanged(isTopResumedActivity)
+        if (isTopResumedActivity && levelViewModel.uiState.value.state == ContainerState.PLAY)
+        {
+            levelViewModel.setUiStateMenuAction()
+        }
+        else {
+            levelViewModel.setUiStateWhenOnResume()
+        }
+        Log.d(TAG, "onTopResumedActivityChanged")
+    }*/
 
 }
