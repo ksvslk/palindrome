@@ -26,7 +26,7 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
@@ -61,7 +61,7 @@ dependencies {
     def coroutine_version = '1.5.1'
     def work_version ='2.7.1'
     def coroutines_play_services_version = '1.4.1'
-    def instant_apps_version = '18.0.1'
+    def instant_apps_version = '17.0.0'
     def room_version = '2.4.1'
     def user_messaging_platform_version = '2.0.0'
     def google_play_services_games_version = '22.0.1'
