@@ -58,11 +58,6 @@ jobs:
       # Grant rights
       - name: Grant rights        
         run: chmod +x build.gradle
-        
-      #  Build with Gradle
-      - name: Build with Gradle
-        id: build
-        run: ./gradlew build
       
       # Build Release AAB
       - name: Build Release AAB
