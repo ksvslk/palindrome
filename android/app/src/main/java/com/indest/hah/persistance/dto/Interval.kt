@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.io.Serializable
 
+@kotlinx.serialization.Serializable
 @Entity(tableName = "interval")
 data class Interval(
     @PrimaryKey

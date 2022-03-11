@@ -20,6 +20,9 @@ import com.indest.hah.persistance.level.LevelProgress
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import java.io.IOException
 import javax.inject.Inject
 
@@ -130,11 +133,13 @@ class SnapshotHelper @Inject constructor(private val context: Context) {
     }
 
     fun bytesToGame(byteArray: ByteArray): SaveGame {
-        return Gson().fromJson(byteArray.decodeToString(), SaveGame::class.java)
+        return Json.decodeFromString(byteArray.decodeToString())
+        //return Gson().fromJson(byteArray.decodeToString(), SaveGame::class.java)
     }
 
     fun gameToBytes(saveGame: SaveGame): ByteArray {
-        return Gson().toJson(saveGame).toByteArray()
+        return Json.encodeToString(saveGame).toByteArray()
+        //return Gson().toJson(saveGame).toByteArray()
     }
 
 }

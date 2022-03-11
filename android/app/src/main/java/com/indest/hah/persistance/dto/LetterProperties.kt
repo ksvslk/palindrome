@@ -1,7 +1,9 @@
 package com.indest.hah.persistance.dto
 
 import androidx.room.*
+import kotlinx.serialization.Serializable
 
+@Serializable
 @Entity(
     foreignKeys = [
         ForeignKey(

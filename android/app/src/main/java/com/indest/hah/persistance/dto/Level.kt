@@ -5,6 +5,7 @@ import androidx.room.Relation
 import com.indest.hah.persistance.level.LevelProgress
 import java.io.Serializable
 
+@kotlinx.serialization.Serializable
 class Level(
     @Embedded val levelInfo: LevelData,
     @Relation(
