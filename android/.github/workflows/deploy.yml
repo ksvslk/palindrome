@@ -93,4 +93,3 @@ jobs:
           packageName: com.indest.hah
           releaseFiles: ${{ steps.sign_app.outputs.signedReleaseFile }}
           track: internal
-          whatsNewDirectory: releaseNotes/whatsnew
