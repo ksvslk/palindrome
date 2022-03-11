@@ -6,7 +6,7 @@ name: CI
 on:
   # Triggers the workflow on push request events but only for the master branch
   push:
-    branches: [ master ]
+    branches: [ develop ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -62,7 +62,7 @@ jobs:
       # Build Release AAB
       - name: Build Release AAB
         id: buildRelease
-        run: ./gradlew bundleRelease
+        run: ./gradlew clean bundleRelease
       
       # Sign AAB
       - name: Sign Release
@@ -83,6 +83,14 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Signed app bundle
-          path: ${{steps.sign_app.outputs.signedReleaseFile}}
-
- 
+          path: ${{ steps.sign_app.outputs.signedReleaseFile }}
+          
+      # Upload AAB to Google Play
+      - name: Upload AAB to Google Play
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJson: ${{ SERVICE_ACCOUNT_JSON }}
+          packageName: com.indest.hah
+          releaseFiles: ${{ steps.sign_app.outputs.signedReleaseFile }}
+          track: internal
+          whatsNewDirectory: releaseNotes/whatsnew
