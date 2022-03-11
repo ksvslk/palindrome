@@ -69,7 +69,6 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
         val configuration = RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build()
         MobileAds.setRequestConfiguration(configuration)
         generalViewModel.toString()
-
         applyCustomWindowInsets()
         windowSizeClassUpdater()
         setUpNavController()
