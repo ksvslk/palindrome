@@ -336,7 +336,7 @@ class LevelViewModel @Inject constructor(
 
             saveGameJob = viewModelScope.launch {
                 while (isActive) {
-                    delay(30000)
+                    delay(120000)
                     if (_uiState.value.state != BUSY && _uiState.value.state != LEVEL_COMPLETE && _uiState.value.state != LOADING) {
                         Log.d(TAG, "Save game to cloud.")
                         val saveGame = levelRepository.getLocalSaveGame()

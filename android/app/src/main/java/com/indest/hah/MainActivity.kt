@@ -51,7 +51,6 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         updateFoldModeInfo()
 
         lifecycle.addObserver(signInObserver)
