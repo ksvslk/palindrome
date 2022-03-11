@@ -38,7 +38,6 @@ class AdsLiveData (private val context: Context) : LiveData<Pair<Boolean, Reward
         postValue(Pair(false, RewardType.NONE))
     }
 
-    // CLEAN
     private fun loadRewardedAd() {
         if (_rewardedAd == null) {
             val adRequest = AdRequest.Builder().build()
