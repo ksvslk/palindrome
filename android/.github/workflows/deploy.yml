@@ -90,7 +90,7 @@ jobs:
       
       # Upload AAB to Google Play
       - name: Upload AAB to Google Play
-        uses: r0adkll/upload-google-play@v1
+        uses: r0adkll/upload-google-play@v1.0.15
         with:
           serviceAccountJson: service_account.json
           packageName: com.indest.hah
