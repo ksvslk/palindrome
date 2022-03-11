@@ -61,7 +61,7 @@ dependencies {
     def coroutine_version = '1.5.1'
     def work_version ='2.7.1'
     def coroutines_play_services_version = '1.4.1'
-    def instant_apps_version = '17.0.0'
+    def instant_apps_version = '18.0.1'
     def room_version = '2.4.2'
     def user_messaging_platform_version = '2.0.0'
     def google_play_services_games_version = '22.0.1'
@@ -84,8 +84,8 @@ dependencies {
     def sdp_version = '1.0.6'
     def ssp_version = '1.0.6'
     def window_manager_version ='1.0.0'
-    def ads_version = '20.5.0'
-    def billing_version = '4.0.0'
+    def ads_version = '20.6.0'
+    def billing_version = '4.1.0'
     def konfetti_version = '2.0.1'
 
     implementation "nl.dionsegijn:konfetti-xml:$konfetti_version"
