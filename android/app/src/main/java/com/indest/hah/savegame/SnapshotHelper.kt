@@ -12,7 +12,6 @@ import com.google.android.gms.games.snapshot.SnapshotMetadata
 import com.google.android.gms.games.snapshot.SnapshotMetadataChange
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
-import com.google.gson.Gson
 import com.indest.hah.other.C
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.SaveGame

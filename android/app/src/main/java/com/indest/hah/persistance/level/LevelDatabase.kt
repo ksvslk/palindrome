@@ -1,10 +1,7 @@
 package com.indest.hah.persistance.level
 
-import android.content.ContentValues
 import android.content.Context
 import androidx.room.*
-import androidx.sqlite.db.SupportSQLiteDatabase
-import com.google.gson.Gson
 import com.indest.hah.persistance.Converters
 import com.indest.hah.persistance.dto.Interval
 import com.indest.hah.persistance.dto.LetterProperties
