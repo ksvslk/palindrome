@@ -51,7 +51,6 @@ class SecondTutorialFragment : Fragment() {
             parentFragmentManager.commit {
                 setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top)
                 setReorderingAllowed(true)
-                mainAnimatorSet.removeAllListeners()
                 replace<ThirdTutorialFragment>(R.id.fragments_container)
             }
         }
@@ -60,7 +59,6 @@ class SecondTutorialFragment : Fragment() {
             parentFragmentManager.commit {
                 setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top)
                 setReorderingAllowed(true)
-                mainAnimatorSet.removeAllListeners()
                 replace<TutorialFragment>(R.id.fragments_container)
             }
         }

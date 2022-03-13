@@ -37,22 +37,20 @@ class ThirdTutorialFragment : Fragment() {
 
         requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView).visibility =
             View.INVISIBLE
-
         binding.startButton.setOnClickListener {
-
-            parentFragmentManager.commit {
-                requireActivity().getSharedPreferences(getString(R.string.app_preferences), Context.MODE_PRIVATE)?.let {
-                    with(it.edit()) {
-                        putBoolean(getString(R.string.tutorial_passed), true)
-                        apply()
-                    }
+            requireActivity().getSharedPreferences(getString(R.string.app_preferences), Context.MODE_PRIVATE)?.let {
+                with(it.edit()) {
+                    putBoolean(getString(R.string.tutorial_passed), true)
+                    apply()
                 }
+            }
+            requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView).visibility = View.VISIBLE
+            parentFragmentManager.commit {
                 setReorderingAllowed(true)
                 setCustomAnimations(R.anim.fade_in_short, R.anim.fade_out_short)
                 replace<LevelFragment>(R.id.fragments_container)
-                requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView).visibility =
-                    View.VISIBLE
             }
+
         }
 
         binding.backButton.setOnClickListener {
@@ -64,6 +62,4 @@ class ThirdTutorialFragment : Fragment() {
         }
 
     }
-
-
 }

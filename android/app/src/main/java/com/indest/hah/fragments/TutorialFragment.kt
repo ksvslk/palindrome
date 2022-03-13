@@ -52,7 +52,6 @@ class TutorialFragment : Fragment() {
             parentFragmentManager.commit {
                 setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top)
                 setReorderingAllowed(true)
-                mainAnimatorSet.removeAllListeners()
                 replace<SecondTutorialFragment>(R.id.fragments_container)
             }
         }
@@ -64,13 +63,12 @@ class TutorialFragment : Fragment() {
                     apply()
                 }
             }
+            requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView).visibility =
+                View.VISIBLE
             parentFragmentManager.commit {
                 setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top)
                 setReorderingAllowed(true)
-                mainAnimatorSet.removeAllListeners()
                 replace<LevelFragment>(R.id.fragments_container)
-                requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView).visibility =
-                    View.VISIBLE
             }
         }
 

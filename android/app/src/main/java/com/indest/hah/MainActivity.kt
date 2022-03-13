@@ -181,7 +181,7 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
     }
 
     override fun onDialogPositiveClick(dialog: DialogFragment) {
-        finish()
+        finishAffinity()
     }
 
     override fun onDialogNegativeClick(dialog: DialogFragment) {

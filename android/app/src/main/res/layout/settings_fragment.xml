@@ -12,18 +12,30 @@
     app:showDividers="middle">
 
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/hints_dialog_title"
+        android:id="@+id/settings_dialog_title"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_header_height"
+        android:layout_marginHorizontal="@dimen/simple_dialog_left_margin"
         android:orientation="horizontal">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/simple_dialog_left_margin"
             android:text="@string/settings"
             android:textAppearance="@style/TextAppearance.OC.Headline5" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/version_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:layout_gravity="center_vertical|end"
+            android:textAlignment="viewEnd"
+            android:lineSpacingMultiplier="0.7"
+            android:textColor="@color/colorOnPrimaryDisabled"
+            android:text="@string/placeholder"
+            android:textAppearance="@style/TextAppearance.OC.Caption" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.LinearLayoutCompat

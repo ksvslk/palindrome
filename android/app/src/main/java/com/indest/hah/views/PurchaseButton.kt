@@ -134,12 +134,17 @@ class PurchaseButton : LinearLayoutCompat {
                 }
             }
         }
-        if (purchasedInSomeWay) {
-            this.setOnClickListener(null)
-            this.visibility = View.GONE
-        }
-        else if (info.skus[sku]?.canPurchase == true) {
-            this.visibility = View.VISIBLE
+        when {
+            purchasedInSomeWay -> {
+                this.setOnClickListener(null)
+                this.visibility = View.GONE
+            }
+            info.skus[sku]?.canPurchase == true -> {
+                this.visibility = View.VISIBLE
+            }
+            info.skus[sku]?.canPurchase == false -> {
+                this.visibility = View.GONE
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.indest.hah.persistance.level
 
+import android.content.ContentValues
 import android.content.Context
 import androidx.room.*
 import com.indest.hah.persistance.Converters
@@ -33,9 +34,9 @@ abstract class LevelDatabase : RoomDatabase() {
                         LevelDatabase::class.java,
                         "dbd.db"
                     )
-                        .createFromAsset("uus.db")
+                       //.createFromAsset("uus.db")
                         .fallbackToDestructiveMigration()
-                            /*
+
                         .addCallback(object : RoomDatabase.Callback() {
 
                             override fun onCreate(db: SupportSQLiteDatabase) {
@@ -51,7 +52,7 @@ abstract class LevelDatabase : RoomDatabase() {
                                val json = context.applicationContext.assets.open("puzzles.json").bufferedReader().use {
                                    it.readText()
                                }
-                               val gson = Gson()
+
                                val levels = gson.fromJson(json, Array<LevelData>::class.java)
 
                                for (i in levels.indices) {
@@ -109,7 +110,7 @@ abstract class LevelDatabase : RoomDatabase() {
 
                             }
                         }
-                        )*/.build()
+                        ).build()
                     INSTANCE = instance
                 }
                 return instance
