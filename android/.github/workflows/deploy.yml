@@ -96,4 +96,4 @@ jobs:
           packageName: com.indest.hah
           releaseFiles: app/build/outputs/bundle/release/*.aab
           track: internal
-          whatsNewDirectory: releaseNotes/whatsnew
+          whatsNewDirectory: releaseNotes/
