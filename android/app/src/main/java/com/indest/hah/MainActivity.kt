@@ -36,6 +36,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.system.exitProcess
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogListener {
@@ -181,7 +182,7 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
     }
 
     override fun onDialogPositiveClick(dialog: DialogFragment) {
-        finishAffinity()
+        moveTaskToBack(false)
     }
 
     override fun onDialogNegativeClick(dialog: DialogFragment) {

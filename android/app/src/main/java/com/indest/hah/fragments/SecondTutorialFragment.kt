@@ -35,20 +35,15 @@ class SecondTutorialFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        mainAnimatorSet.end()
-        mainAnimatorSet.removeAllListeners()
-        _binding = null
+        cleanUp()
         super.onDestroyView()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView).visibility =
-            View.INVISIBLE
-
         binding.continueButton.setOnClickListener {
             parentFragmentManager.commit {
+                cleanUp()
                 setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top)
                 setReorderingAllowed(true)
                 replace<ThirdTutorialFragment>(R.id.fragments_container)
@@ -57,6 +52,7 @@ class SecondTutorialFragment : Fragment() {
 
         binding.backButton.setOnClickListener {
             parentFragmentManager.commit {
+                cleanUp()
                 setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top)
                 setReorderingAllowed(true)
                 replace<TutorialFragment>(R.id.fragments_container)
@@ -65,6 +61,18 @@ class SecondTutorialFragment : Fragment() {
         view.doOnLayout {
             repeatingTutorialAnimation()
         }
+    }
+
+
+    private fun cleanUp()
+    {
+        mainAnimatorSet.end()
+        mainAnimatorSet.childAnimations.forEach {
+            it.end()
+            it.removeAllListeners()
+        }
+        mainAnimatorSet.removeAllListeners()
+        _binding = null
     }
 
     private fun repeatingTutorialAnimation()

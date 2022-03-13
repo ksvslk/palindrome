@@ -36,20 +36,28 @@ class TutorialFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        cleanUp()
+        super.onDestroyView()
+    }
+
+    private fun cleanUp()
+    {
         mainAnimatorSet.end()
+        mainAnimatorSet.childAnimations.forEach {
+            it.end()
+            it.removeAllListeners()
+        }
         mainAnimatorSet.removeAllListeners()
         _binding = null
-        super.onDestroyView()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView).visibility =
             View.INVISIBLE
-
         binding.continueButton.setOnClickListener {
             parentFragmentManager.commit {
+                cleanUp()
                 setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top)
                 setReorderingAllowed(true)
                 replace<SecondTutorialFragment>(R.id.fragments_container)
@@ -57,15 +65,16 @@ class TutorialFragment : Fragment() {
         }
 
         binding.skipButton.setOnClickListener {
-            requireActivity().getSharedPreferences(getString(R.string.app_preferences), Context.MODE_PRIVATE)?.let {
-                with(it.edit()) {
-                    putBoolean(getString(R.string.tutorial_passed), true)
-                    apply()
-                }
-            }
-            requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView).visibility =
-                View.VISIBLE
             parentFragmentManager.commit {
+                requireActivity().getSharedPreferences(getString(R.string.app_preferences), Context.MODE_PRIVATE)?.let {
+                    with(it.edit()) {
+                        putBoolean(getString(R.string.tutorial_passed), true)
+                        apply()
+                    }
+                }
+                requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView).visibility =
+                    View.VISIBLE
+                cleanUp()
                 setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top)
                 setReorderingAllowed(true)
                 replace<LevelFragment>(R.id.fragments_container)
