@@ -74,7 +74,6 @@ class LevelViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            Log.d(TAG, "INIT")
             levelRepository.init()
             uiUpdater()
         }

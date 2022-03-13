@@ -3,10 +3,21 @@ package com.indest.hah.persistance.level
 import android.content.ContentValues
 import android.content.Context
 import androidx.room.*
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.indest.hah.persistance.Converters
 import com.indest.hah.persistance.dto.Interval
 import com.indest.hah.persistance.dto.LetterProperties
 import com.indest.hah.persistance.dto.LevelData
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.decodeFromJsonElement
+
+/*
+@Serializable
+data class LevelInfo(val category: String, val solution:String)
+*/
 
 @Database(
     entities = [LevelData::class, LetterProperties::class, Interval::class],
@@ -34,10 +45,12 @@ abstract class LevelDatabase : RoomDatabase() {
                         LevelDatabase::class.java,
                         "dbd.db"
                     )
-                       //.createFromAsset("uus.db")
+                        .createFromAsset("dbd.db")
                         .fallbackToDestructiveMigration()
-
+                        /*
                         .addCallback(object : RoomDatabase.Callback() {
+
+                            private val jsonInstance = Json { isLenient = true }
 
                             override fun onCreate(db: SupportSQLiteDatabase) {
                                 super.onCreate(db)
@@ -53,7 +66,9 @@ abstract class LevelDatabase : RoomDatabase() {
                                    it.readText()
                                }
 
-                               val levels = gson.fromJson(json, Array<LevelData>::class.java)
+                                val levels = jsonInstance
+                                    .decodeFromString<List<JsonElement>>(json)
+                                    .map { jsonInstance.decodeFromJsonElement(it) as LevelInfo}
 
                                for (i in levels.indices) {
                                    val puzzle = ""
@@ -110,7 +125,7 @@ abstract class LevelDatabase : RoomDatabase() {
 
                             }
                         }
-                        ).build()
+                        )*/.build()
                     INSTANCE = instance
                 }
                 return instance

@@ -74,11 +74,12 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         uiStateUpdater()
+        showPlayerCenteredScores()
     }
 
     private fun showPlayerCenteredScores() {
         lifecycleScope.launch {
-            if (viewModel.isIntervalAttained(getString(R.string.player_centered_scores))) {
+            if (viewModel.isIntervalAttained(getString(R.string.player_centered_scores)) && viewModel.uiState.value.state == PLAY) {
                 parentFragmentManager.commit {
                     addToBackStack(ScoresFragment().tag)
                     add(ScoresFragment(), ScoresFragment().tag)

@@ -20,7 +20,6 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        fail
         applicationId "com.indest.hah"
         minSdkVersion 21
         targetSdkVersion 31
