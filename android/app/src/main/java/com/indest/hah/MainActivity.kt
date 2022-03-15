@@ -1,6 +1,6 @@
 package com.indest.hah
 
-import android.content.Intent
+import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
@@ -12,6 +12,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.forEach
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -23,29 +24,37 @@ import androidx.window.layout.WindowMetricsCalculator
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.indest.hah.ads.RewardType
 import com.indest.hah.databinding.ActivityMainBinding
 import com.indest.hah.fragments.ExitGameDialogFragment
-import com.indest.hah.game.ContainerState
+import com.indest.hah.fragments.TutorialFragment
+import com.indest.hah.fx.SoundPlayer
 import com.indest.hah.game.LevelViewModel
 import com.indest.hah.persistance.dto.LevelData
 import com.indest.hah.game.levelcreation.WindowSizeClass
 import com.indest.hah.other.*
+import com.indest.hah.views.ButtonState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.system.exitProcess
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogListener {
+class MainActivity : AppCompatActivity(),
+    ExitGameDialogFragment.ExitGameDialogListener {
 
     private val TAG = "MainActivity"
     lateinit var binding: ActivityMainBinding
     private val levelViewModel: LevelViewModel by viewModels()
     private val generalViewModel: GeneralViewModel by viewModels()
-    @Inject lateinit var signInObserver : SignInLiveData
+
+    @Inject
+    lateinit var signInObserver: SignInLiveData
+
+    @Inject
+    lateinit var soundPlayer: SoundPlayer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate")
@@ -65,7 +74,11 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
         MobileAds.initialize(applicationContext) {
         }
 
-        val testDeviceIds = listOf("6C6A719C306FBA0A0FBE4D81600B8AB1", "1C8B057289566E4B36BA860D0A8281CB", "06F9B7BCACB746B35A407A17B4D161D9")
+        val testDeviceIds = listOf(
+            "6C6A719C306FBA0A0FBE4D81600B8AB1",
+            "1C8B057289566E4B36BA860D0A8281CB",
+            "06F9B7BCACB746B35A407A17B4D161D9"
+        )
         val configuration = RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build()
         MobileAds.setRequestConfiguration(configuration)
         generalViewModel.toString()
@@ -73,13 +86,67 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
         windowSizeClassUpdater()
         setUpNavController()
         progressBarUpdater()
+        collectRewardInfo()
+        showTutorial()
     }
 
     override fun onResume() {
         super.onResume()
         levelViewModel.startSavingGame()
         levelViewModel.setUiStateWhenOnResume()
+        restoreSadMode()
         Log.d(TAG, "onResume")
+    }
+
+    private fun showTutorial()
+    {
+        getSharedPreferences(
+            getString(R.string.app_preferences),
+            Context.MODE_PRIVATE
+        )?.let { sp ->
+            val tutorialPassed = sp.getBoolean(getString(R.string.tutorial_passed), false)
+            if (!tutorialPassed)
+            {
+                supportFragmentManager.commit {
+                    addToBackStack(TutorialFragment().tag)
+                    add(TutorialFragment(), TutorialFragment().tag)
+                }
+                with(sp.edit()) {
+                    putBoolean(getString(R.string.tutorial_passed), true)
+                    apply()
+                }
+            }
+        }
+    }
+
+    private fun restoreSadMode() {
+        getSharedPreferences(getString(R.string.app_preferences), Context.MODE_PRIVATE)?.let { sp ->
+            val isSad = sp.getBoolean(getString(R.string.sad_mode_pref), false)
+            binding.container.isSadMode = isSad
+            binding.container.invalidate()
+        }
+    }
+
+    private fun updateSadMode(isSadMode: Boolean) {
+        binding.container.isSadMode = isSadMode
+        binding.container.invalidate()
+        getSharedPreferences(
+            getString(R.string.app_preferences),
+            Context.MODE_PRIVATE
+        )?.let { sp ->
+            with(sp.edit()) {
+                putBoolean(getString(R.string.sad_mode_pref), isSadMode)
+                apply()
+            }
+        }
+    }
+
+    private fun isSadMode(): Boolean {
+        val prefs = getSharedPreferences(
+            getString(R.string.app_preferences),
+            Context.MODE_PRIVATE
+        )
+        return prefs.getBoolean(getString(R.string.sad_mode_pref), false)
     }
 
     override fun onPause() {
@@ -89,8 +156,61 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
         levelViewModel.setUiStateWhenOnPause()
     }
 
-    private fun updateFoldModeInfo()
-    {
+    private fun collectRewardInfo() {
+        binding.watchAdTop.setOnClickListener {
+            levelViewModel.setUiStateBusy()
+            generalViewModel.showRewardedVideo(this, RewardType.SAD_MODE)
+            binding.watchAdTop.visibility = View.GONE
+        }
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED)
+            {
+                launch {
+                    generalViewModel.rewardState.collect {
+                        if (it == RewardType.SAD_MODE) {
+                            levelViewModel.setUiStatePlayWhenBusy()
+                            updateSadMode(isSadMode = false)
+                            levelViewModel.resetIntervalCount(getString(R.string.sad_mode_interval))
+                            playModeSwitchSound(false)
+                        } else if (it == RewardType.SAD_AD_FAILED) {
+                            levelViewModel.setUiStatePlayWhenBusy()
+                            updateSadMode(isSadMode = true)
+                            if (generalViewModel.buttonState.replayCache.lastOrNull()?.state == ButtonState.AD) {
+                                binding.watchAdTop.visibility = View.VISIBLE
+                            }
+                            playModeSwitchSound(true)
+                        }
+                        generalViewModel.updateRewardState(RewardType.NONE)
+                    }
+                }
+
+                launch {
+                    generalViewModel.buttonState.collect { g ->
+                        val isSadMode = isSadMode()
+                        val minSkuDetails =
+                            g.skus.values.find { it.sku == getString(R.string.sad_mode) }
+                        if (minSkuDetails != null && minSkuDetails.isPurchased) {
+                            binding.watchAdTop.visibility = View.GONE
+                            binding.container.isSadMode = false
+                            binding.container.invalidate()
+                            return@collect
+                        }
+                        if (isSadMode && g.state == ButtonState.AD) {
+                            binding.watchAdTop.visibility = View.VISIBLE
+                        } else if (g.state == ButtonState.NO_AD) {
+                            binding.watchAdTop.visibility = View.GONE
+                        }
+
+                        binding.container.isSadMode = isSadMode
+                        binding.container.invalidate()
+                    }
+                }
+            }
+        }
+    }
+
+
+    private fun updateFoldModeInfo() {
         lifecycleScope.launch(Dispatchers.Main) {
             lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 WindowInfoTracker.getOrCreate(this@MainActivity)
@@ -162,10 +282,34 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
     private fun progressBarUpdater() {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                levelViewModel.currentLevel.distinctUntilChangedBy { it.levelInfo.levelId }.collect {
-                    setLevelProgressIndicator(it.levelInfo)
-                }
+                levelViewModel.currentLevel.distinctUntilChangedBy { it.levelInfo.levelId }
+                    .collect {
+                        setLevelProgressIndicator(it.levelInfo)
+                        val adsRemoved =
+                            generalViewModel.buttonState.replayCache.lastOrNull()?.skus?.values?.find { a ->
+                                a.sku == getString(R.string.sad_mode)
+                            }?.isPurchased ?: false
+
+                        if (it.levelInfo.levelId != 0 && !adsRemoved) {
+                            val intervalAttained =
+                                levelViewModel.isIntervalAttained(getString(R.string.sad_mode_interval))
+                            if (intervalAttained && !isSadMode()) {
+                                playModeSwitchSound(true)
+                                updateSadMode(true)
+                                if (generalViewModel.buttonState.replayCache.lastOrNull()?.state == ButtonState.AD) {
+                                    binding.watchAdTop.visibility = View.VISIBLE
+                                }
+                            }
+                        }
+                    }
             }
+        }
+    }
+
+    private fun playModeSwitchSound(isSadMode: Boolean) {
+        when (isSadMode) {
+            true -> soundPlayer.play(soundPlayer.sounds.sadMode, volume = 0.5f)
+            false -> soundPlayer.play(soundPlayer.sounds.normalMode, volume = 0.5f)
         }
     }
 
@@ -188,17 +332,5 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
     override fun onDialogNegativeClick(dialog: DialogFragment) {
         dialog.dismiss()
     }
-
-  /*  override fun onTopResumedActivityChanged(isTopResumedActivity: Boolean) {
-        super.onTopResumedActivityChanged(isTopResumedActivity)
-        if (isTopResumedActivity && levelViewModel.uiState.value.state == ContainerState.PLAY)
-        {
-            levelViewModel.setUiStateMenuAction()
-        }
-        else {
-            levelViewModel.setUiStateWhenOnResume()
-        }
-        Log.d(TAG, "onTopResumedActivityChanged")
-    }*/
 
 }

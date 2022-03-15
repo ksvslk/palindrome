@@ -93,6 +93,7 @@ interface LevelDao {
     @Query("DELETE FROM level_info_table")
     suspend fun deleteLevels()
 
+    @Transaction
     @Query("select * from level_info_table")
     suspend fun getAllLevels(): List<Level>
 
@@ -128,6 +129,7 @@ interface LevelDao {
         return isLimit
     }
 
+    @Transaction
     @Query("select *, max(time_modified) from level_info_table")
     fun getLastLevel(): Flow<Level>
 

@@ -26,6 +26,7 @@ import com.google.android.play.core.review.ReviewManagerFactory
 import com.indest.hah.MainActivity
 import com.indest.hah.R
 import com.indest.hah.ads.RewardType
+import com.indest.hah.ads.RewardType.*
 import com.indest.hah.databinding.LevelFragmentBinding
 import com.indest.hah.fx.Animations
 import com.indest.hah.fx.SoundPlayer
@@ -127,7 +128,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                                 levelFragment.notClickable = false
                                 levelFragment.alpha = 1f
                                 if (uiState.refreshLevelUi) displayLevel(uiState)
-                                hideHintsBadge()
                             }
                             INTERMEDIATE -> {
                                 progressCircular.visibility = View.GONE
@@ -152,7 +152,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                                         cellDirector?.sendWrongSolutionLetterHome(uiState)
                                         showWrongEffects(uiState)
                                     }
-                                    NONE -> {
+                                    Solution.NONE -> {
                                         Log.d(TAG, "Solution is: NONE")
                                     }
                                 }
@@ -166,6 +166,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                                 progressCircular.visibility = View.GONE
                                 levelFragment.notClickable = true
                                 levelFragment.alpha = 1f
+                                hideHintsBadge()
                             }
                             PAUSED -> {
 
@@ -213,7 +214,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                             if (isVisible) {
                                 super.onDismissed(transientBottomBar, event)
                                 showContinueMessage(uiState)
-                                askForReview(level = viewModel.currentLevel.replayCache.first().levelInfo.levelId)
+                                viewModel.currentLevel.replayCache.firstOrNull()?.levelInfo?.levelId?.let { it1 -> askForReview(level = it1) }
                             }
                         }
                     }
@@ -313,7 +314,10 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     private fun playTrainAnimation() {
         val childCount =
             activity?.findViewById<LinearLayoutCompat>(R.id.trainLinearLayout)?.childCount
-        if (VaryingProbability.isAnimationPlayed(viewModel.currentLevel.replayCache.first().levelInfo.levelId) && childCount == 0) {
+        if (viewModel.currentLevel.replayCache.firstOrNull()?.levelInfo?.let {
+                VaryingProbability.isAnimationPlayed(
+                    it.levelId)
+            } == true && childCount == 0) {
             val trainLinearLayout = animations.getTrainAnimation()
             trainLinearLayout.doOnNextLayout {
                 val offscreenX = resources.displayMetrics.widthPixels + trainLinearLayout.width
@@ -337,7 +341,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     private fun showHintsBadge() {
         if (isVisible) {
             val hintBadge = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView)
-                .getOrCreateBadge(R.id.navigation_hints)
+                .getOrCreateBadge(R.id.navigation_goods)
             hintBadge.backgroundColor =
                 ContextCompat.getColor(requireContext(), R.color.hintsNotificationColor)
             hintBadge.badgeGravity = BadgeDrawable.TOP_END
@@ -369,20 +373,20 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     private fun hideHintsBadge() {
         if (isVisible) {
             val hintBadge = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView)
-                .getOrCreateBadge(R.id.navigation_hints)
+                .getOrCreateBadge(R.id.navigation_goods)
             hintBadge.isVisible = false
         }
     }
 
     private fun rewardUserWithLetter(rewardType: RewardType = RewardType.NONE) {
         when (rewardType) {
-            RewardType.LETTER -> {
+            LETTER -> {
                 cellDirector?.rewardWithRandomLetter()
             }
-            RewardType.NEXT_LEVEL -> {
-            }
-            RewardType.CLUE -> {}
+            CLUE -> {}
             RewardType.NONE -> {}
+            AD_FAILED -> {}
+            SAD_MODE -> {}
         }
     }
 
@@ -395,7 +399,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                     val rewardType = RewardType.values()[bundle.getInt(C.LETTER_REWARD_TYPE_BUNDLE)]
                     rewardUserWithLetter(rewardType)
                 } else {
-                    rewardUserWithLetter(RewardType.LETTER)
+                    rewardUserWithLetter(LETTER)
                 }
             }
         }

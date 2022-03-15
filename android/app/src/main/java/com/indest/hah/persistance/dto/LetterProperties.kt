@@ -13,6 +13,9 @@ import kotlinx.serialization.Serializable
         )
     ],
     tableName = "letter_info_table",
+    indices = [
+        Index(value = ["owner_id"])
+    ]
 )
 data class LetterProperties(
     @PrimaryKey(autoGenerate = true)

@@ -1,6 +1,8 @@
 package com.indest.hah.fragments
 
+import android.app.Dialog
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,10 +12,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.databinding.ThirdTutorialFragmentBinding
 
-class ThirdTutorialFragment : Fragment() {
+class ThirdTutorialFragment : BottomSheetDialogFragment() {
     private var _binding: ThirdTutorialFragmentBinding? = null
     private val binding get() = _binding!!
 
@@ -27,6 +32,12 @@ class ThirdTutorialFragment : Fragment() {
         return b.root
     }
 
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView).visibility =
+            View.VISIBLE
+    }
+
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()
@@ -35,26 +46,9 @@ class ThirdTutorialFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.startButton.setOnClickListener {
-            parentFragmentManager.commit {
-                requireActivity().getSharedPreferences(getString(R.string.app_preferences), Context.MODE_PRIVATE)?.let {
-                    with(it.edit()) {
-                        putBoolean(getString(R.string.tutorial_passed), true)
-                        apply()
-                    }
-                }
-                requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView).visibility = View.VISIBLE
-                setReorderingAllowed(true)
-                setCustomAnimations(R.anim.fade_in_short, R.anim.fade_out_short)
-                replace<LevelFragment>(R.id.fragments_container)
-            }
-        }
-
-        binding.backButton.setOnClickListener {
-            parentFragmentManager.commit {
-                setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top)
-                setReorderingAllowed(true)
-                replace<SecondTutorialFragment>(R.id.fragments_container)
-            }
+            requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView).visibility =
+                View.VISIBLE
+            parentFragmentManager.popBackStack()
         }
 
     }

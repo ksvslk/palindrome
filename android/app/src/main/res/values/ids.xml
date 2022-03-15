@@ -17,51 +17,51 @@
     <string name="admob_rewarded_ad_unit" translatable="false">ca-app-pub-5386053272091445/9690912366</string>
 
     <!-- IAP -->
-    <string name="full_no_ads">full_no_ads</string>
+    <string name="all_inclusive_pack">all_inclusive_pack</string>
     <string name="instant_letters">instant_letters</string>
     <string name="instant_clues">instant_clues</string>
-    <string name="no_intermediate_ads">no_intermediate_ads</string>
+    <string name="sad_mode">sad_mode</string>
 
     <!-- IAPs that will unlock clues. ANY match will do. -->
     <string-array name="iap_group_that_unlock_clues">
-        <item>@string/full_no_ads</item>
+        <item>@string/all_inclusive_pack</item>
         <item>@string/instant_clues</item>
     </string-array>
 
     <!-- IAPs that will unlock letters. ANY match will do. -->
     <string-array name="iap_group_that_unlock_letters">
-        <item>@string/full_no_ads</item>
+        <item>@string/all_inclusive_pack</item>
         <item>@string/instant_letters</item>
     </string-array>
 
     <!-- IAPs that will hide letters purchase button from menu. ANY match will do -->
     <string-array name="letters_case_1">
-        <item>@string/full_no_ads</item>
+        <item>@string/all_inclusive_pack</item>
         <item>@string/instant_letters</item>
     </string-array>
 
     <!-- IAPs that will hide clue purchase button from menu. ANY match will do. -->
     <string-array name="clues_case_1">
-        <item>@string/full_no_ads</item>
+        <item>@string/all_inclusive_pack</item>
         <item>@string/instant_clues</item>
     </string-array>
 
     <!-- IAPs that will hide intermediate ads removal purchase button from menu. ANY match will do. -->
-    <string-array name="intermediate_case_1">
-        <item>@string/full_no_ads</item>
-        <item>@string/no_intermediate_ads</item>
+    <string-array name="sad_mode_case_1">
+        <item>@string/all_inclusive_pack</item>
+        <item>@string/sad_mode</item>
     </string-array>
 
 
     <!-- IAPs that will hide full ads purchase button from menu. ALL must occurs at same time in one array. -->
-    <string-array name="full_ads_case_1">
-        <item>@string/full_no_ads</item>
+    <string-array name="all_inclusive_pack_case1">
+        <item>@string/all_inclusive_pack</item>
     </string-array>
-    <string-array name="full_ads_case_2">
-        <item>@string/no_intermediate_ads</item>
+    <string-array name="all_inclusive_pack_case2">
+        <item>@string/sad_mode</item>
         <item>@string/instant_clues</item>
     </string-array>
-    <string-array name="full_ads_case_3">
+    <string-array name="all_inclusive_pack_case3">
         <item>@string/instant_letters</item>
     </string-array>
 

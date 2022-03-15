@@ -3,22 +3,27 @@ package com.indest.hah.fragments
 import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
-import android.content.Context
+import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.FrameLayout
 import androidx.core.animation.doOnEnd
 import androidx.core.view.doOnLayout
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
-import androidx.fragment.app.replace
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.databinding.TutorialFragmentBinding
 
-class TutorialFragment : Fragment() {
+
+class TutorialFragment : BottomSheetDialogFragment() {
 
     private val TAG = "TutorialFragment"
     private var _binding: TutorialFragmentBinding? = null
@@ -29,10 +34,10 @@ class TutorialFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val b = TutorialFragmentBinding.inflate(layoutInflater, container, false)
-        _binding = b
+        Log.d(TAG, "onCreateView")
+        _binding = TutorialFragmentBinding.inflate(layoutInflater, container, false)
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-        return b.root
+        return binding.root
     }
 
     override fun onDestroyView() {
@@ -56,34 +61,23 @@ class TutorialFragment : Fragment() {
         requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView).visibility =
             View.INVISIBLE
         binding.continueButton.setOnClickListener {
-            parentFragmentManager.commit {
+            parentFragmentManager.popBackStack()
+           parentFragmentManager.commit {
                 cleanUp()
                 setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top)
-                setReorderingAllowed(true)
-                replace<SecondTutorialFragment>(R.id.fragments_container)
+               add(SecondTutorialFragment(), SecondTutorialFragment().tag)
+               addToBackStack(SecondTutorialFragment().tag)
             }
         }
-
-        binding.skipButton.setOnClickListener {
-            parentFragmentManager.commit {
-                requireActivity().getSharedPreferences(getString(R.string.app_preferences), Context.MODE_PRIVATE)?.let {
-                    with(it.edit()) {
-                        putBoolean(getString(R.string.tutorial_passed), true)
-                        apply()
-                    }
-                }
-                requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView).visibility =
-                    View.VISIBLE
-                cleanUp()
-                setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top)
-                setReorderingAllowed(true)
-                replace<LevelFragment>(R.id.fragments_container)
-            }
-        }
-
         view.doOnLayout {
             repeatingTutorialAnimation()
         }
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView).visibility =
+            View.VISIBLE
     }
 
     private fun repeatingTutorialAnimation()

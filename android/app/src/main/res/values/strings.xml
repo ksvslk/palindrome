@@ -24,7 +24,7 @@
         <item>\"Many of life’s failures are people who did not realize how close they were to success when they gave up.\" ― Thomas Edison </item>
     </string-array>
 
-    <string name="hints">Hints</string>
+    <string name="goods">Goods</string>
     <string name="scores">Scores</string>
     <string name="tutorial">Tutorial</string>
     <string name="level_select">Level Select</string>
@@ -38,8 +38,8 @@
     <string name="rewarded_place_letter">Place Letter</string>
     <string name="remove_clue_ads_text">Instant Clues</string>
     <string name="remove_letter_ads_text">Instant Letters</string>
-    <string name="remove_intermediate_ads_text">No Intermediate Ads</string>
-    <string name="remove_all_ads_text">100% No Ads</string>
+    <string name="no_sad_mode_text">No Sad Mode</string>
+    <string name="all_inclusive_pack_text">All-Inclusive Pack</string>
     <string name="no_ad_available">Hint Not Available</string>
     <string name="instantly">Instantly</string>
     <string name="sound_text">Sound</string>
@@ -54,9 +54,13 @@
     <string name="not_quite_solution">Incorrect palindrome!</string>
     <string name="tap_to_continue">Tap to continue</string>
     <string name="watch_ad_and_continue">Watch ad and continue</string>
-    <string name="placeholder">...</string>
+    <string name="placeholder">…</string>
     <string name="ok">OK</string>
     <string name="sign_in_other_error">Something went wrong while signing in.</string>
+    <string name="watch_ad_top_notice">Watch ad to exit Sad mode (10 levels)</string>
+    <string name="sad_mode_activate">Sad Mode Active</string>
+    <string name="normal_mode_activate">Normal Mode Active</string>
+
     <string-array name="save_24_percent_label">
         <item>SAVE</item>
         <item>24%</item>
@@ -101,7 +105,7 @@
     </string-array>
 
     <!-- Interval table -->
-    <string name="intermediate_ads">intermediate_ads</string>
+    <string name="sad_mode_interval">sad_mode</string>
     <string name="player_centered_scores">player_centered_scores</string>
     <string name="hint_suggestion">hint_suggestion</string>
 
@@ -112,6 +116,7 @@
     <string name="vibration_on_pref">VIBRATION_ON</string>
     <string name="interactive_sign_in_done">INTERACTIVE_SIGN_IN_DONE</string>
     <string name="review_displayed_to_user">REVIEW_DISPLAYED_TO_USER</string>
+    <string name="sad_mode_pref">SAD_MODE</string>
 
     <!-- TUTORIAL -->
     <string name="tutorial_text">Use all letters and punctuation marks to create a palindrome. Palindrome is a same word or sentence both ways.</string>

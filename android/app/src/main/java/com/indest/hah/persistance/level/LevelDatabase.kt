@@ -14,10 +14,10 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.decodeFromJsonElement
 
-/*
+
 @Serializable
 data class LevelInfo(val category: String, val solution:String)
-*/
+
 
 @Database(
     entities = [LevelData::class, LetterProperties::class, Interval::class],
@@ -47,7 +47,7 @@ abstract class LevelDatabase : RoomDatabase() {
                     )
                         .createFromAsset("dbd.db")
                         .fallbackToDestructiveMigration()
-                        /*
+                            /*
                         .addCallback(object : RoomDatabase.Callback() {
 
                             private val jsonInstance = Json { isLenient = true }
@@ -95,7 +95,7 @@ abstract class LevelDatabase : RoomDatabase() {
                                }
 
                                val intervals = ArrayList<String>()
-                               intervals.add(context.getString(com.indest.hah.R.string.intermediate_ads))
+                               intervals.add(context.getString(com.indest.hah.R.string.sad_mode_interval))
                                intervals.add(context.getString(com.indest.hah.R.string.player_centered_scores))
                                intervals.add(context.getString(com.indest.hah.R.string.hint_suggestion))
                                intervals.add(context.getString(com.indest.hah.R.string.achievement_flawless_5))
@@ -105,7 +105,7 @@ abstract class LevelDatabase : RoomDatabase() {
                                    val interval = ContentValues()
                                    val limit = when(it)
                                    {
-                                       context.getString(com.indest.hah.R.string.intermediate_ads) -> 2
+                                       context.getString(com.indest.hah.R.string.sad_mode_interval) -> 5
                                        context.getString(com.indest.hah.R.string.player_centered_scores) -> 5
                                        context.getString(com.indest.hah.R.string.hint_suggestion) -> 3
                                        context.getString(com.indest.hah.R.string.achievement_flawless_5) -> 5

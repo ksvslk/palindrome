@@ -52,9 +52,9 @@ class GeneralViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             val skus = arrayOf(
-                application.getString(R.string.full_no_ads),
+                application.getString(R.string.all_inclusive_pack),
                 application.getString(R.string.instant_clues),
-                application.getString(R.string.no_intermediate_ads),
+                application.getString(R.string.sad_mode),
                 application.getString(R.string.instant_letters)
             )
             _billingDataSource = BillingDataSource.getInstance(
@@ -71,10 +71,10 @@ class GeneralViewModel @Inject constructor(
                 combineAndUpdateMinSkuDetails(application.getString(R.string.instant_clues))
             }
             launch {
-                combineAndUpdateMinSkuDetails(application.getString(R.string.no_intermediate_ads))
+                combineAndUpdateMinSkuDetails(application.getString(R.string.sad_mode))
             }
             launch {
-                combineAndUpdateMinSkuDetails(application.getString(R.string.full_no_ads))
+                combineAndUpdateMinSkuDetails(application.getString(R.string.all_inclusive_pack))
             }
 
             // Collect and react to internet state updates from ConnectionLiveData

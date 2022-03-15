@@ -33,14 +33,8 @@ class LevelViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     private var _windowSizeClassWidth = MutableStateFlow(WindowSizeClass.NOT_SET)
-
-    //val windowSizeClassWidth = _windowSizeClassWidth.asStateFlow()
     private var _bookMode: MutableStateFlow<BookMode> = MutableStateFlow(BookMode.NOT_SET)
-
-    //var isBookMode = _isBookMode.asStateFlow()
     private val _accountStatus = MutableStateFlow(AccountStatus.NOT_SET)
-    //val accountStatus = _accountStatus.asStateFlow()
-
     private val _currentLevel = MutableStateFlow(Level())
     val currentLevel = _currentLevel.asStateFlow()
 
@@ -48,7 +42,7 @@ class LevelViewModel @Inject constructor(
     lateinit var cloudSave: SnapshotHelper
     private var saveGameJob: Job? = null
 
-    private val exceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
+    private val exceptionHandler = CoroutineExceptionHandler { _, _ ->
         Log.e(
             TAG,
             "Error syncing cloud with local. Start collecting level from  local database without up to date information."
@@ -58,6 +52,10 @@ class LevelViewModel @Inject constructor(
                 .collect { _currentLevel.value = it }
             startSavingGame()
         }
+    }
+
+    private val saveGameExceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        Log.e(TAG,"Could not write snapshot or save game: ${throwable.message}")
     }
 
     fun setAccountStatus(accountStatus: AccountStatus) {
@@ -156,6 +154,14 @@ class LevelViewModel @Inject constructor(
         }
         _uiState.value = _uiState.value.copy(
             state = newState,
+            solutionData = SolutionData(),
+            refreshLevelUi = false
+        )
+    }
+
+    fun setUiStatePaused() {
+        _uiState.value = _uiState.value.copy(
+            state = PAUSED,
             solutionData = SolutionData(),
             refreshLevelUi = false
         )
@@ -310,6 +316,13 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+    fun resetIntervalCount(interval:String)
+    {
+        viewModelScope.launch {
+            levelRepository.setCountTo(interval, 0)
+        }
+    }
+
     suspend fun isIntervalAttained(interval: String): Boolean {
         return levelRepository.increaseCount(interval)
     }
@@ -320,6 +333,7 @@ class LevelViewModel @Inject constructor(
         val hintInterval = getApplication<Application>().getString(R.string.hint_suggestion)
         viewModelScope.launch {
             levelRepository.executeLevelCompleteTransaction(levelNr, hintInterval)
+            saveGameImmediately()
         }
     }
 
@@ -333,10 +347,11 @@ class LevelViewModel @Inject constructor(
         if (saveGameJob == null || saveGameJob?.isCompleted == true) {
             Log.d(TAG, "Start saving game. Job was null/completed.")
 
-            saveGameJob = viewModelScope.launch {
+            saveGameJob = viewModelScope.launch(saveGameExceptionHandler) {
                 while (isActive) {
                     delay(120000)
                     if (_uiState.value.state != BUSY && _uiState.value.state != LEVEL_COMPLETE && _uiState.value.state != LOADING) {
+                        return@launch
                         Log.d(TAG, "Save game to cloud.")
                         val saveGame = levelRepository.getLocalSaveGame()
                         cloudSave.save(saveGame)
@@ -350,7 +365,8 @@ class LevelViewModel @Inject constructor(
     }
 
     fun saveGameImmediately() {
-        viewModelScope.launch {
+        return
+        viewModelScope.launch(saveGameExceptionHandler) {
             val saveGame = levelRepository.getLocalSaveGame()
             cloudSave.save(saveGame)
         }
@@ -445,7 +461,6 @@ class LevelViewModel @Inject constructor(
                             _currentLevel.value.levelInfo.levelId,
                             LevelProgress.INTERMEDIATE
                         )
-                        saveGameImmediately()
                         val solutionData = SolutionData(
                             solution = Solution.CORRECT,
                             index = index,

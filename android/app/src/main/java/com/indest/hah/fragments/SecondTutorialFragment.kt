@@ -3,6 +3,8 @@ package com.indest.hah.fragments
 import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.app.Dialog
+import android.content.DialogInterface
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,14 +14,15 @@ import android.view.WindowManager
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import androidx.core.view.doOnLayout
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
-import androidx.fragment.app.replace
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.databinding.SecondTutorialFragmentBinding
 
-class SecondTutorialFragment : Fragment() {
+class SecondTutorialFragment : BottomSheetDialogFragment() {
     private var _binding: SecondTutorialFragmentBinding? = null
     private val binding get() = _binding!!
     private val mainAnimatorSet = AnimatorSet()
@@ -34,6 +37,12 @@ class SecondTutorialFragment : Fragment() {
         return b.root
     }
 
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView).visibility =
+            View.VISIBLE
+    }
+
     override fun onDestroyView() {
         cleanUp()
         super.onDestroyView()
@@ -42,20 +51,12 @@ class SecondTutorialFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.continueButton.setOnClickListener {
+            parentFragmentManager.popBackStack()
             parentFragmentManager.commit {
                 cleanUp()
                 setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top)
-                setReorderingAllowed(true)
-                replace<ThirdTutorialFragment>(R.id.fragments_container)
-            }
-        }
-
-        binding.backButton.setOnClickListener {
-            parentFragmentManager.commit {
-                cleanUp()
-                setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top)
-                setReorderingAllowed(true)
-                replace<TutorialFragment>(R.id.fragments_container)
+                add(ThirdTutorialFragment(), ThirdTutorialFragment().tag)
+                addToBackStack(ThirdTutorialFragment().tag)
             }
         }
         view.doOnLayout {
@@ -64,8 +65,7 @@ class SecondTutorialFragment : Fragment() {
     }
 
 
-    private fun cleanUp()
-    {
+    private fun cleanUp() {
         mainAnimatorSet.end()
         mainAnimatorSet.childAnimations.forEach {
             it.end()
@@ -75,8 +75,7 @@ class SecondTutorialFragment : Fragment() {
         _binding = null
     }
 
-    private fun repeatingTutorialAnimation()
-    {
+    private fun repeatingTutorialAnimation() {
         val frameFadeInAnimation = getAlphaAnimator(binding.tutorialGameplay, 0f, 1f, 500)
         val frameFadeOutAnimation = getAlphaAnimator(binding.tutorialGameplay, 1f, 0f, 500)
 
@@ -85,7 +84,8 @@ class SecondTutorialFragment : Fragment() {
         val handToCenter = getPositionAnimator(what = binding.hand, to = binding.space2)
 
         val handToSecondLetter = getPositionAnimator(what = binding.hand, to = binding.letter2)
-        val secondLetterToFirstPos = getPositionAnimator(what = binding.letter2, to = binding.space1)
+        val secondLetterToFirstPos =
+            getPositionAnimator(what = binding.letter2, to = binding.space1)
         val handToFirstPos = getPositionAnimator(what = binding.hand, to = binding.space1)
 
         val handToThirdLetter = getPositionAnimator(what = binding.hand, to = binding.letter3)
@@ -190,8 +190,12 @@ class SecondTutorialFragment : Fragment() {
         mainAnimatorSet.start()
     }
 
-    private fun getAlphaAnimator(what: View, start:Float, end:Float, aDuration:Long = 1000): Animator
-    {
+    private fun getAlphaAnimator(
+        what: View,
+        start: Float,
+        end: Float,
+        aDuration: Long = 1000
+    ): Animator {
         return ObjectAnimator.ofFloat(
             what,
             View.ALPHA,
@@ -211,12 +215,12 @@ class SecondTutorialFragment : Fragment() {
 
         return Pair(
             ObjectAnimator.ofFloat(
-            what,
-            View.TRANSLATION_X,
-            (toRect.centerX() - whatRect.centerX()).toFloat()
-        ).apply {
-            duration = 1000
-        },
+                what,
+                View.TRANSLATION_X,
+                (toRect.centerX() - whatRect.centerX()).toFloat()
+            ).apply {
+                duration = 1000
+            },
             ObjectAnimator.ofFloat(
                 what,
                 View.TRANSLATION_Y,

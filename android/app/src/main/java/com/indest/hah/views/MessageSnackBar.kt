@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.view.setPadding
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.indest.hah.R
 import com.indest.hah.views.MessageSnackBar.Companion.TextSize.*
@@ -66,6 +67,7 @@ class MessageSnackBar(
             val snackBar = MessageSnackBar(parent, customView)
             snackBar.duration = duration
             if (animateText) addBlinkingTextAnimation(snackBar.view)
+            customView.y = 10f
             return snackBar
         }
 

@@ -85,7 +85,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/simple_dialog_left_margin"
             android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
-            android:contentDescription="@string/remove_all_ads_text"
+            android:contentDescription="@string/all_inclusive_pack_text"
             android:src="@drawable/baseline_help_center_black_36"
             android:clickable="false"
             app:tint="@color/colorOnPrimary"

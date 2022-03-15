@@ -3,7 +3,8 @@ package com.indest.hah.ads
 enum class RewardType {
     CLUE,
     LETTER,
-    NEXT_LEVEL,
+    SAD_MODE,
     NONE,
-    AD_FAILED
+    AD_FAILED,
+    SAD_AD_FAILED
 }

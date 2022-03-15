@@ -51,6 +51,8 @@ object EffectsModule {
                 soundPool.load(context, R.raw.c5_outer, 1),
                 soundPool.load(context, R.raw.c6_outer, 1),
             ),
+            sadMode = soundPool.load(context, R.raw.sad_mode, 1),
+            normalMode = soundPool.load(context, R.raw.normal_mode, 1),
             switchLettersSoundId = soundPool.load(context, R.raw.double_finger, 1),
             placeLetterSoundId = soundPool.load(context, R.raw.block_hit, 1),
             letterRewardedSoundId = soundPool.load(context, R.raw.hint_revealed, 1)

@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.LayoutTransition
 import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -16,8 +17,10 @@ import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.GeneralViewModel
+import com.indest.hah.R
 import com.indest.hah.ads.RewardType
 import com.indest.hah.ads.RewardType.*
 import com.indest.hah.databinding.HintsFragmentBinding
@@ -38,6 +41,7 @@ class HintsFragment : BottomSheetDialogFragment() {
     private val binding get() = _binding!!
     private val viewModel: GeneralViewModel by activityViewModels()
     private val levelViewModel: LevelViewModel by activityViewModels()
+
     @Inject
     lateinit var soundPlayer: SoundPlayer
 
@@ -53,8 +57,8 @@ class HintsFragment : BottomSheetDialogFragment() {
                         binding.rewardPlaceLetter.updateButtonUi(it)
                         binding.purchaseButtonClues.updateButtonUi(it)
                         binding.purchaseButtonLetters.updateButtonUi(it)
-                        binding.purchaseIntermediateAds.updateButtonUi(it)
-                        binding.purchaseFullAds.updateButtonUi(it)
+                        binding.purchaseNoSadMode.updateButtonUi(it)
+                        binding.purchaseAllInclusivePack.updateButtonUi(it)
                     }
                 }
                 launch {
@@ -71,18 +75,15 @@ class HintsFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.rewardCategoryButton.setClue(viewModel.currentLevel.value.levelInfo.category)
-        if (viewModel.currentLevel.value.levelInfo.categoryRewarded)
-        {
+        if (viewModel.currentLevel.value.levelInfo.categoryRewarded) {
             binding.rewardCategoryButton.showClue()
         }
     }
 
-    private fun handleRewards(rewardType: RewardType)
-    {
-        when(rewardType)
-        {
-            NEXT_LEVEL -> {/*_*/}
-            NONE -> {/*_*/}
+    private fun handleRewards(rewardType: RewardType) {
+        when (rewardType) {
+            NONE -> {/*_*/
+            }
             CLUE -> {
                 revealClue()
                 levelViewModel.saveGameImmediately()
@@ -98,11 +99,11 @@ class HintsFragment : BottomSheetDialogFragment() {
             AD_FAILED -> {
                 levelViewModel.setUiStatePlayWhenBusy()
             }
+            SAD_MODE -> {}
         }
     }
 
-    private fun revealClue()
-    {
+    private fun revealClue() {
         soundPlayer.play(soundPlayer.sounds.letterRewardedSoundId)
         binding.rewardCategoryButton.showClue()
     }
@@ -137,14 +138,12 @@ class HintsFragment : BottomSheetDialogFragment() {
 
         addBillingFlowOnClickToPurchaseButton(binding.purchaseButtonClues)
         addBillingFlowOnClickToPurchaseButton(binding.purchaseButtonLetters)
-        addBillingFlowOnClickToPurchaseButton(binding.purchaseIntermediateAds)
-        addBillingFlowOnClickToPurchaseButton(binding.purchaseFullAds)
+        addBillingFlowOnClickToPurchaseButton(binding.purchaseNoSadMode)
+        addBillingFlowOnClickToPurchaseButton(binding.purchaseAllInclusivePack)
 
         binding.rewardCategoryButton.setOnClickListener {
-            if (!viewModel.currentLevel.value.levelInfo.categoryRewarded)
-            {
-                when (binding.rewardCategoryButton.buttonState)
-                {
+            if (!viewModel.currentLevel.value.levelInfo.categoryRewarded) {
+                when (binding.rewardCategoryButton.buttonState) {
                     AD -> {
                         levelViewModel.setUiStateBusy()
                         viewModel.showRewardedVideo(requireActivity(), CLUE)
@@ -153,14 +152,14 @@ class HintsFragment : BottomSheetDialogFragment() {
                         revealClue()
                         viewModel.updateCategoryRewarded()
                     }
-                    NO_AD -> {  /* No action. Button should be disabled in this state. */ }
+                    NO_AD -> {  /* No action. Button should be disabled in this state. */
+                    }
                 }
             }
         }
 
         binding.rewardPlaceLetter.setOnClickListener {
-            when (binding.rewardPlaceLetter.buttonState)
-            {
+            when (binding.rewardPlaceLetter.buttonState) {
                 AD -> {
                     levelViewModel.setUiStateBusy()
                     viewModel.showRewardedVideo(requireActivity(), LETTER)
@@ -174,14 +173,14 @@ class HintsFragment : BottomSheetDialogFragment() {
                     )
                     dismiss()
                 }
-                NO_AD -> { /* No action. Button should be disabled in this state. */ }
+                NO_AD -> { /* No action. Button should be disabled in this state. */
+                }
             }
         }
         return b.root
     }
 
-    private fun addBillingFlowOnClickToPurchaseButton(view: View?)
-    {
+    private fun addBillingFlowOnClickToPurchaseButton(view: View?) {
         view?.setOnClickListener {
             (view as? PurchaseButton)?.let { pb ->
                 pb.sku?.let { sku ->
@@ -191,5 +190,14 @@ class HintsFragment : BottomSheetDialogFragment() {
             }
         }
     }
+
+    override fun onDestroyView() {
+        val hintBadge = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView)
+            .getOrCreateBadge(R.id.navigation_goods)
+        hintBadge.isVisible = false
+        super.onDestroyView()
+
+    }
+
 
 }

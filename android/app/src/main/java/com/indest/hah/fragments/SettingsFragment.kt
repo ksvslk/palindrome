@@ -28,7 +28,9 @@ import com.indest.hah.BuildConfig
 import com.indest.hah.GeneralViewModel
 import com.indest.hah.R
 import com.indest.hah.databinding.SettingsFragmentBinding
+import com.indest.hah.game.LevelViewModel
 import com.indest.hah.other.AccountStatus
+import com.indest.hah.other.AccountStatus.*
 import com.indest.hah.other.SignInLiveData
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -77,17 +79,18 @@ class SettingsFragment : BottomSheetDialogFragment() {
                     }
 
                     when (accountStatus) {
-                        AccountStatus.SIGNED_IN -> {
+                        SIGNED_IN -> {
                             binding.googleSignInButton.visibility = View.GONE
                             binding.googleSignOutButton.visibility = View.VISIBLE
                             binding.googleSignOutButton.setOnClickListener {
                                 signOut()
                             }
                         }
-                        AccountStatus.SIGNED_OUT -> {
+                        SIGNED_OUT -> {
                             binding.googleSignOutButton.visibility = View.GONE
                             binding.googleSignInButton.visibility = View.VISIBLE
                         }
+                        NOT_SET -> TODO()
                     }
 
                     binding.googleSignInButton.setOnClickListener {
@@ -132,16 +135,16 @@ class SettingsFragment : BottomSheetDialogFragment() {
         binding.vibrationButton.setOnClickListener {
             binding.vibrationSwitch.performClick()
         }
-        binding.soundSwitch.setOnCheckedChangeListener { _, b ->
-            changePreference(getString(R.string.sound_on_pref), b)
+        binding.soundSwitch.setOnCheckedChangeListener { _, b1 ->
+            changePreference(getString(R.string.sound_on_pref), b1)
         }
-        binding.vibrationSwitch.setOnCheckedChangeListener { _, b ->
-            changePreference(getString(R.string.vibration_on_pref), b)
+        binding.vibrationSwitch.setOnCheckedChangeListener { _, b2 ->
+            changePreference(getString(R.string.vibration_on_pref), b2)
         }
         binding.tutorialButton.setOnClickListener {
             parentFragmentManager.commit {
-                setReorderingAllowed(true)
-                replace<TutorialFragment>(R.id.fragments_container)
+                addToBackStack(TutorialFragment().tag)
+                add(TutorialFragment(), TutorialFragment().tag)
             }
             dismiss()
         }

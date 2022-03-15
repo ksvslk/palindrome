@@ -46,8 +46,6 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         isBookMode: BookMode,
         sizeClassWidth: WindowSizeClass
     ): DensitySettings {
-        var boxSize = 0
-        var textSize = 0
         val densityDpi = context.resources?.displayMetrics?.densityDpi
         val margin = context.resources.getDimensionPixelSize(R.dimen.def)
         val screenWidth = context.resources?.displayMetrics?.widthPixels!!
@@ -59,8 +57,8 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                 sizeClassWidth,
                 densityDpi
             )
-        boxSize = boxAndText.first
-        textSize = boxAndText.second
+        val boxSize = boxAndText.first
+        val textSize = boxAndText.second
 
         return DensitySettings(
             context.resources.getInteger(R.integer.defaultColumnsCount),
@@ -218,7 +216,8 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
     private fun addLetters(grid: GridLayout, ds: DensitySettings, info: Level, context: Context) {
         val puzzle = info.lettersProperties
             .sortedBy { it.homeIndex }
-            .fold(""
+            .fold(
+                ""
             ) { acc, li -> acc + li.letter }
 
         for ((_, l) in puzzle.withIndex()) {

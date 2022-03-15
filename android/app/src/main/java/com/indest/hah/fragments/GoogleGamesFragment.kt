@@ -84,7 +84,6 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
     }
 
     private fun showLeaderBoard() {
-        levelViewModel.setUiStateMenuAction()
         dismiss()
         val lastSignedInAccount =
             GoogleSignIn.getLastSignedInAccount(requireContext().applicationContext)
@@ -97,13 +96,14 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
         leaderboardsClient?.getLeaderboardIntent(getString(R.string.leaderboard_crme_de_la_crme))
             ?.continueWith {
                 if (it.isSuccessful) {
+                    levelViewModel.setUiStateMenuAction()
                     startActivity.launch(it.result)
                 }
             }
     }
 
     private fun showAchievements() {
-        levelViewModel.setUiStateMenuAction()
+
         dismiss()
         val lastSignedInAccount =
             GoogleSignIn.getLastSignedInAccount(requireContext().applicationContext)
@@ -115,6 +115,7 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
         else null
         achievementsClient?.achievementsIntent?.continueWith {
             if (it.isSuccessful) {
+                levelViewModel.setUiStateMenuAction()
                 startActivity.launch(it.result)
             }
         }
