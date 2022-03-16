@@ -3,7 +3,6 @@ package com.indest.hah.fragments
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,7 +13,6 @@ import android.widget.CompoundButton
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
-import androidx.fragment.app.replace
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -25,18 +23,14 @@ import com.google.android.gms.common.SignInButton
 import com.google.android.gms.games.Games.SCOPE_GAMES_SNAPSHOTS
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.BuildConfig
-import com.indest.hah.GeneralViewModel
+import com.indest.hah.general.GeneralViewModel
 import com.indest.hah.R
 import com.indest.hah.databinding.SettingsFragmentBinding
-import com.indest.hah.game.LevelViewModel
-import com.indest.hah.other.AccountStatus
-import com.indest.hah.other.AccountStatus.*
-import com.indest.hah.other.SignInLiveData
+import com.indest.hah.general.AccountStatus
+import com.indest.hah.general.SignInLiveData
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
-import java.text.SimpleDateFormat
-import java.time.Instant
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -79,18 +73,18 @@ class SettingsFragment : BottomSheetDialogFragment() {
                     }
 
                     when (accountStatus) {
-                        SIGNED_IN -> {
+                        AccountStatus.SIGNED_IN -> {
                             binding.googleSignInButton.visibility = View.GONE
                             binding.googleSignOutButton.visibility = View.VISIBLE
                             binding.googleSignOutButton.setOnClickListener {
                                 signOut()
                             }
                         }
-                        SIGNED_OUT -> {
+                        AccountStatus.SIGNED_OUT -> {
                             binding.googleSignOutButton.visibility = View.GONE
                             binding.googleSignInButton.visibility = View.VISIBLE
                         }
-                        NOT_SET -> TODO()
+                        AccountStatus.NOT_SET -> {}
                     }
 
                     binding.googleSignInButton.setOnClickListener {

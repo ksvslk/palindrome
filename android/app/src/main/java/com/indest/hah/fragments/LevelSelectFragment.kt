@@ -17,7 +17,7 @@ import com.indest.hah.databinding.LevelSelectFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.indest.hah.R
-import com.indest.hah.game.LevelViewModel
+import com.indest.hah.game.viewmodel.LevelViewModel
 import kotlinx.coroutines.flow.collect
 
 @AndroidEntryPoint

@@ -64,8 +64,13 @@ class LevelRepository @Inject constructor(
         return levelDao.getCount(name)
     }
 
-    suspend fun increaseCount(name: String): Boolean {
+    suspend fun increaseCountAndGetResult(name: String): Boolean {
         return levelDao.increaseCountTransaction(name)
+    }
+
+    suspend fun increaseCount(name:String)
+    {
+        levelDao.increaseCurrentCount(name)
     }
 
     suspend fun executeLevelCompleteTransaction(current: Int, hintInterval: String) {
@@ -74,6 +79,10 @@ class LevelRepository @Inject constructor(
 
     fun latestLevelFlow(): Flow<Level> {
         return levelDao.getLastLevel()
+    }
+
+    fun intervalAttainedFlow(name:String): Flow<Boolean> {
+        return levelDao.sadModeIntervalFlow(name)
     }
 
     suspend fun updateLevelProgress(level: Int, progress: LevelProgress) {

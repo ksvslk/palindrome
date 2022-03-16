@@ -140,7 +140,7 @@
 
         <Button
             android:id="@+id/startButton"
-            style="@style/OC.OutlinedButton"
+            style="@style/OC.Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/yantramanav_bold"

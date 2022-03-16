@@ -16,6 +16,7 @@ import com.indest.hah.other.C
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.SaveGame
 import com.indest.hah.persistance.level.LevelProgress
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -25,7 +26,7 @@ import kotlinx.serialization.json.Json
 import java.io.IOException
 import javax.inject.Inject
 
-class SnapshotHelper @Inject constructor(private val context: Context) {
+class SnapshotHelper @Inject constructor(@ApplicationContext private val context: Context) {
 
     private val TAG = "SnapshotHelper"
     private val MY_RESOLUTION_POLICY = RESOLUTION_POLICY_HIGHEST_PROGRESS
@@ -133,12 +134,10 @@ class SnapshotHelper @Inject constructor(private val context: Context) {
 
     fun bytesToGame(byteArray: ByteArray): SaveGame {
         return Json.decodeFromString(byteArray.decodeToString())
-        //return Gson().fromJson(byteArray.decodeToString(), SaveGame::class.java)
     }
 
     fun gameToBytes(saveGame: SaveGame): ByteArray {
         return Json.encodeToString(saveGame).toByteArray()
-        //return Gson().toJson(saveGame).toByteArray()
     }
 
 }

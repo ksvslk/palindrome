@@ -1,10 +1,11 @@
-package com.indest.hah.game
+package com.indest.hah.game.director
 
 import android.util.Log
-import com.indest.hah.game.letter.*
-import com.indest.hah.game.letter.data.GlobalPosition
-import com.indest.hah.game.letter.enums.ColorSelector
-import com.indest.hah.game.letter.enums.SoundSelector
+import com.indest.hah.game.director.data.GlobalPosition
+import com.indest.hah.game.director.enums.ColorSelector
+import com.indest.hah.game.director.enums.SoundSelector
+import com.indest.hah.game.viewmodel.LevelViewModel
+import com.indest.hah.game.viewmodel.UiState
 import com.indest.hah.views.Cell
 import com.indest.hah.views.Letter
 import com.indest.hah.views.Slot

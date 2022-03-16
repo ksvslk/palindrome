@@ -1,4 +1,4 @@
-package com.indest.hah.game.letter
+package com.indest.hah.game.director
 
 import android.content.Context
 import android.os.Build
@@ -7,10 +7,10 @@ import android.os.Vibrator
 import androidx.core.content.ContextCompat
 import com.indest.hah.R
 import com.indest.hah.fx.SoundPlayer
-import com.indest.hah.game.letter.data.AnimationColor
-import com.indest.hah.game.letter.enums.ColorSelector
-import com.indest.hah.game.letter.enums.ColorSelector.*
-import com.indest.hah.game.letter.enums.SoundSelector
+import com.indest.hah.game.director.data.AnimationColor
+import com.indest.hah.game.director.enums.ColorSelector
+import com.indest.hah.game.director.enums.ColorSelector.*
+import com.indest.hah.game.director.enums.SoundSelector
 import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Inject

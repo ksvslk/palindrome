@@ -9,9 +9,9 @@ import com.indest.hah.other.C.NEUTRAL_LAYER
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import androidx.gridlayout.widget.GridLayout
-import com.indest.hah.game.letter.Effects
-import com.indest.hah.game.letter.LetterState
-import com.indest.hah.game.letter.data.GlobalPosition
+import com.indest.hah.game.director.Effects
+import com.indest.hah.game.director.LetterState
+import com.indest.hah.game.director.data.GlobalPosition
 
 @SuppressLint("ViewConstructor")
 @AndroidEntryPoint

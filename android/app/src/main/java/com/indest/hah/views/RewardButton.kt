@@ -10,7 +10,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
-import com.indest.hah.GeneralViewModel
+import com.indest.hah.general.GeneralViewModel
 import com.indest.hah.R
 import com.indest.hah.views.ButtonState.*
 

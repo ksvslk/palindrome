@@ -28,7 +28,7 @@ class HahConstraintLayout : ConstraintLayout {
 
     init {
         val cm = ColorMatrix()
-        cm.setSaturation(0.05f)
+        cm.setSaturation(0f)
         paint = Paint()
         paint.colorFilter = ColorMatrixColorFilter(cm)
     }

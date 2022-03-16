@@ -1,8 +1,7 @@
 package com.indest.hah.persistance.level
 
-import android.util.Log
 import androidx.room.*
-import com.indest.hah.game.levelcreation.Shuffler
+import com.indest.hah.game.creation.Shuffler
 import com.indest.hah.persistance.dto.Interval
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
@@ -120,6 +119,9 @@ interface LevelDao {
 
     @Query("select exists (select 1 from interval where name = :name and current_count = limit_count)")
     suspend fun isLimitAttained(name: String): Boolean
+
+    @Query("select exists (select 1 from interval where name = :name and current_count = limit_count)")
+    fun sadModeIntervalFlow(name:String):Flow<Boolean>
 
     @Transaction
     suspend fun increaseCountTransaction(name: String): Boolean {

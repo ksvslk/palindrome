@@ -1,4 +1,4 @@
-package com.indest.hah.game
+package com.indest.hah.game.viewmodel
 
 import android.app.Application
 import android.util.Log
@@ -6,10 +6,9 @@ import androidx.lifecycle.*
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.games.Games
 import com.indest.hah.R
-import com.indest.hah.game.ContainerState.*
-import com.indest.hah.game.levelcreation.WindowSizeClass
-import com.indest.hah.other.AccountStatus
-import com.indest.hah.other.BookMode
+import com.indest.hah.game.viewmodel.ContainerState.*
+import com.indest.hah.game.creation.WindowSizeClass
+import com.indest.hah.general.AccountStatus
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
 import com.indest.hah.persistance.level.LevelProgress
@@ -323,8 +322,12 @@ class LevelViewModel @Inject constructor(
         }
     }
 
-    suspend fun isIntervalAttained(interval: String): Boolean {
-        return levelRepository.increaseCount(interval)
+    suspend fun increaseIntervalGetResult(interval: String): Boolean {
+        return levelRepository.increaseCountAndGetResult(interval)
+    }
+
+    private suspend fun increaseIntervalCount(name: String) {
+        levelRepository.increaseCount(name)
     }
 
     fun executeLevelCompleteActions() {
@@ -333,6 +336,7 @@ class LevelViewModel @Inject constructor(
         val hintInterval = getApplication<Application>().getString(R.string.hint_suggestion)
         viewModelScope.launch {
             levelRepository.executeLevelCompleteTransaction(levelNr, hintInterval)
+            increaseIntervalCount(getApplication<Application>().getString(R.string.sad_mode_interval))
             saveGameImmediately()
         }
     }
@@ -351,7 +355,7 @@ class LevelViewModel @Inject constructor(
                 while (isActive) {
                     delay(120000)
                     if (_uiState.value.state != BUSY && _uiState.value.state != LEVEL_COMPLETE && _uiState.value.state != LOADING) {
-                        return@launch
+                        //return@launch
                         Log.d(TAG, "Save game to cloud.")
                         val saveGame = levelRepository.getLocalSaveGame()
                         cloudSave.save(saveGame)
@@ -365,7 +369,7 @@ class LevelViewModel @Inject constructor(
     }
 
     fun saveGameImmediately() {
-        return
+       // return
         viewModelScope.launch(saveGameExceptionHandler) {
             val saveGame = levelRepository.getLocalSaveGame()
             cloudSave.save(saveGame)
@@ -402,10 +406,10 @@ class LevelViewModel @Inject constructor(
         val context = getApplication<Application>()
         viewModelScope.launch {
             if (solutionData.score == solutionData.maxScore) {
-                if (levelRepository.increaseCount(context.getString(R.string.achievement_flawless_5))) {
+                if (levelRepository.increaseCountAndGetResult(context.getString(R.string.achievement_flawless_5))) {
                     unlockAchievement(context.getString(R.string.achievement_flawless_5))
                 }
-                if (levelRepository.increaseCount(context.getString(R.string.achievement_flawless_15))) {
+                if (levelRepository.increaseCountAndGetResult(context.getString(R.string.achievement_flawless_15))) {
                     unlockAchievement(context.getString(R.string.achievement_flawless_15))
                 }
             } else {
@@ -476,7 +480,7 @@ class LevelViewModel @Inject constructor(
                         levelRepository.setCountTo(hintsInterval, 0)
                     }
                     playerGuess.reversed() == playerGuess -> {
-                        val showHintsBadge = levelRepository.increaseCount(hintsInterval)
+                        val showHintsBadge = levelRepository.increaseCountAndGetResult(hintsInterval)
                         val solutionData = SolutionData(
                             solution = Solution.BOGUS_PALINDROME,
                             index = index,
@@ -492,7 +496,7 @@ class LevelViewModel @Inject constructor(
                         unlockAchievement(getApplication<Application>().getString(R.string.achievement_wrong_palindrome))
                     }
                     else -> {
-                        val showHintsBadge = levelRepository.increaseCount(hintsInterval)
+                        val showHintsBadge = levelRepository.increaseCountAndGetResult(hintsInterval)
                         val solutionData = SolutionData(
                             solution = Solution.WRONG,
                             index = index,

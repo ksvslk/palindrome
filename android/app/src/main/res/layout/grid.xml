@@ -8,7 +8,6 @@
     android:clipChildren="false"
     app:columnCount="3"
     android:soundEffectsEnabled="true"
-    android:background="@color/colorBackground"
     android:animateLayoutChanges="true"
     android:splitMotionEvents="false"
     android:visibility="visible"

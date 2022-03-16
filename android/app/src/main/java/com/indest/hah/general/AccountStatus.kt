@@ -1,4 +1,4 @@
-package com.indest.hah.other
+package com.indest.hah.general
 
 enum class AccountStatus {
     SIGNED_IN,

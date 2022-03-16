@@ -3,8 +3,6 @@ package com.indest.hah.fragments
 import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
-import android.app.Dialog
-import android.content.DialogInterface
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,9 +13,6 @@ import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import androidx.core.view.doOnLayout
 import androidx.fragment.app.commit
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.databinding.SecondTutorialFragmentBinding
@@ -35,12 +30,6 @@ class SecondTutorialFragment : BottomSheetDialogFragment() {
         _binding = b
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         return b.root
-    }
-
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
-        requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView).visibility =
-            View.VISIBLE
     }
 
     override fun onDestroyView() {

@@ -15,10 +15,10 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.games.Games
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.indest.hah.GeneralViewModel
+import com.indest.hah.general.GeneralViewModel
 import com.indest.hah.R
 import com.indest.hah.databinding.GoogleGamesFragmentBinding
-import com.indest.hah.game.LevelViewModel
+import com.indest.hah.game.viewmodel.LevelViewModel
 import kotlinx.coroutines.flow.collect
 
 class GoogleGamesFragment : BottomSheetDialogFragment() {
@@ -84,7 +84,6 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
     }
 
     private fun showLeaderBoard() {
-        dismiss()
         val lastSignedInAccount =
             GoogleSignIn.getLastSignedInAccount(requireContext().applicationContext)
         val leaderboardsClient = if (lastSignedInAccount != null)
@@ -103,8 +102,6 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
     }
 
     private fun showAchievements() {
-
-        dismiss()
         val lastSignedInAccount =
             GoogleSignIn.getLastSignedInAccount(requireContext().applicationContext)
         val achievementsClient = if (lastSignedInAccount != null)

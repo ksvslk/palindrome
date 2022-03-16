@@ -2,6 +2,7 @@ package com.indest.hah.fragments
 
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -30,10 +31,13 @@ import com.indest.hah.ads.RewardType.*
 import com.indest.hah.databinding.LevelFragmentBinding
 import com.indest.hah.fx.Animations
 import com.indest.hah.fx.SoundPlayer
-import com.indest.hah.game.*
-import com.indest.hah.game.Solution.*
-import com.indest.hah.game.ContainerState.*
-import com.indest.hah.game.levelcreation.LevelCreator
+import com.indest.hah.game.director.CellDirector
+import com.indest.hah.game.viewmodel.Solution.*
+import com.indest.hah.game.viewmodel.ContainerState.*
+import com.indest.hah.game.creation.LevelCreator
+import com.indest.hah.game.viewmodel.LevelViewModel
+import com.indest.hah.game.viewmodel.Solution
+import com.indest.hah.game.viewmodel.UiState
 import com.indest.hah.other.C
 import com.indest.hah.other.VaryingProbability
 import com.indest.hah.views.Cell
@@ -80,7 +84,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
     private fun showPlayerCenteredScores() {
         lifecycleScope.launch {
-            if (viewModel.isIntervalAttained(getString(R.string.player_centered_scores)) && viewModel.uiState.value.state == PLAY) {
+            if (viewModel.increaseIntervalGetResult(getString(R.string.player_centered_scores)) && viewModel.uiState.value.state == PLAY) {
                 parentFragmentManager.commit {
                     addToBackStack(ScoresFragment().tag)
                     add(ScoresFragment(), ScoresFragment().tag)
@@ -108,6 +112,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             }
         }
         binding.levelFragment.addView(levelGridLayout)
+        showTutorial()
     }
 
     private fun uiStateUpdater() {
@@ -338,6 +343,27 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         }
     }
 
+    private fun showTutorial()
+    {
+        context?.getSharedPreferences(
+            getString(R.string.app_preferences),
+            Context.MODE_PRIVATE
+        )?.let { sp ->
+            val tutorialPassed = sp.getBoolean(getString(R.string.tutorial_passed), false)
+            if (!tutorialPassed)
+            {
+                parentFragmentManager.commit {
+                    addToBackStack(TutorialFragment().tag)
+                    add(TutorialFragment(), TutorialFragment().tag)
+                }
+                with(sp.edit()) {
+                    putBoolean(getString(com.indest.hah.R.string.tutorial_passed), true)
+                    apply()
+                }
+            }
+        }
+    }
+
     private fun showHintsBadge() {
         if (isVisible) {
             val hintBadge = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView)
@@ -387,6 +413,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             RewardType.NONE -> {}
             AD_FAILED -> {}
             SAD_MODE -> {}
+            SAD_AD_FAILED -> {}
         }
     }
 

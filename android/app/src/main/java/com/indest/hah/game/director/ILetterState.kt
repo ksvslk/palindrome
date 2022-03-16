@@ -1,4 +1,4 @@
-package com.indest.hah.game.letter
+package com.indest.hah.game.director
 
 import android.view.MotionEvent
 import android.view.View

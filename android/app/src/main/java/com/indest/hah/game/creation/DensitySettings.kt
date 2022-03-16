@@ -1,4 +1,4 @@
-package com.indest.hah.game.levelcreation
+package com.indest.hah.game.creation
 
 data class DensitySettings(
     val columnCount: Int,

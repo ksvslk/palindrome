@@ -4,7 +4,6 @@ import android.animation.Animator
 import android.animation.LayoutTransition
 import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
-import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -19,13 +18,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.indest.hah.GeneralViewModel
+import com.indest.hah.general.GeneralViewModel
 import com.indest.hah.R
 import com.indest.hah.ads.RewardType
 import com.indest.hah.ads.RewardType.*
 import com.indest.hah.databinding.HintsFragmentBinding
 import com.indest.hah.fx.SoundPlayer
-import com.indest.hah.game.LevelViewModel
+import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.other.C
 import com.indest.hah.views.ButtonState.*
 import com.indest.hah.views.PurchaseButton

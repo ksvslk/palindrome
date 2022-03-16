@@ -1,4 +1,4 @@
-package com.indest.hah.other
+package com.indest.hah.game.viewmodel
 
 enum class BookMode {
     BOOK_MODE,

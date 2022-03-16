@@ -10,12 +10,11 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.core.view.setPadding
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.indest.hah.R
 import com.indest.hah.views.MessageSnackBar.Companion.TextSize.*
-import com.indest.hah.game.levelcreation.WindowSizeClass
-import com.indest.hah.other.BookMode
+import com.indest.hah.game.creation.WindowSizeClass
+import com.indest.hah.game.viewmodel.BookMode
 import com.indest.hah.other.findSuitableParent
 
 class MessageSnackBar(

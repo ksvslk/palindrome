@@ -1,4 +1,4 @@
-package com.indest.hah.game.letter
+package com.indest.hah.game.director
 
 import android.animation.ObjectAnimator
 import android.util.Log
@@ -9,9 +9,7 @@ import androidx.fragment.app.findFragment
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.indest.hah.R
 import com.indest.hah.fragments.LevelFragment
-import com.indest.hah.game.ContainerState
-import com.indest.hah.game.UiState
-import com.indest.hah.game.letter.enums.ColorSelector
+import com.indest.hah.game.director.enums.ColorSelector
 import com.indest.hah.views.Letter
 import com.indest.hah.other.C.NEUTRAL_LAYER
 import com.indest.hah.other.C.TOP_LAYER

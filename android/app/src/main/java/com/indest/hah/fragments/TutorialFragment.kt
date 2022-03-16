@@ -3,21 +3,15 @@ package com.indest.hah.fragments
 import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
-import android.app.Dialog
-import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.FrameLayout
 import androidx.core.animation.doOnEnd
 import androidx.core.view.doOnLayout
 import androidx.fragment.app.commit
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.databinding.TutorialFragmentBinding
@@ -58,8 +52,6 @@ class TutorialFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView).visibility =
-            View.INVISIBLE
         binding.continueButton.setOnClickListener {
             parentFragmentManager.popBackStack()
            parentFragmentManager.commit {
@@ -72,12 +64,6 @@ class TutorialFragment : BottomSheetDialogFragment() {
         view.doOnLayout {
             repeatingTutorialAnimation()
         }
-    }
-
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
-        requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView).visibility =
-            View.VISIBLE
     }
 
     private fun repeatingTutorialAnimation()

@@ -1,4 +1,4 @@
-package com.indest.hah.other
+package com.indest.hah.general
 
 import android.content.Context
 import android.content.Intent
@@ -15,12 +15,15 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.games.Games
 import com.indest.hah.MainActivity
 import com.indest.hah.R
+import com.indest.hah.other.C
+import com.indest.hah.other.saveBooleanPreference
 import dagger.hilt.android.qualifiers.ActivityContext
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityScoped
 
 @ActivityScoped
 class SignInLiveData(
-    @ActivityContext private val context: Context
+    @ApplicationContext private val context: Context
 ) :
     DefaultLifecycleObserver, LiveData<AccountStatus>() {
 

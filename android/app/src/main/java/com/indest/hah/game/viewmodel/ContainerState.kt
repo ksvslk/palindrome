@@ -1,4 +1,4 @@
-package com.indest.hah.game
+package com.indest.hah.game.viewmodel
 
 /**
  * Enum representing various states of a container

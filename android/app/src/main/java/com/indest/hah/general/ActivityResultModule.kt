@@ -1,4 +1,4 @@
-package com.indest.hah.other
+package com.indest.hah.general
 
 import android.content.Context
 import dagger.Module

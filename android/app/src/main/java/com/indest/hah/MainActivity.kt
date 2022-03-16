@@ -1,6 +1,5 @@
 package com.indest.hah
 
-import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
@@ -12,7 +11,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.forEach
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -27,12 +25,15 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.indest.hah.ads.RewardType
 import com.indest.hah.databinding.ActivityMainBinding
 import com.indest.hah.fragments.ExitGameDialogFragment
-import com.indest.hah.fragments.TutorialFragment
 import com.indest.hah.fx.SoundPlayer
-import com.indest.hah.game.LevelViewModel
+import com.indest.hah.game.creation.WindowSizeClass
+import com.indest.hah.game.viewmodel.BookMode
+import com.indest.hah.game.viewmodel.LevelViewModel
+import com.indest.hah.general.GeneralViewModel
+import com.indest.hah.general.SignInLiveData
+import com.indest.hah.other.C
+import com.indest.hah.other.hideSystemBars
 import com.indest.hah.persistance.dto.LevelData
-import com.indest.hah.game.levelcreation.WindowSizeClass
-import com.indest.hah.other.*
 import com.indest.hah.views.ButtonState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -87,66 +88,13 @@ class MainActivity : AppCompatActivity(),
         setUpNavController()
         progressBarUpdater()
         collectRewardInfo()
-        showTutorial()
     }
 
     override fun onResume() {
         super.onResume()
         levelViewModel.startSavingGame()
         levelViewModel.setUiStateWhenOnResume()
-        restoreSadMode()
         Log.d(TAG, "onResume")
-    }
-
-    private fun showTutorial()
-    {
-        getSharedPreferences(
-            getString(R.string.app_preferences),
-            Context.MODE_PRIVATE
-        )?.let { sp ->
-            val tutorialPassed = sp.getBoolean(getString(R.string.tutorial_passed), false)
-            if (!tutorialPassed)
-            {
-                supportFragmentManager.commit {
-                    addToBackStack(TutorialFragment().tag)
-                    add(TutorialFragment(), TutorialFragment().tag)
-                }
-                with(sp.edit()) {
-                    putBoolean(getString(R.string.tutorial_passed), true)
-                    apply()
-                }
-            }
-        }
-    }
-
-    private fun restoreSadMode() {
-        getSharedPreferences(getString(R.string.app_preferences), Context.MODE_PRIVATE)?.let { sp ->
-            val isSad = sp.getBoolean(getString(R.string.sad_mode_pref), false)
-            binding.container.isSadMode = isSad
-            binding.container.invalidate()
-        }
-    }
-
-    private fun updateSadMode(isSadMode: Boolean) {
-        binding.container.isSadMode = isSadMode
-        binding.container.invalidate()
-        getSharedPreferences(
-            getString(R.string.app_preferences),
-            Context.MODE_PRIVATE
-        )?.let { sp ->
-            with(sp.edit()) {
-                putBoolean(getString(R.string.sad_mode_pref), isSadMode)
-                apply()
-            }
-        }
-    }
-
-    private fun isSadMode(): Boolean {
-        val prefs = getSharedPreferences(
-            getString(R.string.app_preferences),
-            Context.MODE_PRIVATE
-        )
-        return prefs.getBoolean(getString(R.string.sad_mode_pref), false)
     }
 
     override fun onPause() {
@@ -169,15 +117,10 @@ class MainActivity : AppCompatActivity(),
                     generalViewModel.rewardState.collect {
                         if (it == RewardType.SAD_MODE) {
                             levelViewModel.setUiStatePlayWhenBusy()
-                            updateSadMode(isSadMode = false)
                             levelViewModel.resetIntervalCount(getString(R.string.sad_mode_interval))
                             playModeSwitchSound(false)
                         } else if (it == RewardType.SAD_AD_FAILED) {
                             levelViewModel.setUiStatePlayWhenBusy()
-                            updateSadMode(isSadMode = true)
-                            if (generalViewModel.buttonState.replayCache.lastOrNull()?.state == ButtonState.AD) {
-                                binding.watchAdTop.visibility = View.VISIBLE
-                            }
                             playModeSwitchSound(true)
                         }
                         generalViewModel.updateRewardState(RewardType.NONE)
@@ -185,24 +128,16 @@ class MainActivity : AppCompatActivity(),
                 }
 
                 launch {
-                    generalViewModel.buttonState.collect { g ->
-                        val isSadMode = isSadMode()
-                        val minSkuDetails =
-                            g.skus.values.find { it.sku == getString(R.string.sad_mode) }
-                        if (minSkuDetails != null && minSkuDetails.isPurchased) {
+                    generalViewModel.buttonState.collect { buttonInfo ->
+                        if (buttonInfo.sadMode && buttonInfo.state == ButtonState.AD) {
+                            binding.container.isSadMode = true
+                            binding.watchAdTop.visibility = View.VISIBLE
+                            binding.container.invalidate()
+                        } else {
                             binding.watchAdTop.visibility = View.GONE
                             binding.container.isSadMode = false
                             binding.container.invalidate()
-                            return@collect
                         }
-                        if (isSadMode && g.state == ButtonState.AD) {
-                            binding.watchAdTop.visibility = View.VISIBLE
-                        } else if (g.state == ButtonState.NO_AD) {
-                            binding.watchAdTop.visibility = View.GONE
-                        }
-
-                        binding.container.isSadMode = isSadMode
-                        binding.container.invalidate()
                     }
                 }
             }
@@ -285,22 +220,6 @@ class MainActivity : AppCompatActivity(),
                 levelViewModel.currentLevel.distinctUntilChangedBy { it.levelInfo.levelId }
                     .collect {
                         setLevelProgressIndicator(it.levelInfo)
-                        val adsRemoved =
-                            generalViewModel.buttonState.replayCache.lastOrNull()?.skus?.values?.find { a ->
-                                a.sku == getString(R.string.sad_mode)
-                            }?.isPurchased ?: false
-
-                        if (it.levelInfo.levelId != 0 && !adsRemoved) {
-                            val intervalAttained =
-                                levelViewModel.isIntervalAttained(getString(R.string.sad_mode_interval))
-                            if (intervalAttained && !isSadMode()) {
-                                playModeSwitchSound(true)
-                                updateSadMode(true)
-                                if (generalViewModel.buttonState.replayCache.lastOrNull()?.state == ButtonState.AD) {
-                                    binding.watchAdTop.visibility = View.VISIBLE
-                                }
-                            }
-                        }
                     }
             }
         }

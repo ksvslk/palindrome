@@ -1,8 +1,7 @@
-package com.indest.hah.game
+package com.indest.hah.game.viewmodel
 
-import com.indest.hah.game.levelcreation.WindowSizeClass
-import com.indest.hah.other.AccountStatus
-import com.indest.hah.other.BookMode
+import com.indest.hah.game.creation.WindowSizeClass
+import com.indest.hah.general.AccountStatus
 import com.indest.hah.persistance.dto.Level
 
 data class UiState(

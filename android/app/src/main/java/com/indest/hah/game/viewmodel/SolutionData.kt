@@ -1,4 +1,6 @@
-package com.indest.hah.game
+package com.indest.hah.game.viewmodel
+
+import com.indest.hah.game.viewmodel.Solution
 
 data class SolutionData(
     val solution: Solution = Solution.NONE,
