@@ -245,7 +245,7 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onDialogPositiveClick(dialog: DialogFragment) {
-        moveTaskToBack(false)
+        super.onBackPressed()
     }
 
     override fun onDialogNegativeClick(dialog: DialogFragment) {

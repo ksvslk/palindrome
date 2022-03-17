@@ -224,12 +224,14 @@
 
         <Button
             android:id="@+id/continueButton"
-            style="@style/OC.Button"
+            style="@style/OC.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/yantramanav_bold"
-            android:paddingHorizontal="@dimen/_32sdp"
+            android:paddingStart="@dimen/_24sdp"
             android:paddingVertical="@dimen/default_gap"
+            android:drawableTint="@color/colorOnBackground"
+            android:drawableEnd="@drawable/ic_baseline_arrow_right_24"
             android:text="@string/next"
             android:textAppearance="@style/TextAppearance.OC.Headline5"
             android:textSize="@dimen/tutorial_primary_button_text_size" />

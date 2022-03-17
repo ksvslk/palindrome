@@ -52,6 +52,7 @@ class GeneralViewModel @Inject constructor(
     private val _sadMode = MutableStateFlow(false)
 
     init {
+        _sadMode.value = getSadModeValue()
         viewModelScope.launch {
             val skus = arrayOf(
                 application.getString(R.string.all_inclusive_pack),
@@ -70,14 +71,6 @@ class GeneralViewModel @Inject constructor(
                     Log.d(TAG, "SAD MODE: ${_sadMode.value}")
                 }
             }
-            application.getSharedPreferences(
-                application.getString(R.string.app_preferences),
-                Context.MODE_PRIVATE
-            )?.let { sp ->
-                _sadMode.value =
-                    sp.getBoolean(application.getString(R.string.sad_mode_pref), _sadMode.value)
-            }
-
             // Collect and react to purchase button updates from BillingDataSource
             launch {
                 combineAndUpdateMinSkuDetails(application.getString(R.string.instant_letters))
@@ -111,7 +104,7 @@ class GeneralViewModel @Inject constructor(
                     if (it.second == RewardType.CLUE) {
                         updateCategoryRewarded()
                     } else if (it.second == RewardType.SAD_MODE) {
-                        deactivateSadMode()
+                        persistSadMode(false)
                     }
                     _rewardState.value = it.second
                     updateUiState()
@@ -122,16 +115,17 @@ class GeneralViewModel @Inject constructor(
                     Log.d(TAG, "Signed in state changed to: $it")
                 }
             }
+
             launch {
                 levelRepository.intervalAttainedFlow(application.getString(R.string.sad_mode_interval))
                     .distinctUntilChanged().collect {
                         Log.d(TAG, "Interval reached: $it")
-                        if (it) {
-                            levelRepository.setCountTo(
-                                application.getString(R.string.sad_mode_interval),
-                                0
-                            )
-                            updateSadMode(defaultValue = true)
+                        levelRepository.setCountTo(
+                            application.getString(R.string.sad_mode_interval),
+                            0
+                        )
+                        if (it && !isSadModePurchased()) {
+                            persistSadMode(true)
                             updateUiState()
                         }
                     }
@@ -188,58 +182,30 @@ class GeneralViewModel @Inject constructor(
         }
     }
 
-    // Invoked after watching rewarded video
-    private fun deactivateSadMode() {
+    private fun persistSadMode(newValue: Boolean) {
         val app = getApplication<Application>()
-
-        val newSadMode = false
-
-        // Persist
         app.getSharedPreferences(
             app.getString(R.string.app_preferences),
             Context.MODE_PRIVATE
         )?.let { sp ->
             with(sp.edit()) {
-                putBoolean(app.getString(R.string.sad_mode_pref), newSadMode)
+                putBoolean(app.getString(R.string.sad_mode_pref), newValue)
                 apply()
             }
         }
-
-        _sadMode.value = newSadMode
+        _sadMode.value = newValue
     }
 
-    // Invoked after interval of Sad Mode attained
-    private fun updateSadMode(defaultValue:Boolean = _sadMode.value) {
+    private fun getSadModeValue(): Boolean {
         val app = getApplication<Application>()
-
-        // First set the Sad Mode TRUE because it is called when interval reached
-        var isSadMode = defaultValue
-
-        // If it is purchased set it FALSE
-        buttonState.replayCache.lastOrNull()?.let { b ->
-            val allInclusiveInfo =
-                b.skus.values.find { it.sku == app.getString(R.string.all_inclusive_pack) }
-            val sadModeInfo = b.skus.values.find { it.sku == app.getString(R.string.sad_mode) }
-            if (allInclusiveInfo?.isPurchased == true || sadModeInfo?.isPurchased == true) {
-                isSadMode = false
-            }
+        var sadModeValue = false
+        app.getSharedPreferences(
+            app.getString(R.string.app_preferences),
+            Context.MODE_PRIVATE
+        )?.let { sp ->
+            sadModeValue = sp.getBoolean(app.getString(R.string.sad_mode_pref), _sadMode.value)
         }
-
-        if (isSadMode != _sadMode.value)
-        {
-            // Persist new value
-            app.getSharedPreferences(
-                app.getString(R.string.app_preferences),
-                Context.MODE_PRIVATE
-            )?.let { sp ->
-                with(sp.edit()) {
-                    putBoolean(app.getString(R.string.sad_mode_pref), isSadMode)
-                    apply()
-                }
-            }
-            // Update UI
-            _sadMode.value = isSadMode
-        }
+        return sadModeValue
     }
 
     private suspend fun combineAndUpdateMinSkuDetails(sku: String) {
@@ -261,6 +227,19 @@ class GeneralViewModel @Inject constructor(
             updateSadMode()
             updateUiState()
         }
+    }
+
+    private fun updateSadMode() {
+        if (isSadModePurchased()) {
+            persistSadMode(false)
+        }
+    }
+
+    private fun isSadModePurchased():Boolean {
+        val app = getApplication<Application>()
+        val sadModeSku = app.getString(R.string.sad_mode)
+        val allInclusiveSku = app.getString(R.string.all_inclusive_pack)
+        return (minSkuDetailsMap[sadModeSku]?.isPurchased == true || minSkuDetailsMap[allInclusiveSku]?.isPurchased == true)
     }
 
     data class ButtonInfo(
