@@ -1,23 +1,15 @@
 package com.indest.hah.persistance.level
 
-import android.content.ContentValues
 import android.content.Context
 import androidx.room.*
-import androidx.sqlite.db.SupportSQLiteDatabase
 import com.indest.hah.persistance.Converters
 import com.indest.hah.persistance.dto.Interval
 import com.indest.hah.persistance.dto.LetterProperties
 import com.indest.hah.persistance.dto.LevelData
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.decodeFromJsonElement
 
 
-@Serializable
-data class LevelInfo(val category: String, val solution:String)
-
+/*@Serializable
+data class LevelInfo(val category: String, val solution:String)*/
 
 @Database(
     entities = [LevelData::class, LetterProperties::class, Interval::class],
@@ -47,7 +39,7 @@ abstract class LevelDatabase : RoomDatabase() {
                     )
                         .createFromAsset("dbd.db")
                         .fallbackToDestructiveMigration()
-                            /*
+                         /*
                         .addCallback(object : RoomDatabase.Callback() {
 
                             private val jsonInstance = Json { isLenient = true }
@@ -105,8 +97,8 @@ abstract class LevelDatabase : RoomDatabase() {
                                    val interval = ContentValues()
                                    val limit = when(it)
                                    {
-                                       context.getString(com.indest.hah.R.string.sad_mode_interval) -> 5
-                                       context.getString(com.indest.hah.R.string.player_centered_scores) -> 5
+                                       context.getString(com.indest.hah.R.string.sad_mode_interval) -> 10
+                                       context.getString(com.indest.hah.R.string.player_centered_scores) -> 6
                                        context.getString(com.indest.hah.R.string.hint_suggestion) -> 3
                                        context.getString(com.indest.hah.R.string.achievement_flawless_5) -> 5
                                        context.getString(com.indest.hah.R.string.achievement_flawless_15) -> 15

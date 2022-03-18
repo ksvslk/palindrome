@@ -30,6 +30,7 @@ import com.indest.hah.views.ButtonState.*
 import com.indest.hah.views.PurchaseButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -61,10 +62,9 @@ class HintsFragment : BottomSheetDialogFragment() {
                     }
                 }
                 launch {
-                    viewModel.rewardState.collect {
+                    viewModel.rewardState.distinctUntilChangedBy { it }.collect {
                         Log.d(TAG, "Reward actually given: $it")
                         handleRewards(it)
-                        viewModel.updateRewardState(NONE)
                     }
                 }
             }
@@ -87,18 +87,23 @@ class HintsFragment : BottomSheetDialogFragment() {
                 revealClue()
                 levelViewModel.saveGameImmediately()
                 levelViewModel.startSavingGame()
+                viewModel.updateRewardState(NONE)
             }
             LETTER -> {
+                Log.d(TAG, "setFragmentResult also")
                 setFragmentResult(
                     C.HINTS_REQUEST_KEY,
                     bundleOf(C.LETTER_REWARD_TYPE_BUNDLE to rewardType.ordinal)
                 )
+                viewModel.updateRewardState(NONE)
                 dismiss()
             }
             AD_FAILED -> {
                 levelViewModel.setUiStatePlayWhenBusy()
+                viewModel.updateRewardState(NONE)
             }
             SAD_MODE -> {}
+            SAD_AD_FAILED -> {}
         }
     }
 

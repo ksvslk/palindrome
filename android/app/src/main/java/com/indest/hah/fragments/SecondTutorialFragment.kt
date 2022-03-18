@@ -5,6 +5,7 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.graphics.Rect
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +21,7 @@ import com.indest.hah.databinding.SecondTutorialFragmentBinding
 class SecondTutorialFragment : BottomSheetDialogFragment() {
     private var _binding: SecondTutorialFragmentBinding? = null
     private val binding get() = _binding!!
-    private val mainAnimatorSet = AnimatorSet()
+    private var mainAnimatorSet:AnimatorSet? = AnimatorSet()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,7 +37,6 @@ class SecondTutorialFragment : BottomSheetDialogFragment() {
         cleanUp()
         super.onDestroyView()
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.continueButton.setOnClickListener {
@@ -55,18 +55,17 @@ class SecondTutorialFragment : BottomSheetDialogFragment() {
 
 
     private fun cleanUp() {
-        mainAnimatorSet.end()
-        mainAnimatorSet.childAnimations.forEach {
-            it.end()
+        mainAnimatorSet?.childAnimations?.forEach {
+            it.cancel()
             it.removeAllListeners()
         }
-        mainAnimatorSet.removeAllListeners()
+        mainAnimatorSet?.cancel()
+        mainAnimatorSet?.removeAllListeners()
         _binding = null
     }
 
     private fun repeatingTutorialAnimation() {
         val frameFadeInAnimation = getAlphaAnimator(binding.tutorialGameplay, 0f, 1f, 500)
-        val frameFadeOutAnimation = getAlphaAnimator(binding.tutorialGameplay, 1f, 0f, 500)
 
         val handToStartPosition = getPositionAnimator(what = binding.hand, to = binding.letter1)
         val letterToCenter = getPositionAnimator(what = binding.letter1, to = binding.space2)
@@ -156,7 +155,7 @@ class SecondTutorialFragment : BottomSheetDialogFragment() {
             playSequentially(l1Animation, l2Animation, l3Animation)
         }
 
-        mainAnimatorSet.apply {
+        mainAnimatorSet?.apply {
             playSequentially(
                 frameFadeInAnimation,
                 handToStartAnimation,
@@ -168,15 +167,11 @@ class SecondTutorialFragment : BottomSheetDialogFragment() {
                 hideHandAnimation,
                 rightArrowsAnimation,
                 leftArrowsAnimation,
-                blankAnimation,
-                frameFadeOutAnimation
+                blankAnimation
             )
         }
 
-        mainAnimatorSet.doOnEnd {
-            it.start()
-        }
-        mainAnimatorSet.start()
+        mainAnimatorSet?.start()
     }
 
     private fun getAlphaAnimator(
@@ -185,7 +180,7 @@ class SecondTutorialFragment : BottomSheetDialogFragment() {
         end: Float,
         aDuration: Long = 1000
     ): Animator {
-        return ObjectAnimator.ofFloat(
+        val animator =  ObjectAnimator.ofFloat(
             what,
             View.ALPHA,
             start,
@@ -193,6 +188,7 @@ class SecondTutorialFragment : BottomSheetDialogFragment() {
         ).apply {
             duration = aDuration
         }
+        return animator
     }
 
     private fun getPositionAnimator(what: View, to: View): Pair<Animator, Animator> {
@@ -202,20 +198,22 @@ class SecondTutorialFragment : BottomSheetDialogFragment() {
         val whatRect = Rect()
         what.getGlobalVisibleRect(whatRect)
 
-        return Pair(
-            ObjectAnimator.ofFloat(
-                what,
-                View.TRANSLATION_X,
-                (toRect.centerX() - whatRect.centerX()).toFloat()
-            ).apply {
-                duration = 1000
-            },
-            ObjectAnimator.ofFloat(
-                what,
-                View.TRANSLATION_Y,
-                (toRect.centerY() - whatRect.centerY()).toFloat()
-            ).apply {
-                duration = 1000
-            })
+        val animatorX = ObjectAnimator.ofFloat(
+            what,
+            View.TRANSLATION_X,
+            (toRect.centerX() - whatRect.centerX()).toFloat()
+        ).apply {
+            duration = 1000
+        }
+
+        val animatorY = ObjectAnimator.ofFloat(
+            what,
+            View.TRANSLATION_Y,
+            (toRect.centerY() - whatRect.centerY()).toFloat()
+        ).apply {
+            duration = 1000
+        }
+
+        return Pair(animatorX, animatorY)
     }
 }

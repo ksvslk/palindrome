@@ -27,7 +27,7 @@ import com.indest.hah.databinding.ActivityMainBinding
 import com.indest.hah.fragments.ExitGameDialogFragment
 import com.indest.hah.fx.SoundPlayer
 import com.indest.hah.game.creation.WindowSizeClass
-import com.indest.hah.game.viewmodel.BookMode
+import com.indest.hah.game.creation.BookMode
 import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.general.GeneralViewModel
 import com.indest.hah.general.SignInLiveData
@@ -38,6 +38,7 @@ import com.indest.hah.views.ButtonState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -62,6 +63,8 @@ class MainActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        levelViewModel.setWindowSizeClass(WindowSizeClass.NOT_SET)
+        levelViewModel.setBookMode(BookMode.NOT_SET)
         updateFoldModeInfo()
 
         lifecycle.addObserver(signInObserver)
@@ -114,16 +117,17 @@ class MainActivity : AppCompatActivity(),
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED)
             {
                 launch {
-                    generalViewModel.rewardState.collect {
+                    generalViewModel.rewardState.distinctUntilChangedBy { it }.collect {
                         if (it == RewardType.SAD_MODE) {
                             levelViewModel.setUiStatePlayWhenBusy()
                             levelViewModel.resetIntervalCount(getString(R.string.sad_mode_interval))
                             playModeSwitchSound(false)
+                            generalViewModel.updateRewardState(RewardType.NONE)
                         } else if (it == RewardType.SAD_AD_FAILED) {
                             levelViewModel.setUiStatePlayWhenBusy()
                             playModeSwitchSound(true)
+                            generalViewModel.updateRewardState(RewardType.NONE)
                         }
-                        generalViewModel.updateRewardState(RewardType.NONE)
                     }
                 }
 
@@ -144,18 +148,17 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-
     private fun updateFoldModeInfo() {
         lifecycleScope.launch(Dispatchers.Main) {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 WindowInfoTracker.getOrCreate(this@MainActivity)
                     .windowLayoutInfo(this@MainActivity)
-                    .collect { newLayoutInfo ->
+                    .collectLatest { newLayoutInfo ->
                         val foldingFeature: FoldingFeature? =
                             newLayoutInfo.displayFeatures.find { it is FoldingFeature } as? FoldingFeature
                         val isBookMode = foldingFeature?.state == FoldingFeature.State.FLAT
-                        if (isBookMode) levelViewModel.setBookMode(BookMode.BOOK_MODE)
-                        else levelViewModel.setBookMode(BookMode.NOPE)
+                        if (isBookMode) levelViewModel.setBookMode(bookMode = BookMode.BOOK_MODE)
+                        else levelViewModel.setBookMode(bookMode = BookMode.NOPE)
                     }
             }
         }
@@ -169,6 +172,11 @@ class MainActivity : AppCompatActivity(),
             }
         })
         computeWindowSizeClasses()
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        Log.d(TAG,"onConfigurationChanged")
+        super.onConfigurationChanged(newConfig)
     }
 
     private fun applyCustomWindowInsets() {
@@ -185,6 +193,21 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
+    private fun computeWindowSizeClasses() {
+        Log.d(TAG, "computeWindowSizeClasses")
+        val metrics = WindowMetricsCalculator.getOrCreate()
+            .computeCurrentWindowMetrics(this)
+
+        val widthDp = metrics.bounds.width() /
+                resources.displayMetrics.density
+        val widthWindowSizeClass = when {
+            widthDp < 600f -> WindowSizeClass.COMPACT
+            widthDp < 840f -> WindowSizeClass.MEDIUM
+            else -> WindowSizeClass.EXPANDED
+        }
+        levelViewModel.setWindowSizeClass(widthWindowSizeClass)
+    }
+
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         hideSystemBars(binding.root)
@@ -198,20 +221,6 @@ class MainActivity : AppCompatActivity(),
         bottomNavigationView.setupWithNavController(navController)
         bottomNavigationView.menu.setGroupCheckable(0, true, false)
         bottomNavigationView.menu.forEach { it.isChecked = true }
-    }
-
-    private fun computeWindowSizeClasses() {
-        val metrics = WindowMetricsCalculator.getOrCreate()
-            .computeCurrentWindowMetrics(this)
-
-        val widthDp = metrics.bounds.width() /
-                resources.displayMetrics.density
-        val widthWindowSizeClass = when {
-            widthDp < 600f -> WindowSizeClass.COMPACT
-            widthDp < 840f -> WindowSizeClass.MEDIUM
-            else -> WindowSizeClass.EXPANDED
-        }
-        levelViewModel.setWindowSizeClass(widthWindowSizeClass)
     }
 
     private fun progressBarUpdater() {

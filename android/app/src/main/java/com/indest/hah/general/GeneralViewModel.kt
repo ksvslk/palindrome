@@ -100,7 +100,6 @@ class GeneralViewModel @Inject constructor(
             }
             launch {
                 _adsLiveData.asFlow().distinctUntilChanged().collect {
-                    Log.d(TAG, "Reward given: ${it.second}")
                     if (it.second == RewardType.CLUE) {
                         updateCategoryRewarded()
                     } else if (it.second == RewardType.SAD_MODE) {
@@ -111,8 +110,8 @@ class GeneralViewModel @Inject constructor(
                 }
             }
             launch {
-                _accountStatus.collect {
-                    Log.d(TAG, "Signed in state changed to: $it")
+                accountStatus.collect {
+                    Log.d(TAG, "Account status: $it")
                 }
             }
 

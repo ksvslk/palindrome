@@ -13,7 +13,6 @@ import androidx.gridlayout.widget.GridLayout
 import com.indest.hah.R
 import com.indest.hah.views.Letter
 import com.indest.hah.game.director.LetterState
-import com.indest.hah.game.viewmodel.BookMode
 import com.indest.hah.views.Slot
 import com.indest.hah.persistance.dto.Level
 import dagger.hilt.android.qualifiers.ActivityContext

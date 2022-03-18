@@ -14,7 +14,7 @@ import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.indest.hah.R
 import com.indest.hah.views.MessageSnackBar.Companion.TextSize.*
 import com.indest.hah.game.creation.WindowSizeClass
-import com.indest.hah.game.viewmodel.BookMode
+import com.indest.hah.game.creation.BookMode
 import com.indest.hah.other.findSuitableParent
 
 class MessageSnackBar(

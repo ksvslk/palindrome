@@ -6,6 +6,7 @@ import androidx.lifecycle.*
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.games.Games
 import com.indest.hah.R
+import com.indest.hah.game.creation.BookMode
 import com.indest.hah.game.viewmodel.ContainerState.*
 import com.indest.hah.game.creation.WindowSizeClass
 import com.indest.hah.general.AccountStatus
@@ -32,7 +33,8 @@ class LevelViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     private var _windowSizeClassWidth = MutableStateFlow(WindowSizeClass.NOT_SET)
-    private var _bookMode: MutableStateFlow<BookMode> = MutableStateFlow(BookMode.NOT_SET)
+    private var _bookMode = MutableStateFlow(BookMode.NOT_SET)
+
     private val _accountStatus = MutableStateFlow(AccountStatus.NOT_SET)
     private val _currentLevel = MutableStateFlow(Level())
     val currentLevel = _currentLevel.asStateFlow()
@@ -54,7 +56,7 @@ class LevelViewModel @Inject constructor(
     }
 
     private val saveGameExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        Log.e(TAG,"Could not write snapshot or save game: ${throwable.message}")
+        Log.e(TAG, "Could not write snapshot or save game: ${throwable.message}")
     }
 
     fun setAccountStatus(accountStatus: AccountStatus) {
@@ -63,10 +65,16 @@ class LevelViewModel @Inject constructor(
 
     fun setWindowSizeClass(windowSizeClass: WindowSizeClass) {
         _windowSizeClassWidth.value = windowSizeClass
+        _uiState.value = _uiState.value.copy(
+            windowSizeClass = _windowSizeClassWidth.value
+        )
     }
 
     fun setBookMode(bookMode: BookMode) {
         _bookMode.value = bookMode
+        _uiState.value = _uiState.value.copy(
+            bookMode = _bookMode.value
+        )
     }
 
     init {
@@ -79,52 +87,75 @@ class LevelViewModel @Inject constructor(
     private suspend fun uiUpdater() {
         combine(
             _accountStatus,
-            _windowSizeClassWidth,
+            _currentLevel,
             _bookMode,
-            _currentLevel
-        ) { accountStatus, windowSizeClass, bookMode, level ->
+            _windowSizeClassWidth
+        )
+        { accountStatus, level, bookMode, windowSizeClassWidth ->
             {
-                Pair(level, Triple(accountStatus, bookMode, windowSizeClass))
+                Pair(Pair(accountStatus, level), Pair(bookMode, windowSizeClassWidth))
             }
-        }.collect {
-            if (it().second.first != AccountStatus.NOT_SET &&
-                it().second.second != BookMode.NOT_SET &&
-                it().second.third != WindowSizeClass.NOT_SET &&
-                _uiState.value.state == LOADING &&
-                it().first.levelInfo.levelId == 0
+        }.distinctUntilChanged().collect {
+            Log.d(TAG, it().toString())
+
+            val level = it().first.second
+            val accountStatus = it().first.first
+            val bookMode = it().second.first
+            val windowSizeClass = it().second.second
+            val state = _uiState.value.state
+
+            if (
+                accountStatus != AccountStatus.NOT_SET &&
+                level.levelInfo.levelId == 0 &&
+                bookMode != BookMode.NOT_SET &&
+                windowSizeClass != WindowSizeClass.NOT_SET &&
+                state == LOADING
             ) {
                 loadLatestLevelFromCloudOrLocal()
             } else if (
-                it().first.levelInfo.levelId != 0 &&
-                it().second.first != AccountStatus.NOT_SET &&
-                it().second.second != BookMode.NOT_SET &&
-                it().second.third != WindowSizeClass.NOT_SET
+                level.levelInfo.levelId != 0 &&
+                accountStatus != AccountStatus.NOT_SET &&
+                bookMode != BookMode.NOT_SET &&
+                windowSizeClass != WindowSizeClass.NOT_SET
             ) {
-                if (it().first.levelInfo.progress == LevelProgress.INTERMEDIATE && _uiState.value.state != LEVEL_COMPLETE) {
+                if (level.levelInfo.progress == LevelProgress.INTERMEDIATE && state != LEVEL_COMPLETE) {
                     _uiState.value = getNewUiState(
                         newState = INTERMEDIATE,
                         refreshLevelUi = true,
-                        info = it()
+                        info = Pair(
+                            level,
+                            Triple(accountStatus, bookMode, windowSizeClass)
+                        )
                     )
-                } else if (_uiState.value.state == LEVEL_COMPLETE) {
+                } else if (state == LEVEL_COMPLETE) {
                     _uiState.value = getNewUiState(
                         newState = LEVEL_COMPLETE,
                         refreshLevelUi = true,
-                        info = it()
+                        info = Pair(
+                            level,
+                            Triple(accountStatus, bookMode, windowSizeClass)
+                        )
                     )
-                } else if (_uiState.value.state == PLAY || _uiState.value.state == BUSY || _uiState.value.state == MENU_ACTION) {
+                } else if (state == PLAY || state == BUSY || state == MENU_ACTION) {
                     _uiState.value = getNewUiState(
                         newState = PLAY,
                         refreshLevelUi = false,
-                        info = it()
+                        info = Pair(
+                            level,
+                            Triple(accountStatus, bookMode, windowSizeClass)
+                        )
                     )
-                } else if (_uiState.value.state == PAUSED || _uiState.value.state == LOADING) {
+                } else if (state == PAUSED || state == LOADING) {
                     _uiState.value = getNewUiState(
                         newState = PLAY,
                         refreshLevelUi = true,
-                        info = it()
+                        info = Pair(
+                            level,
+                            Triple(accountStatus, bookMode, windowSizeClass)
+                        )
                     )
                 }
+                Log.d(TAG, _uiState.value.toString())
             }
         }
     }
@@ -158,14 +189,6 @@ class LevelViewModel @Inject constructor(
         )
     }
 
-    fun setUiStatePaused() {
-        _uiState.value = _uiState.value.copy(
-            state = PAUSED,
-            solutionData = SolutionData(),
-            refreshLevelUi = false
-        )
-    }
-
     fun setUiStateBusy() {
         _uiState.value = _uiState.value.copy(
             state = BUSY,
@@ -183,15 +206,13 @@ class LevelViewModel @Inject constructor(
     }
 
     fun setUiStateWhenOnResume() {
-        if (_uiState.value.state == PAUSED) {
+        if (_uiState.value.state == PAUSED && _windowSizeClassWidth.value != WindowSizeClass.NOT_SET && _bookMode.value != BookMode.NOT_SET) {
             _uiState.value = _uiState.value.copy(
                 state = PLAY,
                 solutionData = SolutionData(),
                 refreshLevelUi = true
             )
-        }
-        else if (_uiState.value.state == MENU_ACTION)
-        {
+        } else if (_uiState.value.state == MENU_ACTION) {
             _uiState.value = _uiState.value.copy(
                 state = PLAY,
                 solutionData = SolutionData(),
@@ -222,15 +243,17 @@ class LevelViewModel @Inject constructor(
     private fun loadLatestLevelFromCloudOrLocal() {
         viewModelScope.launch(exceptionHandler) {
             val saveGame = cloudSave.load()
-            Log.d(TAG, "Get save game from cloud.")
-            levelRepository.updateLocalGame(saveGame)
-            Log.d(
-                TAG,
-                "Update local game to: ${saveGame.game.findLast { it.levelInfo.progress == LevelProgress.IN_PROGRESS }?.levelInfo}"
-            )
-            levelRepository.latestLevelFlow()
-                .collect { _currentLevel.value = it }
-            startSavingGame()
+            if (saveGame != null)
+            {
+                levelRepository.updateLocalGame(saveGame)
+                levelRepository.latestLevelFlow().collect { _currentLevel.value = it }
+                startSavingGame()
+            }
+            else {
+                levelRepository.latestLevelFlow().collect { _currentLevel.value = it }
+                startSavingGame()
+            }
+
         }
     }
 
@@ -315,8 +338,7 @@ class LevelViewModel @Inject constructor(
         }
     }
 
-    fun resetIntervalCount(interval:String)
-    {
+    fun resetIntervalCount(interval: String) {
         viewModelScope.launch {
             levelRepository.setCountTo(interval, 0)
         }
@@ -355,7 +377,6 @@ class LevelViewModel @Inject constructor(
                 while (isActive) {
                     delay(120000)
                     if (_uiState.value.state != BUSY && _uiState.value.state != LEVEL_COMPLETE && _uiState.value.state != LOADING) {
-                        //return@launch
                         Log.d(TAG, "Save game to cloud.")
                         val saveGame = levelRepository.getLocalSaveGame()
                         cloudSave.save(saveGame)
@@ -369,7 +390,6 @@ class LevelViewModel @Inject constructor(
     }
 
     fun saveGameImmediately() {
-       // return
         viewModelScope.launch(saveGameExceptionHandler) {
             val saveGame = levelRepository.getLocalSaveGame()
             cloudSave.save(saveGame)
@@ -480,7 +500,8 @@ class LevelViewModel @Inject constructor(
                         levelRepository.setCountTo(hintsInterval, 0)
                     }
                     playerGuess.reversed() == playerGuess -> {
-                        val showHintsBadge = levelRepository.increaseCountAndGetResult(hintsInterval)
+                        val showHintsBadge =
+                            levelRepository.increaseCountAndGetResult(hintsInterval)
                         val solutionData = SolutionData(
                             solution = Solution.BOGUS_PALINDROME,
                             index = index,
@@ -496,7 +517,8 @@ class LevelViewModel @Inject constructor(
                         unlockAchievement(getApplication<Application>().getString(R.string.achievement_wrong_palindrome))
                     }
                     else -> {
-                        val showHintsBadge = levelRepository.increaseCountAndGetResult(hintsInterval)
+                        val showHintsBadge =
+                            levelRepository.increaseCountAndGetResult(hintsInterval)
                         val solutionData = SolutionData(
                             solution = Solution.WRONG,
                             index = index,

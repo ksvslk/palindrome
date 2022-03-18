@@ -113,6 +113,9 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         }
         binding.levelFragment.addView(levelGridLayout)
         showTutorial()
+        viewModel.currentLevel.replayCache.firstOrNull()?.levelInfo?.levelId?.let { it1 ->
+            askForReview(level = it1)
+        }
     }
 
     private fun uiStateUpdater() {
@@ -146,7 +149,9 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                                 levelFragment.notClickable = true
                                 levelFragment.alpha = 1f
                                 when (uiState.solutionData.solution) {
-                                    CORRECT -> { Log.e(TAG, "Invalid state $uiState")}
+                                    CORRECT -> {
+                                        Log.e(TAG, "Invalid state $uiState")
+                                    }
                                     WRONG -> {
                                         viewModel.resetSolutionState()
                                         cellDirector?.sendWrongSolutionLetterHome(uiState)
@@ -163,11 +168,10 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                                 }
                             }
                             LEVEL_COMPLETE -> {
-                                if (uiState.refreshLevelUi){
+                                if (uiState.refreshLevelUi) {
                                     displayLevel(uiState)
                                     showContinueMessage(uiState)
-                                }
-                                else showCorrectEffects(uiState)
+                                } else showCorrectEffects(uiState)
                                 progressCircular.visibility = View.GONE
                                 levelFragment.notClickable = true
                                 levelFragment.alpha = 1f
@@ -219,7 +223,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                             if (isVisible) {
                                 super.onDismissed(transientBottomBar, event)
                                 showContinueMessage(uiState)
-                                viewModel.currentLevel.replayCache.firstOrNull()?.levelInfo?.levelId?.let { it1 -> askForReview(level = it1) }
                             }
                         }
                     }
@@ -321,7 +324,8 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             activity?.findViewById<LinearLayoutCompat>(R.id.trainLinearLayout)?.childCount
         if (viewModel.currentLevel.replayCache.firstOrNull()?.levelInfo?.let {
                 VaryingProbability.isAnimationPlayed(
-                    it.levelId)
+                    it.levelId
+                )
             } == true && childCount == 0) {
             val trainLinearLayout = animations.getTrainAnimation()
             trainLinearLayout.doOnNextLayout {
@@ -343,15 +347,13 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         }
     }
 
-    private fun showTutorial()
-    {
+    private fun showTutorial() {
         context?.getSharedPreferences(
             getString(R.string.app_preferences),
             Context.MODE_PRIVATE
         )?.let { sp ->
             val tutorialPassed = sp.getBoolean(getString(R.string.tutorial_passed), false)
-            if (!tutorialPassed)
-            {
+            if (!tutorialPassed) {
                 parentFragmentManager.commit {
                     addToBackStack(TutorialFragment().tag)
                     add(TutorialFragment(), TutorialFragment().tag)
@@ -379,11 +381,12 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     }
 
     private fun askForReview(level: Int) {
-        if (level == 10) {
+        if (level == 15) {
             val reviewManager = ReviewManagerFactory.create(requireContext())
             val request = reviewManager.requestReviewFlow()
             request.addOnCompleteListener { task ->
                 if (task.isSuccessful) {
+                    viewModel.setUiStateMenuAction()
                     val reviewInfo = task.result
                     val flow = reviewManager.launchReviewFlow(requireActivity(), reviewInfo)
                     flow.addOnCompleteListener { _ ->

@@ -1,10 +1,12 @@
 package com.indest.hah.general
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
@@ -52,6 +54,12 @@ class SignInLiveData(
                     val signedInAccount = result?.signInAccount
                     if (result?.isSuccess == true && signedInAccount != null) {
                         postValue(AccountStatus.SIGNED_IN)
+                        if (owner is Activity) {
+                            showSignedInPopup(context, signedInAccount)
+                        }
+                        else if (owner is Fragment){
+                            showSignedInPopup(owner.requireActivity() as MainActivity, signedInAccount)
+                        }
                     } else {
                         postValue(AccountStatus.SIGNED_OUT)
                     }
@@ -69,7 +77,7 @@ class SignInLiveData(
 
     override fun onResume(owner: LifecycleOwner) {
         super.onResume(owner)
-        tryToSignInSilently(context as MainActivity)
+        if (owner is MainActivity) tryToSignInSilently(context as MainActivity)
     }
 
     fun signIn(intent: Intent) {

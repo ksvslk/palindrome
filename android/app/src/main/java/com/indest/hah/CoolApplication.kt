@@ -9,7 +9,7 @@ import leakcanary.ToastEventListener*/
 class CoolApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-/*        if (BuildConfig.DEBUG)
+       /*if (BuildConfig.DEBUG)
         {
             LeakCanary.config = LeakCanary.config.run {
                 copy(

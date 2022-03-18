@@ -1,2 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <dimen name="tutorial_title_text_size">@dimen/_15ssp</dimen>
+    <dimen name="tutorial_text_size">@dimen/_9ssp</dimen>
+    <dimen name="tutorial_box_size">@dimen/_21sdp</dimen>
+    <dimen name="tutorial_box_text_size">@dimen/_11ssp</dimen>
+    <dimen name="tutorial_primary_button_text_size">@dimen/_11ssp</dimen>
+    <dimen name="tutorial_secondary_button_text_size">@dimen/_6ssp</dimen>
+    <dimen name="tutorial_button_padding">@dimen/_5sdp</dimen>
+    <dimen name="tutorial_container_margin">@dimen/_20sdp</dimen>
+    <dimen name="tutorial_arrow_size">@dimen/_10sdp</dimen>
+    <dimen name="tutorial_progress_width">@dimen/_62sdp</dimen>
+</resources>

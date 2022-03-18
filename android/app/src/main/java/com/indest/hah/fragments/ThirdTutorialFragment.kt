@@ -1,14 +1,11 @@
 package com.indest.hah.fragments
 
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.indest.hah.R
 import com.indest.hah.databinding.ThirdTutorialFragmentBinding
 
 class ThirdTutorialFragment : BottomSheetDialogFragment() {

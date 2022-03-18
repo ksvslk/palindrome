@@ -3,6 +3,7 @@ package com.indest.hah.views
 import android.content.Context
 import android.content.res.TypedArray
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.content.res.AppCompatResources
@@ -77,6 +78,7 @@ class PurchaseButton : LinearLayoutCompat {
             )
         }
         showLabelIfApplicable()
+        this.visibility = View.GONE
     }
 
     private fun showLabelIfApplicable()

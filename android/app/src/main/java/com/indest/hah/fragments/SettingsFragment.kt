@@ -168,6 +168,7 @@ class SettingsFragment : BottomSheetDialogFragment() {
             signInOptions
         )
         signInObserver.signIn(signInClient.signInIntent)
+        dismiss()
     }
 
     private fun signOut() {

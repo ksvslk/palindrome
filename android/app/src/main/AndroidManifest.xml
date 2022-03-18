@@ -29,7 +29,6 @@
             android:hardwareAccelerated="true"
             android:immersive="true"
             android:exported="true"
-            android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_main"
             android:theme="@style/Theme.OC">
             <intent-filter>

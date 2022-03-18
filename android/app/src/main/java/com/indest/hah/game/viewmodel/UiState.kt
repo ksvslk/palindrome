@@ -1,5 +1,6 @@
 package com.indest.hah.game.viewmodel
 
+import com.indest.hah.game.creation.BookMode
 import com.indest.hah.game.creation.WindowSizeClass
 import com.indest.hah.general.AccountStatus
 import com.indest.hah.persistance.dto.Level
