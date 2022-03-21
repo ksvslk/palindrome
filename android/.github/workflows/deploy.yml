@@ -6,7 +6,7 @@ name: CI
 on:
   # Triggers the workflow on push request events but only for the master branch
   push:
-    branches: [ develop ]
+    branches: [ master ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -84,13 +84,16 @@ jobs:
         with:
           name: Signed app bundle
           path: ${{ steps.sign_app.outputs.signedReleaseFile }}
-          
+      
+      - name: Create service_account.json FROM secrets.SERVICE_ACCOUNT_JSON
+        run: echo '${{ secrets.SERVICE_ACCOUNT_JSON }}' > service_account.json
+      
       # Upload AAB to Google Play
       - name: Upload AAB to Google Play
-        uses: r0adkll/upload-google-play@v1
+        uses: r0adkll/upload-google-play@v1.0.15
         with:
-          serviceAccountJson: ${{ SERVICE_ACCOUNT_JSON }}
+          serviceAccountJson: service_account.json
           packageName: com.indest.hah
-          releaseFiles: ${{ steps.sign_app.outputs.signedReleaseFile }}
+          releaseFiles: app/build/outputs/bundle/release/*.aab
           track: internal
-          whatsNewDirectory: releaseNotes/whatsnew
+          whatsNewDirectory: releaseNotes/
