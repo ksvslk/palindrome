@@ -6,8 +6,8 @@
         android:icon="@drawable/games_controller_grey"/>
 
     <item
-        android:id="@+id/navigation_hints"
-        android:title="@string/hints"
+        android:id="@+id/navigation_goods"
+        android:title="@string/goods"
         android:icon="@drawable/lightbulb"/>
     <item
         android:id="@+id/navigation_settings"

@@ -3,6 +3,7 @@ package com.indest.hah.views
 import android.content.Context
 import android.content.res.TypedArray
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.content.res.AppCompatResources
@@ -10,7 +11,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
-import com.indest.hah.GeneralViewModel
+import com.indest.hah.general.GeneralViewModel
 import com.indest.hah.R
 
 private const val REGULAR_VISIBILITY_CASES = 1
@@ -77,6 +78,7 @@ class PurchaseButton : LinearLayoutCompat {
             )
         }
         showLabelIfApplicable()
+        this.visibility = View.GONE
     }
 
     private fun showLabelIfApplicable()
@@ -134,12 +136,17 @@ class PurchaseButton : LinearLayoutCompat {
                 }
             }
         }
-        if (purchasedInSomeWay) {
-            this.setOnClickListener(null)
-            this.visibility = View.GONE
-        }
-        else if (info.skus[sku]?.canPurchase == true) {
-            this.visibility = View.VISIBLE
+        when {
+            purchasedInSomeWay -> {
+                this.setOnClickListener(null)
+                this.visibility = View.GONE
+            }
+            info.skus[sku]?.canPurchase == true -> {
+                this.visibility = View.VISIBLE
+            }
+            info.skus[sku]?.canPurchase == false -> {
+                this.visibility = View.GONE
+            }
         }
     }
 }

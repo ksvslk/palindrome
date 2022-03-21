@@ -27,7 +27,7 @@
     </style>
 
     <style name= "OC.OutlinedButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
-        <item name="android:textColor">@color/colorOnBackground</item>
+        <item name="android:textColor">@color/colorOnPrimary</item>
     </style>
 
 </resources>

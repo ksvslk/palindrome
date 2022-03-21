@@ -16,4 +16,8 @@
         <attr name="visibility_case_3" format="reference" />
         <attr name="labels" format="reference" />
     </declare-styleable>
+    <declare-styleable name="AnyButton">
+        <attr name="any_button_icon" format="reference" />
+        <attr name="any_button_title" format="string" />
+    </declare-styleable>
 </resources>

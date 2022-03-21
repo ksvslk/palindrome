@@ -3,6 +3,18 @@ plugins {
     id 'kotlin-android'
     id 'dagger.hilt.android.plugin'
     id 'kotlin-kapt'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.6.10'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
+}
+
+def getGitHash = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-parse', 'HEAD'
+        standardOutput = stdout
+    }
+    return "\"" + stdout.toString().trim().subSequence(0,8) + "\""
 }
 
 android {
@@ -28,9 +40,12 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "GIT_HASH", getGitHash()
+
         }
         debug {
             minifyEnabled false
+            buildConfigField "String", "GIT_HASH", getGitHash()
         }
     }
     compileOptions {
@@ -61,12 +76,12 @@ dependencies {
     def coroutine_version = '1.5.1'
     def work_version ='2.7.1'
     def coroutines_play_services_version = '1.4.1'
-    def instant_apps_version = '17.0.0'
-    def room_version = '2.4.1'
+    def instant_apps_version = '18.0.1'
+    def room_version = '2.4.2'
     def user_messaging_platform_version = '2.0.0'
     def google_play_services_games_version = '22.0.1'
     def google_play_services_auth_version = '20.1.0'
-    def gson_version = '2.8.7'
+    def gson_version = '2.8.8'
     def gridlayout_version = '1.0.0'
     def constraintlayout_version = '2.1.3'
     def material_version = '1.5.0'
@@ -84,10 +99,16 @@ dependencies {
     def sdp_version = '1.0.6'
     def ssp_version = '1.0.6'
     def window_manager_version ='1.0.0'
-    def ads_version = '20.5.0'
-    def billing_version = '4.0.0'
+    def ads_version = '20.6.0'
+    def billing_version = '4.1.0'
     def konfetti_version = '2.0.1'
+    def kotlinx_serialization = '1.3.2'
+    def firebase_version = '29.2.1'
 
+    implementation platform("com.google.firebase:firebase-bom:$firebase_version")
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization"
     implementation "nl.dionsegijn:konfetti-xml:$konfetti_version"
     implementation "com.intuit.sdp:sdp-android:$sdp_version"
     implementation "com.intuit.ssp:ssp-android:$ssp_version"
@@ -95,14 +116,6 @@ dependencies {
     implementation "com.google.android.material:material:$material_version"
     implementation "androidx.constraintlayout:constraintlayout:$constraintlayout_version"
     implementation "androidx.gridlayout:gridlayout:$gridlayout_version"
-    implementation "com.google.code.gson:gson:$gson_version"
-
-/*    // Import the Firebase BoM
-    implementation platform('com.google.firebase:firebase-bom:28.1.0')
-    // Add the dependency for the Firebase SDK for Google Analytics
-    // When using the BoM, don't specify versions in Firebase dependencies
-    implementation 'com.google.firebase:firebase-analytics-ktx:19.0.1'*/
-
     implementation "com.android.billingclient:billing-ktx:$billing_version"
     implementation "com.android.billingclient:billing:$billing_version"
     implementation "androidx.appcompat:appcompat:$appcompat_version"

@@ -1,20 +1,18 @@
 package com.indest.hah.fragments
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.commit
-import androidx.fragment.app.replace
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.indest.hah.R
+import androidx.fragment.app.activityViewModels
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.databinding.ThirdTutorialFragmentBinding
+import com.indest.hah.game.viewmodel.LevelViewModel
 
-class ThirdTutorialFragment : Fragment() {
+class ThirdTutorialFragment : BottomSheetDialogFragment() {
     private var _binding: ThirdTutorialFragmentBinding? = null
+    private val levelViewModel: LevelViewModel by activityViewModels()
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -34,36 +32,10 @@ class ThirdTutorialFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView).visibility =
-            View.INVISIBLE
-
         binding.startButton.setOnClickListener {
-
-            parentFragmentManager.commit {
-                requireActivity().getSharedPreferences(getString(R.string.app_preferences), Context.MODE_PRIVATE)?.let {
-                    with(it.edit()) {
-                        putBoolean(getString(R.string.tutorial_passed), true)
-                        apply()
-                    }
-                }
-                setReorderingAllowed(true)
-                setCustomAnimations(R.anim.fade_in_short, R.anim.fade_out_short)
-                replace<LevelFragment>(R.id.fragments_container)
-                requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView).visibility =
-                    View.VISIBLE
-            }
-        }
-
-        binding.backButton.setOnClickListener {
-            parentFragmentManager.commit {
-                setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top)
-                setReorderingAllowed(true)
-                replace<SecondTutorialFragment>(R.id.fragments_container)
-            }
+            levelViewModel.logTutorialComplete()
+            parentFragmentManager.popBackStack()
         }
 
     }
-
-
 }

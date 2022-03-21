@@ -16,6 +16,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:appCategory="game"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         tools:ignore="LockedOrientationActivity"
@@ -28,7 +29,6 @@
             android:hardwareAccelerated="true"
             android:immersive="true"
             android:exported="true"
-            android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_main"
             android:theme="@style/Theme.OC">
             <intent-filter>

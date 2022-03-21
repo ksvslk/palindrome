@@ -38,7 +38,6 @@ class AdsLiveData (private val context: Context) : LiveData<Pair<Boolean, Reward
         postValue(Pair(false, RewardType.NONE))
     }
 
-    // CLEAN
     private fun loadRewardedAd() {
         if (_rewardedAd == null) {
             val adRequest = AdRequest.Builder().build()
@@ -92,7 +91,8 @@ class AdsLiveData (private val context: Context) : LiveData<Pair<Boolean, Reward
                         postValue(Pair(false, rewardedType))
                     }
                     else {
-                        postValue(Pair(false, RewardType.AD_FAILED))
+                        if (rewardedType == RewardType.SAD_MODE) postValue(Pair(false, RewardType.SAD_AD_FAILED))
+                        else postValue(Pair(false, RewardType.AD_FAILED))
                     }
                 }
 
@@ -101,7 +101,8 @@ class AdsLiveData (private val context: Context) : LiveData<Pair<Boolean, Reward
                     // Don't forget to set the ad reference to null so you
                     // don't show the ad a second time.
                     _rewardedAd = null
-                    postValue(Pair(false, RewardType.AD_FAILED))
+                    if (rewardedType == RewardType.SAD_MODE) postValue(Pair(false, RewardType.SAD_AD_FAILED))
+                    else postValue(Pair(false, RewardType.AD_FAILED))
                 }
 
                 override fun onAdShowedFullScreenContent() {

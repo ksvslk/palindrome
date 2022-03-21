@@ -1,5 +1,8 @@
 package com.indest.hah.persistance.dto
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class SaveGame(
     val game:List<Level>,
     val interval:List<Interval>

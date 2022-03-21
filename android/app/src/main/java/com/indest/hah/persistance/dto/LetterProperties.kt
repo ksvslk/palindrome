@@ -1,7 +1,9 @@
 package com.indest.hah.persistance.dto
 
 import androidx.room.*
+import kotlinx.serialization.Serializable
 
+@Serializable
 @Entity(
     foreignKeys = [
         ForeignKey(
@@ -11,6 +13,9 @@ import androidx.room.*
         )
     ],
     tableName = "letter_info_table",
+    indices = [
+        Index(value = ["owner_id"])
+    ]
 )
 data class LetterProperties(
     @PrimaryKey(autoGenerate = true)

@@ -36,6 +36,11 @@ class LevelRepository @Inject constructor(
         return levelDao.updateLetters(homeIndex1, homeIndex2, letter1, letter2, level)
     }
 
+    suspend fun getCurrentSolution(level:Int):String
+    {
+        return levelDao.getCurrentSolution(level).joinToString()
+    }
+
     suspend fun updateScore(newScore: Int, level: Int) {
         levelDao.updateScore(newScore, level)
     }
@@ -64,16 +69,29 @@ class LevelRepository @Inject constructor(
         return levelDao.getCount(name)
     }
 
-    suspend fun increaseCount(name: String): Boolean {
+    suspend fun increaseCountAndGetResult(name: String): Boolean {
         return levelDao.increaseCountTransaction(name)
+    }
+
+    suspend fun increaseCount(name:String)
+    {
+        levelDao.increaseCurrentCount(name)
     }
 
     suspend fun executeLevelCompleteTransaction(current: Int, hintInterval: String) {
         levelDao.levelCompletedActions(current, hintInterval)
     }
 
+    suspend fun executeLevelCompleteTransactionFinal(current: Int, hintInterval: String) {
+        levelDao.levelCompletedActionsFinal(current, hintInterval)
+    }
+
     fun latestLevelFlow(): Flow<Level> {
         return levelDao.getLastLevel()
+    }
+
+    fun intervalAttainedFlow(name:String): Flow<Boolean> {
+        return levelDao.sadModeIntervalFlow(name)
     }
 
     suspend fun updateLevelProgress(level: Int, progress: LevelProgress) {
@@ -85,4 +103,8 @@ class LevelRepository @Inject constructor(
 
     suspend fun getLocalSaveGame(): SaveGame = levelDao.getLocalSaveGame()
     suspend fun updateLocalGame(saveGame: SaveGame) = levelDao.updateLocalGame(saveGame)
+
+    suspend fun isFinalLevel(currentLevel:Int) = levelDao.isFinalLevel(currentLevel)
+
+    suspend fun persistInitialLettersInfo(currentLevel: Int) = levelDao.persistInitialLettersInfo(currentLevel)
 }

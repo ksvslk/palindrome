@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/simple_dialog_left_margin"
-            android:text="@string/hints"
+            android:text="@string/goods"
             android:textAppearance="@style/TextAppearance.OC.Headline5" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -60,7 +60,6 @@
         rewardbutton:subtitle_ad_unavailable="@string/no_ad_available"
         rewardbutton:subtitle_reward_unlocked="@string/instantly" />
 
-
     <com.indest.hah.views.PurchaseButton
         android:id="@+id/purchase_button_clues"
         android:layout_width="match_parent"
@@ -87,7 +86,7 @@
         purchasebutton:visibility_case_1="@array/letters_case_1" />
 
     <com.indest.hah.views.PurchaseButton
-        android:id="@+id/purchase_intermediate_ads"
+        android:id="@+id/purchase_no_sad_mode"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
         android:layout_margin="@dimen/_2sdp"
@@ -95,11 +94,11 @@
         android:clickable="true"
         android:focusable="true"
         android:orientation="horizontal"
-        purchasebutton:sku="@string/no_intermediate_ads"
-        purchasebutton:visibility_case_1="@array/intermediate_case_1" />
+        purchasebutton:sku="@string/sad_mode"
+        purchasebutton:visibility_case_1="@array/sad_mode_case_1" />
 
     <com.indest.hah.views.PurchaseButton
-        android:id="@+id/purchase_full_ads"
+        android:id="@+id/purchase_all_inclusive_pack"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
         android:layout_margin="@dimen/_2sdp"
@@ -108,9 +107,9 @@
         android:focusable="true"
         android:orientation="horizontal"
         purchasebutton:labels="@array/save_24_percent_label"
-        purchasebutton:sku="@string/full_no_ads"
-        purchasebutton:visibility_case_1="@array/full_ads_case_1"
-        purchasebutton:visibility_case_2="@array/full_ads_case_2"
-        purchasebutton:visibility_case_3="@array/full_ads_case_3" />
+        purchasebutton:sku="@string/all_inclusive_pack"
+        purchasebutton:visibility_case_1="@array/all_inclusive_pack_case1"
+        purchasebutton:visibility_case_2="@array/all_inclusive_pack_case2"
+        purchasebutton:visibility_case_3="@array/all_inclusive_pack_case3" />
 
 </androidx.appcompat.widget.LinearLayoutCompat>

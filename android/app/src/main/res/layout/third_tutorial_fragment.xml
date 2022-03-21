@@ -5,25 +5,35 @@
     android:id="@+id/third_tutorial_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginHorizontal="@dimen/tutorial_container_margin"
+    android:layout_marginHorizontal="@dimen/default_large_margin"
     android:gravity="center"
     android:orientation="vertical"
+    app:divider="@drawable/divider"
+    app:dividerPadding="@dimen/simple_dialog_left_margin"
+    app:showDividers="middle"
     tools:context=".fragments.ThirdTutorialFragment">
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_margin="@dimen/default_large_margin"
+        android:padding="@dimen/default_large_margin"
         android:layout_weight="1.5"
         android:gravity="center"
         android:orientation="vertical">
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <Button
+            android:id="@+id/startButton"
+            style="@style/OC.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/tutorial"
-            android:textColor="@color/colorOnPrimary"
-            android:textSize="@dimen/tutorial_title_text_size" />
+            android:fontFamily="@font/yantramanav_bold"
+            android:paddingHorizontal="@dimen/_24sdp"
+            android:drawableTint="@color/colorOnBackground"
+            android:paddingVertical="@dimen/default_gap"
+            android:text="@string/lets_go"
+            android:textAppearance="@style/TextAppearance.OC.Headline5"
+            android:textSize="@dimen/tutorial_primary_button_text_size" />
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:layout_width="@dimen/tutorial_progress_width"
@@ -37,6 +47,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0.5"
+        android:layout_margin="@dimen/default_large_margin"
+        android:padding="@dimen/default_large_margin"
         android:textAlignment="center"
         android:gravity="center"
         android:text="@string/tutorial3_text"
@@ -47,6 +59,8 @@
         android:id="@+id/tutorialGameplay"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_margin="@dimen/default_large_margin"
+        android:padding="@dimen/default_large_margin"
         android:layout_weight="2.5"
         android:animateLayoutChanges="true"
         android:clipChildren="false"
@@ -59,7 +73,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:animateLayoutChanges="true"
-            android:background="@color/colorBackground"
             android:clipChildren="false"
             android:splitMotionEvents="false"
             android:visibility="visible"
@@ -121,34 +134,13 @@
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
+        android:layout_weight="1"
+        android:padding="@dimen/default_large_margin"
         android:animateLayoutChanges="true"
         android:clipChildren="false"
         android:gravity="center"
+        android:orientation="horizontal">
 
-        android:orientation="vertical">
-
-        <Button
-            android:id="@+id/startButton"
-            style="@style/OC.Button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/yantramanav_bold"
-            android:padding="@dimen/tutorial_button_padding"
-            android:text="@string/lets_go"
-            android:textAppearance="@style/TextAppearance.OC.Headline5"
-            android:textSize="@dimen/tutorial_primary_button_text_size" />
-
-        <Button
-            android:id="@+id/backButton"
-            style="@style/OC.OutlinedButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/yantramanav_bold"
-            android:padding="@dimen/tutorial_button_padding"
-            android:text="@string/back"
-            android:textAppearance="@style/TextAppearance.OC.LevelSelectNumber"
-            android:textSize="@dimen/tutorial_secondary_button_text_size" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 

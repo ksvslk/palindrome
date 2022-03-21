@@ -1,6 +1,5 @@
 package com.indest.hah
 
-import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
@@ -23,35 +22,50 @@ import androidx.window.layout.WindowMetricsCalculator
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.indest.hah.ads.RewardType
 import com.indest.hah.databinding.ActivityMainBinding
 import com.indest.hah.fragments.ExitGameDialogFragment
-import com.indest.hah.game.ContainerState
-import com.indest.hah.game.LevelViewModel
+import com.indest.hah.fx.SoundPlayer
+import com.indest.hah.game.creation.WindowSizeClass
+import com.indest.hah.game.creation.BookMode
+import com.indest.hah.game.viewmodel.LevelViewModel
+import com.indest.hah.general.GeneralViewModel
+import com.indest.hah.general.SignInLiveData
+import com.indest.hah.other.C
+import com.indest.hah.other.hideSystemBars
 import com.indest.hah.persistance.dto.LevelData
-import com.indest.hah.game.levelcreation.WindowSizeClass
-import com.indest.hah.other.*
+import com.indest.hah.views.ButtonState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogListener {
+class MainActivity : AppCompatActivity(),
+    ExitGameDialogFragment.ExitGameDialogListener {
 
     private val TAG = "MainActivity"
     lateinit var binding: ActivityMainBinding
     private val levelViewModel: LevelViewModel by viewModels()
     private val generalViewModel: GeneralViewModel by viewModels()
-    @Inject lateinit var signInObserver : SignInLiveData
+
+    @Inject
+    lateinit var signInObserver: SignInLiveData
+
+    @Inject
+    lateinit var soundPlayer: SoundPlayer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate")
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        levelViewModel.setWindowSizeClass(WindowSizeClass.NOT_SET)
+        levelViewModel.setBookMode(BookMode.NOT_SET)
         updateFoldModeInfo()
 
         lifecycle.addObserver(signInObserver)
@@ -65,15 +79,19 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
         MobileAds.initialize(applicationContext) {
         }
 
-        val testDeviceIds = listOf("6C6A719C306FBA0A0FBE4D81600B8AB1", "1C8B057289566E4B36BA860D0A8281CB", "06F9B7BCACB746B35A407A17B4D161D9")
+        val testDeviceIds = listOf(
+            "6C6A719C306FBA0A0FBE4D81600B8AB1",
+            "1C8B057289566E4B36BA860D0A8281CB",
+            "06F9B7BCACB746B35A407A17B4D161D9"
+        )
         val configuration = RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build()
         MobileAds.setRequestConfiguration(configuration)
         generalViewModel.toString()
-
         applyCustomWindowInsets()
         windowSizeClassUpdater()
         setUpNavController()
         progressBarUpdater()
+        collectRewardInfo()
     }
 
     override fun onResume() {
@@ -90,18 +108,59 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
         levelViewModel.setUiStateWhenOnPause()
     }
 
-    private fun updateFoldModeInfo()
-    {
+    private fun collectRewardInfo() {
+        binding.watchAdTop.setOnClickListener {
+            levelViewModel.setUiStateBusy()
+            generalViewModel.showRewardedVideo(this, RewardType.SAD_MODE)
+            binding.watchAdTop.visibility = View.GONE
+        }
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED)
+            {
+                launch {
+                    generalViewModel.rewardState.distinctUntilChangedBy { it }.collect {
+                        if (it == RewardType.SAD_MODE) {
+                            levelViewModel.setUiStatePlayWhenBusy()
+                            levelViewModel.resetIntervalCount(getString(R.string.sad_mode_interval))
+                            playModeSwitchSound(false)
+                            generalViewModel.updateRewardState(RewardType.NONE)
+                            levelViewModel.logRewardGiven(RewardType.SAD_MODE)
+                        } else if (it == RewardType.SAD_AD_FAILED) {
+                            levelViewModel.setUiStatePlayWhenBusy()
+                            playModeSwitchSound(true)
+                            generalViewModel.updateRewardState(RewardType.NONE)
+                        }
+                    }
+                }
+
+                launch {
+                    generalViewModel.buttonState.collect { buttonInfo ->
+                        if (buttonInfo.sadMode && buttonInfo.state == ButtonState.AD) {
+                            binding.container.isSadMode = true
+                            binding.watchAdTop.visibility = View.VISIBLE
+                            binding.container.invalidate()
+                        } else {
+                            binding.watchAdTop.visibility = View.GONE
+                            binding.container.isSadMode = false
+                            binding.container.invalidate()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun updateFoldModeInfo() {
         lifecycleScope.launch(Dispatchers.Main) {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 WindowInfoTracker.getOrCreate(this@MainActivity)
                     .windowLayoutInfo(this@MainActivity)
-                    .collect { newLayoutInfo ->
+                    .collectLatest { newLayoutInfo ->
                         val foldingFeature: FoldingFeature? =
                             newLayoutInfo.displayFeatures.find { it is FoldingFeature } as? FoldingFeature
                         val isBookMode = foldingFeature?.state == FoldingFeature.State.FLAT
-                        if (isBookMode) levelViewModel.setBookMode(BookMode.BOOK_MODE)
-                        else levelViewModel.setBookMode(BookMode.NOPE)
+                        if (isBookMode) levelViewModel.setBookMode(bookMode = BookMode.BOOK_MODE)
+                        else levelViewModel.setBookMode(bookMode = BookMode.NOPE)
                     }
             }
         }
@@ -117,6 +176,11 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
         computeWindowSizeClasses()
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        Log.d(TAG,"onConfigurationChanged")
+        super.onConfigurationChanged(newConfig)
+    }
+
     private fun applyCustomWindowInsets() {
         ViewCompat.setOnApplyWindowInsetsListener(binding.container) { _, insets ->
             WindowInsetsCompat.Builder().setInsets(
@@ -129,6 +193,21 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
                 )
             ).build()
         }
+    }
+
+    private fun computeWindowSizeClasses() {
+        Log.d(TAG, "computeWindowSizeClasses")
+        val metrics = WindowMetricsCalculator.getOrCreate()
+            .computeCurrentWindowMetrics(this)
+
+        val widthDp = metrics.bounds.width() /
+                resources.displayMetrics.density
+        val widthWindowSizeClass = when {
+            widthDp < 600f -> WindowSizeClass.COMPACT
+            widthDp < 840f -> WindowSizeClass.MEDIUM
+            else -> WindowSizeClass.EXPANDED
+        }
+        levelViewModel.setWindowSizeClass(widthWindowSizeClass)
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -146,27 +225,21 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
         bottomNavigationView.menu.forEach { it.isChecked = true }
     }
 
-    private fun computeWindowSizeClasses() {
-        val metrics = WindowMetricsCalculator.getOrCreate()
-            .computeCurrentWindowMetrics(this)
-
-        val widthDp = metrics.bounds.width() /
-                resources.displayMetrics.density
-        val widthWindowSizeClass = when {
-            widthDp < 600f -> WindowSizeClass.COMPACT
-            widthDp < 840f -> WindowSizeClass.MEDIUM
-            else -> WindowSizeClass.EXPANDED
-        }
-        levelViewModel.setWindowSizeClass(widthWindowSizeClass)
-    }
-
     private fun progressBarUpdater() {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                levelViewModel.currentLevel.distinctUntilChangedBy { it.levelInfo.levelId }.collect {
-                    setLevelProgressIndicator(it.levelInfo)
-                }
+                levelViewModel.currentLevel.distinctUntilChangedBy { it.levelInfo.levelId }
+                    .collect {
+                        setLevelProgressIndicator(it.levelInfo)
+                    }
             }
+        }
+    }
+
+    private fun playModeSwitchSound(isSadMode: Boolean) {
+        when (isSadMode) {
+            true -> soundPlayer.play(soundPlayer.sounds.sadMode, volume = 0.5f)
+            false -> soundPlayer.play(soundPlayer.sounds.normalMode, volume = 0.5f)
         }
     }
 
@@ -183,23 +256,11 @@ class MainActivity : AppCompatActivity(), ExitGameDialogFragment.ExitGameDialogL
     }
 
     override fun onDialogPositiveClick(dialog: DialogFragment) {
-        finish()
+        super.onBackPressed()
     }
 
     override fun onDialogNegativeClick(dialog: DialogFragment) {
         dialog.dismiss()
     }
-
-  /*  override fun onTopResumedActivityChanged(isTopResumedActivity: Boolean) {
-        super.onTopResumedActivityChanged(isTopResumedActivity)
-        if (isTopResumedActivity && levelViewModel.uiState.value.state == ContainerState.PLAY)
-        {
-            levelViewModel.setUiStateMenuAction()
-        }
-        else {
-            levelViewModel.setUiStateWhenOnResume()
-        }
-        Log.d(TAG, "onTopResumedActivityChanged")
-    }*/
 
 }

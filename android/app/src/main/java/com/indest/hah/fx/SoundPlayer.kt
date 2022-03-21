@@ -59,7 +59,7 @@ class SoundPlayer @Inject constructor(
             if (isRingerModeNotSilent() && it.getBoolean(
                     context.getString(R.string.vibration_on_pref),
                     true
-                )
+                ) && it.getBoolean(context.getString(R.string.sad_mode_pref), false)
             ) {
                 val doubleClickPattern = longArrayOf(0, 50, 50, 50)
                 val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator

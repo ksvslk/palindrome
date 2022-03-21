@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1023077026447",
+    "project_id": "hah-35889753",
+    "storage_bucket": "hah-35889753.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1023077026447:android:dc216f5476054bd5453efa",
+        "android_client_info": {
+          "package_name": "com.indest.hah"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1023077026447-3s7mh9c6c1q10pcblp6g84t2ik6rikhl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5RauzeuYe0KOhz9VsnaaLh2a5dJKz8OQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1023077026447-3s7mh9c6c1q10pcblp6g84t2ik6rikhl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

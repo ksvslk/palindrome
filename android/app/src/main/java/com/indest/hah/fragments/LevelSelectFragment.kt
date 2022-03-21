@@ -9,16 +9,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.commit
+import androidx.fragment.app.replace
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.indest.hah.other.LevelItemAdapter
-import com.indest.hah.databinding.LevelSelectFragmentBinding
-import dagger.hilt.android.AndroidEntryPoint
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
-import com.indest.hah.game.LevelViewModel
+import com.indest.hah.databinding.LevelSelectFragmentBinding
+import com.indest.hah.game.viewmodel.LevelViewModel
+import com.indest.hah.other.LevelItemAdapter
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
+import java.util.logging.Level
+
 
 @AndroidEntryPoint
 class LevelSelectFragment : BottomSheetDialogFragment() {
@@ -48,12 +52,26 @@ class LevelSelectFragment : BottomSheetDialogFragment() {
     {
         lifecycleScope.launchWhenCreated {
                 levelViewModel.allLevelsFlow().collect { levels ->
-                    val currentLevel = levelViewModel.currentLevel.replayCache.first()?.levelInfo?.levelId
+                    val currentLevel = levelViewModel.currentLevel.replayCache.firstOrNull()?.levelInfo?.levelId
                     val currentLevelIcon = getCurrentLevelIcon(currentLevel)
                     binding.levelSelectRecyclerview.adapter = LevelItemAdapter(currentLevelIcon, currentLevel, levels) {
                         it?.levelId?.let { nr ->
-                            levelViewModel.setUiStateWhenOnPause()
-                            levelViewModel.changeLevel(nr)
+                            val currentlyActiveFragment = parentFragmentManager.findFragmentById(R.id.fragments_container)
+                            Log.d(TAG, "Currently active fragment: ${currentlyActiveFragment?.javaClass?.name}")
+                            if (currentlyActiveFragment is LevelFragment)
+                            {
+                                levelViewModel.setUiStateWhenOnPause()
+                                levelViewModel.changeLevel(nr)
+                            }
+                            else if (currentlyActiveFragment is EpilogueFragment)
+                            {
+                                parentFragmentManager.commit {
+                                    setReorderingAllowed(true)
+                                    replace<LevelFragment>(R.id.fragments_container)
+                                    levelViewModel.setUiStateWhenOnPause()
+                                    levelViewModel.changeLevel(nr)
+                                }
+                            }
                             dismiss()
                         }
                     }
@@ -90,7 +108,7 @@ class LevelSelectFragment : BottomSheetDialogFragment() {
             bsd.behavior.state = STATE_EXPANDED
             if (isVisible)
             {
-                levelViewModel.currentLevel.replayCache.first().let {
+                levelViewModel.currentLevel.replayCache.firstOrNull()?.let {
                     binding.levelSelectRecyclerview.scrollToPosition(it.levelInfo.levelId - 1)
                 }
             }

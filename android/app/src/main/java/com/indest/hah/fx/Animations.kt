@@ -195,7 +195,7 @@ class Animations @Inject constructor(
         return itemLayoutTransition
     }
 
-    fun getTrainAnimation(): LinearLayoutCompat {
+    fun getTrainAnimation(fixed:Boolean = false, fixedValue:Int = 20): LinearLayoutCompat {
         val activity = (context as MainActivity)
         val trainLinearLayout = activity.findViewById<LinearLayoutCompat>(R.id.trainLinearLayout)
         trainLinearLayout.alpha = 1f
@@ -213,9 +213,9 @@ class Animations @Inject constructor(
             R.drawable.ic_carriage_center_green,
             R.drawable.ic_carriage_center_yellow
         )
-        val randomNumberOfTrains = (1..5).random()
+        val numberOfCarriages = if (!fixed) (1..5).random() else fixedValue
 
-        for (i in 1..randomNumberOfTrains) {
+        for (i in 1..numberOfCarriages) {
             if (i == 1) {
                 activity.layoutInflater.inflate(
                     R.layout.carriage_last,
@@ -240,9 +240,9 @@ class Animations @Inject constructor(
         }
 
         activity.layoutInflater.inflate(R.layout.locomotive_view, trainLinearLayout, false)
-            .also {
-                (it.background as AnimationDrawable).start()
-                trainLinearLayout.addView(it)
+            .apply {
+                (this.background as AnimationDrawable).start()
+                trainLinearLayout.addView(this)
             }
 
         return trainLinearLayout
@@ -270,11 +270,32 @@ class Animations @Inject constructor(
                 maxSpeed = 15f,
                 damping = 0.9f,
                 angle = Angle.BOTTOM,
-                spread = Spread.ROUND,
+                spread = Spread.SMALL,
                 colors = listOf(0xff0000, 0x2196F3, 0xCDDC39, 0xFFC107),
                 emitter = Emitter(duration = 2, TimeUnit.SECONDS).perSecond(25),
                 position = Position.Relative(0.0, 0.0).between(Position.Relative(1.0, 0.0))
             )
+        )
+    }
+
+    fun getParade(): List<Party> {
+        val party = Party(
+            speed = 30f,
+            maxSpeed = 40f,
+            damping = 0.9f,
+            angle = Angle.RIGHT - 60,
+            spread = Spread.SMALL,
+            colors = listOf(0xff0000, 0x2196F3, 0xCDDC39, 0xFFC107),
+            emitter = Emitter(duration = 60, TimeUnit.SECONDS).perSecond(8),
+            position = Position.Relative(0.0, 0.4)
+        )
+
+        return listOf(
+            party,
+            party.copy(
+                angle = Angle.LEFT + 60, // flip angle from right to left
+                position = Position.Relative(1.0, 0.4)
+            ),
         )
     }
 

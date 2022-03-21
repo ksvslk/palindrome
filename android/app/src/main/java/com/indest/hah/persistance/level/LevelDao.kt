@@ -1,8 +1,7 @@
 package com.indest.hah.persistance.level
 
-import android.util.Log
 import androidx.room.*
-import com.indest.hah.game.levelcreation.Shuffler
+import com.indest.hah.game.creation.Shuffler
 import com.indest.hah.persistance.dto.Interval
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
@@ -93,6 +92,7 @@ interface LevelDao {
     @Query("DELETE FROM level_info_table")
     suspend fun deleteLevels()
 
+    @Transaction
     @Query("select * from level_info_table")
     suspend fun getAllLevels(): List<Level>
 
@@ -120,6 +120,9 @@ interface LevelDao {
     @Query("select exists (select 1 from interval where name = :name and current_count = limit_count)")
     suspend fun isLimitAttained(name: String): Boolean
 
+    @Query("select exists (select 1 from interval where name = :name and current_count = limit_count)")
+    fun sadModeIntervalFlow(name:String):Flow<Boolean>
+
     @Transaction
     suspend fun increaseCountTransaction(name: String): Boolean {
         increaseCurrentCount(name)
@@ -128,6 +131,7 @@ interface LevelDao {
         return isLimit
     }
 
+    @Transaction
     @Query("select *, max(time_modified) from level_info_table")
     fun getLastLevel(): Flow<Level>
 
@@ -190,12 +194,28 @@ interface LevelDao {
         updateProgress(currentLevel, LevelProgress.REPLAY)
         // update current level best score
         updatePuzzle(currentLevel, "")
+        // Reset and make old level info
+        persistInitialLettersInfo(currentLevel)
         // unlock next level (change progress and increase timestamp)
         updateProgress(currentLevel + 1, LevelProgress.IN_PROGRESS)
         // update next level default letters and shuffled puzzle
         persistInitialLettersInfo(currentLevel + 1)
         // update next level timestamp
         updateChosenLevelTimestamp(currentLevel, currentLevel + 1)
+    }
+
+    @Transaction
+    suspend fun levelCompletedActionsFinal(currentLevel: Int, hintInterval: String) {
+        // reset hint interval
+        resetCount(hintInterval)
+        // delete current level letters info
+        deleteLetterInfo(currentLevel)
+        // update current level progress
+        updateProgress(currentLevel, LevelProgress.REPLAY)
+        // update current level best score
+        updatePuzzle(currentLevel, "")
+        // Reset and make old level info
+        persistInitialLettersInfo(currentLevel)
     }
 
     @Query("select solution from level_info_table where level_id=:level")
@@ -246,5 +266,9 @@ interface LevelDao {
         updateLevels(saveGame.game)
         updateIntervals(saveGame.interval)
     }
+
+    @Query("select max(level_id) = :currentLevel from level_info_table")
+    //@Query("select 3 = :currentLevel from level_info_table")
+    suspend fun isFinalLevel(currentLevel:Int):Boolean
 
 }

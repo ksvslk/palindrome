@@ -4,7 +4,9 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.indest.hah.persistance.level.LevelProgress
+import kotlinx.serialization.Serializable
 
+@Serializable
 @Entity(tableName = "level_info_table")
 data class LevelData(
     @PrimaryKey(autoGenerate = true)

@@ -8,5 +8,7 @@ data class Sounds(
     val switchLettersSoundId:Int,
     val placeLetterSoundId:Int,
     val letterRewardedSoundId:Int,
+    val sadMode:Int,
+    val normalMode:Int,
     val noteSounds:ArrayList<Int>
 )

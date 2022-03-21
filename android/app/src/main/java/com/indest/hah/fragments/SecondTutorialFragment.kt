@@ -5,6 +5,7 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.graphics.Rect
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,17 +13,15 @@ import android.view.WindowManager
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import androidx.core.view.doOnLayout
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
-import androidx.fragment.app.replace
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.databinding.SecondTutorialFragmentBinding
 
-class SecondTutorialFragment : Fragment() {
+class SecondTutorialFragment : BottomSheetDialogFragment() {
     private var _binding: SecondTutorialFragmentBinding? = null
     private val binding get() = _binding!!
-    private val mainAnimatorSet = AnimatorSet()
+    private var mainAnimatorSet:AnimatorSet? = AnimatorSet()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,33 +34,18 @@ class SecondTutorialFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        mainAnimatorSet.end()
-        mainAnimatorSet.removeAllListeners()
-        _binding = null
+        cleanUp()
         super.onDestroyView()
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView).visibility =
-            View.INVISIBLE
-
         binding.continueButton.setOnClickListener {
+            parentFragmentManager.popBackStack()
             parentFragmentManager.commit {
+                cleanUp()
                 setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top)
-                setReorderingAllowed(true)
-                mainAnimatorSet.removeAllListeners()
-                replace<ThirdTutorialFragment>(R.id.fragments_container)
-            }
-        }
-
-        binding.backButton.setOnClickListener {
-            parentFragmentManager.commit {
-                setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top)
-                setReorderingAllowed(true)
-                mainAnimatorSet.removeAllListeners()
-                replace<TutorialFragment>(R.id.fragments_container)
+                add(ThirdTutorialFragment(), ThirdTutorialFragment().tag)
+                addToBackStack(ThirdTutorialFragment().tag)
             }
         }
         view.doOnLayout {
@@ -69,17 +53,27 @@ class SecondTutorialFragment : Fragment() {
         }
     }
 
-    private fun repeatingTutorialAnimation()
-    {
+
+    private fun cleanUp() {
+        mainAnimatorSet?.childAnimations?.forEach {
+            it.cancel()
+            it.removeAllListeners()
+        }
+        mainAnimatorSet?.cancel()
+        mainAnimatorSet?.removeAllListeners()
+        _binding = null
+    }
+
+    private fun repeatingTutorialAnimation() {
         val frameFadeInAnimation = getAlphaAnimator(binding.tutorialGameplay, 0f, 1f, 500)
-        val frameFadeOutAnimation = getAlphaAnimator(binding.tutorialGameplay, 1f, 0f, 500)
 
         val handToStartPosition = getPositionAnimator(what = binding.hand, to = binding.letter1)
         val letterToCenter = getPositionAnimator(what = binding.letter1, to = binding.space2)
         val handToCenter = getPositionAnimator(what = binding.hand, to = binding.space2)
 
         val handToSecondLetter = getPositionAnimator(what = binding.hand, to = binding.letter2)
-        val secondLetterToFirstPos = getPositionAnimator(what = binding.letter2, to = binding.space1)
+        val secondLetterToFirstPos =
+            getPositionAnimator(what = binding.letter2, to = binding.space1)
         val handToFirstPos = getPositionAnimator(what = binding.hand, to = binding.space1)
 
         val handToThirdLetter = getPositionAnimator(what = binding.hand, to = binding.letter3)
@@ -161,7 +155,7 @@ class SecondTutorialFragment : Fragment() {
             playSequentially(l1Animation, l2Animation, l3Animation)
         }
 
-        mainAnimatorSet.apply {
+        mainAnimatorSet?.apply {
             playSequentially(
                 frameFadeInAnimation,
                 handToStartAnimation,
@@ -173,20 +167,20 @@ class SecondTutorialFragment : Fragment() {
                 hideHandAnimation,
                 rightArrowsAnimation,
                 leftArrowsAnimation,
-                blankAnimation,
-                frameFadeOutAnimation
+                blankAnimation
             )
         }
 
-        mainAnimatorSet.doOnEnd {
-            it.start()
-        }
-        mainAnimatorSet.start()
+        mainAnimatorSet?.start()
     }
 
-    private fun getAlphaAnimator(what: View, start:Float, end:Float, aDuration:Long = 1000): Animator
-    {
-        return ObjectAnimator.ofFloat(
+    private fun getAlphaAnimator(
+        what: View,
+        start: Float,
+        end: Float,
+        aDuration: Long = 1000
+    ): Animator {
+        val animator =  ObjectAnimator.ofFloat(
             what,
             View.ALPHA,
             start,
@@ -194,6 +188,7 @@ class SecondTutorialFragment : Fragment() {
         ).apply {
             duration = aDuration
         }
+        return animator
     }
 
     private fun getPositionAnimator(what: View, to: View): Pair<Animator, Animator> {
@@ -203,20 +198,22 @@ class SecondTutorialFragment : Fragment() {
         val whatRect = Rect()
         what.getGlobalVisibleRect(whatRect)
 
-        return Pair(
-            ObjectAnimator.ofFloat(
+        val animatorX = ObjectAnimator.ofFloat(
             what,
             View.TRANSLATION_X,
             (toRect.centerX() - whatRect.centerX()).toFloat()
         ).apply {
             duration = 1000
-        },
-            ObjectAnimator.ofFloat(
-                what,
-                View.TRANSLATION_Y,
-                (toRect.centerY() - whatRect.centerY()).toFloat()
-            ).apply {
-                duration = 1000
-            })
+        }
+
+        val animatorY = ObjectAnimator.ofFloat(
+            what,
+            View.TRANSLATION_Y,
+            (toRect.centerY() - whatRect.centerY()).toFloat()
+        ).apply {
+            duration = 1000
+        }
+
+        return Pair(animatorX, animatorY)
     }
 }

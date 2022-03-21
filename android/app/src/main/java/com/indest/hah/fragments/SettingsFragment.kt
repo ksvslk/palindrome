@@ -1,6 +1,8 @@
 package com.indest.hah.fragments
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,28 +10,24 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.CompoundButton
+import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
+import com.google.android.gms.games.Games.SCOPE_GAMES_SNAPSHOTS
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.indest.hah.BuildConfig
 import com.indest.hah.R
 import com.indest.hah.databinding.SettingsFragmentBinding
-
-import android.content.Intent
-import android.net.Uri
-import android.widget.Toast
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.replace
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import com.google.android.gms.games.Games.SCOPE_GAMES_SNAPSHOTS
-import com.indest.hah.GeneralViewModel
-import com.indest.hah.MainActivity
-import com.indest.hah.other.AccountStatus
-import com.indest.hah.other.SignInLiveData
+import com.indest.hah.general.AccountStatus
+import com.indest.hah.general.GeneralViewModel
+import com.indest.hah.general.SignInLiveData
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
@@ -41,7 +39,9 @@ class SettingsFragment : BottomSheetDialogFragment() {
     private var _binding: SettingsFragmentBinding? = null
     private val binding get() = _binding!!
     private val generalViewModel: GeneralViewModel by activityViewModels()
-    @Inject lateinit var signInObserver: SignInLiveData
+
+    @Inject
+    lateinit var signInObserver: SignInLiveData
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +52,12 @@ class SettingsFragment : BottomSheetDialogFragment() {
                 generalViewModel.internet.combine(generalViewModel.accountStatus) { i, a ->
                     Pair(i, a)
                 }.collect { (internet, accountStatus) ->
+                    binding.shareButtonSettings.visibility =
+                        if (internet) View.VISIBLE else View.GONE
+                    binding.shareButtonSettings.setOnClickListener {
+                        val shareIntent = generalViewModel.getShareIntent(javaClass.name)
+                        startActivity(shareIntent)
+                    }
                     binding.rateGameButton.setOnClickListener {
                         when (internet) {
                             true -> {
@@ -85,6 +91,7 @@ class SettingsFragment : BottomSheetDialogFragment() {
                             binding.googleSignOutButton.visibility = View.GONE
                             binding.googleSignInButton.visibility = View.VISIBLE
                         }
+                        AccountStatus.NOT_SET -> {}
                     }
 
                     binding.googleSignInButton.setOnClickListener {
@@ -129,18 +136,25 @@ class SettingsFragment : BottomSheetDialogFragment() {
         binding.vibrationButton.setOnClickListener {
             binding.vibrationSwitch.performClick()
         }
-        binding.soundSwitch.setOnCheckedChangeListener { _, b ->
-            changePreference(getString(R.string.sound_on_pref), b)
+        binding.soundSwitch.setOnCheckedChangeListener { _, b1 ->
+            changePreference(getString(R.string.sound_on_pref), b1)
         }
-        binding.vibrationSwitch.setOnCheckedChangeListener { _, b ->
-            changePreference(getString(R.string.vibration_on_pref), b)
+        binding.vibrationSwitch.setOnCheckedChangeListener { _, b2 ->
+            changePreference(getString(R.string.vibration_on_pref), b2)
         }
         binding.tutorialButton.setOnClickListener {
             parentFragmentManager.commit {
-                setReorderingAllowed(true)
-                replace<TutorialFragment>(R.id.fragments_container)
+                addToBackStack(TutorialFragment().tag)
+                add(TutorialFragment(), TutorialFragment().tag)
             }
             dismiss()
+        }
+        binding.versionInfo.text =
+            "${BuildConfig.VERSION_CODE}\n${BuildConfig.VERSION_NAME}\n${BuildConfig.GIT_HASH}"
+        binding.settingsDialogTitle.setOnLongClickListener {
+            binding.versionInfo.visibility =
+                if (binding.versionInfo.visibility == View.INVISIBLE) View.VISIBLE else View.INVISIBLE
+            true
         }
 
         setInitialPreference(binding.soundSwitch, getString(R.string.sound_on_pref))
@@ -162,10 +176,12 @@ class SettingsFragment : BottomSheetDialogFragment() {
             signInOptions
         )
         signInObserver.signIn(signInClient.signInIntent)
+        dismiss()
     }
 
     private fun signOut() {
-        val client = GoogleSignIn.getClient(requireActivity(),  GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
+        val client =
+            GoogleSignIn.getClient(requireActivity(), GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
         client.signOut().addOnCompleteListener(requireActivity()) {
             if (it.isSuccessful) {
                 signInObserver.setSignedOutState()

@@ -15,17 +15,18 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.games.Games
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.indest.hah.GeneralViewModel
+import com.indest.hah.general.GeneralViewModel
 import com.indest.hah.R
 import com.indest.hah.databinding.GoogleGamesFragmentBinding
-import com.indest.hah.game.LevelViewModel
+import com.indest.hah.game.viewmodel.LevelViewModel
 import kotlinx.coroutines.flow.collect
 
 class GoogleGamesFragment : BottomSheetDialogFragment() {
 
     private val TAG = "GoogleGamesFragment"
     private val startActivity =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        }
     private var _binding: GoogleGamesFragmentBinding? = null
     private val binding get() = _binding!!
     private val generalViewModel: GeneralViewModel by activityViewModels()
@@ -84,8 +85,6 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
     }
 
     private fun showLeaderBoard() {
-        levelViewModel.setUiStateMenuAction()
-        dismiss()
         val lastSignedInAccount =
             GoogleSignIn.getLastSignedInAccount(requireContext().applicationContext)
         val leaderboardsClient = if (lastSignedInAccount != null)
@@ -97,14 +96,13 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
         leaderboardsClient?.getLeaderboardIntent(getString(R.string.leaderboard_crme_de_la_crme))
             ?.continueWith {
                 if (it.isSuccessful) {
+                    levelViewModel.setUiStateMenuAction()
                     startActivity.launch(it.result)
                 }
             }
     }
 
     private fun showAchievements() {
-        levelViewModel.setUiStateMenuAction()
-        dismiss()
         val lastSignedInAccount =
             GoogleSignIn.getLastSignedInAccount(requireContext().applicationContext)
         val achievementsClient = if (lastSignedInAccount != null)
@@ -115,6 +113,7 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
         else null
         achievementsClient?.achievementsIntent?.continueWith {
             if (it.isSuccessful) {
+                levelViewModel.setUiStateMenuAction()
                 startActivity.launch(it.result)
             }
         }

@@ -5,25 +5,35 @@
     android:id="@+id/second_tutorial_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginHorizontal="@dimen/tutorial_container_margin"
+    android:layout_marginHorizontal="@dimen/default_large_margin"
     android:gravity="center"
     android:orientation="vertical"
+    app:divider="@drawable/divider"
+    app:dividerPadding="@dimen/simple_dialog_left_margin"
+    app:showDividers="middle"
     tools:context=".fragments.SecondTutorialFragment">
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
+        android:layout_margin="@dimen/default_large_margin"
+        android:padding="@dimen/default_large_margin"
         android:layout_height="0dp"
         android:layout_weight="1.5"
         android:gravity="center"
         android:orientation="vertical">
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <Button
+            android:id="@+id/continueButton"
+            style="@style/OC.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/tutorial"
-            android:textColor="@color/colorOnPrimary"
-            android:textSize="@dimen/tutorial_title_text_size" />
+            android:fontFamily="@font/yantramanav_bold"
+            android:paddingVertical="@dimen/default_gap"
+            android:drawableTint="@color/colorOnBackground"
+            android:drawableEnd="@drawable/ic_baseline_arrow_right_24"
+            android:text="@string/next"
+            android:textAppearance="@style/TextAppearance.OC.Headline5"
+            android:textSize="@dimen/tutorial_primary_button_text_size" />
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:layout_width="@dimen/tutorial_progress_width"
@@ -36,6 +46,8 @@
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_large_margin"
+        android:padding="@dimen/default_large_margin"
         android:layout_weight="0.5"
         android:textAlignment="center"
         android:gravity="center"
@@ -47,6 +59,8 @@
         android:id="@+id/tutorialGameplay"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_margin="@dimen/default_large_margin"
+        android:padding="@dimen/default_large_margin"
         android:layout_weight="2.5"
         android:alpha="0"
         android:animateLayoutChanges="true"
@@ -66,7 +80,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:animateLayoutChanges="true"
-            android:background="@color/colorBackground"
             android:clipChildren="false"
             android:splitMotionEvents="false"
             android:visibility="visible"
@@ -116,7 +129,7 @@
                 android:alpha="0"
                 android:background="@drawable/ic_baseline_double_arrow_24"
                 android:backgroundTint="@color/rightToLeftColor"
-                app:layout_gravity="center"></androidx.appcompat.widget.AppCompatImageView>
+                app:layout_gravity="center" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/r2"
@@ -125,7 +138,7 @@
                 android:alpha="0"
                 android:background="@drawable/ic_baseline_double_arrow_24"
                 android:backgroundTint="@color/rightToLeftColor"
-                app:layout_gravity="center"></androidx.appcompat.widget.AppCompatImageView>
+                app:layout_gravity="center" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/r3"
@@ -134,7 +147,7 @@
                 android:alpha="0"
                 android:background="@drawable/ic_baseline_double_arrow_24"
                 android:backgroundTint="@color/rightToLeftColor"
-                app:layout_gravity="center"></androidx.appcompat.widget.AppCompatImageView>
+                app:layout_gravity="center" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/space1"
@@ -177,7 +190,7 @@
                 android:background="@drawable/ic_baseline_double_arrow_24"
                 android:backgroundTint="@color/leftToRightColor"
                 android:rotationY="180"
-                app:layout_gravity="center"></androidx.appcompat.widget.AppCompatImageView>
+                app:layout_gravity="center" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/l2"
@@ -187,7 +200,7 @@
                 android:background="@drawable/ic_baseline_double_arrow_24"
                 android:backgroundTint="@color/leftToRightColor"
                 android:rotationY="180"
-                app:layout_gravity="center"></androidx.appcompat.widget.AppCompatImageView>
+                app:layout_gravity="center" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/l1"
@@ -197,7 +210,7 @@
                 android:background="@drawable/ic_baseline_double_arrow_24"
                 android:backgroundTint="@color/leftToRightColor"
                 android:rotationY="180"
-                app:layout_gravity="center"></androidx.appcompat.widget.AppCompatImageView>
+                app:layout_gravity="center" />
         </androidx.gridlayout.widget.GridLayout>
 
     </FrameLayout>
@@ -205,34 +218,12 @@
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
+        android:layout_weight="1"
+        android:padding="@dimen/default_large_margin"
         android:animateLayoutChanges="true"
         android:clipChildren="false"
         android:gravity="center"
-
-        android:orientation="vertical">
-
-        <Button
-            android:id="@+id/continueButton"
-            style="@style/OC.Button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/yantramanav_bold"
-            android:padding="@dimen/tutorial_button_padding"
-            android:text="@string/next"
-            android:textAppearance="@style/TextAppearance.OC.Headline5"
-            android:textSize="@dimen/tutorial_primary_button_text_size" />
-
-        <Button
-            android:id="@+id/backButton"
-            style="@style/OC.OutlinedButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/yantramanav_bold"
-            android:padding="@dimen/tutorial_button_padding"
-            android:text="@string/back"
-            android:textAppearance="@style/TextAppearance.OC.LevelSelectNumber"
-            android:textSize="@dimen/tutorial_secondary_button_text_size" />
+        android:orientation="horizontal">
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 </androidx.appcompat.widget.LinearLayoutCompat>
