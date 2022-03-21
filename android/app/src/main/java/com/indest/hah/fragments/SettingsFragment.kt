@@ -55,7 +55,7 @@ class SettingsFragment : BottomSheetDialogFragment() {
                     binding.shareButtonSettings.visibility =
                         if (internet) View.VISIBLE else View.GONE
                     binding.shareButtonSettings.setOnClickListener {
-                        val shareIntent = generalViewModel.getShareIntent(javaClass.name)
+                        val shareIntent = generalViewModel.getShareIntent("SettingsFragment")
                         startActivity(shareIntent)
                     }
                     binding.rateGameButton.setOnClickListener {

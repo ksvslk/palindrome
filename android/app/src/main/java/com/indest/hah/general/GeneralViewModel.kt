@@ -7,8 +7,10 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.asFlow
@@ -28,6 +30,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.io.OutputStream
+import java.lang.Exception
 import javax.inject.Inject
 
 @HiltViewModel
@@ -258,32 +264,15 @@ class GeneralViewModel @Inject constructor(
                 bundleOf(Pair(FirebaseCustom.Params.POINT_IN_GAME, screen))
             )
         }
-        val imageUri =
-            getImageUriFromBitmap(
-                getApplication<Application>().applicationContext,
-                BitmapFactory.decodeResource(
-                    getApplication<Application>().applicationContext.resources,
-                    R.drawable.share_game_puzzle
-                )
-            )
+        val puzzle = "\uD83C\uDD30\uD83C\uDD30\uD83C\uDD31\uD83C\uDD31"
         return Intent.createChooser(Intent().apply {
             action = Intent.ACTION_SEND
             putExtra(
                 Intent.EXTRA_TEXT,
-                "It is a famous band and also a palindrome... Play the game and solve it: https://play.google.com/store/apps/details?id=${BuildConfig.APPLICATION_ID}"
+                "Solve puzzle: $puzzle. It is a famous band and also a palindrome! Find more puzzles: https://play.google.com/store/apps/details?id=${BuildConfig.APPLICATION_ID}"
             )
-            putExtra(Intent.EXTRA_STREAM, imageUri)
-            flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-            type = "image/jpeg"
-        }, null)
-    }
-
-    private fun getImageUriFromBitmap(context: Context, bitmap: Bitmap): Uri {
-        val bytes = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
-        val path =
-            MediaStore.Images.Media.insertImage(context.contentResolver, bitmap, "Title", null)
-        return Uri.parse(path.toString())
+            type = "text/plain"
+        }, "Share Game")
     }
 
     data class ButtonInfo(

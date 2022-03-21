@@ -122,7 +122,7 @@ class EpilogueFragment : Fragment(R.layout.epilogue_fragment) {
                         showAchievements()
                     }
                     binding.shareButton.setOnClickListener {
-                        val shareIntent = generalViewModel.getShareIntent(javaClass.name)
+                        val shareIntent = generalViewModel.getShareIntent("EpilogueFragment")
                         startActivity(shareIntent)
                     }
                     binding.levelSelectButton.setOnClickListener {
