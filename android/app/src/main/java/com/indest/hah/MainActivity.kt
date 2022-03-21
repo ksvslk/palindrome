@@ -22,6 +22,7 @@ import androidx.window.layout.WindowMetricsCalculator
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.indest.hah.ads.RewardType
 import com.indest.hah.databinding.ActivityMainBinding
 import com.indest.hah.fragments.ExitGameDialogFragment
@@ -123,6 +124,7 @@ class MainActivity : AppCompatActivity(),
                             levelViewModel.resetIntervalCount(getString(R.string.sad_mode_interval))
                             playModeSwitchSound(false)
                             generalViewModel.updateRewardState(RewardType.NONE)
+                            levelViewModel.logRewardGiven(RewardType.SAD_MODE)
                         } else if (it == RewardType.SAD_AD_FAILED) {
                             levelViewModel.setUiStatePlayWhenBusy()
                             playModeSwitchSound(true)

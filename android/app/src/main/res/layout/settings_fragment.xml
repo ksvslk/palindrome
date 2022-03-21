@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:anybutton="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -29,13 +30,13 @@
             android:id="@+id/version_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="invisible"
             android:layout_gravity="center_vertical|end"
-            android:textAlignment="viewEnd"
             android:lineSpacingMultiplier="0.7"
-            android:textColor="@color/colorOnPrimaryDisabled"
             android:text="@string/placeholder"
-            android:textAppearance="@style/TextAppearance.OC.Caption" />
+            android:textAlignment="viewEnd"
+            android:textAppearance="@style/TextAppearance.OC.Caption"
+            android:textColor="@color/colorOnPrimaryDisabled"
+            android:visibility="invisible" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -54,8 +55,8 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/simple_dialog_left_margin"
             android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
-            android:contentDescription="@string/level_select"
             android:clickable="false"
+            android:contentDescription="@string/level_select"
             android:src="@drawable/baseline_list_alt_black_36"
             app:tint="@color/colorOnPrimary"
             tools:ignore="RtlSymmetry" />
@@ -63,8 +64,8 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center_vertical"
             android:clickable="false"
+            android:gravity="center_vertical"
             android:text="@string/level_select"
             android:textAppearance="@style/TextAppearance.OC.Body1" />
     </androidx.appcompat.widget.LinearLayoutCompat>
@@ -85,18 +86,18 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/simple_dialog_left_margin"
             android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
+            android:clickable="false"
             android:contentDescription="@string/all_inclusive_pack_text"
             android:src="@drawable/baseline_help_center_black_36"
-            android:clickable="false"
             app:tint="@color/colorOnPrimary"
             tools:ignore="RtlSymmetry" />
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center_vertical"
             android:layout_marginRight="@dimen/simple_dialog_left_margin"
             android:clickable="false"
+            android:gravity="center_vertical"
             android:orientation="horizontal"
             android:weightSum="2">
 
@@ -127,9 +128,9 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/simple_dialog_left_margin"
             android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
+            android:clickable="false"
             android:layoutDirection="rtl"
             android:text="@string/sound_text"
-            android:clickable="false"
             android:textAppearance="@style/TextAppearance.OC.Body1"
             android:textColor="@color/colorOnPrimary" />
 
@@ -152,12 +153,13 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/simple_dialog_left_margin"
             android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
-            android:layoutDirection="rtl"
             android:clickable="false"
+            android:layoutDirection="rtl"
             android:text="@string/vibration_text"
             android:textAppearance="@style/TextAppearance.OC.Body1"
             android:textColor="@color/colorOnPrimary" />
     </androidx.appcompat.widget.LinearLayoutCompat>
+
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/rate_game_button"
         android:layout_width="match_parent"
@@ -174,8 +176,8 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/simple_dialog_left_margin"
             android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
-            android:contentDescription="@string/rate_game"
             android:clickable="false"
+            android:contentDescription="@string/rate_game"
             android:src="@drawable/baseline_rate_review_black_36"
             app:tint="@color/colorOnPrimary"
             tools:ignore="RtlSymmetry" />
@@ -183,11 +185,24 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center_vertical"
             android:clickable="false"
+            android:gravity="center_vertical"
             android:text="@string/rate_game"
             android:textAppearance="@style/TextAppearance.OC.Body1" />
     </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <com.indest.hah.views.AnyButton
+        android:id="@+id/share_button_settings"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/simple_dialog_item_height"
+        android:layout_margin="@dimen/_2sdp"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="horizontal"
+        anybutton:any_button_icon="@drawable/baseline_share_black_36"
+        anybutton:any_button_title="@string/share" />
+
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/google_sign_in_out_button"
         android:layout_width="match_parent"
@@ -198,17 +213,18 @@
 
         <com.google.android.gms.common.SignInButton
             android:id="@+id/google_sign_in_button"
-            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/simple_dialog_left_margin"
             android:paddingHorizontal="@dimen/_8sdp"
-            android:layout_marginHorizontal="@dimen/simple_dialog_left_margin" />
+            android:visibility="gone" />
+
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/google_sign_out_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.OC.Body1"
+            android:layout_marginHorizontal="@dimen/simple_dialog_left_margin"
             android:text="@string/log_out"
-            android:layout_marginHorizontal="@dimen/simple_dialog_left_margin" />
+            android:textAppearance="@style/TextAppearance.OC.Body1" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.appcompat.widget.LinearLayoutCompat>

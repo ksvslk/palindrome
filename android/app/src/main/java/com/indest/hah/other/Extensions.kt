@@ -17,6 +17,7 @@ fun AppCompatActivity.hideSystemBars(viewGroup: ViewGroup) {
     insetsController.hide(WindowInsetsCompat.Type.systemBars())
 }
 
+
 // Return old value
 fun AppCompatActivity.saveBooleanPreference(preference: String, newValue: Boolean): Boolean {
     var oldValue = false

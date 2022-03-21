@@ -25,7 +25,8 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
 
     private val TAG = "GoogleGamesFragment"
     private val startActivity =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        }
     private var _binding: GoogleGamesFragmentBinding? = null
     private val binding get() = _binding!!
     private val generalViewModel: GeneralViewModel by activityViewModels()

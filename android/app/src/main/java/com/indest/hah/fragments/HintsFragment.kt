@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
@@ -88,9 +89,10 @@ class HintsFragment : BottomSheetDialogFragment() {
                 levelViewModel.saveGameImmediately()
                 levelViewModel.startSavingGame()
                 viewModel.updateRewardState(NONE)
+                levelViewModel.logRewardGiven(rewardType)
             }
             LETTER -> {
-                Log.d(TAG, "setFragmentResult also")
+                levelViewModel.logRewardGiven(rewardType)
                 setFragmentResult(
                     C.HINTS_REQUEST_KEY,
                     bundleOf(C.LETTER_REWARD_TYPE_BUNDLE to rewardType.ordinal)
@@ -155,6 +157,7 @@ class HintsFragment : BottomSheetDialogFragment() {
                     PREMIUM -> {
                         revealClue()
                         viewModel.updateCategoryRewarded()
+                        levelViewModel.logPremiumHintUsage(CLUE)
                     }
                     NO_AD -> {  /* No action. Button should be disabled in this state. */
                     }
@@ -169,6 +172,7 @@ class HintsFragment : BottomSheetDialogFragment() {
                     viewModel.showRewardedVideo(requireActivity(), LETTER)
                 }
                 PREMIUM -> {
+                    levelViewModel.logPremiumHintUsage(LETTER)
                     setFragmentResult(
                         C.HINTS_REQUEST_KEY,
                         bundleOf(

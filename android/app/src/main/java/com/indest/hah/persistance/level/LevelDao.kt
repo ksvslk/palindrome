@@ -194,12 +194,28 @@ interface LevelDao {
         updateProgress(currentLevel, LevelProgress.REPLAY)
         // update current level best score
         updatePuzzle(currentLevel, "")
+        // Reset and make old level info
+        persistInitialLettersInfo(currentLevel)
         // unlock next level (change progress and increase timestamp)
         updateProgress(currentLevel + 1, LevelProgress.IN_PROGRESS)
         // update next level default letters and shuffled puzzle
         persistInitialLettersInfo(currentLevel + 1)
         // update next level timestamp
         updateChosenLevelTimestamp(currentLevel, currentLevel + 1)
+    }
+
+    @Transaction
+    suspend fun levelCompletedActionsFinal(currentLevel: Int, hintInterval: String) {
+        // reset hint interval
+        resetCount(hintInterval)
+        // delete current level letters info
+        deleteLetterInfo(currentLevel)
+        // update current level progress
+        updateProgress(currentLevel, LevelProgress.REPLAY)
+        // update current level best score
+        updatePuzzle(currentLevel, "")
+        // Reset and make old level info
+        persistInitialLettersInfo(currentLevel)
     }
 
     @Query("select solution from level_info_table where level_id=:level")
@@ -250,5 +266,9 @@ interface LevelDao {
         updateLevels(saveGame.game)
         updateIntervals(saveGame.interval)
     }
+
+    @Query("select max(level_id) = :currentLevel from level_info_table")
+    //@Query("select 3 = :currentLevel from level_info_table")
+    suspend fun isFinalLevel(currentLevel:Int):Boolean
 
 }

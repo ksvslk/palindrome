@@ -23,10 +23,10 @@ import com.google.android.gms.common.SignInButton
 import com.google.android.gms.games.Games.SCOPE_GAMES_SNAPSHOTS
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.BuildConfig
-import com.indest.hah.general.GeneralViewModel
 import com.indest.hah.R
 import com.indest.hah.databinding.SettingsFragmentBinding
 import com.indest.hah.general.AccountStatus
+import com.indest.hah.general.GeneralViewModel
 import com.indest.hah.general.SignInLiveData
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -39,6 +39,7 @@ class SettingsFragment : BottomSheetDialogFragment() {
     private var _binding: SettingsFragmentBinding? = null
     private val binding get() = _binding!!
     private val generalViewModel: GeneralViewModel by activityViewModels()
+
     @Inject
     lateinit var signInObserver: SignInLiveData
 
@@ -51,6 +52,12 @@ class SettingsFragment : BottomSheetDialogFragment() {
                 generalViewModel.internet.combine(generalViewModel.accountStatus) { i, a ->
                     Pair(i, a)
                 }.collect { (internet, accountStatus) ->
+                    binding.shareButtonSettings.visibility =
+                        if (internet) View.VISIBLE else View.GONE
+                    binding.shareButtonSettings.setOnClickListener {
+                        val shareIntent = generalViewModel.getShareIntent(javaClass.name)
+                        startActivity(shareIntent)
+                    }
                     binding.rateGameButton.setOnClickListener {
                         when (internet) {
                             true -> {
@@ -142,7 +149,8 @@ class SettingsFragment : BottomSheetDialogFragment() {
             }
             dismiss()
         }
-        binding.versionInfo.text = "${BuildConfig.VERSION_CODE}\n${BuildConfig.VERSION_NAME}\n${BuildConfig.GIT_HASH}"
+        binding.versionInfo.text =
+            "${BuildConfig.VERSION_CODE}\n${BuildConfig.VERSION_NAME}\n${BuildConfig.GIT_HASH}"
         binding.settingsDialogTitle.setOnLongClickListener {
             binding.versionInfo.visibility =
                 if (binding.versionInfo.visibility == View.INVISIBLE) View.VISIBLE else View.INVISIBLE

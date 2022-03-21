@@ -52,5 +52,5 @@ enum class ContainerState {
      * leaderboard, achievements or billing flow we don't need
      * to refresh the container contents.
      */
-    MENU_ACTION
+    MENU_ACTION,
 }

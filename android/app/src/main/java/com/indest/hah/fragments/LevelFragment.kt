@@ -13,6 +13,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.animation.*
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.children
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.doOnPreDraw
@@ -24,6 +25,7 @@ import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.play.core.review.ReviewManagerFactory
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.indest.hah.MainActivity
 import com.indest.hah.R
 import com.indest.hah.ads.RewardType
@@ -78,6 +80,9 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (requireActivity() as? MainActivity)?.let {
+            it.binding.bottomNavView.visibility = View.VISIBLE
+        }
         uiStateUpdater()
         showPlayerCenteredScores()
     }
@@ -168,10 +173,14 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                                 }
                             }
                             LEVEL_COMPLETE -> {
+                                val isLastLevel = viewModel.isLastLevel()
+                                Log.d(TAG, "isLastLevel: $isLastLevel")
                                 if (uiState.refreshLevelUi) {
                                     displayLevel(uiState)
-                                    showContinueMessage(uiState)
-                                } else showCorrectEffects(uiState)
+                                    showContinueMessage(uiState, isLastLevel)
+                                } else {
+                                    showCorrectEffects(uiState, isLastLevel)
+                                }
                                 progressCircular.visibility = View.GONE
                                 levelFragment.notClickable = true
                                 levelFragment.alpha = 1f
@@ -190,7 +199,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         }
     }
 
-    private fun showCorrectEffects(uiState: UiState) {
+    private fun showCorrectEffects(uiState: UiState, isLastLevel: Boolean = false) {
         cellDirector?.getCells()?.let { cells ->
             val cellsAnimation = animations.getCorrectSolutionAnimation(cells)
             cellsAnimation.doOnEnd {
@@ -222,7 +231,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                         override fun onDismissed(transientBottomBar: MessageSnackBar?, event: Int) {
                             if (isVisible) {
                                 super.onDismissed(transientBottomBar, event)
-                                showContinueMessage(uiState)
+                                showContinueMessage(uiState, isLastLevel)
                             }
                         }
                     }
@@ -295,10 +304,10 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         if (uiState.solutionData.showHintsBadge) showHintsBadge()
     }
 
-    private fun showContinueMessage(uiState: UiState) {
+    private fun showContinueMessage(uiState: UiState, isLastLevel: Boolean = false) {
         val continueMessage = MessageSnackBar.make(
             view = binding.levelFragment,
-            message = getString(R.string.tap_to_continue),
+            message = if(!isLastLevel) getString(R.string.tap_to_continue) else getString(R.string.tap_to_finish),
             duration = Int.MAX_VALUE,
             windowSizeClassWidth = uiState.windowSizeClass,
             isBookMode = uiState.bookMode,
@@ -313,7 +322,15 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                 continueMessage.dismiss()
                 soundPlayer.play(soundPlayer.sounds.levelTransition, volume = 0.2f)
                 playTrainAnimation()
-                viewModel.executeLevelCompleteActions()
+                if (!isLastLevel) {
+                    viewModel.executeLevelCompleteActions()
+                } else {
+                    parentFragmentManager.commit {
+                        viewModel.executeLevelCompleteActionsFinal()
+                        setReorderingAllowed(true)
+                        replace<EpilogueFragment>(R.id.fragments_container)
+                    }
+                }
             }
         }
         continueMessage.show()
@@ -354,6 +371,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         )?.let { sp ->
             val tutorialPassed = sp.getBoolean(getString(R.string.tutorial_passed), false)
             if (!tutorialPassed) {
+                viewModel.logTutorialBegin()
                 parentFragmentManager.commit {
                     addToBackStack(TutorialFragment().tag)
                     add(TutorialFragment(), TutorialFragment().tag)

@@ -3,13 +3,22 @@ package com.indest.hah.general
 import android.app.Activity
 import android.app.Application
 import android.content.Context
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
+import android.provider.MediaStore
 import android.util.Log
+import androidx.core.os.bundleOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.indest.hah.BuildConfig
 import com.indest.hah.R
 import com.indest.hah.ads.AdsLiveData
 import com.indest.hah.ads.RewardType
+import com.indest.hah.game.viewmodel.FirebaseCustom
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.MinSkuDetails
 import com.indest.hah.persistance.level.LevelRepository
@@ -18,6 +27,7 @@ import com.sample.android.trivialdrivesample.billing.BillingDataSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 @HiltViewModel
@@ -234,11 +244,46 @@ class GeneralViewModel @Inject constructor(
         }
     }
 
-    private fun isSadModePurchased():Boolean {
+    private fun isSadModePurchased(): Boolean {
         val app = getApplication<Application>()
         val sadModeSku = app.getString(R.string.sad_mode)
         val allInclusiveSku = app.getString(R.string.all_inclusive_pack)
         return (minSkuDetailsMap[sadModeSku]?.isPurchased == true || minSkuDetailsMap[allInclusiveSku]?.isPurchased == true)
+    }
+
+    fun getShareIntent(screen: String): Intent {
+        FirebaseAnalytics.getInstance(getApplication<Application>().applicationContext).apply {
+            this.logEvent(
+                FirebaseCustom.Events.SHARE_GAME_CLICKED,
+                bundleOf(Pair(FirebaseCustom.Params.POINT_IN_GAME, screen))
+            )
+        }
+        val imageUri =
+            getImageUriFromBitmap(
+                getApplication<Application>().applicationContext,
+                BitmapFactory.decodeResource(
+                    getApplication<Application>().applicationContext.resources,
+                    R.drawable.share_game_puzzle
+                )
+            )
+        return Intent.createChooser(Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(
+                Intent.EXTRA_TEXT,
+                "It is a famous band and also a palindrome... Play the game and solve it: https://play.google.com/store/apps/details?id=${BuildConfig.APPLICATION_ID}"
+            )
+            putExtra(Intent.EXTRA_STREAM, imageUri)
+            flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+            type = "image/jpeg"
+        }, null)
+    }
+
+    private fun getImageUriFromBitmap(context: Context, bitmap: Bitmap): Uri {
+        val bytes = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+        val path =
+            MediaStore.Images.Media.insertImage(context.contentResolver, bitmap, "Title", null)
+        return Uri.parse(path.toString())
     }
 
     data class ButtonInfo(

@@ -28,7 +28,7 @@
     <string name="scores">Scores</string>
     <string name="tutorial">Tutorial</string>
     <string name="level_select">Level Select</string>
-    <string name="rate_game">Leave Your Feedback</string>
+    <string name="rate_game">Give Feedback</string>
     <string name="log_out">Log Out</string>
     <string name="no_internet">No Internet Connection</string>
     <string name="please_sign_in">Please sign in from "Settings" page.</string>
@@ -53,6 +53,13 @@
     <string name="correct_solution">Correct!</string>
     <string name="not_quite_solution">Incorrect palindrome!</string>
     <string name="tap_to_continue">Tap to continue</string>
+    <string name="tap_to_finish">Tap to finish!</string>
+    <string name="game_completed_message">Done! Keeping the app on your <i>radar</i> and supporting it is a sure way to guarantee another level pack!</string>
+    <string name="game_completed_shout">Yay!</string>
+    <string name="game_completed_shout_smiley">(>‿◠)✌</string>
+    <string name="game_completed_shout_shout2">Winning!</string>
+    <string name="game_completed_shout_smiley2">(͠≖ ͜ʖ͠≖)👌</string>
+    <string name="share">Share</string>
     <string name="watch_ad_and_continue">Watch ad and continue</string>
     <string name="placeholder">…</string>
     <string name="ok">OK</string>
@@ -119,7 +126,7 @@
     <string name="sad_mode_pref">SAD_MODE</string>
 
     <!-- TUTORIAL -->
-    <string name="tutorial_text">Use all letters and punctuation marks to create a palindrome. Palindrome is a same word or sentence both ways.</string>
+    <string name="tutorial_text">Create a palindrome with the given chars. Solution will be same when reading from either side.</string>
     <string name="tutorial2_text">Compete against other players by making as few mistakes as possible!</string>
     <string name="tutorial3_text">Punctuations are required to be in the correct positions but not from both sides.</string>
     <string name="next">Next</string>

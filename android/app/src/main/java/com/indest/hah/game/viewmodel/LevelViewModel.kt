@@ -2,14 +2,21 @@ package com.indest.hah.game.viewmodel
 
 import android.app.Application
 import android.util.Log
+import androidx.core.os.bundleOf
+import androidx.fragment.app.commit
+import androidx.fragment.app.replace
 import androidx.lifecycle.*
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.games.Games
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.indest.hah.R
+import com.indest.hah.ads.RewardType
+import com.indest.hah.fragments.EpilogueFragment
 import com.indest.hah.game.creation.BookMode
 import com.indest.hah.game.viewmodel.ContainerState.*
 import com.indest.hah.game.creation.WindowSizeClass
 import com.indest.hah.general.AccountStatus
+import com.indest.hah.other.C
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
 import com.indest.hah.persistance.level.LevelProgress
@@ -42,6 +49,8 @@ class LevelViewModel @Inject constructor(
     @Inject
     lateinit var cloudSave: SnapshotHelper
     private var saveGameJob: Job? = null
+
+    private val firebaseAnalytics = FirebaseAnalytics.getInstance(application.applicationContext)
 
     private val exceptionHandler = CoroutineExceptionHandler { _, _ ->
         Log.e(
@@ -160,6 +169,10 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+    suspend fun isLastLevel(): Boolean {
+        return levelRepository.isFinalLevel(_currentLevel.value.levelInfo.levelId)
+    }
+
     private fun getNewUiState(
         newState: ContainerState,
         refreshLevelUi: Boolean = false,
@@ -243,13 +256,11 @@ class LevelViewModel @Inject constructor(
     private fun loadLatestLevelFromCloudOrLocal() {
         viewModelScope.launch(exceptionHandler) {
             val saveGame = cloudSave.load()
-            if (saveGame != null)
-            {
+            if (saveGame != null) {
                 levelRepository.updateLocalGame(saveGame)
                 levelRepository.latestLevelFlow().collect { _currentLevel.value = it }
                 startSavingGame()
-            }
-            else {
+            } else {
                 levelRepository.latestLevelFlow().collect { _currentLevel.value = it }
                 startSavingGame()
             }
@@ -359,6 +370,17 @@ class LevelViewModel @Inject constructor(
         viewModelScope.launch {
             levelRepository.executeLevelCompleteTransaction(levelNr, hintInterval)
             increaseIntervalCount(getApplication<Application>().getString(R.string.sad_mode_interval))
+            saveGameImmediately()
+            logLevelStart()
+        }
+    }
+
+    fun executeLevelCompleteActionsFinal() {
+        _uiState.value = _uiState.value.copy(state = PAUSED)
+        val levelNr = _currentLevel.value.levelInfo.levelId
+        val hintInterval = getApplication<Application>().getString(R.string.hint_suggestion)
+        viewModelScope.launch {
+            levelRepository.executeLevelCompleteTransactionFinal(levelNr, hintInterval)
             saveGameImmediately()
         }
     }
@@ -498,6 +520,7 @@ class LevelViewModel @Inject constructor(
                         )
                         resolveLevelCompleteAchievements(solutionData)
                         levelRepository.setCountTo(hintsInterval, 0)
+                        logLevelEnd()
                     }
                     playerGuess.reversed() == playerGuess -> {
                         val showHintsBadge =
@@ -547,4 +570,90 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+    private fun logLevelStart() {
+        firebaseAnalytics.logEvent(
+            FirebaseAnalytics.Event.LEVEL_START, bundleOf(
+                Pair(
+                    FirebaseAnalytics.Param.LEVEL,
+                    _currentLevel.value.levelInfo.levelId
+                ),
+                Pair(
+                    FirebaseCustom.Params.LEVEL_SOLUTION,
+                    _currentLevel.value.levelInfo.solution
+                )
+            )
+        )
+    }
+
+    private fun logLevelEnd() {
+        firebaseAnalytics.logEvent(
+            FirebaseAnalytics.Event.LEVEL_END, bundleOf(
+                Pair(
+                    FirebaseAnalytics.Param.LEVEL,
+                    _currentLevel.value.levelInfo.levelId
+                ),
+                Pair(
+                    FirebaseAnalytics.Param.SCORE,
+                    _currentLevel.value.levelInfo.score
+                ),
+                Pair(
+                    FirebaseCustom.Params.MAX_SCORE,
+                    _currentLevel.value.levelInfo.levelId * 100
+                ),
+                Pair(
+                    FirebaseCustom.Params.LEVEL_SOLUTION,
+                    _currentLevel.value.levelInfo.solution
+                )
+            )
+        )
+    }
+
+    fun logTutorialBegin() {
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.TUTORIAL_BEGIN, bundleOf())
+    }
+
+    fun logTutorialComplete() {
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.TUTORIAL_COMPLETE, bundleOf())
+    }
+
+    fun logPremiumHintUsage(hintType: RewardType) {
+        viewModelScope.launch {
+            val currentLevel = _currentLevel.value.levelInfo.levelId
+            val currentSolution = levelRepository.getCurrentSolution(currentLevel)
+
+            firebaseAnalytics.logEvent(
+                FirebaseCustom.Events.PREMIUM_HINT_USAGE,
+                bundleOf(
+                    Pair(FirebaseCustom.Params.HINT_TYPE, hintType.name),
+                    Pair(FirebaseAnalytics.Param.LEVEL, currentLevel),
+                    Pair(FirebaseCustom.Params.CURRENT_SOLUTION, currentSolution),
+                    Pair(
+                        FirebaseCustom.Params.LEVEL_SOLUTION,
+                        _currentLevel.value.levelInfo.solution
+                    ),
+                    Pair(FirebaseAnalytics.Param.VALUE, 1),
+                )
+            )
+        }
+    }
+
+    fun logRewardGiven(rewardType: RewardType) {
+        viewModelScope.launch {
+            val currentLevel = _currentLevel.value.levelInfo.levelId
+            val currentSolution = levelRepository.getCurrentSolution(currentLevel)
+            firebaseAnalytics.logEvent(
+                FirebaseCustom.Events.REWARD_GIVEN,
+                bundleOf(
+                    Pair(FirebaseCustom.Params.REWARD_AD_TYPE, rewardType.name),
+                    Pair(FirebaseAnalytics.Param.LEVEL, currentLevel),
+                    Pair(FirebaseCustom.Params.CURRENT_SOLUTION, currentSolution),
+                    Pair(
+                        FirebaseCustom.Params.LEVEL_SOLUTION,
+                        _currentLevel.value.levelInfo.solution
+                    ),
+                    Pair(FirebaseAnalytics.Param.VALUE, 1),
+                )
+            )
+        }
+    }
 }
