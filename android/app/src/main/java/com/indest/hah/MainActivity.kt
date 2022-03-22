@@ -81,13 +81,13 @@ class MainActivity : AppCompatActivity(),
         MobileAds.initialize(applicationContext) {
         }
 
-        val testDeviceIds = listOf(
+/*        val testDeviceIds = listOf(
             "6C6A719C306FBA0A0FBE4D81600B8AB1",
             "1C8B057289566E4B36BA860D0A8281CB",
             "06F9B7BCACB746B35A407A17B4D161D9"
         )
         val configuration = RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build()
-        MobileAds.setRequestConfiguration(configuration)
+        MobileAds.setRequestConfiguration(configuration)*/
         generalViewModel.toString()
         applyCustomWindowInsets()
         windowSizeClassUpdater()

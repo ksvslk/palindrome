@@ -42,7 +42,7 @@ class AdsLiveData (private val context: Context) : LiveData<Pair<Boolean, Reward
         if (_rewardedAd == null) {
             val adRequest = AdRequest.Builder().build()
             RewardedAd.load(
-                context, context.getString(R.string.admob_rewarded_ad_unit), adRequest,
+                context, context.getString(R.string.admob_rewarded_ad_unit_fake), adRequest,
                 object : RewardedAdLoadCallback() {
                     override fun onAdFailedToLoad(adError: LoadAdError) {
                         Log.d(TAG, adError.message)
