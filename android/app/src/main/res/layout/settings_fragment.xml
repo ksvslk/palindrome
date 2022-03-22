@@ -9,14 +9,14 @@
     android:orientation="vertical"
     android:paddingVertical="@dimen/default_large_margin"
     app:divider="@drawable/divider"
-    app:dividerPadding="@dimen/simple_dialog_left_margin"
+    app:dividerPadding="@dimen/simple_dialog_header_left_margin"
     app:showDividers="middle">
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/settings_dialog_title"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_header_height"
-        android:layout_marginHorizontal="@dimen/simple_dialog_left_margin"
+        android:layout_marginHorizontal="@dimen/simple_dialog_header_left_margin"
         android:orientation="horizontal">
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -40,6 +40,64 @@
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="2"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/vibration_button"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_height="@dimen/simple_dialog_item_height"
+            android:layout_margin="@dimen/_2sdp"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal">
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/vibration_switch"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/simple_dialog_item_left_margin"
+                android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
+                android:clickable="false"
+                android:layoutDirection="rtl"
+                android:text="@string/vibration_text"
+                android:textAppearance="@style/TextAppearance.OC.Body1"
+                android:textColor="@color/colorOnPrimary" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/sound_button"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_height="@dimen/simple_dialog_item_height"
+            android:layout_margin="@dimen/_2sdp"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal">
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/sound_switch"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/simple_dialog_item_left_margin"
+                android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
+                android:clickable="false"
+                android:layoutDirection="rtl"
+                android:text="@string/sound_text"
+                android:textAppearance="@style/TextAppearance.OC.Body1"
+                android:textColor="@color/colorOnPrimary" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/level_select_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
@@ -53,8 +111,9 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/simple_dialog_left_margin"
+            android:layout_marginStart="@dimen/simple_dialog_item_left_margin"
             android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
+
             android:clickable="false"
             android:contentDescription="@string/level_select"
             android:src="@drawable/baseline_list_alt_black_36"
@@ -84,7 +143,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/simple_dialog_left_margin"
+            android:layout_marginStart="@dimen/simple_dialog_item_left_margin"
             android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
             android:clickable="false"
             android:contentDescription="@string/all_inclusive_pack_text"
@@ -95,7 +154,7 @@
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginRight="@dimen/simple_dialog_left_margin"
+            android:layout_marginRight="@dimen/simple_dialog_header_left_margin"
             android:clickable="false"
             android:gravity="center_vertical"
             android:orientation="horizontal"
@@ -112,55 +171,6 @@
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/sound_button"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/simple_dialog_item_height"
-        android:layout_margin="@dimen/_2sdp"
-        android:background="?android:attr/selectableItemBackground"
-        android:clickable="true"
-        android:focusable="true"
-        android:orientation="horizontal">
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/sound_switch"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/simple_dialog_left_margin"
-            android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
-            android:clickable="false"
-            android:layoutDirection="rtl"
-            android:text="@string/sound_text"
-            android:textAppearance="@style/TextAppearance.OC.Body1"
-            android:textColor="@color/colorOnPrimary" />
-
-    </androidx.appcompat.widget.LinearLayoutCompat>
-
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/vibration_button"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/simple_dialog_item_height"
-        android:layout_margin="@dimen/_2sdp"
-        android:background="?android:attr/selectableItemBackground"
-        android:clickable="true"
-        android:focusable="true"
-        android:orientation="horizontal">
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/vibration_switch"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/simple_dialog_left_margin"
-            android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
-            android:clickable="false"
-            android:layoutDirection="rtl"
-            android:text="@string/vibration_text"
-            android:textAppearance="@style/TextAppearance.OC.Body1"
-            android:textColor="@color/colorOnPrimary" />
-    </androidx.appcompat.widget.LinearLayoutCompat>
-
-    <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/rate_game_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
@@ -174,7 +184,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/simple_dialog_left_margin"
+            android:layout_marginStart="@dimen/simple_dialog_item_left_margin"
             android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
             android:clickable="false"
             android:contentDescription="@string/rate_game"
@@ -215,7 +225,7 @@
             android:id="@+id/google_sign_in_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/simple_dialog_left_margin"
+            android:layout_marginHorizontal="@dimen/simple_dialog_header_left_margin"
             android:paddingHorizontal="@dimen/_8sdp"
             android:visibility="gone" />
 
@@ -223,7 +233,7 @@
             android:id="@+id/google_sign_out_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/simple_dialog_left_margin"
+            android:layout_marginHorizontal="@dimen/simple_dialog_header_left_margin"
             android:text="@string/log_out"
             android:textAppearance="@style/TextAppearance.OC.Body1" />
     </androidx.appcompat.widget.LinearLayoutCompat>

@@ -2,8 +2,10 @@ package com.indest.hah
 
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.Insets
@@ -22,13 +24,12 @@ import androidx.window.layout.WindowMetricsCalculator
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.indest.hah.ads.RewardType
 import com.indest.hah.databinding.ActivityMainBinding
 import com.indest.hah.fragments.ExitGameDialogFragment
 import com.indest.hah.fx.SoundPlayer
-import com.indest.hah.game.creation.WindowSizeClass
 import com.indest.hah.game.creation.BookMode
+import com.indest.hah.game.creation.WindowSizeClass
 import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.general.GeneralViewModel
 import com.indest.hah.general.SignInLiveData
@@ -43,6 +44,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(),
@@ -99,6 +101,7 @@ class MainActivity : AppCompatActivity(),
         levelViewModel.startSavingGame()
         levelViewModel.setUiStateWhenOnResume()
         Log.d(TAG, "onResume")
+        getScreenSize()
     }
 
     override fun onPause() {
@@ -106,6 +109,42 @@ class MainActivity : AppCompatActivity(),
         Log.d(TAG, "onPause")
         levelViewModel.stopSavingGame()
         levelViewModel.setUiStateWhenOnPause()
+    }
+
+    private fun getScreenSize() {
+        when {
+            resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK == Configuration.SCREENLAYOUT_SIZE_LARGE -> {
+                Log.d(TAG, "DENSITY: LARGE SCREEN; ${getScreenDensity()}")
+            }
+            resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK == Configuration.SCREENLAYOUT_SIZE_NORMAL -> {
+                Log.d(TAG, "DENSITY: NORMAL SCREEN; ${getScreenDensity()}")
+            }
+            resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK == Configuration.SCREENLAYOUT_SIZE_SMALL -> {
+                Log.d(TAG, "DENSITY: SMALL SCREEN; ${getScreenDensity()}")
+            }
+            else -> {
+                Log.d(TAG, "DENSITY: Is not large, normal or small screen. And ${getScreenDensity()}")
+            }
+        }
+    }
+
+    private fun getScreenDensity():String {
+        val metrics = DisplayMetrics()
+        windowManager.defaultDisplay.getMetrics(metrics)
+        return when (val density = metrics.densityDpi) {
+            DisplayMetrics.DENSITY_HIGH -> {
+                "DENSITY_HIGH... Density is $density"
+            }
+            DisplayMetrics.DENSITY_MEDIUM -> {
+                "DENSITY_MEDIUM... Density is $density"
+            }
+            DisplayMetrics.DENSITY_LOW -> {
+                "DENSITY_LOW... Density is $density"
+            }
+            else -> {
+                "Density is neither HIGH, MEDIUM OR LOW. Density is $density"
+            }
+        }
     }
 
     private fun collectRewardInfo() {

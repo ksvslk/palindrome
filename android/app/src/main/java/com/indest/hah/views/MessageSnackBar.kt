@@ -123,8 +123,8 @@ class MessageSnackBar(
                             }
                         }
                         densityDpi in DisplayMetrics.DENSITY_XXHIGH.rangeTo(DisplayMetrics.DENSITY_XXXHIGH) -> {
-                            textBig = context.resources.getDimensionPixelSize(R.dimen._7ssp)
-                            textSmall = context.resources.getDimensionPixelSize(R.dimen._6ssp)
+                            textBig = context.resources.getDimensionPixelSize(R.dimen._6ssp)
+                            textSmall = context.resources.getDimensionPixelSize(R.dimen._5ssp)
                         }
                         densityDpi?.compareTo(DisplayMetrics.DENSITY_XXXHIGH) == 1 || densityDpi?.compareTo(
                             DisplayMetrics.DENSITY_XXXHIGH

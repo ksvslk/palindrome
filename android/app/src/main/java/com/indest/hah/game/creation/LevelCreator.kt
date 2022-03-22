@@ -129,7 +129,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                             "DisplayMetrics.DENSITY_XXHIGH.rangeTo(DisplayMetrics.DENSITY_XXXHIGH) - COMPAT"
                         )
                         val box = ((widthPixels - margin * 2.8) / 7).toInt()
-                        val text = box.div(4.7).toInt()
+                        val text = box.div(5).toInt()
                         Pair(box, text)
                     }
                     else -> {

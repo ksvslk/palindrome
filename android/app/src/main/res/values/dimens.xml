@@ -4,9 +4,10 @@
     <dimen name="default_margin">@dimen/_8sdp</dimen>
     <dimen name="default_padding_text">@dimen/_4sdp</dimen>
 
-    <dimen name="simple_dialog_header_height">@dimen/_64sdp</dimen>
-    <dimen name="simple_dialog_item_height">@dimen/_48sdp</dimen>
-    <dimen name="simple_dialog_left_margin">@dimen/_24sdp</dimen>
+    <dimen name="simple_dialog_header_height">@dimen/_48sdp</dimen>
+    <dimen name="simple_dialog_item_height">@dimen/_38sdp</dimen>
+    <dimen name="simple_dialog_header_left_margin">@dimen/_25sdp</dimen>
+    <dimen name="simple_dialog_item_left_margin">@dimen/_20sdp</dimen>
     <dimen name="simple_dialog_divider_margin">@dimen/_20sdp</dimen>
 
     <dimen name="winning_message_size">@dimen/_7ssp</dimen>

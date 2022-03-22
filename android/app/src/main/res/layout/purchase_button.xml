@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_marginStart="@dimen/simple_dialog_left_margin"
+        android:layout_marginStart="@dimen/simple_dialog_item_left_margin"
         android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
         android:clickable="false"
         android:contentDescription="@string/remove_letter_ads_text"
@@ -22,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clickable="false"
-        android:layout_marginRight="@dimen/simple_dialog_left_margin"
+        android:layout_marginRight="@dimen/simple_dialog_header_left_margin"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:weightSum="2">

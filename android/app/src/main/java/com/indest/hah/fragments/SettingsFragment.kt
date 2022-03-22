@@ -61,12 +61,17 @@ class SettingsFragment : BottomSheetDialogFragment() {
                     binding.rateGameButton.setOnClickListener {
                         when (internet) {
                             true -> {
-                                val intent = Intent(Intent.ACTION_VIEW).apply {
+                                val playStoreIntent = Intent(Intent.ACTION_VIEW).apply {
                                     data = Uri.parse(getString(R.string.app_package_url))
                                     setPackage(getString(R.string.vending_package))
                                 }
-                                if (intent.resolveActivity(requireContext().packageManager) != null) {
-                                    startActivity(intent)
+                                if (playStoreIntent.resolveActivity(requireContext().packageManager) != null) {
+                                    startActivity(playStoreIntent)
+                                } else {
+                                    val browserIntent = Intent(Intent.ACTION_VIEW).apply {
+                                        data = Uri.parse(getString(R.string.app_package_url))
+                                    }
+                                    startActivity(browserIntent)
                                 }
                             }
                             false -> {

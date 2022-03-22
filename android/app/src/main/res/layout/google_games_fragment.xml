@@ -8,7 +8,7 @@
     android:paddingVertical="@dimen/default_large_margin"
     app:divider="@drawable/divider"
     app:showDividers="middle"
-    app:dividerPadding="@dimen/simple_dialog_left_margin"
+    app:dividerPadding="@dimen/simple_dialog_header_left_margin"
     android:orientation="vertical">
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -21,7 +21,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/simple_dialog_left_margin"
+            android:layout_marginStart="@dimen/simple_dialog_header_left_margin"
             android:text="@string/play_games"
             android:textAppearance="@style/TextAppearance.OC.Headline5" />
     </androidx.appcompat.widget.LinearLayoutCompat>
@@ -40,7 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/simple_dialog_left_margin"
+            android:layout_marginStart="@dimen/simple_dialog_item_left_margin"
             android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
             android:contentDescription="@string/leaderboard"
             android:clickable="false"
@@ -71,7 +71,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/simple_dialog_left_margin"
+            android:layout_marginStart="@dimen/simple_dialog_item_left_margin"
             android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
             android:contentDescription="@string/achievements"
             android:clickable="false"

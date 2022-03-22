@@ -223,7 +223,7 @@ class LevelViewModel @Inject constructor(
             _uiState.value = _uiState.value.copy(
                 state = PLAY,
                 solutionData = SolutionData(),
-                refreshLevelUi = true
+                refreshLevelUi = false
             )
         } else if (_uiState.value.state == MENU_ACTION) {
             _uiState.value = _uiState.value.copy(
@@ -232,6 +232,7 @@ class LevelViewModel @Inject constructor(
                 refreshLevelUi = false
             )
         }
+
     }
 
     fun setUiStateWhenOnPause() {

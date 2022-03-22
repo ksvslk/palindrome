@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:paddingVertical="@dimen/default_large_margin"
     app:divider="@drawable/divider"
-    app:dividerPadding="@dimen/simple_dialog_left_margin"
+    app:dividerPadding="@dimen/simple_dialog_header_left_margin"
     app:showDividers="middle">
 
     <ViewFlipper
@@ -22,7 +22,7 @@
             android:id="@+id/scores_dialog_title_1"
             android:layout_width="match_parent"
             android:layout_height="@dimen/simple_dialog_header_height"
-            android:layout_marginHorizontal="@dimen/simple_dialog_left_margin"
+            android:layout_marginHorizontal="@dimen/simple_dialog_header_left_margin"
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -44,7 +44,7 @@
             android:id="@+id/scores_dialog_title_2"
             android:layout_width="match_parent"
             android:layout_height="@dimen/simple_dialog_header_height"
-            android:layout_marginHorizontal="@dimen/simple_dialog_left_margin"
+            android:layout_marginHorizontal="@dimen/simple_dialog_header_left_margin"
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatImageView
