@@ -1,5 +1,6 @@
 package com.indest.hah.fragments
 
+import android.animation.LayoutTransition
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Context
@@ -87,17 +88,12 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                 .setIcon(R.drawable.lightbulb)
         }
         uiStateUpdater()
-        showPlayerCenteredScores()
     }
 
     private fun showPlayerCenteredScores() {
-        lifecycleScope.launchWhenCreated {
-            if (viewModel.increaseIntervalGetResult(getString(R.string.player_centered_scores)) && viewModel.uiState.value.state == PLAY) {
-                parentFragmentManager.commit {
-                    addToBackStack(ScoresFragment().tag)
-                    add(ScoresFragment(), ScoresFragment().tag)
-                }
-            }
+        parentFragmentManager.commit {
+            addToBackStack(ScoresFragment().tag)
+            add(ScoresFragment(), ScoresFragment().tag)
         }
     }
 
@@ -123,6 +119,11 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         showTutorial()
         viewModel.currentLevel.replayCache.firstOrNull()?.levelInfo?.levelId?.let { it1 ->
             askForReview(level = it1)
+        }
+        lifecycleScope.launchWhenResumed {
+            if (viewModel.isShowScores()) {
+                showPlayerCenteredScores()
+            }
         }
     }
 

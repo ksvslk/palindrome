@@ -76,7 +76,15 @@ interface LevelDao {
     suspend fun updateIntervals(intervals: List<Interval>) {
         deleteIntervals()
         intervals.forEach { interval ->
-            insertInterval(interval)
+            val special = "player_centered_scores"
+            if (interval.name == special) {
+                if (!isLimitAttained(special)) {
+                    val modifiedInterval = Interval(name = special, currentCount = 0, limitCount = interval.limitCount)
+                    insertInterval(modifiedInterval)
+                }
+            } else {
+                insertInterval(interval)
+            }
         }
     }
 
@@ -112,16 +120,16 @@ interface LevelDao {
     suspend fun resetCount(name: String)
 
     @Query("select current_count from interval where name = :name")
-    suspend fun getCount(name: String): Int
+    suspend fun getIntervalCount(name: String): Int
 
     @Query("update interval set current_count = :count where name = :name")
     suspend fun setCountTo(name: String, count: Int)
 
-    @Query("select exists (select 1 from interval where name = :name and current_count = limit_count)")
+    @Query("select exists (select 1 from interval where name = :name and current_count >= limit_count)")
     suspend fun isLimitAttained(name: String): Boolean
 
     @Query("select exists (select 1 from interval where name = :name and current_count = limit_count)")
-    fun sadModeIntervalFlow(name:String):Flow<Boolean>
+    fun sadModeIntervalFlow(name: String): Flow<Boolean>
 
     @Transaction
     suspend fun increaseCountTransaction(name: String): Boolean {
@@ -269,6 +277,6 @@ interface LevelDao {
 
     @Query("select max(level_id) = :currentLevel from level_info_table")
     //@Query("select 3 = :currentLevel from level_info_table")
-    suspend fun isFinalLevel(currentLevel:Int):Boolean
+    suspend fun isFinalLevel(currentLevel: Int): Boolean
 
 }

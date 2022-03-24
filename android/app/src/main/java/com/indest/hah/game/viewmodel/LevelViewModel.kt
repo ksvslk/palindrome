@@ -4,20 +4,16 @@ import android.app.Application
 import android.os.Bundle
 import android.util.Log
 import androidx.core.os.bundleOf
-import androidx.fragment.app.commit
-import androidx.fragment.app.replace
 import androidx.lifecycle.*
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.games.Games
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.indest.hah.R
 import com.indest.hah.ads.RewardType
-import com.indest.hah.fragments.EpilogueFragment
 import com.indest.hah.game.creation.BookMode
 import com.indest.hah.game.viewmodel.ContainerState.*
 import com.indest.hah.game.creation.WindowSizeClass
 import com.indest.hah.general.AccountStatus
-import com.indest.hah.other.C
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
 import com.indest.hah.persistance.level.LevelProgress
@@ -168,6 +164,14 @@ class LevelViewModel @Inject constructor(
                 Log.d(TAG, _uiState.value.toString())
             }
         }
+    }
+
+    suspend fun isShowScores(): Boolean {
+        val showScoresString =
+            getApplication<Application>().getString(R.string.player_centered_scores)
+        val limitReached = levelRepository.isLimitAttained(showScoresString)
+        if (limitReached) resetIntervalCount(showScoresString)
+        return limitReached
     }
 
     suspend fun isLastLevel(): Boolean {
@@ -332,16 +336,6 @@ class LevelViewModel @Inject constructor(
         viewModelScope.launch {
             _currentLevel.value.levelInfo.let { levelInfo ->
                 val hintInterval = getApplication<Application>().getString(R.string.hint_suggestion)
-                val scoreInterval =
-                    getApplication<Application>().getString(R.string.player_centered_scores)
-                val currentScoreIntervalCount = levelRepository.getCount(scoreInterval)
-
-                // Loading each level gives +1 so to balance it out we will -1 each level
-                // change made from "Level Select" screen as this is not part of the intended gameplay.
-                if (currentScoreIntervalCount > 0) {
-                    levelRepository.setCountTo(scoreInterval, currentScoreIntervalCount - 1)
-                }
-
                 levelRepository.setCountTo(hintInterval, 0)
                 levelRepository.nextLevelActions(
                     levelInfo.levelId,
@@ -357,21 +351,14 @@ class LevelViewModel @Inject constructor(
         }
     }
 
-    suspend fun increaseIntervalGetResult(interval: String): Boolean {
-        return levelRepository.increaseCountAndGetResult(interval)
-    }
-
-    private suspend fun increaseIntervalCount(name: String) {
-        levelRepository.increaseCount(name)
-    }
-
     fun executeLevelCompleteActions() {
         _uiState.value = _uiState.value.copy(state = PAUSED)
         val levelNr = _currentLevel.value.levelInfo.levelId
         val hintInterval = getApplication<Application>().getString(R.string.hint_suggestion)
         viewModelScope.launch {
             levelRepository.executeLevelCompleteTransaction(levelNr, hintInterval)
-            increaseIntervalCount(getApplication<Application>().getString(R.string.sad_mode_interval))
+            levelRepository.increaseCount(getApplication<Application>().getString(R.string.sad_mode_interval))
+            levelRepository.increaseCount(getApplication<Application>().getString(R.string.player_centered_scores))
             saveGameImmediately()
             logLevelStart()
         }
@@ -596,7 +583,10 @@ class LevelViewModel @Inject constructor(
             val parameters = Bundle().apply {
                 this.putInt(FirebaseAnalytics.Param.LEVEL, _currentLevel.value.levelInfo.levelId)
                 this.putFloat(FirebaseCustom.Params.SCORE_TO_MAX_RATIO, scoreToMaxRatio)
-                this.putString(FirebaseCustom.Params.LEVEL_SOLUTION, _currentLevel.value.levelInfo.solution)
+                this.putString(
+                    FirebaseCustom.Params.LEVEL_SOLUTION,
+                    _currentLevel.value.levelInfo.solution
+                )
             }
             firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LEVEL_END, parameters)
         }

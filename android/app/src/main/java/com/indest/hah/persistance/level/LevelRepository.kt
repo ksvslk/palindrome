@@ -1,5 +1,6 @@
 package com.indest.hah.persistance.level
 
+import com.indest.hah.persistance.dto.Interval
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
 import com.indest.hah.persistance.dto.SaveGame
@@ -66,8 +67,8 @@ class LevelRepository @Inject constructor(
         levelDao.setCountTo(name, count)
     }
 
-    suspend fun getCount(name: String): Int {
-        return levelDao.getCount(name)
+    suspend fun getIntervalCount(name: String): Int {
+        return levelDao.getIntervalCount(name)
     }
 
     suspend fun increaseCountAndGetResult(name: String): Boolean {
@@ -77,6 +78,10 @@ class LevelRepository @Inject constructor(
     suspend fun increaseCount(name:String)
     {
         levelDao.increaseCurrentCount(name)
+    }
+
+    suspend fun isLimitAttained(name:String):Boolean {
+        return levelDao.isLimitAttained(name)
     }
 
     suspend fun executeLevelCompleteTransaction(current: Int, hintInterval: String) {
@@ -103,9 +108,9 @@ class LevelRepository @Inject constructor(
         levelDao.updateCategoryRewarded(value, level)
 
     suspend fun getLocalSaveGame(): SaveGame = levelDao.getLocalSaveGame()
+
     suspend fun updateLocalGame(saveGame: SaveGame) = levelDao.updateLocalGame(saveGame)
 
     suspend fun isFinalLevel(currentLevel:Int) = levelDao.isFinalLevel(currentLevel)
 
-    suspend fun persistInitialLettersInfo(currentLevel: Int) = levelDao.persistInitialLettersInfo(currentLevel)
 }

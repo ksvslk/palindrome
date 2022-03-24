@@ -124,7 +124,7 @@ class MainActivity : AppCompatActivity(),
             .build()
 
         consentInformation = UserMessagingPlatform.getConsentInformation(this)
-        consentInformation?.reset()
+       // consentInformation?.reset()
         consentInformation?.requestConsentInfoUpdate(
             this,
             params,
@@ -347,6 +347,11 @@ class MainActivity : AppCompatActivity(),
 
     override fun onDialogNegativeClick(dialog: DialogFragment) {
         dialog.dismiss()
+    }
+
+    override fun onDestroy() {
+        Log.d(TAG, "onDestroy")
+        super.onDestroy()
     }
 
 }
