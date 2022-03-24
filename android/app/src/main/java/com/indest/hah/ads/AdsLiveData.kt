@@ -10,6 +10,7 @@ import com.google.android.gms.ads.*
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.indest.hah.R
+import java.util.*
 import kotlin.math.min
 
 private const val AD_RELOAD_TIMER_START_MILLISECONDS = 1L * 1000L
@@ -28,6 +29,7 @@ class AdsLiveData (private val context: Context) : LiveData<Pair<Boolean, Reward
     }
 
     override fun onActive() {
+        RequestConfiguration.Builder().setTestDeviceIds(Arrays.asList("110B8025CEE827AEA5BB1074ABAE1663"))
         Log.d(TAG, "onActive")
         loadRewardedAd()
     }

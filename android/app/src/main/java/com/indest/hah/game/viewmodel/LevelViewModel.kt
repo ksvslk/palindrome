@@ -1,6 +1,7 @@
 package com.indest.hah.game.viewmodel
 
 import android.app.Application
+import android.os.Bundle
 import android.util.Log
 import androidx.core.os.bundleOf
 import androidx.fragment.app.commit
@@ -572,53 +573,49 @@ class LevelViewModel @Inject constructor(
     }
 
     private fun logLevelStart() {
-        firebaseAnalytics.logEvent(
-            FirebaseAnalytics.Event.LEVEL_START, bundleOf(
-                Pair(
-                    FirebaseAnalytics.Param.LEVEL,
-                    _currentLevel.value.levelInfo.levelId
-                ),
-                Pair(
-                    FirebaseCustom.Params.LEVEL_SOLUTION,
-                    _currentLevel.value.levelInfo.solution
+        viewModelScope.launch(Dispatchers.Default) {
+            firebaseAnalytics.logEvent(
+                FirebaseAnalytics.Event.LEVEL_START, bundleOf(
+                    Pair(
+                        FirebaseAnalytics.Param.LEVEL,
+                        _currentLevel.value.levelInfo.levelId
+                    ),
+                    Pair(
+                        FirebaseCustom.Params.LEVEL_SOLUTION,
+                        _currentLevel.value.levelInfo.solution
+                    )
                 )
             )
-        )
+        }
     }
 
     private fun logLevelEnd() {
-        firebaseAnalytics.logEvent(
-            FirebaseAnalytics.Event.LEVEL_END, bundleOf(
-                Pair(
-                    FirebaseAnalytics.Param.LEVEL,
-                    _currentLevel.value.levelInfo.levelId
-                ),
-                Pair(
-                    FirebaseAnalytics.Param.SCORE,
-                    _currentLevel.value.levelInfo.score
-                ),
-                Pair(
-                    FirebaseCustom.Params.MAX_SCORE,
-                    _currentLevel.value.levelInfo.levelId * 100
-                ),
-                Pair(
-                    FirebaseCustom.Params.LEVEL_SOLUTION,
-                    _currentLevel.value.levelInfo.solution
-                )
-            )
-        )
+        viewModelScope.launch(Dispatchers.Default) {
+            val scoreToMaxRatio =
+                _currentLevel.value.levelInfo.score / (_currentLevel.value.levelInfo.levelId * 100f)
+            val parameters = Bundle().apply {
+                this.putInt(FirebaseAnalytics.Param.LEVEL, _currentLevel.value.levelInfo.levelId)
+                this.putFloat(FirebaseCustom.Params.SCORE_TO_MAX_RATIO, scoreToMaxRatio)
+                this.putString(FirebaseCustom.Params.LEVEL_SOLUTION, _currentLevel.value.levelInfo.solution)
+            }
+            firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LEVEL_END, parameters)
+        }
     }
 
     fun logTutorialBegin() {
-        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.TUTORIAL_BEGIN, bundleOf())
+        viewModelScope.launch(Dispatchers.Default) {
+            firebaseAnalytics.logEvent(FirebaseAnalytics.Event.TUTORIAL_BEGIN, bundleOf())
+        }
     }
 
     fun logTutorialComplete() {
-        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.TUTORIAL_COMPLETE, bundleOf())
+        viewModelScope.launch(Dispatchers.Default) {
+            firebaseAnalytics.logEvent(FirebaseAnalytics.Event.TUTORIAL_COMPLETE, bundleOf())
+        }
     }
 
     fun logPremiumHintUsage(hintType: RewardType) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
             val currentLevel = _currentLevel.value.levelInfo.levelId
             val currentSolution = levelRepository.getCurrentSolution(currentLevel)
 
@@ -639,7 +636,7 @@ class LevelViewModel @Inject constructor(
     }
 
     fun logRewardGiven(rewardType: RewardType) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
             val currentLevel = _currentLevel.value.levelInfo.levelId
             val currentSolution = levelRepository.getCurrentSolution(currentLevel)
             firebaseAnalytics.logEvent(

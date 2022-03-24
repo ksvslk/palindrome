@@ -36,9 +36,10 @@ class LevelRepository @Inject constructor(
         return levelDao.updateLetters(homeIndex1, homeIndex2, letter1, letter2, level)
     }
 
-    suspend fun getCurrentSolution(level:Int):String
-    {
-        return levelDao.getCurrentSolution(level).joinToString()
+    suspend fun getCurrentSolution(level: Int): String {
+        val guess = levelDao.getCurrentSolution(level).joinToString("")
+        return guess.map<Any> { char -> if ("^([?!.,’])".contains(char)) "" else char }
+            .joinToString("")
     }
 
     suspend fun updateScore(newScore: Int, level: Int) {

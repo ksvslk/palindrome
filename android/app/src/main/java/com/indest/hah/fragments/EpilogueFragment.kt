@@ -3,8 +3,7 @@ package com.indest.hah.fragments
 import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.graphics.*
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -15,6 +14,7 @@ import android.view.WindowManager
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.animation.doOnEnd
+import androidx.core.app.ActivityCompat.invalidateOptionsMenu
 import androidx.core.view.doOnNextLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -139,7 +139,8 @@ class EpilogueFragment : Fragment(R.layout.epilogue_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         (requireActivity() as? MainActivity)?.let {
-            it.binding.bottomNavView.visibility = View.INVISIBLE
+            it.binding.bottomNavView.menu.findItem(R.id.navigation_goods).isEnabled = false
+            it.binding.bottomNavView.menu.findItem(R.id.navigation_goods).setIcon(R.drawable.ic_baseline_not_interested_24)
             val parade = animations.getParade()
             it.binding.konfettiView.start(parade)
             playTrainAnimation()

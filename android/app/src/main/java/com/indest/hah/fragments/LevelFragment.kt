@@ -3,6 +3,7 @@ package com.indest.hah.fragments
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Context
+import android.graphics.BlendMode
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -81,14 +82,16 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (requireActivity() as? MainActivity)?.let {
-            it.binding.bottomNavView.visibility = View.VISIBLE
+            it.binding.bottomNavView.menu.findItem(R.id.navigation_goods).isEnabled = true
+            it.binding.bottomNavView.menu.findItem(R.id.navigation_goods)
+                .setIcon(R.drawable.lightbulb)
         }
         uiStateUpdater()
         showPlayerCenteredScores()
     }
 
     private fun showPlayerCenteredScores() {
-        lifecycleScope.launch {
+        lifecycleScope.launchWhenCreated {
             if (viewModel.increaseIntervalGetResult(getString(R.string.player_centered_scores)) && viewModel.uiState.value.state == PLAY) {
                 parentFragmentManager.commit {
                     addToBackStack(ScoresFragment().tag)
@@ -307,7 +310,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     private fun showContinueMessage(uiState: UiState, isLastLevel: Boolean = false) {
         val continueMessage = MessageSnackBar.make(
             view = binding.levelFragment,
-            message = if(!isLastLevel) getString(R.string.tap_to_continue) else getString(R.string.tap_to_finish),
+            message = if (!isLastLevel) getString(R.string.tap_to_continue) else getString(R.string.tap_to_finish),
             duration = Int.MAX_VALUE,
             windowSizeClassWidth = uiState.windowSizeClass,
             isBookMode = uiState.bookMode,

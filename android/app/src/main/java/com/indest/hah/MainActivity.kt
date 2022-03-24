@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.Insets
@@ -22,8 +21,11 @@ import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoTracker
 import androidx.window.layout.WindowMetricsCalculator
 import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.ump.ConsentForm
+import com.google.android.ump.ConsentInformation
+import com.google.android.ump.ConsentRequestParameters
+import com.google.android.ump.UserMessagingPlatform
 import com.indest.hah.ads.RewardType
 import com.indest.hah.databinding.ActivityMainBinding
 import com.indest.hah.fragments.ExitGameDialogFragment
@@ -54,6 +56,8 @@ class MainActivity : AppCompatActivity(),
     lateinit var binding: ActivityMainBinding
     private val levelViewModel: LevelViewModel by viewModels()
     private val generalViewModel: GeneralViewModel by viewModels()
+    private var consentInformation: ConsentInformation? = null
+    private var consentForm: ConsentForm? = null
 
     @Inject
     lateinit var signInObserver: SignInLiveData
@@ -94,6 +98,7 @@ class MainActivity : AppCompatActivity(),
         setUpNavController()
         progressBarUpdater()
         collectRewardInfo()
+        requestLatestConsentInformation()
     }
 
     override fun onResume() {
@@ -109,6 +114,48 @@ class MainActivity : AppCompatActivity(),
         Log.d(TAG, "onPause")
         levelViewModel.stopSavingGame()
         levelViewModel.setUiStateWhenOnPause()
+    }
+
+    private fun requestLatestConsentInformation()
+    {
+        // Set tag for underage of consent. false means users are not underage.
+        val params = ConsentRequestParameters.Builder()
+            .setTagForUnderAgeOfConsent(false)
+            .build()
+
+        consentInformation = UserMessagingPlatform.getConsentInformation(this)
+        consentInformation?.reset()
+        consentInformation?.requestConsentInfoUpdate(
+            this,
+            params,
+            {
+                // The consent information state was updated.
+                // You are now ready to check if a form is available.
+                if (consentInformation?.isConsentFormAvailable == true) {
+                    loadForm();
+                }
+            },
+            {
+                Log.e(TAG, "Message: ${it.message}. Code: ${it.errorCode}.")
+            })
+    }
+
+    private fun loadForm() {
+        UserMessagingPlatform.loadConsentForm(
+            this,
+            { consentForm ->
+                this@MainActivity.consentForm = consentForm
+                if (consentInformation!!.consentStatus == ConsentInformation.ConsentStatus.REQUIRED) {
+                    consentForm.show(
+                        this@MainActivity
+                    ) { // Handle dismissal by reloading form.
+                        loadForm()
+                    }
+                }
+            }
+        ) {
+            Log.e(TAG, "Message: ${it.message}. Code: ${it.errorCode}.")
+        }
     }
 
     private fun getScreenSize() {

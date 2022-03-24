@@ -4,13 +4,7 @@ import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.Uri
-import android.os.Environment
-import android.provider.MediaStore
 import android.util.Log
-import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.asFlow
@@ -27,13 +21,9 @@ import com.indest.hah.persistance.level.LevelRepository
 import com.indest.hah.views.ButtonState
 import com.sample.android.trivialdrivesample.billing.BillingDataSource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileOutputStream
-import java.io.OutputStream
-import java.lang.Exception
 import javax.inject.Inject
 
 @HiltViewModel
@@ -258,18 +248,20 @@ class GeneralViewModel @Inject constructor(
     }
 
     fun getShareIntent(screen: String): Intent {
-        FirebaseAnalytics.getInstance(getApplication<Application>().applicationContext).apply {
-            this.logEvent(
-                FirebaseCustom.Events.SHARE_GAME_CLICKED,
-                bundleOf(Pair(FirebaseCustom.Params.POINT_IN_GAME, screen))
-            )
+        viewModelScope.launch(Dispatchers.Default) {
+            FirebaseAnalytics.getInstance(getApplication<Application>().applicationContext).apply {
+                this.logEvent(
+                    FirebaseCustom.Events.SHARE_GAME_CLICKED,
+                    bundleOf(Pair(FirebaseCustom.Params.ORIGIN_SCREEN, screen))
+                )
+            }
         }
         val puzzle = "\uD83C\uDD30\uD83C\uDD30\uD83C\uDD31\uD83C\uDD31"
         return Intent.createChooser(Intent().apply {
             action = Intent.ACTION_SEND
             putExtra(
                 Intent.EXTRA_TEXT,
-                "Solve puzzle: $puzzle. It is a famous band and also a palindrome! Find more puzzles: https://play.google.com/store/apps/details?id=${BuildConfig.APPLICATION_ID}"
+                "Rearrange chars to solve puzzle: $puzzle. Hint: famous band and most importantly - palindrome! Play full game: https://play.google.com/store/apps/details?id=${BuildConfig.APPLICATION_ID}"
             )
             type = "text/plain"
         }, "Share Game")

@@ -54,7 +54,8 @@ class LevelItemAdapter(
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
         levelItemViewHolder.textView.text = dataSet[position].levelId.toString()
-        levelItemViewHolder.itemView.isClickable =
+
+       levelItemViewHolder.itemView.isClickable =
             if (dataSet[position].progress == LevelProgress.TODO) {
                 levelItemViewHolder.textView.isEnabled = false
                 false
