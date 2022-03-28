@@ -9,7 +9,7 @@ import com.indest.hah.persistance.dto.LevelData
 
 
 /*@Serializable
-data class LevelInfo(val category: String, val solution:String)*/
+data class LevelInfo(val nr:Int, val category: String, val solution:String)*/
 
 @Database(
     entities = [LevelData::class, LetterProperties::class, Interval::class],

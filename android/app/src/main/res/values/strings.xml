@@ -98,16 +98,13 @@
         <item>Keep trying.</item>
         <item>Take another stab.</item>
         <item>Palindrome required.</item>
-        <item>Guess once more.</item>
         <item>Look it over.</item>
     </string-array>
 
     <string-array name="palindrome_wrong_texts">
-        <item>False palindrome.</item>
-        <item>Illogical palindrome.</item>
-        <item>Bogus palindrome.</item>
-        <item>Incorrect palindrome.</item>
-        <item>Unreasonable palindrome.</item>
+        <item>Wrong palindrome.</item>
+        <item>Forbidden palindrome.</item>
+        <item>Disallowed palindrome.</item>
     </string-array>
 
     <!-- Interval table -->

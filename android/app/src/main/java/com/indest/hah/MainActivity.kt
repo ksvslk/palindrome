@@ -124,7 +124,6 @@ class MainActivity : AppCompatActivity(),
             .build()
 
         consentInformation = UserMessagingPlatform.getConsentInformation(this)
-       // consentInformation?.reset()
         consentInformation?.requestConsentInfoUpdate(
             this,
             params,
