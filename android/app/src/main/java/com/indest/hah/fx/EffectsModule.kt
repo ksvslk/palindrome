@@ -55,7 +55,8 @@ object EffectsModule {
             normalMode = soundPool.load(context, R.raw.normal_mode, 1),
             switchLettersSoundId = soundPool.load(context, R.raw.double_finger, 1),
             placeLetterSoundId = soundPool.load(context, R.raw.block_hit, 1),
-            letterRewardedSoundId = soundPool.load(context, R.raw.hint_revealed, 1)
+            letterRewardedSoundId = soundPool.load(context, R.raw.hint_revealed, 1),
+            triumph = soundPool.load(context, R.raw.triumph, 1)
         )
     }
 

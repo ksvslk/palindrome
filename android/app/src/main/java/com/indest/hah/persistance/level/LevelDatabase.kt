@@ -7,9 +7,8 @@ import com.indest.hah.persistance.dto.Interval
 import com.indest.hah.persistance.dto.LetterProperties
 import com.indest.hah.persistance.dto.LevelData
 
-
 /*@Serializable
-data class LevelInfo(val nr:Int, val category: String, val solution:String)*/
+data class LevelInfo(val nr: Int, val category: String, val solution: String, val levelPack:Int)*/
 
 @Database(
     entities = [LevelData::class, LetterProperties::class, Interval::class],
@@ -39,7 +38,7 @@ abstract class LevelDatabase : RoomDatabase() {
                     )
                         .createFromAsset("dbd.db")
                         .fallbackToDestructiveMigration()
-                         /*
+                        /*
                         .addCallback(object : RoomDatabase.Callback() {
 
                             private val jsonInstance = Json { isLenient = true }
@@ -54,66 +53,68 @@ abstract class LevelDatabase : RoomDatabase() {
                                         "end;"
                                 db.execSQL(trigger)
 
-                               val json = context.applicationContext.assets.open("puzzles.json").bufferedReader().use {
-                                   it.readText()
-                               }
+                                val json =
+                                    context.applicationContext.assets.open("level_pack_1.json")
+                                        .bufferedReader().use {
+                                        it.readText()
+                                    }
 
                                 val levels = jsonInstance
                                     .decodeFromString<List<JsonElement>>(json)
-                                    .map { jsonInstance.decodeFromJsonElement(it) as LevelInfo}
+                                    .map { jsonInstance.decodeFromJsonElement(it) as LevelInfo }
 
-                               for (i in levels.indices) {
-                                   val puzzle = ""
-                                   val category = levels[i].category
-                                   val progress = LevelProgress.TODO
-                                   val score = (i + 1) * 100
+                                for (i in levels.indices) {
+                                    val puzzle = ""
+                                    val category = levels[i].category
+                                    val progress = LevelProgress.TODO
+                                    val score = (i + 1) * 100
 
-                                   val contentValues = ContentValues()
-                                   contentValues.put("level_id", i + 1)
-                                   contentValues.put("solution", levels[i].solution)
-                                   contentValues.put("puzzle", puzzle)
-                                   contentValues.put("category", category)
-                                   contentValues.put("category_rewarded", false)
-                                   contentValues.put("progress", progress.ordinal)
-                                   contentValues.put("score", score)
-                                   contentValues.put("best_score", 0)
-                                   contentValues.put("time_modified", 0)
+                                    val contentValues = ContentValues()
+                                    contentValues.put("level_id", i + 1)
+                                    contentValues.put("solution", levels[i].solution)
+                                    contentValues.put("puzzle", puzzle)
+                                    contentValues.put("category", category)
+                                    contentValues.put("category_rewarded", false)
+                                    contentValues.put("progress", progress.ordinal)
+                                    contentValues.put("score", score)
+                                    contentValues.put("best_score", 0)
+                                    contentValues.put("time_modified", 0)
+                                    contentValues.put("level_pack", levels[i].levelPack)
 
-                                   db.insert(
-                                       "level_info_table",
-                                       OnConflictStrategy.IGNORE,
-                                       contentValues
-                                   )
-                               }
+                                    db.insert(
+                                        "level_info_table",
+                                        OnConflictStrategy.IGNORE,
+                                        contentValues
+                                    )
+                                }
 
-                               val intervals = ArrayList<String>()
-                               intervals.add(context.getString(com.indest.hah.R.string.sad_mode_interval))
-                               intervals.add(context.getString(com.indest.hah.R.string.player_centered_scores))
-                               intervals.add(context.getString(com.indest.hah.R.string.hint_suggestion))
-                               intervals.add(context.getString(com.indest.hah.R.string.achievement_flawless_5))
-                               intervals.add(context.getString(com.indest.hah.R.string.achievement_flawless_15))
+                                val intervals = ArrayList<String>()
+                                intervals.add(context.getString(com.indest.hah.R.string.sad_mode_interval))
+                                intervals.add(context.getString(com.indest.hah.R.string.player_centered_scores))
+                                intervals.add(context.getString(com.indest.hah.R.string.hint_suggestion))
+                                intervals.add(context.getString(com.indest.hah.R.string.achievement_flawless_5))
+                                intervals.add(context.getString(com.indest.hah.R.string.achievement_flawless_15))
 
-                               intervals.forEach {
-                                   val interval = ContentValues()
-                                   val limit = when(it)
-                                   {
-                                       context.getString(com.indest.hah.R.string.sad_mode_interval) -> 10
-                                       context.getString(com.indest.hah.R.string.player_centered_scores) -> 6
-                                       context.getString(com.indest.hah.R.string.hint_suggestion) -> 3
-                                       context.getString(com.indest.hah.R.string.achievement_flawless_5) -> 5
-                                       context.getString(com.indest.hah.R.string.achievement_flawless_15) -> 15
-                                       else -> 7
-                                   }
-                                   interval.put("name", it)
-                                   interval.put("current_count", 0)
-                                   interval.put("limit_count", limit)
+                                intervals.forEach {
+                                    val interval = ContentValues()
+                                    val limit = when (it) {
+                                        context.getString(com.indest.hah.R.string.sad_mode_interval) -> 10
+                                        context.getString(com.indest.hah.R.string.player_centered_scores) -> 6
+                                        context.getString(com.indest.hah.R.string.hint_suggestion) -> 3
+                                        context.getString(com.indest.hah.R.string.achievement_flawless_5) -> 5
+                                        context.getString(com.indest.hah.R.string.achievement_flawless_15) -> 15
+                                        else -> 7
+                                    }
+                                    interval.put("name", it)
+                                    interval.put("current_count", 0)
+                                    interval.put("limit_count", limit)
 
-                                   db.insert(
-                                       "interval",
-                                       OnConflictStrategy.IGNORE,
-                                       interval
-                                   )
-                               }
+                                    db.insert(
+                                        "interval",
+                                        OnConflictStrategy.IGNORE,
+                                        interval
+                                    )
+                                }
 
                             }
                         }

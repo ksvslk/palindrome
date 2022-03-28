@@ -19,7 +19,6 @@ import com.indest.hah.MainActivity
 import com.indest.hah.R
 import com.indest.hah.other.C
 import com.indest.hah.other.saveBooleanPreference
-import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityScoped
 

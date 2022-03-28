@@ -15,7 +15,7 @@ class Level(
     val lettersProperties: List<LetterProperties>,
 ):Serializable {
     constructor() : this(
-        LevelData(0,"_EMPTY_CONSTRUCTOR_","","",false, LevelProgress.IN_PROGRESS,0, 0, 0),
+        LevelData(0,"_EMPTY_CONSTRUCTOR_","","",false, LevelProgress.IN_PROGRESS,0, 0, 0, LevelPack.NONE),
         emptyList()
     )
 

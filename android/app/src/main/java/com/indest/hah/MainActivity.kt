@@ -2,7 +2,6 @@ package com.indest.hah
 
 import android.content.res.Configuration
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
@@ -85,13 +84,6 @@ class MainActivity : AppCompatActivity(),
         MobileAds.initialize(applicationContext) {
         }
 
-/*        val testDeviceIds = listOf(
-            "6C6A719C306FBA0A0FBE4D81600B8AB1",
-            "1C8B057289566E4B36BA860D0A8281CB",
-            "06F9B7BCACB746B35A407A17B4D161D9"
-        )
-        val configuration = RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build()
-        MobileAds.setRequestConfiguration(configuration)*/
         generalViewModel.toString()
         applyCustomWindowInsets()
         windowSizeClassUpdater()
@@ -103,10 +95,8 @@ class MainActivity : AppCompatActivity(),
 
     override fun onResume() {
         super.onResume()
-        levelViewModel.startSavingGame()
         levelViewModel.setUiStateWhenOnResume()
         Log.d(TAG, "onResume")
-        getScreenSize()
     }
 
     override fun onPause() {
@@ -114,6 +104,12 @@ class MainActivity : AppCompatActivity(),
         Log.d(TAG, "onPause")
         levelViewModel.stopSavingGame()
         levelViewModel.setUiStateWhenOnPause()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        levelViewModel.saveGameImmediately()
+        Log.d(TAG, "onStop")
     }
 
     private fun requestLatestConsentInformation()
@@ -154,42 +150,6 @@ class MainActivity : AppCompatActivity(),
             }
         ) {
             Log.e(TAG, "Message: ${it.message}. Code: ${it.errorCode}.")
-        }
-    }
-
-    private fun getScreenSize() {
-        when {
-            resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK == Configuration.SCREENLAYOUT_SIZE_LARGE -> {
-                Log.d(TAG, "DENSITY: LARGE SCREEN; ${getScreenDensity()}")
-            }
-            resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK == Configuration.SCREENLAYOUT_SIZE_NORMAL -> {
-                Log.d(TAG, "DENSITY: NORMAL SCREEN; ${getScreenDensity()}")
-            }
-            resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK == Configuration.SCREENLAYOUT_SIZE_SMALL -> {
-                Log.d(TAG, "DENSITY: SMALL SCREEN; ${getScreenDensity()}")
-            }
-            else -> {
-                Log.d(TAG, "DENSITY: Is not large, normal or small screen. And ${getScreenDensity()}")
-            }
-        }
-    }
-
-    private fun getScreenDensity():String {
-        val metrics = DisplayMetrics()
-        windowManager.defaultDisplay.getMetrics(metrics)
-        return when (val density = metrics.densityDpi) {
-            DisplayMetrics.DENSITY_HIGH -> {
-                "DENSITY_HIGH... Density is $density"
-            }
-            DisplayMetrics.DENSITY_MEDIUM -> {
-                "DENSITY_MEDIUM... Density is $density"
-            }
-            DisplayMetrics.DENSITY_LOW -> {
-                "DENSITY_LOW... Density is $density"
-            }
-            else -> {
-                "Density is neither HIGH, MEDIUM OR LOW. Density is $density"
-            }
         }
     }
 

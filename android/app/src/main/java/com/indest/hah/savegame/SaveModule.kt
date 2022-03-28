@@ -1,7 +1,6 @@
 package com.indest.hah.savegame
 
 import android.content.Context
-import com.indest.hah.persistance.dto.SaveGame
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

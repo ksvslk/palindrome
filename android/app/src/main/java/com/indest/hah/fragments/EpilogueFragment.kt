@@ -1,12 +1,9 @@
 package com.indest.hah.fragments
 
 import android.animation.ObjectAnimator
-import android.content.Context
 import android.content.Intent
-import android.graphics.*
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +11,6 @@ import android.view.WindowManager
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.animation.doOnEnd
-import androidx.core.app.ActivityCompat.invalidateOptionsMenu
 import androidx.core.view.doOnNextLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -24,7 +20,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.games.Games
-import com.indest.hah.BuildConfig
 import com.indest.hah.MainActivity
 import com.indest.hah.R
 import com.indest.hah.databinding.EpilogueFragmentBinding
@@ -34,7 +29,6 @@ import com.indest.hah.general.GeneralViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
-import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 

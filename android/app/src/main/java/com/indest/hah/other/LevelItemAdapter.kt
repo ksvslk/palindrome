@@ -55,14 +55,14 @@ class LevelItemAdapter(
         // contents of the view with that element
         levelItemViewHolder.textView.text = dataSet[position].levelId.toString()
 
-    /*    levelItemViewHolder.itemView.isClickable =
+        levelItemViewHolder.itemView.isClickable =
             if (dataSet[position].progress == LevelProgress.TODO) {
                 levelItemViewHolder.textView.isEnabled = false
                 false
             } else {
                 levelItemViewHolder.textView.isEnabled = true
                 true
-            }*/
+            }
         currentLevel?.let {
             if (it == dataSet[position].levelId) {
                 levelItemViewHolder.setIsRecyclable(false)

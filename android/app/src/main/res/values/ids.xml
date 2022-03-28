@@ -6,12 +6,8 @@
     <!--app_id-->
     <string name="app_preferences" translatable="false">AppPreferences</string>
 
-    <!-- Unity ads -->
-    <string name="game_id" translatable="false">4562975</string>
-    <string name="ad_unit_rewarded" translatable="false">Rewarded_Android</string>
-
-    <string name="admob_app_id_fake" translatable="false">ca-app-pub-3940256099942544~3347511713</string> <!-- TODO: Fake id -->
-    <string name="admob_rewarded_ad_unit_fake" translatable="false">ca-app-pub-3940256099942544/5224354917</string> <!-- TODO: Fake id -->
+<!--    <string name="admob_app_id_fake" translatable="false">ca-app-pub-3940256099942544~3347511713</string> &lt;!&ndash; TODO: Fake id &ndash;&gt;
+    <string name="admob_rewarded_ad_unit_fake" translatable="false">ca-app-pub-3940256099942544/5224354917</string> &lt;!&ndash; TODO: Fake id &ndash;&gt;-->
 
     <string name="admob_app_id" translatable="false">ca-app-pub-5386053272091445~8107886899</string>
     <string name="admob_rewarded_ad_unit" translatable="false">ca-app-pub-5386053272091445/9690912366</string>

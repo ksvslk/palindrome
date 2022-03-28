@@ -10,5 +10,6 @@ data class Sounds(
     val letterRewardedSoundId:Int,
     val sadMode:Int,
     val normalMode:Int,
-    val noteSounds:ArrayList<Int>
+    val noteSounds:ArrayList<Int>,
+    val triumph:Int,
 )

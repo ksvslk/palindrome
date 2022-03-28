@@ -1,10 +1,8 @@
 package com.indest.hah.fragments
 
-import android.animation.LayoutTransition
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Context
-import android.graphics.BlendMode
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,9 +11,8 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.TextView
 import androidx.appcompat.widget.LinearLayoutCompat
-import androidx.core.animation.*
+import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
 import androidx.core.view.children
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.doOnPreDraw
@@ -27,7 +24,6 @@ import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.play.core.review.ReviewManagerFactory
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.indest.hah.MainActivity
 import com.indest.hah.R
 import com.indest.hah.ads.RewardType
@@ -35,19 +31,20 @@ import com.indest.hah.ads.RewardType.*
 import com.indest.hah.databinding.LevelFragmentBinding
 import com.indest.hah.fx.Animations
 import com.indest.hah.fx.SoundPlayer
-import com.indest.hah.game.director.CellDirector
-import com.indest.hah.game.viewmodel.Solution.*
-import com.indest.hah.game.viewmodel.ContainerState.*
 import com.indest.hah.game.creation.LevelCreator
+import com.indest.hah.game.director.CellDirector
+import com.indest.hah.game.viewmodel.ContainerState.*
 import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.game.viewmodel.Solution
+import com.indest.hah.game.viewmodel.Solution.*
 import com.indest.hah.game.viewmodel.UiState
 import com.indest.hah.other.C
 import com.indest.hah.other.VaryingProbability
 import com.indest.hah.views.Cell
 import com.indest.hah.views.MessageSnackBar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -329,6 +326,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                 if (!isLastLevel) {
                     viewModel.executeLevelCompleteActions()
                 } else {
+                    soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.2f)
                     parentFragmentManager.commit {
                         viewModel.executeLevelCompleteActionsFinal()
                         setReorderingAllowed(true)

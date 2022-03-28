@@ -3,7 +3,6 @@ package com.indest.hah.views
 import android.content.Context
 import android.content.res.TypedArray
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.content.res.AppCompatResources
@@ -11,8 +10,8 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
-import com.indest.hah.general.GeneralViewModel
 import com.indest.hah.R
+import com.indest.hah.general.GeneralViewModel
 
 private const val REGULAR_VISIBILITY_CASES = 1
 private const val SPECIAL_VISIBILITY_CASES = 3

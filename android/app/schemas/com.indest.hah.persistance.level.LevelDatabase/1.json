@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "b64a62da02a45697ef5136a8875d8b94",
+    "identityHash": "f94cc42baf1ebeafd26d6cafac5cb23a",
     "entities": [
       {
         "tableName": "level_info_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`level_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `solution` TEXT NOT NULL, `puzzle` TEXT NOT NULL, `category` TEXT NOT NULL, `category_rewarded` INTEGER NOT NULL, `progress` INTEGER NOT NULL, `score` INTEGER NOT NULL, `best_score` INTEGER NOT NULL, `time_modified` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`level_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `solution` TEXT NOT NULL, `puzzle` TEXT NOT NULL, `category` TEXT NOT NULL, `category_rewarded` INTEGER NOT NULL, `progress` INTEGER NOT NULL, `score` INTEGER NOT NULL, `best_score` INTEGER NOT NULL, `time_modified` INTEGER NOT NULL, `level_pack` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "levelId",
@@ -59,6 +59,12 @@
           {
             "fieldPath": "timeModified",
             "columnName": "time_modified",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "levelPack",
+            "columnName": "level_pack",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -180,7 +186,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b64a62da02a45697ef5136a8875d8b94')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f94cc42baf1ebeafd26d6cafac5cb23a')"
     ]
   }
 }

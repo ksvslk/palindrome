@@ -36,6 +36,14 @@ android {
         }
     }
 
+    sourceSets {
+        main {
+            java {
+                exclude 'src/main/assets/level_pack_1.json'
+            }
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled true

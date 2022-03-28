@@ -21,7 +21,6 @@ import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.other.LevelItemAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
-import java.util.logging.Level
 
 
 @AndroidEntryPoint

@@ -57,7 +57,6 @@ class LevelViewModel @Inject constructor(
         viewModelScope.launch {
             levelRepository.latestLevelFlow()
                 .collect { _currentLevel.value = it }
-            startSavingGame()
         }
     }
 
@@ -265,10 +264,8 @@ class LevelViewModel @Inject constructor(
             if (saveGame != null) {
                 levelRepository.updateLocalGame(saveGame)
                 levelRepository.latestLevelFlow().collect { _currentLevel.value = it }
-                startSavingGame()
             } else {
                 levelRepository.latestLevelFlow().collect { _currentLevel.value = it }
-                startSavingGame()
             }
 
         }
@@ -314,7 +311,6 @@ class LevelViewModel @Inject constructor(
                     level = levelInfo.levelId
                 )
                 saveGameImmediately()
-                startSavingGame()
             }
         }
     }
@@ -377,26 +373,6 @@ class LevelViewModel @Inject constructor(
     fun allLevelsFlow(): Flow<List<LevelData>> {
         return flow {
             emit(levelRepository.getAllLevels())
-        }
-    }
-
-    fun startSavingGame() {
-        if (saveGameJob == null || saveGameJob?.isCompleted == true) {
-            Log.d(TAG, "Start saving game. Job was null/completed.")
-
-            saveGameJob = viewModelScope.launch(saveGameExceptionHandler) {
-                while (isActive) {
-                    delay(120000)
-                    if (_uiState.value.state != BUSY && _uiState.value.state != LEVEL_COMPLETE && _uiState.value.state != LOADING) {
-                        Log.d(TAG, "Save game to cloud.")
-                        val saveGame = levelRepository.getLocalSaveGame()
-                        cloudSave.save(saveGame)
-                    }
-                }
-            }
-        } else if (saveGameJob?.isCancelled == true) {
-            Log.d(TAG, "Start saving game (job was Cancelled")
-            saveGameJob?.start()
         }
     }
 
