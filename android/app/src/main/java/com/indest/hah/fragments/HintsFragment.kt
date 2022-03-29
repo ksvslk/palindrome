@@ -77,6 +77,49 @@ class HintsFragment : BottomSheetDialogFragment() {
         if (viewModel.currentLevel.value.levelInfo.categoryRewarded) {
             binding.rewardCategoryButton.showClue()
         }
+        addBillingFlowOnClickToPurchaseButton(binding.purchaseButtonClues)
+        addBillingFlowOnClickToPurchaseButton(binding.purchaseButtonLetters)
+        addBillingFlowOnClickToPurchaseButton(binding.purchaseNoSadMode)
+        addBillingFlowOnClickToPurchaseButton(binding.purchaseAllInclusivePack)
+
+        binding.rewardCategoryButton.setOnClickListener {
+            if (!viewModel.currentLevel.value.levelInfo.categoryRewarded) {
+                when (binding.rewardCategoryButton.buttonState) {
+                    AD -> {
+                        levelViewModel.setUiStateBusy()
+                        viewModel.showRewardedVideo(requireActivity(), CLUE)
+                    }
+                    PREMIUM -> {
+                        revealClue()
+                        viewModel.updateCategoryRewarded()
+                        levelViewModel.logPremiumHintUsage(CLUE)
+                    }
+                    NO_AD -> {  /* No action. Button should be disabled in this state. */
+                    }
+                }
+            }
+        }
+
+        binding.rewardPlaceLetter.setOnClickListener {
+            when (binding.rewardPlaceLetter.buttonState) {
+                AD -> {
+                    levelViewModel.setUiStateBusy()
+                    viewModel.showRewardedVideo(requireActivity(), LETTER)
+                }
+                PREMIUM -> {
+                    levelViewModel.logPremiumHintUsage(LETTER)
+                    setFragmentResult(
+                        C.HINTS_REQUEST_KEY,
+                        bundleOf(
+                            C.LETTER_PREMIUM_BUNDLE to true
+                        )
+                    )
+                    dismiss()
+                }
+                NO_AD -> { /* No action. Button should be disabled in this state. */
+                }
+            }
+        }
     }
 
     private fun handleRewards(rewardType: RewardType) {
@@ -140,49 +183,6 @@ class HintsFragment : BottomSheetDialogFragment() {
 
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
 
-        addBillingFlowOnClickToPurchaseButton(binding.purchaseButtonClues)
-        addBillingFlowOnClickToPurchaseButton(binding.purchaseButtonLetters)
-        addBillingFlowOnClickToPurchaseButton(binding.purchaseNoSadMode)
-        addBillingFlowOnClickToPurchaseButton(binding.purchaseAllInclusivePack)
-
-        binding.rewardCategoryButton.setOnClickListener {
-            if (!viewModel.currentLevel.value.levelInfo.categoryRewarded) {
-                when (binding.rewardCategoryButton.buttonState) {
-                    AD -> {
-                        levelViewModel.setUiStateBusy()
-                        viewModel.showRewardedVideo(requireActivity(), CLUE)
-                    }
-                    PREMIUM -> {
-                        revealClue()
-                        viewModel.updateCategoryRewarded()
-                        levelViewModel.logPremiumHintUsage(CLUE)
-                    }
-                    NO_AD -> {  /* No action. Button should be disabled in this state. */
-                    }
-                }
-            }
-        }
-
-        binding.rewardPlaceLetter.setOnClickListener {
-            when (binding.rewardPlaceLetter.buttonState) {
-                AD -> {
-                    levelViewModel.setUiStateBusy()
-                    viewModel.showRewardedVideo(requireActivity(), LETTER)
-                }
-                PREMIUM -> {
-                    levelViewModel.logPremiumHintUsage(LETTER)
-                    setFragmentResult(
-                        C.HINTS_REQUEST_KEY,
-                        bundleOf(
-                            C.LETTER_PREMIUM_BUNDLE to true
-                        )
-                    )
-                    dismiss()
-                }
-                NO_AD -> { /* No action. Button should be disabled in this state. */
-                }
-            }
-        }
         return b.root
     }
 
@@ -191,6 +191,7 @@ class HintsFragment : BottomSheetDialogFragment() {
             (view as? PurchaseButton)?.let { pb ->
                 pb.sku?.let { sku ->
                     levelViewModel.setUiStateMenuAction()
+                    Log.d(TAG, "launchBillingFlow: $sku")
                     viewModel.launchBillingFlow(requireActivity(), sku)
                 }
             }

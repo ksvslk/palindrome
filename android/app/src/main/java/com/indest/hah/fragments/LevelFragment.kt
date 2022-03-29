@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.doOnPreDraw
+import androidx.core.view.forEach
 import androidx.fragment.app.*
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -79,11 +80,11 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (requireActivity() as? MainActivity)?.let {
+ /*       (requireActivity() as? MainActivity)?.let {
             it.binding.bottomNavView.menu.findItem(R.id.navigation_goods).isEnabled = true
             it.binding.bottomNavView.menu.findItem(R.id.navigation_goods)
                 .setIcon(R.drawable.lightbulb)
-        }
+        }*/
         uiStateUpdater()
     }
 
@@ -133,17 +134,20 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                     {
                         when (uiState.state) {
                             LOADING -> {
+                                deactivateBottomNavBar()
                                 progressCircular.visibility = View.VISIBLE
                                 levelFragment.notClickable = true
                                 levelFragment.alpha = .2f
                             }
                             PLAY -> {
+                                activateBottomNavBar()
                                 progressCircular.visibility = View.GONE
                                 levelFragment.notClickable = false
                                 levelFragment.alpha = 1f
                                 if (uiState.refreshLevelUi) displayLevel(uiState)
                             }
                             INTERMEDIATE -> {
+                                deactivateGoods()
                                 progressCircular.visibility = View.GONE
                                 levelFragment.notClickable = true
                                 levelFragment.alpha = 1f
@@ -174,6 +178,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                                 }
                             }
                             LEVEL_COMPLETE -> {
+                                deactivateGoods()
                                 val isLastLevel = viewModel.isLastLevel()
                                 Log.d(TAG, "isLastLevel: $isLastLevel")
                                 if (uiState.refreshLevelUi) {
@@ -188,15 +193,52 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                                 hideHintsBadge()
                             }
                             PAUSED -> {
-
                             }
                             MENU_ACTION -> {
-
                             }
                         }
                     }
                 }
             }
+        }
+    }
+
+    private fun activateBottomNavBar()
+    {
+        (requireActivity() as? MainActivity)?.let { mainActivity ->
+            mainActivity.binding.bottomNavView.menu.forEach { menuItem ->
+                menuItem.isEnabled = true
+                when(menuItem.itemId)
+                {
+                    R.id.navigation_google_games -> {
+                        menuItem.setIcon(R.drawable.games_controller_grey)
+                    }
+                    R.id.navigation_goods -> {
+                        menuItem.setIcon(R.drawable.lightbulb)
+                    }
+                    R.id.navigation_settings -> {
+                        menuItem.setIcon(R.drawable.settings)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun deactivateBottomNavBar()
+    {
+        (requireActivity() as? MainActivity)?.let { mainActivity ->
+            mainActivity.binding.bottomNavView.menu.forEach { menuItem ->
+                menuItem.isEnabled = false
+                menuItem.setIcon(R.drawable.ic_baseline_disabled_by_default_24)
+            }
+        }
+    }
+
+    private fun deactivateGoods()
+    {
+        (requireActivity() as? MainActivity)?.let { mainActivity ->
+            mainActivity.binding.bottomNavView.menu.findItem(R.id.navigation_goods).isEnabled = false
+            mainActivity.binding.bottomNavView.menu.findItem(R.id.navigation_goods).setIcon(R.drawable.ic_baseline_disabled_by_default_24)
         }
     }
 

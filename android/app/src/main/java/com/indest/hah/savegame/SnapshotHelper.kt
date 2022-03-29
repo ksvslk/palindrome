@@ -34,6 +34,7 @@ class SnapshotHelper @Inject constructor(@ApplicationContext private val context
     suspend fun save(saveGame: SaveGame) = withContext(Dispatchers.Default) {
         GoogleSignIn.getLastSignedInAccount(context)?.let { signInAccount ->
             val snapshotsClient = Games.getSnapshotsClient(context, signInAccount)
+            Log.d(TAG, "Trying to save game..")
             snapshotsClient.open(
                 C.SAVE_GAME,
                 true,

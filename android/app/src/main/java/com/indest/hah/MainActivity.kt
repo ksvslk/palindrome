@@ -296,11 +296,13 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onBackPressed() {
-        val dialog = ExitGameDialogFragment()
-        dialog.show(supportFragmentManager, C.EXIT_GAME_DIALOG_FRAGMENT)
+        Log.d(TAG, "onBackPressed")
+        val exitDialog = ExitGameDialogFragment()
+        exitDialog.show(supportFragmentManager, C.EXIT_GAME_DIALOG_FRAGMENT)
     }
 
     override fun onDialogPositiveClick(dialog: DialogFragment) {
+        levelViewModel.saveGameImmediately()
         super.onBackPressed()
     }
 

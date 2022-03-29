@@ -2,10 +2,13 @@ package com.indest.hah.fragments
 
 import android.app.Dialog
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
+import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.indest.hah.MainActivity
 import com.indest.hah.R
 
 class ExitGameDialogFragment : DialogFragment() {
@@ -53,5 +56,9 @@ class ExitGameDialogFragment : DialogFragment() {
                 { _, _ -> listener.onDialogNegativeClick(this) }
             builder.create()
         } ?: throw IllegalStateException("Activity cannot be null")
+    }
+
+    override fun onCancel(dialog: DialogInterface) {
+        listener.onDialogPositiveClick(this)
     }
 }

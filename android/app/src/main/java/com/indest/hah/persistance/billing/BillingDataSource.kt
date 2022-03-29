@@ -408,11 +408,15 @@ class BillingDataSource private constructor(
      * @return true if launch is successful
      */
     fun launchBillingFlow(activity: Activity?, sku: String) {
+        Log.d(TAG, "launchBillingFlow: $sku")
         val skuDetails = skuDetailsMap[sku]?.value
+        Log.d(TAG, "skuDetails: $skuDetails")
         if (null != skuDetails) {
             val billingFlowParamsBuilder = BillingFlowParams.newBuilder()
             billingFlowParamsBuilder.setSkuDetails(skuDetails)
+            Log.d(TAG, "trying to launch")
             defaultScope.launch {
+                Log.d(TAG, "wtfg")
                 val br = billingClient.launchBillingFlow(
                     activity!!,
                     billingFlowParamsBuilder.build()

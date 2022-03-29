@@ -21,11 +21,14 @@ import com.indest.hah.persistance.level.LevelRepository
 import com.indest.hah.views.ButtonState
 import com.sample.android.trivialdrivesample.billing.BillingDataSource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@OptIn(DelicateCoroutinesApi::class)
 @HiltViewModel
 class GeneralViewModel @Inject constructor(
     private val levelRepository: LevelRepository,
@@ -68,7 +71,7 @@ class GeneralViewModel @Inject constructor(
             )
             _billingDataSource = BillingDataSource.getInstance(
                 application,
-                viewModelScope,
+                GlobalScope,
                 skus
             )
 

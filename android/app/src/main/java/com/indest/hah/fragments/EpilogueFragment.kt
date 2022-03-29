@@ -12,6 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.animation.doOnEnd
 import androidx.core.view.doOnNextLayout
+import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
@@ -134,7 +135,7 @@ class EpilogueFragment : Fragment(R.layout.epilogue_fragment) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         (requireActivity() as? MainActivity)?.let {
             it.binding.bottomNavView.menu.findItem(R.id.navigation_goods).isEnabled = false
-            it.binding.bottomNavView.menu.findItem(R.id.navigation_goods).setIcon(R.drawable.ic_baseline_not_interested_24)
+            it.binding.bottomNavView.menu.findItem(R.id.navigation_goods).setIcon(R.drawable.ic_baseline_disabled_by_default_24)
             val parade = animations.getParade()
             it.binding.konfettiView.start(parade)
             playTrainAnimation()
