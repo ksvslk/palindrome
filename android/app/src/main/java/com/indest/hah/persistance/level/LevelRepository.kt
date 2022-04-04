@@ -51,9 +51,9 @@ class LevelRepository @Inject constructor(
         return levelDao.getTotalScore().toLong()
     }
 
-    suspend fun getAllLevels(): List<LevelData> {
+    suspend fun getAllLevels(): List<Pair<Boolean, LevelData>> {
         val result = levelDao.getAllLevels().map {
-            it.levelInfo
+            Pair(it.solutions.size > 1, it.levelInfo)
         }
         return result
     }

@@ -73,7 +73,10 @@ class HintsFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.rewardCategoryButton.setClue(viewModel.currentLevel.value.levelInfo.category)
+        val uniqueHints = viewModel.currentLevel.value.solutions.map { it.hint }.toSet()
+        val hints =
+            if (uniqueHints.size > 1) uniqueHints.joinToString(" / ") { it } else uniqueHints.first()
+        binding.rewardCategoryButton.setClue(hints, uniqueHints.size > 1)
         if (viewModel.currentLevel.value.levelInfo.categoryRewarded) {
             binding.rewardCategoryButton.showClue()
         }

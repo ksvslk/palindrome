@@ -226,8 +226,11 @@ interface LevelDao {
         persistInitialLettersInfo(currentLevel)
     }
 
-    @Query("select solution from level_info_table where level_id=:level")
-    suspend fun getLevelSolution(level: Int): String
+/*    @Query("select solution from level_info_table where level_id=:level")
+    suspend fun getLevelSolution(level: Int): String*/
+
+    @Query("select palindrome from solution_table where parent_id=:level")
+    suspend fun getLevelSolutions(level: Int): List<String>
 
     @Query("select progress from level_info_table where level_id=:level")
     suspend fun getLevelProgress(level: Int): LevelProgress
@@ -238,7 +241,7 @@ interface LevelDao {
             val lettersCount = levelLettersCount(levelNr)
             val isLevelFinished = getLevelProgress(levelNr)
             if (lettersCount <= 0 && isLevelFinished != LevelProgress.INTERMEDIATE) {
-                val solution = getLevelSolution(levelNr)
+                val solution = getLevelSolutions(levelNr).first()
                 val puzzle = Shuffler.getShuffledSolution(solution)
                 updatePuzzle(levelNr, puzzle)
                 puzzle.forEachIndexed { index, char ->

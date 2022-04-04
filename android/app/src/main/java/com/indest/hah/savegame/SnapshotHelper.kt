@@ -155,7 +155,10 @@ class SnapshotHelper @Inject constructor(@ApplicationContext private val context
     }
 
     fun bytesToGame(byteArray: ByteArray): SaveGame {
-        return Json.decodeFromString(byteArray.decodeToString())
+        val json = Json {
+            ignoreUnknownKeys = true
+        }
+        return json.decodeFromString(byteArray.decodeToString())
     }
 
     fun gameToBytes(saveGame: SaveGame): ByteArray {

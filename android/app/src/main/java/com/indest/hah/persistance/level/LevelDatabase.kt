@@ -2,17 +2,28 @@ package com.indest.hah.persistance.level
 
 import android.content.Context
 import androidx.room.*
+import androidx.room.migration.AutoMigrationSpec
 import com.indest.hah.persistance.Converters
 import com.indest.hah.persistance.dto.Interval
 import com.indest.hah.persistance.dto.LetterProperties
 import com.indest.hah.persistance.dto.LevelData
+import com.indest.hah.persistance.dto.Solution
 
-/*@Serializable
-data class LevelInfo(val nr: Int, val category: String, val solution: String, val levelPack:Int)*/
+/*
+@Serializable
+data class LevelInfo(val nr: Int, val solutionToCategory:Map<String,String>)
+*/
 
 @Database(
-    entities = [LevelData::class, LetterProperties::class, Interval::class],
-    version = 1,
+    entities = [LevelData::class, LetterProperties::class, Interval::class, Solution::class],
+    version = 2,
+    autoMigrations = [
+        AutoMigration (
+            from = 1,
+            to = 2,
+            spec = LevelDatabase.MyAutoMigration::class
+        )
+    ],
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -20,6 +31,11 @@ data class LevelInfo(val nr: Int, val category: String, val solution: String, va
 abstract class LevelDatabase : RoomDatabase() {
 
     abstract val levelDao: LevelDao
+
+    @DeleteColumn(tableName = "level_info_table", columnName = "solution")
+    @DeleteColumn(tableName = "level_info_table", columnName = "category")
+    @DeleteColumn(tableName = "level_info_table", columnName = "level_pack")
+    class MyAutoMigration : AutoMigrationSpec
 
     companion object {
 
@@ -37,8 +53,8 @@ abstract class LevelDatabase : RoomDatabase() {
                         "dbd.db"
                     )
                         .createFromAsset("dbd.db")
+                          /*
                         .fallbackToDestructiveMigration()
-                        /*
                         .addCallback(object : RoomDatabase.Callback() {
 
                             private val jsonInstance = Json { isLenient = true }
@@ -54,7 +70,7 @@ abstract class LevelDatabase : RoomDatabase() {
                                 db.execSQL(trigger)
 
                                 val json =
-                                    context.applicationContext.assets.open("level_pack_1.json")
+                                    context.applicationContext.assets.open("level_pack_1_modified.json")
                                         .bufferedReader().use {
                                         it.readText()
                                     }
@@ -65,27 +81,41 @@ abstract class LevelDatabase : RoomDatabase() {
 
                                 for (i in levels.indices) {
                                     val puzzle = ""
-                                    val category = levels[i].category
+                                    //val category = levels[i].category
                                     val progress = LevelProgress.TODO
                                     val score = (i + 1) * 100
 
                                     val contentValues = ContentValues()
                                     contentValues.put("level_id", i + 1)
-                                    contentValues.put("solution", levels[i].solution)
+                                    //contentValues.put("solution", levels[i].solution)
                                     contentValues.put("puzzle", puzzle)
-                                    contentValues.put("category", category)
+                                    //contentValues.put("category", category)
                                     contentValues.put("category_rewarded", false)
                                     contentValues.put("progress", progress.ordinal)
                                     contentValues.put("score", score)
                                     contentValues.put("best_score", 0)
                                     contentValues.put("time_modified", 0)
-                                    contentValues.put("level_pack", levels[i].levelPack)
+
+                                    for (solutionToCategory in levels[i].solutionToCategory.entries)
+                                    {
+                                        val solutionContentValues = ContentValues()
+                                        solutionContentValues.put("parent_id", i + 1)
+                                        solutionContentValues.put("palindrome", solutionToCategory.key)
+                                        solutionContentValues.put("hint", solutionToCategory.value)
+                                        solutionContentValues.put("solved", false)
+                                        db.insert(
+                                            "solution_table",
+                                            OnConflictStrategy.IGNORE,
+                                            solutionContentValues
+                                        )
+                                    }
 
                                     db.insert(
                                         "level_info_table",
                                         OnConflictStrategy.IGNORE,
                                         contentValues
                                     )
+
                                 }
 
                                 val intervals = ArrayList<String>()

@@ -13,7 +13,7 @@ import com.indest.hah.persistance.dto.LevelData
 class LevelItemAdapter(
     private val currentLevelIcon: String,
     private val currentLevel: Int?,
-    private val dataSet: List<LevelData>,
+    private val dataSet: List<Pair<Boolean, LevelData>>,
     private val onItemClicked: (LevelData?) -> Unit
 ) :
     RecyclerView.Adapter<LevelItemAdapter.LevelItemViewHolder>() {
@@ -44,7 +44,7 @@ class LevelItemAdapter(
         val view = LayoutInflater.from(viewGroup.context)
             .inflate(R.layout.level_select_item, viewGroup, false)
         return LevelItemViewHolder(view) {
-            onItemClicked(dataSet[it])
+            onItemClicked(dataSet[it].second)
         }
     }
 
@@ -53,10 +53,15 @@ class LevelItemAdapter(
         Log.d(TAG, "onBindViewHolder")
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        levelItemViewHolder.textView.text = dataSet[position].levelId.toString()
+
+        if (dataSet[position].first) {
+            levelItemViewHolder.textView.text = "${dataSet[position].second.levelId}*"
+        } else {
+            levelItemViewHolder.textView.text = dataSet[position].second.levelId.toString()
+        }
 
         levelItemViewHolder.itemView.isClickable =
-            if (dataSet[position].progress == LevelProgress.TODO) {
+            if (dataSet[position].second.progress == LevelProgress.TODO) {
                 levelItemViewHolder.textView.isEnabled = false
                 false
             } else {
@@ -64,11 +69,12 @@ class LevelItemAdapter(
                 true
             }
         currentLevel?.let {
-            if (it == dataSet[position].levelId) {
+            if (it == dataSet[position].second.levelId) {
                 levelItemViewHolder.setIsRecyclable(false)
                 levelItemViewHolder.textView.text = currentLevelIcon
             }
         }
+
     }
 
     // Return the size of your dataset (invoked by the layout manager)

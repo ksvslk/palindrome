@@ -18,13 +18,12 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_header_height"
         android:orientation="horizontal">
-
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/simple_dialog_header_left_margin"
-            android:text="@string/goods"
+            android:text="@string/hints"
             android:textAppearance="@style/TextAppearance.OC.Headline5" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 

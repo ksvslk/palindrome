@@ -4,8 +4,10 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -167,12 +169,12 @@ class MainActivity : AppCompatActivity(),
                         if (it == RewardType.SAD_MODE) {
                             levelViewModel.setUiStatePlayWhenBusy()
                             levelViewModel.resetIntervalCount(getString(R.string.sad_mode_interval))
-                            playModeSwitchSound(false)
+                            activateSadMode(false)
                             generalViewModel.updateRewardState(RewardType.NONE)
                             levelViewModel.logRewardGiven(RewardType.SAD_MODE)
                         } else if (it == RewardType.SAD_AD_FAILED) {
                             levelViewModel.setUiStatePlayWhenBusy()
-                            playModeSwitchSound(true)
+                            activateSadMode(true)
                             generalViewModel.updateRewardState(RewardType.NONE)
                         }
                     }
@@ -181,6 +183,7 @@ class MainActivity : AppCompatActivity(),
                 launch {
                     generalViewModel.buttonState.collect { buttonInfo ->
                         if (buttonInfo.sadMode && buttonInfo.state == ButtonState.AD) {
+                            activateSadMode(true)
                             binding.container.isSadMode = true
                             binding.watchAdTop.visibility = View.VISIBLE
                             binding.container.invalidate()
@@ -193,6 +196,22 @@ class MainActivity : AppCompatActivity(),
                 }
             }
         }
+    }
+
+    private fun showSadModeToast()
+    {
+        val text = getString(R.string.entering_sad_mode)
+        val duration = Toast.LENGTH_LONG
+        val toast = Toast.makeText(applicationContext, text, duration)
+        toast.show()
+    }
+
+    private fun showNormalModeToast()
+    {
+        val text = getString(R.string.entering_normal_mode)
+        val duration = Toast.LENGTH_LONG
+        val toast = Toast.makeText(applicationContext, text, duration)
+        toast.show()
     }
 
     private fun updateFoldModeInfo() {
@@ -275,22 +294,28 @@ class MainActivity : AppCompatActivity(),
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 levelViewModel.currentLevel.distinctUntilChangedBy { it.levelInfo.levelId }
                     .collect {
-                        setLevelProgressIndicator(it.levelInfo)
+                        setLevelProgressIndicator(it.levelInfo, it.solutions.size)
                     }
             }
         }
     }
 
-    private fun playModeSwitchSound(isSadMode: Boolean) {
+    private fun activateSadMode(isSadMode: Boolean) {
         when (isSadMode) {
-            true -> soundPlayer.play(soundPlayer.sounds.sadMode, volume = 0.5f)
-            false -> soundPlayer.play(soundPlayer.sounds.normalMode, volume = 0.5f)
+            true -> {
+                showSadModeToast()
+                soundPlayer.play(soundPlayer.sounds.sadMode, volume = 0.5f)
+            }
+            false -> {
+                showNormalModeToast()
+                soundPlayer.play(soundPlayer.sounds.normalMode, volume = 0.5f)
+            }
         }
     }
 
-    private fun setLevelProgressIndicator(level: LevelData) {
+    private fun setLevelProgressIndicator(level: LevelData, solutionsCount:Int) {
         val levelsCount = 100
-        binding.levelNumber.text = level.levelId.toString()
+        binding.levelNumber.text = if(solutionsCount > 1) "${level.levelId}*" else "${level.levelId}"
         binding.gameProgress.progress =
             (level.levelId.toFloat() / levelsCount.toFloat() * 100.0).toInt()
     }

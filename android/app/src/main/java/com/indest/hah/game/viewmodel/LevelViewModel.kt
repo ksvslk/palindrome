@@ -370,7 +370,7 @@ class LevelViewModel @Inject constructor(
         }
     }
 
-    fun allLevelsFlow(): Flow<List<LevelData>> {
+    fun allLevelsFlow(): Flow<List<Pair<Boolean, LevelData>>> {
         return flow {
             emit(levelRepository.getAllLevels())
         }
@@ -440,7 +440,7 @@ class LevelViewModel @Inject constructor(
         }
 
         // Complete Level achievement
-        if (_currentLevel.value.levelInfo.solution == "LEVEL") {
+        if (_currentLevel.value.solutions.any { it.palindrome == "LEVEL" }) {
             unlockAchievement(context.getString(R.string.achievement_complete_level))
         }
 
@@ -454,19 +454,29 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+    private fun isSolutionCorrect(guess:String):Boolean
+    {
+       return _currentLevel.value.solutions.any {
+           it.palindrome.replace(" ", "") == guess
+       }
+    }
+
     private fun updateSolutionState(index: Int, guess: String) {
         viewModelScope.launch {
-            val solution = _currentLevel.value.levelInfo.solution.replace(" ", "")
+            //val solution = _currentLevel.value.levelInfo.solution.replace(" ", "")
+            val solution = _currentLevel.value.solutions.first().palindrome.replace(" ", "")
             if (guess.length == solution.length) {
                 val playerGuess = guess.map { char ->
                     if ("^([?!.,’])".contains(char)) "" else char
                 }.joinToString("")
-                Log.d(TAG, "guess: $guess, solution: $solution")
+
+                Log.d(TAG, "guess: $guess, solutions: ${_currentLevel.value.solutions}")
+
                 val hintsInterval =
                     getApplication<Application>().getString(R.string.hint_suggestion)
 
                 when {
-                    guess == solution -> {
+                    isSolutionCorrect(guess) -> {
                         submitScore()
                         levelRepository.updateLevelProgress(
                             _currentLevel.value.levelInfo.levelId,
@@ -545,7 +555,7 @@ class LevelViewModel @Inject constructor(
                     ),
                     Pair(
                         FirebaseCustom.Params.LEVEL_SOLUTION,
-                        _currentLevel.value.levelInfo.solution
+                        _currentLevel.value.solutions.first().palindrome
                     )
                 )
             )
@@ -561,7 +571,7 @@ class LevelViewModel @Inject constructor(
                 this.putFloat(FirebaseCustom.Params.SCORE_TO_MAX_RATIO, scoreToMaxRatio)
                 this.putString(
                     FirebaseCustom.Params.LEVEL_SOLUTION,
-                    _currentLevel.value.levelInfo.solution
+                    _currentLevel.value.solutions.first().palindrome
                 )
             }
             firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LEVEL_END, parameters)
@@ -593,7 +603,7 @@ class LevelViewModel @Inject constructor(
                     Pair(FirebaseCustom.Params.CURRENT_SOLUTION, currentSolution),
                     Pair(
                         FirebaseCustom.Params.LEVEL_SOLUTION,
-                        _currentLevel.value.levelInfo.solution
+                        _currentLevel.value.solutions.first().palindrome
                     ),
                     Pair(FirebaseAnalytics.Param.VALUE, 1),
                 )
@@ -613,7 +623,7 @@ class LevelViewModel @Inject constructor(
                     Pair(FirebaseCustom.Params.CURRENT_SOLUTION, currentSolution),
                     Pair(
                         FirebaseCustom.Params.LEVEL_SOLUTION,
-                        _currentLevel.value.levelInfo.solution
+                        _currentLevel.value.solutions.first().palindrome
                     ),
                     Pair(FirebaseAnalytics.Param.VALUE, 1),
                 )

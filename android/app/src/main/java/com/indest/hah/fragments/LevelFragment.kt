@@ -4,12 +4,12 @@ import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.os.Bundle
+import android.text.Layout
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
+import android.widget.FrameLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
@@ -24,6 +24,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.indest.hah.MainActivity
 import com.indest.hah.R
@@ -48,6 +49,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class LevelFragment : Fragment(R.layout.level_fragment) {
@@ -80,11 +82,11 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
- /*       (requireActivity() as? MainActivity)?.let {
-            it.binding.bottomNavView.menu.findItem(R.id.navigation_goods).isEnabled = true
-            it.binding.bottomNavView.menu.findItem(R.id.navigation_goods)
-                .setIcon(R.drawable.lightbulb)
-        }*/
+        /*       (requireActivity() as? MainActivity)?.let {
+                   it.binding.bottomNavView.menu.findItem(R.id.navigation_goods).isEnabled = true
+                   it.binding.bottomNavView.menu.findItem(R.id.navigation_goods)
+                       .setIcon(R.drawable.lightbulb)
+               }*/
         uiStateUpdater()
     }
 
@@ -203,13 +205,11 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         }
     }
 
-    private fun activateBottomNavBar()
-    {
+    private fun activateBottomNavBar() {
         (requireActivity() as? MainActivity)?.let { mainActivity ->
             mainActivity.binding.bottomNavView.menu.forEach { menuItem ->
                 menuItem.isEnabled = true
-                when(menuItem.itemId)
-                {
+                when (menuItem.itemId) {
                     R.id.navigation_google_games -> {
                         menuItem.setIcon(R.drawable.games_controller_grey)
                     }
@@ -224,8 +224,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         }
     }
 
-    private fun deactivateBottomNavBar()
-    {
+    private fun deactivateBottomNavBar() {
         (requireActivity() as? MainActivity)?.let { mainActivity ->
             mainActivity.binding.bottomNavView.menu.forEach { menuItem ->
                 menuItem.isEnabled = false
@@ -234,11 +233,12 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         }
     }
 
-    private fun deactivateGoods()
-    {
+    private fun deactivateGoods() {
         (requireActivity() as? MainActivity)?.let { mainActivity ->
-            mainActivity.binding.bottomNavView.menu.findItem(R.id.navigation_goods).isEnabled = false
-            mainActivity.binding.bottomNavView.menu.findItem(R.id.navigation_goods).setIcon(R.drawable.ic_baseline_disabled_by_default_24)
+            mainActivity.binding.bottomNavView.menu.findItem(R.id.navigation_goods).isEnabled =
+                false
+            mainActivity.binding.bottomNavView.menu.findItem(R.id.navigation_goods)
+                .setIcon(R.drawable.ic_baseline_disabled_by_default_24)
         }
     }
 
@@ -435,8 +435,11 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             hintBadge.backgroundColor =
                 ContextCompat.getColor(requireContext(), R.color.hintsNotificationColor)
             hintBadge.badgeGravity = BadgeDrawable.TOP_END
+            val text = getString(R.string.hints_are_available)
+            val duration = Toast.LENGTH_LONG
+            Toast.makeText(requireContext(), text, duration).show()
+            soundPlayer.play(soundPlayer.sounds.hintNotification)
             if (!hintBadge.isVisible) {
-                soundPlayer.play(soundPlayer.sounds.hintNotification)
                 hintBadge.isVisible = true
             }
         }

@@ -39,4 +39,5 @@
     <color name="textOnRewardedColor">#18182C</color>
 
     <color name="progressBackgroundColor">#D5D5D5</color>
+    <color name="transparentColor">#00000000</color>
 </resources>

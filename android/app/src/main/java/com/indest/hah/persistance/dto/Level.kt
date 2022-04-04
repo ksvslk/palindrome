@@ -1,7 +1,6 @@
 package com.indest.hah.persistance.dto
 
-import androidx.room.Embedded
-import androidx.room.Relation
+import androidx.room.*
 import com.indest.hah.persistance.level.LevelProgress
 import java.io.Serializable
 
@@ -13,9 +12,15 @@ class Level(
         entityColumn = "owner_id"
     )
     val lettersProperties: List<LetterProperties>,
+    @Relation(
+        parentColumn = "level_id",
+        entityColumn = "parent_id"
+    )
+    val solutions: List<Solution> = emptyList()
 ):Serializable {
     constructor() : this(
-        LevelData(0,"_EMPTY_CONSTRUCTOR_","","",false, LevelProgress.IN_PROGRESS,0, 0, 0, LevelPack.NONE),
+        LevelData(0,"_EMPTY_CONSTRUCTOR_",false, LevelProgress.IN_PROGRESS,0, 0, 0),
+        emptyList(),
         emptyList()
     )
 
@@ -27,6 +32,7 @@ class Level(
 
         if (levelInfo != other.levelInfo) return false
         if (lettersProperties != other.lettersProperties) return false
+        if (solutions != other.solutions) return false
 
         return true
     }
@@ -34,6 +40,8 @@ class Level(
     override fun hashCode(): Int {
         var result = levelInfo.hashCode()
         result = 31 * result + lettersProperties.hashCode()
+        result = 31 * result + solutions.hashCode()
         return result
     }
+
 }

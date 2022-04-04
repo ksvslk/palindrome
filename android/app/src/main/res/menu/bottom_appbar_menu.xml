@@ -7,7 +7,7 @@
 
     <item
         android:id="@+id/navigation_goods"
-        android:title="@string/goods"
+        android:title="@string/hints"
         android:icon="@drawable/lightbulb"/>
     <item
         android:id="@+id/navigation_settings"

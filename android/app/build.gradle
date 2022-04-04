@@ -39,7 +39,7 @@ android {
     sourceSets {
         main {
             java {
-                exclude 'src/main/assets/level_pack_1.json'
+                exclude('src/main/assets/level_pack_1.json','src/main/assets/level_pack_1_modified.json')
             }
         }
     }

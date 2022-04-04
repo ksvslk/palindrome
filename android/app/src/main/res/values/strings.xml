@@ -23,7 +23,7 @@
         <item>\"Many of life’s failures are people who did not realize how close they were to success when they gave up.\" ― Thomas Edison </item>
     </string-array>
 
-    <string name="goods">Goods</string>
+    <string name="hints">Hints</string>
     <string name="scores">Scores</string>
     <string name="tutorial">Tutorial</string>
     <string name="level_select">Level Select</string>
@@ -66,6 +66,9 @@
     <string name="watch_ad_top_notice">Watch ad to exit Sad mode (10 levels)</string>
     <string name="sad_mode_activate">Sad Mode Active</string>
     <string name="normal_mode_activate">Normal Mode Active</string>
+    <string name="entering_sad_mode">Entering Sad mode 😕</string>
+    <string name="entering_normal_mode">Entering Normal mode 😆</string>
+    <string name="hints_are_available">Hints can be found below ↙️</string>
 
     <string-array name="save_24_percent_label">
         <item>SAVE</item>
@@ -104,7 +107,7 @@
     <string-array name="palindrome_wrong_texts">
         <item>Wrong palindrome.</item>
         <item>Forbidden palindrome.</item>
-        <item>Disallowed palindrome.</item>
+        <item>Bogus palindrome.</item>
     </string-array>
 
     <!-- Interval table -->
@@ -125,6 +128,7 @@
     <string name="tutorial_text">Create a palindrome with the given chars. Solution will be same when reading from either side.</string>
     <string name="tutorial2_text">Compete against other players by making as few mistakes as possible!</string>
     <string name="tutorial3_text">Punctuations are required to be in the correct positions but not from both sides.</string>
+    <string name="tutorial3_second_text">\"*\" marks multiple solutions.</string>
     <string name="next">Next</string>
     <string name="skip">Skip Tutorial</string>
     <string name="back">Back</string>

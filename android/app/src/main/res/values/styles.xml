@@ -22,6 +22,11 @@
         <item name="android:textColor">@color/colorSecondaryVariant</item>
     </style>
 
+    <style name="TextAppearance.OC.SmallHintText" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="fontFamily">@font/yantramanav_medium</item>
+        <item name="android:textColor">@color/textOnRewardedColor</item>
+    </style>
+
     <style name= "OC.Button" parent="Widget.MaterialComponents.Button">
         <item name="android:textColor">@color/colorOnPrimary</item>
     </style>

@@ -37,7 +37,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         level.columnCount = densitySettings.columnCount
         addLetters(level, densitySettings, info, context)
         addBlanks(densitySettings.columnCount, level, layoutInflater)
-        addSlots(info.levelInfo.solution, level, densitySettings, context)
+        addSlots(info.solutions.first().palindrome, level, densitySettings, context)
         return level
     }
 

@@ -12,12 +12,8 @@ data class LevelData(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "level_id")
     val levelId: Int,
-    @ColumnInfo(name = "solution")
-    val solution: String,
     @ColumnInfo(name = "puzzle")
     var puzzle: String,
-    @ColumnInfo(name = "category")
-    val category: String,
     @ColumnInfo(name = "category_rewarded")
     val categoryRewarded: Boolean,
     @ColumnInfo(name = "progress")
@@ -28,6 +24,4 @@ data class LevelData(
     val best_score: Int,
     @ColumnInfo(name = "time_modified")
     val timeModified: Long,
-    @ColumnInfo(name = "level_pack")
-    val levelPack: LevelPack
 )
