@@ -88,9 +88,8 @@ abstract class LevelDatabase : RoomDatabase() {
                         LevelDatabase::class.java,
                         "dbd.db"
                     )
-                        .createFromAsset("dbd.db")
                         .addAutoMigrationSpec(MyAutoMigration(context))
-                        .fallbackToDestructiveMigration()
+                        .createFromAsset("dbd.db")
                         /*
                     .addCallback(object : RoomDatabase.Callback() {
 
