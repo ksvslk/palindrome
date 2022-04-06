@@ -127,7 +127,8 @@ class SaveGameConvertTest {
         val snapshotHelper = SnapshotHelper(mockContext)
         val randomSaveGame = getRandomSaveGameOld()
         val saveGameBytes = gameToBytesOld(randomSaveGame)
-        snapshotHelper.bytesToGame(saveGameBytes)
+        val s = snapshotHelper.bytesToGame(saveGameBytes)
+        println(s.game[0].levelInfo)
     }
 
     private fun gameToBytesOld(saveGame: SaveGameOld): ByteArray {
