@@ -6,13 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.commit
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.indest.hah.R
 import com.indest.hah.databinding.ThirdTutorialFragmentBinding
 import com.indest.hah.game.viewmodel.LevelViewModel
 
 class ThirdTutorialFragment : BottomSheetDialogFragment() {
     private var _binding: ThirdTutorialFragmentBinding? = null
-    private val levelViewModel: LevelViewModel by activityViewModels()
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -33,9 +34,13 @@ class ThirdTutorialFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.startButton.setOnClickListener {
-            levelViewModel.logTutorialComplete()
+            // levelViewModel.logTutorialComplete()
             parentFragmentManager.popBackStack()
+            parentFragmentManager.commit {
+                setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top)
+                add(SecondTutorialFragment(), SecondTutorialFragment().tag)
+                addToBackStack(SecondTutorialFragment().tag)
+            }
         }
-
     }
 }

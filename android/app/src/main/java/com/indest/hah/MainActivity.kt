@@ -7,7 +7,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -169,12 +168,12 @@ class MainActivity : AppCompatActivity(),
                         if (it == RewardType.SAD_MODE) {
                             levelViewModel.setUiStatePlayWhenBusy()
                             levelViewModel.resetIntervalCount(getString(R.string.sad_mode_interval))
-                            activateSadMode(false)
+                            executeSadModeEffects(false)
                             generalViewModel.updateRewardState(RewardType.NONE)
                             levelViewModel.logRewardGiven(RewardType.SAD_MODE)
                         } else if (it == RewardType.SAD_AD_FAILED) {
                             levelViewModel.setUiStatePlayWhenBusy()
-                            activateSadMode(true)
+                            executeSadModeEffects(true)
                             generalViewModel.updateRewardState(RewardType.NONE)
                         }
                     }
@@ -183,7 +182,6 @@ class MainActivity : AppCompatActivity(),
                 launch {
                     generalViewModel.buttonState.collect { buttonInfo ->
                         if (buttonInfo.sadMode && buttonInfo.state == ButtonState.AD) {
-                            activateSadMode(true)
                             binding.container.isSadMode = true
                             binding.watchAdTop.visibility = View.VISIBLE
                             binding.container.invalidate()
@@ -300,7 +298,7 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    private fun activateSadMode(isSadMode: Boolean) {
+    private fun executeSadModeEffects(isSadMode: Boolean) {
         when (isSadMode) {
             true -> {
                 showSadModeToast()

@@ -12,14 +12,17 @@ import android.view.WindowManager
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import androidx.core.view.doOnLayout
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.databinding.SecondTutorialFragmentBinding
+import com.indest.hah.game.viewmodel.LevelViewModel
 
 class SecondTutorialFragment : BottomSheetDialogFragment() {
     private var _binding: SecondTutorialFragmentBinding? = null
     private val binding get() = _binding!!
+    private val levelViewModel: LevelViewModel by activityViewModels()
     private var mainAnimatorSet:AnimatorSet? = AnimatorSet()
 
     override fun onCreateView(
@@ -42,9 +45,11 @@ class SecondTutorialFragment : BottomSheetDialogFragment() {
             parentFragmentManager.popBackStack()
             parentFragmentManager.commit {
                 cleanUp()
-                setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top)
+            /*    setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top)
                 add(ThirdTutorialFragment(), ThirdTutorialFragment().tag)
-                addToBackStack(ThirdTutorialFragment().tag)
+                addToBackStack(ThirdTutorialFragment().tag)*/
+                levelViewModel.logTutorialComplete()
+                parentFragmentManager.popBackStack()
             }
         }
         view.doOnLayout {

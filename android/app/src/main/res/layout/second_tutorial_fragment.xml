@@ -31,14 +31,14 @@
             android:paddingVertical="@dimen/default_gap"
             android:drawableTint="@color/colorOnBackground"
             android:drawableEnd="@drawable/ic_baseline_arrow_right_24"
-            android:text="@string/next"
+            android:text="@string/play"
             android:textAppearance="@style/TextAppearance.OC.Headline5"
             android:textSize="@dimen/tutorial_primary_button_text_size" />
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:layout_width="@dimen/tutorial_progress_width"
             android:layout_height="match_parent"
-            android:progress="66"
+            android:progress="100"
             app:indicatorColor="@color/hintsNotificationColor" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>

@@ -55,8 +55,8 @@ class TutorialFragment : BottomSheetDialogFragment() {
             parentFragmentManager.commit {
                 cleanUp()
                 setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top)
-                add(SecondTutorialFragment(), SecondTutorialFragment().tag)
-                addToBackStack(SecondTutorialFragment().tag)
+                add(ThirdTutorialFragment(), ThirdTutorialFragment().tag)
+                addToBackStack(ThirdTutorialFragment().tag)
             }
         }
         view.doOnLayout {

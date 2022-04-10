@@ -75,11 +75,6 @@ class GeneralViewModel @Inject constructor(
                 skus
             )
 
-            launch {
-                _sadMode.collect {
-                    Log.d(TAG, "SAD MODE: ${_sadMode.value}")
-                }
-            }
             // Collect and react to purchase button updates from BillingDataSource
             launch {
                 combineAndUpdateMinSkuDetails(application.getString(R.string.instant_letters))
@@ -116,11 +111,6 @@ class GeneralViewModel @Inject constructor(
                     }
                     _rewardState.value = it.second
                     updateUiState()
-                }
-            }
-            launch {
-                accountStatus.collect {
-                    Log.d(TAG, "Account status: $it")
                 }
             }
 
