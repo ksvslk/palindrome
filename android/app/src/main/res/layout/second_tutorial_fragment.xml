@@ -15,8 +15,8 @@
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
-        android:layout_margin="@dimen/default_gap"
-        android:padding="@dimen/default_gap"
+        android:layout_margin="@dimen/default_large_margin"
+        android:padding="@dimen/default_large_margin"
         android:layout_height="0dp"
         android:layout_weight="1.5"
         android:gravity="center"
@@ -46,11 +46,10 @@
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/default_gap"
-        android:padding="@dimen/default_gap"
+        android:layout_margin="@dimen/default_large_margin"
+        android:padding="@dimen/default_large_margin"
         android:layout_weight="0.5"
-        android:textAlignment="center"
-        android:gravity="center"
+        android:gravity="start"
         android:text="@string/tutorial2_text"
         android:textColor="@color/colorOnPrimary"
         android:textSize="@dimen/tutorial_text_size" />
@@ -59,8 +58,8 @@
         android:id="@+id/tutorialGameplay"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_margin="@dimen/default_gap"
-        android:padding="@dimen/default_gap"
+        android:layout_margin="@dimen/default_large_margin"
+        android:padding="@dimen/default_large_margin"
         android:layout_weight="2.5"
         android:alpha="0"
         android:animateLayoutChanges="true"

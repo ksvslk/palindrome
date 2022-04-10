@@ -16,8 +16,8 @@
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/default_gap"
-        android:padding="@dimen/default_gap"
+        android:layout_margin="@dimen/default_large_margin"
+        android:padding="@dimen/default_large_margin"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -45,8 +45,8 @@
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/default_gap"
-        android:padding="@dimen/default_gap"
+        android:layout_margin="@dimen/default_large_margin"
+        android:padding="@dimen/default_large_margin"
         android:textAlignment="center"
         android:text="@string/tutorial3_text"
         android:textColor="@color/colorOnPrimary"
@@ -56,8 +56,8 @@
         android:id="@+id/tutorialGameplay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/default_gap"
-        android:padding="@dimen/default_gap"
+        android:layout_margin="@dimen/default_large_margin"
+        android:padding="@dimen/default_large_margin"
         android:animateLayoutChanges="true"
         android:clipChildren="false"
         android:gravity="center"
@@ -169,10 +169,9 @@
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/default_gap"
-        android:padding="@dimen/default_gap"
-        android:textAlignment="center"
-        android:gravity="center"
+        android:layout_margin="@dimen/default_large_margin"
+        android:padding="@dimen/default_large_margin"
+        android:gravity="start"
         android:text="@string/tutorial3_second_text"
         android:textColor="@color/colorOnPrimary"
         android:textSize="@dimen/tutorial_text_size" />

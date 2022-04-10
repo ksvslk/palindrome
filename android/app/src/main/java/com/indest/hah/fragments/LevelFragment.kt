@@ -341,7 +341,8 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             windowSizeClassWidth = uiState.windowSizeClass,
             isBookMode = uiState.bookMode,
             textSize = MessageSnackBar.Companion.TextSize.SMALL,
-            animateText = false
+            animateText = false,
+            isViewEnabled = false
         )
         message.show()
         if (uiState.solutionData.showHintsBadge) showHintsBadge()

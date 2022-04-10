@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.Insets
@@ -120,7 +121,7 @@ class MainActivity : AppCompatActivity(),
             .setTagForUnderAgeOfConsent(false)
             .build()
 
-        consentInformation = UserMessagingPlatform.getConsentInformation(this)
+        consentInformation = UserMessagingPlatform.getConsentInformation(applicationContext)
         consentInformation?.requestConsentInfoUpdate(
             this,
             params,
@@ -138,11 +139,11 @@ class MainActivity : AppCompatActivity(),
 
     private fun loadForm() {
         UserMessagingPlatform.loadConsentForm(
-            this,
+            applicationContext,
             { consentForm ->
                 this@MainActivity.consentForm = consentForm
-                if (consentInformation!!.consentStatus == ConsentInformation.ConsentStatus.REQUIRED) {
-                    consentForm.show(
+                if (consentInformation?.consentStatus == ConsentInformation.ConsentStatus.REQUIRED) {
+                    this@MainActivity.consentForm?.show(
                         this@MainActivity
                     ) { // Handle dismissal by reloading form.
                         loadForm()
@@ -326,7 +327,8 @@ class MainActivity : AppCompatActivity(),
 
     override fun onDialogPositiveClick(dialog: DialogFragment) {
         levelViewModel.saveGameImmediately()
-        super.onBackPressed()
+        onBackPressedDispatcher.onBackPressed()
+        //super.onBackPressed()
     }
 
     override fun onDialogNegativeClick(dialog: DialogFragment) {

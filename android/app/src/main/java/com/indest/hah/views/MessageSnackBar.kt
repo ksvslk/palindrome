@@ -47,7 +47,8 @@ class MessageSnackBar(
             windowSizeClassWidth: WindowSizeClass,
             isBookMode: BookMode,
             textSize: TextSize,
-            animateText: Boolean = false
+            animateText: Boolean = false,
+            isViewEnabled:Boolean = true
         ): MessageSnackBar {
 
             val parent = view.findSuitableParent() ?: throw IllegalArgumentException(
@@ -64,16 +65,11 @@ class MessageSnackBar(
             textView.textSize =
                 getTextSize(view.context, textSize, windowSizeClassWidth, isBookMode)
             val snackBar = MessageSnackBar(parent, customView)
+            snackBar.view.isEnabled = isViewEnabled
             snackBar.duration = duration
             if (animateText) addBlinkingTextAnimation(snackBar.view)
             customView.y = 10f
             return snackBar
-        }
-
-        fun removeBlinkingAnimation()
-        {
-            tapToContinueAnimation?.cancel()
-            tapToContinueAnimation = null
         }
 
         private fun addBlinkingTextAnimation(view: SnackbarBaseLayout) {
