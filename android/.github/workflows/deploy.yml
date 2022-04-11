@@ -21,15 +21,15 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: Checkout repository  
+      - name: Checkout repository
         uses: actions/checkout@v2
         with:
           fetch-depth: 0 # Mandatory to use the extract version from tag action
-      
+
       # Extract version from tag
       - name: Extract version from tag
         uses: damienaicheh/extract-version-from-tag-action@v1.0.0
-        
+
       # Update AndroidManifest.xml (instant version)
       - name: Update AndroidManifest.xml (instant version)
         uses: damienaicheh/update-android-version-manifest-action@v1.0.0
@@ -38,7 +38,7 @@ jobs:
           version-code: ${{ env.NUMBER_OF_COMMITS }}
           version-name: '${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}-${{ env.PRE_RELEASE }}'
           print-file: true
-      
+
       # Generate version code for regular version
       - name: Generate version code for regular version
         run:  echo "REGULAR_VERSION_CODE=$((NUMBER_OF_COMMITS+1000))" >> $GITHUB_ENV
@@ -51,7 +51,7 @@ jobs:
           version-code: ${{ env.REGULAR_VERSION_CODE }}
           version-name: '${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}-${{ env.PRE_RELEASE }}'
           print-file: true
-      
+
       # Update gradle version for Android
       - name: Update gradle version for Android
         uses: damienaicheh/update-android-version-gradle-action@v1.0.0
@@ -60,29 +60,29 @@ jobs:
           version-code: ${{ env.NUMBER_OF_COMMITS }}
           version-name: '${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}-${{ env.PRE_RELEASE }}'
           print-file: true
-      
+
       # Set up JDK 1.8  
-      - name: Set up JDK 1.8        
-        uses: actions/setup-java@v2       
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v2
         with:
           distribution: 'temurin'
           java-version: '11'
-          
+
       # Grant rights
-      - name: Grant rights        
+      - name: Grant rights
         run: chmod +x build.gradle
-      
+
       # Build Release AAB
       - name: Build Release AAB
         id: buildRelease
-        run: ./gradlew clean bundleRelease
-      
+        run: ./gradlew clean bundleRelease copyReleaseFilesToOneDirectory
+
       # Sign AAB
       - name: Sign Releases
         id: sign_app
         uses: r0adkll/sign-android-release@v1
         with:
-          releaseDirectory: app/build/outputs/bundle/
+          releaseDirectory: app/build/outputs/bundle
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
           alias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
@@ -103,7 +103,7 @@ jobs:
 
       - name: Create service_account.json FROM secrets.SERVICE_ACCOUNT_JSON
         run: echo '${{ secrets.SERVICE_ACCOUNT_JSON }}' > service_account.json
-      
+
       # Upload AAB to Google Play
       - name: Upload AAB to Google Play
         uses: r0adkll/upload-google-play@v1.0.15
