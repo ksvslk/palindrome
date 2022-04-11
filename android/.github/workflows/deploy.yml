@@ -30,12 +30,21 @@ jobs:
       - name: Extract version from tag
         uses: damienaicheh/extract-version-from-tag-action@v1.0.0
         
-      # Update AndroidManifest.xml
-      - name: Update AndroidManifest.xml
+      # Update AndroidManifest.xml (instant version)
+      - name: Update AndroidManifest.xml (instant version)
+        uses: damienaicheh/update-android-version-manifest-action@v1.0.0
+        with:
+          android-manifest-path: './app/src/instant/AndroidManifest.xml'
+          version-code: ${{ env.NUMBER_OF_COMMITS }}
+          version-name: '${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}-${{ env.PRE_RELEASE }}'
+          print-file: true
+
+      # Update AndroidManifest.xml (regular version)
+      - name: Update AndroidManifest.xml (regular version)
         uses: damienaicheh/update-android-version-manifest-action@v1.0.0
         with:
           android-manifest-path: './app/src/main/AndroidManifest.xml'
-          version-code: ${{ env.NUMBER_OF_COMMITS }}
+          version-code: ${{ env.NUMBER_OF_COMMITS + 1000 }}
           version-name: '${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}-${{ env.PRE_RELEASE }}'
           print-file: true
       
@@ -65,11 +74,11 @@ jobs:
         run: ./gradlew clean bundleRelease
       
       # Sign AAB
-      - name: Sign Release
+      - name: Sign Releases
         id: sign_app
         uses: r0adkll/sign-android-release@v1
         with:
-          releaseDirectory: app/build/outputs/bundle/release
+          releaseDirectory: app/build/outputs/bundle/
           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
           alias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
@@ -78,13 +87,16 @@ jobs:
           # override default build-tools version (29.0.3) -- optional
           BUILD_TOOLS_VERSION: "30.0.3"
 
-      # Example use of `signedReleaseFile` output -- not needed
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
+      - name: Upload releases
+        uses: marvinpinto/action-automatic-releases@latest
         with:
-          name: Signed app bundle
-          path: ${{ steps.sign_app.outputs.signedReleaseFile }}
-      
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}-${{ env.PRE_RELEASE }}"
+          title: "${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}-${{ env.PRE_RELEASE }}"
+          files: |
+            ${{ steps.sign_app.signedReleaseFile0 }}
+            ${{ steps.sign_app.signedReleaseFile1 }}
+
       - name: Create service_account.json FROM secrets.SERVICE_ACCOUNT_JSON
         run: echo '${{ secrets.SERVICE_ACCOUNT_JSON }}' > service_account.json
       
@@ -94,6 +106,6 @@ jobs:
         with:
           serviceAccountJson: service_account.json
           packageName: com.indest.hah
-          releaseFiles: app/build/outputs/bundle/release/*.aab
+          releaseFiles: app/build/outputs/bundle/*.aab
           track: internal
-          whatsNewDirectory: releaseNotes/
+          status: draft

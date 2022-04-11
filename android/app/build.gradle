@@ -36,14 +36,6 @@ android {
         }
     }
 
-    sourceSets {
-        main {
-            java {
-                exclude('src/main/assets/level_pack_1.json','src/main/assets/level_pack_1_modified.json')
-            }
-        }
-    }
-
     buildTypes {
         release {
             minifyEnabled true
@@ -56,6 +48,18 @@ android {
             buildConfigField "String", "GIT_HASH", getGitHash()
         }
     }
+
+    flavorDimensions "default"
+
+    productFlavors {
+        instant {
+            versionNameSuffix "-in"
+        }
+        regular {
+            versionNameSuffix "-re"
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
