@@ -41,11 +41,8 @@ jobs:
       
       # Generate version code for regular version
       - name: Generate version code for regular version
-        env:
-          INSTANT_VERSION_CODE: ${{ env.NUMBER_OF_COMMITS }}
-        run: |
-          echo ::set-env name=REGULAR_VERSION_CODE::$(($INSTANT_VERSION_CODE+1000))
-      
+        run:  echo "REGULAR_VERSION_CODE=$(NUMBER_OF_COMMITS+1000)" >> $GITHUB_ENV
+
       # Update AndroidManifest.xml (regular version)
       - name: Update AndroidManifest.xml (regular version)
         uses: damienaicheh/update-android-version-manifest-action@v1.0.0
