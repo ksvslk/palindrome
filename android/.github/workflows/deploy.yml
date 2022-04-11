@@ -41,7 +41,7 @@ jobs:
       
       # Generate version code for regular version
       - name: Generate version code for regular version
-        run:  echo "REGULAR_VERSION_CODE=$(echo $NUMBER_OF_COMMITS+1000)" >> $GITHUB_ENV
+        run:  echo "REGULAR_VERSION_CODE=$((NUMBER_OF_COMMITS+1000))" >> $GITHUB_ENV
 
       # Update AndroidManifest.xml (regular version)
       - name: Update AndroidManifest.xml (regular version)
