@@ -57,10 +57,9 @@ android {
 
     productFlavors {
         instant {
-
         }
         regular {
-
+            versionCode = defaultConfig.versionCode + 1000
         }
     }
 
@@ -175,3 +174,4 @@ tasks.register('copyReleaseFilesToOneDirectory', Copy) {
     into layout.buildDirectory.dir("outputs/bundle/")
 }
 tasks.findByName('copyReleaseFilesToOneDirectory').mustRunAfter ':app:bundleRelease'
+tasks.findByName('copyReleaseFilesToOneDirectory').dependsOn(':app:bundleRelease')
