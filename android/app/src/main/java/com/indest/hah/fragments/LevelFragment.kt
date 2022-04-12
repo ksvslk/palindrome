@@ -82,11 +82,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        /*       (requireActivity() as? MainActivity)?.let {
-                   it.binding.bottomNavView.menu.findItem(R.id.navigation_goods).isEnabled = true
-                   it.binding.bottomNavView.menu.findItem(R.id.navigation_goods)
-                       .setIcon(R.drawable.lightbulb)
-               }*/
         uiStateUpdater()
     }
 

@@ -183,6 +183,10 @@ class MainActivity : AppCompatActivity(),
                 launch {
                     generalViewModel.buttonState.collect { buttonInfo ->
                         if (buttonInfo.sadMode && buttonInfo.state == ButtonState.AD) {
+                            if (!binding.container.isSadMode)
+                            {
+                                executeSadModeEffects(true)
+                            }
                             binding.container.isSadMode = true
                             binding.watchAdTop.visibility = View.VISIBLE
                             binding.container.invalidate()
@@ -326,8 +330,8 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onDialogPositiveClick(dialog: DialogFragment) {
-        levelViewModel.saveGameImmediately()
         onBackPressedDispatcher.onBackPressed()
+        levelViewModel.saveGameImmediately()
         //super.onBackPressed()
     }
 

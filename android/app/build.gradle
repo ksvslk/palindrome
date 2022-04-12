@@ -51,10 +51,6 @@ android {
 
     flavorDimensions "default"
 
-    productFlavors.whenObjectAdded { flavor ->
-        flavor.ext.set('directoryPath', '')
-    }
-
     productFlavors {
         instant {
         }
