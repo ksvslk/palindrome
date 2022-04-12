@@ -330,9 +330,8 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onDialogPositiveClick(dialog: DialogFragment) {
-        onBackPressedDispatcher.onBackPressed()
         levelViewModel.saveGameImmediately()
-        //super.onBackPressed()
+        finishAndRemoveTask()
     }
 
     override fun onDialogNegativeClick(dialog: DialogFragment) {
