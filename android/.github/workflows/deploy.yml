@@ -36,7 +36,7 @@ jobs:
         with:
           android-manifest-path: './app/src/instant/AndroidManifest.xml'
           version-code: ${{ env.NUMBER_OF_COMMITS }}
-          version-name: '${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}-${{ env.PRE_RELEASE }}'
+          version-name: '${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}'
           print-file: true
 
       # Generate version code for regular version
@@ -49,7 +49,7 @@ jobs:
         with:
           android-manifest-path: './app/src/main/AndroidManifest.xml'
           version-code: ${{ env.REGULAR_VERSION_CODE }}
-          version-name: '${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}-${{ env.PRE_RELEASE }}'
+          version-name: '${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}'
           print-file: true
 
       # Update gradle version for Android
@@ -58,7 +58,7 @@ jobs:
         with:
           build-gradle-path: './app/build.gradle'
           version-code: ${{ env.NUMBER_OF_COMMITS }}
-          version-name: '${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}-${{ env.PRE_RELEASE }}'
+          version-name: '${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}'
           print-file: true
 
       # Set up JDK 1.8  

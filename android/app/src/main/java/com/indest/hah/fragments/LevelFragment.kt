@@ -86,7 +86,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     }
 
     private fun showPlayerCenteredScores() {
-        parentFragmentManager.commit {
+        childFragmentManager.commit {
             addToBackStack(ScoresFragment().tag)
             add(ScoresFragment(), ScoresFragment().tag)
         }
@@ -111,7 +111,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             }
         }
         binding.levelFragment.addView(levelGridLayout)
-        showTutorial()
+
         viewModel.currentLevel.replayCache.firstOrNull()?.levelInfo?.levelId?.let { it1 ->
             askForReview(level = it1)
         }
@@ -119,6 +119,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             if (viewModel.isShowScores()) {
                 showPlayerCenteredScores()
             }
+            showTutorial()
         }
     }
 
@@ -412,7 +413,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             val tutorialPassed = sp.getBoolean(getString(R.string.tutorial_passed), false)
             if (!tutorialPassed) {
                 viewModel.logTutorialBegin()
-                parentFragmentManager.commit {
+                childFragmentManager.commit {
                     addToBackStack(TutorialFragment().tag)
                     add(TutorialFragment(), TutorialFragment().tag)
                 }
