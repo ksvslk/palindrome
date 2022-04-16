@@ -74,12 +74,15 @@ class HintsFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val uniqueHints = viewModel.currentLevel.value.solutions.map { it.hint }.toSet()
-        val hints =
-            if (uniqueHints.size > 1) uniqueHints.joinToString(" / ") { it } else uniqueHints.first()
-        binding.rewardCategoryButton.setClue(hints, uniqueHints.size > 1)
+        if (uniqueHints.isNotEmpty()) {
+            val hints =
+                if (uniqueHints.size > 1) uniqueHints.joinToString(" / ") { it } else uniqueHints.first()
+            binding.rewardCategoryButton.setClue(hints, uniqueHints.size > 1)
+        }
         if (viewModel.currentLevel.value.levelInfo.categoryRewarded) {
             binding.rewardCategoryButton.showClue()
         }
+
         addBillingFlowOnClickToPurchaseButton(binding.purchaseButtonClues)
         addBillingFlowOnClickToPurchaseButton(binding.purchaseButtonLetters)
         addBillingFlowOnClickToPurchaseButton(binding.purchaseNoSadMode)
