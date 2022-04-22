@@ -21,6 +21,9 @@
         <action
             android:id="@+id/action_navigation_level_to_navigation_epilogue"
             app:destination="@id/navigation_epilogue" />
+        <action
+            android:id="@+id/action_navigation_level_to_navigation_stages"
+            app:destination="@id/navigation_stages" />
     </fragment>
 
     <fragment
@@ -105,6 +108,32 @@
         <action
             android:id="@+id/action_navigation_settings_to_navigation_level_select"
             app:destination="@id/navigation_level_select" />
+    </dialog>
+
+    <dialog
+        android:id="@+id/navigation_stages"
+        android:name="com.indest.hah.fragments.StagesFragment"
+        android:label="@string/stages"
+        tools:layout="@layout/stages_fragment" >
+        <action
+            android:id="@+id/action_navigation_stages_to_navigation_level"
+            app:destination="@id/navigation_level" />
+        <action
+            android:id="@+id/action_navigation_stages_to_navigation_level_select"
+            app:destination="@id/navigation_level_select" />
+        <action
+            android:id="@+id/action_navigation_stages_to_navigation_submission"
+            app:destination="@id/navigation_submission" />
+    </dialog>
+
+    <dialog
+        android:id="@+id/navigation_submission"
+        android:name="com.indest.hah.fragments.SubmissionFragment"
+        android:label="@string/submit_level"
+        tools:layout="@layout/submission_fragment" >
+        <action
+            android:id="@+id/action_navigation_submission_to_navigation_level"
+            app:destination="@id/navigation_level" />
     </dialog>
 
     <dialog

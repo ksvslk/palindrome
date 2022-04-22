@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/submit_level_fragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingVertical="@dimen/default_large_margin"
+    app:dividerPadding="@dimen/simple_dialog_header_left_margin"
+    app:showDividers="middle">
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/player_submitted_level"
+        android:layout_width="match_parent"
+        android:hint="@string/send_level_input_hint"
+        android:textSize="@dimen/_17ssp"
+        android:inputType="textNoSuggestions|textCapCharacters"
+        android:layout_height="@dimen/simple_dialog_header_height"
+        android:layout_marginHorizontal="@dimen/simple_dialog_item_left_margin">
+    </com.google.android.material.textfield.TextInputEditText>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/send_level_button"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/simple_dialog_header_height"
+        android:textAppearance="@style/TextAppearance.OC.Headline5"
+        android:layout_marginHorizontal="@dimen/simple_dialog_item_left_margin"
+        android:backgroundTint="@color/colorSecondary"
+        android:text="@string/send">
+    </androidx.appcompat.widget.AppCompatButton>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

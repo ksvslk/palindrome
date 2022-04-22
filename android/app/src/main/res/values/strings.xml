@@ -23,7 +23,14 @@
         <item>\"Many of life’s failures are people who did not realize how close they were to success when they gave up.\" ― Thomas Edison </item>
     </string-array>
 
+    <string name="game_levels">Game Levels</string>
+    <string name="player_levels">Player Levels</string>
+    <string name="submit_level">Submit Your Level</string>
+    <string name="send">Send</string>
+    <string name="send_level_input_hint">Enter your palindrome</string>
+    <string name="stages">Levels</string>
     <string name="hints">Hints</string>
+    <string name="levels">Levels</string>
     <string name="scores">Scores</string>
     <string name="tutorial">Tutorial</string>
     <string name="level_select">Level Select</string>

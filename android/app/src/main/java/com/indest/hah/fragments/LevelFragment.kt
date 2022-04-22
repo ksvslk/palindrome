@@ -212,6 +212,9 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                     R.id.navigation_goods -> {
                         menuItem.setIcon(R.drawable.lightbulb)
                     }
+                    R.id.navigation_stages -> {
+                        menuItem.setIcon(R.drawable.baseline_list_alt_black_36)
+                    }
                     R.id.navigation_settings -> {
                         menuItem.setIcon(R.drawable.settings)
                     }

@@ -127,14 +127,6 @@ class SettingsFragment : BottomSheetDialogFragment() {
         val b = SettingsFragmentBinding.inflate(layoutInflater, container, false)
         _binding = b
 
-        binding.levelSelectButton.setOnClickListener {
-            findNavController().popBackStack()
-            parentFragmentManager.commit {
-                addToBackStack(LevelSelectFragment().tag)
-                add(LevelSelectFragment(), LevelSelectFragment().tag)
-            }
-        }
-
         binding.soundButton.setOnClickListener {
             binding.soundSwitch.performClick()
         }

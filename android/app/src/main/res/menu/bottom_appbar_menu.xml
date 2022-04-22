@@ -4,11 +4,14 @@
         android:id="@+id/navigation_google_games"
         android:title="@string/play_games"
         android:icon="@drawable/games_controller_grey"/>
-
     <item
         android:id="@+id/navigation_goods"
         android:title="@string/hints"
         android:icon="@drawable/lightbulb"/>
+    <item
+        android:id="@+id/navigation_stages"
+        android:title="@string/levels"
+        android:icon="@drawable/baseline_list_alt_black_36"/>
     <item
         android:id="@+id/navigation_settings"
         android:title="@string/settings"
