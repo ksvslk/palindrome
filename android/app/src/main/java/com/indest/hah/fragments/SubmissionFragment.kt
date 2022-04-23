@@ -1,13 +1,16 @@
 package com.indest.hah.fragments
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.core.content.ContextCompat
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.firebase.firestore.*
+import com.indest.hah.R
 import com.indest.hah.databinding.SubmissionFragmentBinding
 
 
@@ -28,9 +31,72 @@ class SubmissionFragment : BottomSheetDialogFragment() {
         return b.root
     }
 
+    private fun isPalindrome(string: String): Boolean {
+        val testString = string.lowercase()
+            .replace("""[\W+]""".toRegex(), "")
+        return testString == testString.reversed()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val db = FirebaseFirestore.getInstance()
+        binding.sendLevelButton.isEnabled = false
+        binding.enterPalindromeTextInputEditText.setOnFocusChangeListener { _, b ->
+            if (!b) {
+                if (binding.enterPalindromeTextInputEditText.text.toString().trim().length < 3) {
+                    binding.enterPalindromeTextInputLayout.error = "Length must be >= 3"
+                }
+            }
+        }
+        binding.enterPalindromeTextInputEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                Log.d(TAG, "beforeTextChanged: $p0")
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                Log.d(TAG, "onTextChanged: $p0")
+            }
+
+            override fun afterTextChanged(p0: Editable?) {
+                val errors = mutableListOf<String>()
+                if (p0.toString().length < 3) {
+                    errors.add(getString(R.string.length_3_error))
+                    binding.enterPalindromeTextInputLayout.endIconDrawable = null
+                }
+                else if (p0.toString().length > 24) {
+                    errors.add(getString(R.string.length_24_error))
+                    binding.enterPalindromeTextInputLayout.endIconDrawable = null
+                }
+                else {
+                    errors.remove(getString(R.string.length_3_error))
+                    errors.remove(getString(R.string.length_24_error))
+                    if (isPalindrome(p0.toString())) {
+                        errors.remove(getString(R.string.not_a_palindrome_error))
+                        binding.enterPalindromeTextInputLayout.error = null
+                        binding.enterPalindromeTextInputLayout.errorIconDrawable = null
+                        binding.enterPalindromeTextInputLayout.endIconDrawable =
+                            ContextCompat.getDrawable(
+                                requireContext(),
+                                R.drawable.ic_baseline_check_circle_24
+                            )
+                    } else {
+                        errors.add(getString(R.string.not_a_palindrome_error))
+                        binding.enterPalindromeTextInputLayout.endIconDrawable = null
+                        binding.enterPalindromeTextInputLayout.error = "Not a palindrome"
+                        binding.enterPalindromeTextInputLayout.errorIconDrawable =
+                            ContextCompat.getDrawable(
+                                requireContext(),
+                                R.drawable.ic_baseline_error_24
+                            )
+                    }
+                }
+                if (errors.size > 1) binding.enterPalindromeTextInputLayout.error =
+                    errors.joinToString(", ")
+                else binding.enterPalindromeTextInputLayout.error = errors.joinToString()
+
+                binding.sendLevelButton.isEnabled = errors.size == 0
+            }
+        })
+/*        val db = FirebaseFirestore.getInstance()
 
         db.collection("user_submitted_levels")
             .whereEqualTo("is_featured", true)
@@ -46,9 +112,9 @@ class SubmissionFragment : BottomSheetDialogFragment() {
                         DocumentChange.Type.REMOVED -> Log.d(TAG, "Removed level: " + dc.document.data)
                     }
                 }
-            })
+            })*/
 
-        binding.sendLevelButton.setOnClickListener {
+/*        binding.sendLevelButton.setOnClickListener {
             // Create a new user with a first, middle, and last name
             val level = hashMapOf(
                 "is_featured" to false,
@@ -66,7 +132,7 @@ class SubmissionFragment : BottomSheetDialogFragment() {
                 .addOnFailureListener { e ->
                     Log.w(TAG, "Error adding document", e)
                 }
-        }
+        }*/
     }
 
 }

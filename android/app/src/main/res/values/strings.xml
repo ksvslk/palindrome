@@ -26,10 +26,14 @@
     <string name="game_levels">Game Levels</string>
     <string name="player_levels">Player Levels</string>
     <string name="submit_level">Submit Your Level</string>
-    <string name="send">Send</string>
+    <string name="send">Send For Review</string>
     <string name="send_level_input_hint">Enter your palindrome</string>
     <string name="stages">Levels</string>
     <string name="hints">Hints</string>
+    <string name="helper_text_limit">Length limit</string>
+    <string name="length_3_error">Minimum length is 3</string>!!
+    <string name="length_24_error">Maximum length is 24</string>
+    <string name="not_a_palindrome_error">Should be a palindrome</string>
     <string name="levels">Levels</string>
     <string name="scores">Scores</string>
     <string name="tutorial">Tutorial</string>
