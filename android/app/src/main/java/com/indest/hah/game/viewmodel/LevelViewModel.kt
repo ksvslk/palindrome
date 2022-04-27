@@ -49,10 +49,10 @@ class LevelViewModel @Inject constructor(
 
     private val firebaseAnalytics = FirebaseAnalytics.getInstance(application.applicationContext)
 
-    private val exceptionHandler = CoroutineExceptionHandler { _, _ ->
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Log.e(
             TAG,
-            "Error syncing cloud with local. Start collecting level from  local database without up to date information."
+            "Error syncing cloud with local. Start collecting level from  local database without up to date information.", throwable
         )
         viewModelScope.launch {
             levelRepository.latestLevelFlow()

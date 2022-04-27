@@ -2,10 +2,7 @@ package com.indest.hah.persistance.level
 
 import androidx.room.*
 import com.indest.hah.game.creation.Shuffler
-import com.indest.hah.persistance.dto.Interval
-import com.indest.hah.persistance.dto.Level
-import com.indest.hah.persistance.dto.LevelData
-import com.indest.hah.persistance.dto.SaveGame
+import com.indest.hah.persistance.dto.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -54,12 +51,17 @@ interface LevelDao {
     @Insert
     suspend fun insertLevelInfo(levels: LevelData)
 
+    @Insert
+    suspend fun insertSolutions(solutions: List<Solution>)
+
     @Transaction
     suspend fun updateLevels(levels: List<Level>) {
+        deleteSolutions()
         deleteLettersInfo()
         deleteLevels()
         levels.forEach { level ->
             insertLevelInfo(level.levelInfo)
+            insertSolutions(level.solutions)
             level.lettersProperties.forEach { lp ->
                 insertLetterData(
                     ownerId = lp.ownerId,
@@ -93,6 +95,9 @@ interface LevelDao {
 
     @Query("DELETE FROM interval")
     suspend fun deleteIntervals()
+
+    @Query("DELETE FROM solution_table")
+    suspend fun deleteSolutions()
 
     @Query("DELETE FROM letter_info_table")
     suspend fun deleteLettersInfo()
