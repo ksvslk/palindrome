@@ -16,6 +16,7 @@
     <style name="TextAppearance.OC.Body1" parent="TextAppearance.MaterialComponents.Body1">
         <item name="fontFamily">@font/yantramanav_medium</item>
         <item name="android:textColor">@color/colorOnPrimary</item>
+        <item name="android:textColorPrimaryDisableOnly">@color/colorOnPrimaryDisabled</item>
     </style>
     <style name="TextAppearance.OC.Caption" parent="TextAppearance.MaterialComponents.Caption">
         <item name="fontFamily">@font/yantramanav_medium</item>
@@ -34,5 +35,6 @@
     <style name= "OC.OutlinedButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="android:textColor">@color/colorOnPrimary</item>
     </style>
+
 
 </resources>

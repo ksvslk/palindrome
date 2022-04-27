@@ -2,6 +2,7 @@ package com.indest.hah.persistance.level
 
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
+import com.indest.hah.persistance.dto.PlayerLevel
 import com.indest.hah.persistance.dto.SaveGame
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -15,6 +16,12 @@ class LevelRepository @Inject constructor(
 
     suspend fun init() {
         levelDao.init()
+    }
+
+    suspend fun getMaxLevelId():Int = levelDao.getMaxLevelId()
+
+    suspend fun insertPlayerLevels(playerLevels:List<PlayerLevel>):Pair<LevelData,Int> {
+        return levelDao.insertPlayerLevels(playerLevels)
     }
 
     // REFACTOR
@@ -56,6 +63,10 @@ class LevelRepository @Inject constructor(
             Pair(it.solutions.size > 1, it.levelInfo)
         }
         return result
+    }
+
+    suspend fun getAllPalindromes():MutableSet<String> {
+        return levelDao.getAllPalindromes().map { it.replace("[!?’,.;:'\\-\"\\s]".toRegex(), "") }.toHashSet()
     }
 
     suspend fun nextLevelActions(current: Int, chosenLevel: Int) {

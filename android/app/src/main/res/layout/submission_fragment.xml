@@ -5,46 +5,115 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
+    android:layout_gravity="center"
     android:orientation="vertical"
-    android:paddingVertical="@dimen/default_large_margin"
-    app:dividerPadding="@dimen/simple_dialog_header_left_margin"
+    android:padding="@dimen/default_large_margin"
     app:showDividers="middle">
 
-
-
     <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.Design.TextInputLayout"
         android:id="@+id/enter_palindrome_TextInputLayout"
-        app:startIconDrawable="@drawable/ic_baseline_compare_arrows_24"
+        style="@style/Widget.Design.TextInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/default_large_margin"
         android:layout_margin="@dimen/def"
+        android:layout_marginHorizontal="@dimen/default_large_margin"
+        android:textColorHint="@color/textOnRewardedColor"
+        app:counterEnabled="true"
         app:endIconMode="custom"
-        app:errorIconDrawable="@drawable/ic_baseline_error_24"
         app:errorEnabled="true"
-        app:helperTextEnabled="true"
-        app:counterEnabled="true">
+        app:errorIconDrawable="@drawable/ic_baseline_error_24"
+        app:startIconDrawable="@drawable/ic_baseline_compare_arrows_24">
 
         <com.indest.hah.other.TextInputEditTextWithError
             android:id="@+id/enter_palindrome_TextInputEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/ThemeOverlay.Material3.TextInputEditText.FilledBox"
-            android:textSize="@dimen/_12ssp"
             android:hint="@string/send_level_input_hint"
-            android:inputType="textNoSuggestions|textCapCharacters"/>
-
+            android:inputType="textNoSuggestions|textCapCharacters"
+            android:textSize="@dimen/_12ssp" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/send_level_button"
+    <ViewFlipper
+        android:id="@+id/send_level_flipper"
+        android:layout_gravity="center"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/simple_dialog_item_height"
-        android:layout_marginHorizontal="@dimen/simple_dialog_item_left_margin"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:textColor="@color/colorOnSecondary"
-        android:text="@string/send">
-    </androidx.appcompat.widget.AppCompatButton>
+        android:layout_height="@dimen/simple_dialog_item_height">
 
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/send_level_button"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/simple_dialog_item_height"
+            android:layout_marginHorizontal="@dimen/simple_dialog_item_left_margin"
+            android:text="@string/send"
+            android:textColor="@color/colorOnPrimary" />
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true" >
+        </com.google.android.material.progressindicator.LinearProgressIndicator>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/send_level_success_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="@dimen/default_gap"
+                    android:background="@drawable/baseline_check_box_black_36"
+                    android:backgroundTint="@color/successBoxColor" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/palindrome_successfully_sent"
+                    android:textAppearance="@style/TextAppearance.OC.Body1" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/send_level_failed_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:visibility="gone">
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="@dimen/default_gap"
+                    android:background="@drawable/ic_baseline_error_24" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/something_went_wrong"
+                    android:layout_marginEnd="@dimen/default_large_margin"
+                    android:textAppearance="@style/TextAppearance.OC.Body1" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/send_level_failed_button"
+                    style="@style/Widget.AppCompat.Button.Colored"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/simple_dialog_item_height"
+                    android:paddingHorizontal="@dimen/default_gap"
+                    android:text="@string/try_again"
+                    android:textColor="@color/colorOnPrimary" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+        </RelativeLayout>
+    </ViewFlipper>
 </androidx.appcompat.widget.LinearLayoutCompat>

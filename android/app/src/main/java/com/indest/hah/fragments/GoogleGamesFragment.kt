@@ -47,21 +47,27 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
                                     getString(R.string.please_sign_in)
                                 binding.achievementsButton.visibility = View.GONE
                                 binding.leaderboardsButton.visibility = View.GONE
+                                binding.playerLevelsLeaderboardButton.visibility = View.GONE
                             } else {
                                 binding.alternativeScreen.visibility = View.GONE
                                 binding.achievementsButton.setOnClickListener {
                                     showAchievements()
                                 }
                                 binding.leaderboardsButton.setOnClickListener {
-                                    showLeaderBoard()
+                                    showCremeDelaCremeLeaderboard()
+                                }
+                                binding.playerLevelsLeaderboardButton.setOnClickListener {
+                                    //TODO: Show players levels leaderboard
                                 }
                             }
                         }
                         false -> {
                             binding.achievementsButton.setOnClickListener(null)
                             binding.leaderboardsButton.setOnClickListener(null)
+                            binding.playerLevelsLeaderboardButton.setOnClickListener(null)
                             binding.achievementsButton.visibility = View.GONE
                             binding.leaderboardsButton.visibility = View.GONE
+                            binding.playerLevelsLeaderboardButton.visibility = View.GONE
                             binding.alternativeScreen.findViewById<AppCompatTextView>(R.id.alternative_text).text =
                                 getString(R.string.no_internet)
                         }
@@ -84,7 +90,7 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
         return b.root
     }
 
-    private fun showLeaderBoard() {
+    private fun showCremeDelaCremeLeaderboard() {
         val lastSignedInAccount =
             GoogleSignIn.getLastSignedInAccount(requireContext().applicationContext)
         val leaderboardsClient = if (lastSignedInAccount != null)

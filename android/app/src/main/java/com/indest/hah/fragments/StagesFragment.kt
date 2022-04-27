@@ -6,7 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.common.SignInButton
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.BuildConfig
@@ -15,11 +21,48 @@ import com.indest.hah.databinding.SettingsFragmentBinding
 import com.indest.hah.databinding.StagesFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.navigation.fragment.findNavController
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.indest.hah.general.GeneralViewModel
+import kotlinx.coroutines.flow.collect
 
 class StagesFragment : BottomSheetDialogFragment()  {
     private val TAG = "StagesFragment"
     private var _binding: StagesFragmentBinding? = null
     private val binding get() = _binding!!
+    private val generalViewModel: GeneralViewModel by activityViewModels()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        lifecycleScope.launchWhenStarted {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED)
+            {
+                generalViewModel.internet.collect { internet ->
+                    when (internet) {
+                        true -> {
+                            val lastSignedInAccount =
+                                GoogleSignIn.getLastSignedInAccount(requireContext().applicationContext)
+                            if (lastSignedInAccount == null) {
+                                binding.submitYourLevelButton.visibility = View.GONE
+                            } else {
+                                binding.submitYourLevelButton.visibility = View.VISIBLE
+                                binding.submitYourLevelButton.setOnClickListener {
+                                    findNavController().popBackStack()
+                                    parentFragmentManager.commit {
+                                        addToBackStack(SubmissionFragment().tag)
+                                        add(SubmissionFragment(), SubmissionFragment().tag)
+                                    }
+                                }
+                            }
+                        }
+                        false -> {
+                            binding.submitYourLevelButton.setOnClickListener(null)
+                            binding.submitYourLevelButton.visibility = View.GONE
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,6 +77,13 @@ class StagesFragment : BottomSheetDialogFragment()  {
             parentFragmentManager.commit {
                 addToBackStack(LevelSelectFragment().tag)
                 add(LevelSelectFragment(), LevelSelectFragment().tag)
+            }
+        }
+        binding.playerLevelsButton.setOnClickListener {
+            findNavController().popBackStack()
+            parentFragmentManager.commit {
+                addToBackStack(PlayerLevelSelectFragment().tag)
+                add(PlayerLevelSelectFragment(), PlayerLevelSelectFragment().tag)
             }
         }
         binding.submitYourLevelButton.setOnClickListener {

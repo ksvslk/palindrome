@@ -32,6 +32,7 @@ class SnapshotHelper @Inject constructor(@ApplicationContext private val context
     private val MY_RESOLUTION_POLICY = RESOLUTION_POLICY_HIGHEST_PROGRESS
 
     suspend fun save(saveGame: SaveGame) = withContext(Dispatchers.Default) {
+        return@withContext
         GoogleSignIn.getLastSignedInAccount(context)?.let { signInAccount ->
             val snapshotsClient = Games.getSnapshotsClient(context, signInAccount)
             Log.d(TAG, "Trying to save game..")
@@ -72,6 +73,7 @@ class SnapshotHelper @Inject constructor(@ApplicationContext private val context
     }
 
     suspend fun load(): SaveGame? = withContext(Dispatchers.Default) {
+        return@withContext null
         try {
             val bytes = getSaveGameBytes().await()
             if (bytes != null) {

@@ -40,4 +40,7 @@
 
     <color name="progressBackgroundColor">#D5D5D5</color>
     <color name="transparentColor">#00000000</color>
+
+    <color name="playNewLevelColor">#00960F</color>
+    <color name="playNewLevelTextColor">#333333</color>
 </resources>

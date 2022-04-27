@@ -51,6 +51,7 @@
         android:orientation="horizontal"
         anybutton:any_button_icon="@drawable/ic_baseline_library_add_36"
         anybutton:any_button_title="@string/submit_level" />
+
     <com.indest.hah.views.AnyButton
         android:id="@+id/player_levels_button"
         android:layout_width="match_parent"

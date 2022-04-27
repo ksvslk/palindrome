@@ -124,6 +124,9 @@
         <action
             android:id="@+id/action_navigation_stages_to_navigation_submission"
             app:destination="@id/navigation_submission" />
+        <action
+            android:id="@+id/action_navigation_stages_to_navigation_player_level_select"
+            app:destination="@id/navigation_player_level_select" />
     </dialog>
 
     <dialog
@@ -146,5 +149,14 @@
             app:destination="@id/navigation_level" />
     </dialog>
 
+    <dialog
+        android:id="@+id/navigation_player_level_select"
+        android:name="com.indest.hah.fragments.PlayerLevelSelectFragment"
+        android:label="@string/player_level_select"
+        tools:layout="@layout/player_level_select_fragment" >
+        <action
+            android:id="@+id/action_navigation_player_level_select_to_navigation_level"
+            app:destination="@id/navigation_level" />
+    </dialog>
 
 </navigation>

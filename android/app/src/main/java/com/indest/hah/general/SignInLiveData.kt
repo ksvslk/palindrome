@@ -15,12 +15,15 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.games.Games
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.indest.hah.MainActivity
 import com.indest.hah.R
 import com.indest.hah.other.C
 import com.indest.hah.other.saveBooleanPreference
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityScoped
+
 
 @ActivityScoped
 class SignInLiveData(
@@ -30,14 +33,28 @@ class SignInLiveData(
 
     private val TAG = "SignInLiveData"
     lateinit var resultLauncher: ActivityResultLauncher<Intent>
+    private lateinit var auth: FirebaseAuth
+
 
     init {
         postValue(AccountStatus.NOT_SET)
+        auth = FirebaseAuth.getInstance()
     }
 
     fun setSignedOutState()
     {
         postValue(AccountStatus.SIGNED_OUT)
+    }
+
+    override fun onStart(owner: LifecycleOwner) {
+        super.onStart(owner)
+        // Check if user is signed in (non-null) and update UI accordingly.
+        // Check if user is signed in (non-null) and update UI accordingly.
+        Log.d(TAG, "User : ${auth.currentUser}")
+        auth.currentUser?.let {
+            Log.d(TAG, "User anonymous: ${it.isAnonymous}")
+            Log.d(TAG, "User metadata: ${it.metadata}")
+        }
     }
 
     override fun onCreate(owner: LifecycleOwner) {
@@ -87,6 +104,7 @@ class SignInLiveData(
         val signInOptions =
             GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
                 .requestScopes(Games.SCOPE_GAMES_SNAPSHOTS)
+                .requestServerAuthCode(context.getString(R.string.gpg_web_client_id))
                 .build()
         val account = GoogleSignIn.getLastSignedInAccount(context)
         if (GoogleSignIn.hasPermissions(account, *signInOptions.scopeArray)) {

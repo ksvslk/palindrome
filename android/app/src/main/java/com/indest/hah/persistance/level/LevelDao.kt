@@ -1,11 +1,9 @@
 package com.indest.hah.persistance.level
 
+import android.util.Log
 import androidx.room.*
 import com.indest.hah.game.creation.Shuffler
-import com.indest.hah.persistance.dto.Interval
-import com.indest.hah.persistance.dto.Level
-import com.indest.hah.persistance.dto.LevelData
-import com.indest.hah.persistance.dto.SaveGame
+import com.indest.hah.persistance.dto.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -53,6 +51,53 @@ interface LevelDao {
 
     @Insert
     suspend fun insertLevelInfo(levels: LevelData)
+
+    @Insert
+    suspend fun insertSolution(solution: Solution)
+
+    @Query("select max(solution_id) from solution_table")
+    suspend fun getMaxSolutionId():Int
+
+    @Query("select * from level_info_table where level_id = (select max(level_id) from level_info_table)")
+    suspend fun getMaxLevel():LevelData
+
+    @Transaction
+    suspend fun insertPlayerLevels(playerLevel:List<PlayerLevel>):Pair<LevelData, Int> {
+        val previousLevelCount = getAllLevels().size
+        playerLevel.forEach { level ->
+            val puzzle = level.solutionToCategory.keys.firstOrNull() ?: ""
+            insertLevelInfo(
+              LevelData(
+                  levelId = level.levelId.toInt(),
+                  puzzle = puzzle,
+                  categoryRewarded = false,
+                  progress = LevelProgress.TODO,
+                  score = puzzle.length * 100,
+                  best_score = 0,
+                  timeModified = 0,
+                  author = level.player
+              )
+            )
+            level.solutionToCategory.entries.forEach { solutionToCategory ->
+                val maxSolutionId = getMaxSolutionId()
+                insertSolution(
+                    Solution(
+                        solutionId = if (maxSolutionId == 100) 1001 else maxSolutionId + 1,
+                        parentId = level.levelId.toInt(),
+                        palindrome = solutionToCategory.key,
+                        hint = solutionToCategory.value,
+                        solved = false
+                    )
+                )
+            }
+        }
+        val newMaxLevelId = getMaxLevel()
+        val currentLevelCount = getAllLevels().size
+        return Pair(newMaxLevelId, currentLevelCount - previousLevelCount)
+    }
+
+    @Query("select max(level_id) from level_info_table")
+    suspend fun getMaxLevelId():Int
 
     @Transaction
     suspend fun updateLevels(levels: List<Level>) {
@@ -106,6 +151,9 @@ interface LevelDao {
 
     @Query("select * from interval")
     suspend fun getAllIntervals(): List<Interval>
+
+    @Query("select palindrome from solution_table")
+    suspend fun getAllPalindromes(): List<String>
 
     @Query("update level_info_table set category_rewarded=:value where level_id=:level")
     suspend fun updateCategoryRewarded(value: Boolean, level: Int)
@@ -237,11 +285,13 @@ interface LevelDao {
 
     @Transaction
     suspend fun persistInitialLettersInfo(levelNr: Int) = withContext(Dispatchers.Default) {
+        Log.d("DAO", "persistInitialLettersInfo, $levelNr")
         if (levelNr != 0) {
             val lettersCount = levelLettersCount(levelNr)
             val isLevelFinished = getLevelProgress(levelNr)
             if (lettersCount <= 0 && isLevelFinished != LevelProgress.INTERMEDIATE) {
                 val solution = getLevelSolutions(levelNr).first()
+                val newScore = if (levelNr <= 100) levelNr * 100 else solution.length * 100
                 val puzzle = Shuffler.getShuffledSolution(solution)
                 updatePuzzle(levelNr, puzzle)
                 puzzle.forEachIndexed { index, char ->
@@ -253,7 +303,7 @@ interface LevelDao {
                         locked = false,
                     )
                 }
-                updateScore(levelNr * 100, levelNr)
+                updateScore(newScore, levelNr)
                 updateProgress(levelNr, LevelProgress.IN_PROGRESS)
             }
         }
