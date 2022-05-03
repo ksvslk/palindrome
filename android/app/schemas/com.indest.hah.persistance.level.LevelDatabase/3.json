@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 3,
-    "identityHash": "75a19c523fbc729223195c45da30361e",
+    "identityHash": "ae6151e2d192eaea64d08b67f6bf76f8",
     "entities": [
       {
         "tableName": "level_info_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`level_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `puzzle` TEXT NOT NULL, `category_rewarded` INTEGER NOT NULL, `progress` INTEGER NOT NULL, `score` INTEGER NOT NULL, `best_score` INTEGER NOT NULL, `time_modified` INTEGER NOT NULL, `author` TEXT NOT NULL DEFAULT '')",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`level_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `puzzle` TEXT NOT NULL, `category_rewarded` INTEGER NOT NULL, `progress` INTEGER NOT NULL, `score` INTEGER NOT NULL, `best_score` INTEGER NOT NULL, `time_modified` INTEGER NOT NULL, `author` TEXT NOT NULL DEFAULT '', `column_count` INTEGER NOT NULL DEFAULT 7)",
         "fields": [
           {
             "fieldPath": "levelId",
@@ -56,6 +56,13 @@
             "affinity": "TEXT",
             "notNull": true,
             "defaultValue": "''"
+          },
+          {
+            "fieldPath": "columnCount",
+            "columnName": "column_count",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "7"
           }
         ],
         "primaryKey": {
@@ -241,7 +248,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '75a19c523fbc729223195c45da30361e')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ae6151e2d192eaea64d08b67f6bf76f8')"
     ]
   }
 }

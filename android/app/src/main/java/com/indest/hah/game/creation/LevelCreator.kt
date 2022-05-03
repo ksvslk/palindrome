@@ -1,6 +1,5 @@
 package com.indest.hah.game.creation
 
-import android.app.Activity
 import android.content.Context
 import android.util.DisplayMetrics
 import android.util.Log
@@ -10,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.Space
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.marginRight
 import androidx.gridlayout.widget.GridLayout
 import com.indest.hah.R
 import com.indest.hah.views.Letter
@@ -20,7 +18,6 @@ import com.indest.hah.persistance.dto.Level
 import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.scopes.ActivityScoped
 import java.lang.Math.abs
-import java.lang.Math.min
 import javax.inject.Inject
 
 @ActivityScoped
@@ -38,7 +35,8 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
 
         val level = layoutInflater.inflate(R.layout.grid, container, false) as GridLayout
         val puzzleOnlyLetters = getPuzzle(info)
-        val densitySettings = getDensitySettings(isBookMode, windowSizeClassWidth, info,container,puzzleOnlyLetters)
+        val densitySettings =
+            getDensitySettings(isBookMode, windowSizeClassWidth, info, container, puzzleOnlyLetters)
         level.columnCount = densitySettings.columnCount
         addLetters(level, densitySettings, puzzleOnlyLetters, context)
         addBlanks(densitySettings.columnCount, level, layoutInflater)
@@ -46,65 +44,101 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         return level
     }
 
-    private fun maxHeightExceeded(boxSize:Int,container: ViewGroup, margin: Int, rowsCount:Int):Boolean
-    {
-        return (container.height - rowsCount * boxSize) <= margin
+    private fun maxHeightExceeded(
+        boxSize: Int,
+        container: ViewGroup,
+        margin: Int,
+        rowsCount: Int,
+    ): Boolean {
+        val space = (container.height - rowsCount * boxSize)
+        return space <= margin
     }
 
-    private fun maxWidthExceeded(boxSize:Int, columnCount: Int, container: ViewGroup, margin: Int):Boolean
-    {
-        return (container.width - columnCount * boxSize) >= margin
+    private fun nextIncreaseWillNotExceedWidthLimit(
+        boxSize: Int,
+        columnCount: Int,
+        container: ViewGroup,
+        margin: Int
+    ): Boolean {
+        val space = (container.width - (columnCount + 1) * boxSize)
+        return space >= margin || space < 0
     }
 
-    private fun nextColumnIncreaseWillNotExceedLimit(boxSize:Int, columnCount: Int, container: ViewGroup, margin:Int):Boolean
-    {
-        return (container.width - (columnCount + 1) * boxSize) > margin
+    private fun nextIncreaseWillNotExceedHeightLimit(
+        boxSize: Int,
+        rowsCount: Int,
+        container: ViewGroup,
+        margin: Int
+    ): Boolean {
+        val space = (container.height - rowsCount * boxSize)
+        return space <= margin || space < 0
     }
 
     private fun getDensitySettings(
         isBookMode: BookMode,
         sizeClassWidth: WindowSizeClass,
-        info:Level,
+        info: Level,
         container: ViewGroup,
         puzzleOnlyLetters: String
     ): DensitySettings {
+
         val densityDpi = context.resources?.displayMetrics?.densityDpi
-        var margin = context.resources.getDimensionPixelSize(R.dimen.def)
+        val margin = context.resources.getDimensionPixelSize(R.dimen.def)
         val screenWidth = context.resources?.displayMetrics?.widthPixels!!
-   /*     val boxAndText =
+        var initialColumnCount = context.resources.getInteger(R.integer.defaultColumnsCount)
+        val smallGap = context.resources.getDimensionPixelSize(R.dimen._2sdp)
+        val intermediateGap = context.resources.getDimensionPixelSize(R.dimen._18sdp)
+        var rowsCount = puzzleOnlyLetters.chunked(initialColumnCount).count() + getSolutionRows(
+            info.solutions.first().palindrome,
+            initialColumnCount
+        ).count()
+        val heightMarginBothWays = margin * 3f
+        val widthMarginBothWays = margin * 2
+        val boxDecreaseRate = 1.1f
+        val textDecreaseRate = 1.04f
+
+        val boxAndText =
             getBoxAndTextSize(
                 screenWidth,
                 margin,
                 isBookMode,
                 sizeClassWidth,
-                densityDpi
-            )*/
-        var boxSize = context.resources.getDimensionPixelSize(R.dimen._50sdp)
-        var textSize = context.resources.getDimensionPixelSize(R.dimen._35ssp)
-        var initialColumnCount = context.resources.getInteger(R.integer.defaultColumnsCount)
-        val smallGap = context.resources.getDimensionPixelSize(R.dimen._1sdp)
-        val intermediateGap = context.resources.getDimensionPixelSize(R.dimen._16sdp)
-        val rowsCount = puzzleOnlyLetters.chunked(initialColumnCount).count() + getSolutionRows(info.solutions.first().palindrome, initialColumnCount).count()
-        while (maxWidthExceeded(boxSize, initialColumnCount, container, margin*2+(initialColumnCount-1)*smallGap) &&
-            nextColumnIncreaseWillNotExceedLimit(boxSize, initialColumnCount, container, margin*2+(initialColumnCount-1)*smallGap))
-        {
-            initialColumnCount++
-        }
-        val boxAndText =
-         getBoxAndTextSize(
-             screenWidth,
-             margin,
-             isBookMode,
-             sizeClassWidth,
-             densityDpi,
-             initialColumnCount
-         )
-        boxSize = boxAndText.first
-        textSize = boxAndText.second
-        while(maxHeightExceeded(boxSize, container, margin*2+(intermediateGap+rowsCount-1)*smallGap, rowsCount))
-        {
-            boxSize = (boxSize / 1.1f).toInt()
-            textSize = (textSize / 1.05f).toInt()
+                densityDpi,
+                initialColumnCount
+            )
+        var boxSize = boxAndText.first
+        var textSize = boxAndText.second
+
+        while (maxHeightExceeded(
+                boxSize,
+                container,
+                (heightMarginBothWays + (intermediateGap) + (rowsCount - 1) * smallGap).toInt(),
+                rowsCount
+            )
+        ) {
+            if (nextIncreaseWillNotExceedHeightLimit(
+                    boxSize,
+                    rowsCount,
+                    container,
+                    (heightMarginBothWays + (intermediateGap) + (rowsCount - 1) * smallGap).toInt()
+                )
+            ) {
+                boxSize = (boxSize / boxDecreaseRate).toInt()
+                textSize = (textSize / textDecreaseRate).toInt()
+            }
+            if (nextIncreaseWillNotExceedWidthLimit(
+                    boxSize,
+                    initialColumnCount,
+                    container,
+                    widthMarginBothWays + (initialColumnCount - 1) * smallGap
+                )
+            ) {
+                initialColumnCount++
+                rowsCount = puzzleOnlyLetters.chunked(initialColumnCount).count() + getSolutionRows(
+                    info.solutions.first().palindrome,
+                    initialColumnCount
+                ).count()
+            }
         }
 
         return DensitySettings(
@@ -261,8 +295,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         }
     }
 
-    private fun getPuzzle(info:Level):String
-    {
+    private fun getPuzzle(info: Level): String {
         return info.lettersProperties
             .sortedBy { it.homeIndex }
             .fold(
@@ -270,7 +303,12 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
             ) { acc, li -> acc + li.letter }
     }
 
-    private fun addLetters(grid: GridLayout, ds: DensitySettings, puzzle: String, context: Context) {
+    private fun addLetters(
+        grid: GridLayout,
+        ds: DensitySettings,
+        puzzle: String,
+        context: Context
+    ) {
         for ((_, l) in puzzle.withIndex()) {
             if (l.isWhitespace()) {
                 continue

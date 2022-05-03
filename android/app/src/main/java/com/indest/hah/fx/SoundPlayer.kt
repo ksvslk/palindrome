@@ -39,7 +39,14 @@ class SoundPlayer @Inject constructor(
             if (audioManager.ringerMode != AudioManager.RINGER_MODE_NORMAL ||
                 !it.getBoolean(context.getString(R.string.sound_on_pref), true)
             ) return
-            soundPool.play(sounds.noteSounds[index], volume, volume, 1, 0, 1.0f)
+            if (index <= (sounds.noteSounds.size - 1))
+            {
+                soundPool.play(sounds.noteSounds[index], volume, volume, 1, 0, 1.0f)
+            }
+            else {
+                soundPool.play(sounds.noteSounds.random(), volume, volume, 1, 0, 1.0f)
+            }
+
         }
     }
 

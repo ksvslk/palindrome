@@ -28,7 +28,7 @@
         app:layout_constraintTop_toTopOf="parent"/>
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/watch_ad_top"
+        android:id="@+id/ff"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/level_number"
@@ -40,6 +40,20 @@
         android:text="@string/watch_ad_top_notice"
         android:translationZ="2dp"
         android:textColor="@color/colorOnPrimary"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/watch_ad_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/default_gap"
+        android:fontFamily="@font/yantramanav_bold"
+        app:layout_constraintTop_toBottomOf="@+id/gameProgress"
+        app:layout_constraintRight_toRightOf="@+id/container"
+        android:background="@color/letterRewardedColor"
+        android:textColor="@color/colorOnPrimary"
+        android:paddingHorizontal="@dimen/default_gap"
+        android:text="@string/watch_ad_top_notice">
+    </androidx.appcompat.widget.AppCompatTextView>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/level_number"

@@ -1,6 +1,7 @@
 package com.indest.hah.persistance.dto
 
 import androidx.room.ColumnInfo
+import androidx.room.ColumnInfo.INTEGER
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.indest.hah.persistance.level.LevelProgress
@@ -26,4 +27,6 @@ data class LevelData(
     val timeModified: Long,
     @ColumnInfo(name = "author", defaultValue = "")
     val author: String = "",
+    @ColumnInfo(name = "column_count", defaultValue = "7")
+    val columnCount:Int = 7
 )
