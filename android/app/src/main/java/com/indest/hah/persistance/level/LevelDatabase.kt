@@ -2,8 +2,11 @@ package com.indest.hah.persistance.level
 
 import android.content.ContentValues
 import android.content.Context
+import android.database.sqlite.SQLiteException
+import android.util.Log
 import androidx.room.*
 import androidx.room.migration.AutoMigrationSpec
+import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.indest.hah.persistance.Converters
 import com.indest.hah.persistance.dto.Interval
@@ -32,13 +35,10 @@ data class LevelInfo(val nr: Int, val solutionToCategory:Map<String,String>)
             from = 2,
             to = 3
         ),
-        AutoMigration (
-            from = 3,
-            to = 4
-        )
     ],
     exportSchema = true
 )
+
 @TypeConverters(Converters::class)
 @RewriteQueriesToDropUnusedColumns
 abstract class LevelDatabase : RoomDatabase() {
@@ -83,6 +83,17 @@ abstract class LevelDatabase : RoomDatabase() {
 
     companion object {
 
+        val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                try{
+                    database.execSQL(
+                        "ALTER TABLE level_info_table ADD COLUMN column_count INTEGER NOT NULL DEFAULT 7")
+                } catch (ex: SQLiteException) {
+                    Log.w("LevelDatabase", "Altering " + "column_count" + ": " + ex.message)
+                }
+            }
+        }
+
         @Volatile
         private var INSTANCE: LevelDatabase? = null
 
@@ -96,6 +107,7 @@ abstract class LevelDatabase : RoomDatabase() {
                         LevelDatabase::class.java,
                         "dbd.db"
                     )
+                        .addMigrations(MIGRATION_3_4)
                         .addAutoMigrationSpec(MyAutoMigration(context))
                         .createFromAsset("dbd.db")
                         /*

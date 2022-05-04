@@ -18,6 +18,9 @@ class LevelRepository @Inject constructor(
         levelDao.init()
     }
 
+    suspend fun changeFriendIndexesBasedOnColumnCount(level: Int, columnDifference:Int, columnCount:Int) =
+        levelDao.changeFriendIndexesBasedOnColumnCount(level, columnDifference, columnCount)
+
     suspend fun getMaxLevelId():Int = levelDao.getMaxLevelId()
 
     suspend fun insertPlayerLevels(playerLevels:List<PlayerLevel>):Pair<LevelData,Int> {

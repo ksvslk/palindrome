@@ -80,6 +80,20 @@ class LevelViewModel @Inject constructor(
         Log.e(TAG, "Could not write snapshot or save game: ${throwable.message}")
     }
 
+    suspend fun changeFriendIndexesBasedOnColumnCount(newColumnCount: Int) {
+        val columnDifference = newColumnCount - _uiState.value.level.levelInfo.columnCount
+        Log.d(TAG, "newColumnCount: $newColumnCount")
+        Log.d(TAG, "currentColumnCount: ${_uiState.value.level.levelInfo.columnCount}")
+        if (columnDifference != 0) {
+            Log.d(TAG, "WE HAVE A COLUMN DIFF: $columnDifference")
+            levelRepository.changeFriendIndexesBasedOnColumnCount(
+                _uiState.value.level.levelInfo.levelId,
+                columnDifference,
+                newColumnCount
+            )
+        }
+    }
+
     fun setAccountStatus(accountStatus: AccountStatus) {
         _accountStatus.value = accountStatus
     }
@@ -709,11 +723,9 @@ class LevelViewModel @Inject constructor(
             }
             Log.d(TAG, "New featured levels: $playerLevels")
             viewModelScope.launch {
-                if (playerLevels.size != 0)
-                {
+                if (playerLevels.size != 0) {
                     val levelAndCount = insertPlayerLevels(playerLevels)
-                    if (levelAndCount.second > 0)
-                    {
+                    if (levelAndCount.second > 0) {
                         _newPlayerLevels.value = if (levelAndCount.second > 1) Triple(
                             -1,
                             levelAndCount.second,
@@ -725,9 +737,8 @@ class LevelViewModel @Inject constructor(
         })
     }
 
-    fun resetNewPlayersLevels()
-    {
-        _newPlayerLevels.value = Triple(-1,-1,"")
+    fun resetNewPlayersLevels() {
+        _newPlayerLevels.value = Triple(-1, -1, "")
     }
 
     private suspend fun insertPlayerLevels(playerLevels: List<PlayerLevel>): Pair<LevelData, Int> {

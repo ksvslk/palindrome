@@ -61,6 +61,19 @@ interface LevelDao {
     @Query("select * from level_info_table where level_id = (select max(level_id) from level_info_table)")
     suspend fun getMaxLevel():LevelData
 
+    @Query("update letter_info_table set friend_index=(friend_index+:columnDifference) where owner_id = :level and friend_index != -666")
+    suspend fun changeFriendIndexes(level: Int, columnDifference:Int)
+
+    @Query("update level_info_table set column_count = :newColumnCount where level_id = :level")
+    suspend fun changeColumnCount(level: Int, newColumnCount:Int)
+
+    @Transaction
+    suspend fun changeFriendIndexesBasedOnColumnCount(level: Int, columnDifference:Int, columnCount:Int)
+    {
+        changeFriendIndexes(level, columnDifference)
+        changeColumnCount(level, columnCount)
+    }
+
     @Transaction
     suspend fun insertPlayerLevels(playerLevel:List<PlayerLevel>):Pair<LevelData, Int> {
         val previousLevelCount = getAllLevels().size
