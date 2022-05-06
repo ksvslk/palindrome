@@ -48,9 +48,6 @@ class SecondTutorialFragment : BottomSheetDialogFragment() {
             parentFragmentManager.popBackStack()
             parentFragmentManager.commit {
                 cleanUp()
-            /*    setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top)
-                add(ThirdTutorialFragment(), ThirdTutorialFragment().tag)
-                addToBackStack(ThirdTutorialFragment().tag)*/
                 levelViewModel.logTutorialComplete()
                 parentFragmentManager.popBackStack()
             }

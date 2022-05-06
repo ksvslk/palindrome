@@ -1,9 +1,9 @@
 package com.indest.hah
 
 import android.app.Application
+import com.google.android.gms.games.PlayGamesSdk
 import dagger.hilt.android.HiltAndroidApp
-/*
-import leakcanary.LeakCanary
+/*import leakcanary.LeakCanary
 import leakcanary.ToastEventListener*/
 
 
@@ -11,8 +11,9 @@ import leakcanary.ToastEventListener*/
 class CoolApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        /*
-       if (BuildConfig.DEBUG)
+        PlayGamesSdk.initialize(this)
+
+/*       if (BuildConfig.DEBUG)
         {
             LeakCanary.config = LeakCanary.config.run {
                 copy(
@@ -21,7 +22,7 @@ class CoolApplication : Application() {
                     }
                 )
             }
-        }
-        */
+        }*/
+
     }
 }

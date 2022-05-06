@@ -22,7 +22,6 @@ import com.indest.hah.other.LevelItemAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 
-
 @AndroidEntryPoint
 class LevelSelectFragment : BottomSheetDialogFragment() {
     private val TAG = "LevelSelectFragment"

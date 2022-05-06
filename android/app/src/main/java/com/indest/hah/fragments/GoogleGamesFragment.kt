@@ -12,14 +12,15 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.games.Games
+import com.google.android.gms.games.PlayGames
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.indest.hah.general.GeneralViewModel
 import com.indest.hah.R
 import com.indest.hah.databinding.GoogleGamesFragmentBinding
 import com.indest.hah.game.viewmodel.LevelViewModel
+import com.indest.hah.general.AccountStatus
+import com.indest.hah.general.GeneralViewModel
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
 
 class GoogleGamesFragment : BottomSheetDialogFragment() {
 
@@ -37,12 +38,12 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
         lifecycleScope.launchWhenStarted {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED)
             {
-                generalViewModel.internet.collect { internet ->
+                generalViewModel.internet.combine(generalViewModel.accountStatus) { i, a ->
+                    Pair(i, a)
+                }.collect { (internet, accountStatus) ->
                     when (internet) {
                         true -> {
-                            val lastSignedInAccount =
-                                GoogleSignIn.getLastSignedInAccount(requireContext().applicationContext)
-                            if (lastSignedInAccount == null) {
+                            if (accountStatus != AccountStatus.SIGNED_IN) {
                                 binding.alternativeScreen.findViewById<AppCompatTextView>(R.id.alternative_text).text =
                                     getString(R.string.please_sign_in)
                                 binding.achievementsButton.visibility = View.GONE
@@ -85,16 +86,9 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
     }
 
     private fun showLeaderBoard() {
-        val lastSignedInAccount =
-            GoogleSignIn.getLastSignedInAccount(requireContext().applicationContext)
-        val leaderboardsClient = if (lastSignedInAccount != null)
-            Games.getLeaderboardsClient(
-                requireContext().applicationContext,
-                lastSignedInAccount
-            )
-        else null
-        leaderboardsClient?.getLeaderboardIntent(getString(R.string.leaderboard_crme_de_la_crme))
-            ?.continueWith {
+        val leaderboardsClient = PlayGames.getLeaderboardsClient(requireActivity())
+        leaderboardsClient.getLeaderboardIntent(getString(R.string.leaderboard_crme_de_la_crme))
+            .continueWith {
                 if (it.isSuccessful) {
                     levelViewModel.setUiStateMenuAction()
                     startActivity.launch(it.result)
@@ -103,15 +97,8 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
     }
 
     private fun showAchievements() {
-        val lastSignedInAccount =
-            GoogleSignIn.getLastSignedInAccount(requireContext().applicationContext)
-        val achievementsClient = if (lastSignedInAccount != null)
-            Games.getAchievementsClient(
-                requireContext().applicationContext,
-                lastSignedInAccount
-            )
-        else null
-        achievementsClient?.achievementsIntent?.continueWith {
+        val achievementsClient = PlayGames.getAchievementsClient(requireActivity())
+        achievementsClient.achievementsIntent.continueWith {
             if (it.isSuccessful) {
                 levelViewModel.setUiStateMenuAction()
                 startActivity.launch(it.result)

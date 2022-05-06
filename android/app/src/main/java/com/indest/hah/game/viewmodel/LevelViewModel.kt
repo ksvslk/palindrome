@@ -5,8 +5,6 @@ import android.os.Bundle
 import android.util.Log
 import androidx.core.os.bundleOf
 import androidx.lifecycle.*
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.games.Games
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.indest.hah.R
 import com.indest.hah.ads.RewardType
@@ -16,11 +14,12 @@ import com.indest.hah.game.creation.WindowSizeClass
 import com.indest.hah.general.AccountStatus
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
+import com.indest.hah.persistance.dto.SaveGame
 import com.indest.hah.persistance.level.LevelProgress
 import com.indest.hah.persistance.level.LevelRepository
-import com.indest.hah.savegame.SnapshotHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
@@ -43,16 +42,16 @@ class LevelViewModel @Inject constructor(
     private val _currentLevel = MutableStateFlow(Level())
     val currentLevel = _currentLevel.asStateFlow()
 
-    @Inject
-    lateinit var cloudSave: SnapshotHelper
-    private var saveGameJob: Job? = null
+    private val variousEventChannel = Channel<VariousEvent>()
+    val variousEventFlow = variousEventChannel.receiveAsFlow()
 
     private val firebaseAnalytics = FirebaseAnalytics.getInstance(application.applicationContext)
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Log.e(
             TAG,
-            "Error syncing cloud with local. Start collecting level from  local database without up to date information.", throwable
+            "Error syncing cloud with local. Start collecting level from  local database without up to date information.",
+            throwable
         )
         viewModelScope.launch {
             levelRepository.latestLevelFlow()
@@ -116,7 +115,14 @@ class LevelViewModel @Inject constructor(
                 windowSizeClass != WindowSizeClass.NOT_SET &&
                 state == LOADING
             ) {
-                loadLatestLevelFromCloudOrLocal()
+                if (accountStatus == AccountStatus.SIGNED_IN) {
+                    variousEventChannel.send(VariousEvent.LoadGame)
+                }
+                else {
+                    viewModelScope.launch {
+                        levelRepository.latestLevelFlow().collect { _currentLevel.value = it }
+                    }
+                }
             } else if (
                 level.levelInfo.levelId != 0 &&
                 accountStatus != AccountStatus.NOT_SET &&
@@ -206,6 +212,15 @@ class LevelViewModel @Inject constructor(
         )
     }
 
+    fun setUiStateLoading() {
+        _uiState.value = _uiState.value.copy(
+            state = LOADING
+        )
+        viewModelScope.launch {
+            variousEventChannel.send(VariousEvent.LoadGame)
+        }
+    }
+
     fun setUiStateBusy() {
         _uiState.value = _uiState.value.copy(
             state = BUSY,
@@ -258,22 +273,15 @@ class LevelViewModel @Inject constructor(
         }
     }
 
-    private fun loadLatestLevelFromCloudOrLocal() {
+    fun loadLatestLevelFromCloudOrLocal(saveGame: SaveGame?) {
         viewModelScope.launch(exceptionHandler) {
-            val saveGame = cloudSave.load()
             if (saveGame != null) {
                 levelRepository.updateLocalGame(saveGame)
                 levelRepository.latestLevelFlow().collect { _currentLevel.value = it }
             } else {
                 levelRepository.latestLevelFlow().collect { _currentLevel.value = it }
             }
-
         }
-    }
-
-    fun stopSavingGame() {
-        Log.d(TAG, "Stop saving game.")
-        saveGameJob?.cancel()
     }
 
     fun updateLetters(topIndex: Int, bottomLetter: Char, bottomIndex: Int, topLetter: Char) {
@@ -378,33 +386,38 @@ class LevelViewModel @Inject constructor(
 
     fun saveGameImmediately() {
         viewModelScope.launch(saveGameExceptionHandler) {
-            val saveGame = levelRepository.getLocalSaveGame()
-            cloudSave.save(saveGame)
+            if (_accountStatus.value == AccountStatus.SIGNED_IN) {
+                val saveGame = levelRepository.getLocalSaveGame()
+                variousEventChannel.send(VariousEvent.SaveGame(saveGame))
+            }
         }
     }
 
     private fun submitScore() {
         viewModelScope.launch {
-            val context = getApplication<Application>()
-            GoogleSignIn.getLastSignedInAccount(context)?.let {
+            if (_accountStatus.value == AccountStatus.SIGNED_IN) {
                 val totalScore = levelRepository.getTotalUpdatedScore(
                     _currentLevel.value.levelInfo.levelId
                 )
-                Games.getLeaderboardsClient(context, it)
-                    .submitScore(
-                        context.getString(R.string.leaderboard_crme_de_la_crme),
-                        totalScore
-                    )
+                variousEventChannel.send(VariousEvent.SubmitScore(totalScore))
             }
         }
     }
 
     private fun unlockAchievement(achievement: String) {
-        val context = getApplication<Application>()
-        GoogleSignIn.getLastSignedInAccount(context)?.let { signedInAccount ->
-            Games.getAchievementsClient(context, signedInAccount)
-                .unlock(achievement)
+        viewModelScope.launch {
+            if (_accountStatus.value == AccountStatus.SIGNED_IN) {
+                variousEventChannel.send(VariousEvent.UnlockAchievement(achievement))
+            }
         }
+    }
+
+    sealed class VariousEvent {
+        data class UnlockAchievement(val achievement: String) : VariousEvent()
+        data class SubmitScore(val score: Long) : VariousEvent()
+        data class SaveGame(val localSaveGame: com.indest.hah.persistance.dto.SaveGame) :
+            VariousEvent()
+        object LoadGame : VariousEvent()
     }
 
     private fun updateAndConsiderFlawlessAchievements(
@@ -454,11 +467,10 @@ class LevelViewModel @Inject constructor(
         }
     }
 
-    private fun isSolutionCorrect(guess:String):Boolean
-    {
-       return _currentLevel.value.solutions.any {
-           it.palindrome.replace(" ", "") == guess
-       }
+    private fun isSolutionCorrect(guess: String): Boolean {
+        return _currentLevel.value.solutions.any {
+            it.palindrome.replace(" ", "") == guess
+        }
     }
 
     private fun updateSolutionState(index: Int, guess: String) {

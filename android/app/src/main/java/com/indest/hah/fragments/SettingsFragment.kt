@@ -17,21 +17,18 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
-import com.google.android.gms.games.Games.SCOPE_GAMES_SNAPSHOTS
+import com.google.android.gms.games.PlayGames
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.BuildConfig
 import com.indest.hah.R
 import com.indest.hah.databinding.SettingsFragmentBinding
+import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.general.AccountStatus
 import com.indest.hah.general.GeneralViewModel
-import com.indest.hah.general.SignInLiveData
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class SettingsFragment : BottomSheetDialogFragment() {
@@ -39,13 +36,10 @@ class SettingsFragment : BottomSheetDialogFragment() {
     private var _binding: SettingsFragmentBinding? = null
     private val binding get() = _binding!!
     private val generalViewModel: GeneralViewModel by activityViewModels()
-
-    @Inject
-    lateinit var signInObserver: SignInLiveData
+    private val levelViewModel: LevelViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lifecycle.addObserver(signInObserver)
         lifecycleScope.launchWhenStarted {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED)
             {
@@ -88,8 +82,8 @@ class SettingsFragment : BottomSheetDialogFragment() {
                         AccountStatus.SIGNED_IN -> {
                             binding.googleSignInButton.visibility = View.GONE
                             binding.googleSignOutButton.visibility = View.VISIBLE
-                            binding.googleSignOutButton.setOnClickListener {
-                                signOut()
+                            PlayGames.getPlayersClient(requireActivity()).currentPlayer.addOnCompleteListener {
+                                binding.googleSignOutButton.text = "Signed in as ${it.result.displayName}"
                             }
                         }
                         AccountStatus.SIGNED_OUT -> {
@@ -171,38 +165,17 @@ class SettingsFragment : BottomSheetDialogFragment() {
     }
 
     private fun signInToGoogle() {
-        val signInOptions =
-            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
-                .requestScopes(SCOPE_GAMES_SNAPSHOTS)
-                .build()
-
-        val signInClient = GoogleSignIn.getClient(
-            requireContext().applicationContext,
-            signInOptions
-        )
-        signInObserver.signIn(signInClient.signInIntent)
-        dismiss()
-    }
-
-    private fun signOut() {
-        val client =
-            GoogleSignIn.getClient(requireActivity(), GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
-        client.signOut().addOnCompleteListener(requireActivity()) {
-            if (it.isSuccessful) {
-                signInObserver.setSignedOutState()
-                Toast.makeText(
-                    requireContext().applicationContext,
-                    "Successfully signed out.",
-                    Toast.LENGTH_LONG
-                ).show()
-                dismiss()
-            } else {
-                Toast.makeText(
-                    requireContext().applicationContext,
-                    "Something went wrong when trying to sign out.",
-                    Toast.LENGTH_LONG
-                ).show()
-                dismiss()
+        val gamesSignInClient = PlayGames.getGamesSignInClient(requireActivity())
+        gamesSignInClient.signIn().addOnCompleteListener {
+            if (it.isSuccessful && it.result.isAuthenticated)
+            {
+                generalViewModel.setAccountStatus(AccountStatus.SIGNED_IN)
+                levelViewModel.setAccountStatus(AccountStatus.SIGNED_IN)
+                levelViewModel.setUiStateLoading()
+            }
+            else {
+                levelViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
+                generalViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
             }
         }
     }

@@ -2,7 +2,7 @@
 <!--Google Play game services IDs. Save this file as res/values/games-ids.xml in your project.-->
 <resources>
     <!--app_id-->
-    <string name="app_id" translatable="false">1023077026447</string>
+    <string name="game_services_project_id" translatable="false">1023077026447</string>
     <!--achievement Greenhorn-->
     <string name="achievement_greenhorn" translatable="false">CgkIj5WSoeMdEAIQAQ</string>
     <!--achievement Proficient-->

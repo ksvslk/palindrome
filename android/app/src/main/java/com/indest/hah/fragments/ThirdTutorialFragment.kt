@@ -37,7 +37,6 @@ class ThirdTutorialFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.startButton.setOnClickListener {
-            // levelViewModel.logTutorialComplete()
             parentFragmentManager.popBackStack()
             parentFragmentManager.commit {
                 setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top)

@@ -8,17 +8,19 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.images.ImageManager
-import com.google.android.gms.games.Games
+import com.google.android.gms.games.PlayGames
 import com.google.android.gms.games.leaderboard.LeaderboardVariant.COLLECTION_PUBLIC
 import com.google.android.gms.games.leaderboard.LeaderboardVariant.TIME_SPAN_ALL_TIME
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.databinding.ScoreFragmentBinding
+import com.indest.hah.general.AccountStatus
+import com.indest.hah.general.GeneralViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 
@@ -26,6 +28,7 @@ class ScoresFragment : BottomSheetDialogFragment() {
     private var _binding: ScoreFragmentBinding? = null
     private val binding get() = _binding!!
     private val TAG = "ScoresFragment"
+    private val generalViewModel: GeneralViewModel by activityViewModels()
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Log.e(TAG, throwable.message.toString())
         if (isAdded) dismiss()
@@ -52,9 +55,8 @@ class ScoresFragment : BottomSheetDialogFragment() {
         lifecycleScope.launch(exceptionHandler) {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED)
             {
-                val lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(requireActivity())
-                if (lastSignedInAccount != null) {
-                    Games.getLeaderboardsClient(requireActivity(), lastSignedInAccount)
+                if(generalViewModel.accountStatus.value == AccountStatus.SIGNED_IN) {
+                    PlayGames.getLeaderboardsClient(requireActivity())
                         .loadPlayerCenteredScores(
                             getString(R.string.leaderboard_crme_de_la_crme),
                             TIME_SPAN_ALL_TIME,

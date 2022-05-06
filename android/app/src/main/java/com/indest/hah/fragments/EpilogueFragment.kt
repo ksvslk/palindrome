@@ -12,15 +12,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.animation.doOnEnd
 import androidx.core.view.doOnNextLayout
-import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.games.Games
+import com.google.android.gms.games.PlayGames
 import com.indest.hah.MainActivity
 import com.indest.hah.R
 import com.indest.hah.databinding.EpilogueFragmentBinding
@@ -135,7 +133,8 @@ class EpilogueFragment : Fragment(R.layout.epilogue_fragment) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         (requireActivity() as? MainActivity)?.let {
             it.binding.bottomNavView.menu.findItem(R.id.navigation_goods).isEnabled = false
-            it.binding.bottomNavView.menu.findItem(R.id.navigation_goods).setIcon(R.drawable.ic_baseline_disabled_by_default_24)
+            it.binding.bottomNavView.menu.findItem(R.id.navigation_goods)
+                .setIcon(R.drawable.ic_baseline_disabled_by_default_24)
             val parade = animations.getParade()
             it.binding.konfettiView.start(parade)
             playTrainAnimation()
@@ -143,16 +142,9 @@ class EpilogueFragment : Fragment(R.layout.epilogue_fragment) {
     }
 
     private fun showLeaderBoard() {
-        val lastSignedInAccount =
-            GoogleSignIn.getLastSignedInAccount(requireContext().applicationContext)
-        val leaderboardsClient = if (lastSignedInAccount != null)
-            Games.getLeaderboardsClient(
-                requireContext().applicationContext,
-                lastSignedInAccount
-            )
-        else null
-        leaderboardsClient?.getLeaderboardIntent(getString(R.string.leaderboard_crme_de_la_crme))
-            ?.continueWith {
+        val leaderboardsClient = PlayGames.getLeaderboardsClient(requireActivity())
+        leaderboardsClient.getLeaderboardIntent(getString(R.string.leaderboard_crme_de_la_crme))
+            .continueWith {
                 if (it.isSuccessful) {
                     startActivity.launch(it.result)
                 }
@@ -160,15 +152,8 @@ class EpilogueFragment : Fragment(R.layout.epilogue_fragment) {
     }
 
     private fun showAchievements() {
-        val lastSignedInAccount =
-            GoogleSignIn.getLastSignedInAccount(requireContext().applicationContext)
-        val achievementsClient = if (lastSignedInAccount != null)
-            Games.getAchievementsClient(
-                requireContext().applicationContext,
-                lastSignedInAccount
-            )
-        else null
-        achievementsClient?.achievementsIntent?.continueWith {
+        val achievementsClient = PlayGames.getAchievementsClient(requireActivity())
+        achievementsClient.achievementsIntent.continueWith {
             if (it.isSuccessful) {
                 startActivity.launch(it.result)
             }

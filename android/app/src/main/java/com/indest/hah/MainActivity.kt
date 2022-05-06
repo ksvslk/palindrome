@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.Insets
@@ -16,12 +15,16 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoTracker
 import androidx.window.layout.WindowMetricsCalculator
 import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.games.AuthenticationResult
+import com.google.android.gms.games.PlayGames
+import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.ump.ConsentForm
 import com.google.android.ump.ConsentInformation
@@ -34,11 +37,13 @@ import com.indest.hah.fx.SoundPlayer
 import com.indest.hah.game.creation.BookMode
 import com.indest.hah.game.creation.WindowSizeClass
 import com.indest.hah.game.viewmodel.LevelViewModel
+import com.indest.hah.general.AccountStatus
 import com.indest.hah.general.GeneralViewModel
-import com.indest.hah.general.SignInLiveData
 import com.indest.hah.other.C
 import com.indest.hah.other.hideSystemBars
 import com.indest.hah.persistance.dto.LevelData
+import com.indest.hah.persistance.dto.SaveGame
+import com.indest.hah.savegame.SnapshotHelper
 import com.indest.hah.views.ButtonState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -47,7 +52,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(),
@@ -61,10 +65,10 @@ class MainActivity : AppCompatActivity(),
     private var consentForm: ConsentForm? = null
 
     @Inject
-    lateinit var signInObserver: SignInLiveData
+    lateinit var soundPlayer: SoundPlayer
 
     @Inject
-    lateinit var soundPlayer: SoundPlayer
+    lateinit var snapshotHelper: SnapshotHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate")
@@ -75,11 +79,16 @@ class MainActivity : AppCompatActivity(),
         levelViewModel.setBookMode(BookMode.NOT_SET)
         updateFoldModeInfo()
 
-        lifecycle.addObserver(signInObserver)
-        signInObserver.observe(this) {
-            it?.let { accountStatus ->
-                levelViewModel.setAccountStatus(accountStatus)
-                generalViewModel.setAccountStatus(accountStatus)
+        val gamesSignInClient = PlayGames.getGamesSignInClient(this)
+        gamesSignInClient.isAuthenticated.addOnCompleteListener { isAuthenticatedTask: Task<AuthenticationResult> ->
+            val isAuthenticated = isAuthenticatedTask.isSuccessful &&
+                    isAuthenticatedTask.result.isAuthenticated
+            if (isAuthenticated) {
+                levelViewModel.setAccountStatus(AccountStatus.SIGNED_IN)
+                generalViewModel.setAccountStatus(AccountStatus.SIGNED_IN)
+            } else {
+                levelViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
+                generalViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
             }
         }
 
@@ -92,6 +101,7 @@ class MainActivity : AppCompatActivity(),
         setUpNavController()
         progressBarUpdater()
         collectRewardInfo()
+        collectVariousEvents()
         requestLatestConsentInformation()
     }
 
@@ -104,7 +114,6 @@ class MainActivity : AppCompatActivity(),
     override fun onPause() {
         super.onPause()
         Log.d(TAG, "onPause")
-        levelViewModel.stopSavingGame()
         levelViewModel.setUiStateWhenOnPause()
     }
 
@@ -114,8 +123,19 @@ class MainActivity : AppCompatActivity(),
         Log.d(TAG, "onStop")
     }
 
-    private fun requestLatestConsentInformation()
-    {
+    private fun submitScore(score: Long) {
+        PlayGames.getLeaderboardsClient(this)
+            .submitScore(
+                getString(R.string.leaderboard_crme_de_la_crme),
+                score
+            )
+    }
+
+    private fun unlockAchievement(achievement: String) {
+        PlayGames.getAchievementsClient(this).unlock(achievement)
+    }
+
+    private fun requestLatestConsentInformation() {
         // Set tag for underage of consent. false means users are not underage.
         val params = ConsentRequestParameters.Builder()
             .setTagForUnderAgeOfConsent(false)
@@ -155,6 +175,33 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
+    private fun collectVariousEvents()
+    {
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED)
+            {
+                levelViewModel.variousEventFlow.collect { event ->
+                    when(event)
+                    {
+                        LevelViewModel.VariousEvent.LoadGame -> {
+                            val saveGame:SaveGame? = snapshotHelper.load(this@MainActivity)
+                            levelViewModel.loadLatestLevelFromCloudOrLocal(saveGame)
+                        }
+                        is LevelViewModel.VariousEvent.SaveGame -> {
+                            snapshotHelper.save(this@MainActivity, event.localSaveGame)
+                        }
+                        is LevelViewModel.VariousEvent.SubmitScore -> {
+                            submitScore(event.score)
+                        }
+                        is LevelViewModel.VariousEvent.UnlockAchievement -> {
+                            unlockAchievement(event.achievement)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private fun collectRewardInfo() {
         binding.watchAdTop.setOnClickListener {
             levelViewModel.setUiStateBusy()
@@ -183,8 +230,7 @@ class MainActivity : AppCompatActivity(),
                 launch {
                     generalViewModel.buttonState.collect { buttonInfo ->
                         if (buttonInfo.sadMode && buttonInfo.state == ButtonState.AD) {
-                            if (!binding.container.isSadMode)
-                            {
+                            if (!binding.container.isSadMode) {
                                 executeSadModeEffects(true)
                             }
                             binding.container.isSadMode = true
@@ -201,16 +247,14 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    private fun showSadModeToast()
-    {
+    private fun showSadModeToast() {
         val text = getString(R.string.entering_sad_mode)
         val duration = Toast.LENGTH_LONG
         val toast = Toast.makeText(applicationContext, text, duration)
         toast.show()
     }
 
-    private fun showNormalModeToast()
-    {
+    private fun showNormalModeToast() {
         val text = getString(R.string.entering_normal_mode)
         val duration = Toast.LENGTH_LONG
         val toast = Toast.makeText(applicationContext, text, duration)
@@ -244,7 +288,7 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
-        Log.d(TAG,"onConfigurationChanged")
+        Log.d(TAG, "onConfigurationChanged")
         super.onConfigurationChanged(newConfig)
     }
 
@@ -316,9 +360,10 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    private fun setLevelProgressIndicator(level: LevelData, solutionsCount:Int) {
+    private fun setLevelProgressIndicator(level: LevelData, solutionsCount: Int) {
         val levelsCount = 100
-        binding.levelNumber.text = if(solutionsCount > 1) "${level.levelId}*" else "${level.levelId}"
+        binding.levelNumber.text =
+            if (solutionsCount > 1) "${level.levelId}*" else "${level.levelId}"
         binding.gameProgress.progress =
             (level.levelId.toFloat() / levelsCount.toFloat() * 100.0).toInt()
     }
