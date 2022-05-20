@@ -25,6 +25,7 @@
 
     <string name="hints">Hints</string>
     <string name="scores">Scores</string>
+    <string name="prizes">Prizes</string>
     <string name="tutorial">Tutorial</string>
     <string name="level_select">Level Select</string>
     <string name="rate_game">Give Feedback</string>
@@ -124,13 +125,20 @@
 
     <!-- TUTORIAL -->
     <string name="tutorial_text">Create a palindrome with the given chars. Solution will be same when reading from either side.</string>
-    <string name="tutorial2_text">Compete against other players by making as few mistakes as possible!</string>
     <string name="tutorial3_text">Sentences require regular punctuation.</string>
-    <string name="tutorial3_second_text">Levels with \"*\" indicate multiple solutions.</string>
+    <string name="tutorial3_second_text">• Multiple solutions are marked with \"*\" \n• Fewer mistakes = better score</string>
+    <string name="tutorial_25_level_promo">One more thing… Reach level 25 and get \"Instant Clues\" as a reward.</string>
+    <string name="tutorial_complete_text">Done! Enjoy the game 🚀</string>
     <string name="next">Next</string>
     <string name="skip">Skip Tutorial</string>
     <string name="back">Back</string>
     <string name="play">Play</string>
+    <string name="redeem_now">Redeem Prize</string>
+    <string name="congrats_25_prize_title">Congratulations!</string>
+    <string name="congrats_25_prize_text">You finished with a reward!\nRedeem your prize below or save the code somewhere because you cannot recover it later (code is copied to your clipboard)!</string>
+    <string name="congrats_25_no_prize_title">Competition complete!</string>
+    <string name="congrats_25_no_prize_text">There are no rewards left but you should be proud of yourself because only about 3% of all the players make it this far. Good job!</string>
+
 
     <!-- LEVEL SELECT ICONS -->
     <string name="levels_1_20">🐣</string>

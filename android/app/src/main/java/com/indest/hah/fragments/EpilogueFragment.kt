@@ -48,7 +48,7 @@ class EpilogueFragment : Fragment(R.layout.epilogue_fragment) {
         savedInstanceState: Bundle?
     ): View {
         binding = EpilogueFragmentBinding.inflate(layoutInflater, container, false)
-        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+        activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         return binding.root
     }
 
@@ -104,8 +104,10 @@ class EpilogueFragment : Fragment(R.layout.epilogue_fragment) {
                             data = Uri.parse(getString(R.string.app_package_url))
                             setPackage(getString(R.string.vending_package))
                         }
-                        if (intent.resolveActivity(requireContext().packageManager) != null) {
-                            startActivity(intent)
+                        context?.let {
+                            if (intent.resolveActivity(it.packageManager) != null) {
+                                startActivity(intent)
+                            }
                         }
                     }
                     binding.showLeaderboardsButton.setOnClickListener {
@@ -131,7 +133,7 @@ class EpilogueFragment : Fragment(R.layout.epilogue_fragment) {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        (requireActivity() as? MainActivity)?.let {
+        (activity as? MainActivity)?.let {
             it.binding.bottomNavView.menu.findItem(R.id.navigation_goods).isEnabled = false
             it.binding.bottomNavView.menu.findItem(R.id.navigation_goods)
                 .setIcon(R.drawable.ic_baseline_disabled_by_default_24)
@@ -142,26 +144,30 @@ class EpilogueFragment : Fragment(R.layout.epilogue_fragment) {
     }
 
     private fun showLeaderBoard() {
-        val leaderboardsClient = PlayGames.getLeaderboardsClient(requireActivity())
-        leaderboardsClient.getLeaderboardIntent(getString(R.string.leaderboard_crme_de_la_crme))
-            .continueWith {
-                if (it.isSuccessful) {
-                    startActivity.launch(it.result)
+        activity?.let { activity ->
+            val leaderboardsClient = PlayGames.getLeaderboardsClient(activity)
+            leaderboardsClient.getLeaderboardIntent(getString(R.string.leaderboard_crme_de_la_crme))
+                .continueWith {
+                    if (it.isSuccessful) {
+                        startActivity.launch(it.result)
+                    }
                 }
-            }
+        }
     }
 
     private fun showAchievements() {
-        val achievementsClient = PlayGames.getAchievementsClient(requireActivity())
-        achievementsClient.achievementsIntent.continueWith {
-            if (it.isSuccessful) {
-                startActivity.launch(it.result)
+        activity?.let { activity ->
+            val achievementsClient = PlayGames.getAchievementsClient(activity)
+            achievementsClient.achievementsIntent.continueWith {
+                if (it.isSuccessful) {
+                    startActivity.launch(it.result)
+                }
             }
         }
     }
 
     override fun onDestroyView() {
-        (requireActivity() as? MainActivity)?.binding?.konfettiView?.stopGracefully()
+        (activity as? MainActivity)?.binding?.konfettiView?.stopGracefully()
         trainAnimator?.cancel()
         trainAnimator?.removeAllListeners()
         super.onDestroyView()

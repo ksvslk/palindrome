@@ -36,7 +36,7 @@ class LevelSelectFragment : BottomSheetDialogFragment() {
     ): View {
         Log.d(TAG, "onCreateView")
         _binding = LevelSelectFragmentBinding.inflate(layoutInflater, container, false)
-        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+        activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         return binding.root
     }
 

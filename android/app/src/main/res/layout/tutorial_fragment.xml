@@ -25,10 +25,11 @@
         <Button
             android:id="@+id/continueButton"
             style="@style/OC.OutlinedButton"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/yantramanav_bold"
-            android:drawableTint="@color/colorOnBackground"
+            android:backgroundTint="@color/colorPrimary"
+            android:drawableTint="@color/colorOnPrimary"
             android:paddingVertical="@dimen/default_gap"
             android:drawableEnd="@drawable/ic_baseline_arrow_right_24"
             android:text="@string/next"
@@ -36,10 +37,10 @@
             android:textSize="@dimen/tutorial_primary_button_text_size" />
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
-            android:layout_width="@dimen/tutorial_progress_width"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:progress="33"
-            app:indicatorColor="@color/hintsNotificationColor" />
+            app:indicatorColor="@color/colorOnBackground" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -57,17 +58,23 @@
     <FrameLayout
         android:id="@+id/tutorialGameplay"
         android:layout_width="match_parent"
-        android:layout_margin="@dimen/default_large_margin"
-        android:padding="@dimen/default_large_margin"
         android:layout_height="0dp"
+        android:padding="@dimen/default_large_margin"
         android:layout_weight="2.5"
+        android:alpha="0"
         android:animateLayoutChanges="true"
         android:clipChildren="false"
         android:gravity="center"
         android:orientation="vertical">
 
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/hand"
+            android:layout_width="@dimen/_44sdp"
+            android:layout_height="@dimen/_44sdp"
+            android:background="@drawable/tutorial_hand_drawable"
+            android:elevation="2dp" />
+
         <androidx.gridlayout.widget.GridLayout
-            android:id="@+id/tutorial_letters_grid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -77,6 +84,42 @@
             android:visibility="visible"
             app:columnCount="3"
             app:useDefaultMargins="true">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/letter1"
+                android:layout_width="@dimen/tutorial_box_size"
+                android:layout_height="@dimen/tutorial_box_size"
+                android:background="@color/colorPrimary"
+                android:elevation="1dp"
+                android:fontFamily="@font/yantramanav_bold"
+                android:gravity="center"
+                android:text="A"
+                android:textColor="@color/colorOnPrimary"
+                android:textSize="@dimen/tutorial_box_text_size" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/letter2"
+                android:layout_width="@dimen/tutorial_box_size"
+                android:layout_height="@dimen/tutorial_box_size"
+                android:background="@color/colorPrimary"
+                android:elevation="1dp"
+                android:fontFamily="@font/yantramanav_bold"
+                android:gravity="center"
+                android:text="H"
+                android:textColor="@color/colorOnPrimary"
+                android:textSize="@dimen/tutorial_box_text_size" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/letter3"
+                android:layout_width="@dimen/tutorial_box_size"
+                android:layout_height="@dimen/tutorial_box_size"
+                android:background="@color/colorPrimary"
+                android:elevation="1dp"
+                android:fontFamily="@font/yantramanav_bold"
+                android:gravity="center"
+                android:text="H"
+                android:textColor="@color/colorOnPrimary"
+                android:textSize="@dimen/tutorial_box_text_size" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/r1"
@@ -106,38 +149,35 @@
                 app:layout_gravity="center" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/letter1"
+                android:id="@+id/space1"
                 android:layout_width="@dimen/tutorial_box_size"
                 android:layout_height="@dimen/tutorial_box_size"
-                android:background="@color/colorPrimary"
-                android:elevation="1dp"
+                android:background="@drawable/slot_edge_fade"
+                android:elevation="0dp"
                 android:fontFamily="@font/yantramanav_bold"
                 android:gravity="center"
-                android:text="H"
                 android:textColor="@color/colorOnPrimary"
                 android:textSize="@dimen/tutorial_box_text_size" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/letter2"
+                android:id="@+id/space2"
                 android:layout_width="@dimen/tutorial_box_size"
                 android:layout_height="@dimen/tutorial_box_size"
-                android:background="@color/colorPrimary"
-                android:elevation="1dp"
+                android:background="@drawable/slot_edge_fade"
+                android:elevation="0dp"
                 android:fontFamily="@font/yantramanav_bold"
                 android:gravity="center"
-                android:text="A"
                 android:textColor="@color/colorOnPrimary"
                 android:textSize="@dimen/tutorial_box_text_size" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/letter3"
+                android:id="@+id/space3"
                 android:layout_width="@dimen/tutorial_box_size"
                 android:layout_height="@dimen/tutorial_box_size"
-                android:background="@color/colorPrimary"
-                android:elevation="1dp"
+                android:background="@drawable/slot_edge_fade"
+                android:elevation="0dp"
                 android:fontFamily="@font/yantramanav_bold"
                 android:gravity="center"
-                android:text="H"
                 android:textColor="@color/colorOnPrimary"
                 android:textSize="@dimen/tutorial_box_text_size" />
 
@@ -171,6 +211,7 @@
                 android:rotationY="180"
                 app:layout_gravity="center" />
         </androidx.gridlayout.widget.GridLayout>
+
     </FrameLayout>
 
     <androidx.appcompat.widget.LinearLayoutCompat

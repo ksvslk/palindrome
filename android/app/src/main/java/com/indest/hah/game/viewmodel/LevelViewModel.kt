@@ -4,23 +4,27 @@ import android.app.Application
 import android.os.Bundle
 import android.util.Log
 import androidx.core.os.bundleOf
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.indest.hah.R
 import com.indest.hah.ads.RewardType
 import com.indest.hah.game.creation.BookMode
-import com.indest.hah.game.viewmodel.ContainerState.*
 import com.indest.hah.game.creation.WindowSizeClass
+import com.indest.hah.game.viewmodel.ContainerState.*
 import com.indest.hah.general.AccountStatus
+import com.indest.hah.general.CompetitionAnnouncement
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
 import com.indest.hah.persistance.dto.SaveGame
 import com.indest.hah.persistance.level.LevelProgress
 import com.indest.hah.persistance.level.LevelRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -37,6 +41,8 @@ class LevelViewModel @Inject constructor(
 
     private var _windowSizeClassWidth = MutableStateFlow(WindowSizeClass.NOT_SET)
     private var _bookMode = MutableStateFlow(BookMode.NOT_SET)
+
+    private val _competitionStatus = MutableStateFlow(CompetitionAnnouncement())
 
     private val _accountStatus = MutableStateFlow(AccountStatus.NOT_SET)
     private val _currentLevel = MutableStateFlow(Level())
@@ -61,6 +67,15 @@ class LevelViewModel @Inject constructor(
 
     private val saveGameExceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Log.e(TAG, "Could not write snapshot or save game: ${throwable.message}")
+    }
+
+    fun getCompetitionStatus():CompetitionAnnouncement
+    {
+        return _competitionStatus.value
+    }
+
+    fun setCompetitionStatus(competitionAnnouncement: CompetitionAnnouncement) {
+        _competitionStatus.value = competitionAnnouncement
     }
 
     fun setAccountStatus(accountStatus: AccountStatus) {

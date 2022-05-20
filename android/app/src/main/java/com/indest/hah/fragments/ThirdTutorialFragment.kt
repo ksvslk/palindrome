@@ -6,14 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.FrameLayout
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.databinding.ThirdTutorialFragmentBinding
-import com.indest.hah.game.viewmodel.LevelViewModel
 
 class ThirdTutorialFragment : BottomSheetDialogFragment() {
     private var _binding: ThirdTutorialFragmentBinding? = null
@@ -25,7 +23,7 @@ class ThirdTutorialFragment : BottomSheetDialogFragment() {
     ): View {
         val b = ThirdTutorialFragmentBinding.inflate(layoutInflater, container, false)
         _binding = b
-        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+        activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         return b.root
     }
 

@@ -6,6 +6,8 @@
     <!--app_id-->
     <string name="app_preferences" translatable="false">AppPreferences</string>
 
+    <string name="oauth_game_server_client_id" translatable="false">1023077026447-3s7mh9c6c1q10pcblp6g84t2ik6rikhl.apps.googleusercontent.com</string>
+
 <!--    <string name="admob_app_id_fake" translatable="false">ca-app-pub-3940256099942544~3347511713</string> &lt;!&ndash; TODO: Fake id &ndash;&gt;
     <string name="admob_rewarded_ad_unit_fake" translatable="false">ca-app-pub-3940256099942544/5224354917</string> &lt;!&ndash; TODO: Fake id &ndash;&gt;-->
 

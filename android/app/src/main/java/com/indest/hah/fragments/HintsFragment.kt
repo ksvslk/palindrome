@@ -93,7 +93,9 @@ class HintsFragment : BottomSheetDialogFragment() {
                 when (binding.rewardCategoryButton.buttonState) {
                     AD -> {
                         levelViewModel.setUiStateBusy()
-                        viewModel.showRewardedVideo(requireActivity(), CLUE)
+                        activity?.let {
+                            viewModel.showRewardedVideo(it, CLUE)
+                        }
                     }
                     PREMIUM -> {
                         revealClue()
@@ -110,7 +112,9 @@ class HintsFragment : BottomSheetDialogFragment() {
             when (binding.rewardPlaceLetter.buttonState) {
                 AD -> {
                     levelViewModel.setUiStateBusy()
-                    viewModel.showRewardedVideo(requireActivity(), LETTER)
+                    activity?.let {
+                        viewModel.showRewardedVideo(it, LETTER)
+                    }
                 }
                 PREMIUM -> {
                     levelViewModel.logPremiumHintUsage(LETTER)
@@ -187,7 +191,7 @@ class HintsFragment : BottomSheetDialogFragment() {
         binding.root.layoutTransition.setAnimator(LayoutTransition.APPEARING, appearingScaleY)
         binding.root.layoutTransition.setAnimator(LayoutTransition.DISAPPEARING, disappearingScaleY)
 
-        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+        activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
 
         return b.root
     }
@@ -198,16 +202,20 @@ class HintsFragment : BottomSheetDialogFragment() {
                 pb.sku?.let { sku ->
                     levelViewModel.setUiStateMenuAction()
                     Log.d(TAG, "launchBillingFlow: $sku")
-                    viewModel.launchBillingFlow(requireActivity(), sku)
+                    activity?.let {
+                        viewModel.launchBillingFlow(it, sku)
+                    }
                 }
             }
         }
     }
 
     override fun onDestroyView() {
-        val hintBadge = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView)
-            .getOrCreateBadge(R.id.navigation_goods)
-        hintBadge.isVisible = false
+        activity?.let {
+            val hintBadge = it.findViewById<BottomNavigationView>(R.id.bottomNavView)
+                .getOrCreateBadge(R.id.navigation_goods)
+            hintBadge.isVisible = false
+        }
         super.onDestroyView()
     }
 

@@ -24,21 +24,22 @@
         <Button
             android:id="@+id/startButton"
             style="@style/OC.OutlinedButton"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/yantramanav_bold"
-            android:paddingHorizontal="@dimen/_24sdp"
-            android:drawableTint="@color/colorOnBackground"
+            android:backgroundTint="@color/colorPrimary"
+            android:drawableTint="@color/colorOnPrimary"
+            android:drawableEnd="@drawable/ic_baseline_arrow_right_24"
             android:paddingVertical="@dimen/default_gap"
             android:text="@string/next"
             android:textAppearance="@style/TextAppearance.OC.Headline5"
             android:textSize="@dimen/tutorial_primary_button_text_size" />
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
-            android:layout_width="@dimen/tutorial_progress_width"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:progress="66"
-            app:indicatorColor="@color/hintsNotificationColor" />
+            app:indicatorColor="@color/colorOnBackground" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

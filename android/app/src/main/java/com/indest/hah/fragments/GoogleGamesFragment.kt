@@ -81,27 +81,31 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
         Log.d(TAG, "onCreateView")
         val b = GoogleGamesFragmentBinding.inflate(layoutInflater, container, false)
         _binding = b
-        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+        activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         return b.root
     }
 
     private fun showLeaderBoard() {
-        val leaderboardsClient = PlayGames.getLeaderboardsClient(requireActivity())
-        leaderboardsClient.getLeaderboardIntent(getString(R.string.leaderboard_crme_de_la_crme))
-            .continueWith {
+        activity?.let { activity ->
+            val leaderboardsClient = PlayGames.getLeaderboardsClient(activity)
+            leaderboardsClient.getLeaderboardIntent(getString(R.string.leaderboard_crme_de_la_crme))
+                .continueWith {
+                    if (it.isSuccessful) {
+                        levelViewModel.setUiStateMenuAction()
+                        startActivity.launch(it.result)
+                    }
+                }
+        }
+    }
+
+    private fun showAchievements() {
+        activity?.let { activity ->
+            val achievementsClient = PlayGames.getAchievementsClient(activity)
+            achievementsClient.achievementsIntent.continueWith {
                 if (it.isSuccessful) {
                     levelViewModel.setUiStateMenuAction()
                     startActivity.launch(it.result)
                 }
-            }
-    }
-
-    private fun showAchievements() {
-        val achievementsClient = PlayGames.getAchievementsClient(requireActivity())
-        achievementsClient.achievementsIntent.continueWith {
-            if (it.isSuccessful) {
-                levelViewModel.setUiStateMenuAction()
-                startActivity.launch(it.result)
             }
         }
     }

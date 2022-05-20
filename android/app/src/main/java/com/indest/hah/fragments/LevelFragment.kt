@@ -4,10 +4,11 @@ import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.os.Bundle
-import android.text.Layout
 import android.util.Log
-import android.view.*
-import android.widget.FrameLayout
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.LinearLayoutCompat
@@ -24,7 +25,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.BaseTransientBottomBar
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.indest.hah.MainActivity
 import com.indest.hah.R
@@ -75,7 +75,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         savedInstanceState: Bundle?
     ): View {
         binding = LevelFragmentBinding.inflate(layoutInflater, container, false)
-        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+        activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         binding.levelFragment.layoutTransition = animations.getLayoutTransition()
         return binding.root
     }
@@ -202,7 +202,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     }
 
     private fun activateBottomNavBar() {
-        (requireActivity() as? MainActivity)?.let { mainActivity ->
+        (activity as? MainActivity)?.let { mainActivity ->
             mainActivity.binding.bottomNavView.menu.forEach { menuItem ->
                 menuItem.isEnabled = true
                 when (menuItem.itemId) {
@@ -221,7 +221,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     }
 
     private fun deactivateBottomNavBar() {
-        (requireActivity() as? MainActivity)?.let { mainActivity ->
+        (activity as? MainActivity)?.let { mainActivity ->
             mainActivity.binding.bottomNavView.menu.forEach { menuItem ->
                 menuItem.isEnabled = false
                 menuItem.setIcon(R.drawable.ic_baseline_disabled_by_default_24)
@@ -230,7 +230,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     }
 
     private fun deactivateGoods() {
-        (requireActivity() as? MainActivity)?.let { mainActivity ->
+        (activity as? MainActivity)?.let { mainActivity ->
             mainActivity.binding.bottomNavView.menu.findItem(R.id.navigation_goods).isEnabled =
                 false
             mainActivity.binding.bottomNavView.menu.findItem(R.id.navigation_goods)
@@ -285,7 +285,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
     private fun playMaxScoreAnimation(score: Int, maxScore: Int) {
         if (score == maxScore) {
-            (requireActivity() as? MainActivity)?.let {
+            (activity as? MainActivity)?.let {
                 val rain = animations.getRainConfetti()
                 it.binding.konfettiView.start(rain)
             }
@@ -418,7 +418,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                     add(TutorialFragment(), TutorialFragment().tag)
                 }
                 with(sp.edit()) {
-                    putBoolean(getString(com.indest.hah.R.string.tutorial_passed), true)
+                    putBoolean(getString(R.string.tutorial_passed), true)
                     apply()
                 }
             }
@@ -427,35 +427,39 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
     private fun showHintsBadge() {
         if (isVisible) {
-            val hintBadge = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView)
-                .getOrCreateBadge(R.id.navigation_goods)
-            hintBadge.backgroundColor =
-                ContextCompat.getColor(requireContext(), R.color.hintsNotificationColor)
-            hintBadge.badgeGravity = BadgeDrawable.TOP_END
-            val text = getString(R.string.hints_are_available)
-            val duration = Toast.LENGTH_LONG
-            Toast.makeText(requireContext(), text, duration).show()
-            soundPlayer.play(soundPlayer.sounds.hintNotification)
-            if (!hintBadge.isVisible) {
-                hintBadge.isVisible = true
+            activity?.let {
+                val hintBadge = it.findViewById<BottomNavigationView>(R.id.bottomNavView)
+                    .getOrCreateBadge(R.id.navigation_goods)
+                hintBadge.backgroundColor =
+                    ContextCompat.getColor(it.applicationContext, R.color.hintsNotificationColor)
+                hintBadge.badgeGravity = BadgeDrawable.TOP_END
+                val text = getString(R.string.hints_are_available)
+                val duration = Toast.LENGTH_LONG
+                Toast.makeText(it.applicationContext, text, duration).show()
+                soundPlayer.play(soundPlayer.sounds.hintNotification)
+                if (!hintBadge.isVisible) {
+                    hintBadge.isVisible = true
+                }
             }
         }
     }
 
     private fun askForReview(level: Int) {
-        if (level == 15) {
-            val reviewManager = ReviewManagerFactory.create(requireContext())
-            val request = reviewManager.requestReviewFlow()
-            request.addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    viewModel.setUiStateMenuAction()
-                    val reviewInfo = task.result
-                    val flow = reviewManager.launchReviewFlow(requireActivity(), reviewInfo)
-                    flow.addOnCompleteListener { _ ->
-                        Log.d(TAG, "Review flow completed.")
+        if (level == 8) {
+            activity?.let {
+                val reviewManager = ReviewManagerFactory.create(it.applicationContext)
+                val request = reviewManager.requestReviewFlow()
+                request.addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        viewModel.setUiStateMenuAction()
+                        val reviewInfo = task.result
+                        val flow = reviewManager.launchReviewFlow(it, reviewInfo)
+                        flow.addOnCompleteListener { _ ->
+                            Log.d(TAG, "Review flow completed.")
+                        }
+                    } else {
+                        Log.e(TAG, "Error requesting review flow: ${task.exception?.message}")
                     }
-                } else {
-                    Log.e(TAG, "Error requesting review flow: ${task.exception?.message}")
                 }
             }
         }
@@ -463,9 +467,11 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
     private fun hideHintsBadge() {
         if (isVisible) {
-            val hintBadge = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView)
-                .getOrCreateBadge(R.id.navigation_goods)
-            hintBadge.isVisible = false
+            activity?.let {
+                val hintBadge = it.findViewById<BottomNavigationView>(R.id.bottomNavView)
+                    .getOrCreateBadge(R.id.navigation_goods)
+                hintBadge.isVisible = false
+            }
         }
     }
 

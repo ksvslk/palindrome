@@ -4,11 +4,9 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
-import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.indest.hah.MainActivity
 import com.indest.hah.R
 
 class ExitGameDialogFragment : DialogFragment() {
@@ -44,7 +42,7 @@ class ExitGameDialogFragment : DialogFragment() {
             builder
                 .setBackground(
                     ContextCompat.getDrawable(
-                        requireActivity(),
+                        it,
                         R.drawable.round_rectangle
                     )
                 )
@@ -55,7 +53,7 @@ class ExitGameDialogFragment : DialogFragment() {
                 .setNegativeButton(R.string.continue_game)
                 { _, _ -> listener.onDialogNegativeClick(this) }
             builder.create()
-        } ?: throw IllegalStateException("Activity cannot be null")
+        } ?: throw IllegalStateException("Activity cannot be null. Exit dialog.")
     }
 
     override fun onCancel(dialog: DialogInterface) {

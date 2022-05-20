@@ -49,3 +49,16 @@
 
 # Report
 -printusage app/build/outputs/mapping/release/usage.txt
+
+-keep class * implements android.os.Parcelable {
+   public static final android.os.Parcelable$Creator *;
+}
+
+-keep class com.google.android.gms.** { *; }
+
+-keep public class com.google.android.gms.ads.**{
+   public *;
+}
+-keep public class com.google.ads.**{
+   public *;
+}

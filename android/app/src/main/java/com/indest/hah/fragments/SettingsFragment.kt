@@ -53,27 +53,29 @@ class SettingsFragment : BottomSheetDialogFragment() {
                         startActivity(shareIntent)
                     }
                     binding.rateGameButton.setOnClickListener {
-                        when (internet) {
-                            true -> {
-                                val playStoreIntent = Intent(Intent.ACTION_VIEW).apply {
-                                    data = Uri.parse(getString(R.string.app_package_url))
-                                    setPackage(getString(R.string.vending_package))
-                                }
-                                if (playStoreIntent.resolveActivity(requireContext().packageManager) != null) {
-                                    startActivity(playStoreIntent)
-                                } else {
-                                    val browserIntent = Intent(Intent.ACTION_VIEW).apply {
+                        context?.let {
+                            when (internet) {
+                                true -> {
+                                    val playStoreIntent = Intent(Intent.ACTION_VIEW).apply {
                                         data = Uri.parse(getString(R.string.app_package_url))
+                                        setPackage(getString(R.string.vending_package))
                                     }
-                                    startActivity(browserIntent)
+                                    if (playStoreIntent.resolveActivity(it.packageManager) != null) {
+                                        startActivity(playStoreIntent)
+                                    } else {
+                                        val browserIntent = Intent(Intent.ACTION_VIEW).apply {
+                                            data = Uri.parse(getString(R.string.app_package_url))
+                                        }
+                                        startActivity(browserIntent)
+                                    }
                                 }
-                            }
-                            false -> {
-                                Toast.makeText(
-                                    requireContext().applicationContext,
-                                    getString(R.string.no_internet),
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                                false -> {
+                                    Toast.makeText(
+                                        it.applicationContext,
+                                        getString(R.string.no_internet),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
                             }
                         }
                     }
@@ -82,8 +84,10 @@ class SettingsFragment : BottomSheetDialogFragment() {
                         AccountStatus.SIGNED_IN -> {
                             binding.googleSignInButton.visibility = View.GONE
                             binding.googleSignOutButton.visibility = View.VISIBLE
-                            PlayGames.getPlayersClient(requireActivity()).currentPlayer.addOnCompleteListener {
-                                binding.googleSignOutButton.text = "Signed in as ${it.result.displayName}"
+                            activity?.let {
+                                PlayGames.getPlayersClient(it).currentPlayer.addOnCompleteListener {
+                                    binding.googleSignOutButton.text = "Signed in as ${it.result.displayName}"
+                                }
                             }
                         }
                         AccountStatus.SIGNED_OUT -> {
@@ -99,11 +103,13 @@ class SettingsFragment : BottomSheetDialogFragment() {
                                 signInToGoogle()
                             }
                             false -> {
-                                Toast.makeText(
-                                    requireContext().applicationContext,
-                                    getString(R.string.no_internet),
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                                context?.let {
+                                    Toast.makeText(
+                                        it.applicationContext,
+                                        getString(R.string.no_internet),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
                             }
                         }
                     }
@@ -142,6 +148,11 @@ class SettingsFragment : BottomSheetDialogFragment() {
             changePreference(getString(R.string.vibration_on_pref), b2)
         }
         binding.tutorialButton.setOnClickListener {
+            levelViewModel.setCompetitionStatus(
+                levelViewModel.getCompetitionStatus().copy(
+                    accessedFromMenu = true
+                )
+            )
             parentFragmentManager.commit {
                 addToBackStack(TutorialFragment().tag)
                 add(TutorialFragment(), TutorialFragment().tag)
@@ -160,28 +171,31 @@ class SettingsFragment : BottomSheetDialogFragment() {
         setInitialPreference(binding.vibrationSwitch, getString(R.string.vibration_on_pref))
 
         binding.googleSignInButton.setSize(SignInButton.SIZE_WIDE)
-        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+        activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         return b.root
     }
 
     private fun signInToGoogle() {
-        val gamesSignInClient = PlayGames.getGamesSignInClient(requireActivity())
-        gamesSignInClient.signIn().addOnCompleteListener {
-            if (it.isSuccessful && it.result.isAuthenticated)
-            {
-                generalViewModel.setAccountStatus(AccountStatus.SIGNED_IN)
-                levelViewModel.setAccountStatus(AccountStatus.SIGNED_IN)
-                levelViewModel.setUiStateLoading()
-            }
-            else {
-                levelViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
-                generalViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
+        activity?.let { activity ->
+            val gamesSignInClient = PlayGames.getGamesSignInClient(activity)
+            gamesSignInClient.signIn().addOnCompleteListener {
+                if (it.isSuccessful && it.result.isAuthenticated)
+                {
+                    generalViewModel.setAccountStatus(AccountStatus.SIGNED_IN)
+                    levelViewModel.setAccountStatus(AccountStatus.SIGNED_IN)
+                    levelViewModel.setUiStateLoading()
+                }
+                else {
+                    levelViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
+                    generalViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
+                }
             }
         }
+
     }
 
     private fun changePreference(setting: String, value: Boolean) {
-        requireContext().applicationContext.getSharedPreferences(
+        context?.applicationContext?.getSharedPreferences(
             getString(R.string.app_preferences),
             Context.MODE_PRIVATE
         )?.let {
@@ -193,7 +207,7 @@ class SettingsFragment : BottomSheetDialogFragment() {
     }
 
     private fun setInitialPreference(button: CompoundButton, setting: String) {
-        requireContext().applicationContext.getSharedPreferences(
+        context?.applicationContext?.getSharedPreferences(
             getString(R.string.app_preferences),
             Context.MODE_PRIVATE
         )?.let {

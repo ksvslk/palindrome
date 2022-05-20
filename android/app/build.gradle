@@ -35,13 +35,14 @@ android {
             }
         }
     }
-
     buildTypes {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField "String", "GIT_HASH", getGitHash()
-
+            ndk {
+                debugSymbolLevel = 'full'
+            }
         }
         debug {
             minifyEnabled false
@@ -83,6 +84,8 @@ android {
 
 dependencies {
 
+    implementation 'com.google.firebase:firebase-auth-ktx:21.0.4'
+    implementation 'com.google.firebase:firebase-appcheck-debug:16.0.0'
     def hilt_version = "2.38.1"
     def coroutine_version = '1.5.1'
     def work_version = '2.7.1'
@@ -114,11 +117,14 @@ dependencies {
     def billing_version = '4.1.0'
     def konfetti_version = '2.0.1'
     def kotlinx_serialization = '1.3.2'
-    def firebase_version = '29.2.1'
+    def firebase_version = '30.0.1'
 
+    implementation 'com.google.firebase:firebase-inappmessaging-display-ktx'
+    implementation 'com.google.firebase:firebase-appcheck-playintegrity'
     implementation platform("com.google.firebase:firebase-bom:$firebase_version")
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    implementation 'com.google.firebase:firebase-firestore-ktx'
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization"
     implementation "nl.dionsegijn:konfetti-xml:$konfetti_version"
     implementation "com.intuit.sdp:sdp-android:$sdp_version"
@@ -154,7 +160,7 @@ dependencies {
     implementation "androidx.hilt:hilt-work:$hilt_work_version"
     kapt "androidx.hilt:hilt-compiler:$hilt_work_version"
 
-    //debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.8.1'
+   debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.8.1'
     testImplementation 'uk.co.jemos.podam:podam:7.2.5.RELEASE'
     testImplementation "org.mockito.kotlin:mockito-kotlin:4.0.0"
     testImplementation "junit:junit:$junit_version"
