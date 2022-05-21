@@ -3,7 +3,7 @@ package com.indest.hah
 import android.app.Application
 import com.google.firebase.FirebaseApp
 import com.google.firebase.appcheck.FirebaseAppCheck
-import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
+import com.google.firebase.appcheck.safetynet.SafetyNetAppCheckProviderFactory
 import dagger.hilt.android.HiltAndroidApp
 /*import leakcanary.LeakCanary
 import leakcanary.ToastEventListener*/
@@ -15,7 +15,7 @@ class CoolApplication : Application() {
         FirebaseApp.initializeApp(this)
         val firebaseAppCheck = FirebaseAppCheck.getInstance()
         firebaseAppCheck.installAppCheckProviderFactory(
-            PlayIntegrityAppCheckProviderFactory.getInstance()
+            SafetyNetAppCheckProviderFactory.getInstance()
         )
 /*       if (BuildConfig.DEBUG)
         {
