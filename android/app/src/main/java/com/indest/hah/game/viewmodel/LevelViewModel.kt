@@ -617,6 +617,12 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+    fun logCompetitionRelatedEvent(event:String) {
+        viewModelScope.launch(Dispatchers.Default) {
+            firebaseAnalytics.logEvent(event, bundleOf())
+        }
+    }
+
     fun logPremiumHintUsage(hintType: RewardType) {
         viewModelScope.launch(Dispatchers.Default) {
             val currentLevel = _currentLevel.value.levelInfo.levelId

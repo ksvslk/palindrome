@@ -48,6 +48,7 @@ import com.indest.hah.fx.SoundPlayer
 import com.indest.hah.game.creation.BookMode
 import com.indest.hah.game.creation.WindowSizeClass
 import com.indest.hah.game.viewmodel.ContainerState
+import com.indest.hah.game.viewmodel.FirebaseCustom
 import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.general.AccountStatus
 import com.indest.hah.general.CompetitionAnnouncement
@@ -288,6 +289,7 @@ class MainActivity : AppCompatActivity(),
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText("Redeem link", promoCode)
         clipboard.setPrimaryClip(clip)
+        levelViewModel.logCompetitionRelatedEvent(FirebaseCustom.Events.COMPETITION_25_PRIZE)
         supportFragmentManager.commit {
             addToBackStack(PrizeFragment(redeemLink).tag)
             add(PrizeFragment(redeemLink), PrizeFragment(redeemLink).tag)
@@ -298,6 +300,7 @@ class MainActivity : AppCompatActivity(),
         levelViewModel.setCompetitionStatus(
             levelViewModel.getCompetitionStatus().copy(competitionEnded = true)
         )
+        levelViewModel.logCompetitionRelatedEvent(FirebaseCustom.Events.COMPETITION_25_FINISHED)
         supportFragmentManager.commit {
             addToBackStack(PrizeFragment().tag)
             add(PrizeFragment(), PrizeFragment().tag)
