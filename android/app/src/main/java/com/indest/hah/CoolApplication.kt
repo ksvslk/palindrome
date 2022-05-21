@@ -1,14 +1,12 @@
 package com.indest.hah
 
 import android.app.Application
-import com.google.android.gms.games.PlayGamesSdk
 import com.google.firebase.FirebaseApp
 import com.google.firebase.appcheck.FirebaseAppCheck
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import dagger.hilt.android.HiltAndroidApp
 /*import leakcanary.LeakCanary
 import leakcanary.ToastEventListener*/
-
 
 @HiltAndroidApp
 class CoolApplication : Application() {
@@ -19,7 +17,6 @@ class CoolApplication : Application() {
         firebaseAppCheck.installAppCheckProviderFactory(
             PlayIntegrityAppCheckProviderFactory.getInstance()
         )
-        PlayGamesSdk.initialize(this)
 /*       if (BuildConfig.DEBUG)
         {
             LeakCanary.config = LeakCanary.config.run {

@@ -101,9 +101,9 @@ class MainActivity : AppCompatActivity(),
             val isAuthenticated = isAuthenticatedTask.isSuccessful &&
                     isAuthenticatedTask.result.isAuthenticated
             if (isAuthenticated) {
+                signInToFirebaseWithCredential(gamesSignInClient)
                 levelViewModel.setAccountStatus(AccountStatus.SIGNED_IN)
                 generalViewModel.setAccountStatus(AccountStatus.SIGNED_IN)
-                signInToFirebaseWithCredential(gamesSignInClient)
             } else {
                 levelViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
                 generalViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
@@ -144,14 +144,17 @@ class MainActivity : AppCompatActivity(),
                                             maxLevel =
                                                 levels.firstOrNull { it.second.progress == LevelProgress.TODO }?.second?.levelId
                                         }
+                                        val currentInfo = levelViewModel.getCompetitionStatus()
                                         if (uiState.state == ContainerState.PLAY) {
-                                            if (!levelViewModel.getCompetitionStatus().show) {
+                                            if (!currentInfo.show && !currentInfo.triedToParticipate) {
                                                 if (currentLevel == 1 && maxLevel == 2) {
+                                                    levelViewModel.setCompetitionStatus(currentInfo.copy(triedToParticipate = true))
                                                     tryToParticipateInCompetition()
                                                 }
                                             }
-                                            if (!levelViewModel.getCompetitionStatus().competitionEnded) {
-                                                if (currentLevel == 25 && maxLevel == 26) {
+                                            if (!currentInfo.competitionEnded) {
+                                                if (currentLevel == 25 && maxLevel == 26 && !currentInfo.triedToOfferPrize) {
+                                                    levelViewModel.setCompetitionStatus(currentInfo.copy(triedToOfferPrize = true))
                                                     tryToObtainPromoCode()
                                                 }
                                             }
