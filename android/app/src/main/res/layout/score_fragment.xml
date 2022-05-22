@@ -30,15 +30,15 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="@dimen/default_gap"
-                app:srcCompat="@drawable/ic_baseline_stars_24"/>
+                app:srcCompat="@drawable/ic_baseline_stars_24" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
-                android:drawablePadding="@dimen/default_large_margin"
                 android:drawableEnd="@drawable/ic_baseline_disabled_by_default_36"
+                android:drawablePadding="@dimen/default_large_margin"
+                android:gravity="center_vertical"
                 android:text="@string/scores"
                 android:textAppearance="@style/TextAppearance.OC.Headline5" />
 
@@ -60,7 +60,7 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/player_score_improve_message"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:gravity="center_vertical"
