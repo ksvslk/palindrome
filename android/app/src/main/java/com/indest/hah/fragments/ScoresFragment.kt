@@ -29,10 +29,6 @@ class ScoresFragment : BottomSheetDialogFragment() {
     private val binding get() = _binding!!
     private val TAG = "ScoresFragment"
     private val generalViewModel: GeneralViewModel by activityViewModels()
-    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        Log.e(TAG, throwable.message.toString())
-        if (isAdded) dismiss()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,84 +48,81 @@ class ScoresFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        lifecycleScope.launch(exceptionHandler) {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED)
-            {
-                if(generalViewModel.accountStatus.value == AccountStatus.SIGNED_IN) {
-                    activity?.let { activity ->
-                        PlayGames.getLeaderboardsClient(activity)
-                            .loadPlayerCenteredScores(
-                                getString(R.string.leaderboard_crme_de_la_crme),
-                                TIME_SPAN_ALL_TIME,
-                                COLLECTION_PUBLIC,
-                                3,
-                                true
-                            ).addOnSuccessListener(activity) { result ->
-                                val leaderBoardScores = result.get()
-                                if (leaderBoardScores != null && isAdded) {
-                                    binding.scoreFragment.removeViewAt(1)
-                                    leaderBoardScores.scores.forEachIndexed { index, score ->
-                                        val isCurrentPlayer =
-                                            score.scoreHolder?.relationshipInfo?.friendStatus
+        if (generalViewModel.accountStatus.value == AccountStatus.SIGNED_IN) {
+            activity?.let { activity ->
+                PlayGames.getLeaderboardsClient(activity)
+                    .loadPlayerCenteredScores(
+                        getString(R.string.leaderboard_crme_de_la_crme),
+                        TIME_SPAN_ALL_TIME,
+                        COLLECTION_PUBLIC,
+                        3,
+                        true
+                    ).addOnSuccessListener(activity) { result ->
+                        val leaderBoardScores = result.get()
+                        if (leaderBoardScores != null && isAdded) {
+                            binding.scoreFragment.removeViewAt(1)
+                            leaderBoardScores.scores.forEachIndexed { index, score ->
+                                val isCurrentPlayer =
+                                    score.scoreHolder?.relationshipInfo?.friendStatus
 
-                                        if (isCurrentPlayer == -1) {
-                                            val scoreLayout = layoutInflater.inflate(
-                                                R.layout.score_item_player,
-                                                binding.scoreFragment,
-                                                false
-                                            )
-                                            val imgManager = ImageManager.create(activity.applicationContext)
-                                            imgManager.loadImage(
-                                                scoreLayout.findViewById<ImageView>(R.id.icon),
-                                                score.scoreHolderIconImageUri
-                                            )
+                                if (isCurrentPlayer == -1) {
+                                    val scoreLayout = layoutInflater.inflate(
+                                        R.layout.score_item_player,
+                                        binding.scoreFragment,
+                                        false
+                                    )
+                                    val imgManager =
+                                        ImageManager.create(activity.applicationContext)
+                                    imgManager.loadImage(
+                                        scoreLayout.findViewById<ImageView>(R.id.icon),
+                                        score.scoreHolderIconImageUri
+                                    )
 
-                                            scoreLayout.findViewById<AppCompatTextView>(R.id.rank).text =
-                                                score.rank.toString()
-                                            scoreLayout.findViewById<AppCompatTextView>(R.id.name).text =
-                                                score.scoreHolderDisplayName
-                                            scoreLayout.findViewById<AppCompatTextView>(R.id.score).text =
-                                                "Score: ${score.rawScore}"
+                                    scoreLayout.findViewById<AppCompatTextView>(R.id.rank).text =
+                                        score.rank.toString()
+                                    scoreLayout.findViewById<AppCompatTextView>(R.id.name).text =
+                                        score.scoreHolderDisplayName
+                                    scoreLayout.findViewById<AppCompatTextView>(R.id.score).text =
+                                        "Score: ${score.rawScore}"
 
-                                            if (index == 0) {
-                                                binding.playerScoreImproveMessage.text =
-                                                    "You rank first!"
-                                            } else {
-                                                binding.playerScoreImproveMessage.text =
-                                                    "Earn ${leaderBoardScores.scores[index - 1].rawScore - score.rawScore + 1} points to rank up!"
-                                            }
-                                            binding.scoreFlipper.showNext()
-                                            binding.scoreFragment.addView(scoreLayout)
-                                        } else {
-                                            val scoreLayout = layoutInflater.inflate(
-                                                R.layout.score_item,
-                                                binding.scoreFragment,
-                                                false
-                                            )
-                                            val imgManager = ImageManager.create(activity.applicationContext)
-                                            imgManager.loadImage(
-                                                scoreLayout.findViewById<ImageView>(R.id.icon),
-                                                score.scoreHolderIconImageUri
-                                            )
-                                            scoreLayout.findViewById<AppCompatTextView>(R.id.rank).text =
-                                                score.rank.toString()
-                                            scoreLayout.findViewById<AppCompatTextView>(R.id.name).text =
-                                                score.scoreHolderDisplayName
-                                            scoreLayout.findViewById<AppCompatTextView>(R.id.score).text =
-                                                "Score: ${score.rawScore}"
-                                            binding.scoreFragment.addView(scoreLayout)
-                                        }
+                                    if (index == 0) {
+                                        binding.playerScoreImproveMessage.text =
+                                            "You rank first!"
+                                    } else {
+                                        binding.playerScoreImproveMessage.text =
+                                            "Earn ${leaderBoardScores.scores[index - 1].rawScore - score.rawScore + 1} points to rank up!"
                                     }
+                                    binding.scoreFlipper.showNext()
+                                    binding.scoreFragment.addView(scoreLayout)
+                                } else {
+                                    val scoreLayout = layoutInflater.inflate(
+                                        R.layout.score_item,
+                                        binding.scoreFragment,
+                                        false
+                                    )
+                                    val imgManager =
+                                        ImageManager.create(activity.applicationContext)
+                                    imgManager.loadImage(
+                                        scoreLayout.findViewById<ImageView>(R.id.icon),
+                                        score.scoreHolderIconImageUri
+                                    )
+                                    scoreLayout.findViewById<AppCompatTextView>(R.id.rank).text =
+                                        score.rank.toString()
+                                    scoreLayout.findViewById<AppCompatTextView>(R.id.name).text =
+                                        score.scoreHolderDisplayName
+                                    scoreLayout.findViewById<AppCompatTextView>(R.id.score).text =
+                                        "Score: ${score.rawScore}"
+                                    binding.scoreFragment.addView(scoreLayout)
                                 }
-                                leaderBoardScores?.release()
-                            }.addOnFailureListener {
-                                dismiss()
                             }
+                        }
+                        leaderBoardScores?.release()
+                    }.addOnFailureListener {
+                        dismiss()
                     }
-                } else {
-                    dismiss()
-                }
             }
+        } else {
+            dismiss()
         }
     }
 }

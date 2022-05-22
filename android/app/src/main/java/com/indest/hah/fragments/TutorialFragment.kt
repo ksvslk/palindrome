@@ -21,7 +21,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.databinding.TutorialFragmentBinding
 
-
 class TutorialFragment : BottomSheetDialogFragment() {
 
     private val TAG = "TutorialFragment"
@@ -47,12 +46,11 @@ class TutorialFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.continueButton.setOnClickListener {
-            parentFragmentManager.popBackStack()
             parentFragmentManager.commit {
                 cleanUp()
+                dismiss()
                 setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top)
                 add(ThirdTutorialFragment(), ThirdTutorialFragment().tag)
-                addToBackStack(ThirdTutorialFragment().tag)
             }
         }
         view.doOnLayout {

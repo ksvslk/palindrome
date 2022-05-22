@@ -7,14 +7,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.indest.hah.MainActivity
 import com.indest.hah.R
 import com.indest.hah.databinding.PrizeFragmentBinding
+import com.indest.hah.general.GeneralViewModel
+import nl.dionsegijn.konfetti.core.Angle
+import nl.dionsegijn.konfetti.core.Party
+import nl.dionsegijn.konfetti.core.Position
+import nl.dionsegijn.konfetti.core.Spread
+import nl.dionsegijn.konfetti.core.emitter.Emitter
+import java.util.concurrent.TimeUnit
 
-class PrizeFragment(private val promoLink:String = "") : BottomSheetDialogFragment() {
+class PrizeFragment(private val promoLink: String = "") : BottomSheetDialogFragment() {
     private var _binding: PrizeFragmentBinding? = null
     private val binding get() = _binding!!
     private val TAG = "PrizeFragment"
+    private val generalViewModel: GeneralViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,28 +44,34 @@ class PrizeFragment(private val promoLink:String = "") : BottomSheetDialogFragme
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if(promoLink.isNotEmpty())
-        {
+        if (promoLink.isNotEmpty()) {
             binding.redeemButton.visibility = View.VISIBLE
             binding.prizeDialogTitle.text = getString(R.string.congrats_25_prize_title)
             binding.competitionCompleteText.text = getString(R.string.congrats_25_prize_text)
             binding.redeemButton.setOnClickListener {
                 redeemCode()
             }
-        }
-        else {
+        } else {
             binding.redeemButton.visibility = View.GONE
             binding.prizeDialogTitle.text = getString(R.string.congrats_25_no_prize_title)
             binding.competitionCompleteText.text = getString(R.string.congrats_25_no_prize_text)
         }
     }
 
-    private fun redeemCode()
-    {
-        val browserIntent = Intent(Intent.ACTION_VIEW).apply {
-            data = Uri.parse(promoLink)
+    private fun redeemCode() {
+        generalViewModel.refreshPurchases = true
+        activity?.let {
+            val playStoreIntent = Intent(Intent.ACTION_VIEW).apply {
+                data = Uri.parse(promoLink)
+            }
+            if (playStoreIntent.resolveActivity(it.packageManager) != null) {
+                startActivity(playStoreIntent)
+                dismiss()
+            }
+            else {
+                Toast.makeText(it, "Something went wrong. Promo code should be still in your clipboard!", Toast.LENGTH_LONG).show()
+            }
         }
-        startActivity(browserIntent)
         dismiss()
     }
 

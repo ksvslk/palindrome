@@ -310,6 +310,7 @@ class MainActivity : AppCompatActivity(),
     override fun onResume() {
         super.onResume()
         levelViewModel.setUiStateWhenOnResume()
+        generalViewModel.refreshPurchasesTriedRedeem()
         Log.d(TAG, "onResume")
     }
 

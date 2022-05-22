@@ -35,11 +35,10 @@ class ThirdTutorialFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.startButton.setOnClickListener {
-            parentFragmentManager.popBackStack()
             parentFragmentManager.commit {
+                dismiss()
                 setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top)
                 add(SecondTutorialFragment(), SecondTutorialFragment().tag)
-                addToBackStack(SecondTutorialFragment().tag)
             }
         }
         this.dialog?.let { dialog ->

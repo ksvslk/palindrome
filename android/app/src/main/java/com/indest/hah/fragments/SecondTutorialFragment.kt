@@ -45,10 +45,9 @@ class SecondTutorialFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.continueButton.setOnClickListener {
-            parentFragmentManager.popBackStack()
             parentFragmentManager.commit {
+                dismiss()
                 levelViewModel.logTutorialComplete()
-                parentFragmentManager.popBackStack()
             }
         }
 
@@ -60,6 +59,5 @@ class SecondTutorialFragment : BottomSheetDialogFragment() {
             bottomSheetBehavior.peekHeight = bottomSheet.height
         }
     }
-
 
 }

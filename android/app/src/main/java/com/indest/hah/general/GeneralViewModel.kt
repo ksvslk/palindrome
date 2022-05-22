@@ -60,6 +60,18 @@ class GeneralViewModel @Inject constructor(
 
     private val _sadMode = MutableStateFlow(false)
 
+    var refreshPurchases = false
+
+    fun refreshPurchasesTriedRedeem()
+    {
+        viewModelScope.launch {
+            if (refreshPurchases) {
+                refreshPurchases = false
+                _billingDataSource.refreshPurchases()
+            }
+        }
+    }
+
     init {
         _sadMode.value = getSadModeValue()
         viewModelScope.launch {

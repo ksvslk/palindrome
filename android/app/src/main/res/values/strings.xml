@@ -134,10 +134,10 @@
     <string name="back">Back</string>
     <string name="play">Play</string>
     <string name="redeem_now">Redeem Prize</string>
-    <string name="congrats_25_prize_title">Congratulations!</string>
-    <string name="congrats_25_prize_text">You finished with a reward!\nRedeem your prize below or save the code somewhere because you cannot recover it later (code is copied to your clipboard)!</string>
-    <string name="congrats_25_no_prize_title">Competition complete!</string>
-    <string name="congrats_25_no_prize_text">There are no rewards left but you should be proud of yourself because only about 3% of all the players make it this far. Good job!</string>
+    <string name="congrats_25_prize_title">Congratulations 🎉!</string>
+    <string name="congrats_25_prize_text">You finished with a reward 🏆!\nRedeem your prize below or save the unrecoverable code (in your clipboard)!</string>
+    <string name="congrats_25_no_prize_title">Competition complete 🏁</string>
+    <string name="congrats_25_no_prize_text">There are no rewards left but only about 3% of all the players make it this far 🦄 - that is extremely rare. Great job!</string>
 
 
     <!-- LEVEL SELECT ICONS -->
