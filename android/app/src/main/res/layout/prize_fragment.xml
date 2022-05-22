@@ -12,6 +12,7 @@
     app:showDividers="middle">
 
     <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/prizeCloseButton"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_header_height"
         android:layout_marginHorizontal="@dimen/simple_dialog_header_left_margin"
@@ -19,9 +20,11 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/prizeDialogTitle"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:drawablePadding="@dimen/default_large_margin"
+            android:drawableEnd="@drawable/ic_baseline_disabled_by_default_36"
             android:text="@string/congrats_25_prize_title"
             android:textAppearance="@style/TextAppearance.OC.Headline5" />
 

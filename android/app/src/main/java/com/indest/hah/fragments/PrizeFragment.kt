@@ -10,16 +10,9 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.indest.hah.MainActivity
 import com.indest.hah.R
 import com.indest.hah.databinding.PrizeFragmentBinding
 import com.indest.hah.general.GeneralViewModel
-import nl.dionsegijn.konfetti.core.Angle
-import nl.dionsegijn.konfetti.core.Party
-import nl.dionsegijn.konfetti.core.Position
-import nl.dionsegijn.konfetti.core.Spread
-import nl.dionsegijn.konfetti.core.emitter.Emitter
-import java.util.concurrent.TimeUnit
 
 class PrizeFragment(private val promoLink: String = "") : BottomSheetDialogFragment() {
     private var _binding: PrizeFragmentBinding? = null
@@ -56,6 +49,14 @@ class PrizeFragment(private val promoLink: String = "") : BottomSheetDialogFragm
             binding.prizeDialogTitle.text = getString(R.string.congrats_25_no_prize_title)
             binding.competitionCompleteText.text = getString(R.string.congrats_25_no_prize_text)
         }
+        binding.prizeCloseButton.setOnClickListener {
+            dismiss()
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        isCancelable = false
     }
 
     private fun redeemCode() {

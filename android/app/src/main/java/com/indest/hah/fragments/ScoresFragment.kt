@@ -1,7 +1,6 @@
 package com.indest.hah.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,9 +8,6 @@ import android.view.WindowManager
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.common.images.ImageManager
 import com.google.android.gms.games.PlayGames
 import com.google.android.gms.games.leaderboard.LeaderboardVariant.COLLECTION_PUBLIC
@@ -21,8 +17,6 @@ import com.indest.hah.R
 import com.indest.hah.databinding.ScoreFragmentBinding
 import com.indest.hah.general.AccountStatus
 import com.indest.hah.general.GeneralViewModel
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.launch
 
 class ScoresFragment : BottomSheetDialogFragment() {
     private var _binding: ScoreFragmentBinding? = null
@@ -41,6 +35,11 @@ class ScoresFragment : BottomSheetDialogFragment() {
         return b.root
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        isCancelable = false
+    }
+
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()
@@ -48,6 +47,12 @@ class ScoresFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.scoresDialogTitle1.setOnClickListener {
+            dismiss()
+        }
+        binding.scoresDialogTitle2.setOnClickListener {
+            dismiss()
+        }
         if (generalViewModel.accountStatus.value == AccountStatus.SIGNED_IN) {
             activity?.let { activity ->
                 PlayGames.getLeaderboardsClient(activity)
