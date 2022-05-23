@@ -192,6 +192,7 @@ class MainActivity : AppCompatActivity(),
                 if (prizesLeft <= 0) {
                     CompetitionAnnouncement()
                 } else if (snapshot.exists() && finished == false) {
+                    showCompetitionToast(prizesLeft)
                     CompetitionAnnouncement(show = true, prizesLeft)
                 } else if (snapshot.exists() && promoLink?.isNotEmpty() == true) {
                     CompetitionAnnouncement()
@@ -212,6 +213,13 @@ class MainActivity : AppCompatActivity(),
                 Log.w(TAG, "Transaction failure - not added to competition", e)
             }
         }
+    }
+
+    private fun showCompetitionToast(prizesLeft:Long)
+    {
+        val toast = Toast.makeText(applicationContext, "Reach level 25 to win Instant Clues! Only $prizesLeft prizes left!",Toast.LENGTH_LONG)
+        toast.show()
+        levelViewModel.logCompetitionRelatedEvent(FirebaseCustom.Events.COMPETITION_25_ANNOUNCED)
     }
 
     private fun tryToObtainPromoCode() {
@@ -586,7 +594,6 @@ class MainActivity : AppCompatActivity(),
 
     override fun onDestroy() {
         Log.d(TAG, "onDestroy")
-        soundPlayer.soundPool.release()
         super.onDestroy()
     }
 

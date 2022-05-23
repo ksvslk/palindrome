@@ -13,7 +13,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.databinding.SecondTutorialFragmentBinding
-import com.indest.hah.game.viewmodel.FirebaseCustom
 import com.indest.hah.game.viewmodel.LevelViewModel
 
 class SecondTutorialFragment : BottomSheetDialogFragment() {
@@ -33,7 +32,6 @@ class SecondTutorialFragment : BottomSheetDialogFragment() {
             binding.limitedAmountText.text = "Limited amount - ${competition.prizesLeft} left!"
             binding.competitionAnnouncement.visibility = View.VISIBLE
             binding.tutorialCompleteText.visibility = View.GONE
-            levelViewModel.logCompetitionRelatedEvent(FirebaseCustom.Events.COMPETITION_25_ANNOUNCED)
         }
         else {
             binding.tutorialCompleteText.visibility = View.VISIBLE

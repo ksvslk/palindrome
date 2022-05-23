@@ -14,7 +14,7 @@ import javax.inject.Inject
 @ActivityScoped
 class SoundPlayer @Inject constructor(
     @ApplicationContext private val context: Context,
-    val soundPool: SoundPool,
+    private val soundPool: SoundPool,
     private val audioManager: AudioManager,
     val sounds: Sounds
 ) {
