@@ -1,9 +1,9 @@
 package com.indest.hah.persistance.dto
 
 import androidx.room.*
-import kotlinx.serialization.Serializable
+import java.io.Serializable
 
-@Serializable
+@kotlinx.serialization.Serializable
 @Entity(
     foreignKeys = [
         ForeignKey(
@@ -29,4 +29,4 @@ data class Solution(
     val hint: String,
     @ColumnInfo(name = "solved")
     val solved: Boolean,
-)
+):Serializable

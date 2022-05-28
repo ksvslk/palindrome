@@ -1,12 +1,13 @@
 package com.indest.hah.persistance.dto
 
-import kotlinx.serialization.Serializable
+import java.io.Serializable
 
-@Serializable
+
+@kotlinx.serialization.Serializable
 data class SaveGame(
     val game:List<Level>,
     val interval:List<Interval>
-) {
+):Serializable {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

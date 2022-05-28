@@ -1,9 +1,9 @@
 package com.indest.hah.persistance.dto
 
 import androidx.room.*
-import kotlinx.serialization.Serializable
+import java.io.Serializable
 
-@Serializable
+@kotlinx.serialization.Serializable
 @Entity(
     foreignKeys = [
         ForeignKey(
@@ -31,4 +31,4 @@ data class LetterProperties(
     val letter: Char,
     @ColumnInfo(name = "locked")
     val locked: Boolean
-)
+):Serializable

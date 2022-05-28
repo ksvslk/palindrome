@@ -4,9 +4,9 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.indest.hah.persistance.level.LevelProgress
-import kotlinx.serialization.Serializable
+import java.io.Serializable
 
-@Serializable
+@kotlinx.serialization.Serializable
 @Entity(tableName = "level_info_table")
 data class LevelData(
     @PrimaryKey(autoGenerate = true)
@@ -24,4 +24,4 @@ data class LevelData(
     val best_score: Int,
     @ColumnInfo(name = "time_modified")
     val timeModified: Long,
-)
+):Serializable

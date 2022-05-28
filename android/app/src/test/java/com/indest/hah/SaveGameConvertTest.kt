@@ -105,7 +105,7 @@ class SaveGameConvertTest {
 
     @Test
     fun saveGame_toBytes_toSaveGame_isEqualTo_initial_saveGame() {
-        val snapshotHelper = SnapshotHelper(mockContext)
+        val snapshotHelper = SnapshotHelper()
         val randomSaveGame = getRandomSaveGame()
         val saveGameBytes = snapshotHelper.gameToBytes(randomSaveGame)
         val loadedSaveGame = snapshotHelper.bytesToGame(saveGameBytes)
@@ -114,7 +114,7 @@ class SaveGameConvertTest {
 
     @Test
     fun saveGame_toBytes_toSaveGame_random_value_isEqualTo_initial_saveGame_random_value() {
-        val snapshotHelper = SnapshotHelper(mockContext)
+        val snapshotHelper = SnapshotHelper()
         val randomSaveGame = getRandomSaveGame()
         val saveGameBytes = snapshotHelper.gameToBytes(randomSaveGame)
         val loadedSaveGame = snapshotHelper.bytesToGame(saveGameBytes)
@@ -124,7 +124,7 @@ class SaveGameConvertTest {
 
     @Test
     fun saveGameOld_toBytes_toSaveGameNew_isPossible() {
-        val snapshotHelper = SnapshotHelper(mockContext)
+        val snapshotHelper = SnapshotHelper()
         val randomSaveGame = getRandomSaveGameOld()
         val saveGameBytes = gameToBytesOld(randomSaveGame)
         val s = snapshotHelper.bytesToGame(saveGameBytes)
