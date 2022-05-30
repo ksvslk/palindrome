@@ -5,8 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
 import com.google.android.gms.games.PlayGames
-import com.google.android.gms.games.SnapshotsClient.DataOrConflict
-import com.google.android.gms.games.SnapshotsClient.RESOLUTION_POLICY_HIGHEST_PROGRESS
+import com.google.android.gms.games.SnapshotsClient.*
 import com.google.android.gms.games.snapshot.Snapshot
 import com.google.android.gms.games.snapshot.SnapshotMetadata
 import com.google.android.gms.games.snapshot.SnapshotMetadataChange
@@ -29,7 +28,7 @@ import javax.inject.Inject
 class SnapshotHelper @Inject constructor() {
 
     private val TAG = "SnapshotHelper"
-    private val MY_RESOLUTION_POLICY = RESOLUTION_POLICY_HIGHEST_PROGRESS
+    private val MY_RESOLUTION_POLICY = RESOLUTION_POLICY_LAST_KNOWN_GOOD
 
     suspend fun save(activity: Activity, saveGame: SaveGame) = withContext(Dispatchers.Default) {
         val snapshotsClient = PlayGames.getSnapshotsClient(activity)
