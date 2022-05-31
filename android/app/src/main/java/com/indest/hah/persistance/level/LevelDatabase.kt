@@ -2,6 +2,7 @@ package com.indest.hah.persistance.level
 
 import android.content.ContentValues
 import android.content.Context
+import androidx.annotation.Keep
 import androidx.room.*
 import androidx.room.migration.AutoMigrationSpec
 import androidx.sqlite.db.SupportSQLiteDatabase
@@ -16,6 +17,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.decodeFromJsonElement
 
+@Keep
 @Serializable
 data class LevelInfo(val nr: Int, val solutionToCategory:Map<String,String>)
 

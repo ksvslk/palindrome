@@ -1,11 +1,13 @@
 package com.indest.hah.persistance.dto
 
+import androidx.annotation.Keep
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.indest.hah.persistance.level.LevelProgress
 import java.io.Serializable
 
+@Keep
 @kotlinx.serialization.Serializable
 @Entity(tableName = "level_info_table")
 data class LevelData(

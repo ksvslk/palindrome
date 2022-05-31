@@ -1,8 +1,10 @@
 package com.indest.hah.persistance.dto
 
+import androidx.annotation.Keep
 import androidx.room.*
 import java.io.Serializable
 
+@Keep
 @kotlinx.serialization.Serializable
 @Entity(
     foreignKeys = [

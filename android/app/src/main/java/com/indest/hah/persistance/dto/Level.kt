@@ -1,9 +1,11 @@
 package com.indest.hah.persistance.dto
 
+import androidx.annotation.Keep
 import androidx.room.*
 import com.indest.hah.persistance.level.LevelProgress
 import java.io.Serializable
 
+@Keep
 @kotlinx.serialization.Serializable
 class Level(
     @Embedded val levelInfo: LevelData,

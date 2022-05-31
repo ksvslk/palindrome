@@ -3,7 +3,7 @@ plugins {
     id 'kotlin-android'
     id 'dagger.hilt.android.plugin'
     id 'kotlin-kapt'
-    id 'org.jetbrains.kotlin.plugin.serialization' version '1.6.10'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.6.21'
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
 }
@@ -114,7 +114,7 @@ dependencies {
     def ads_version = '20.6.0'
     def billing_version = '4.1.0'
     def konfetti_version = '2.0.1'
-    def kotlinx_serialization = '1.3.2'
+    def kotlinx_serialization = '1.3.3'
     def firebase_version = '30.0.1'
 
     implementation 'com.google.firebase:firebase-auth-ktx:21.0.4'
