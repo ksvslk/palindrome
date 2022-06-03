@@ -29,6 +29,7 @@ import com.indest.hah.general.GeneralViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SettingsFragment : BottomSheetDialogFragment() {
@@ -38,10 +39,9 @@ class SettingsFragment : BottomSheetDialogFragment() {
     private val generalViewModel: GeneralViewModel by activityViewModels()
     private val levelViewModel: LevelViewModel by activityViewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        lifecycleScope.launchWhenStarted {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED)
             {
                 generalViewModel.internet.combine(generalViewModel.accountStatus) { i, a ->
                     Pair(i, a)
@@ -116,17 +116,6 @@ class SettingsFragment : BottomSheetDialogFragment() {
                 }
             }
         }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        Log.d(TAG, "onCreateView")
-        val b = SettingsFragmentBinding.inflate(layoutInflater, container, false)
-        _binding = b
-
         binding.levelSelectButton.setOnClickListener {
             findNavController().popBackStack()
             parentFragmentManager.commit {
@@ -169,8 +158,17 @@ class SettingsFragment : BottomSheetDialogFragment() {
 
         setInitialPreference(binding.soundSwitch, getString(R.string.sound_on_pref))
         setInitialPreference(binding.vibrationSwitch, getString(R.string.vibration_on_pref))
-
         binding.googleSignInButton.setSize(SignInButton.SIZE_WIDE)
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        Log.d(TAG, "onCreateView")
+        val b = SettingsFragmentBinding.inflate(layoutInflater, container, false)
+        _binding = b
         activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         return b.root
     }

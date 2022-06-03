@@ -28,6 +28,7 @@ import com.indest.hah.general.GeneralViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -71,10 +72,9 @@ class EpilogueFragment : Fragment(R.layout.epilogue_fragment) {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        lifecycleScope.launchWhenStarted {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED)
             {
                 generalViewModel.internet.combine(generalViewModel.accountStatus) { i, a ->
                     Pair(i, a)
@@ -130,9 +130,6 @@ class EpilogueFragment : Fragment(R.layout.epilogue_fragment) {
             }
         }
 
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         (activity as? MainActivity)?.let {
             it.binding.bottomNavView.menu.findItem(R.id.navigation_goods).isEnabled = false
             it.binding.bottomNavView.menu.findItem(R.id.navigation_goods)

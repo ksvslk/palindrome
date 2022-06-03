@@ -45,8 +45,7 @@ class HintsFragment : BottomSheetDialogFragment() {
     @Inject
     lateinit var soundPlayer: SoundPlayer
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED)
             {
@@ -69,10 +68,7 @@ class HintsFragment : BottomSheetDialogFragment() {
                 }
             }
         }
-    }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         val uniqueHints = viewModel.currentLevel.value.solutions.map { it.hint }.toSet()
         if (uniqueHints.isNotEmpty()) {
             val hints =
@@ -185,11 +181,11 @@ class HintsFragment : BottomSheetDialogFragment() {
         appearingScaleY.duration = 3000
         disappearingScaleY.duration = 3000
 
-        binding.root.layoutTransition.disableTransitionType(LayoutTransition.CHANGING);
-        binding.root.layoutTransition.disableTransitionType(LayoutTransition.CHANGE_APPEARING);
-        binding.root.layoutTransition.disableTransitionType(LayoutTransition.CHANGE_DISAPPEARING);
-        binding.root.layoutTransition.setAnimator(LayoutTransition.APPEARING, appearingScaleY)
-        binding.root.layoutTransition.setAnimator(LayoutTransition.DISAPPEARING, disappearingScaleY)
+        b.root.layoutTransition.disableTransitionType(LayoutTransition.CHANGING);
+        b.root.layoutTransition.disableTransitionType(LayoutTransition.CHANGE_APPEARING);
+        b.root.layoutTransition.disableTransitionType(LayoutTransition.CHANGE_DISAPPEARING);
+        b.root.layoutTransition.setAnimator(LayoutTransition.APPEARING, appearingScaleY)
+        b.root.layoutTransition.setAnimator(LayoutTransition.DISAPPEARING, disappearingScaleY)
 
         activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
 

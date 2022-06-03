@@ -21,6 +21,7 @@ import com.indest.hah.general.AccountStatus
 import com.indest.hah.general.GeneralViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
 
 class GoogleGamesFragment : BottomSheetDialogFragment() {
 
@@ -33,10 +34,9 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
     private val generalViewModel: GeneralViewModel by activityViewModels()
     private val levelViewModel: LevelViewModel by activityViewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        lifecycleScope.launchWhenStarted {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED)
             {
                 generalViewModel.internet.combine(generalViewModel.accountStatus) { i, a ->
                     Pair(i, a)
