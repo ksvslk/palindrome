@@ -99,16 +99,32 @@ class MainActivity : AppCompatActivity(),
 
         val gamesSignInClient = PlayGames.getGamesSignInClient(this)
         gamesSignInClient.isAuthenticated.addOnCompleteListener { isAuthenticatedTask: Task<AuthenticationResult> ->
-            val isAuthenticated = isAuthenticatedTask.isSuccessful &&
-                    isAuthenticatedTask.result.isAuthenticated
-            if (isAuthenticated) {
-                signInToFirebaseWithCredential(gamesSignInClient)
-                levelViewModel.setAccountStatus(AccountStatus.SIGNED_IN)
-                generalViewModel.setAccountStatus(AccountStatus.SIGNED_IN)
-            } else {
+            Log.d(TAG, "addOnCompleteListener")
+
+            if (!isAuthenticatedTask.isSuccessful) {
+                // Disable Play Games Services integration
                 levelViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
                 generalViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
+                Log.d(TAG, "SIGNED_OUT")
+
+                return@addOnCompleteListener
             }
+
+            val authenticationResult = isAuthenticatedTask.result
+            if (!authenticationResult.isAuthenticated) {
+                // Disable Play Games Services integration
+                levelViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
+                generalViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
+                Log.d(TAG, "SIGNED_OUT")
+
+                return@addOnCompleteListener
+            }
+
+            // Enable Play Games Services integration
+            Log.d(TAG, "SIGNED_IN")
+            signInToFirebaseWithCredential(gamesSignInClient)
+            levelViewModel.setAccountStatus(AccountStatus.SIGNED_IN)
+            generalViewModel.setAccountStatus(AccountStatus.SIGNED_IN)
         }
 
         MobileAds.initialize(applicationContext) {
@@ -149,13 +165,21 @@ class MainActivity : AppCompatActivity(),
                                         if (uiState.state == ContainerState.PLAY) {
                                             if (!currentInfo.show && !currentInfo.triedToParticipate) {
                                                 if (currentLevel == 1 && maxLevel == 2) {
-                                                    levelViewModel.setCompetitionStatus(currentInfo.copy(triedToParticipate = true))
+                                                    levelViewModel.setCompetitionStatus(
+                                                        currentInfo.copy(
+                                                            triedToParticipate = true
+                                                        )
+                                                    )
                                                     tryToParticipateInCompetition()
                                                 }
                                             }
                                             if (!currentInfo.competitionEnded) {
                                                 if (currentLevel == 25 && maxLevel == 26 && !currentInfo.triedToOfferPrize) {
-                                                    levelViewModel.setCompetitionStatus(currentInfo.copy(triedToOfferPrize = true))
+                                                    levelViewModel.setCompetitionStatus(
+                                                        currentInfo.copy(
+                                                            triedToOfferPrize = true
+                                                        )
+                                                    )
                                                     tryToObtainPromoCode()
                                                 }
                                             }
@@ -215,9 +239,12 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    private fun showCompetitionToast(prizesLeft:Long)
-    {
-        val toast = Toast.makeText(applicationContext, "Reach level 25 to win Instant Clues! Only $prizesLeft prizes left!",Toast.LENGTH_LONG)
+    private fun showCompetitionToast(prizesLeft: Long) {
+        val toast = Toast.makeText(
+            applicationContext,
+            "Reach level 25 to win Instant Clues! Only $prizesLeft prizes left!",
+            Toast.LENGTH_LONG
+        )
         toast.show()
         levelViewModel.logCompetitionRelatedEvent(FirebaseCustom.Events.COMPETITION_25_ANNOUNCED)
     }
