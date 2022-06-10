@@ -3,7 +3,7 @@ plugins {
     id 'kotlin-android'
     id 'dagger.hilt.android.plugin'
     id 'kotlin-kapt'
-    id 'org.jetbrains.kotlin.plugin.serialization' version '1.6.21'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.7.0'
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
 }
@@ -83,11 +83,15 @@ android {
 
 }
 
+kapt {
+    correctErrorTypes true
+}
 
 dependencies {
+    def play_games_services_version = "17.0.0"
     def sqlite_version = "2.2.0"
-    def hilt_version = "2.38.1"
-    def coroutine_version = '1.5.1'
+    def hilt_version = "2.42"
+    def coroutine_version = '1.6.0'
     def work_version = '2.7.1'
     def coroutines_play_services_version = '1.4.1'
     def instant_apps_version = '18.0.1'
@@ -95,10 +99,10 @@ dependencies {
     def user_messaging_platform_version = '2.0.0'
     def google_play_services_auth_version = '20.2.0'
     def gridlayout_version = '1.0.0'
-    def constraintlayout_version = '2.1.3'
-    def material_version = '1.6.0'
-    def appcompat_version = '1.4.1'
-    def androidx_core_version = '1.7.0'
+    def constraintlayout_version = '2.1.4'
+    def material_version = '1.6.1'
+    def appcompat_version = '1.4.2'
+    def androidx_core_version = '1.8.0'
     def junit_version = '4.13.2'
     def espresso_core_version = '3.4.0'
     def coroutines_test_version = '1.5.2'
@@ -115,12 +119,17 @@ dependencies {
     def konfetti_version = '2.0.1'
     def kotlinx_serialization = '1.3.3'
     def firebase_version = '30.0.1'
+    def androidx_collection = "1.2.0"
+    def play_core_ktx = "1.8.1"
+    def firebase_auth_ktx = "21.0.5"
+    def firebase_appcheck = "16.0.0"
 
-    implementation 'com.google.firebase:firebase-auth-ktx:21.0.5'
-    implementation 'com.google.firebase:firebase-appcheck-debug:16.0.0'
+    implementation "androidx.collection:collection-ktx:$androidx_collection"
+    implementation "com.google.firebase:firebase-auth-ktx:$firebase_auth_ktx"
     implementation 'com.google.firebase:firebase-inappmessaging-display-ktx'
     implementation platform("com.google.firebase:firebase-bom:$firebase_version")
-    implementation 'com.google.firebase:firebase-appcheck-safetynet:16.0.0'
+    implementation "com.google.firebase:firebase-appcheck-safetynet:$firebase_appcheck"
+    implementation "com.google.firebase:firebase-appcheck-debug:$firebase_appcheck"
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
     implementation 'com.google.firebase:firebase-firestore-ktx'
@@ -135,29 +144,32 @@ dependencies {
     implementation "com.android.billingclient:billing-ktx:$billing_version"
     implementation "com.android.billingclient:billing:$billing_version"
     implementation "androidx.appcompat:appcompat:$appcompat_version"
+    implementation("androidx.navigation:navigation-runtime-ktx:$nav_version")
     implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
     implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
     implementation "androidx.fragment:fragment-ktx:$fragment_version"
     implementation "com.google.android.gms:play-services-ads:$ads_version"
     implementation "com.google.android.gms:play-services-auth:$google_play_services_auth_version"
-    implementation "com.google.android.gms:play-services-games-v2:17.0.0"
+    implementation "com.google.android.gms:play-services-games-v2:$play_games_services_version"
     implementation "com.google.android.ump:user-messaging-platform:$user_messaging_platform_version"
-    implementation("com.google.dagger:hilt-android:$hilt_version")
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-compiler:$hilt_version"
+
     implementation "androidx.window:window:$window_manager_version"
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'com.google.android.play:core-ktx:1.8.1'
-    kapt("com.google.dagger:hilt-android-compiler:$hilt_version")
+    implementation "com.google.android.play:core-ktx:$play_core_ktx"
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_runtime_ktx")
     implementation("androidx.room:room-ktx:$room_version")
     kapt "androidx.room:room-compiler:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
     implementation "com.google.android.gms:play-services-instantapps:$instant_apps_version"
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2'
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$coroutines_play_services_version"
     implementation "androidx.work:work-runtime-ktx:$work_version"
     implementation "androidx.hilt:hilt-work:$hilt_work_version"
     implementation "androidx.sqlite:sqlite-ktx:$sqlite_version"
+    implementation "androidx.sqlite:sqlite-framework:$sqlite_version"
     kapt "androidx.hilt:hilt-compiler:$hilt_work_version"
 
     //debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.8.1'
@@ -171,7 +183,7 @@ dependencies {
 }
 
 tasks.register('copyReleaseFilesToOneDirectory', Copy) {
-    from layout.buildDirectory.file("outputs/bundle/instantRelease/app-instant-release.aab"), layout.buildDirectory.file("outputs/bundle/regularRelease/app-regular-release.aab")
+    from layout.buildDirectory.file("outputs/bundle/instantRelease/app-instant-release.aab"),layout.buildDirectory.file("outputs/bundle/regularRelease/app-regular-release.aab")
     into layout.buildDirectory.dir("outputs/bundle/")
 }
 tasks.findByName('copyReleaseFilesToOneDirectory').mustRunAfter ':app:bundleRelease'
