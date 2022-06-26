@@ -21,7 +21,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/Theme.OC"
         tools:ignore="LockedOrientationActivity">
-
+        <profileable
+            android:shell="true"
+            tools:targetApi="q" />
         <activity
             android:name="com.indest.hah.MainActivity"
             android:exported="true"

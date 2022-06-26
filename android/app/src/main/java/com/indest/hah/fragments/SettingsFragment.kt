@@ -21,6 +21,7 @@ import com.google.android.gms.common.SignInButton
 import com.google.android.gms.games.PlayGames
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.BuildConfig
+//import com.indest.hah.BuildConfig
 import com.indest.hah.R
 import com.indest.hah.databinding.SettingsFragmentBinding
 import com.indest.hah.game.viewmodel.LevelViewModel
