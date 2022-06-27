@@ -126,7 +126,7 @@ dependencies {
     def firebase_version = '30.0.1'
     def androidx_collection = "1.2.0"
     def play_core_ktx = "1.8.1"
-    def firebase_auth_ktx = "21.0.5"
+    def firebase_auth_ktx = "21.0.6"
     def firebase_appcheck = "16.0.0"
 
     implementation "androidx.collection:collection-ktx:$androidx_collection"

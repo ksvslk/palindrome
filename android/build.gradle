@@ -19,6 +19,7 @@ buildscript {
 }
 
 apply plugin: "com.vanniktech.dependency.graph.generator"
+apply plugin: "com.google.gms.google-services"
 
 allprojects {
     repositories {
