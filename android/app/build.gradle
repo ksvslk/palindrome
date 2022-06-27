@@ -194,3 +194,4 @@ tasks.register('copyReleaseFilesToOneDirectory', Copy) {
 }
 tasks.findByName('copyReleaseFilesToOneDirectory').mustRunAfter ':app:bundleRelease'
 tasks.findByName('copyReleaseFilesToOneDirectory').dependsOn(':app:bundleRelease')
+apply plugin: 'com.google.gms.google-services'
