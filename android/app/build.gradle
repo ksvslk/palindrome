@@ -58,15 +58,11 @@ android {
 
     productFlavors {
         instant {
-            firebaseCrashlytics {
-                mappingFileUploadEnabled true
-            }
+
         }
         regular {
-            firebaseCrashlytics {
-                mappingFileUploadEnabled true
-            }
             versionCode = defaultConfig.versionCode + 1000
+
         }
     }
 
