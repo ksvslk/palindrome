@@ -29,7 +29,14 @@ android {
         benchmark {
             debuggable = true
             signingConfig = debug.signingConfig
-            matchingFallbacks = ["release"]
+            matchingFallbacks = ["instantRelease", "regularRelease"]
+        }
+    }
+    flavorDimensions "default"
+    productFlavors {
+        instant {
+        }
+        regular {
         }
     }
 

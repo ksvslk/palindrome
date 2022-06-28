@@ -36,20 +36,27 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField "String", "GIT_HASH", getGitHash()
             ndk {
                 debugSymbolLevel = 'full'
             }
+            firebaseCrashlytics {
+                mappingFileUploadEnabled true
+            }
         }
         debug {
             minifyEnabled false
             buildConfigField "String", "GIT_HASH", getGitHash()
+            firebaseCrashlytics {
+                mappingFileUploadEnabled false
+            }
         }
         benchmark {
+            buildConfigField "String", "GIT_HASH", getGitHash()
             signingConfig signingConfigs.debug
-            matchingFallbacks = ['release']
+            matchingFallbacks = ['instantRelease']
             debuggable false
         }
     }
@@ -58,11 +65,15 @@ android {
 
     productFlavors {
         instant {
-
+            firebaseCrashlytics {
+                mappingFileUploadEnabled true
+            }
         }
         regular {
             versionCode = defaultConfig.versionCode + 1000
-
+            firebaseCrashlytics {
+                mappingFileUploadEnabled true
+            }
         }
     }
 
@@ -87,6 +98,7 @@ android {
             excludes += ['**/attach_hotspot_windows.dll', 'META-INF/licenses/**', 'META-INF/AL2.0', 'META-INF/LGPL2.1']
         }
     }
+    buildToolsVersion '33.0.0'
 
 }
 
