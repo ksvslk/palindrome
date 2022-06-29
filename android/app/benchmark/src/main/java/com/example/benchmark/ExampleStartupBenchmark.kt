@@ -1,5 +1,6 @@
 package com.example.benchmark
 
+import android.content.Intent
 import androidx.benchmark.macro.BaselineProfileMode
 import androidx.benchmark.macro.CompilationMode
 import androidx.benchmark.macro.StartupMode
@@ -35,8 +36,11 @@ class BaselineProfileBenchmark {
             startupMode = StartupMode.COLD,
             compilationMode = compilationMode
         ) {
+
             pressHome()
-            startActivityAndWait()
+            val intent = Intent()
+            intent.action = "com.example.benchmark.FULLY_DRAWN_STARTUP_ACTIVITY"
+            startActivityAndWait(intent)
         }
     }
 }

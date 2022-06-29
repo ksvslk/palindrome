@@ -142,7 +142,9 @@ dependencies {
     def play_core_ktx = "1.8.1"
     def firebase_auth_ktx = "21.0.6"
     def firebase_appcheck = "16.0.0"
+    def startup_runtime = "1.1.1"
 
+    implementation "androidx.startup:startup-runtime:$startup_runtime"
     implementation "androidx.collection:collection-ktx:$androidx_collection"
     implementation "com.google.firebase:firebase-auth-ktx:$firebase_auth_ktx"
     implementation 'com.google.firebase:firebase-inappmessaging-display-ktx'

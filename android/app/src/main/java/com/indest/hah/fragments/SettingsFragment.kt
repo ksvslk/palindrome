@@ -29,6 +29,7 @@ import com.indest.hah.general.GeneralViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -86,7 +87,10 @@ class SettingsFragment : BottomSheetDialogFragment() {
                             binding.googleSignOutButton.visibility = View.VISIBLE
                             activity?.let {
                                 PlayGames.getPlayersClient(it).currentPlayer.addOnCompleteListener {
-                                    binding.googleSignOutButton.text = "Signed in as ${it.result.displayName}"
+                                    if (isVisible)
+                                    {
+                                        binding.googleSignOutButton.text = "Signed in as ${it.result.displayName}"
+                                    }
                                 }
                             }
                         }
@@ -142,11 +146,11 @@ class SettingsFragment : BottomSheetDialogFragment() {
                     accessedFromMenu = true
                 )
             )
+            findNavController().popBackStack()
             parentFragmentManager.commit {
                 addToBackStack(TutorialFragment().tag)
                 add(TutorialFragment(), TutorialFragment().tag)
             }
-            dismiss()
         }
         binding.versionInfo.text =
             "${BuildConfig.VERSION_CODE}\n${BuildConfig.VERSION_NAME}\n${BuildConfig.GIT_HASH}"

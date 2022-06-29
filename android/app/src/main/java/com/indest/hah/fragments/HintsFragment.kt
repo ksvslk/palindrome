@@ -120,7 +120,7 @@ class HintsFragment : BottomSheetDialogFragment() {
                             C.LETTER_PREMIUM_BUNDLE to true
                         )
                     )
-                    dismiss()
+                    dismissAllowingStateLoss()
                 }
                 NO_AD -> { /* No action. Button should be disabled in this state. */
                 }
@@ -145,7 +145,7 @@ class HintsFragment : BottomSheetDialogFragment() {
                     bundleOf(C.LETTER_REWARD_TYPE_BUNDLE to rewardType.ordinal)
                 )
                 viewModel.updateRewardState(NONE)
-                dismiss()
+                dismissAllowingStateLoss()
             }
             AD_FAILED -> {
                 levelViewModel.setUiStatePlayWhenBusy()
