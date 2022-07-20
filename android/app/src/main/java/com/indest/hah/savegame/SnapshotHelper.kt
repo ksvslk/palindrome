@@ -23,14 +23,15 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
+import javax.inject.Singleton
 
-@ActivityScoped
+@Singleton
 class SnapshotHelper @Inject constructor() {
 
     private val TAG = "SnapshotHelper"
     private val MY_RESOLUTION_POLICY = RESOLUTION_POLICY_MOST_RECENTLY_MODIFIED
 
-    suspend fun save(activity: Activity, saveGame: SaveGame) = withContext(Dispatchers.IO) {
+    suspend fun save(activity: Activity, saveGame: SaveGame) = withContext(Dispatchers.Default) {
         val snapshotsClient = PlayGames.getSnapshotsClient(activity)
         Log.d(TAG, "Trying to save game..")
         snapshotsClient.open(
@@ -63,7 +64,7 @@ class SnapshotHelper @Inject constructor() {
                     throw task.exception ?: Exception("Could not save the snapshot.")
                 }
             } catch (e: java.lang.Exception) {
-                Log.e(TAG, e.message.toString())
+                Log.e(TAG, "Something went wrong while saving the game :(" + e.message.toString())
             }
         }
     }

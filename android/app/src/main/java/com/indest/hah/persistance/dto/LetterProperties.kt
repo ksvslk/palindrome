@@ -33,4 +33,4 @@ data class LetterProperties(
     val letter: Char,
     @ColumnInfo(name = "locked")
     val locked: Boolean
-):Serializable
+)

@@ -19,7 +19,7 @@ class Level(
         entityColumn = "parent_id"
     )
     val solutions: List<Solution> = emptyList()
-):Serializable {
+) {
     constructor() : this(
         LevelData(0,"_EMPTY_CONSTRUCTOR_",false, LevelProgress.IN_PROGRESS,0, 0, 0),
         emptyList(),

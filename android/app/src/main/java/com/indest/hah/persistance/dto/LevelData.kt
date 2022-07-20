@@ -26,4 +26,4 @@ data class LevelData(
     val best_score: Int,
     @ColumnInfo(name = "time_modified")
     val timeModified: Long,
-):Serializable
+)

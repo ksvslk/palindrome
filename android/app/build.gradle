@@ -47,10 +47,14 @@ android {
             }
         }
         debug {
-            minifyEnabled false
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField "String", "GIT_HASH", getGitHash()
+            ndk {
+                debugSymbolLevel = 'full'
+            }
             firebaseCrashlytics {
-                mappingFileUploadEnabled false
+                mappingFileUploadEnabled true
             }
         }
         benchmark {

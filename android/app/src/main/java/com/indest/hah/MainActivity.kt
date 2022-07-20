@@ -5,6 +5,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -606,12 +607,12 @@ class MainActivity : AppCompatActivity(),
 
     override fun onBackPressed() {
         Log.d(TAG, "onBackPressed")
+        levelViewModel.saveGameImmediately()
         val exitDialog = ExitGameDialogFragment()
         exitDialog.show(supportFragmentManager, C.EXIT_GAME_DIALOG_FRAGMENT)
     }
 
     override fun onDialogPositiveClick(dialog: DialogFragment) {
-        levelViewModel.saveGameImmediately()
         finishAndRemoveTask()
     }
 

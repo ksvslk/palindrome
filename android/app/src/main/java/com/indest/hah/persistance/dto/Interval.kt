@@ -19,4 +19,4 @@ data class Interval(
     // Constant - when reached, currentCount will reset
     @ColumnInfo(name = "limit_count")
     val limitCount: Int = 0
-):Serializable
+)

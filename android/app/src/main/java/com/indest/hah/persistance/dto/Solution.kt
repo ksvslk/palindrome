@@ -31,4 +31,4 @@ data class Solution(
     val hint: String,
     @ColumnInfo(name = "solved")
     val solved: Boolean,
-):Serializable
+)
