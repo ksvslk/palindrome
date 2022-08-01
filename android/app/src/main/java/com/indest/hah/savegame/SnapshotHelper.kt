@@ -31,7 +31,7 @@ class SnapshotHelper @Inject constructor() {
     private val TAG = "SnapshotHelper"
     private val MY_RESOLUTION_POLICY = RESOLUTION_POLICY_MOST_RECENTLY_MODIFIED
 
-    suspend fun save(activity: Activity, saveGame: SaveGame) = withContext(Dispatchers.Default) {
+    suspend fun save(activity: Activity, saveGame: SaveGame) = withContext(Dispatchers.Main) {
         val snapshotsClient = PlayGames.getSnapshotsClient(activity)
         Log.d(TAG, "Trying to save game..")
         snapshotsClient.open(

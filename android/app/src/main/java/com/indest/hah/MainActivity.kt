@@ -25,6 +25,8 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoTracker
 import androidx.window.layout.WindowMetricsCalculator
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.games.AuthenticationResult
 import com.google.android.gms.games.GamesSignInClient
@@ -63,10 +65,12 @@ import com.indest.hah.savegame.SnapshotHelper
 import com.indest.hah.views.ButtonState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 
@@ -357,8 +361,10 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onStop() {
+        runBlocking {
+            levelViewModel.saveGameImmediately()
+        }
         super.onStop()
-        levelViewModel.saveGameImmediately()
         Log.d(TAG, "onStop")
     }
 
@@ -433,6 +439,7 @@ class MainActivity : AppCompatActivity(),
                         is LevelViewModel.VariousEvent.UnlockAchievement -> {
                             unlockAchievement(event.achievement)
                         }
+                        else -> {}
                     }
                 }
             }
