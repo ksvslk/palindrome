@@ -3,6 +3,7 @@ package com.indest.hah
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.os.PersistableBundle
@@ -361,9 +362,7 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onStop() {
-        runBlocking {
-            levelViewModel.saveGameImmediately()
-        }
+        levelViewModel.saveGameImmediately()
         super.onStop()
         Log.d(TAG, "onStop")
     }

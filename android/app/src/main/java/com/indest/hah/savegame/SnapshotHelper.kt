@@ -1,6 +1,7 @@
 package com.indest.hah.savegame
 
 import android.app.Activity
+import android.app.ActivityManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
@@ -25,14 +26,15 @@ import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
+@ActivityScoped
 class SnapshotHelper @Inject constructor() {
 
     private val TAG = "SnapshotHelper"
     private val MY_RESOLUTION_POLICY = RESOLUTION_POLICY_MOST_RECENTLY_MODIFIED
 
-    suspend fun save(activity: Activity, saveGame: SaveGame) = withContext(Dispatchers.Main) {
+    suspend fun save(activity: Activity, saveGame: SaveGame) = withContext(Dispatchers.Default) {
         val snapshotsClient = PlayGames.getSnapshotsClient(activity)
+
         Log.d(TAG, "Trying to save game..")
         snapshotsClient.open(
             C.SAVE_GAME,
