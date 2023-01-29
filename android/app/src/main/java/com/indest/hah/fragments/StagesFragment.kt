@@ -22,28 +22,28 @@ import com.indest.hah.databinding.StagesFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.indest.hah.general.AccountStatus
 import com.indest.hah.general.GeneralViewModel
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
 
-class StagesFragment : BottomSheetDialogFragment()  {
+class StagesFragment : BottomSheetDialogFragment() {
     private val TAG = "StagesFragment"
     private var _binding: StagesFragmentBinding? = null
     private val binding get() = _binding!!
     private val generalViewModel: GeneralViewModel by activityViewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        lifecycleScope.launchWhenStarted {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED)
             {
-                generalViewModel.internet.collect { internet ->
+                generalViewModel.internet.combine(generalViewModel.accountStatus) { i, a ->
+                    Pair(i, a)
+                }.collect { (internet, accountStatus) ->
                     when (internet) {
                         true -> {
-                            val lastSignedInAccount =
-                                GoogleSignIn.getLastSignedInAccount(requireContext().applicationContext)
-                            if (lastSignedInAccount == null) {
-                                binding.submitYourLevelButton.visibility = View.GONE
-                            } else {
+                            if (accountStatus == AccountStatus.SIGNED_IN) {
                                 binding.submitYourLevelButton.visibility = View.VISIBLE
                                 binding.submitYourLevelButton.setOnClickListener {
                                     findNavController().popBackStack()
@@ -52,6 +52,9 @@ class StagesFragment : BottomSheetDialogFragment()  {
                                         add(SubmissionFragment(), SubmissionFragment().tag)
                                     }
                                 }
+                            }
+                            else {
+                                binding.submitYourLevelButton.visibility = View.GONE
                             }
                         }
                         false -> {
@@ -63,6 +66,7 @@ class StagesFragment : BottomSheetDialogFragment()  {
             }
         }
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,

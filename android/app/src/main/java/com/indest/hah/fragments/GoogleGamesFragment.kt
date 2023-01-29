@@ -55,7 +55,7 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
                                     showAchievements()
                                 }
                                 binding.leaderboardsButton.setOnClickListener {
-                                    showCremeDelaCremeLeaderboard()
+                                    showLeaderBoard()
                                 }
                                 binding.playerLevelsLeaderboardButton.setOnClickListener {
                                     //TODO: Show players levels leaderboard

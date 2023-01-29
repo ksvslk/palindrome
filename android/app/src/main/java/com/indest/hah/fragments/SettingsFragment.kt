@@ -120,13 +120,6 @@ class SettingsFragment : BottomSheetDialogFragment() {
                 }
             }
         }
-        binding.levelSelectButton.setOnClickListener {
-            findNavController().popBackStack()
-            parentFragmentManager.commit {
-                addToBackStack(LevelSelectFragment().tag)
-                add(LevelSelectFragment(), LevelSelectFragment().tag)
-            }
-        }
 
         binding.soundButton.setOnClickListener {
             binding.soundSwitch.performClick()

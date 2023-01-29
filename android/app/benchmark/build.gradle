@@ -41,6 +41,7 @@ android {
     }
 
     targetProjectPath = ":app"
+    namespace 'com.example.benchmark'
     experimentalProperties["android.experimental.self-instrumenting"] = true
 }
 

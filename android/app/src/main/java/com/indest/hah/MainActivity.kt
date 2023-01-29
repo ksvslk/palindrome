@@ -65,8 +65,9 @@ import com.indest.hah.game.creation.BookMode
 import com.indest.hah.game.creation.WindowSizeClass
 import com.indest.hah.game.viewmodel.ContainerState
 import com.indest.hah.game.viewmodel.FirebaseCustom
-import com.indest.hah.game.viewmodel.ContainerState
 import com.indest.hah.game.viewmodel.LevelViewModel
+import com.indest.hah.general.AccountStatus
+import com.indest.hah.general.CompetitionAnnouncement
 import com.indest.hah.general.GeneralViewModel
 import com.indest.hah.other.C
 import com.indest.hah.other.hideSystemBars
@@ -691,7 +692,6 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    private fun setLevelProgressIndicator(level: LevelData, solutionsCount: Int) {
     private fun setLevelProgressIndicatorPlayerPack(level: LevelData, solutionsCount: Int, maxLevels:Int) {
         binding.levelNumber.text =
             if (solutionsCount > 1) "${level.levelId-1000}* - ${level.author}" else "${level.levelId-1000} - ${level.author}"
@@ -727,4 +727,4 @@ class MainActivity : AppCompatActivity(),
         super.onDestroy()
     }
 
-}
+    }
