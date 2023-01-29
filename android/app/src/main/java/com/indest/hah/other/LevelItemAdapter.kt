@@ -14,7 +14,8 @@ class LevelItemAdapter(
     private val currentLevelIcon: String,
     private val currentLevel: Int?,
     private val dataSet: List<Pair<Boolean, LevelData>>,
-    private val onItemClicked: (LevelData?) -> Unit
+    private val playerLevel: Boolean = false,
+    private val onItemClicked: (LevelData?) -> Unit,
 ) :
     RecyclerView.Adapter<LevelItemAdapter.LevelItemViewHolder>() {
 
@@ -53,23 +54,30 @@ class LevelItemAdapter(
         Log.d(TAG, "onBindViewHolder")
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-
+        val levelNr = if (playerLevel) dataSet[position].second.levelId - 1000 else dataSet[position].second.levelId
         if (dataSet[position].first) {
-            levelItemViewHolder.textView.text = "${dataSet[position].second.levelId}*"
+            levelItemViewHolder.textView.text = "$levelNr*"
         } else {
-            levelItemViewHolder.textView.text = dataSet[position].second.levelId.toString()
+            levelItemViewHolder.textView.text = levelNr.toString()
         }
 
-        levelItemViewHolder.itemView.isClickable =
-            if (dataSet[position].second.progress == LevelProgress.TODO) {
-                levelItemViewHolder.textView.isEnabled = false
-                false
-            } else {
-                levelItemViewHolder.textView.isEnabled = true
-                true
-            }
+        if (playerLevel)
+        {
+            levelItemViewHolder.itemView.isClickable = true
+            levelItemViewHolder.textView.isEnabled = true
+        }
+        else {
+            levelItemViewHolder.itemView.isClickable =
+                if (dataSet[position].second.progress == LevelProgress.TODO) {
+                    levelItemViewHolder.textView.isEnabled = false
+                    false
+                } else {
+                    levelItemViewHolder.textView.isEnabled = true
+                    true
+                }
+        }
         currentLevel?.let {
-            if (it == dataSet[position].second.levelId) {
+            if (it == levelNr) {
                 levelItemViewHolder.setIsRecyclable(false)
                 levelItemViewHolder.textView.text = currentLevelIcon
             }

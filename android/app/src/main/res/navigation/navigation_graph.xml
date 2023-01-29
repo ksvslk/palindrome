@@ -24,6 +24,9 @@
         <action
             android:id="@+id/action_navigation_level_to_navigation_tutorial"
             app:destination="@id/navigation_tutorial" />
+        <action
+            android:id="@+id/action_navigation_level_to_navigation_stages"
+            app:destination="@id/navigation_stages" />
     </fragment>
 
     <fragment
@@ -108,6 +111,35 @@
     </dialog>
 
     <dialog
+        android:id="@+id/navigation_stages"
+        android:name="com.indest.hah.fragments.StagesFragment"
+        android:label="@string/stages"
+        tools:layout="@layout/stages_fragment" >
+        <action
+            android:id="@+id/action_navigation_stages_to_navigation_level"
+            app:destination="@id/navigation_level" />
+        <action
+            android:id="@+id/action_navigation_stages_to_navigation_level_select"
+            app:destination="@id/navigation_level_select" />
+        <action
+            android:id="@+id/action_navigation_stages_to_navigation_submission"
+            app:destination="@id/navigation_submission" />
+        <action
+            android:id="@+id/action_navigation_stages_to_navigation_player_level_select"
+            app:destination="@id/navigation_player_level_select" />
+    </dialog>
+
+    <dialog
+        android:id="@+id/navigation_submission"
+        android:name="com.indest.hah.fragments.SubmissionFragment"
+        android:label="@string/submit_level"
+        tools:layout="@layout/submission_fragment" >
+        <action
+            android:id="@+id/action_navigation_submission_to_navigation_level"
+            app:destination="@id/navigation_level" />
+    </dialog>
+
+    <dialog
         android:id="@+id/navigation_level_select"
         android:name="com.indest.hah.fragments.LevelSelectFragment"
         android:label="@string/level_select"
@@ -117,5 +149,14 @@
             app:destination="@id/navigation_level" />
     </dialog>
 
+    <dialog
+        android:id="@+id/navigation_player_level_select"
+        android:name="com.indest.hah.fragments.PlayerLevelSelectFragment"
+        android:label="@string/player_level_select"
+        tools:layout="@layout/player_level_select_fragment" >
+        <action
+            android:id="@+id/action_navigation_player_level_select_to_navigation_level"
+            app:destination="@id/navigation_level" />
+    </dialog>
 
 </navigation>

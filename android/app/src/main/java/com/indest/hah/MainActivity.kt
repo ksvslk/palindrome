@@ -7,21 +7,28 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.text.TextUtils.replace
 import android.util.Log
+import android.view.Gravity
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.forEach
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.commit
+import androidx.fragment.app.commit
+import androidx.fragment.app.replace
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoTracker
@@ -34,6 +41,8 @@ import com.google.android.gms.games.GamesSignInClient
 import com.google.android.gms.games.PlayGames
 import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.snackbar.BaseTransientBottomBar.ANIMATION_MODE_SLIDE
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.ump.ConsentForm
 import com.google.android.ump.ConsentInformation
 import com.google.android.ump.ConsentRequestParameters
@@ -44,18 +53,20 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.*
 import com.indest.hah.ads.RewardType
 import com.indest.hah.databinding.ActivityMainBinding
 import com.indest.hah.fragments.ExitGameDialogFragment
 import com.indest.hah.fragments.PrizeFragment
+import com.indest.hah.fragments.LevelFragment
+import com.indest.hah.fragments.LevelSelectFragment
 import com.indest.hah.fx.SoundPlayer
 import com.indest.hah.game.creation.BookMode
 import com.indest.hah.game.creation.WindowSizeClass
 import com.indest.hah.game.viewmodel.ContainerState
 import com.indest.hah.game.viewmodel.FirebaseCustom
+import com.indest.hah.game.viewmodel.ContainerState
 import com.indest.hah.game.viewmodel.LevelViewModel
-import com.indest.hah.general.AccountStatus
-import com.indest.hah.general.CompetitionAnnouncement
 import com.indest.hah.general.GeneralViewModel
 import com.indest.hah.other.C
 import com.indest.hah.other.hideSystemBars
@@ -63,6 +74,7 @@ import com.indest.hah.persistance.dto.LevelData
 import com.indest.hah.persistance.dto.SaveGame
 import com.indest.hah.persistance.level.LevelProgress
 import com.indest.hah.savegame.SnapshotHelper
+import com.indest.hah.persistance.dto.PlayerLevel
 import com.indest.hah.views.ButtonState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -144,6 +156,75 @@ class MainActivity : AppCompatActivity(),
         collectRewardInfo()
         collectVariousEvents()
         requestLatestConsentInformation()
+        collectPlayerLevels()
+    }
+
+    private fun collectPlayerLevels() {
+        lifecycleScope.launch {
+            lifecycleScope.launchWhenCreated {
+                levelViewModel.newPlayerLevels.collectLatest { (levelNr, addedLevelsCount, author) ->
+                    if (levelNr == -1 && addedLevelsCount == -1 && author == "") return@collectLatest
+                    if (addedLevelsCount == 1) {
+                        showNewLevelMessage(
+                            author,
+                            levelNr
+                        )
+                    } else if (addedLevelsCount > 1) {
+                        showNewLevelMessage(
+                            author,
+                            lastAddedLevel = -1,
+                            multipleLevels = addedLevelsCount
+                        )
+                    }
+                    levelViewModel.resetNewPlayersLevels()
+                }
+            }
+        }
+    }
+
+    private fun showNewLevelMessage(
+        player: String,
+        lastAddedLevel: Int,
+        multipleLevels: Int = -1
+    ) {
+        val snackMessage =
+            if (multipleLevels == -1) "New level by $player!" else "$multipleLevels levels added!"
+
+        val snack =
+            Snackbar.make(findViewById(android.R.id.content), snackMessage, 15000)
+                .setAction("Play") {
+                    if (multipleLevels == -1) {
+                        supportFragmentManager.commit {
+                            levelViewModel.setUiStateWhenOnPause()
+                            levelViewModel.changeLevel(lastAddedLevel)
+                        }
+                    } else {
+                        supportFragmentManager.commit {
+                            addToBackStack(LevelSelectFragment().tag)
+                            add(LevelSelectFragment(), LevelSelectFragment().tag)
+                        }
+                    }
+                }
+                .setTextColor(
+                    ContextCompat.getColor(
+                        applicationContext,
+                        R.color.playNewLevelTextColor
+                    )
+                )
+                .setAnimationMode(ANIMATION_MODE_SLIDE)
+                .setActionTextColor(
+                    ContextCompat.getColor(
+                        applicationContext,
+                        R.color.playNewLevelColor
+                    )
+                )
+        val params = snack.view.layoutParams as FrameLayout.LayoutParams
+        params.gravity = Gravity.TOP
+        params.topMargin = resources.getDimension(R.dimen._16sdp).toInt()
+        snack.view.layoutParams = params
+        snack.view.background =
+            ContextCompat.getDrawable(applicationContext, R.drawable.new_level_message_rectangle)
+        snack.show()
     }
 
     private fun signInToFirebaseWithCredential(gamesSignInClient: GamesSignInClient) {
@@ -584,7 +665,14 @@ class MainActivity : AppCompatActivity(),
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 levelViewModel.currentLevel.distinctUntilChangedBy { it.levelInfo.levelId }
                     .collect {
-                        setLevelProgressIndicator(it.levelInfo, it.solutions.size)
+                        if (it.levelInfo.levelId < 1000)
+                        {
+                            setLevelProgressIndicator(it.levelInfo, it.solutions.size)
+                        }
+                        else if (it.levelInfo.levelId > 1000) {
+                            val maxLevels = levelViewModel.getMaxLevelId() - 1000
+                            setLevelProgressIndicatorPlayerPack(it.levelInfo, it.solutions.size, maxLevels)
+                        }
                     }
             }
         }
@@ -601,6 +689,14 @@ class MainActivity : AppCompatActivity(),
                 soundPlayer.play(soundPlayer.sounds.normalMode, volume = 0.5f)
             }
         }
+    }
+
+    private fun setLevelProgressIndicator(level: LevelData, solutionsCount: Int) {
+    private fun setLevelProgressIndicatorPlayerPack(level: LevelData, solutionsCount: Int, maxLevels:Int) {
+        binding.levelNumber.text =
+            if (solutionsCount > 1) "${level.levelId-1000}* - ${level.author}" else "${level.levelId-1000} - ${level.author}"
+        binding.gameProgress.progress =
+            (level.levelId.toFloat() / maxLevels.toFloat() * 100.0).toInt()
     }
 
     private fun setLevelProgressIndicator(level: LevelData, solutionsCount: Int) {

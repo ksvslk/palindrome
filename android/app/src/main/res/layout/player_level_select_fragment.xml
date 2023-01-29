@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/player_level_select_dialog"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingVertical="@dimen/default_large_margin"
+    app:divider="@drawable/divider"
+    app:dividerPadding="@dimen/simple_dialog_header_left_margin"
+    app:showDividers="middle">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/player_level_select_dialog_title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/simple_dialog_header_height"
+        android:orientation="horizontal">
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/simple_dialog_header_left_margin"
+            android:text="@string/player_level_select"
+            android:textAppearance="@style/TextAppearance.OC.Headline5" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/player_level_select_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusable="true"
+        app:spanCount="3"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager">
+    </androidx.recyclerview.widget.RecyclerView>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

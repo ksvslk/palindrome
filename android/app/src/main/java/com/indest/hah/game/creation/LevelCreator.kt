@@ -17,6 +17,7 @@ import com.indest.hah.views.Slot
 import com.indest.hah.persistance.dto.Level
 import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.scopes.ActivityScoped
+import java.lang.Math.abs
 import javax.inject.Inject
 
 @ActivityScoped
@@ -32,37 +33,116 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         windowSizeClassWidth: WindowSizeClass
     ): GridLayout {
 
-        val densitySettings = getDensitySettings(isBookMode, windowSizeClassWidth)
         val level = layoutInflater.inflate(R.layout.grid, container, false) as GridLayout
+        val puzzleOnlyLetters = getPuzzle(info)
+        val densitySettings =
+            getDensitySettings(isBookMode, windowSizeClassWidth, info, container, puzzleOnlyLetters)
         level.columnCount = densitySettings.columnCount
-        addLetters(level, densitySettings, info, context)
+        addLetters(level, densitySettings, puzzleOnlyLetters, context)
         addBlanks(densitySettings.columnCount, level, layoutInflater)
-        Log.d(TAG, info.solutions.toString())
-        Log.d(TAG, info.solutions.first().toString())
         addSlots(info.solutions.first().palindrome, level, densitySettings, context)
         return level
     }
 
+    private fun maxHeightExceeded(
+        boxSize: Int,
+        container: ViewGroup,
+        margin: Int,
+        rowsCount: Int,
+    ): Boolean {
+        val space = (container.height - rowsCount * boxSize)
+        return space <= margin
+    }
+
+    private fun nextIncreaseWillNotExceedWidthLimit(
+        boxSize: Int,
+        columnCount: Int,
+        container: ViewGroup,
+        margin: Int
+    ): Boolean {
+        val space = (container.width - (columnCount + 1) * boxSize)
+        return space >= margin || space < 0
+    }
+
+    private fun nextIncreaseWillNotExceedHeightLimit(
+        boxSize: Int,
+        rowsCount: Int,
+        container: ViewGroup,
+        margin: Int
+    ): Boolean {
+        val space = (container.height - rowsCount * boxSize)
+        return space <= margin || space < 0
+    }
+
     private fun getDensitySettings(
         isBookMode: BookMode,
-        sizeClassWidth: WindowSizeClass
+        sizeClassWidth: WindowSizeClass,
+        info: Level,
+        container: ViewGroup,
+        puzzleOnlyLetters: String
     ): DensitySettings {
+
         val densityDpi = context.resources?.displayMetrics?.densityDpi
         val margin = context.resources.getDimensionPixelSize(R.dimen.def)
         val screenWidth = context.resources?.displayMetrics?.widthPixels!!
+        var initialColumnCount = context.resources.getInteger(R.integer.defaultColumnsCount)
+        val smallGap = context.resources.getDimensionPixelSize(R.dimen._2sdp)
+        val intermediateGap = context.resources.getDimensionPixelSize(R.dimen._18sdp)
+        var rowsCount = puzzleOnlyLetters.chunked(initialColumnCount).count() + getSolutionRows(
+            info.solutions.first().palindrome,
+            initialColumnCount
+        ).count()
+        val heightMarginBothWays = margin * 3f
+        val widthMarginBothWays = margin * 2
+        val boxDecreaseRate = 1.1f
+        val textDecreaseRate = 1.04f
+
         val boxAndText =
             getBoxAndTextSize(
                 screenWidth,
                 margin,
                 isBookMode,
                 sizeClassWidth,
-                densityDpi
+                densityDpi,
+                initialColumnCount
             )
-        val boxSize = boxAndText.first
-        val textSize = boxAndText.second
+        var boxSize = boxAndText.first
+        var textSize = boxAndText.second
+
+        while (maxHeightExceeded(
+                boxSize,
+                container,
+                (heightMarginBothWays + (intermediateGap) + (rowsCount - 1) * smallGap).toInt(),
+                rowsCount
+            )
+        ) {
+            if (nextIncreaseWillNotExceedHeightLimit(
+                    boxSize,
+                    rowsCount,
+                    container,
+                    (heightMarginBothWays + (intermediateGap) + (rowsCount - 1) * smallGap).toInt()
+                )
+            ) {
+                boxSize = (boxSize / boxDecreaseRate).toInt()
+                textSize = (textSize / textDecreaseRate).toInt()
+            }
+            if (nextIncreaseWillNotExceedWidthLimit(
+                    boxSize,
+                    initialColumnCount,
+                    container,
+                    widthMarginBothWays + (initialColumnCount - 1) * smallGap
+                )
+            ) {
+                initialColumnCount++
+                rowsCount = puzzleOnlyLetters.chunked(initialColumnCount).count() + getSolutionRows(
+                    info.solutions.first().palindrome,
+                    initialColumnCount
+                ).count()
+            }
+        }
 
         return DensitySettings(
-            context.resources.getInteger(R.integer.defaultColumnsCount),
+            initialColumnCount,
             boxSize,
             textSize,
         )
@@ -73,7 +153,8 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         margin: Int,
         isBookMode: BookMode,
         sizeClassWidth: WindowSizeClass,
-        densityDpi: Int?
+        densityDpi: Int?,
+        columnCount: Int
     ): Pair<Int, Int> {
 
         return when (sizeClassWidth) {
@@ -84,7 +165,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                             TAG,
                             "DisplayMetrics.DENSITY_LOW.rangeTo(DisplayMetrics.DENSITY_MEDIUM) - COMPAT"
                         )
-                        val box = (widthPixels - margin * 2) / 7
+                        val box = (widthPixels - margin * 2) / columnCount
                         val text = box.div(1.4).toInt()
                         return Pair(box, text)
                     }
@@ -93,7 +174,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                             TAG,
                             "DisplayMetrics.DENSITY_MEDIUM.rangeTo(DisplayMetrics.DENSITY_HIGH) - COMPAT"
                         )
-                        val box = (widthPixels - margin * 2) / 7
+                        val box = (widthPixels - margin * 2) / columnCount
                         val text = box.div(2.2).toInt()
                         return Pair(box, text)
                     }
@@ -102,7 +183,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                             TAG,
                             "DisplayMetrics.DENSITY_HIGH.rangeTo(DisplayMetrics.DENSITY_XHIGH) - COMPAT"
                         )
-                        val box = (widthPixels - margin * 3) / 7
+                        val box = (widthPixels - margin * 3) / columnCount
                         val text = box.div(3).toInt()
                         return Pair(box, text)
                     }
@@ -112,7 +193,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                                 TAG,
                                 "DisplayMetrics.DENSITY_XHIGH.rangeTo(DisplayMetrics.DENSITY_XXHIGH) - COMPAT and BOOK MODE"
                             )
-                            val box = ((widthPixels / 2 - margin) / 7).toInt()
+                            val box = ((widthPixels / 2 - margin) / columnCount).toInt()
                             val text = box.div(3.8).toInt()
                             Pair(box, text)
                         } else {
@@ -120,7 +201,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                                 TAG,
                                 "DisplayMetrics.DENSITY_XHIGH.rangeTo(DisplayMetrics.DENSITY_XXHIGH) - COMPAT and DEFAULT"
                             )
-                            val box = ((widthPixels - margin * 3) / 7).toInt()
+                            val box = ((widthPixels - margin * 3) / columnCount).toInt()
                             val text = box.div(3.8).toInt()
                             Pair(box, text)
                         }
@@ -130,13 +211,13 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                             TAG,
                             "DisplayMetrics.DENSITY_XXHIGH.rangeTo(DisplayMetrics.DENSITY_XXXHIGH) - COMPAT"
                         )
-                        val box = ((widthPixels - margin * 2.8) / 7).toInt()
+                        val box = ((widthPixels - margin * 2.8) / columnCount).toInt()
                         val text = box.div(5).toInt()
                         Pair(box, text)
                     }
                     else -> {
                         Log.d(TAG, "DisplayMetrics OTHER - COMPAT")
-                        val box = (widthPixels - margin * 2) / 7
+                        val box = (widthPixels - margin * 2) / columnCount
                         val text = box.div(3.9).toInt()
                         return Pair(box, text)
                     }
@@ -149,7 +230,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                             TAG,
                             "DisplayMetrics.DENSITY_LOW.rangeTo(DisplayMetrics.DENSITY_MEDIUM) - MEDIUM"
                         )
-                        val box = ((widthPixels / 1.8 - margin) / 7).toInt()
+                        val box = ((widthPixels / 1.8 - margin) / columnCount).toInt()
                         val text = box.div(1.4).toInt()
                         return Pair(box, text)
                     }
@@ -158,7 +239,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                             TAG,
                             "DisplayMetrics.DENSITY_MEDIUM.rangeTo(DisplayMetrics.DENSITY_HIGH) - MEDIUM"
                         )
-                        val box = ((widthPixels / 1.6 - margin * 1.8) / 7).toInt()
+                        val box = ((widthPixels / 1.6 - margin * 1.8) / columnCount).toInt()
                         val text = box.div(1.8).toInt()
                         return Pair(box, text)
                     }
@@ -167,7 +248,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                             TAG,
                             "DisplayMetrics.DENSITY_HIGH.rangeTo(DisplayMetrics.DENSITY_XHIGH) - MEDIUM"
                         )
-                        val box = ((widthPixels / 1.6 - margin * 2) / 7).toInt()
+                        val box = ((widthPixels / 1.6 - margin * 2) / columnCount).toInt()
                         val text = box.div(2.6).toInt()
                         return Pair(box, text)
                     }
@@ -178,7 +259,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                                 TAG,
                                 "DisplayMetrics.DENSITY_XHIGH.rangeTo(DisplayMetrics.DENSITY_XXHIGH) - MEDIUM and BOOK MODE"
                             )
-                            val box = ((widthPixels / 1.8 - margin * 2) / 7).toInt()
+                            val box = ((widthPixels / 1.8 - margin * 2) / columnCount).toInt()
                             val text = box.div(3.3).toInt()
                             Pair(box, text)
                         } else {
@@ -186,14 +267,14 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                                 TAG,
                                 "DisplayMetrics.DENSITY_XHIGH.rangeTo(DisplayMetrics.DENSITY_XXHIGH) - MEDIUM"
                             )
-                            val box = ((widthPixels / 1.6 - margin * 2) / 7).toInt()
+                            val box = ((widthPixels / 1.6 - margin * 2) / columnCount).toInt()
                             val text = box.div(3.2).toInt()
                             Pair(box, text)
                         }
                     }
                     else -> {
                         Log.d(TAG, "DisplayMetrics OTHER - MEDIUM")
-                        val box = (widthPixels / 2 - margin * 2) / 7
+                        val box = (widthPixels / 2 - margin * 2) / columnCount
                         val text = box.div(2.5).toInt()
                         return Pair(box, text)
                     }
@@ -201,26 +282,33 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
             }
             WindowSizeClass.EXPANDED -> {
                 Log.d(TAG, "DisplayMetrics ... - EXPANDED")
-                val box = (widthPixels / 2 - margin * 2) / 7
+                val box = (widthPixels / 2 - margin * 2) / columnCount
                 val text = box.div(2.5).toInt()
                 return Pair(box, text)
             }
             WindowSizeClass.NOT_SET -> {
                 Log.d(TAG, "DisplayMetrics ... - NOT SET")
-                val box = (widthPixels - margin * 2) / 7
+                val box = (widthPixels - margin * 2) / columnCount
                 val text = box.div(2.5).toInt()
                 return Pair(box, text)
             }
         }
     }
 
-    private fun addLetters(grid: GridLayout, ds: DensitySettings, info: Level, context: Context) {
-        val puzzle = info.lettersProperties
+    private fun getPuzzle(info: Level): String {
+        return info.lettersProperties
             .sortedBy { it.homeIndex }
             .fold(
                 ""
             ) { acc, li -> acc + li.letter }
+    }
 
+    private fun addLetters(
+        grid: GridLayout,
+        ds: DensitySettings,
+        puzzle: String,
+        context: Context
+    ) {
         for ((_, l) in puzzle.withIndex()) {
             if (l.isWhitespace()) {
                 continue
@@ -260,6 +348,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
 
     private fun addSlots(puzzle: String, grid: GridLayout, ds: DensitySettings, context: Context) {
         val solutionRows = getSolutionRows(puzzle, ds.columnCount)
+
         for (row in solutionRows) {
             for (char in row) {
                 when (char) {

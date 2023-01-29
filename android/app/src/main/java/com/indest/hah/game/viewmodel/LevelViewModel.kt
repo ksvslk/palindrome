@@ -7,6 +7,10 @@ import androidx.core.os.bundleOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.firestore.DocumentChange
+import com.google.firebase.firestore.EventListener
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import com.indest.hah.R
 import com.indest.hah.ads.RewardType
 import com.indest.hah.game.creation.BookMode
@@ -17,6 +21,7 @@ import com.indest.hah.general.CompetitionAnnouncement
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
 import com.indest.hah.persistance.dto.SaveGame
+import com.indest.hah.persistance.dto.PlayerLevel
 import com.indest.hah.persistance.level.LevelProgress
 import com.indest.hah.persistance.level.LevelRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -53,6 +58,12 @@ class LevelViewModel @Inject constructor(
     val variousEventFlow = variousEventChannel.receiveAsFlow()
 
     private val firebaseAnalytics = FirebaseAnalytics.getInstance(application.applicationContext)
+    private val fsDb = FirebaseFirestore.getInstance()
+    private var liveStoreRegistration: ListenerRegistration? = null
+
+    private val _newPlayerLevels =
+        MutableStateFlow(Triple(-1, -1, "")) // level nr, multiple levels, who submitted
+    val newPlayerLevels = _newPlayerLevels.asStateFlow()
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Log.e(
@@ -66,6 +77,11 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        liveStoreRegistration?.remove()
+    }
+
     private val saveGameExceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Log.e(TAG, "Could not write snapshot or save game: ${throwable.message}")
     }
@@ -77,6 +93,20 @@ class LevelViewModel @Inject constructor(
 
     fun setCompetitionStatus(competitionAnnouncement: CompetitionAnnouncement) {
         _competitionStatus.value = competitionAnnouncement
+    }
+
+    suspend fun changeFriendIndexesBasedOnColumnCount(newColumnCount: Int) {
+        val columnDifference = newColumnCount - _uiState.value.level.levelInfo.columnCount
+        Log.d(TAG, "newColumnCount: $newColumnCount")
+        Log.d(TAG, "currentColumnCount: ${_uiState.value.level.levelInfo.columnCount}")
+        if (columnDifference != 0) {
+            Log.d(TAG, "WE HAVE A COLUMN DIFF: $columnDifference")
+            levelRepository.changeFriendIndexesBasedOnColumnCount(
+                _uiState.value.level.levelInfo.levelId,
+                columnDifference,
+                newColumnCount
+            )
+        }
     }
 
     fun setAccountStatus(accountStatus: AccountStatus) {
@@ -293,15 +323,21 @@ class LevelViewModel @Inject constructor(
         viewModelScope.launch(exceptionHandler) {
             if (saveGame != null) {
                 levelRepository.updateLocalGame(saveGame)
-                levelRepository.latestLevelFlow().collect { _currentLevel.value = it }
+                launch {
+                    levelRepository.latestLevelFlow().collect { _currentLevel.value = it }
+                }
             } else {
-                levelRepository.latestLevelFlow().collect { _currentLevel.value = it }
+                launch {
+                    levelRepository.latestLevelFlow().collect { _currentLevel.value = it }
+                }
+            }
+            launch {
+                collectPlayerLevels()
             }
         }
     }
 
     fun updateLetters(topIndex: Int, bottomLetter: Char, bottomIndex: Int, topLetter: Char) {
-
         viewModelScope.launch {
             _currentLevel.value.levelInfo.let { levelInfo ->
                 val currentSolution = levelRepository.switchLetters(
@@ -319,7 +355,8 @@ class LevelViewModel @Inject constructor(
     fun increaseMistakes() {
         viewModelScope.launch {
             _currentLevel.value.levelInfo.let { levelInfo ->
-                val pointsToSubtract = levelInfo.levelId * 100 / 20
+                val pointsToSubtract =
+                    if (levelInfo.levelId <= 100) levelInfo.levelId * 100 / 20 else levelInfo.puzzle.length * 100 / 20
                 val newScore = if (levelInfo.score - pointsToSubtract < 0) 0
                 else levelInfo.score - pointsToSubtract
                 levelRepository.updateScore(newScore, levelInfo.levelId)
@@ -397,6 +434,12 @@ class LevelViewModel @Inject constructor(
     fun allLevelsFlow(): Flow<List<Pair<Boolean, LevelData>>> {
         return flow {
             emit(levelRepository.getAllLevels())
+        }
+    }
+
+    fun allPalindromesFlow(): Flow<MutableSet<String>> {
+        return flow {
+            emit(levelRepository.getAllPalindromes())
         }
     }
 
@@ -663,5 +706,82 @@ class LevelViewModel @Inject constructor(
                 )
             )
         }
+    }
+
+    private suspend fun collectPlayerLevels() {
+        liveStoreRegistration?.remove()
+        val maxLevelId = getMaxLevelId()
+        val query = fsDb.collection("user_submitted_levels")
+            .whereEqualTo("isFeatured", true)
+            .whereGreaterThan("levelId", maxLevelId)
+        liveStoreRegistration = query.addSnapshotListener(EventListener { snapshots, e ->
+            if (e != null) {
+                Log.w(TAG, "listen:error", e)
+                return@EventListener
+            }
+            val playerLevels = mutableListOf<PlayerLevel>()
+            snapshots?.let { snap ->
+                for (dc in snap.documentChanges) {
+                    when (dc.type) {
+                        DocumentChange.Type.ADDED -> {
+                            try {
+                                dc.document.data.let { levelValues ->
+                                    val solutionsToCategories =
+                                        levelValues["solutionToCategory"] as Map<String, String>
+                                    if (solutionsToCategories.isEmpty()) throw Exception("Solutions were empty")
+                                    playerLevels.add(
+                                        PlayerLevel(
+                                            levelValues["levelId"] as Long,
+                                            levelValues["player"] as String,
+                                            solutionsToCategories
+                                        )
+                                    )
+                                }
+                            } catch (e: Exception) {
+                                Log.w(
+                                    TAG,
+                                    "Something went wrong when parsing the user level from FB.",
+                                    e
+                                )
+                                return@EventListener
+                            }
+                        }
+                        DocumentChange.Type.MODIFIED -> Log.d(
+                            TAG,
+                            "Modified level: " + dc.document.data
+                        )
+                        DocumentChange.Type.REMOVED -> Log.d(
+                            TAG,
+                            "Removed level: " + dc.document.data
+                        )
+                    }
+                }
+            }
+            Log.d(TAG, "New featured levels: $playerLevels")
+            viewModelScope.launch {
+                if (playerLevels.size != 0) {
+                    val levelAndCount = insertPlayerLevels(playerLevels)
+                    if (levelAndCount.second > 0) {
+                        _newPlayerLevels.value = if (levelAndCount.second > 1) Triple(
+                            -1,
+                            levelAndCount.second,
+                            ""
+                        ) else Triple(levelAndCount.first.levelId, 1, levelAndCount.first.author)
+                    }
+                }
+            }
+        })
+    }
+
+    fun resetNewPlayersLevels() {
+        _newPlayerLevels.value = Triple(-1, -1, "")
+    }
+
+    private suspend fun insertPlayerLevels(playerLevels: List<PlayerLevel>): Pair<LevelData, Int> {
+        return levelRepository.insertPlayerLevels(playerLevels)
+    }
+
+    suspend fun getMaxLevelId(): Int {
+        return levelRepository.getMaxLevelId()
     }
 }

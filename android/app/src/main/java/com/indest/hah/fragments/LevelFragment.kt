@@ -45,6 +45,7 @@ import com.indest.hah.other.VaryingProbability
 import com.indest.hah.views.Cell
 import com.indest.hah.views.MessageSnackBar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
@@ -101,20 +102,24 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             uiState.bookMode,
             uiState.windowSizeClass
         )
-        levelGridLayout.children.filterIsInstance<Cell<*, *>>().toMutableList().apply {
-            levelGridLayout.doOnPreDraw {
-                cellDirector = CellDirector(
-                    uiState.level,
-                    this,
-                    viewModel
-                )
-            }
-        }
-        binding.levelFragment.addView(levelGridLayout)
 
-        viewModel.currentLevel.replayCache.firstOrNull()?.levelInfo?.levelId?.let { it1 ->
-            askForReview(level = it1)
+        lifecycleScope.launch(Dispatchers.Main)
+        {
+            viewModel.changeFriendIndexesBasedOnColumnCount(levelGridLayout.columnCount)
+            levelGridLayout.children.filterIsInstance<Cell<*, *>>().toMutableList().apply {
+                levelGridLayout.doOnPreDraw {
+                    cellDirector = CellDirector(
+                        viewModel.currentLevel.value,
+                        this,
+                        viewModel
+                    )
+                }
+            }
+            binding.levelFragment.addView(levelGridLayout)
         }
+
+        askForReview(uiState.level.levelInfo.levelId)
+
         lifecycleScope.launchWhenResumed {
             if (viewModel.isShowScores()) {
                 showPlayerCenteredScores()
@@ -212,6 +217,9 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                     }
                     R.id.navigation_goods -> {
                         menuItem.setIcon(R.drawable.lightbulb)
+                    }
+                    R.id.navigation_stages -> {
+                        menuItem.setIcon(R.drawable.baseline_list_alt_black_36)
                     }
                     R.id.navigation_settings -> {
                         menuItem.setIcon(R.drawable.settings)
