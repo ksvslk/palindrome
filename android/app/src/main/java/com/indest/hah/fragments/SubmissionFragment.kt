@@ -62,7 +62,13 @@ class SubmissionFragment : BottomSheetDialogFragmentCustom() {
 
                     override fun afterTextChanged(p0: Editable?) {
                         val errors = mutableListOf<String>()
-                        if (p0.toString().length < resources.getInteger(R.integer.minUserPalindromeLength)) {
+                        if (p0.toString().isEmpty()) {
+                            errors.clear()
+                            binding.enterPalindromeTextInputLayout.error = null
+                            binding.enterPalindromeTextInputLayout.endIconDrawable = null
+                            binding.enterPalindromeTextInputLayout.errorIconDrawable = null
+                        }
+                        else if (p0.toString().length < resources.getInteger(R.integer.minUserPalindromeLength)) {
                             errors.add(getString(R.string.min_length_error)+resources.getInteger(R.integer.minUserPalindromeLength))
                             binding.enterPalindromeTextInputLayout.endIconDrawable = null
                         }
@@ -112,7 +118,7 @@ class SubmissionFragment : BottomSheetDialogFragmentCustom() {
                                 )
                         }
 
-                        if (errors.size == 0)
+                        if (errors.size == 0 && p0.toString().isNotEmpty())
                         {
                             binding.enterPalindromeTextInputLayout.errorIconDrawable = null
                             binding.sendLevelButton.alpha = 1f
