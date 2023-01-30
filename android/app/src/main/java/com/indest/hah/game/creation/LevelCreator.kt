@@ -43,7 +43,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         return level
     }
 
-    private fun maxHeightExceeded(
+    private fun maxHeightNotExceeded(
         boxSize: Int,
         container: ViewGroup,
         margin: Int,
@@ -51,16 +51,6 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
     ): Boolean {
         val space = (container.height - rowsCount * boxSize)
         return space <= margin
-    }
-
-    private fun nextIncreaseWillNotExceedWidthLimit(
-        boxSize: Int,
-        columnCount: Int,
-        container: ViewGroup,
-        margin: Int
-    ): Boolean {
-        val space = (container.width - (columnCount + 1) * boxSize)
-        return space >= margin || space < 0
     }
 
     private fun nextIncreaseWillNotExceedHeightLimit(
@@ -73,6 +63,28 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         return space <= margin || space < 0
     }
 
+
+    private fun maxWidthNotExceeded(
+        boxSize: Int,
+        columnCount: Int,
+        container: ViewGroup,
+        margin: Int
+    ): Boolean {
+        val space = (container.width - (columnCount + 1) * boxSize)
+        return space >= margin
+    }
+
+    private fun nextIncreaseWillNotExceedWidthLimit(
+        boxSize: Int,
+        columnCount: Int,
+        container: ViewGroup,
+        margin: Int
+    ): Boolean {
+        val space = (container.width - (columnCount + 1) * boxSize)
+        return space >= margin || space < 0
+    }
+
+
     private fun getDensitySettings(
         isBookMode: BookMode,
         sizeClassWidth: WindowSizeClass,
@@ -84,10 +96,19 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         val densityDpi = context.resources?.displayMetrics?.densityDpi
         val margin = context.resources.getDimensionPixelSize(R.dimen.def)
         val screenWidth = context.resources?.displayMetrics?.widthPixels!!
-        var initialColumnCount = if (sizeClassWidth == WindowSizeClass.EXPANDED) context.resources.getInteger(R.integer.expandedColumnsCount)
+        var initialColumnCount =
+            if (sizeClassWidth == WindowSizeClass.EXPANDED) context.resources.getInteger(R.integer.expandedColumnsCount)
             else context.resources.getInteger(R.integer.defaultColumnsCount)
+        Log.d(TAG, "sizeClassWidth: ${sizeClassWidth}")
+        Log.d(TAG, "initialColumnCount: ${initialColumnCount}")
         val smallGap = context.resources.getDimensionPixelSize(R.dimen._2sdp)
         val intermediateGap = context.resources.getDimensionPixelSize(R.dimen._18sdp)
+        Log.d(
+            TAG,
+            "puzzleOnlyLetters.chunked(initialColumnCount).count(): ${
+                puzzleOnlyLetters.chunked(initialColumnCount)
+            }"
+        )
         var rowsCount = puzzleOnlyLetters.chunked(initialColumnCount).count() + getSolutionRows(
             info.solutions.first().palindrome,
             initialColumnCount
@@ -109,37 +130,76 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         var boxSize = boxAndText.first
         var textSize = boxAndText.second
 
-        while (maxHeightExceeded(
-                boxSize,
-                container,
-                (heightMarginBothWays + (intermediateGap) + (rowsCount - 1) * smallGap).toInt(),
-                rowsCount
-            )
-        ) {
-            if (nextIncreaseWillNotExceedHeightLimit(
+        if (sizeClassWidth != WindowSizeClass.EXPANDED)
+        {
+            // DO NOT CHANGED !!!!!!!!!!!!!!!!!!!!!!!!!!
+            while (maxHeightNotExceeded(
                     boxSize,
-                    rowsCount,
                     container,
-                    (heightMarginBothWays + (intermediateGap) + (rowsCount - 1) * smallGap).toInt()
+                    (heightMarginBothWays + (intermediateGap) + (rowsCount - 1) * smallGap).toInt(),
+                    rowsCount
                 )
             ) {
-                boxSize = (boxSize / boxDecreaseRate).toInt()
-                textSize = (textSize / textDecreaseRate).toInt()
-            }
-            if (nextIncreaseWillNotExceedWidthLimit(
-                    boxSize,
-                    initialColumnCount,
-                    container,
-                    widthMarginBothWays + (initialColumnCount - 1) * smallGap
-                )
-            ) {
-                initialColumnCount++
-                rowsCount = puzzleOnlyLetters.chunked(initialColumnCount).count() + getSolutionRows(
-                    info.solutions.first().palindrome,
-                    initialColumnCount
-                ).count()
+                if (nextIncreaseWillNotExceedHeightLimit(
+                        boxSize,
+                        rowsCount,
+                        container,
+                        (heightMarginBothWays + (intermediateGap) + (rowsCount - 1) * smallGap).toInt()
+                    )
+                ) {
+                    boxSize = (boxSize / boxDecreaseRate).toInt()
+                    textSize = (textSize / textDecreaseRate).toInt()
+                }
+                if (nextIncreaseWillNotExceedWidthLimit(
+                        boxSize,
+                        initialColumnCount,
+                        container,
+                        widthMarginBothWays + (initialColumnCount - 1) * smallGap
+                    )
+                ) {
+                    initialColumnCount++
+                    rowsCount = puzzleOnlyLetters.chunked(initialColumnCount).count() + getSolutionRows(
+                        info.solutions.first().palindrome,
+                        initialColumnCount
+                    ).count()
+                }
             }
         }
+        else if (sizeClassWidth == WindowSizeClass.EXPANDED)
+        {
+            while (maxHeightNotExceeded(
+                    boxSize,
+                    container,
+                    (heightMarginBothWays + (intermediateGap) + (rowsCount - 1) * smallGap).toInt(),
+                    rowsCount
+                )
+            ) {
+                if (nextIncreaseWillNotExceedHeightLimit(
+                        boxSize,
+                        rowsCount,
+                        container,
+                        (heightMarginBothWays + (intermediateGap) + (rowsCount - 1) * smallGap).toInt()
+                    )
+                ) {
+                    boxSize = (boxSize / boxDecreaseRate).toInt()
+                    textSize = (textSize / textDecreaseRate).toInt()
+                }
+                if (nextIncreaseWillNotExceedWidthLimit(
+                        boxSize,
+                        initialColumnCount,
+                        container,
+                        widthMarginBothWays + (initialColumnCount - 1) * smallGap
+                    )
+                ) {
+                    initialColumnCount++
+                    rowsCount = puzzleOnlyLetters.chunked(initialColumnCount).count() + getSolutionRows(
+                        info.solutions.first().palindrome,
+                        initialColumnCount
+                    ).count()
+                }
+            }
+        }
+
 
         return DensitySettings(
             initialColumnCount,

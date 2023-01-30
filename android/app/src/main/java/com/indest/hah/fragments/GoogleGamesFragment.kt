@@ -56,10 +56,10 @@ class GoogleGamesFragment : BottomSheetDialogFragmentCustom() {
                                     showAchievements()
                                 }
                                 binding.leaderboardsButton.setOnClickListener {
-                                    showLeaderBoard()
+                                    showLeaderBoard(getString(R.string.leaderboard_crme_de_la_crme))
                                 }
                                 binding.playerLevelsLeaderboardButton.setOnClickListener {
-                                    //TODO: Show players levels leaderboard
+                                    showLeaderBoard(getString(R.string.leaderboard_player_levels_leaderboard))
                                 }
                             }
                         }
@@ -92,11 +92,11 @@ class GoogleGamesFragment : BottomSheetDialogFragmentCustom() {
         return b.root
     }
 
-    // TODO: add different string here for different leaderboard
-    private fun showLeaderBoard() {
+
+    private fun showLeaderBoard(id:String) {
         activity?.let { activity ->
             val leaderboardsClient = PlayGames.getLeaderboardsClient(activity)
-            leaderboardsClient.getLeaderboardIntent(getString(R.string.leaderboard_crme_de_la_crme))
+            leaderboardsClient.getLeaderboardIntent(id)
                 .continueWith {
                     if (it.isSuccessful) {
                         levelViewModel.setUiStateMenuAction()

@@ -36,6 +36,7 @@ import com.indest.hah.databinding.LevelFragmentBinding
 import com.indest.hah.fx.Animations
 import com.indest.hah.fx.SoundPlayer
 import com.indest.hah.game.creation.LevelCreator
+import com.indest.hah.game.creation.WindowSizeClass
 import com.indest.hah.game.director.CellDirector
 import com.indest.hah.game.viewmodel.ContainerState.*
 import com.indest.hah.game.viewmodel.LevelViewModel
@@ -102,22 +103,25 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         }
         Log.d(TAG, "splitted puzzle: ${uiState.level.solutions}")
         Log.d(TAG, "expandedSize: $expandedSize")
-        Log.d(TAG, "requireActivity().requestedOrientation: ${requireActivity().requestedOrientation}")
 
+        var windowSizeClass = uiState.windowSizeClass
         if (expandedSize)
         {
             requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+            windowSizeClass = WindowSizeClass.EXPANDED
         }
         else {
             requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
+
+        Log.d(TAG, "requireActivity().requestedOrientation: ${requireActivity().requestedOrientation}")
 
         val levelGridLayout = levelCreator.getLevel(
             uiState.level,
             layoutInflater,
             binding.levelFragment,
             uiState.bookMode,
-            uiState.windowSizeClass
+            windowSizeClass
         )
 
         lifecycleScope.launch(Dispatchers.Main)

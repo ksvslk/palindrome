@@ -26,4 +26,7 @@
 
     <!--leaderboard Crème de la Crème-->
     <string name="leaderboard_crme_de_la_crme" translatable="false">CgkIj5WSoeMdEAIQCQ</string>
+
+    <!--leaderboard Player Levels Leaderboard-->
+    <string name="leaderboard_player_levels_leaderboard" translatable="false">CgkIj5WSoeMdEAIQEA</string>
 </resources>

@@ -53,11 +53,19 @@ class ScoresFragment : BottomSheetDialogFragmentCustom() {
         binding.scoresDialogTitle2.setOnClickListener {
             dismiss()
         }
+
         if (generalViewModel.accountStatus.value == AccountStatus.SIGNED_IN) {
+
+            val leaderboardId = if (generalViewModel.currentLevel.value.levelInfo.levelId > 1000) {
+                getString(R.string.leaderboard_player_levels_leaderboard)
+            } else {
+                getString(R.string.leaderboard_crme_de_la_crme)
+            }
+
             activity?.let { activity ->
                 PlayGames.getLeaderboardsClient(activity)
                     .loadPlayerCenteredScores(
-                        getString(R.string.leaderboard_crme_de_la_crme),
+                        leaderboardId,
                         TIME_SPAN_ALL_TIME,
                         COLLECTION_PUBLIC,
                         3,

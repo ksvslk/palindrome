@@ -546,6 +546,12 @@ class LevelViewModel @Inject constructor(
                 val hintsInterval =
                     getApplication<Application>().getString(R.string.hint_suggestion)
 
+                val maxScore = if (_currentLevel.value.levelInfo.levelId > 1000) {
+                    _currentLevel.value.levelInfo.puzzle.length * 100
+                } else {
+                    _currentLevel.value.levelInfo.levelId * 100
+                }
+
                 when {
                     isSolutionCorrect(guess) -> {
                         submitScore()
@@ -557,7 +563,7 @@ class LevelViewModel @Inject constructor(
                             solution = Solution.CORRECT,
                             index = index,
                             score = _currentLevel.value.levelInfo.score,
-                            maxScore = _currentLevel.value.levelInfo.levelId * 100,
+                            maxScore = maxScore,
                             showHintsBadge = false
                         )
                         _uiState.value = _uiState.value.copy(
@@ -575,7 +581,7 @@ class LevelViewModel @Inject constructor(
                             solution = Solution.BOGUS_PALINDROME,
                             index = index,
                             score = _currentLevel.value.levelInfo.score,
-                            maxScore = _currentLevel.value.levelInfo.levelId * 100,
+                            maxScore = maxScore,
                             showHintsBadge = showHintsBadge
                         )
                         _uiState.value = _uiState.value.copy(
@@ -592,7 +598,7 @@ class LevelViewModel @Inject constructor(
                             solution = Solution.WRONG,
                             index = index,
                             score = _currentLevel.value.levelInfo.score,
-                            maxScore = _currentLevel.value.levelInfo.levelId * 100,
+                            maxScore = maxScore,
                             showHintsBadge = showHintsBadge
                         )
                         _uiState.value = _uiState.value.copy(
