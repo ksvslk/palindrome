@@ -35,7 +35,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HintsFragment : BottomSheetDialogFragment() {
+class HintsFragment : BottomSheetDialogFragmentCustom() {
     private val TAG = "HintsFragment"
     private var _binding: HintsFragmentBinding? = null
     private val binding get() = _binding!!
@@ -46,6 +46,7 @@ class HintsFragment : BottomSheetDialogFragment() {
     lateinit var soundPlayer: SoundPlayer
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED)
             {

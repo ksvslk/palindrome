@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
-class GoogleGamesFragment : BottomSheetDialogFragment() {
+class GoogleGamesFragment : BottomSheetDialogFragmentCustom() {
 
     private val TAG = "GoogleGamesFragment"
     private val startActivity =
@@ -35,6 +35,7 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
     private val levelViewModel: LevelViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED)
             {

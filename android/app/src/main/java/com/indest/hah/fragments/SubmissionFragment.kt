@@ -20,7 +20,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-class SubmissionFragment : BottomSheetDialogFragment() {
+class SubmissionFragment : BottomSheetDialogFragmentCustom() {
     private val TAG = "SubmissionFragment"
     private var _binding: SubmissionFragmentBinding? = null
     private val binding get() = _binding!!
@@ -62,8 +62,8 @@ class SubmissionFragment : BottomSheetDialogFragment() {
 
                     override fun afterTextChanged(p0: Editable?) {
                         val errors = mutableListOf<String>()
-                        if (p0.toString().length < 3) {
-                            errors.add(getString(R.string.length_3_error))
+                        if (p0.toString().length < resources.getInteger(R.integer.minUserPalindromeLength)) {
+                            errors.add(getString(R.string.min_length_error)+resources.getInteger(R.integer.minUserPalindromeLength))
                             binding.enterPalindromeTextInputLayout.endIconDrawable = null
                         }
                         else if (palindromes.contains(p0?.toString()?.replace("[!?’,.;:'\\-\"\\s]".toRegex(), "")))
@@ -71,13 +71,13 @@ class SubmissionFragment : BottomSheetDialogFragment() {
                             errors.add(getString(R.string.palindrome_exists))
                             binding.enterPalindromeTextInputLayout.endIconDrawable = null
                         }
-                        else if (p0.toString().length > 24) {
-                            errors.add(getString(R.string.length_24_error))
+                        else if (p0.toString().length > resources.getInteger(R.integer.maxUserPalindromeLength)) {
+                            errors.add(getString(R.string.max_length_error)+resources.getInteger(R.integer.maxUserPalindromeLength))
                             binding.enterPalindromeTextInputLayout.endIconDrawable = null
                         }
                         else {
-                            errors.remove(getString(R.string.length_3_error))
-                            errors.remove(getString(R.string.length_24_error))
+                            errors.remove(getString(R.string.min_length_error)+resources.getInteger(R.integer.minUserPalindromeLength))
+                            errors.remove(getString(R.string.max_length_error)+resources.getInteger(R.integer.maxUserPalindromeLength))
                             errors.remove(getString(R.string.palindrome_exists))
                             if (isPalindrome(p0.toString())) {
                                 errors.remove(getString(R.string.not_a_palindrome_error))

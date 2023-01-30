@@ -33,7 +33,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class SettingsFragment : BottomSheetDialogFragment() {
+class SettingsFragment : BottomSheetDialogFragmentCustom() {
     private val TAG = "SettingsFragment"
     private var _binding: SettingsFragmentBinding? = null
     private val binding get() = _binding!!
@@ -41,6 +41,7 @@ class SettingsFragment : BottomSheetDialogFragment() {
     private val levelViewModel: LevelViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED)
             {

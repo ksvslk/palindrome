@@ -3,6 +3,8 @@ package com.indest.hah.fragments
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Context
+import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -95,6 +97,21 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
     private fun displayLevel(uiState: UiState) {
         binding.levelFragment.removeAllViews()
+        val expandedSize = uiState.level.solutions.first().palindrome.split(" ").any {
+            it.length > resources.getInteger(R.integer.defaultColumnsCount)
+        }
+        Log.d(TAG, "splitted puzzle: ${uiState.level.solutions}")
+        Log.d(TAG, "expandedSize: $expandedSize")
+        Log.d(TAG, "requireActivity().requestedOrientation: ${requireActivity().requestedOrientation}")
+
+        if (expandedSize)
+        {
+            requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+        }
+        else {
+            requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        }
+
         val levelGridLayout = levelCreator.getLevel(
             uiState.level,
             layoutInflater,

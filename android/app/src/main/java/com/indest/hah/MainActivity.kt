@@ -56,10 +56,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.firestore.*
 import com.indest.hah.ads.RewardType
 import com.indest.hah.databinding.ActivityMainBinding
-import com.indest.hah.fragments.ExitGameDialogFragment
-import com.indest.hah.fragments.PrizeFragment
-import com.indest.hah.fragments.LevelFragment
-import com.indest.hah.fragments.LevelSelectFragment
+import com.indest.hah.fragments.*
 import com.indest.hah.fx.SoundPlayer
 import com.indest.hah.game.creation.BookMode
 import com.indest.hah.game.creation.WindowSizeClass
@@ -201,8 +198,8 @@ class MainActivity : AppCompatActivity(),
                         }
                     } else {
                         supportFragmentManager.commit {
-                            addToBackStack(LevelSelectFragment().tag)
-                            add(LevelSelectFragment(), LevelSelectFragment().tag)
+                            addToBackStack(PlayerLevelSelectFragment().tag)
+                            add(PlayerLevelSelectFragment(), PlayerLevelSelectFragment().tag)
                         }
                     }
                 }

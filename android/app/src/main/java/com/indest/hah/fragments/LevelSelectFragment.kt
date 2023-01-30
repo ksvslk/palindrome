@@ -23,7 +23,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 
 @AndroidEntryPoint
-class LevelSelectFragment : BottomSheetDialogFragment() {
+class LevelSelectFragment : BottomSheetDialogFragmentCustom() {
     private val TAG = "LevelSelectFragment"
     private var _binding: LevelSelectFragmentBinding? = null
     private val binding get() = _binding!!

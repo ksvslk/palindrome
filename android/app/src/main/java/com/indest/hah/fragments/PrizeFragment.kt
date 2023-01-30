@@ -14,7 +14,7 @@ import com.indest.hah.R
 import com.indest.hah.databinding.PrizeFragmentBinding
 import com.indest.hah.general.GeneralViewModel
 
-class PrizeFragment(private val promoLink: String = "") : BottomSheetDialogFragment() {
+class PrizeFragment(private val promoLink: String = "") : BottomSheetDialogFragmentCustom() {
     private var _binding: PrizeFragmentBinding? = null
     private val binding get() = _binding!!
     private val TAG = "PrizeFragment"

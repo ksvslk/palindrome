@@ -34,8 +34,8 @@
     <string name="stages">Levels</string>
     <string name="hints">Hints</string>
     <string name="helper_text_limit">Length limit</string>
-    <string name="length_3_error">Minimum length is 3</string>!!
-    <string name="length_24_error">Maximum length is 24</string>
+    <string name="min_length_error">Minimum length is </string>
+    <string name="max_length_error">Maximum length is </string>
     <string name="palindrome_exists">Palindrome is already added</string>
     <string name="not_a_palindrome_error">Solution must be a palindrome</string>
     <string name="levels">Levels</string>

@@ -17,7 +17,6 @@ import com.indest.hah.views.Slot
 import com.indest.hah.persistance.dto.Level
 import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.scopes.ActivityScoped
-import java.lang.Math.abs
 import javax.inject.Inject
 
 @ActivityScoped
@@ -85,7 +84,8 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         val densityDpi = context.resources?.displayMetrics?.densityDpi
         val margin = context.resources.getDimensionPixelSize(R.dimen.def)
         val screenWidth = context.resources?.displayMetrics?.widthPixels!!
-        var initialColumnCount = context.resources.getInteger(R.integer.defaultColumnsCount)
+        var initialColumnCount = if (sizeClassWidth == WindowSizeClass.EXPANDED) context.resources.getInteger(R.integer.expandedColumnsCount)
+            else context.resources.getInteger(R.integer.defaultColumnsCount)
         val smallGap = context.resources.getDimensionPixelSize(R.dimen._2sdp)
         val intermediateGap = context.resources.getDimensionPixelSize(R.dimen._18sdp)
         var rowsCount = puzzleOnlyLetters.chunked(initialColumnCount).count() + getSolutionRows(
@@ -282,9 +282,9 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
             }
             WindowSizeClass.EXPANDED -> {
                 Log.d(TAG, "DisplayMetrics ... - EXPANDED")
-                val box = (widthPixels / 2 - margin * 2) / columnCount
-                val text = box.div(2.5).toInt()
-                return Pair(box, text)
+                val box = ((widthPixels / 1.3 - margin * 2) / columnCount).toInt()
+                val text = box.div(3.5).toInt()
+                Pair(box, text)
             }
             WindowSizeClass.NOT_SET -> {
                 Log.d(TAG, "DisplayMetrics ... - NOT SET")

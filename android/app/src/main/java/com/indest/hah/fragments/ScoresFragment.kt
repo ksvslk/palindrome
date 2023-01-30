@@ -18,7 +18,7 @@ import com.indest.hah.databinding.ScoreFragmentBinding
 import com.indest.hah.general.AccountStatus
 import com.indest.hah.general.GeneralViewModel
 
-class ScoresFragment : BottomSheetDialogFragment() {
+class ScoresFragment : BottomSheetDialogFragmentCustom() {
     private var _binding: ScoreFragmentBinding? = null
     private val binding get() = _binding!!
     private val TAG = "ScoresFragment"

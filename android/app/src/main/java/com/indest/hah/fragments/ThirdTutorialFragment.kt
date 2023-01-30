@@ -13,7 +13,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.databinding.ThirdTutorialFragmentBinding
 
-class ThirdTutorialFragment : BottomSheetDialogFragment() {
+class ThirdTutorialFragment : BottomSheetDialogFragmentCustom() {
     private var _binding: ThirdTutorialFragmentBinding? = null
     private val binding get() = _binding!!
 

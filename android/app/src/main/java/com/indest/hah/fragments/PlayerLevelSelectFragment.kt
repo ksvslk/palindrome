@@ -25,7 +25,7 @@ import kotlinx.coroutines.flow.collect
 
 
 @AndroidEntryPoint
-class PlayerLevelSelectFragment : BottomSheetDialogFragment() {
+class PlayerLevelSelectFragment : BottomSheetDialogFragmentCustom() {
     private val TAG = "PlayerLevelSelectFrag"
     private var _binding: PlayerLevelSelectFragmentBinding? = null
     private val binding get() = _binding!!
