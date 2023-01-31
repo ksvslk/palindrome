@@ -39,6 +39,7 @@ import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.games.AuthenticationResult
 import com.google.android.gms.games.GamesSignInClient
 import com.google.android.gms.games.PlayGames
+import com.google.android.gms.games.Player
 import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.BaseTransientBottomBar.ANIMATION_MODE_SLIDE
@@ -122,7 +123,7 @@ class MainActivity : AppCompatActivity(),
                 levelViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
                 generalViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
                 Log.d(TAG, "SIGNED_OUT")
-
+                levelViewModel.currentlySignedInPlayerName = "Unknown"
                 return@addOnCompleteListener
             }
 
@@ -132,7 +133,7 @@ class MainActivity : AppCompatActivity(),
                 levelViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
                 generalViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
                 Log.d(TAG, "SIGNED_OUT")
-
+                levelViewModel.currentlySignedInPlayerName = "Unknown"
                 return@addOnCompleteListener
             }
 
@@ -141,6 +142,10 @@ class MainActivity : AppCompatActivity(),
             signInToFirebaseWithCredential(gamesSignInClient)
             levelViewModel.setAccountStatus(AccountStatus.SIGNED_IN)
             generalViewModel.setAccountStatus(AccountStatus.SIGNED_IN)
+
+            PlayGames.getPlayersClient(this).currentPlayer.addOnCompleteListener { mTask: Task<Player> ->
+                levelViewModel.currentlySignedInPlayerName = mTask.result.displayName
+            }
         }
 
         MobileAds.initialize(applicationContext) {
@@ -235,6 +240,7 @@ class MainActivity : AppCompatActivity(),
                     authTokenTask.result?.let { serverAuthToken ->
                         val credential = PlayGamesAuthProvider.getCredential(serverAuthToken)
                         auth.signInWithCredential(credential).addOnSuccessListener {
+                            Log.d(TAG, "UID: ${it.user?.uid}")
                             Log.d(TAG, "Signed in to firebase")
                             lifecycleScope.launchWhenCreated {
                                 lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
@@ -446,10 +452,16 @@ class MainActivity : AppCompatActivity(),
         Log.d(TAG, "onStop")
     }
 
-    private fun submitScore(score: Long) {
+    private fun submitScore(score: Long, playerLevels:Boolean = false) {
+        val leaderboardId = if (playerLevels) {
+            getString(R.string.leaderboard_player_levels_leaderboard)
+        }
+        else {
+            getString(R.string.leaderboard_crme_de_la_crme)
+        }
         PlayGames.getLeaderboardsClient(this)
             .submitScore(
-                getString(R.string.leaderboard_crme_de_la_crme),
+                leaderboardId,
                 score
             )
     }

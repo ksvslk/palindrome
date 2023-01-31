@@ -21,7 +21,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.databinding.TutorialFragmentBinding
 
-class TutorialFragment : BottomSheetDialogFragmentCustom() {
+class TutorialFragment : BottomSheetDialogFragment() {
 
     private val TAG = "TutorialFragment"
     private var _binding: TutorialFragmentBinding? = null

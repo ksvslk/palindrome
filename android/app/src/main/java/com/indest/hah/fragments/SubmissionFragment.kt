@@ -8,14 +8,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.databinding.SubmissionFragmentBinding
 import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.general.GeneralViewModel
+import com.indest.hah.persistance.dto.SaveGame
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -46,12 +51,14 @@ class SubmissionFragment : BottomSheetDialogFragmentCustom() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         binding.sendLevelButton.isEnabled = false
         binding.sendLevelButton.alpha = 0.5f
 
         lifecycleScope.launchWhenCreated {
             levelViewModel.allPalindromesFlow().collect { palindromes ->
-                binding.enterPalindromeTextInputEditText.addTextChangedListener(object : TextWatcher {
+                binding.enterPalindromeTextInputEditText.addTextChangedListener(object :
+                    TextWatcher {
                     override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                         Log.d(TAG, "beforeTextChanged: $p0")
                     }
@@ -67,23 +74,29 @@ class SubmissionFragment : BottomSheetDialogFragmentCustom() {
                             binding.enterPalindromeTextInputLayout.error = null
                             binding.enterPalindromeTextInputLayout.endIconDrawable = null
                             binding.enterPalindromeTextInputLayout.errorIconDrawable = null
-                        }
-                        else if (p0.toString().length < resources.getInteger(R.integer.minUserPalindromeLength)) {
-                            errors.add(getString(R.string.min_length_error)+resources.getInteger(R.integer.minUserPalindromeLength))
+                        } else if (p0.toString().length < resources.getInteger(R.integer.minUserPalindromeLength)) {
+                            errors.add(getString(R.string.min_length_error) + resources.getInteger(R.integer.minUserPalindromeLength))
                             binding.enterPalindromeTextInputLayout.endIconDrawable = null
-                        }
-                        else if (palindromes.contains(p0?.toString()?.replace("[!?’,.;:'\\-\"\\s]".toRegex(), "")))
-                        {
+                        } else if (palindromes.contains(
+                                p0?.toString()?.replace("[!?’,.;:'\\-\"\\s]".toRegex(), "")
+                            )
+                        ) {
                             errors.add(getString(R.string.palindrome_exists))
                             binding.enterPalindromeTextInputLayout.endIconDrawable = null
-                        }
-                        else if (p0.toString().length > resources.getInteger(R.integer.maxUserPalindromeLength)) {
-                            errors.add(getString(R.string.max_length_error)+resources.getInteger(R.integer.maxUserPalindromeLength))
+                        } else if (p0.toString().length > resources.getInteger(R.integer.maxUserPalindromeLength)) {
+                            errors.add(getString(R.string.max_length_error) + resources.getInteger(R.integer.maxUserPalindromeLength))
                             binding.enterPalindromeTextInputLayout.endIconDrawable = null
-                        }
-                        else {
-                            errors.remove(getString(R.string.min_length_error)+resources.getInteger(R.integer.minUserPalindromeLength))
-                            errors.remove(getString(R.string.max_length_error)+resources.getInteger(R.integer.maxUserPalindromeLength))
+                        } else {
+                            errors.remove(
+                                getString(R.string.min_length_error) + resources.getInteger(
+                                    R.integer.minUserPalindromeLength
+                                )
+                            )
+                            errors.remove(
+                                getString(R.string.max_length_error) + resources.getInteger(
+                                    R.integer.maxUserPalindromeLength
+                                )
+                            )
                             errors.remove(getString(R.string.palindrome_exists))
                             if (isPalindrome(p0.toString())) {
                                 errors.remove(getString(R.string.not_a_palindrome_error))
@@ -108,8 +121,7 @@ class SubmissionFragment : BottomSheetDialogFragmentCustom() {
                         if (errors.size > 1) {
                             binding.enterPalindromeTextInputLayout.error =
                                 errors.joinToString(", ")
-                        }
-                        else {
+                        } else {
                             binding.enterPalindromeTextInputLayout.error = errors.joinToString()
                             binding.enterPalindromeTextInputLayout.errorIconDrawable =
                                 ContextCompat.getDrawable(
@@ -118,13 +130,11 @@ class SubmissionFragment : BottomSheetDialogFragmentCustom() {
                                 )
                         }
 
-                        if (errors.size == 0 && p0.toString().isNotEmpty())
-                        {
+                        if (errors.size == 0 && p0.toString().isNotEmpty()) {
                             binding.enterPalindromeTextInputLayout.errorIconDrawable = null
                             binding.sendLevelButton.alpha = 1f
                             binding.sendLevelButton.isEnabled = true
-                        }
-                        else {
+                        } else {
                             binding.sendLevelButton.alpha = 0.5f
                             binding.sendLevelButton.isEnabled = false
                         }
@@ -133,71 +143,42 @@ class SubmissionFragment : BottomSheetDialogFragmentCustom() {
             }
         }
 
+
         binding.sendLevelButton.setOnClickListener {
             lifecycleScope.launchWhenCreated {
                 binding.enterPalindromeTextInputLayout.visibility = View.GONE
                 binding.sendLevelFlipper.showNext()
-                delay(2000)
-                binding.sendLevelFlipper.showNext()
-                if ((0..1).random() == 0)
-                {
-                    binding.sendLevelFailedView.visibility = View.VISIBLE
-                    binding.sendLevelFailedButton.setOnClickListener {
-                        binding.sendLevelFailedView.visibility = View.GONE
-                        binding.sendLevelFlipper.showNext()
-                        binding.enterPalindromeTextInputLayout.visibility = View.VISIBLE
-                    }
-                }
-                else {
-                    binding.sendLevelSuccessView.visibility = View.VISIBLE
-                    binding.enterPalindromeTextInputLayout.visibility = View.GONE
-                    lifecycleScope.launchWhenCreated {
-                        delay(3000)
-                        dismissAllowingStateLoss()
+                levelViewModel.submissionEventFlow.collect { event ->
+                    when (event) {
+                        LevelViewModel.SubmissionEvent.Succeeded -> {
+                            binding.sendLevelFlipper.showNext()
+                            binding.sendLevelSuccessView.visibility = View.VISIBLE
+                            binding.enterPalindromeTextInputLayout.visibility = View.GONE
+                            lifecycleScope.launchWhenCreated {
+                                delay(3000)
+                                dismissAllowingStateLoss()
+                            }
+                            this.cancel()
+                        }
+                        LevelViewModel.SubmissionEvent.Failed -> {
+                            binding.sendLevelFlipper.showNext()
+                            binding.sendLevelFailedView.visibility = View.VISIBLE
+                            binding.sendLevelFailedButton.setOnClickListener {
+                                binding.sendLevelFailedView.visibility = View.GONE
+                                binding.sendLevelFlipper.showNext()
+                                binding.enterPalindromeTextInputLayout.visibility = View.VISIBLE
+                            }
+                            this.cancel()
+                        }
+                        else -> {
+                        }
                     }
                 }
             }
-
+            lifecycleScope.launchWhenCreated {
+                levelViewModel.submitUserLevel(binding.enterPalindromeTextInputLayout.editText?.text.toString())
+            }
         }
-/*        val db = FirebaseFirestore.getInstance()
-
-        db.collection("user_submitted_levels")
-            .whereEqualTo("is_featured", true)
-            .addSnapshotListener(EventListener { snapshots, e ->
-                if (e != null) {
-                    Log.w(TAG, "listen:error", e)
-                    return@EventListener
-                }
-                for (dc in snapshots!!.documentChanges) {
-                    when (dc.type) {
-                        DocumentChange.Type.ADDED -> Log.d(TAG, "New featured level: " + dc.document.data)
-                        DocumentChange.Type.MODIFIED -> Log.d(TAG, "Modified level: " + dc.document.data)
-                        DocumentChange.Type.REMOVED -> Log.d(TAG, "Removed level: " + dc.document.data)
-                    }
-                }
-            })*/
-
-/*        binding.sendLevelButton.setOnClickListener {
-            // Create a new user with a first, middle, and last name
-            val level = hashMapOf(
-                "is_featured" to false,
-                "level" to binding.playerSubmittedLevel.text.toString(),
-                "timestamp" to FieldValue.serverTimestamp(),
-                "user_name" to "Mina"
-            )
-
-            // Add a new document with a generated ID
-            db.collection("user_submitted_levels")
-                .add(level)
-                .addOnSuccessListener { documentReference ->
-                    Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
-                }
-                .addOnFailureListener { e ->
-                    Log.w(TAG, "Error adding document", e)
-                }
-        }*/
-
-
     }
 
 }

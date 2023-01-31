@@ -19,7 +19,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.games.PlayGames
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.gms.games.Player
+import com.google.android.gms.tasks.Task
 import com.indest.hah.BuildConfig
 import com.indest.hah.R
 import com.indest.hah.databinding.SettingsFragmentBinding
@@ -27,9 +28,7 @@ import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.general.AccountStatus
 import com.indest.hah.general.GeneralViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint

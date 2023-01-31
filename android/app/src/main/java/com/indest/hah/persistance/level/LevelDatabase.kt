@@ -85,7 +85,7 @@ abstract class LevelDatabase : RoomDatabase() {
 
     companion object {
 
-        val MIGRATION_3_4 = object : Migration(3, 4) {
+        private val MIGRATION_3_4 = object : Migration(3, 4) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 try{
                     database.execSQL(

@@ -49,6 +49,9 @@ interface LevelDao {
     @Query("select sum(best_score) from level_info_table")
     suspend fun getTotalScore(): Int
 
+    @Query("select sum(best_score) from level_info_table where level_id > 1000")
+    suspend fun getTotalPlayerLevelsScore(): Int
+
     @Insert
     suspend fun insertLevelInfo(levels: LevelData)
 
@@ -312,8 +315,8 @@ interface LevelDao {
             val isLevelFinished = getLevelProgress(levelNr)
             if (lettersCount <= 0 && isLevelFinished != LevelProgress.INTERMEDIATE) {
                 val solution = getLevelSolutions(levelNr).first()
-                val newScore = if (levelNr <= 100) levelNr * 100 else solution.length * 100
                 val puzzle = Shuffler.getShuffledSolution(solution)
+                val newScore = if (levelNr <= 100) levelNr * 100 else puzzle.trim().length * 100
                 updatePuzzle(levelNr, puzzle)
                 puzzle.forEachIndexed { index, char ->
                     insertLetterData(

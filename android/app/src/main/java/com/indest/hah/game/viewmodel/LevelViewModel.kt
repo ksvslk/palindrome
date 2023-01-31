@@ -7,10 +7,7 @@ import androidx.core.os.bundleOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.firestore.DocumentChange
-import com.google.firebase.firestore.EventListener
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.*
 import com.indest.hah.R
 import com.indest.hah.ads.RewardType
 import com.indest.hah.game.creation.BookMode
@@ -31,6 +28,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 @HiltViewModel
@@ -57,6 +55,9 @@ class LevelViewModel @Inject constructor(
     private val variousEventChannel = Channel<VariousEvent>()
     val variousEventFlow = variousEventChannel.receiveAsFlow()
 
+    private val submissionChannel = Channel<SubmissionEvent>()
+    val submissionEventFlow = submissionChannel.receiveAsFlow()
+
     private val firebaseAnalytics = FirebaseAnalytics.getInstance(application.applicationContext)
     private val fsDb = FirebaseFirestore.getInstance()
     private var liveStoreRegistration: ListenerRegistration? = null
@@ -64,6 +65,8 @@ class LevelViewModel @Inject constructor(
     private val _newPlayerLevels =
         MutableStateFlow(Triple(-1, -1, "")) // level nr, multiple levels, who submitted
     val newPlayerLevels = _newPlayerLevels.asStateFlow()
+
+    var currentlySignedInPlayerName = "Unknown"
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Log.e(
@@ -458,7 +461,7 @@ class LevelViewModel @Inject constructor(
                 val totalScore = levelRepository.getTotalUpdatedScore(
                     _currentLevel.value.levelInfo.levelId
                 )
-                variousEventChannel.send(VariousEvent.SubmitScore(totalScore))
+                variousEventChannel.send(VariousEvent.SubmitScore(totalScore, _currentLevel.value.levelInfo.levelId > 1000))
             }
         }
     }
@@ -473,10 +476,17 @@ class LevelViewModel @Inject constructor(
 
     sealed class VariousEvent {
         data class UnlockAchievement(val achievement: String) : VariousEvent()
-        data class SubmitScore(val score: Long) : VariousEvent()
+        data class SubmitScore(val score: Long, val playerLevels: Boolean) : VariousEvent()
         data class SaveGame(val localSaveGame: com.indest.hah.persistance.dto.SaveGame) :
             VariousEvent()
         object LoadGame : VariousEvent()
+        object PalindromeSubmissionSucceeded : VariousEvent()
+        object PalindromeSubmissionFailed : VariousEvent()
+    }
+
+    sealed class SubmissionEvent {
+        object Succeeded : SubmissionEvent()
+        object Failed : SubmissionEvent()
     }
 
     private fun updateAndConsiderFlawlessAchievements(
@@ -789,5 +799,33 @@ class LevelViewModel @Inject constructor(
 
     suspend fun getMaxLevelId(): Int {
         return levelRepository.getMaxLevelId()
+    }
+
+    suspend fun submitUserLevel(playersPalindrome:String) {
+        // Create a new user with a first, middle, and last name
+        val level = hashMapOf(
+            "is_featured" to false,
+            "level" to playersPalindrome,
+            "timestamp" to FieldValue.serverTimestamp(),
+            "user_name" to currentlySignedInPlayerName
+        )
+        Log.d(TAG, "fsDb: ${fsDb.app.options.toString()}")
+        Log.d(TAG, "submitUserLevel: ${level.toString()}")
+
+        // Add a new document with a generated ID
+        fsDb.collection("user_submitted_levels")
+            .add(level)
+            .addOnSuccessListener { documentReference ->
+                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+                viewModelScope.launch {
+                    submissionChannel.send(SubmissionEvent.Succeeded)
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error adding document", e)
+                viewModelScope.launch {
+                    submissionChannel.send(SubmissionEvent.Failed)
+                }
+            }
     }
 }

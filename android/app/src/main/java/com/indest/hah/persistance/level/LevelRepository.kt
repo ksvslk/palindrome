@@ -58,6 +58,10 @@ class LevelRepository @Inject constructor(
 
     suspend fun getTotalUpdatedScore(level: Int): Long {
         levelDao.updateBestScoreQuery(level)
+        if (level > 1000)
+        {
+            return levelDao.getTotalPlayerLevelsScore().toLong()
+        }
         return levelDao.getTotalScore().toLong()
     }
 
