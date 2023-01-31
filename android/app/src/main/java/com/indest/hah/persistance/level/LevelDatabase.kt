@@ -2,6 +2,7 @@ package com.indest.hah.persistance.level
 
 import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
 import android.database.sqlite.SQLiteException
 import android.util.Log
 import androidx.annotation.Keep
@@ -17,10 +18,10 @@ import com.indest.hah.persistance.dto.Interval
 import com.indest.hah.persistance.dto.LanguageLevel
 import com.indest.hah.persistance.dto.LetterProperties
 import com.indest.hah.persistance.dto.LevelData
+import com.indest.hah.persistance.dto.PlayerLevel
 import com.indest.hah.persistance.dto.RegularLevel
 import com.indest.hah.persistance.dto.Solution
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.decodeFromJsonElement
@@ -32,7 +33,7 @@ data class LevelInfo(val nr: Int, val solutionToCategory: Map<String, String>)
 
 @Database(
     entities = [LevelData::class, LetterProperties::class, Interval::class, Solution::class],
-    version = 4,
+    version = 5,
     autoMigrations = [
         AutoMigration(
             from = 1,
@@ -43,6 +44,11 @@ data class LevelInfo(val nr: Int, val solutionToCategory: Map<String, String>)
             from = 3,
             to = 4,
             spec = LevelDatabase.AutoMigrationFrom3to4::class
+        ),
+        AutoMigration(
+            from = 4,
+            to = 5,
+            spec = LevelDatabase.AutoMigrationFrom4to5::class
         )
     ],
     exportSchema = true
@@ -102,7 +108,8 @@ abstract class LevelDatabase : RoomDatabase() {
                 while (cursor.moveToNext()) {
                     val levelId = cursor.getInt(cursor.getColumnIndexOrThrow("level_id"))
                     val puzzle = cursor.getString(cursor.getColumnIndexOrThrow("puzzle"))
-                    val categoryRewarded = cursor.getInt(cursor.getColumnIndexOrThrow("category_rewarded")) == 1
+                    val categoryRewarded =
+                        cursor.getInt(cursor.getColumnIndexOrThrow("category_rewarded")) == 1
                     val progress = cursor.getInt(cursor.getColumnIndexOrThrow("progress"))
                     val score = cursor.getInt(cursor.getColumnIndexOrThrow("score"))
                     val bestScore = cursor.getInt(cursor.getColumnIndexOrThrow("best_score"))
@@ -147,7 +154,8 @@ abstract class LevelDatabase : RoomDatabase() {
             for (level in regularLevels.plus(playerLevels)) {
                 val puzzle = level.solutionToCategory.keys.firstOrNull() ?: ""
                 val score = level.nr.toInt().getLevelScore(puzzle = puzzle)
-                val shuffled = Shuffler.getShuffledSolution(level.solutionToCategory.keys.first()).replace("-","")
+                val shuffled = Shuffler.getShuffledSolution(level.solutionToCategory.keys.first())
+                    .replace("-", "")
 
                 // ignore these as when migrating they are already set to correct values
                 // best_score
@@ -158,8 +166,7 @@ abstract class LevelDatabase : RoomDatabase() {
                 val contentValues = ContentValues()
                 contentValues.put("puzzle", shuffled)
                 contentValues.put("score", score)
-                if (levelMap.contains(level.nr.toInt()))
-                {
+                if (levelMap.contains(level.nr.toInt())) {
                     val oldLevelInfo = levelMap[level.nr.toInt()]!!
                     oldLevelInfo.levelId
                     oldLevelInfo.author
@@ -241,7 +248,9 @@ abstract class LevelDatabase : RoomDatabase() {
                     val score = currentLevelId.getLevelScore(puzzle = puzzle)
                     val progress = if (first) 1 else 0
                     first = false
-                    val shuffled = Shuffler.getShuffledSolution(level.solutionToCategory.keys.first()).replace("-","")
+                    val shuffled =
+                        Shuffler.getShuffledSolution(level.solutionToCategory.keys.first())
+                            .replace("-", "")
 
                     val contentValues = ContentValues()
                     contentValues.put("level_id", currentLevelId)
@@ -304,6 +313,106 @@ abstract class LevelDatabase : RoomDatabase() {
         }
     }
 
+    @ProvidedAutoMigrationSpec
+    class AutoMigrationFrom4to5(private val context: Context) : AutoMigrationSpec {
+        override fun onPostMigrate(db: SupportSQLiteDatabase) {
+
+            val jsonInstance = Json {
+                ignoreUnknownKeys = true
+                isLenient = true
+            }
+            val json = context.applicationContext.assets.open("output_user_submitted_levels.json")
+                .bufferedReader().use {
+                    it.readText()
+                }
+
+            val levels = jsonInstance.decodeFromString<List<PlayerLevel>>(json)
+
+            levels.forEach { levelValues ->
+                val currentLevelId = levelValues.levelId.toInt()
+                var cursor: Cursor? = null
+                val query = "SELECT 1 FROM level_info_table WHERE level_id = $currentLevelId LIMIT 1"
+
+                try {
+                    cursor = db.query(query)
+                    val exists = cursor.moveToFirst()
+                    if (!exists) {
+                        val solutionsToCategories =
+                            levelValues.solutionToCategory
+                        if (solutionsToCategories.keys.isEmpty()) {
+                            throw Exception("Solutions were empty")
+                        }
+
+                        val puzzle = levelValues.solutionToCategory.keys.firstOrNull() ?: ""
+                        val score = currentLevelId.getLevelScore(puzzle = puzzle)
+                        val progress = if (currentLevelId < 10000) 2 else 0
+                        val shuffled =
+                            Shuffler.getShuffledSolution(levelValues.solutionToCategory.keys.first())
+                                .replace("-", "")
+
+                        val contentValues = ContentValues()
+                        contentValues.put("level_id", currentLevelId)
+                        contentValues.put("puzzle", shuffled)
+                        contentValues.put("category_rewarded", false)
+                        contentValues.put("picture_rewarded", false)
+                        contentValues.put("progress", progress)
+                        contentValues.put("score", score)
+                        contentValues.put("best_score", 0)
+                        contentValues.put("time_modified", 0)
+                        contentValues.put("author", levelValues.player)
+                        contentValues.put("column_count", -1)
+                        contentValues.put("country_code", levelValues.countryCode)
+
+                        for (solutionToCategory in levelValues.solutionToCategory.entries) {
+                            val solutionContentValues = ContentValues()
+                            solutionContentValues.put("parent_id", currentLevelId)
+                            solutionContentValues.put("palindrome", solutionToCategory.key)
+                            solutionContentValues.put("hint", solutionToCategory.value.hint)
+                            solutionContentValues.put("hint_cn", solutionToCategory.value.hintCn)
+                            solutionContentValues.put("hint_de", solutionToCategory.value.hintDe)
+                            solutionContentValues.put("hint_es", solutionToCategory.value.hintEs)
+                            solutionContentValues.put("hint_et", solutionToCategory.value.hintEt)
+                            solutionContentValues.put("hint_fi", solutionToCategory.value.hintFi)
+                            solutionContentValues.put("hint_fr", solutionToCategory.value.hintFr)
+                            solutionContentValues.put("hint_id", solutionToCategory.value.hintId)
+                            solutionContentValues.put("hint_it", solutionToCategory.value.hintIt)
+                            solutionContentValues.put("hint_ja", solutionToCategory.value.hintJa)
+                            solutionContentValues.put("hint_ko", solutionToCategory.value.hintKo)
+                            solutionContentValues.put("hint_nl", solutionToCategory.value.hintNl)
+                            solutionContentValues.put("hint_pl", solutionToCategory.value.hintPl)
+                            solutionContentValues.put("hint_pt", solutionToCategory.value.hintPt)
+                            solutionContentValues.put("hint_ro", solutionToCategory.value.hintRo)
+                            solutionContentValues.put("hint_sv", solutionToCategory.value.hintSv)
+                            solutionContentValues.put("hint_tr", solutionToCategory.value.hintTr)
+                            solutionContentValues.put("hint_uk", solutionToCategory.value.hintUk)
+                            solutionContentValues.put("solved", false)
+
+                            db.insert(
+                                "solution_table",
+                                OnConflictStrategy.REPLACE,
+                                solutionContentValues,
+                            )
+                        }
+                        db.insert(
+                            "level_info_table",
+                            OnConflictStrategy.REPLACE,
+                            contentValues,
+                        )
+
+                        shuffled.forEachIndexed { index, char ->
+                            db.execSQL(
+                                "INSERT INTO letter_info_table (owner_id, home_index, friend_index, letter, locked) VALUES (?,?,?,?,?)",
+                                arrayOf(currentLevelId, index, -666, char.code, false)
+                            )
+                        }
+                    }
+                } finally {
+                    cursor?.close()
+                }
+            }
+        }
+    }
+
 
     companion object {
 
@@ -339,6 +448,7 @@ abstract class LevelDatabase : RoomDatabase() {
                         .addMigrations(MIGRATION_2_3)
                         .addAutoMigrationSpec(MyAutoMigration(context))
                         .addAutoMigrationSpec(AutoMigrationFrom3to4(context))
+                        .addAutoMigrationSpec(AutoMigrationFrom4to5(context))
                         .createFromAsset("dbd.db")
                         .build()
                     INSTANCE = instance

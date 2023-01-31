@@ -272,5 +272,10 @@
 
     </string-array>
 
-
+    <string name="redeem_now">Preis einlösen</string>
+    <string name="congrats_25_prize_title">Glückwunsch 🎉</string>
+    <string name="congrats_25_prize_text">Sie haben eine Belohnung 🏆 erhalten!\nLösen Sie unten Ihren Preis ein oder speichern Sie den nicht wiederherstellbaren Code (in Ihrer Zwischenablage)!</string>
+    <string name="congrats_25_no_prize_title">Wettbewerb abgeschlossen 🏁</string>
+    <string name="congrats_25_no_prize_text">Es sind keine Belohnungen mehr übrig, aber nur sehr wenige schaffen es bis hierher 🦄 - das ist extrem selten. Großartig gemacht!</string>
+    <string name="competition_announcement">Achtung! Erreichen Sie Level 20 und erhalten Sie eine Belohnung (begrenzte Anzahl)!</string>
 </resources>

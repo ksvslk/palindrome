@@ -162,4 +162,11 @@
         <item>Română</item>
     </string-array>
 
+    <string name="redeem_now">Revendică premiul</string>
+    <string name="congrats_25_prize_title">Felicitări 🎉</string>
+    <string name="congrats_25_prize_text">Ai terminat cu o recompensă 🏆!\nRevendică-ți premiul mai jos sau salvează codul nerecuperabil (în clipboard)!</string>
+    <string name="congrats_25_no_prize_title">Competiție completă 🏁</string>
+    <string name="congrats_25_no_prize_text">Nu mai sunt recompense, dar foarte puțini oameni ajung până aici 🦄 - este extrem de rar. Foarte bine!</string>
+    <string name="competition_announcement">Atenție! Atingeți nivelul 20 și obțineți o recompensă (cantitate limitată)!</string>
+
 </resources>

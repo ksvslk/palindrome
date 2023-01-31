@@ -162,4 +162,11 @@
         <item>Rumeenia</item>
     </string-array>
 
+    <string name="redeem_now">Lunasta auhind</string>
+    <string name="congrats_25_prize_title">Palju õnne 🎉</string>
+    <string name="congrats_25_prize_text">Sa said preemia 🏆!\nLunasta oma auhind allpool või salvesta tagasisaamatu kood (sinu lõikelauale)!</string>
+    <string name="congrats_25_no_prize_title">Võistlus lõppenud 🏁</string>
+    <string name="congrats_25_no_prize_text">Pole enam auhindu, kuid väga vähesed jõuavad siia 🦄 - see on äärmiselt haruldane. Tubli töö!</string>
+    <string name="competition_announcement">Tähelepanu! Saavuta 20. tase ja saa auhind (piiratud kogus)!</string>
+
 </resources>

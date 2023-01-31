@@ -161,4 +161,12 @@
         <item>에스토니아어</item>
         <item>루마니아어</item>
     </string-array>
+
+    <string name="redeem_now">상품 교환</string>
+    <string name="congrats_25_prize_title">축하합니다 🎉</string>
+    <string name="congrats_25_prize_text">보상을 획득하셨습니다 🏆!\n아래에서 상품을 교환하거나 복구할 수 없는 코드를 저장하세요 (클립보드에 저장됨)!</string>
+    <string name="congrats_25_no_prize_title">대회 완료 🏁</string>
+    <string name="congrats_25_no_prize_text">더 이상 보상은 남아있지 않지만, 여기까지 도달하는 사람은 매우 드뭅니다 🦄 - 이는 매우 희귀한 일입니다. 잘 하셨어요!</string>
+    <string name="competition_announcement">주의! 레벨 20에 도달하여 보상을 받으세요 (제한된 수량)!</string>
+
 </resources>

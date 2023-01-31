@@ -128,6 +128,14 @@
     <string name="tutorial_text">Create words and sentences that read same from either side. Fewer mistakes = better score.</string>
     <string name="play">Play</string>
 
+    <!-- COMPETITION -->
+    <string name="redeem_now">Redeem Prize</string>
+    <string name="congrats_25_prize_title">Congratulations 🎉</string>
+    <string name="congrats_25_prize_text">You finished with a reward 🏆!\nRedeem your prize below or save the unrecoverable code (in your clipboard)!</string>
+    <string name="congrats_25_no_prize_title">Competition complete 🏁</string>
+    <string name="congrats_25_no_prize_text">There are no rewards left but very few people make it here 🦄 - that is extremely rare. Great job!</string>
+    <string name="competition_announcement">Attention! Reach level 20 and get a reward (limited amount)!</string>
+
     <!-- LEVEL SELECT ICONS -->
     <string name="levels_1_20" translatable="false">🐣</string>
     <string name="levels_21_40" translatable="false">🐷</string>

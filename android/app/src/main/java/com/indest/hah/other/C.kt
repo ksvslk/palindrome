@@ -10,9 +10,9 @@ object C {
     const val REWARDED_ANIM_MUL_DEFAULT = 1
 
     const val FIREBASE_PICS_STORAGE_PATH = "gs://hah-35889753.appspot.com/level_hint/"
-    const val PLAYER_LEVELS_COVERED_LOCALLY = 1080
+    const val PLAYER_LEVELS_COVERED_LOCALLY = 1155
     const val PLAYER_LEVELS_TAG = "isFeatured_v3"
-    val LANGUAGE_LEVELS_RANGE = 10001..10330
+    val LANGUAGE_LEVELS_RANGE = 10001..10540
 
     // do not change order here - affects how language packs are added
     val languages = mapOf(

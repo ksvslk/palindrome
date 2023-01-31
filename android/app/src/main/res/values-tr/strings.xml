@@ -163,4 +163,11 @@
         <item>Rumence</item>
     </string-array>
 
+    <string name="redeem_now">Ödülü Al</string>
+    <string name="congrats_25_prize_title">Tebrikler 🎉</string>
+    <string name="congrats_25_prize_text">Bir ödülle bitirdiniz 🏆!\nAşağıdan ödülünüzü alın veya geri alınamaz kodu (panonuzda) saklayın!</string>
+    <string name="congrats_25_no_prize_title">Yarışma tamamlandı 🏁</string>
+    <string name="congrats_25_no_prize_text">Hiç ödül kalmadı ancak buraya çok az kişi ulaşıyor 🦄 - bu son derece nadirdir. Harika iş!</string>
+    <string name="competition_announcement">Dikkat! Seviye 20\'ye ulaşın ve bir ödül kazanın (sınırlı miktar)!</string>
+
 </resources>

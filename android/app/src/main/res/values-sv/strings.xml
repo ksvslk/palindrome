@@ -161,4 +161,12 @@
         <item>Estnisk</item>
         <item>Rumänska</item>
     </string-array>
+
+    <string name="redeem_now">Lös in pris</string>
+    <string name="congrats_25_prize_title">Grattis 🎉</string>
+    <string name="congrats_25_prize_text">Du avslutade med en belöning 🏆!\nLös in ditt pris nedan eller spara den oåterkalleliga koden (i ditt urklipp)!</string>
+    <string name="congrats_25_no_prize_title">Tävling klar 🏁</string>
+    <string name="congrats_25_no_prize_text">Det finns inga belöningar kvar men väldigt få når hit 🦄 - det är extremt sällsynt. Bra gjort!</string>
+    <string name="competition_announcement">Uppmärksamhet! Nå nivå 20 och få en belöning (begränsat antal)!</string>
+
 </resources>

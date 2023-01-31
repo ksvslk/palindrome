@@ -271,4 +271,11 @@
 
     </string-array>
 
+    <string name="redeem_now">賞品を交換</string>
+    <string name="congrats_25_prize_title">おめでとうございます 🎉</string>
+    <string name="congrats_25_prize_text">報酬を獲得しました 🏆！\n以下で賞品を交換するか、復元不可のコードを保存してください（クリップボードに保存されています）！</string>
+    <string name="congrats_25_no_prize_title">コンペティション完了 🏁</string>
+    <string name="congrats_25_no_prize_text">残りの報酬はありませんが、ここに到達できる人は非常に少ないです 🦄 - それは非常にまれです。よくやった！</string>
+    <string name="competition_announcement">注意！レベル20に到達し、報酬を獲得しよう（限定数）！</string>
+
 </resources>

@@ -271,5 +271,11 @@
 
     </string-array>
 
+    <string name="redeem_now">兑换奖品</string>
+    <string name="congrats_25_prize_title">恭喜 🎉</string>
+    <string name="congrats_25_prize_text">您获得了奖励 🏆！\n在下面兑换您的奖品或保存无法恢复的代码（在您的剪贴板中）！</string>
+    <string name="congrats_25_no_prize_title">比赛结束 🏁</string>
+    <string name="congrats_25_no_prize_text">没有奖励了，但很少有人能做到这一点 🦄 - 这是非常罕见的。干得好！</string>
+    <string name="competition_announcement">注意！达到20级并获得奖励（数量有限）！</string>
 
 </resources>

@@ -272,4 +272,11 @@
 
     </string-array>
 
+    <string name="redeem_now">Resgatar Prêmio</string>
+    <string name="congrats_25_prize_title">Parabéns 🎉</string>
+    <string name="congrats_25_prize_text">Você terminou com uma recompensa 🏆!\nResgate seu prêmio abaixo ou salve o código irreversível (em sua área de transferência)!</string>
+    <string name="congrats_25_no_prize_title">Competição completa 🏁</string>
+    <string name="congrats_25_no_prize_text">Não há mais recompensas, mas muito poucas pessoas chegam até aqui 🦄 - isso é extremamente raro. Excelente trabalho!</string>
+    <string name="competition_announcement">Atenção! Alcance o nível 20 e ganhe uma recompensa (quantidade limitada)!</string>
+
 </resources>

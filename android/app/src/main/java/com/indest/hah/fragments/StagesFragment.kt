@@ -95,7 +95,9 @@ class StagesFragment : FullBottomSheetDialogFragment() {
             }
         }
 
-        lifecycleScope.launch {
+        /* TODO: Need to be rewritten VM once notification system in place
+
+                lifecycleScope.launch {
             levelViewModel.countOfNewPlayerLevelsAndLanguageLevels()
                 .collect { (newPlayerLevelCount, newLanguageLevelCount) ->
                     val superScriptPlayer = "+$newPlayerLevelCount"
@@ -119,7 +121,7 @@ class StagesFragment : FullBottomSheetDialogFragment() {
                     }
                 }
         }
-
+         */
     }
 
 

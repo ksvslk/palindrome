@@ -23,7 +23,7 @@ class LevelRepository @Inject constructor(
     suspend fun getMaxPlayerLevelId():Int?
         = levelDao.getMaxPlayerLevelId()
 
-    suspend fun getMaxGameLevelId():Int = levelDao.getMaxGameLevels()
+    suspend fun getMaxLevelDefault():Int = levelDao.getMaxLevelDefault()
 
     suspend fun insertPlayerLevels(playerLevels:List<PlayerLevel>):Pair<LevelData,Int> {
         return levelDao.insertPlayerLevels(playerLevels)
@@ -238,6 +238,5 @@ class LevelRepository @Inject constructor(
 
     suspend fun insertLanguageLevelPack(levels:List<LanguageLevel>, language:String)
         = levelDao.insertLanguagePackLevel(levels, language)
-
 
 }

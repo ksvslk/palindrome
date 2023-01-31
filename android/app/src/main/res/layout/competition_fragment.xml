@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/competitionAnnouncement"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:saveEnabled="true"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/default_large_margin"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context=".fragments.CompetitionFragment">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:saveEnabled="true"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <Button
+            android:saveEnabled="true"
+            style="@style/Widget.Material3.Button"
+            android:id="@+id/continueButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/continue_game"/>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:saveEnabled="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="@dimen/default_large_margin"
+        android:layout_weight="1"
+        android:gravity="start"
+        android:text="@string/competition_announcement"
+        android:textSize="@dimen/body_large_text_size" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:src="@drawable/stairs"/>
+</androidx.appcompat.widget.LinearLayoutCompat>

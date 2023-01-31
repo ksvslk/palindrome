@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlin.Exception
 
 private val TAG = "LevelDao"
+
 @Dao
 interface LevelDao {
 
@@ -234,16 +235,19 @@ interface LevelDao {
         var oneLevelId = 1L
         try {
             playerLevel.forEach { level ->
-                val isLanguagePackCompleted = if (level.countryCode != "" && level.countryCode != "gb") isLanguagePackCompleted(level.countryCode) else true
+                val isLanguagePackCompleted =
+                    if (level.countryCode != "" && level.countryCode != "gb") isLanguagePackCompleted(
+                        level.countryCode
+                    ) else true
                 if (!isLevelAdded(level.levelId)) {
-                    val puzzle = level.solutionToCategory.keys.first()
+                    val puzzle = level.solutionToCategory.entries.first().key
                     insertLevelInfo(
                         LevelData(
                             levelId = level.levelId.toInt(),
                             puzzle = puzzle,
                             categoryRewarded = false,
                             pictureRewarded = false,
-                            progress = if (isLanguagePackCompleted == 1) LevelProgress.IN_PROGRESS else LevelProgress.TODO,
+                            progress = if (isLanguagePackCompleted == 1 || level.countryCode == "gb") LevelProgress.IN_PROGRESS else LevelProgress.TODO,
                             score = level.levelId.toInt().getLevelScore(puzzle = puzzle),
                             bestScore = 0,
                             timeModified = 0,
@@ -252,31 +256,32 @@ interface LevelDao {
                             countryCode = level.countryCode
                         )
                     )
-                    level.solutionToCategory.entries.forEach { solutionToHintsMap ->
+
+                    level.solutionToCategory.values.forEach { solutionToHintsMap ->
                         val maxSolutionId = getMaxSolutionId()
                         insertSolution(
                             Solution(
                                 solutionId = if (maxSolutionId == 100) 1001 else maxSolutionId + 1,
                                 parentId = level.levelId.toInt(),
-                                palindrome = solutionToHintsMap.key,
-                                hint = solutionToHintsMap.value.getOrDefault("hint", ""),
-                                hint_cn = solutionToHintsMap.value.getOrDefault("hint_cn", ""),
-                                hint_de = solutionToHintsMap.value.getOrDefault("hint_de", ""),
-                                hint_es = solutionToHintsMap.value.getOrDefault("hint_es", ""),
-                                hint_et = solutionToHintsMap.value.getOrDefault("hint_et", ""),
-                                hint_fi = solutionToHintsMap.value.getOrDefault("hint_fi", ""),
-                                hint_fr = solutionToHintsMap.value.getOrDefault("hint_fr", ""),
-                                hint_id = solutionToHintsMap.value.getOrDefault("hint_id", ""),
-                                hint_it = solutionToHintsMap.value.getOrDefault("hint_it", ""),
-                                hint_ja = solutionToHintsMap.value.getOrDefault("hint_ja", ""),
-                                hint_ko = solutionToHintsMap.value.getOrDefault("hint_ko", ""),
-                                hint_nl = solutionToHintsMap.value.getOrDefault("hint_nl", ""),
-                                hint_pl = solutionToHintsMap.value.getOrDefault("hint_pl", ""),
-                                hint_pt = solutionToHintsMap.value.getOrDefault("hint_pt", ""),
-                                hint_ro = solutionToHintsMap.value.getOrDefault("hint_ro", ""),
-                                hint_sv = solutionToHintsMap.value.getOrDefault("hint_sv", ""),
-                                hint_tr = solutionToHintsMap.value.getOrDefault("hint_tr", ""),
-                                hint_uk = solutionToHintsMap.value.getOrDefault("hint_uk", ""),
+                                palindrome = level.solutionToCategory.entries.first().key,
+                                hint = solutionToHintsMap.hint,
+                                hint_cn = solutionToHintsMap.hintCn,
+                                hint_de = solutionToHintsMap.hintDe,
+                                hint_es = solutionToHintsMap.hintEs,
+                                hint_et = solutionToHintsMap.hintEt,
+                                hint_fi = solutionToHintsMap.hintFi,
+                                hint_fr = solutionToHintsMap.hintFr,
+                                hint_id = solutionToHintsMap.hintId,
+                                hint_it = solutionToHintsMap.hintIt,
+                                hint_ja = solutionToHintsMap.hintJa,
+                                hint_ko = solutionToHintsMap.hintKo,
+                                hint_nl = solutionToHintsMap.hintNl,
+                                hint_pl = solutionToHintsMap.hintPl,
+                                hint_pt = solutionToHintsMap.hintPt,
+                                hint_ro = solutionToHintsMap.hintRo,
+                                hint_sv = solutionToHintsMap.hintSv,
+                                hint_tr = solutionToHintsMap.hintTr,
+                                hint_uk = solutionToHintsMap.hintUk,
                                 solved = false
                             )
                         )
@@ -296,8 +301,7 @@ interface LevelDao {
                     oneLevelId = level.levelId
                 }
             }
-        } catch (e:Exception)
-        {
+        } catch (e: Exception) {
             Log.e(TAG, "Could not insert level(s): $playerLevel to database.")
         }
 
@@ -317,7 +321,7 @@ interface LevelDao {
     suspend fun getMaxLevelIdForCountry(cc: String): Int
 
     @Query("select max(level_id) from level_info_table where level_id < 1000")
-    suspend fun getMaxGameLevels(): Int
+    suspend fun getMaxLevelDefault(): Int
 
 
     @Transaction
@@ -616,9 +620,9 @@ interface LevelDao {
     suspend fun getMaximumTimestamp(): Long?
 
     @Query("select case when 0 = (select count(*) FROM level_info_table WHERE country_code = :countryCode AND progress < 1) then 1 else 0 end")
-    suspend fun isLanguagePackCompleted(countryCode: String):Int
+    suspend fun isLanguagePackCompleted(countryCode: String): Int
 
     @Query("select level_id from level_info_table where level_id > :levelId and country_code = :countryCode order by level_id asc limit 1")
-    suspend fun getNextLevelForLanguageLevel(levelId:Int, countryCode: String):Int?
+    suspend fun getNextLevelForLanguageLevel(levelId: Int, countryCode: String): Int?
 
 }

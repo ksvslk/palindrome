@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:saveEnabled="true"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/default_large_margin"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/prizeCloseButton"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/simple_dialog_item_height_half"
+        android:layout_margin="@dimen/default_large_margin"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/prizeDialogTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:drawablePadding="@dimen/default_large_margin"
+            android:drawableEnd="@drawable/ic_baseline_disabled_by_default_36"
+            android:text="@string/congrats_25_prize_title"
+            android:textAppearance="@style/TextAppearance.OC.Headline5" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="2"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/competitionCompleteText"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:gravity="start"
+            android:layout_margin="@dimen/default_large_margin"
+
+            android:layout_weight="1"
+            android:text="@string/congrats_25_prize_text"
+            android:textSize="@dimen/body_large_text_size" />
+
+        <Button
+            android:id="@+id/redeemButton"
+            style="@style/Widget.Material3.Button"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/default_large_margin"
+
+            android:fontFamily="@font/yantramanav_bold"
+            android:padding="@dimen/default_large_margin"
+            android:text="@string/redeem_now"
+            android:textAppearance="@style/TextAppearance.OC.Headline6" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

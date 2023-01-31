@@ -7,6 +7,9 @@ object FirebaseCustom {
         const val SHARE_GAME_CLICKED = "share_game_clicked"
         const val DIALOG_PROMO_SHOWN = "dialog_promo_shown"
         const val MENU_PROMO_CLICKED = "menu_promo_clicked"
+        const val COMPETITION_20_ANNOUNCED = "competition_20_announced"
+        const val COMPETITION_20_PRIZE = "competition_20_prize"
+        const val COMPETITION_20_FINISHED = "competition_20_finished"
     }
     object Params {
         const val REWARD_AD_TYPE = "reward_ad_type"

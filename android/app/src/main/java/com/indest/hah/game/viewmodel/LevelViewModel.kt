@@ -36,7 +36,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import java.util.Locale
 import javax.inject.Inject
@@ -69,6 +68,8 @@ class LevelViewModel @Inject constructor(
     private val submissionChannel = Channel<SubmissionEvent>()
     val submissionEventFlow = submissionChannel.receiveAsFlow()
 
+    private val _competitionStatus = MutableStateFlow(CompetitionAnnouncement())
+
     private val firebaseAnalytics = FirebaseAnalytics.getInstance(application.applicationContext)
     private val fsDb = FirebaseFirestore.getInstance()
     private var liveStoreRegistration: ListenerRegistration? = null
@@ -94,6 +95,15 @@ class LevelViewModel @Inject constructor(
             throwable
         )
         //startCollectingLevelUpdate()
+    }
+
+    fun getCompetitionStatus():CompetitionAnnouncement
+    {
+        return _competitionStatus.value
+    }
+
+    fun setCompetitionStatus(competitionAnnouncement: CompetitionAnnouncement) {
+        _competitionStatus.value = competitionAnnouncement
     }
 
     fun updateColumnCount(newCols: Int) {
@@ -151,7 +161,7 @@ class LevelViewModel @Inject constructor(
             result = Pair(progress, text)
             currentRelativeLevelNumber = levelShownInUi
         } else {
-            val levelsCount = levelRepository.getMaxGameLevelId()
+            val levelsCount = levelRepository.getMaxLevelDefault()
             val text = if (solutionsCount > 1) "$levelId*" else "$levelId"
             val progress = (levelId / levelsCount.toFloat() * 100.0).toInt()
             result = Pair(progress, text)
@@ -163,6 +173,17 @@ class LevelViewModel @Inject constructor(
 
     private val saveGameExceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Log.e(TAG, "Could not write snapshot or save game: ${throwable.message}")
+    }
+
+    suspend fun getMaxLevelDefault() : Int {
+        return levelRepository.getMaxLevelDefault()
+    }
+
+    suspend fun isEnrollingToCompetition(): Boolean {
+        val language = _currentLevel.value.levelInfo.countryCode
+        val levels = levelRepository.getLevelsForCountry(language)
+        val count = levels.count { it.progress == LevelProgress.IN_PROGRESS }
+        return count == 1
     }
 
     fun setPictureDownloaded(isPresent: Boolean) {
@@ -205,14 +226,18 @@ class LevelViewModel @Inject constructor(
             addLanguagePacks()
             addIntervals()
         }
+        // Migration to 6.0.0 - levels local
+          viewModelScope.launch {
+            addPlayerLevelsTemp()
+        }
          */
-        startCollectingLevelUpdate()
     }
 
     init {
         viewModelScope.launch {
-            levelRepository.updateSadModeLimit(10)
+            levelRepository.updateSadModeLimit(2)
         }
+        startCollectingLevelUpdate()
     }
 
     suspend fun isShowScores(): Boolean {
@@ -783,6 +808,12 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+    fun logCompetitionRelatedEvent(event:String) {
+        viewModelScope.launch(Dispatchers.Default) {
+            firebaseAnalytics.logEvent(event, bundleOf())
+        }
+    }
+
 
     fun logPremiumHintUsage(hintType: RewardType) {
         viewModelScope.launch(Dispatchers.Default) {
@@ -845,7 +876,8 @@ class LevelViewModel @Inject constructor(
 
 
     private suspend fun subscribeToRealTimePlayerLevelUpdates() {
-        if (_accountStatus.value == AccountStatus.SIGNED_IN_WITH_FIREBASE) {
+        /*
+             if (_accountStatus.value == AccountStatus.SIGNED_IN_WITH_FIREBASE) {
             val maxPlayerLevelId = levelRepository.getMaxPlayerLevelId() ?: 1080
             val maxLevelId = levelRepository.getMaxLevelId()
             val query = fsDb.collection("user_submitted_levels").where(
@@ -958,8 +990,46 @@ class LevelViewModel @Inject constructor(
                 }
             })
         }
+         */
+
     }
 
+    suspend fun addPlayerLevelsTemp() {
+        val playerLevels = mutableListOf<PlayerLevel>()
+        val jsonInstance = Json {
+            ignoreUnknownKeys = true
+            isLenient = true
+        }
+        val json =
+            getApplication<Application>().applicationContext.assets.open("output_user_submitted_levels.json")
+                .bufferedReader().use {
+                    it.readText()
+                }
+        val levels = jsonInstance.decodeFromString<List<PlayerLevel>>(json)
+        val allLevels = levelRepository.getAllLevels()
+
+        levels.forEach { levelValues ->
+            val levelId = levelValues.levelId
+            if (allLevels.firstOrNull { it.second.levelId.toLong() == levelId } == null) {
+                val solutionsToCategories =
+                    levelValues.solutionToCategory
+                if (solutionsToCategories.keys.isEmpty()) {
+                    throw Exception("Solutions were empty")
+                }
+                val playerLevel = PlayerLevel(
+                    levelId = levelValues.levelId,
+                    player = levelValues.player,
+                    solutionToCategory = solutionsToCategories,
+                    countryCode = levelValues.countryCode
+                )
+                playerLevels.add(playerLevel)
+            }
+        }
+        Log.v(TAG, "player levels successfully gathered, count (${playerLevels.count()}")
+        Log.v(TAG, "---------------------")
+        Log.v(TAG, "$playerLevels")
+        insertPlayerLevels(playerLevels)
+    }
 
     fun resetNewPlayersLevels() {
         _newPlayerLevels.value = NewLevelNotification(-1, -1, "", "")

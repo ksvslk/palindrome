@@ -160,4 +160,11 @@
         <item>Rumuński</item>
     </string-array>
 
+    <string name="redeem_now">Odbierz nagrodę</string>
+    <string name="congrats_25_prize_title">Gratulacje 🎉</string>
+    <string name="congrats_25_prize_text">Ukończyłeś z nagrodą 🏆!\nOdbierz swoją nagrodę poniżej lub zapisz nieodwracalny kod (w schowku)!</string>
+    <string name="congrats_25_no_prize_title">Konkurs zakończony 🏁</string>
+    <string name="congrats_25_no_prize_text">Nie ma już nagród, ale bardzo niewielu dociera tutaj 🦄 - to jest niezwykle rzadkie. Świetna robota!</string>
+    <string name="competition_announcement">Uwaga! Osiągnij poziom 20 i odbierz nagrodę (ograniczona ilość)!</string>
+
 </resources>

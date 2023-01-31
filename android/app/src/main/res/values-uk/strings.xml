@@ -160,4 +160,11 @@
         <item>Румунська</item>
     </string-array>
 
+    <string name="redeem_now">Отримати приз</string>
+    <string name="congrats_25_prize_title">Вітаємо 🎉</string>
+    <string name="congrats_25_prize_text">Ви завершили з нагородою 🏆!\nОтримайте свій приз нижче або збережіть невідновлюваний код (у вашому буфері обміну)!</string>
+    <string name="congrats_25_no_prize_title">Змагання завершено 🏁</string>
+    <string name="congrats_25_no_prize_text">Нагород більше немає, але дуже мало людей доходять сюди 🦄 - це надзвичайно рідкісне явище. Чудова робота!</string>
+    <string name="competition_announcement">Увага! Досягніть рівня 20 та отримайте нагороду (обмежена кількість)!</string>
+
 </resources>

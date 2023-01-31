@@ -271,5 +271,11 @@
 
     </string-array>
 
+    <string name="redeem_now">Réclamer le prix</string>
+    <string name="congrats_25_prize_title">Félicitations 🎉</string>
+    <string name="congrats_25_prize_text">Vous avez terminé avec une récompense 🏆!\nRéclamez votre prix ci-dessous ou enregistrez le code irrécupérable (dans votre presse-papiers)!</string>
+    <string name="congrats_25_no_prize_title">Compétition terminée 🏁</string>
+    <string name="congrats_25_no_prize_text">Il n\'y a plus de récompenses, mais très peu de gens atteignent ce niveau 🦄 - c\'est extrêmement rare. Beau travail !</string>
+    <string name="competition_announcement">Attention ! Atteignez le niveau 20 et obtenez une récompense (quantité limitée) !</string>
 
 </resources>

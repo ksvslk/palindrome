@@ -10,16 +10,12 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.indest.hah.R
-import com.indest.hah.other.C
-import com.indest.hah.other.C.LANGUAGE_LEVELS_RANGE
 import com.indest.hah.persistance.dto.PromoDialogData
-
 
 class PromoDialogFragment(private val promoData: PromoDialogData) : DialogFragment() {
 

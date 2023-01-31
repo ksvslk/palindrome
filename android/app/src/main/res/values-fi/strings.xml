@@ -164,4 +164,11 @@
         <item>Romania</item>
     </string-array>
 
+    <string name="redeem_now">Lunasta palkinto</string>
+    <string name="congrats_25_prize_title">Onnittelut 🎉</string>
+    <string name="congrats_25_prize_text">Sait palkinnon 🏆!\nLunasta palkintosi alla tai tallenna palauttamaton koodi (leikepöydälläsi)!</string>
+    <string name="congrats_25_no_prize_title">Kilpailu päättynyt 🏁</string>
+    <string name="congrats_25_no_prize_text">Ei ole enää palkintoja jäljellä, mutta vain harvat pääsevät tänne 🦄 - se on erittäin harvinaista. Hienoa työtä!</string>
+    <string name="competition_announcement">Huomio! Saavuta taso 20 ja saat palkinnon (rajoitettu määrä)!</string>
+
 </resources>

@@ -272,4 +272,10 @@
 
     </string-array>
 
+    <string name="redeem_now">Tukar Hadiah</string>
+    <string name="congrats_25_prize_title">Selamat 🎉</string>
+    <string name="congrats_25_prize_text">Kamu mendapatkan hadiah 🏆!\nTukarkan hadiahmu di bawah atau simpan kode yang tidak dapat dipulihkan (di clipboard kamu)!</string>
+    <string name="congrats_25_no_prize_title">Kompetisi selesai 🏁</string>
+    <string name="congrats_25_no_prize_text">Tidak ada hadiah tersisa, tetapi sangat sedikit orang yang bisa mencapainya 🦄 - itu sangat langka. Kerja bagus!</string>
+    <string name="competition_announcement">Perhatian! Capai level 20 dan dapatkan hadiah (jumlah terbatas)!</string>
 </resources>

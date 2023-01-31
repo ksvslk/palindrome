@@ -162,4 +162,11 @@
         <item>Roemeens</item>
     </string-array>
 
+    <string name="redeem_now">Prijs inwisselen</string>
+    <string name="congrats_25_prize_title">Gefeliciteerd 🎉</string>
+    <string name="congrats_25_prize_text">Je hebt een beloning verdiend 🏆!\nWissel hieronder je prijs in of sla de niet-herstelbare code op (in je klembord)!</string>
+    <string name="congrats_25_no_prize_title">Competitie voltooid 🏁</string>
+    <string name="congrats_25_no_prize_text">Er zijn geen beloningen meer, maar heel weinig mensen komen hier 🦄 - dat is uiterst zeldzaam. Goed gedaan!</string>
+    <string name="competition_announcement">Let op! Bereik niveau 20 en ontvang een beloning (beperkte hoeveelheid)!</string>
+
 </resources>

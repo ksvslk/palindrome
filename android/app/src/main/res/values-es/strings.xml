@@ -272,4 +272,11 @@
 
     </string-array>
 
+    <string name="redeem_now">Canjear premio</string>
+    <string name="congrats_25_prize_title">Felicidades 🎉</string>
+    <string name="congrats_25_prize_text">¡Terminaste con una recompensa 🏆!\nCanjea tu premio a continuación o guarda el código irrecuperable (en tu portapapeles)!</string>
+    <string name="congrats_25_no_prize_title">Competencia completa 🏁</string>
+    <string name="congrats_25_no_prize_text">No quedan recompensas, pero muy pocas personas llegan hasta aquí 🦄 - eso es extremadamente raro. ¡Gran trabajo!</string>
+    <string name="competition_announcement">¡Atención! ¡Alcanza el nivel 20 y obtén una recompensa (cantidad limitada)!</string>
+
 </resources>

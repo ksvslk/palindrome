@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Color
 import android.media.AudioManager
 import android.media.SoundPool
-import androidx.core.content.res.ResourcesCompat
 import com.google.android.material.color.MaterialColors
 import com.indest.hah.R
 import dagger.Module
