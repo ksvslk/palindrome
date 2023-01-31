@@ -279,4 +279,9 @@ class GeneralViewModel @Inject constructor(
         val sadMode: Boolean
     )
 
+    suspend fun isAllowedToSubmitPalindrome():Boolean
+    {
+        return levelRepository.isAllowedToSubmitPalindrome()
+    }
+
 }

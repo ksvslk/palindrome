@@ -1,10 +1,13 @@
 package com.indest.hah.persistance.level
 
+import android.util.Log
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
 import com.indest.hah.persistance.dto.PlayerLevel
 import com.indest.hah.persistance.dto.SaveGame
 import kotlinx.coroutines.flow.Flow
+import java.time.Duration
+import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -129,5 +132,25 @@ class LevelRepository @Inject constructor(
     suspend fun updateLocalGame(saveGame: SaveGame) = levelDao.updateLocalGame(saveGame)
 
     suspend fun isFinalLevel(currentLevel:Int) = levelDao.isFinalLevel(currentLevel)
+
+    suspend fun isAllowedToSubmitPalindrome():Boolean
+    {
+        val lastSubmission = levelDao.getLastSubmissionTimestamp()
+        if (lastSubmission == -1L) return true
+        val lastTime = Instant.ofEpochMilli(lastSubmission)
+        val currentTime = Instant.now()
+        val duration = Duration.between(lastTime, currentTime)
+        //return duration.toHours() >= 24 TODO: Change back
+        Log.d(TAG, "Minutes: ${duration.toMinutes()}")
+        Log.d(TAG, "lastTime.toEpochMilli: ${lastTime.toEpochMilli()}")
+        Log.d(TAG, "currentTime.toEpochMilli: ${currentTime.toEpochMilli()}")
+        return duration.toMinutes() >= 5
+    }
+
+    suspend fun updateSubmissionTimestamp()
+    {
+        val millis = Instant.now().toEpochMilli()
+        levelDao.updateSubmissionTimestamp(millis)
+    }
 
 }

@@ -21,7 +21,7 @@ class Level(
     val solutions: List<Solution> = emptyList()
 ) {
     constructor() : this(
-        LevelData(0,"_EMPTY_CONSTRUCTOR_",false, LevelProgress.IN_PROGRESS,0, 0, 0),
+        LevelData(0,"_EMPTY_CONSTRUCTOR_",false, LevelProgress.IN_PROGRESS,0, 0, 0, "", 7),
         emptyList(),
         emptyList()
     )

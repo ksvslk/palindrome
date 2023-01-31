@@ -147,6 +147,7 @@ class SnapshotHelper @Inject constructor() {
     }
 
     fun gameToBytes(saveGame: SaveGame): ByteArray {
+        Log.v(TAG,"save game: ${Json.encodeToString(saveGame)}")
         return Json.encodeToString(saveGame).toByteArray()
     }
 

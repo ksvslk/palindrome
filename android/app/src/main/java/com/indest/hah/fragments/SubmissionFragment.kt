@@ -143,7 +143,6 @@ class SubmissionFragment : BottomSheetDialogFragmentCustom() {
             }
         }
 
-
         binding.sendLevelButton.setOnClickListener {
             lifecycleScope.launchWhenCreated {
                 binding.enterPalindromeTextInputLayout.visibility = View.GONE

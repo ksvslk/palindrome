@@ -86,6 +86,7 @@
     <string name="entering_sad_mode">You are in Sad Mode 😕</string>
     <string name="entering_normal_mode">You are in Normal Mode 😆</string>
     <string name="hints_are_available">Hints can be found below ↙️</string>
+    <string name="last_submission">last_submission</string>
 
     <string-array name="save_24_percent_label">
         <item>SAVE</item>

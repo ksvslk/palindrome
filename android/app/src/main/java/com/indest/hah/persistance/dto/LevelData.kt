@@ -26,8 +26,8 @@ data class LevelData(
     val best_score: Int,
     @ColumnInfo(name = "time_modified")
     val timeModified: Long,
-    @ColumnInfo(name = "author", defaultValue = "")
-    val author: String = "",
+    @ColumnInfo(name = "author")
+    val author: String,
     @ColumnInfo(name = "column_count")
-    val columnCount:Int = 7
+    val columnCount:Int
 )

@@ -7,6 +7,8 @@ import com.indest.hah.persistance.dto.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import java.time.Instant
+import java.util.Date
 
 @Dao
 interface LevelDao {
@@ -94,7 +96,8 @@ interface LevelDao {
                   score = puzzle.length * 100,
                   best_score = 0,
                   timeModified = 0,
-                  author = level.player
+                  author = level.player,
+                  columnCount = -1
               )
             )
             level.solutionToCategory.entries.forEach { solutionToCategory ->
@@ -145,7 +148,7 @@ interface LevelDao {
             val special = "player_centered_scores"
             if (interval.name == special) {
                 if (!isLimitAttained(special)) {
-                    val modifiedInterval = Interval(name = special, currentCount = 0, limitCount = interval.limitCount)
+                    val modifiedInterval = Interval(name = special, currentCount = 0, limitCount = interval.limitCount, -1L)
                     insertInterval(modifiedInterval)
                 }
             } else {
@@ -355,5 +358,11 @@ interface LevelDao {
     @Query("select max(level_id) = :currentLevel from level_info_table")
     //@Query("select 3 = :currentLevel from level_info_table")
     suspend fun isFinalLevel(currentLevel: Int): Boolean
+
+    @Query("select timestamp from interval where name = 'last_submission'")
+    suspend fun getLastSubmissionTimestamp(): Long
+
+    @Query("update interval set timestamp=:time where name = 'last_submission'")
+    suspend fun updateSubmissionTimestamp(time: Long)
 
 }

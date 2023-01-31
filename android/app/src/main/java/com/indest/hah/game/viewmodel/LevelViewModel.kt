@@ -818,6 +818,7 @@ class LevelViewModel @Inject constructor(
             .addOnSuccessListener { documentReference ->
                 Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
                 viewModelScope.launch {
+                    levelRepository.updateSubmissionTimestamp()
                     submissionChannel.send(SubmissionEvent.Succeeded)
                 }
             }
@@ -828,4 +829,5 @@ class LevelViewModel @Inject constructor(
                 }
             }
     }
+
 }

@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 4,
-    "identityHash": "73876f576caea28557ca7f6a7d8606a4",
+    "identityHash": "28de53a33e7d2a1358ce3387361c920f",
     "entities": [
       {
         "tableName": "level_info_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`level_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `puzzle` TEXT NOT NULL, `category_rewarded` INTEGER NOT NULL, `progress` INTEGER NOT NULL, `score` INTEGER NOT NULL, `best_score` INTEGER NOT NULL, `time_modified` INTEGER NOT NULL, `author` TEXT NOT NULL DEFAULT '', `column_count` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`level_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `puzzle` TEXT NOT NULL, `category_rewarded` INTEGER NOT NULL, `progress` INTEGER NOT NULL, `score` INTEGER NOT NULL, `best_score` INTEGER NOT NULL, `time_modified` INTEGER NOT NULL, `author` TEXT NOT NULL, `column_count` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "levelId",
@@ -54,8 +54,7 @@
             "fieldPath": "author",
             "columnName": "author",
             "affinity": "TEXT",
-            "notNull": true,
-            "defaultValue": "''"
+            "notNull": true
           },
           {
             "fieldPath": "columnCount",
@@ -147,7 +146,7 @@
       },
       {
         "tableName": "interval",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `current_count` INTEGER NOT NULL, `limit_count` INTEGER NOT NULL, PRIMARY KEY(`name`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `current_count` INTEGER NOT NULL, `limit_count` INTEGER NOT NULL, `timestamp` INTEGER NOT NULL, PRIMARY KEY(`name`))",
         "fields": [
           {
             "fieldPath": "name",
@@ -164,6 +163,12 @@
           {
             "fieldPath": "limitCount",
             "columnName": "limit_count",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timestamp",
+            "columnName": "timestamp",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -247,7 +252,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '73876f576caea28557ca7f6a7d8606a4')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '28de53a33e7d2a1358ce3387361c920f')"
     ]
   }
 }

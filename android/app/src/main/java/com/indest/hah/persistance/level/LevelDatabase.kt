@@ -88,10 +88,12 @@ abstract class LevelDatabase : RoomDatabase() {
         private val MIGRATION_3_4 = object : Migration(3, 4) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 try{
-                    database.execSQL(
-                        "ALTER TABLE level_info_table ADD COLUMN column_count INTEGER NOT NULL DEFAULT 7")
+                    database.execSQL("ALTER TABLE level_info_table ADD COLUMN column_count INTEGER NOT NULL DEFAULT 7")
+                    database.execSQL("ALTER TABLE level_info_table ADD COLUMN author STRING NOT NULL DEFAULT ''")
+                    database.execSQL("ALTER TABLE interval ADD COLUMN timestamp LONG NOT NULL DEFAULT -1")
+                    database.execSQL("INSERT INTO interval VALUES (last_submission, -1, -1, -1)")
                 } catch (ex: SQLiteException) {
-                    Log.w("LevelDatabase", "Altering " + "column_count" + ": " + ex.message)
+                    Log.w("LevelDatabase", "Altering database to migrate from version 3 to 4: " + ex.message)
                 }
             }
         }
@@ -112,7 +114,7 @@ abstract class LevelDatabase : RoomDatabase() {
                         .addMigrations(MIGRATION_3_4)
                         .addAutoMigrationSpec(MyAutoMigration(context))
                         .createFromAsset("dbd.db")
-                        /*
+                    /*
                     .addCallback(object : RoomDatabase.Callback() {
 
                         private val jsonInstance = Json { isLenient = true }
@@ -153,6 +155,8 @@ abstract class LevelDatabase : RoomDatabase() {
                                 contentValues.put("score", score)
                                 contentValues.put("best_score", 0)
                                 contentValues.put("time_modified", 0)
+                                contentValues.put("author", "")
+                                contentValues.put("column_count", 7)
 
                                 for (solutionToCategory in levels[i].solutionToCategory.entries)
                                 {
@@ -182,6 +186,7 @@ abstract class LevelDatabase : RoomDatabase() {
                             intervals.add(context.getString(com.indest.hah.R.string.hint_suggestion))
                             intervals.add(context.getString(com.indest.hah.R.string.achievement_flawless_5))
                             intervals.add(context.getString(com.indest.hah.R.string.achievement_flawless_15))
+                            intervals.add(context.getString(com.indest.hah.R.string.last_submission))
 
                             intervals.forEach {
                                 val interval = ContentValues()
@@ -196,6 +201,7 @@ abstract class LevelDatabase : RoomDatabase() {
                                 interval.put("name", it)
                                 interval.put("current_count", 0)
                                 interval.put("limit_count", limit)
+                                interval.put("timestamp", -1L)
 
                                 db.insert(
                                     "interval",

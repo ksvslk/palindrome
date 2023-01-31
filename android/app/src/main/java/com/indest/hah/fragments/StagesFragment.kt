@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.FrameLayout
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
@@ -40,10 +41,19 @@ class StagesFragment : BottomSheetDialogFragmentCustom() {
                             if (accountStatus == AccountStatus.SIGNED_IN) {
                                 binding.submitYourLevelButton.visibility = View.VISIBLE
                                 binding.submitYourLevelButton.setOnClickListener {
-                                    findNavController().popBackStack()
-                                    parentFragmentManager.commit {
-                                        addToBackStack(SubmissionFragment().tag)
-                                        add(SubmissionFragment(), SubmissionFragment().tag)
+
+                                    lifecycleScope.launchWhenCreated {
+                                        if (generalViewModel.isAllowedToSubmitPalindrome())
+                                        {
+                                            findNavController().popBackStack()
+                                            parentFragmentManager.commit {
+                                                addToBackStack(SubmissionFragment().tag)
+                                                add(SubmissionFragment(), SubmissionFragment().tag)
+                                            }
+                                        }
+                                        else {
+                                            showLimitedSubmissionsToast()
+                                        }
                                     }
                                 }
                             }
@@ -86,15 +96,34 @@ class StagesFragment : BottomSheetDialogFragmentCustom() {
             }
         }
         binding.submitYourLevelButton.setOnClickListener {
-            findNavController().popBackStack()
-            parentFragmentManager.commit {
-                addToBackStack(SubmissionFragment().tag)
-                add(SubmissionFragment(), SubmissionFragment().tag)
+
+            lifecycleScope.launchWhenCreated {
+                if (generalViewModel.isAllowedToSubmitPalindrome())
+                {
+                    findNavController().popBackStack()
+                    parentFragmentManager.commit {
+                        addToBackStack(SubmissionFragment().tag)
+                        add(SubmissionFragment(), SubmissionFragment().tag)
+                    }
+                }
+                else {
+                    showLimitedSubmissionsToast()
+                }
             }
         }
 
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         return b.root
+    }
+
+    private fun showLimitedSubmissionsToast()
+    {
+        val toast = Toast.makeText(
+            requireContext().applicationContext,
+            "You can submit once per day.",
+            Toast.LENGTH_LONG
+        )
+        toast.show()
     }
 
 }

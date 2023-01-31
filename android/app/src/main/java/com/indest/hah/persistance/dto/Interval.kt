@@ -4,7 +4,10 @@ import androidx.annotation.Keep
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.type.DateTime
 import java.io.Serializable
+import java.text.DateFormat
+import java.util.*
 
 @Keep
 @kotlinx.serialization.Serializable
@@ -18,5 +21,7 @@ data class Interval(
     val currentCount: Int = 0,
     // Constant - when reached, currentCount will reset
     @ColumnInfo(name = "limit_count")
-    val limitCount: Int = 0
+    val limitCount: Int = 0,
+    @ColumnInfo(name = "timestamp")
+    val timestamp: Long = -1L
 )
