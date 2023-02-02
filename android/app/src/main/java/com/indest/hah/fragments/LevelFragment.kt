@@ -112,8 +112,8 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         }
 
         Log.d(TAG, "requireActivity().requestedOrientation: ${requireActivity().requestedOrientation}")*/
-        val bottom = requireActivity().requireViewById<BottomNavigationView>(R.id.bottomNavView)
-        val margin = bottom.height
+        val bottom = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView)
+        val margin = bottom.height //+ bottom.paddingTop
 
         val levelGridLayout = levelCreator.getLevel(
             uiState.level,

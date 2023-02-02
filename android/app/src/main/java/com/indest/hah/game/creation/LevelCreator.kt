@@ -3,14 +3,16 @@ package com.indest.hah.game.creation
 import android.content.Context
 import android.util.DisplayMetrics
 import android.util.Log
+import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Space
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.marginTop
 import androidx.gridlayout.widget.GridLayout
+import com.google.android.play.core.assetpacks.dp
 import com.indest.hah.R
 import com.indest.hah.game.director.LetterState
 import com.indest.hah.persistance.dto.Level
@@ -20,7 +22,8 @@ import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Inject
 import kotlin.math.abs
-import kotlin.math.roundToInt
+import kotlin.math.ceil
+
 
 @ActivityScoped
 class LevelCreator @Inject constructor(@ActivityContext private val context: Context) {
@@ -96,17 +99,13 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         var boxSize = 1.00f
         var textSize = 1.00f
         val bottomNavHeight =  bot
-        container.setPadding(smallGap*4,smallGap*4,smallGap*4,smallGap*4)
         var perfectRatio = container.width.toDouble() / (container.height.toDouble() - bottomNavHeight)
 
         var heightExceeded = isHeightLimitExceeded(container, rowsCount, boxSize, smallGap, intermediateGap, bottomNavHeight)
         var widthExceeded = isWidthLimitExceeded(container, columns, boxSize, smallGap)
-        var ratio = widthExceeded.second.toDouble() / heightExceeded.second.toDouble()
-        Log.d(TAG, "RATIO: $ratio")
         Log.d(TAG, "heightExceeded: ${heightExceeded.first}")
         Log.d(TAG, "widthExceeded: ${widthExceeded.first}")
 
-        var ratioDifference = abs(ratio - perfectRatio)
         while(!heightExceeded.first && !widthExceeded.first)
         {
             val potentialBoxSize = boxSize * boxDecreaseRate
@@ -129,7 +128,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
             //Log.d(TAG,"perfectRatio: $perfectRatio")
             Log.d(TAG,"boxSize: $boxSize")
 
-            val widthHasMoreRoom = (container.width - testWidth.second > (container.height - bottomNavHeight) - testHeight.second)
+            val widthHasMoreRoom = ((container.width - testWidth.second) > (container.height - bottomNavHeight - testHeight.second))
 
             if (testWidth.first || testHeight.first ) break
 
@@ -156,30 +155,17 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
 
         }
 
+        Log.d(TAG, "Solution rows: ${getSolutionRows(palindrome, columns)}")
 
-/*
-        while (isHeightLimitNotExceeded(container, rowsCount, boxSize, smallGap, intermediateGap).first) {
-            val heightExceeded = isHeightLimitNotExceeded(container, rowsCount, boxSize, smallGap, intermediateGap)
+        val divider = getTextDividerValue(isBookMode, sizeClassWidth, densityDpi)
+        textSize = boxSize.div(divider)
+        //textSize = ceil((dip * context.resources.displayMetrics.scaledDensity).toDouble()).toInt().toFloat()
 
-            val widthExceeded = isWidthLimitNotExceeded(container, columns, boxSize, smallGap)
-
-
-
-            Log.d(TAG,"width of letters: ${widthExceeded.second}")
-            Log.d(TAG,"height of letters: ${heightExceeded.second}")
-            val ratio = widthExceeded.second.toDouble() / heightExceeded.second.toDouble()
-            Log.d(TAG, "RATIO: $ratio")
-            Log.d(TAG, "targetRatio: $targetRatio")
-            boxSize = (boxSize / boxDecreaseRate).toInt()
-            textSize = (textSize / textDecreaseRate).toInt()
-        }
-*/
-        textSize = boxSize / 3
 
         return DensitySettings(
             columns,
             boxSize.toInt(),
-            textSize.toInt()
+            2
         )
     }
 
@@ -209,8 +195,8 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         intermediateGap: Int,
         bottomNavHeight:Int
     ): Pair<Boolean, Float> {
-        val usedHeight = (rowsCount * (boxSize + smallGapBetweenLetters)) + intermediateGap + boxSize + 2*smallGapBetweenLetters
-        return Pair((container.height - bottomNavHeight - usedHeight) <= 0, usedHeight+bottomNavHeight)
+        val usedHeight = (rowsCount * (boxSize + smallGapBetweenLetters)) + intermediateGap + boxSize + 2*smallGapBetweenLetters+bottomNavHeight
+        return Pair((container.height - usedHeight) <= 0, usedHeight)
     }
 
     private fun isWidthLimitExceeded(
@@ -221,6 +207,118 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
     ): Pair<Boolean, Float> {
         val usedWidth = (columns * (boxSize + smallGapBetweenLetters) + boxSize + 2*smallGapBetweenLetters)
         return Pair((container.width - usedWidth) <= 0, usedWidth)
+    }
+
+    private fun getTextDividerValue(isBookMode: BookMode,
+                                    sizeClassWidth: WindowSizeClass,
+                                    densityDpi: Int?):Float
+    {
+        return when (sizeClassWidth) {
+            WindowSizeClass.COMPACT -> {
+                when (densityDpi) {
+                    in DisplayMetrics.DENSITY_LOW.rangeTo(DisplayMetrics.DENSITY_MEDIUM) -> {
+                        Log.d(
+                            TAG,
+                            "DisplayMetrics.DENSITY_LOW.rangeTo(DisplayMetrics.DENSITY_MEDIUM) - COMPAT"
+                        )
+                        return 1.4f
+                    }
+                    in DisplayMetrics.DENSITY_MEDIUM.rangeTo(DisplayMetrics.DENSITY_HIGH) -> {
+                        Log.d(
+                            TAG,
+                            "DisplayMetrics.DENSITY_MEDIUM.rangeTo(DisplayMetrics.DENSITY_HIGH) - COMPAT"
+                        )
+                        return 2.2f
+                    }
+                    in DisplayMetrics.DENSITY_HIGH.rangeTo(DisplayMetrics.DENSITY_XHIGH) -> {
+                        Log.d(
+                            TAG,
+                            "DisplayMetrics.DENSITY_HIGH.rangeTo(DisplayMetrics.DENSITY_XHIGH) - COMPAT"
+                        )
+                        return 3.0f
+                    }
+                    in DisplayMetrics.DENSITY_XHIGH.rangeTo(DisplayMetrics.DENSITY_XXHIGH) -> {
+                        return if (isBookMode == BookMode.BOOK_MODE) {
+                            Log.d(
+                                TAG,
+                                "DisplayMetrics.DENSITY_XHIGH.rangeTo(DisplayMetrics.DENSITY_XXHIGH) - COMPAT and BOOK MODE"
+                            )
+                            3.8f
+                        } else {
+                            Log.d(
+                                TAG,
+                                "DisplayMetrics.DENSITY_XHIGH.rangeTo(DisplayMetrics.DENSITY_XXHIGH) - COMPAT and DEFAULT"
+                            )
+                            return 3.8f
+                        }
+                    }
+                    in DisplayMetrics.DENSITY_XXHIGH.rangeTo(DisplayMetrics.DENSITY_XXXHIGH) -> {
+                        Log.d(
+                            TAG,
+                            "DisplayMetrics.DENSITY_XXHIGH.rangeTo(DisplayMetrics.DENSITY_XXXHIGH) - COMPAT"
+                        )
+                        return 5.0f
+                    }
+                    else -> {
+                        Log.d(TAG, "DisplayMetrics OTHER - COMPAT")
+                        return 3.9f
+                    }
+                }
+            }
+            WindowSizeClass.MEDIUM -> {
+                when (densityDpi) {
+                    in DisplayMetrics.DENSITY_LOW.rangeTo(DisplayMetrics.DENSITY_MEDIUM) -> {
+                        Log.d(
+                            TAG,
+                            "DisplayMetrics.DENSITY_LOW.rangeTo(DisplayMetrics.DENSITY_MEDIUM) - MEDIUM"
+                        )
+                        return 1.4f
+                    }
+                    in DisplayMetrics.DENSITY_MEDIUM.rangeTo(DisplayMetrics.DENSITY_HIGH) -> {
+                        Log.d(
+                            TAG,
+                            "DisplayMetrics.DENSITY_MEDIUM.rangeTo(DisplayMetrics.DENSITY_HIGH) - MEDIUM"
+                        )
+                        return 1.8f
+                    }
+                    in DisplayMetrics.DENSITY_HIGH.rangeTo(DisplayMetrics.DENSITY_XHIGH) -> {
+                        Log.d(
+                            TAG,
+                            "DisplayMetrics.DENSITY_HIGH.rangeTo(DisplayMetrics.DENSITY_XHIGH) - MEDIUM"
+                        )
+                        return 2.6f
+                    }
+                    in DisplayMetrics.DENSITY_XHIGH.rangeTo(DisplayMetrics.DENSITY_XXHIGH) -> {
+
+                        return if (isBookMode == BookMode.BOOK_MODE) {
+                            Log.d(
+                                TAG,
+                                "DisplayMetrics.DENSITY_XHIGH.rangeTo(DisplayMetrics.DENSITY_XXHIGH) - MEDIUM and BOOK MODE"
+                            )
+                            3.3f
+                        } else {
+                            Log.d(
+                                TAG,
+                                "DisplayMetrics.DENSITY_XHIGH.rangeTo(DisplayMetrics.DENSITY_XXHIGH) - MEDIUM"
+                            )
+                            return 3.2f
+                        }
+                    }
+                    else -> {
+                        Log.d(TAG, "DisplayMetrics OTHER - MEDIUM")
+                        return 2.5f
+                    }
+                }
+            }
+            WindowSizeClass.EXPANDED -> {
+                Log.d(TAG, "DisplayMetrics ... - EXPANDED")
+                return 2.5f
+            }
+            WindowSizeClass.NOT_SET -> {
+                Log.d(TAG, "DisplayMetrics ... - NOT SET")
+                return 2.5f
+            }
+        }
     }
 
     private fun getBoxAndTextSize(
@@ -390,7 +488,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                     .apply {
                         width = ds.boxSize
                         height = ds.boxSize
-                        textSize = ds.textSize.toFloat()
+                        //textSize = ds.textSize.toFloat()
                         typeface = ResourcesCompat.getFont(context, R.font.yantramanav_bold)
                         gravity = Gravity.CENTER
 
@@ -421,7 +519,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                     ' ' -> grid.addView(Space(context))
                     else -> grid.addView(Slot(context, char).apply {
                         contentDescription = "Slot nr ${this.homeIndex}"
-                        textSize = ds.textSize.toFloat()
+                        //textSize = ds.textSize.toFloat()
                         width = ds.boxSize
                         height = ds.boxSize
                         background =

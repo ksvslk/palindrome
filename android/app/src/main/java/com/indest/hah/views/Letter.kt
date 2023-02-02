@@ -84,5 +84,6 @@ class Letter @Inject constructor(
         setOnTouchListener(touchListen)
         translationZ = NEUTRAL_LAYER
         text = letter
+        setAutoSizeTextTypeWithDefaults(AUTO_SIZE_TEXT_TYPE_UNIFORM)
     }
 }
