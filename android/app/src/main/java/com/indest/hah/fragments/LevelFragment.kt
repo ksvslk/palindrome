@@ -16,10 +16,7 @@ import android.widget.Toast
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
-import androidx.core.view.children
-import androidx.core.view.doOnNextLayout
-import androidx.core.view.doOnPreDraw
-import androidx.core.view.forEach
+import androidx.core.view.*
 import androidx.fragment.app.*
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -101,7 +98,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         val expandedSize = uiState.level.solutions.first().palindrome.split(" ").any {
             it.length > resources.getInteger(R.integer.defaultColumnsCount)
         }
-        Log.d(TAG, "splitted puzzle: ${uiState.level.solutions}")
+/*        Log.d(TAG, "splitted puzzle: ${uiState.level.solutions}")
         Log.d(TAG, "expandedSize: $expandedSize")
 
         var windowSizeClass = uiState.windowSizeClass
@@ -114,14 +111,17 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
 
-        Log.d(TAG, "requireActivity().requestedOrientation: ${requireActivity().requestedOrientation}")
+        Log.d(TAG, "requireActivity().requestedOrientation: ${requireActivity().requestedOrientation}")*/
+        val bottom = requireActivity().requireViewById<BottomNavigationView>(R.id.bottomNavView)
+        val margin = bottom.height
 
         val levelGridLayout = levelCreator.getLevel(
             uiState.level,
             layoutInflater,
             binding.levelFragment,
             uiState.bookMode,
-            windowSizeClass
+            uiState.windowSizeClass,
+            margin
         )
 
         lifecycleScope.launch(Dispatchers.Main)

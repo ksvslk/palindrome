@@ -95,22 +95,6 @@ class StagesFragment : BottomSheetDialogFragmentCustom() {
                 add(PlayerLevelSelectFragment(), PlayerLevelSelectFragment().tag)
             }
         }
-        binding.submitYourLevelButton.setOnClickListener {
-
-            lifecycleScope.launchWhenCreated {
-                if (generalViewModel.isAllowedToSubmitPalindrome())
-                {
-                    findNavController().popBackStack()
-                    parentFragmentManager.commit {
-                        addToBackStack(SubmissionFragment().tag)
-                        add(SubmissionFragment(), SubmissionFragment().tag)
-                    }
-                }
-                else {
-                    showLimitedSubmissionsToast()
-                }
-            }
-        }
 
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         return b.root

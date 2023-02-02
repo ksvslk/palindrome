@@ -160,6 +160,10 @@ class MainActivity : AppCompatActivity(),
         collectVariousEvents()
         requestLatestConsentInformation()
         collectPlayerLevels()
+
+        lifecycleScope.launch {
+            levelViewModel.collectPlayerLevels()
+        }
     }
 
     private fun collectPlayerLevels() {
@@ -512,6 +516,7 @@ class MainActivity : AppCompatActivity(),
 
     private fun collectVariousEvents() {
         lifecycleScope.launch {
+
             lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED)
             {
                 levelViewModel.variousEventFlow.collect { event ->

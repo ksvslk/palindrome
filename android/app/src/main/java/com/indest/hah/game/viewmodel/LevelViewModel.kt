@@ -89,8 +89,7 @@ class LevelViewModel @Inject constructor(
         Log.e(TAG, "Could not write snapshot or save game: ${throwable.message}")
     }
 
-    fun getCompetitionStatus():CompetitionAnnouncement
-    {
+    fun getCompetitionStatus(): CompetitionAnnouncement {
         return _competitionStatus.value
     }
 
@@ -166,8 +165,7 @@ class LevelViewModel @Inject constructor(
             ) {
                 if (accountStatus == AccountStatus.SIGNED_IN) {
                     variousEventChannel.send(VariousEvent.LoadGame)
-                }
-                else {
+                } else {
                     viewModelScope.launch {
                         levelRepository.latestLevelFlow().collect { _currentLevel.value = it }
                     }
@@ -461,7 +459,12 @@ class LevelViewModel @Inject constructor(
                 val totalScore = levelRepository.getTotalUpdatedScore(
                     _currentLevel.value.levelInfo.levelId
                 )
-                variousEventChannel.send(VariousEvent.SubmitScore(totalScore, _currentLevel.value.levelInfo.levelId > 1000))
+                variousEventChannel.send(
+                    VariousEvent.SubmitScore(
+                        totalScore,
+                        _currentLevel.value.levelInfo.levelId > 1000
+                    )
+                )
             }
         }
     }
@@ -479,6 +482,7 @@ class LevelViewModel @Inject constructor(
         data class SubmitScore(val score: Long, val playerLevels: Boolean) : VariousEvent()
         data class SaveGame(val localSaveGame: com.indest.hah.persistance.dto.SaveGame) :
             VariousEvent()
+
         object LoadGame : VariousEvent()
         object PalindromeSubmissionSucceeded : VariousEvent()
         object PalindromeSubmissionFailed : VariousEvent()
@@ -677,7 +681,7 @@ class LevelViewModel @Inject constructor(
         }
     }
 
-    fun logCompetitionRelatedEvent(event:String) {
+    fun logCompetitionRelatedEvent(event: String) {
         viewModelScope.launch(Dispatchers.Default) {
             firebaseAnalytics.logEvent(event, bundleOf())
         }
@@ -724,7 +728,18 @@ class LevelViewModel @Inject constructor(
         }
     }
 
-    private suspend fun collectPlayerLevels() {
+    suspend fun collectPlayerLevels() {
+        if (levelRepository.getMaxLevelId() > 1000) return
+        val levelAndCount = insertPlayerLevels(debugPlayerLevels())
+        Log.d(TAG, "levelAndCount: $levelAndCount")
+        if (levelAndCount.second > 0) {
+            _newPlayerLevels.value = if (levelAndCount.second > 1) Triple(
+                -1,
+                levelAndCount.second,
+                ""
+            ) else Triple(levelAndCount.first.levelId, 1, levelAndCount.first.author)
+        }
+        return
         liveStoreRegistration?.remove()
         val maxLevelId = getMaxLevelId()
         val query = fsDb.collection("user_submitted_levels")
@@ -789,6 +804,55 @@ class LevelViewModel @Inject constructor(
         })
     }
 
+    private fun debugPlayerLevels(): List<PlayerLevel> {
+        val palindromes = listOf(
+            mapOf(
+                "Sure, vile dog race cargo deliver us.".uppercase() to "37 Chars"
+            ),
+            mapOf(
+                "Now Sal, uvulae versus us reveal uvulas won.".uppercase() to "44 Chars"
+            ),
+            mapOf(
+                "No, it net tacit power, dog ego drew optic attention.".uppercase() to "53 Chars"
+            ),
+            mapOf(
+                "Tone diced, in words do grammar gods drown? I decide not.".uppercase() to "57 Chars"
+            ),
+            mapOf(
+                "Emits nets, a hot tide vortex, as axe trove ditto hastens time.".uppercase() to "63 Chars"
+            ),
+            mapOf(
+                "Dido site: buoy. Tide suffused it, I desuffused it. You bet I so did.".uppercase() to "69 Chars"
+            ),
+            mapOf(
+                "A Hayek rut? Did I stress Ed's gift o' hot figs? Desserts, I did. Turkey, aha!".uppercase() to "78 Chars"
+            ),
+            mapOf(
+                "Madam, in Eden, I'm Adam. A man, a plan, a canal, Panama! Never a foot too far, even.".uppercase() to "85 Chars"
+            ),
+            mapOf(
+                "Deb, bury Levi’s net, so fine mesh. Sugar rubs burr, a gush semen if ostensively rubbed.".uppercase() to "88 Chars"
+            ),
+            mapOf(
+                "Slam in, impugn it, a mit’s enemy brew enema made edamame newer by men estimating up minimals.".uppercase() to "94 Chars"
+            ),
+            mapOf(
+                "Enola: Ballet? Nemo: Na, Niagara bar again. Prawn Warp: Niagara bar again? — An Omen! Tell Abalone!".uppercase() to "99 Chars"
+            ),
+            mapOf(
+                "No risk lawyer protégée, snack lederhosen obsesses bones! Oh, red elk can see, get or prey walks iron.".uppercase() to "102 Chars"
+            )
+
+        )
+        val playerLevels = mutableListOf<PlayerLevel>()
+        palindromes.forEachIndexed { index, palindrome ->
+            playerLevels.add(
+                PlayerLevel(1000 + index + 1L, palindrome.values.first(), palindrome)
+            )
+        }
+        return playerLevels
+    }
+
     fun resetNewPlayersLevels() {
         _newPlayerLevels.value = Triple(-1, -1, "")
     }
@@ -801,7 +865,7 @@ class LevelViewModel @Inject constructor(
         return levelRepository.getMaxLevelId()
     }
 
-    suspend fun submitUserLevel(playersPalindrome:String) {
+    suspend fun submitUserLevel(playersPalindrome: String) {
         // Create a new user with a first, middle, and last name
         val level = hashMapOf(
             "is_featured" to false,
