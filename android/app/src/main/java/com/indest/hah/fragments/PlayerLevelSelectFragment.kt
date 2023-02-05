@@ -12,6 +12,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -58,7 +59,7 @@ class PlayerLevelSelectFragment : BottomSheetDialogFragmentCustom() {
                         it?.levelId?.let { nr ->
                             val currentlyActiveFragment = parentFragmentManager.findFragmentById(R.id.fragments_container)
                             Log.d(TAG, "Currently active fragment: ${currentlyActiveFragment?.javaClass?.name}")
-                            if (currentlyActiveFragment is LevelFragment)
+                            if (currentlyActiveFragment is LevelFragment || currentlyActiveFragment is NavHostFragment)
                             {
                                 levelViewModel.setUiStateWhenOnPause()
                                 levelViewModel.changeLevel(nr)
