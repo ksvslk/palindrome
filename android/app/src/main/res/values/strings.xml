@@ -72,7 +72,8 @@
     <string name="not_quite_solution">Incorrect palindrome!</string>
     <string name="tap_to_continue">Tap to continue</string>
     <string name="tap_to_finish">Tap to finish!</string>
-    <string name="game_completed_message">Done! Keeping the app on your <i>radar</i> and supporting it is a sure way to guarantee another level pack!</string>
+    <string name="game_completed_message">Check out also the player levels and send your own palindrome!</string>
+    <string name="player_game_completed_message">Did you complete all the player levels? Nice! Now send your own!</string>
     <string name="game_completed_shout">Yay!</string>
     <string name="game_completed_shout_smiley">(>‿◠)✌</string>
     <string name="game_completed_shout_shout2">Winning!</string>

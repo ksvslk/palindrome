@@ -269,7 +269,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         }
     }
 
-    private fun showCorrectEffects(uiState: UiState, isLastLevel: Boolean = false) {
+    private fun showCorrectEffects(uiState: UiState, isLastLevel: Pair<Boolean, Boolean> = Pair(false, false)) {
         cellDirector?.getCells()?.let { cells ->
             val cellsAnimation = animations.getCorrectSolutionAnimation(cells)
             cellsAnimation.doOnEnd {
@@ -375,10 +375,10 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         if (uiState.solutionData.showHintsBadge) showHintsBadge()
     }
 
-    private fun showContinueMessage(uiState: UiState, isLastLevel: Boolean = false) {
+    private fun showContinueMessage(uiState: UiState, isLastLevel: Pair<Boolean, Boolean> = Pair(false, false)) {
         val continueMessage = MessageSnackBar.make(
             view = binding.levelFragment,
-            message = if (!isLastLevel) getString(R.string.tap_to_continue) else getString(R.string.tap_to_finish),
+            message = if (!isLastLevel.first && !isLastLevel.second) getString(R.string.tap_to_continue) else getString(R.string.tap_to_finish),
             duration = Int.MAX_VALUE,
             windowSizeClassWidth = uiState.windowSizeClass,
             isBookMode = uiState.bookMode,
@@ -393,15 +393,28 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                 continueMessage.dismiss()
                 soundPlayer.play(soundPlayer.sounds.levelTransition, volume = 0.2f)
                 playTrainAnimation()
-                if (!isLastLevel) {
-                    viewModel.executeLevelCompleteActions()
-                } else {
-                    soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.2f)
-                    parentFragmentManager.commit {
-                        viewModel.executeLevelCompleteActionsFinal()
-                        setReorderingAllowed(true)
-                        replace<EpilogueFragment>(R.id.fragments_container)
+                when (isLastLevel)
+                {
+                    Pair(false, false) -> {
+                        viewModel.executeLevelCompleteActions()
                     }
+                    Pair(true, false) -> {
+                        soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.2f)
+                        parentFragmentManager.commit {
+                            viewModel.executeLevelCompleteActionsFinal()
+                            setReorderingAllowed(true)
+                            replace<EpilogueFragment>(R.id.fragments_container)
+                        }
+                    }
+                    Pair(false, true) -> {
+                        soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.2f)
+                        parentFragmentManager.commit {
+                            viewModel.executeLevelCompleteActionsFinal()
+                            setReorderingAllowed(true)
+                            replace<PlayerEpilogueFragment>(R.id.fragments_container)
+                        }
+                    }
+
                 }
             }
         }

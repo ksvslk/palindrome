@@ -27,6 +27,9 @@
         <action
             android:id="@+id/action_navigation_level_to_navigation_stages"
             app:destination="@id/navigation_stages" />
+        <action
+            android:id="@+id/action_navigation_level_to_navigation_player_epilogue"
+            app:destination="@id/navigation_player_epilogue" />
     </fragment>
 
     <fragment
@@ -73,6 +76,17 @@
         tools:layout="@layout/epilogue_fragment">
         <action
             android:id="@+id/action_navigation_epilogue_to_navigation_level"
+            app:destination="@id/navigation_level" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/navigation_player_epilogue"
+        android:name="com.indest.hah.fragments.PlayerEpilogueFragment"
+        android:label="PlayerEpilogueFragment"
+        tools:layout="@layout/epilogue_player_fragment">
+        <action
+            android:id="@+id/action_navigation_player_epilogue_to_navigation_level2"
             app:destination="@id/navigation_level" />
     </fragment>
 

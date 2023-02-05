@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        anybutton:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -19,8 +20,8 @@
             android:id="@+id/reward_button_flipper"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clickable="false"
             android:autoStart="true"
+            android:clickable="false"
             android:flipInterval="@integer/gameCompleteMessageFlipInterval"
             android:inAnimation="@android:anim/slide_in_left"
             android:outAnimation="@android:anim/slide_out_right">
@@ -29,11 +30,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:paddingVertical="@dimen/default_padding_text"
-                android:paddingHorizontal="@dimen/default_large_margin"
-                android:gravity="center"
                 android:background="@drawable/round_rectangle"
                 android:backgroundTint="@color/colorSecondary"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/default_large_margin"
+                android:paddingVertical="@dimen/default_padding_text"
                 android:text="@string/game_completed_shout"
                 android:textAppearance="@style/TextAppearance.OC.Headline5" />
 
@@ -41,23 +42,23 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:paddingVertical="@dimen/default_padding_text"
-                android:paddingHorizontal="@dimen/default_large_margin"
-                android:gravity="center"
-                android:text="@string/game_completed_shout_smiley"
                 android:background="@drawable/round_rectangle"
                 android:backgroundTint="@color/colorOnPrimaryDisabled"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/default_large_margin"
+                android:paddingVertical="@dimen/default_padding_text"
+                android:text="@string/game_completed_shout_smiley"
                 android:textAppearance="@style/TextAppearance.OC.Headline5" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:paddingVertical="@dimen/default_padding_text"
-                android:paddingHorizontal="@dimen/default_large_margin"
-                android:gravity="center"
                 android:background="@drawable/round_rectangle"
                 android:backgroundTint="@color/colorSecondary"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/default_large_margin"
+                android:paddingVertical="@dimen/default_padding_text"
                 android:text="@string/game_completed_shout_shout2"
                 android:textAppearance="@style/TextAppearance.OC.Headline5" />
 
@@ -65,11 +66,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:paddingVertical="@dimen/default_padding_text"
-                android:paddingHorizontal="@dimen/default_large_margin"
-                android:gravity="center"
                 android:background="@drawable/round_rectangle"
                 android:backgroundTint="@color/colorOnPrimaryDisabled"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/default_large_margin"
+                android:paddingVertical="@dimen/default_padding_text"
                 android:text="@string/game_completed_shout_smiley2"
                 android:textAppearance="@style/TextAppearance.OC.Headline5" />
         </ViewFlipper>
@@ -93,20 +94,9 @@
             app:divider="@drawable/divider"
             app:showDividers="middle">
 
-            <com.indest.hah.views.AnyButton
-                android:id="@+id/show_leaderboards_button"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/simple_dialog_item_height"
-                android:layout_margin="@dimen/_2sdp"
-                android:background="?android:attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true"
-                android:orientation="horizontal"
-                anybutton:any_button_icon="@drawable/games_leaderboards"
-                anybutton:any_button_title="@string/leaderboard" />
 
             <com.indest.hah.views.AnyButton
-                android:id="@+id/show_achievements_button"
+                android:id="@+id/player_level_select_button"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/simple_dialog_item_height"
                 android:layout_margin="@dimen/_2sdp"
@@ -114,8 +104,8 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:orientation="horizontal"
-                anybutton:any_button_icon="@drawable/games_achievements"
-                anybutton:any_button_title="@string/achievements" />
+                anybutton:any_button_icon="@drawable/ic_baseline_groups_24"
+                anybutton:any_button_title="@string/player_level_select" />
 
             <com.indest.hah.views.AnyButton
                 android:id="@+id/share_button"
@@ -140,6 +130,7 @@
                 android:orientation="horizontal"
                 anybutton:any_button_icon="@drawable/baseline_rate_review_black_36"
                 anybutton:any_button_title="@string/rate_game" />
+
             <com.indest.hah.views.AnyButton
                 android:id="@+id/level_select_button"
                 android:layout_width="match_parent"

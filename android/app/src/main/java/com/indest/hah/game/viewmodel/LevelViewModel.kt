@@ -242,8 +242,10 @@ class LevelViewModel @Inject constructor(
         return limitReached
     }
 
-    suspend fun isLastLevel(): Boolean {
-        return levelRepository.isFinalLevel(_currentLevel.value.levelInfo.levelId)
+    suspend fun isLastLevel(): Pair<Boolean, Boolean> {
+        val lastGameLevel = levelRepository.isFinalLevel(_currentLevel.value.levelInfo.levelId, 1, 100)
+        val lastPlayerLevel = levelRepository.isFinalLevel(_currentLevel.value.levelInfo.levelId, 1001, Int.MAX_VALUE)
+        return Pair(lastGameLevel, lastPlayerLevel)
     }
 
     private fun getNewUiState(
@@ -447,6 +449,18 @@ class LevelViewModel @Inject constructor(
     fun allLevelsFlow(): Flow<List<Pair<Boolean, LevelData>>> {
         return flow {
             emit(levelRepository.getAllLevels())
+        }
+    }
+
+    fun allPlayerLevelsFlow(): Flow<List<Pair<Boolean, LevelData>>> {
+        return flow {
+            emit(levelRepository.getAllLevels().filter { it.second.levelId >= 1000 })
+        }
+    }
+
+    fun allGameLevelsFlow(): Flow<List<Pair<Boolean, LevelData>>> {
+        return flow {
+            emit(levelRepository.getAllLevels().filter { it.second.levelId <= 100 })
         }
     }
 
@@ -856,7 +870,10 @@ class LevelViewModel @Inject constructor(
             mapOf(
                 "No risk lawyer protégée, snack lederhosen obsesses bones! Oh, red elk can see, get or prey walks iron.".uppercase() to "102 Chars"
             )
-
+            ,
+            mapOf(
+                "TAAT".uppercase() to "Testing"
+            )
         )
         val playerLevels = mutableListOf<PlayerLevel>()
         palindromes.forEachIndexed { index, palindrome ->

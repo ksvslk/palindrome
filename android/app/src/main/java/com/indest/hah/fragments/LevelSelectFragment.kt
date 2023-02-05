@@ -49,7 +49,7 @@ class LevelSelectFragment : BottomSheetDialogFragmentCustom() {
     private fun setUpRecyclerView()
     {
         lifecycleScope.launchWhenCreated {
-                levelViewModel.allLevelsFlow().collect { levels ->
+                levelViewModel.allGameLevelsFlow().collect { levels ->
                     val currentLevel = levelViewModel.currentLevel.replayCache.firstOrNull()?.levelInfo?.levelId
                     val currentLevelIcon = getCurrentLevelIcon(currentLevel)
                     binding.levelSelectRecyclerview.adapter = LevelItemAdapter(currentLevelIcon, currentLevel, levels) {
@@ -61,7 +61,7 @@ class LevelSelectFragment : BottomSheetDialogFragmentCustom() {
                                 levelViewModel.setUiStateWhenOnPause()
                                 levelViewModel.changeLevel(nr)
                             }
-                            else if (currentlyActiveFragment is EpilogueFragment)
+                            else if (currentlyActiveFragment is EpilogueFragment || currentlyActiveFragment is PlayerEpilogueFragment)
                             {
                                 parentFragmentManager.commit {
                                     setReorderingAllowed(true)

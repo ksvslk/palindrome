@@ -372,9 +372,9 @@ interface LevelDao {
         updateIntervals(saveGame.interval)
     }
 
-    @Query("select max(level_id) = :currentLevel from level_info_table")
+    @Query("select max(level_id) = :currentLevel from level_info_table where level_id >= :minLimit and level_id <= :maxLimit")
     //@Query("select 3 = :currentLevel from level_info_table")
-    suspend fun isFinalLevel(currentLevel: Int): Boolean
+    suspend fun isFinalLevel(currentLevel: Int, minLimit:Int, maxLimit:Int): Boolean
 
     @Query("select timestamp from interval where name = 'last_submission'")
     suspend fun getLastSubmissionTimestamp(): Long

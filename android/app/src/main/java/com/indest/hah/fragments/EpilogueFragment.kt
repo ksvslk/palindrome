@@ -40,8 +40,6 @@ class EpilogueFragment : Fragment(R.layout.epilogue_fragment) {
     private lateinit var binding: EpilogueFragmentBinding
     private var trainAnimator: ObjectAnimator? = null
     private val generalViewModel: GeneralViewModel by activityViewModels()
-    private val startActivity =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -78,22 +76,13 @@ class EpilogueFragment : Fragment(R.layout.epilogue_fragment) {
             {
                 generalViewModel.internet.combine(generalViewModel.accountStatus) { i, a ->
                     Pair(i, a)
-                }.collect { (internet, accountStatus) ->
+                }.collect { (internet, _) ->
                     when (internet) {
                         true -> {
-                            if (accountStatus == AccountStatus.SIGNED_IN) {
-                                binding.showLeaderboardsButton.visibility = View.VISIBLE
-                                binding.showAchievementsButton.visibility = View.VISIBLE
-                            } else {
-                                binding.showLeaderboardsButton.visibility = View.GONE
-                                binding.showAchievementsButton.visibility = View.GONE
-                            }
                             binding.shareButton.visibility = View.VISIBLE
                             binding.feedbackButton.visibility = View.VISIBLE
                         }
                         false -> {
-                            binding.showLeaderboardsButton.visibility = View.GONE
-                            binding.showAchievementsButton.visibility = View.GONE
                             binding.shareButton.visibility = View.GONE
                             binding.feedbackButton.visibility = View.GONE
                         }
@@ -110,12 +99,6 @@ class EpilogueFragment : Fragment(R.layout.epilogue_fragment) {
                             }
                         }
                     }
-                    binding.showLeaderboardsButton.setOnClickListener {
-                        showLeaderBoard()
-                    }
-                    binding.showAchievementsButton.setOnClickListener {
-                        showAchievements()
-                    }
                     binding.shareButton.setOnClickListener {
                         val shareIntent = generalViewModel.getShareIntent("EpilogueFragment")
                         startActivity(shareIntent)
@@ -124,6 +107,12 @@ class EpilogueFragment : Fragment(R.layout.epilogue_fragment) {
                         parentFragmentManager.commit {
                             addToBackStack(LevelSelectFragment().tag)
                             add(LevelSelectFragment(), LevelSelectFragment().tag)
+                        }
+                    }
+                    binding.playerLevelSelectButton.setOnClickListener {
+                        parentFragmentManager.commit {
+                            addToBackStack(PlayerLevelSelectFragment().tag)
+                            add(PlayerLevelSelectFragment(), PlayerLevelSelectFragment().tag)
                         }
                     }
                 }
@@ -140,28 +129,6 @@ class EpilogueFragment : Fragment(R.layout.epilogue_fragment) {
         }
     }
 
-    private fun showLeaderBoard() {
-        activity?.let { activity ->
-            val leaderboardsClient = PlayGames.getLeaderboardsClient(activity)
-            leaderboardsClient.getLeaderboardIntent(getString(R.string.leaderboard_crme_de_la_crme))
-                .continueWith {
-                    if (it.isSuccessful) {
-                        startActivity.launch(it.result)
-                    }
-                }
-        }
-    }
-
-    private fun showAchievements() {
-        activity?.let { activity ->
-            val achievementsClient = PlayGames.getAchievementsClient(activity)
-            achievementsClient.achievementsIntent.continueWith {
-                if (it.isSuccessful) {
-                    startActivity.launch(it.result)
-                }
-            }
-        }
-    }
 
     override fun onDestroyView() {
         (activity as? MainActivity)?.binding?.konfettiView?.stopGracefully()

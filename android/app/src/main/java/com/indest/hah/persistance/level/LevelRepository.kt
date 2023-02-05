@@ -139,7 +139,7 @@ class LevelRepository @Inject constructor(
 
     suspend fun updateLocalGame(saveGame: SaveGame) = levelDao.updateLocalGame(saveGame)
 
-    suspend fun isFinalLevel(currentLevel:Int) = levelDao.isFinalLevel(currentLevel)
+    suspend fun isFinalLevel(currentLevel:Int, minLimit:Int, maxLimit:Int) = levelDao.isFinalLevel(currentLevel, minLimit, maxLimit)
 
     suspend fun isAllowedToSubmitPalindrome():Boolean
     {
