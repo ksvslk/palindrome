@@ -3,12 +3,15 @@ package com.indest.hah.views
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
+import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
+import android.view.View
 import android.view.View.OnTouchListener
 import com.indest.hah.other.C.NEUTRAL_LAYER
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import androidx.gridlayout.widget.GridLayout
+import com.indest.hah.R
 import com.indest.hah.game.director.Effects
 import com.indest.hah.game.director.LetterState
 import com.indest.hah.game.director.data.GlobalPosition
@@ -36,12 +39,31 @@ class Letter @Inject constructor(
         super.onDraw(canvas)
     }
 
+    fun addHapticFeedback(constant: Int) {
+        context.getSharedPreferences(
+            context.getString(R.string.app_preferences),
+            Context.MODE_PRIVATE
+        )?.let {
+            if (isSoundEffectsEnabled && it.getBoolean(
+                    context.getString(
+                        R.string.vibration_on_pref
+                    ), true
+                )
+            ) {
+                performHapticFeedback(constant)
+            }
+        }
+    }
+
     private val touchListen = OnTouchListener { v, e ->
         if (!isLocked) {
             when (e.action) {
                 MotionEvent.ACTION_DOWN -> {
                     if (state == LetterState.HOME) {
-                        effects.addShortVibration()
+                        //effects.addShortVibration()
+                        addHapticFeedback(
+                            HapticFeedbackConstants.TEXT_HANDLE_MOVE
+                        )
                         state = LetterState.DRAGGING
                         state.executeActionDownBehaviour(this, v, e)
                     }

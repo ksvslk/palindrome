@@ -69,16 +69,33 @@ interface LevelDao {
     @Query("select * from level_info_table where level_id = (select max(level_id) from level_info_table)")
     suspend fun getMaxLevel():LevelData
 
-    @Query("update letter_info_table set friend_index=(friend_index+:columnDifference) where owner_id = :level and friend_index != -666")
+    @Query("update letter_info_table set friend_index=(friend_index-(:columnDifference)) where owner_id = :level and friend_index != -666")
     suspend fun changeFriendIndexes(level: Int, columnDifference:Int)
 
     @Query("update level_info_table set column_count = :newColumnCount where level_id = :level")
     suspend fun changeColumnCount(level: Int, newColumnCount:Int)
 
     @Transaction
-    suspend fun changeFriendIndexesBasedOnColumnCount(level: Int, columnDifference:Int, columnCount:Int)
+    suspend fun changeFriendIndexesBasedOnColumnCount(level: Int, columnCount:Int, letters:List<LetterProperties>, diff:List<Int>, startingIndex:Int, )
     {
-        changeFriendIndexes(level, columnDifference)
+
+        Log.d("DAO", "Letters: " + "${letters.map { "${it.letter}: Home: ${it.homeIndex}, Friend: ${it.friendIndex}"}}")
+
+        // seal kus home index == ? muuda friend index ?
+
+        // kustkohast me teame kas homeIndexit või asukohta solutionis (0, 1, 2)
+        // me teame homeIndexit pigem kusagilt
+
+
+        letters.forEachIndexed { index, letter ->
+            Log.d("DAO", "INDEX: $index")
+            if (letter.friendIndex != -666)
+            {
+                Log.d("DAO", "Index: $index")
+                Log.d("DAO", "Changing letter with friend index ${letter.friendIndex} (${letter.letter}) friend index to ${diff[index]}" )
+                updateFriendIndexSub(letter.homeIndex, diff[index], level)
+            }
+        }
         changeColumnCount(level, columnCount)
     }
 

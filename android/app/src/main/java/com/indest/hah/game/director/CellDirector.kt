@@ -1,6 +1,7 @@
 package com.indest.hah.game.director
 
 import android.util.Log
+import android.view.HapticFeedbackConstants
 import com.indest.hah.game.director.data.GlobalPosition
 import com.indest.hah.game.director.enums.ColorSelector
 import com.indest.hah.game.director.enums.SoundSelector
@@ -20,7 +21,6 @@ import com.indest.hah.other.C.TOP_LAYER
 import kotlin.math.abs
 
 class CellDirector constructor(
-    info: Level,
     private val cells: MutableList<Cell<*, *>>,
     private val viewModel: LevelViewModel
 ) {
@@ -28,7 +28,7 @@ class CellDirector constructor(
     private val TAG = "CellDirector"
 
     init {
-        restoreSlotPlacements(info)
+        restoreSlotPlacements(viewModel.currentLevel.value)
     }
 
     fun getCells(): MutableList<Cell<*, *>> = cells
@@ -44,6 +44,9 @@ class CellDirector constructor(
             is Slot -> {
                 if (!closestCell.hasFriend()) {
                     placeLetterInEmptyBox(letter, closestCell)
+                    letter.addHapticFeedback(
+                        HapticFeedbackConstants.KEYBOARD_TAP
+                    )
                     return
                 } else if (closestCell.getTheFriend() == letter) {
                     letter.effects.playSound(SoundSelector.SWITCH_LETTERS)
@@ -228,6 +231,7 @@ class CellDirector constructor(
 
     fun sendWrongSolutionLetterHome(uiState: UiState) {
         val lastLetter = cells.find { p -> p.homeIndex == uiState.solutionData.index } as Letter
+        lastLetter.addHapticFeedback(HapticFeedbackConstants.REJECT)
         sendLetterHome(lastLetter)
     }
 
@@ -303,6 +307,7 @@ class CellDirector constructor(
             topFriend?.setFriend(bottom)
             top.setFriend(null)
         }
+        bottom.addHapticFeedback(HapticFeedbackConstants.TEXT_HANDLE_MOVE)
     }
 
     fun rewardWithRandomLetter()

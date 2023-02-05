@@ -26,4 +26,6 @@
     <dimen name="tutorial_arrow_size">@dimen/_16sdp</dimen>
     <dimen name="tutorial_progress_width">@dimen/_100sdp</dimen>
 
+    <dimen name="cell_container_width">@dimen/_4sdp</dimen>
+
 </resources>

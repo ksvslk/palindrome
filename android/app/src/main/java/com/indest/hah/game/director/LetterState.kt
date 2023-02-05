@@ -2,6 +2,7 @@ package com.indest.hah.game.director
 
 import android.animation.ObjectAnimator
 import android.util.Log
+import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -175,7 +176,12 @@ enum class LetterState : ILetterState {
                     letter.translationZ = NEUTRAL_LAYER
                     letter.currentPos.x = letter.pos.x
                     letter.currentPos.y = letter.pos.y
-
+                    if (durationModifier != 1)
+                    {
+                        letter.addHapticFeedback(
+                            HapticFeedbackConstants.CONFIRM
+                        )
+                    }
                   /*  if (durationModifier != 1) {
                         try {
                             //letter.findFragment<LevelFragment>().playUiContainerState()

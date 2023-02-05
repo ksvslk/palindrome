@@ -1,10 +1,7 @@
 package com.indest.hah.persistance.level
 
 import android.util.Log
-import com.indest.hah.persistance.dto.Level
-import com.indest.hah.persistance.dto.LevelData
-import com.indest.hah.persistance.dto.PlayerLevel
-import com.indest.hah.persistance.dto.SaveGame
+import com.indest.hah.persistance.dto.*
 import kotlinx.coroutines.flow.Flow
 import java.time.Duration
 import java.time.Instant
@@ -21,8 +18,14 @@ class LevelRepository @Inject constructor(
         levelDao.init()
     }
 
-    suspend fun changeFriendIndexesBasedOnColumnCount(level: Int, columnDifference:Int, columnCount:Int) =
-        levelDao.changeFriendIndexesBasedOnColumnCount(level, columnDifference, columnCount)
+    suspend fun changeFriendIndexesBasedOnColumnCount(level: Int, columnCount:Int, letters:List<LetterProperties>, diff:List<Int>, startingIndex:Int) {
+        levelDao.changeFriendIndexesBasedOnColumnCount(level, columnCount, letters, diff,startingIndex)
+    }
+
+
+    suspend fun changeColumnCount(level: Int, columnCount: Int){
+        levelDao.changeColumnCount(level, columnCount)
+    }
 
     suspend fun getMaxLevelId():Int = levelDao.getMaxLevelId()
 
@@ -33,6 +36,11 @@ class LevelRepository @Inject constructor(
     // REFACTOR
     suspend fun updateFriendIndex(homeIndex: Int, newFriendIndex: Int, level: Int): String {
         return levelDao.updateFriendIndex(homeIndex, newFriendIndex, level)
+    }
+
+    suspend fun updateOneFriendIndex(homeIndex: Int, newFriendIndex: Int, level: Int)
+    {
+        levelDao.updateFriendIndexSub(homeIndex,newFriendIndex,level)
     }
 
     suspend fun setLetterLocked(homeIndex: Int, level: Int) {

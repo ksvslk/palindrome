@@ -12,5 +12,6 @@ data class UiState(
     val bookMode: BookMode = BookMode.NOT_SET,
     val windowSizeClass: WindowSizeClass = WindowSizeClass.NOT_SET,
     val solutionData: SolutionData,
-    val refreshLevelUi: Boolean = false
+    val refreshLevelUi: Boolean = false,
+    val columnsChanged: Boolean = false,
 )

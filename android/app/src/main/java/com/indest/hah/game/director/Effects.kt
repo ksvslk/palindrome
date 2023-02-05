@@ -4,6 +4,8 @@ import android.content.Context
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.view.HapticFeedbackConstants
+import android.view.View
 import androidx.core.content.ContextCompat
 import com.indest.hah.R
 import com.indest.hah.fx.SoundPlayer
@@ -63,7 +65,11 @@ class Effects @Inject constructor(
             context.getString(R.string.app_preferences),
             Context.MODE_PRIVATE
         )?.let {
-            if (soundPlayer.isRingerModeNotNormal() || !it.getBoolean(context.getString(R.string.sound_on_pref), true)) return
+            if (soundPlayer.isRingerModeNotNormal() || !it.getBoolean(
+                    context.getString(R.string.sound_on_pref),
+                    true
+                )
+            ) return
             when (soundSelector) {
                 SoundSelector.PLACE_LETTER_IN_EMPTY_BOX -> {
                     soundPlayer.play(soundPlayer.sounds.placeLetterSoundId)
@@ -87,8 +93,7 @@ class Effects @Inject constructor(
         }
     }
 
-    fun getSuccessBoxColor():Int
-    {
+    fun getSuccessBoxColor(): Int {
         return ContextCompat.getColor(context, R.color.successBoxColor)
     }
 

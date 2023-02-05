@@ -74,16 +74,25 @@ class LevelViewModel @Inject constructor(
             "Error syncing cloud with local. Start collecting level from  local database without up to date information.",
             throwable
         )
+        startCollectingLevelUpdate()
+    }
+
+    private fun startCollectingLevelUpdate()
+    {
         viewModelScope.launch {
             levelRepository.latestLevelFlow()
-                .collect { _currentLevel.value = it }
+                .collect {
+                    _currentLevel.value = it
+                }
         }
     }
+
 
     override fun onCleared() {
         super.onCleared()
         liveStoreRegistration?.remove()
     }
+
 
     private val saveGameExceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Log.e(TAG, "Could not write snapshot or save game: ${throwable.message}")
@@ -97,16 +106,27 @@ class LevelViewModel @Inject constructor(
         _competitionStatus.value = competitionAnnouncement
     }
 
-    suspend fun changeFriendIndexesBasedOnColumnCount(newColumnCount: Int) {
-        val columnDifference = newColumnCount - _uiState.value.level.levelInfo.columnCount
-        Log.d(TAG, "newColumnCount: $newColumnCount")
-        Log.d(TAG, "currentColumnCount: ${_uiState.value.level.levelInfo.columnCount}")
-        if (columnDifference != 0) {
-            Log.d(TAG, "WE HAVE A COLUMN DIFF: $columnDifference")
-            levelRepository.changeFriendIndexesBasedOnColumnCount(
+    suspend fun changeFriendIndexesBasedOnColumnCount(newColumnCount: Int, emptySpacesInTheOld: Int, emptySpacesInTheNew: Int, indexDifferences: List<Int>, oldFirstIndex:Int) {
+        setUiStateWhenOnPause()
+        val oldColumnCount = _uiState.value.level.levelInfo.columnCount
+        if (emptySpacesInTheOld == -1)
+        {
+            levelRepository.changeColumnCount( _uiState.value.level.levelInfo.levelId, newColumnCount)
+        }
+        else if (newColumnCount != oldColumnCount) {
+            val emptySpacesInTheOldPlusoldColumnCount = emptySpacesInTheOld + oldColumnCount
+            val emptySpacesInTheNewPLusnewColumnCount = emptySpacesInTheNew + newColumnCount
+            Log.d(TAG, "emptySpacesInTheOldPlusoldColumnCount: $emptySpacesInTheOldPlusoldColumnCount")
+            Log.d(TAG, "emptySpacesInTheNewPLusnewColumnCount: $emptySpacesInTheNewPLusnewColumnCount")
+            val extraDifference = emptySpacesInTheOldPlusoldColumnCount - emptySpacesInTheNewPLusnewColumnCount
+            Log.d(TAG, "OLD FIRST INDEX: $oldFirstIndex")
+           if (indexDifferences.isNotEmpty()) Log.d(TAG, "NEW FIRST INDEX: ${indexDifferences[0]}")
+          levelRepository.changeFriendIndexesBasedOnColumnCount(
                 _uiState.value.level.levelInfo.levelId,
-                columnDifference,
-                newColumnCount
+                newColumnCount,
+             _currentLevel.value.lettersProperties,
+             indexDifferences,
+              extraDifference
             )
         }
     }
@@ -148,7 +168,6 @@ class LevelViewModel @Inject constructor(
                 Pair(Pair(accountStatus, level), Pair(bookMode, windowSizeClassWidth))
             }
         }.distinctUntilChanged().collect {
-            Log.d(TAG, it().toString())
 
             val level = it().first.second
             val accountStatus = it().first.first
@@ -166,9 +185,7 @@ class LevelViewModel @Inject constructor(
                 if (accountStatus == AccountStatus.SIGNED_IN) {
                     variousEventChannel.send(VariousEvent.LoadGame)
                 } else {
-                    viewModelScope.launch {
-                        levelRepository.latestLevelFlow().collect { _currentLevel.value = it }
-                    }
+                    startCollectingLevelUpdate()
                 }
             } else if (
                 level.levelInfo.levelId != 0 &&
@@ -213,7 +230,6 @@ class LevelViewModel @Inject constructor(
                         )
                     )
                 }
-                Log.d(TAG, _uiState.value.toString())
             }
         }
     }
@@ -324,13 +340,9 @@ class LevelViewModel @Inject constructor(
         viewModelScope.launch(exceptionHandler) {
             if (saveGame != null) {
                 levelRepository.updateLocalGame(saveGame)
-                launch {
-                    levelRepository.latestLevelFlow().collect { _currentLevel.value = it }
-                }
+                startCollectingLevelUpdate()
             } else {
-                launch {
-                    levelRepository.latestLevelFlow().collect { _currentLevel.value = it }
-                }
+                startCollectingLevelUpdate()
             }
             launch {
                 collectPlayerLevels()
@@ -554,8 +566,6 @@ class LevelViewModel @Inject constructor(
                 val playerGuess = guess.map { char ->
                     if ("^([?!.,’])".contains(char)) "" else char
                 }.joinToString("")
-
-                Log.d(TAG, "guess: $guess, solutions: ${_currentLevel.value.solutions}")
 
                 val hintsInterval =
                     getApplication<Application>().getString(R.string.hint_suggestion)
@@ -805,6 +815,10 @@ class LevelViewModel @Inject constructor(
     }
 
     private fun debugPlayerLevels(): List<PlayerLevel> {
+        viewModelScope.launch {
+            for (i in 1..101)
+                levelRepository.updateLevelProgress(i, LevelProgress.REPLAY)
+        }
         val palindromes = listOf(
             mapOf(
                 "Sure, vile dog race cargo deliver us.".uppercase() to "37 Chars"

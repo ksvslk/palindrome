@@ -18,12 +18,12 @@ def getGitHash = { ->
 }
 
 android {
-    compileSdkVersion 32
+    compileSdkVersion 33
 
     defaultConfig {
         applicationId "com.indest.hah"
         minSdkVersion 21
-        targetSdkVersion 32
+        targetSdkVersion 33
         versionCode 5 // versionCode does not necessarily have a strong resemblance to versionName
         versionName "1.0.0"
 
@@ -127,7 +127,7 @@ dependencies {
     def constraintlayout_version = '2.1.4'
     def material_version = '1.6.1'
     def appcompat_version = '1.4.2'
-    def androidx_core_version = '1.8.0'
+    def androidx_core_version = '1.9.0'
     def junit_version = '4.13.2'
     def espresso_core_version = '3.4.0'
     def coroutines_test_version = '1.5.2'
@@ -209,11 +209,13 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_core_version"
     androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_test_version"
 }
-
+/*
 tasks.register('copyReleaseFilesToOneDirectory', Copy) {
     from layout.buildDirectory.file("outputs/bundle/instantRelease/app-instant-release.aab"),layout.buildDirectory.file("outputs/bundle/regularRelease/app-regular-release.aab")
     into layout.buildDirectory.dir("outputs/bundle/")
 }
 tasks.findByName('copyReleaseFilesToOneDirectory').mustRunAfter ':app:bundleRelease'
 tasks.findByName('copyReleaseFilesToOneDirectory').dependsOn(':app:bundleRelease')
+*/
+
 apply plugin: 'com.google.gms.google-services'

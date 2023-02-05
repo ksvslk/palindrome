@@ -95,49 +95,48 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
     private fun displayLevel(uiState: UiState) {
         binding.levelFragment.removeAllViews()
-        val expandedSize = uiState.level.solutions.first().palindrome.split(" ").any {
-            it.length > resources.getInteger(R.integer.defaultColumnsCount)
-        }
-/*        Log.d(TAG, "splitted puzzle: ${uiState.level.solutions}")
-        Log.d(TAG, "expandedSize: $expandedSize")
+        Log.d(TAG, "displayLevel: ${uiState.level.levelInfo.levelId}")
 
-        var windowSizeClass = uiState.windowSizeClass
-        if (expandedSize)
-        {
-            requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-            windowSizeClass = WindowSizeClass.EXPANDED
-        }
-        else {
-            requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        }
-
-        Log.d(TAG, "requireActivity().requestedOrientation: ${requireActivity().requestedOrientation}")*/
+        Log.d(TAG, "Current column count: ${uiState.level.levelInfo.columnCount}")
         val bottom = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView)
-        val margin = bottom.height //+ bottom.paddingTop
+        val margin = bottom.height
 
         val levelGridLayout = levelCreator.getLevel(
             uiState.level,
             layoutInflater,
             binding.levelFragment,
-            uiState.bookMode,
-            uiState.windowSizeClass,
             margin
         )
+        Log.d(TAG, "New column count: ${levelGridLayout.first.columnCount}")
+        val areColumnsDifferent = uiState.level.levelInfo.columnCount != levelGridLayout.first.columnCount
 
         lifecycleScope.launch(Dispatchers.Main)
         {
-            viewModel.changeFriendIndexesBasedOnColumnCount(levelGridLayout.columnCount)
-            levelGridLayout.children.filterIsInstance<Cell<*, *>>().toMutableList().apply {
-                levelGridLayout.doOnPreDraw {
+            Log.d(TAG, "Columns before changing friends: ${uiState.level.levelInfo.columnCount}")
+            if (areColumnsDifferent)
+            {
+                viewModel.changeFriendIndexesBasedOnColumnCount(
+                    levelGridLayout.first.columnCount,
+                    levelGridLayout.second.first,
+                    levelGridLayout.second.second,
+                    levelGridLayout.third,
+                    levelGridLayout.second.third,
+                )
+                return@launch
+            }
+            Log.d(TAG,"After: ${viewModel.currentLevel.value.lettersProperties.joinToString()}")
+            levelGridLayout.first.children.filterIsInstance<Cell<*, *>>().toMutableList().apply {
+                levelGridLayout.first.doOnPreDraw {
+                    Log.d(TAG, "COLUMNS WHEN GOING TO CELL-DIRECTOR: ${viewModel.currentLevel.value.levelInfo.columnCount}")
                     cellDirector = CellDirector(
-                        viewModel.currentLevel.value,
                         this,
                         viewModel
                     )
                 }
             }
-            binding.levelFragment.addView(levelGridLayout)
+            binding.levelFragment.addView(levelGridLayout.first)
         }
+        if (areColumnsDifferent) return
 
         askForReview(uiState.level.levelInfo.levelId)
 
@@ -148,6 +147,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             showTutorial()
         }
         activity?.reportFullyDrawn();
+        Log.d(TAG, "IS STILL DONE?")
     }
 
     private fun uiStateUpdater() {
@@ -165,6 +165,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                                 levelFragment.alpha = .2f
                             }
                             PLAY -> {
+                                Log.d(TAG, "PLAY: ${uiState.level.levelInfo}")
                                 activateBottomNavBar()
                                 progressCircular.visibility = View.GONE
                                 levelFragment.notClickable = false

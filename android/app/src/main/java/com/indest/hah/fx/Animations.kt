@@ -3,6 +3,7 @@ package com.indest.hah.fx
 import android.animation.*
 import android.content.Context
 import android.graphics.drawable.AnimationDrawable
+import android.util.Log
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
@@ -48,7 +49,7 @@ class Animations @Inject constructor(
             setEvaluator(ArgbEvaluator())
             duration = animationDuration
             this.addListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationStart(animation: Animator?) {
+                override fun onAnimationStart(animation: Animator) {
                     soundPlayer.playNote(index)
                     super.onAnimationStart(animation)
                 }
@@ -74,6 +75,7 @@ class Animations @Inject constructor(
     fun getCorrectSolutionAnimation(
         cells: MutableList<Cell<*, *>>,
     ): AnimatorSet {
+        Log.d("ANIMATIONS", "getCorrectSolutionAnimation")
         val animatorSet = AnimatorSet()
         val specialChars = ArrayList<Letter>()
         val letters = cells
@@ -167,6 +169,7 @@ class Animations @Inject constructor(
                 .with(letterAnimation)
                 .with(animations.last())
         }
+        Log.d("ANIMATIONS", "animatorSet: $animatorSet")
 
         return animatorSet
     }
