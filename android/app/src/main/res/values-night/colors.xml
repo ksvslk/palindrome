@@ -33,4 +33,6 @@
     <color name="textOnRewardedColor">#FFFFFF</color>
 
     <color name="progressBackgroundColor">#434343</color>
+
+    <color name="playerPackIndicatorColor">#A71DBE</color>
 </resources>

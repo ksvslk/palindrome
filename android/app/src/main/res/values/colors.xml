@@ -43,4 +43,6 @@
 
     <color name="playNewLevelColor">#00960F</color>
     <color name="playNewLevelTextColor">#333333</color>
+
+    <color name="playerPackIndicatorColor">#DA00FF</color>
 </resources>

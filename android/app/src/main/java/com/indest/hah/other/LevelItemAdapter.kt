@@ -77,7 +77,7 @@ class LevelItemAdapter(
                 }
         }
         currentLevel?.let {
-            if (it == levelNr) {
+            if (it == levelNr && !playerLevel) {
                 levelItemViewHolder.setIsRecyclable(false)
                 levelItemViewHolder.textView.text = currentLevelIcon
             }

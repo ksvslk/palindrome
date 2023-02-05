@@ -710,7 +710,7 @@ class MainActivity : AppCompatActivity(),
         binding.levelNumber.text =
             if (solutionsCount > 1) "${level.levelId-1000}* - ${level.author}" else "${level.levelId-1000} - ${level.author}"
         binding.gameProgress.progress =
-            (level.levelId.toFloat() / maxLevels.toFloat() * 100.0).toInt()
+            ((level.levelId-1000).toFloat() / maxLevels.toFloat() * 100.0).toInt()
     }
 
     private fun setLevelProgressIndicator(level: LevelData, solutionsCount: Int) {
