@@ -18,7 +18,7 @@ import com.indest.hah.views.Slot
 import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Inject
-import kotlin.math.abs
+import kotlin.math.min
 
 
 @ActivityScoped
@@ -30,8 +30,8 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         info: Level,
         layoutInflater: LayoutInflater,
         container: ViewGroup,
-        bottomNavHeight:Int
-    ): Triple<GridLayout, Triple<Int,Int,Int>, List<Int>> {
+        bottomNavHeight: Int
+    ): Triple<GridLayout, Triple<Int, Int, Int>, List<Int>> {
         val maxWordLength = info.solutions.first().palindrome.split(" ").maxBy { it.length }.length
         val densitySettings =
             getDensitySettings(maxWordLength, container, info, bottomNavHeight)
@@ -40,33 +40,30 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         addLetters(level, densitySettings, info, context)
         addBlanks(densitySettings.columnCount, level, layoutInflater)
         addSlots(info.solutions.first().palindrome, level, densitySettings, context)
-        return Triple(level, densitySettings.emptySpacesInTheEndChars, densitySettings.indexDifferences)
+        return Triple(
+            level,
+            densitySettings.emptySpacesInTheEndChars,
+            densitySettings.indexDifferences
+        )
     }
 
-   private fun getNewFriendIndexesForLetters(palindrome:String, oldColumnCount:Int, newColumnCount:Int, firstIndex:Int):List<Int>
-   {
-       if (oldColumnCount != -1 && oldColumnCount != newColumnCount) {
-
-       val oldList = getSolutionRows(palindrome, oldColumnCount)
-       val newList = getSolutionRows(palindrome, newColumnCount)
-       Log.d(TAG, "old count: ${oldList.count()}, new count: ${newList.count()}")
-        Log.d(TAG, "PALINDROME: $palindrome")
-       Log.d(TAG, "old start")
-           Log.d(TAG, "OLD: ${oldList.joinToString("")}")
-       Log.d(TAG, "NEW: ${newList.joinToString("")}")
-           val oldIndexToCharList = oldList.joinToString("").withIndex().filter { it.value != ' ' }
-           val newIndexToCharList = newList.joinToString("").withIndex().filter { it.value != ' ' }
-           Log.d(TAG, "indexes of old: $oldIndexToCharList")
-           Log.d(TAG, "indexes of new: $newIndexToCharList")
-           // val stuff = oldIndexToCharList.zip(newIndexToCharList) { index1, index2 -> index1.index - index2.index   }
-           Log.d(TAG, "FIRST INDEX: $firstIndex")
-           val stuff = newIndexToCharList.map { i -> firstIndex + i.index   }
-           Log.d(TAG, "indexes zipped (ACTUAL NEW INDEXES): $stuff")
-//  updateFriendIndexSub(letter.homeIndex, diff[index], level) -> MIDA VAJA?
-        return stuff
-       }
-       return emptyList()
-   }
+    private fun getNewFriendIndexesForLetters(
+        palindrome: String,
+        oldColumnCount: Int,
+        newColumnCount: Int,
+        firstIndex: Int
+    ): List<Int> {
+        if (oldColumnCount != -1 && oldColumnCount != newColumnCount) {
+            val oldList = getSolutionRows(palindrome, oldColumnCount)
+            val newList = getSolutionRows(palindrome, newColumnCount)
+            val oldIndexToCharList = oldList.joinToString("").withIndex().filter { it.value != ' ' }
+            val newIndexToCharList = newList.joinToString("").withIndex().filter { it.value != ' ' }
+            // val stuff = oldIndexToCharList.zip(newIndexToCharList) { index1, index2 -> index1.index - index2.index   }
+            val stuff = newIndexToCharList.map { i -> firstIndex + i.index }
+            return stuff
+        }
+        return emptyList()
+    }
 
     private fun getPuzzle(info: Level): String {
         return info.lettersProperties
@@ -93,43 +90,45 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         var boxSize = 1.00f
         val boxDecreaseRate = 1.05f
 
-        val widthGap = context.resources.getDimension(R.dimen._8sdp)
         val smallGap = context.resources.getDimensionPixelSize(R.dimen._2sdp)
         val intermediateGap = context.resources.getDimensionPixelSize(R.dimen._10sdp)
-        val perfectRatio = (container.width.toDouble() - widthGap) / (container.height.toDouble() - bottomNav)
 
-        val rowsCount = puzzleOnlyLetters.chunked(columns).count() + getSolutionRows(palindrome, columns).count()
-        var heightExceeded = isHeightLimitExceeded(container, rowsCount, boxSize, smallGap, intermediateGap, bottomNav)
-        var widthExceeded = isWidthLimitExceeded(container, columns, boxSize, smallGap, widthGap)
+        val usableWidth = container.width
+        val usableHeight = container.height - bottomNav
+        val widthAndHeight = Pair(usableWidth, usableHeight)
+        val rowsCount = puzzleOnlyLetters.chunked(columns).count() + getSolutionRows(
+            palindrome,
+            columns
+        ).count()
+        var heightExceeded = isHeightLimitExceeded(
+            widthAndHeight,
+            rowsCount,
+            boxSize,
+            smallGap,
+            intermediateGap,
+            bottomNav
+        )
+        var widthExceeded = isWidthLimitExceeded(widthAndHeight, columns, boxSize, smallGap)
 
-        while(!heightExceeded.first && !widthExceeded.first)
-        {
+        // Expand boxes as big as possible
+        while (!heightExceeded.first && !widthExceeded.first) {
             val potentialBoxSize = boxSize * boxDecreaseRate
-            val potentialColumns = columns + 1
-            val potentialRowsCount = puzzleOnlyLetters.chunked(potentialColumns).count() + getSolutionRows(palindrome, potentialColumns).count()
+            val potentialRowsCount = puzzleOnlyLetters.chunked(columns).count() + getSolutionRows(
+                palindrome,
+                columns
+            ).count()
+            val testWidth =
+                isWidthLimitExceeded(widthAndHeight, columns, potentialBoxSize, smallGap)
             val testHeight = isHeightLimitExceeded(
-                container,
+                widthAndHeight,
                 potentialRowsCount,
                 potentialBoxSize,
                 smallGap,
                 intermediateGap,
                 bottomNav
             )
-            val testWidth = isWidthLimitExceeded(container, potentialColumns, potentialBoxSize, smallGap, widthGap)
-            val widthChangedRatio = abs(testWidth.second.toDouble() / heightExceeded.second.toDouble() - perfectRatio)
-            val heightChangedRatio = abs(widthExceeded.second.toDouble() / testHeight.second.toDouble()- perfectRatio)
-            val widthHasMoreRoom = ((container.width - testWidth.second - widthGap) > (container.height - bottomNav - testHeight.second))
-
-            if (testWidth.first || testHeight.first ) break
-
-            if (widthChangedRatio <= heightChangedRatio && widthHasMoreRoom)
-            {
-                columns = potentialColumns
-                boxSize = potentialBoxSize
-                widthExceeded = testWidth
-                heightExceeded = testHeight
-            }
-            else  {
+            if (testWidth.first || testHeight.first) break
+            else {
                 boxSize = potentialBoxSize
                 heightExceeded = testHeight
                 widthExceeded = testWidth
@@ -137,13 +136,69 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
 
         }
 
+        // Put more columns to make the boxes even bigger
+        while (!heightExceeded.first && !widthExceeded.first) {
+            val potentialColumns = columns + 1
+            val potentialRowsCount =
+                puzzleOnlyLetters.chunked(potentialColumns).count() + getSolutionRows(
+                    palindrome,
+                    potentialColumns
+                ).count()
+            val testWidth =
+                isWidthLimitExceeded(widthAndHeight, potentialColumns, boxSize, smallGap)
+            val testHeight = isHeightLimitExceeded(
+                widthAndHeight,
+                potentialRowsCount,
+                boxSize,
+                smallGap,
+                intermediateGap,
+                bottomNav
+            )
+
+            if (testWidth.first || testHeight.first) break
+            // After column increase was possible we will check if this new column
+            // count will provide bigger boxes, if not we break and DO NOT increase columns
+            val potentialBoxSize = boxSize * boxDecreaseRate
+            val testWidth2 =
+                isWidthLimitExceeded(widthAndHeight, potentialColumns, potentialBoxSize, smallGap)
+            val testHeight2 = isHeightLimitExceeded(
+                widthAndHeight,
+                potentialRowsCount,
+                potentialBoxSize,
+                smallGap,
+                intermediateGap,
+                bottomNav
+            )
+            Log.d(TAG, "testWidth2: $testWidth2")
+            if (testWidth2.first || testHeight2.first || boxSize > potentialBoxSize) {
+                break
+            }
+            else {
+                Log.d(TAG, "There should be more width...")
+                Log.d(TAG, "Increase columns to: $columns")
+                Log.d(TAG, "Screen width columns to: ${context.resources.displayMetrics.widthPixels}")
+                Log.d(TAG, "Container usable width: ${widthAndHeight.first}")
+                Log.d(TAG, "Container old used width: ${widthExceeded.second}")
+                columns = potentialColumns
+                boxSize = potentialBoxSize
+                heightExceeded = testHeight2
+                widthExceeded = testWidth2
+                Log.d(TAG, "New box size: ${boxSize}")
+                Log.d(TAG, "New used width: ${widthExceeded.second}")
+
+            }
+
+        }
+
+
         var emptySlotsInTheEndNew = 0
         var emptySlotsInTheEndOld = 0
 
-        if (info.levelInfo.columnCount != -1)
-        {
+        if (info.levelInfo.columnCount != -1) {
             emptySlotsInTheEndNew = columns - puzzleOnlyLetters.chunked(columns).last().count()
-            emptySlotsInTheEndOld = info.levelInfo.columnCount - puzzleOnlyLetters.chunked(info.levelInfo.columnCount).last().count()
+            emptySlotsInTheEndOld =
+                info.levelInfo.columnCount - puzzleOnlyLetters.chunked(info.levelInfo.columnCount)
+                    .last().count()
         }
 
         val indexDifferences = getNewFriendIndexesForLetters(
@@ -153,38 +208,45 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
             firstIndex = puzzleOnlyLetters.count() + emptySlotsInTheEndNew + columns
         )
 
+        val maxBoxSize = context.resources.getDimension(R.dimen._50sdp)
+        val finalBoxSize = min(boxSize, maxBoxSize)
+
         return DensitySettings(
             columns,
-            boxSize.toInt(),
-            Triple(emptySlotsInTheEndOld, emptySlotsInTheEndNew, puzzleOnlyLetters.count() + emptySlotsInTheEndOld + info.levelInfo.columnCount),
+            finalBoxSize.toInt(),
+            Triple(
+                emptySlotsInTheEndOld,
+                emptySlotsInTheEndNew,
+                puzzleOnlyLetters.count() + emptySlotsInTheEndOld + info.levelInfo.columnCount
+            ),
             indexDifferences,
         )
     }
 
 
     private fun isHeightLimitExceeded(
-        container: ViewGroup,
+        widthAndHeight: Pair<Int, Int>,
         rowsCount: Int,
         boxSize: Float,
         smallGapBetweenLetters: Int,
         intermediateGap: Int,
-        bottomNavHeight:Int
+        bottomNavHeight: Int
     ): Pair<Boolean, Float> {
-        val usedHeight = (rowsCount * (boxSize + smallGapBetweenLetters)) + intermediateGap + boxSize + 2 * smallGapBetweenLetters + bottomNavHeight
-        return Pair((container.height - usedHeight) <= 0, usedHeight)
+        val usedHeight =
+            (rowsCount * (boxSize + smallGapBetweenLetters)) + intermediateGap + boxSize*2 + 3 * smallGapBetweenLetters
+        return Pair((widthAndHeight.second - usedHeight) <= 0, usedHeight)
     }
 
     private fun isWidthLimitExceeded(
-        container: ViewGroup,
+        widthAndHeight: Pair<Int, Int>,
         columns: Int,
         boxSize: Float,
-        smallGapBetweenLetters: Int,
-        widthGap:Float
+        smallGapBetweenLetters: Int
     ): Pair<Boolean, Float> {
-        val usedWidth = (columns * (boxSize + smallGapBetweenLetters) + boxSize + 2 * smallGapBetweenLetters + widthGap)
-        return Pair((container.width - usedWidth) <= 0, usedWidth)
+        val usedWidth =
+            (columns * (boxSize + smallGapBetweenLetters) + boxSize*2 + 3 * smallGapBetweenLetters)
+        return Pair((widthAndHeight.first - usedWidth) <= 0, usedWidth)
     }
-
 
     private fun addLetters(grid: GridLayout, ds: DensitySettings, info: Level, context: Context) {
         val puzzle = info.lettersProperties
@@ -273,7 +335,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
 
     private fun addBlanks(columnCount: Int, grid: GridLayout, layoutInflater: LayoutInflater) {
         for (i in 1..columnCount) {
-           layoutInflater.inflate(R.layout.space, grid)
+            layoutInflater.inflate(R.layout.space, grid)
         }
     }
 

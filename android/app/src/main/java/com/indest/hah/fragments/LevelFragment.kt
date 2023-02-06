@@ -77,7 +77,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     ): View {
         binding = LevelFragmentBinding.inflate(layoutInflater, container, false)
         activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-        binding.levelFragment.layoutTransition = animations.getLayoutTransition()
+        binding.levelFragment.layoutTransition = animations.getLayoutTransitionFade()
         return binding.root
     }
 

@@ -3,9 +3,11 @@ package com.indest.hah.fx
 import android.animation.*
 import android.content.Context
 import android.graphics.drawable.AnimationDrawable
+import android.transition.Transition
 import android.util.Log
 import android.view.View
 import android.view.animation.AccelerateInterpolator
+import android.view.animation.Animation
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import android.widget.TextView
@@ -192,8 +194,29 @@ class Animations @Inject constructor(
         scaleUp.interpolator = OvershootInterpolator(1.2f)
 
         val itemLayoutTransition = LayoutTransition()
-        itemLayoutTransition.setAnimator(LayoutTransition.APPEARING, scaleUp)
+        //itemLayoutTransition.setAnimator(LayoutTransition.APPEARING, scaleUp)
         itemLayoutTransition.setAnimator(LayoutTransition.DISAPPEARING, scaleDown)
+
+        return itemLayoutTransition
+    }
+
+    fun getLayoutTransitionFade(): LayoutTransition {
+        val fadeOut: Animator = ObjectAnimator.ofPropertyValuesHolder(
+            null as Any?,
+            PropertyValuesHolder.ofFloat(View.ALPHA, 1f, 0f)
+        )
+        fadeOut.duration = 300
+        fadeOut.interpolator = DecelerateInterpolator()
+        val fadeIn: Animator = ObjectAnimator.ofPropertyValuesHolder(
+            null as Any?,
+            PropertyValuesHolder.ofFloat(View.ALPHA, 0f, 1f)
+        )
+        fadeIn.duration = 300
+        fadeIn.interpolator = AccelerateInterpolator()
+
+        val itemLayoutTransition = LayoutTransition()
+        itemLayoutTransition.setAnimator(LayoutTransition.APPEARING, fadeIn)
+        itemLayoutTransition.setAnimator(LayoutTransition.DISAPPEARING, fadeOut)
 
         return itemLayoutTransition
     }
