@@ -76,25 +76,11 @@ interface LevelDao {
     suspend fun changeColumnCount(level: Int, newColumnCount:Int)
 
     @Transaction
-    suspend fun changeFriendIndexesBasedOnColumnCount(level: Int, columnCount:Int, letters:List<LetterProperties>, diff:List<Int>, startingIndex:Int, )
+    suspend fun changeFriendIndexesBasedOnColumnCount(level: Int, columnCount:Int, letters:List<LetterProperties>, homeIndexNewFriendIndexes:List<Pair<Int,Int>>)
     {
+        homeIndexNewFriendIndexes.forEach {
+            updateFriendIndexSub(it.first, it.second, level)
 
-        Log.d("DAO", "Letters: " + "${letters.map { "${it.letter}: Home: ${it.homeIndex}, Friend: ${it.friendIndex}"}}")
-
-        // seal kus home index == ? muuda friend index ?
-
-        // kustkohast me teame kas homeIndexit või asukohta solutionis (0, 1, 2)
-        // me teame homeIndexit pigem kusagilt
-
-
-        letters.forEachIndexed { index, letter ->
-            Log.d("DAO", "INDEX: $index")
-            if (letter.friendIndex != -666)
-            {
-                Log.d("DAO", "Index: $index")
-                Log.d("DAO", "Changing letter with friend index ${letter.friendIndex} (${letter.letter}) friend index to ${diff[index]}" )
-                updateFriendIndexSub(letter.homeIndex, diff[index], level)
-            }
         }
         changeColumnCount(level, columnCount)
     }

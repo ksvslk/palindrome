@@ -117,10 +117,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             {
                 viewModel.changeFriendIndexesBasedOnColumnCount(
                     levelGridLayout.first.columnCount,
-                    levelGridLayout.second.first,
-                    levelGridLayout.second.second,
-                    levelGridLayout.third,
-                    levelGridLayout.second.third,
+                    levelGridLayout.second
                 )
                 return@launch
             }
@@ -384,9 +381,11 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             isBookMode = uiState.bookMode,
             textSize = MessageSnackBar.Companion.TextSize.SMALL,
         )
+        /*
         val tapToContinueAnimation = animations.getContinueAnimation(continueMessage)
         allAnimations.add(tapToContinueAnimation)
         tapToContinueAnimation.start()
+         */
 
         continueMessage.view.setOnClickListener {
             if (isVisible) {

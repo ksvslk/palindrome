@@ -31,39 +31,63 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         layoutInflater: LayoutInflater,
         container: ViewGroup,
         bottomNavHeight: Int
-    ): Triple<GridLayout, Triple<Int, Int, Int>, List<Int>> {
+    ): Pair<GridLayout, List<Pair<Int,Int>>> {
         val maxWordLength = info.solutions.first().palindrome.split(" ").maxBy { it.length }.length
         val densitySettings =
             getDensitySettings(maxWordLength, container, info, bottomNavHeight)
         val level = layoutInflater.inflate(R.layout.grid, container, false) as GridLayout
         level.columnCount = densitySettings.columnCount
+        getUpdatedLevelWithPossiblyNewColumnCount(info, level.columnCount)
         addLetters(level, densitySettings, info, context)
         addBlanks(densitySettings.columnCount, level, layoutInflater)
         addSlots(info.solutions.first().palindrome, level, densitySettings, context)
-        return Triple(
+        return Pair(
             level,
-            densitySettings.emptySpacesInTheEndChars,
-            densitySettings.indexDifferences
+            densitySettings.homeIndexNewFriendIndexes
         )
     }
 
-    private fun getNewFriendIndexesForLetters(
-        palindrome: String,
-        oldColumnCount: Int,
-        newColumnCount: Int,
-        firstIndex: Int
-    ): List<Int> {
-        if (oldColumnCount != -1 && oldColumnCount != newColumnCount) {
-            val oldList = getSolutionRows(palindrome, oldColumnCount)
+
+    private fun getUpdatedLevelWithPossiblyNewColumnCount(info: Level, newColumnCount: Int):MutableList<Pair<Int,Int>>
+    {
+        val newFriendIndexesForHomes = mutableListOf<Pair<Int,Int>>()
+
+        if (info.levelInfo.columnCount != -1 && info.levelInfo.columnCount != newColumnCount) {
+            val palindrome = info.solutions.first().palindrome
+            val puzzleOnlyLetters = getPuzzle(info)
+            val puzzleOnlyCount = puzzleOnlyLetters.count()
+            val emptySlotsInTheEndNew =
+                newColumnCount - puzzleOnlyLetters.chunked(newColumnCount).last().count()
+            val emptySlotsInTheEndOld =
+                    info.levelInfo.columnCount - puzzleOnlyLetters.chunked(info.levelInfo.columnCount).last().count()
+            val firstIndexForNewColumnsCount = puzzleOnlyCount + emptySlotsInTheEndNew + newColumnCount
+            val firstIndexForOldColumnsCount = puzzleOnlyCount + emptySlotsInTheEndOld + info.levelInfo.columnCount
+            val oldList = getSolutionRows(palindrome, info.levelInfo.columnCount)
             val newList = getSolutionRows(palindrome, newColumnCount)
-            val oldIndexToCharList = oldList.joinToString("").withIndex().filter { it.value != ' ' }
             val newIndexToCharList = newList.joinToString("").withIndex().filter { it.value != ' ' }
-            // val stuff = oldIndexToCharList.zip(newIndexToCharList) { index1, index2 -> index1.index - index2.index   }
-            val stuff = newIndexToCharList.map { i -> firstIndex + i.index }
-            return stuff
+            val oldIndexToCharList = oldList.joinToString("").withIndex().filter { it.value != ' ' }
+            val newIndexes = newIndexToCharList.map { i -> firstIndexForNewColumnsCount + i.index }
+            val oldIndexes = oldIndexToCharList.map { i -> firstIndexForOldColumnsCount + i.index }
+
+
+            //TODO: Change the friend indexes for all letters to take into account
+            // the column difference. Also locked value should be set.
+            // 1. Home index stays the same and is always in the range from 0..X
+            Log.d(TAG, "newIndexes: $newIndexes, size: ${newIndexes.size}")
+            Log.d(TAG, "oldIndexes: $oldIndexes, size: ${oldIndexes.size}")
+
+            info.lettersProperties.filter {it.friendIndex != -666 }.forEach {
+                Log.d(TAG, "Letter with home index: ${it.homeIndex} has friend ${it.friendIndex}.")
+                val g = oldIndexes.indexOf(oldIndexes.first { nr -> nr == it.friendIndex })
+                val readjustedHome = Pair(it.homeIndex, newIndexes.get(g))
+                newFriendIndexesForHomes.add(Pair(it.homeIndex, newIndexes.get(g)))
+                Log.d(TAG, "Letter with home index: ${it.homeIndex} should now have a friend ${readjustedHome.second}.")
+            }
+            return newFriendIndexesForHomes
         }
-        return emptyList()
+        return mutableListOf()
     }
+
 
     private fun getPuzzle(info: Level): String {
         return info.lettersProperties
@@ -169,43 +193,20 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                 intermediateGap,
                 bottomNav
             )
-            Log.d(TAG, "testWidth2: $testWidth2")
             if (testWidth2.first || testHeight2.first || boxSize > potentialBoxSize) {
                 break
             }
             else {
-                Log.d(TAG, "There should be more width...")
-                Log.d(TAG, "Increase columns to: $columns")
-                Log.d(TAG, "Screen width columns to: ${context.resources.displayMetrics.widthPixels}")
-                Log.d(TAG, "Container usable width: ${widthAndHeight.first}")
-                Log.d(TAG, "Container old used width: ${widthExceeded.second}")
                 columns = potentialColumns
                 boxSize = potentialBoxSize
                 heightExceeded = testHeight2
                 widthExceeded = testWidth2
-                Log.d(TAG, "New box size: ${boxSize}")
-                Log.d(TAG, "New used width: ${widthExceeded.second}")
-
             }
-
         }
 
-
-        var emptySlotsInTheEndNew = 0
-        var emptySlotsInTheEndOld = 0
-
-        if (info.levelInfo.columnCount != -1) {
-            emptySlotsInTheEndNew = columns - puzzleOnlyLetters.chunked(columns).last().count()
-            emptySlotsInTheEndOld =
-                info.levelInfo.columnCount - puzzleOnlyLetters.chunked(info.levelInfo.columnCount)
-                    .last().count()
-        }
-
-        val indexDifferences = getNewFriendIndexesForLetters(
-            palindrome = palindrome,
-            oldColumnCount = info.levelInfo.columnCount,
+        val homeIndexNewFriendIndexes = getUpdatedLevelWithPossiblyNewColumnCount(
+            info = info,
             newColumnCount = columns,
-            firstIndex = puzzleOnlyLetters.count() + emptySlotsInTheEndNew + columns
         )
 
         val maxBoxSize = context.resources.getDimension(R.dimen._50sdp)
@@ -214,12 +215,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         return DensitySettings(
             columns,
             finalBoxSize.toInt(),
-            Triple(
-                emptySlotsInTheEndOld,
-                emptySlotsInTheEndNew,
-                puzzleOnlyLetters.count() + emptySlotsInTheEndOld + info.levelInfo.columnCount
-            ),
-            indexDifferences,
+            homeIndexNewFriendIndexes,
         )
     }
 

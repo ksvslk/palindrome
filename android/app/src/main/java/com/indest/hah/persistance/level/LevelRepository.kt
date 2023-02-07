@@ -18,8 +18,8 @@ class LevelRepository @Inject constructor(
         levelDao.init()
     }
 
-    suspend fun changeFriendIndexesBasedOnColumnCount(level: Int, columnCount:Int, letters:List<LetterProperties>, diff:List<Int>, startingIndex:Int) {
-        levelDao.changeFriendIndexesBasedOnColumnCount(level, columnCount, letters, diff,startingIndex)
+    suspend fun changeFriendIndexesBasedOnColumnCount(level: Int, columnCount:Int, letters:List<LetterProperties>, homeIndexNewFriendIndexes:List<Pair<Int,Int>>) {
+        levelDao.changeFriendIndexesBasedOnColumnCount(level, columnCount, letters, homeIndexNewFriendIndexes)
     }
 
 

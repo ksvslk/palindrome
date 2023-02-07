@@ -106,27 +106,18 @@ class LevelViewModel @Inject constructor(
         _competitionStatus.value = competitionAnnouncement
     }
 
-    suspend fun changeFriendIndexesBasedOnColumnCount(newColumnCount: Int, emptySpacesInTheOld: Int, emptySpacesInTheNew: Int, indexDifferences: List<Int>, oldFirstIndex:Int) {
+    suspend fun changeFriendIndexesBasedOnColumnCount(newColumnCount:Int, homeIndexNewFriendIndexes: List<Pair<Int,Int>>) {
         setUiStateWhenOnPause()
-        val oldColumnCount = _uiState.value.level.levelInfo.columnCount
-        if (emptySpacesInTheOld == -1)
+        if (_currentLevel.value.levelInfo.columnCount == -1)
         {
             levelRepository.changeColumnCount( _uiState.value.level.levelInfo.levelId, newColumnCount)
         }
-        else if (newColumnCount != oldColumnCount) {
-            val emptySpacesInTheOldPlusoldColumnCount = emptySpacesInTheOld + oldColumnCount
-            val emptySpacesInTheNewPLusnewColumnCount = emptySpacesInTheNew + newColumnCount
-            Log.d(TAG, "emptySpacesInTheOldPlusoldColumnCount: $emptySpacesInTheOldPlusoldColumnCount")
-            Log.d(TAG, "emptySpacesInTheNewPLusnewColumnCount: $emptySpacesInTheNewPLusnewColumnCount")
-            val extraDifference = emptySpacesInTheOldPlusoldColumnCount - emptySpacesInTheNewPLusnewColumnCount
-            Log.d(TAG, "OLD FIRST INDEX: $oldFirstIndex")
-           if (indexDifferences.isNotEmpty()) Log.d(TAG, "NEW FIRST INDEX: ${indexDifferences[0]}")
+        else {
           levelRepository.changeFriendIndexesBasedOnColumnCount(
                 _uiState.value.level.levelInfo.levelId,
                 newColumnCount,
              _currentLevel.value.lettersProperties,
-             indexDifferences,
-              extraDifference
+              homeIndexNewFriendIndexes
             )
         }
     }
@@ -439,6 +430,7 @@ class LevelViewModel @Inject constructor(
     fun executeLevelCompleteActionsFinal() {
         _uiState.value = _uiState.value.copy(state = PAUSED)
         val levelNr = _currentLevel.value.levelInfo.levelId
+        Log.d(TAG, "executeLevelCompleteActionsFinal with level nr: $levelNr")
         val hintInterval = getApplication<Application>().getString(R.string.hint_suggestion)
         viewModelScope.launch {
             levelRepository.executeLevelCompleteTransactionFinal(levelNr, hintInterval)
