@@ -95,24 +95,15 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
     private fun displayLevel(uiState: UiState) {
         binding.levelFragment.removeAllViews()
-        Log.d(TAG, "displayLevel: ${uiState.level.levelInfo.levelId}")
-
-        Log.d(TAG, "Current column count: ${uiState.level.levelInfo.columnCount}")
-        val bottom = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavView)
-        val margin = bottom.height
-
         val levelGridLayout = levelCreator.getLevel(
             uiState.level,
             layoutInflater,
-            binding.levelFragment,
-            margin
+            binding.levelFragment
         )
-        Log.d(TAG, "New column count: ${levelGridLayout.first.columnCount}")
         val areColumnsDifferent = uiState.level.levelInfo.columnCount != levelGridLayout.first.columnCount
 
         lifecycleScope.launch(Dispatchers.Main)
         {
-            Log.d(TAG, "Columns before changing friends: ${uiState.level.levelInfo.columnCount}")
             if (areColumnsDifferent)
             {
                 viewModel.changeFriendIndexesBasedOnColumnCount(
@@ -121,10 +112,8 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                 )
                 return@launch
             }
-            Log.d(TAG,"After: ${viewModel.currentLevel.value.lettersProperties.joinToString()}")
             levelGridLayout.first.children.filterIsInstance<Cell<*, *>>().toMutableList().apply {
                 levelGridLayout.first.doOnPreDraw {
-                    Log.d(TAG, "COLUMNS WHEN GOING TO CELL-DIRECTOR: ${viewModel.currentLevel.value.levelInfo.columnCount}")
                     cellDirector = CellDirector(
                         this,
                         viewModel
@@ -144,7 +133,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             showTutorial()
         }
         activity?.reportFullyDrawn();
-        Log.d(TAG, "IS STILL DONE?")
     }
 
     private fun uiStateUpdater() {

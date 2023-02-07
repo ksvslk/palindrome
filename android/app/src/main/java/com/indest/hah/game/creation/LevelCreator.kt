@@ -29,12 +29,11 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
     fun getLevel(
         info: Level,
         layoutInflater: LayoutInflater,
-        container: ViewGroup,
-        bottomNavHeight: Int
+        container: ViewGroup
     ): Pair<GridLayout, List<Pair<Int,Int>>> {
         val maxWordLength = info.solutions.first().palindrome.split(" ").maxBy { it.length }.length
         val densitySettings =
-            getDensitySettings(maxWordLength, container, info, bottomNavHeight)
+            getDensitySettings(maxWordLength, container, info)
         val level = layoutInflater.inflate(R.layout.grid, container, false) as GridLayout
         level.columnCount = densitySettings.columnCount
         getUpdatedLevelWithPossiblyNewColumnCount(info, level.columnCount)
@@ -47,7 +46,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         )
     }
 
-
+    // TODO: optimize a bit
     private fun getUpdatedLevelWithPossiblyNewColumnCount(info: Level, newColumnCount: Int):MutableList<Pair<Int,Int>>
     {
         val newFriendIndexesForHomes = mutableListOf<Pair<Int,Int>>()
@@ -64,24 +63,19 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
             val firstIndexForOldColumnsCount = puzzleOnlyCount + emptySlotsInTheEndOld + info.levelInfo.columnCount
             val oldList = getSolutionRows(palindrome, info.levelInfo.columnCount)
             val newList = getSolutionRows(palindrome, newColumnCount)
-            val newIndexToCharList = newList.joinToString("").withIndex().filter { it.value != ' ' }
-            val oldIndexToCharList = oldList.joinToString("").withIndex().filter { it.value != ' ' }
-            val newIndexes = newIndexToCharList.map { i -> firstIndexForNewColumnsCount + i.index }
-            val oldIndexes = oldIndexToCharList.map { i -> firstIndexForOldColumnsCount + i.index }
-
-
-            //TODO: Change the friend indexes for all letters to take into account
-            // the column difference. Also locked value should be set.
-            // 1. Home index stays the same and is always in the range from 0..X
-            Log.d(TAG, "newIndexes: $newIndexes, size: ${newIndexes.size}")
-            Log.d(TAG, "oldIndexes: $oldIndexes, size: ${oldIndexes.size}")
-
+            val newIndexes = newList
+                .joinToString("")
+                .withIndex()
+                .filter { it.value != ' ' }
+                .map { i -> firstIndexForNewColumnsCount + i.index }
+            val oldIndexes = oldList
+                .joinToString("")
+                .withIndex()
+                .filter { it.value != ' ' }
+                .map { i -> firstIndexForOldColumnsCount + i.index }
             info.lettersProperties.filter {it.friendIndex != -666 }.forEach {
-                Log.d(TAG, "Letter with home index: ${it.homeIndex} has friend ${it.friendIndex}.")
                 val g = oldIndexes.indexOf(oldIndexes.first { nr -> nr == it.friendIndex })
-                val readjustedHome = Pair(it.homeIndex, newIndexes.get(g))
-                newFriendIndexesForHomes.add(Pair(it.homeIndex, newIndexes.get(g)))
-                Log.d(TAG, "Letter with home index: ${it.homeIndex} should now have a friend ${readjustedHome.second}.")
+                newFriendIndexesForHomes.add(Pair(it.homeIndex, newIndexes[g]))
             }
             return newFriendIndexesForHomes
         }
@@ -100,13 +94,9 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
     private fun getDensitySettings(
         maxWordLength: Int,
         container: ViewGroup,
-        info: Level,
-        bottomNav: Int
+        info: Level
     ): DensitySettings {
-        var columns =
-            if (maxWordLength > context.resources.getInteger(R.integer.defaultColumnsCount))
-                maxWordLength
-            else context.resources.getInteger(R.integer.defaultColumnsCount)
+        var columns = maxWordLength
 
         val puzzleOnlyLetters = getPuzzle(info)
         val palindrome = info.solutions.first().palindrome
@@ -118,7 +108,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         val intermediateGap = context.resources.getDimensionPixelSize(R.dimen._10sdp)
 
         val usableWidth = container.width
-        val usableHeight = container.height - bottomNav
+        val usableHeight = container.height
         val widthAndHeight = Pair(usableWidth, usableHeight)
         val rowsCount = puzzleOnlyLetters.chunked(columns).count() + getSolutionRows(
             palindrome,
@@ -129,8 +119,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
             rowsCount,
             boxSize,
             smallGap,
-            intermediateGap,
-            bottomNav
+            intermediateGap
         )
         var widthExceeded = isWidthLimitExceeded(widthAndHeight, columns, boxSize, smallGap)
 
@@ -148,8 +137,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                 potentialRowsCount,
                 potentialBoxSize,
                 smallGap,
-                intermediateGap,
-                bottomNav
+                intermediateGap
             )
             if (testWidth.first || testHeight.first) break
             else {
@@ -175,8 +163,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                 potentialRowsCount,
                 boxSize,
                 smallGap,
-                intermediateGap,
-                bottomNav
+                intermediateGap
             )
 
             if (testWidth.first || testHeight.first) break
@@ -190,8 +177,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                 potentialRowsCount,
                 potentialBoxSize,
                 smallGap,
-                intermediateGap,
-                bottomNav
+                intermediateGap
             )
             if (testWidth2.first || testHeight2.first || boxSize > potentialBoxSize) {
                 break
@@ -209,8 +195,10 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
             newColumnCount = columns,
         )
 
-        val maxBoxSize = context.resources.getDimension(R.dimen._50sdp)
+        val maxBoxSize = context.resources.getDimension(R.dimen.max_box_size)
         val finalBoxSize = min(boxSize, maxBoxSize)
+
+        Log.d(TAG, "TAKE THE SMALLEST FROM: boxSize: ${boxSize} and maxBoxSize:${maxBoxSize}")
 
         return DensitySettings(
             columns,
@@ -225,8 +213,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         rowsCount: Int,
         boxSize: Float,
         smallGapBetweenLetters: Int,
-        intermediateGap: Int,
-        bottomNavHeight: Int
+        intermediateGap: Int
     ): Pair<Boolean, Float> {
         val usedHeight =
             (rowsCount * (boxSize + smallGapBetweenLetters)) + intermediateGap + boxSize*2 + 3 * smallGapBetweenLetters

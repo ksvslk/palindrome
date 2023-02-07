@@ -33,14 +33,8 @@ class LevelRepository @Inject constructor(
         return levelDao.insertPlayerLevels(playerLevels)
     }
 
-    // REFACTOR
     suspend fun updateFriendIndex(homeIndex: Int, newFriendIndex: Int, level: Int): String {
         return levelDao.updateFriendIndex(homeIndex, newFriendIndex, level)
-    }
-
-    suspend fun updateOneFriendIndex(homeIndex: Int, newFriendIndex: Int, level: Int)
-    {
-        levelDao.updateFriendIndexSub(homeIndex,newFriendIndex,level)
     }
 
     suspend fun setLetterLocked(homeIndex: Int, level: Int) {

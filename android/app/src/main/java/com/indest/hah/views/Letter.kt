@@ -3,9 +3,12 @@ package com.indest.hah.views
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
+import android.os.Build
+import android.os.VibrationEffect
 import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
 import android.view.View
+import android.view.View.HAPTIC_FEEDBACK_ENABLED
 import android.view.View.OnTouchListener
 import com.indest.hah.other.C.NEUTRAL_LAYER
 import dagger.hilt.android.AndroidEntryPoint
@@ -50,7 +53,11 @@ class Letter @Inject constructor(
                     ), true
                 )
             ) {
-                performHapticFeedback(constant)
+                if (Build.VERSION.SDK_INT >= 33) {
+                    performHapticFeedback(constant)
+                } else {
+                    performHapticFeedback(constant, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING)
+                }
             }
         }
     }
@@ -60,7 +67,6 @@ class Letter @Inject constructor(
             when (e.action) {
                 MotionEvent.ACTION_DOWN -> {
                     if (state == LetterState.HOME) {
-                        //effects.addShortVibration()
                         addHapticFeedback(
                             HapticFeedbackConstants.TEXT_HANDLE_MOVE
                         )

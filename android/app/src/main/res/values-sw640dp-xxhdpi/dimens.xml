@@ -9,4 +9,8 @@
     <dimen name="other_message_size">3sp</dimen>
     <dimen name="cell_container_width">@dimen/_30sdp</dimen>
 
+
+    <dimen name="max_box_size">@dimen/_24sdp</dimen>
+
+
 </resources>

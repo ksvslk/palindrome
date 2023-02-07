@@ -28,4 +28,7 @@
 
     <dimen name="cell_container_width">@dimen/_4sdp</dimen>
 
+    <dimen name="max_box_size">@dimen/_37sdp</dimen>
+
+
 </resources>

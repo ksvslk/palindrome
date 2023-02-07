@@ -7,4 +7,8 @@
     <dimen name="simple_dialog_divider_margin">@dimen/_10sdp</dimen>
     <dimen name="cell_container_width">@dimen/_30sdp</dimen>
 
+
+    <dimen name="max_box_size">@dimen/_25sdp</dimen>
+
+
 </resources>

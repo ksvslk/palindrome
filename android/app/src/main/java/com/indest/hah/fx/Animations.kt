@@ -78,6 +78,7 @@ class Animations @Inject constructor(
         cells: MutableList<Cell<*, *>>,
     ): AnimatorSet {
         Log.d("ANIMATIONS", "getCorrectSolutionAnimation")
+
         val animatorSet = AnimatorSet()
         val specialChars = ArrayList<Letter>()
         val letters = cells
@@ -98,6 +99,7 @@ class Animations @Inject constructor(
 
         for (i in 0 until count) {
             val animations = animatorSet.childAnimations
+
             val letterAhead = letters[i]
             val letterBehind = letters[letters.size - 1 - i]
 
@@ -135,6 +137,7 @@ class Animations @Inject constructor(
             }
         }
 
+
         if (odd) {
             val animations = animatorSet.childAnimations
             val letter = letters[count]
@@ -169,9 +172,8 @@ class Animations @Inject constructor(
             animatorSet
                 .play(letterTextAnimation)
                 .with(letterAnimation)
-                .with(animations.last())
+                .after(animations.last())
         }
-        Log.d("ANIMATIONS", "animatorSet: $animatorSet")
 
         return animatorSet
     }
@@ -201,12 +203,12 @@ class Animations @Inject constructor(
     }
 
     fun getLayoutTransitionFade(): LayoutTransition {
-        val fadeOut: Animator = ObjectAnimator.ofPropertyValuesHolder(
+   /*     val fadeOut: Animator = ObjectAnimator.ofPropertyValuesHolder(
             null as Any?,
             PropertyValuesHolder.ofFloat(View.ALPHA, 1f, 0f)
         )
         fadeOut.duration = 300
-        fadeOut.interpolator = DecelerateInterpolator()
+        fadeOut.interpolator = DecelerateInterpolator()*/
         val fadeIn: Animator = ObjectAnimator.ofPropertyValuesHolder(
             null as Any?,
             PropertyValuesHolder.ofFloat(View.ALPHA, 0f, 1f)
@@ -216,7 +218,7 @@ class Animations @Inject constructor(
 
         val itemLayoutTransition = LayoutTransition()
         itemLayoutTransition.setAnimator(LayoutTransition.APPEARING, fadeIn)
-        itemLayoutTransition.setAnimator(LayoutTransition.DISAPPEARING, fadeOut)
+        //itemLayoutTransition.setAnimator(LayoutTransition.DISAPPEARING, fadeOut)
 
         return itemLayoutTransition
     }
