@@ -36,6 +36,7 @@ import androidx.window.layout.WindowMetricsCalculator
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkRequest
 import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.gms.games.AuthenticationResult
 import com.google.android.gms.games.GamesSignInClient
 import com.google.android.gms.games.PlayGames
@@ -147,6 +148,7 @@ class MainActivity : AppCompatActivity(),
                 levelViewModel.currentlySignedInPlayerName = mTask.result.displayName
             }
         }
+        requestLatestConsentInformation()
 
         MobileAds.initialize(applicationContext) {
         }
@@ -158,7 +160,6 @@ class MainActivity : AppCompatActivity(),
         progressBarUpdater()
         collectRewardInfo()
         collectVariousEvents()
-        requestLatestConsentInformation()
         collectPlayerLevels()
 
         lifecycleScope.launch {
@@ -477,7 +478,7 @@ class MainActivity : AppCompatActivity(),
     private fun requestLatestConsentInformation() {
         // Set tag for underage of consent. false means users are not underage.
         val params = ConsentRequestParameters.Builder()
-            .setTagForUnderAgeOfConsent(false)
+            .setTagForUnderAgeOfConsent(true)
             .build()
 
         consentInformation = UserMessagingPlatform.getConsentInformation(applicationContext)

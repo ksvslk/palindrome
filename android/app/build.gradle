@@ -3,7 +3,7 @@ plugins {
     id 'kotlin-android'
     id 'dagger.hilt.android.plugin'
     id 'kotlin-kapt'
-    id 'org.jetbrains.kotlin.plugin.serialization' version '1.7.0'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.8.10'
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
 }
@@ -61,6 +61,7 @@ android {
             buildConfigField "String", "GIT_HASH", getGitHash()
             signingConfig signingConfigs.debug
             matchingFallbacks = ['instantRelease']
+            proguardFiles("benchmark-rules.pro.txt")
             debuggable false
         }
     }
@@ -82,9 +83,12 @@ android {
     }
 
     compileOptions {
+        coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+
     kotlinOptions {
         jvmTarget = '1.8'
         freeCompilerArgs += [
@@ -125,21 +129,21 @@ dependencies {
     def google_play_services_auth_version = '20.4.1'
     def gridlayout_version = '1.0.0'
     def constraintlayout_version = '2.1.4'
-    def material_version = '1.6.1'
-    def appcompat_version = '1.4.2'
+    def material_version = '1.8.0'
+    def appcompat_version = '1.6.0'
     def androidx_core_version = '1.9.0'
     def junit_version = '4.13.2'
     def espresso_core_version = '3.4.0'
     def coroutines_test_version = '1.5.2'
     def hilt_work_version = '1.0.0'
-    def fragment_version = '1.4.1'
-    def nav_version = '2.4.2'
-    def lifecycle_version = '2.4.1'
+    def fragment_version = '1.5.5'
+    def nav_version = '2.5.3'
+    def lifecycle_version = '2.5.1'
     def lifecycle_runtime_ktx = '2.4.1'
     def sdp_version = '1.0.6'
     def ssp_version = '1.0.6'
     def window_manager_version = '1.0.0'
-    def ads_version = '21.4.0'
+    def ads_version = '21.5.0'
     def billing_version = '4.1.0'
     def konfetti_version = '2.0.1'
     def kotlinx_serialization = '1.3.3'
@@ -147,9 +151,11 @@ dependencies {
     def play_core_ktx = "1.8.1"
     def startup_runtime = "1.1.1"
 
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.2.2")
+
+
     implementation "androidx.startup:startup-runtime:$startup_runtime"
     implementation "androidx.collection:collection-ktx:$androidx_collection"
-  //  implementation "com.google.firebase:firebase-appcheck-safetynet:$firebase_appcheck"
 
     implementation platform("com.google.firebase:firebase-bom:$firebase_version")
     implementation 'com.google.firebase:firebase-appcheck-debug:16.1.1' // only one needed to specify version because in beta
@@ -182,7 +188,7 @@ dependencies {
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
 
-    implementation "androidx.profileinstaller:profileinstaller:1.2.0-rc01"
+    implementation "androidx.profileinstaller:profileinstaller:1.2.2"
     implementation "androidx.window:window:$window_manager_version"
     implementation "com.google.android.play:core-ktx:$play_core_ktx"
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
@@ -209,13 +215,13 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_core_version"
     androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_test_version"
 }
-/*
+
 tasks.register('copyReleaseFilesToOneDirectory', Copy) {
     from layout.buildDirectory.file("outputs/bundle/instantRelease/app-instant-release.aab"),layout.buildDirectory.file("outputs/bundle/regularRelease/app-regular-release.aab")
     into layout.buildDirectory.dir("outputs/bundle/")
 }
 tasks.findByName('copyReleaseFilesToOneDirectory').mustRunAfter ':app:bundleRelease'
 tasks.findByName('copyReleaseFilesToOneDirectory').dependsOn(':app:bundleRelease')
-*/
+
 
 apply plugin: 'com.google.gms.google-services'

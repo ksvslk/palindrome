@@ -745,7 +745,7 @@ class LevelViewModel @Inject constructor(
     }
 
     suspend fun collectPlayerLevels() {
-        if (levelRepository.getMaxLevelId() > 1000) return
+/*        if (levelRepository.getMaxLevelId() > 1000) return
         val levelAndCount = insertPlayerLevels(debugPlayerLevels())
         Log.d(TAG, "levelAndCount: $levelAndCount")
         if (levelAndCount.second > 0) {
@@ -755,7 +755,7 @@ class LevelViewModel @Inject constructor(
                 ""
             ) else Triple(levelAndCount.first.levelId, 1, levelAndCount.first.author)
         }
-        return
+        return*/
         liveStoreRegistration?.remove()
         val maxLevelId = getMaxLevelId()
         val query = fsDb.collection("user_submitted_levels")

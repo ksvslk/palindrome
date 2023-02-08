@@ -20,6 +20,7 @@ import dagger.hilt.android.scopes.ActivityScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -33,6 +34,7 @@ class SnapshotHelper @Inject constructor() {
     private val MY_RESOLUTION_POLICY = RESOLUTION_POLICY_MOST_RECENTLY_MODIFIED
 
     suspend fun save(activity: Activity, saveGame: SaveGame) = withContext(Dispatchers.Default) {
+        //if (activity.isActivityTransitionRunning)
         val snapshotsClient = PlayGames.getSnapshotsClient(activity)
 
         Log.d(TAG, "Trying to save game..")
@@ -147,7 +149,7 @@ class SnapshotHelper @Inject constructor() {
     }
 
     fun gameToBytes(saveGame: SaveGame): ByteArray {
-        Log.v(TAG,"save game: ${Json.encodeToString(saveGame)}")
+        //Log.d(TAG,"save game: ${Json.encodeToString(saveGame)}")
         return Json.encodeToString(saveGame).toByteArray()
     }
 

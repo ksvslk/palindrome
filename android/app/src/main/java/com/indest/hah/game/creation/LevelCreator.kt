@@ -46,7 +46,6 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         )
     }
 
-    // TODO: optimize a bit
     private fun getUpdatedLevelWithPossiblyNewColumnCount(info: Level, newColumnCount: Int):MutableList<Pair<Int,Int>>
     {
         val newFriendIndexesForHomes = mutableListOf<Pair<Int,Int>>()

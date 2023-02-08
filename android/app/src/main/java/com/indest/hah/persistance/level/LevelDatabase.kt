@@ -26,17 +26,13 @@ data class LevelInfo(val nr: Int, val solutionToCategory:Map<String,String>)
 
 @Database(
     entities = [LevelData::class, LetterProperties::class, Interval::class, Solution::class],
-    version = 4,
+    version = 3,
     autoMigrations = [
         AutoMigration (
             from = 1,
             to = 2,
             spec = LevelDatabase.MyAutoMigration::class
-        ),
-        AutoMigration (
-            from = 2,
-            to = 3
-        ),
+        )
     ],
     exportSchema = true
 )
@@ -85,7 +81,7 @@ abstract class LevelDatabase : RoomDatabase() {
 
     companion object {
 
-        private val MIGRATION_3_4 = object : Migration(3, 4) {
+        private val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 try{
                     database.execSQL("ALTER TABLE level_info_table ADD COLUMN column_count INTEGER NOT NULL DEFAULT 7")
@@ -93,7 +89,7 @@ abstract class LevelDatabase : RoomDatabase() {
                     database.execSQL("ALTER TABLE interval ADD COLUMN timestamp LONG NOT NULL DEFAULT -1")
                     database.execSQL("INSERT INTO interval VALUES (last_submission, -1, -1, -1)")
                 } catch (ex: SQLiteException) {
-                    Log.w("LevelDatabase", "Altering database to migrate from version 3 to 4: " + ex.message)
+                    Log.w("LevelDatabase", "Altering database to migrate from version 2 to 3: " + ex.message)
                 }
             }
         }
@@ -111,7 +107,7 @@ abstract class LevelDatabase : RoomDatabase() {
                         LevelDatabase::class.java,
                         "dbd.db"
                     )
-                        .addMigrations(MIGRATION_3_4)
+                        .addMigrations(MIGRATION_2_3)
                         .addAutoMigrationSpec(MyAutoMigration(context))
                         .createFromAsset("dbd.db")
                     /*
