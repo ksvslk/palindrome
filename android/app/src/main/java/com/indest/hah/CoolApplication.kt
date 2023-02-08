@@ -17,8 +17,8 @@ class CoolApplication : Application() {
         FirebaseApp.initializeApp(this)
         val firebaseAppCheck = FirebaseAppCheck.getInstance()
         firebaseAppCheck.installAppCheckProviderFactory(
-            DebugAppCheckProviderFactory.getInstance()
-            //PlayIntegrityAppCheckProviderFactory.getInstance()
+            //DebugAppCheckProviderFactory.getInstance()
+            PlayIntegrityAppCheckProviderFactory.getInstance()
         )
 /*       if (BuildConfig.DEBUG)
         {
