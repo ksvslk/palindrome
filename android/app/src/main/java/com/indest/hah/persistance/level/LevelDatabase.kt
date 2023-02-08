@@ -84,8 +84,8 @@ abstract class LevelDatabase : RoomDatabase() {
         private val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 try{
+                    database.execSQL("ALTER TABLE level_info_table ADD COLUMN author TEXT NOT NULL DEFAULT ''")
                     database.execSQL("ALTER TABLE level_info_table ADD COLUMN column_count INTEGER NOT NULL DEFAULT 7")
-                    database.execSQL("ALTER TABLE level_info_table ADD COLUMN author STRING NOT NULL DEFAULT ''")
                     database.execSQL("ALTER TABLE interval ADD COLUMN timestamp LONG NOT NULL DEFAULT -1")
                     database.execSQL("INSERT INTO interval VALUES (last_submission, -1, -1, -1)")
                 } catch (ex: SQLiteException) {
