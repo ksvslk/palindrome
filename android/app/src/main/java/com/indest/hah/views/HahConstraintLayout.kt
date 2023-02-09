@@ -1,12 +1,11 @@
 package com.indest.hah.views
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.ColorMatrix
-import android.graphics.ColorMatrixColorFilter
-import android.graphics.Paint
+import android.graphics.*
+import android.os.Build
 import android.util.AttributeSet
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.indest.hah.R
 
 class HahConstraintLayout : ConstraintLayout {
     constructor(context: Context?) : super(context!!)
@@ -38,4 +37,5 @@ class HahConstraintLayout : ConstraintLayout {
         super.dispatchDraw(canvas)
         if(isSadMode) canvas?.restore()
     }
+
 }

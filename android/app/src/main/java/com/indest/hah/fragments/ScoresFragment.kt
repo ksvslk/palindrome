@@ -15,6 +15,7 @@ import com.google.android.gms.games.leaderboard.LeaderboardVariant.TIME_SPAN_ALL
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.databinding.ScoreFragmentBinding
+import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.general.AccountStatus
 import com.indest.hah.general.GeneralViewModel
 
@@ -23,6 +24,7 @@ class ScoresFragment : BottomSheetDialogFragmentCustom() {
     private val binding get() = _binding!!
     private val TAG = "ScoresFragment"
     private val generalViewModel: GeneralViewModel by activityViewModels()
+    private val levelViewModel: LevelViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,6 +64,7 @@ class ScoresFragment : BottomSheetDialogFragmentCustom() {
                 getString(R.string.leaderboard_crme_de_la_crme)
             }
 
+
             activity?.let { activity ->
                 PlayGames.getLeaderboardsClient(activity)
                     .loadPlayerCenteredScores(
@@ -75,10 +78,7 @@ class ScoresFragment : BottomSheetDialogFragmentCustom() {
                         if (leaderBoardScores != null && isAdded) {
                             binding.scoreFragment.removeViewAt(1)
                             leaderBoardScores.scores.forEachIndexed { index, score ->
-                                val isCurrentPlayer =
-                                    score.scoreHolder?.relationshipInfo?.friendStatus
-
-                                if (isCurrentPlayer == -1) {
+                                if (score.scoreHolderDisplayName == levelViewModel.currentlySignedInPlayerName) {
                                     val scoreLayout = layoutInflater.inflate(
                                         R.layout.score_item_player,
                                         binding.scoreFragment,

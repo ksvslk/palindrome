@@ -5,6 +5,8 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Rect
+import android.os.Build
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.text.TextUtils.replace
@@ -17,9 +19,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.Insets
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.forEach
+import androidx.core.view.*
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.commit
 import androidx.fragment.app.commit
@@ -155,6 +155,7 @@ class MainActivity : AppCompatActivity(),
 
         generalViewModel.toString()
         applyCustomWindowInsets()
+        configureSwipeEdge()
         windowSizeClassUpdater()
         setUpNavController()
         progressBarUpdater()
@@ -164,6 +165,22 @@ class MainActivity : AppCompatActivity(),
 
         lifecycleScope.launch {
             levelViewModel.collectPlayerLevels()
+        }
+    }
+
+    private fun configureSwipeEdge() {
+        val cap = resources.getDimension(R.dimen._1sdp).toInt()
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemGestures())
+            // Apply the insets as padding to the view. Here we're setting all of the
+            // dimensions, but apply as appropriate to your layout. You could also
+            // update the views margin if more appropriate.
+            view.updatePadding(cap, cap, cap, insets.bottom)
+
+            // Return CONSUMED if we don't want the window insets to keep being passed
+            // down to descendant views.
+            WindowInsetsCompat.CONSUMED
         }
     }
 
@@ -457,11 +474,10 @@ class MainActivity : AppCompatActivity(),
         Log.d(TAG, "onStop")
     }
 
-    private fun submitScore(score: Long, playerLevels:Boolean = false) {
+    private fun submitScore(score: Long, playerLevels: Boolean = false) {
         val leaderboardId = if (playerLevels) {
             getString(R.string.leaderboard_player_levels_leaderboard)
-        }
-        else {
+        } else {
             getString(R.string.leaderboard_crme_de_la_crme)
         }
         PlayGames.getLeaderboardsClient(this)
@@ -530,7 +546,7 @@ class MainActivity : AppCompatActivity(),
                             snapshotHelper.save(this@MainActivity, event.localSaveGame)
                         }
                         is LevelViewModel.VariousEvent.SubmitScore -> {
-                            submitScore(event.score)
+                            submitScore(event.score, event.playerLevels)
                         }
                         is LevelViewModel.VariousEvent.UnlockAchievement -> {
                             unlockAchievement(event.achievement)
@@ -634,17 +650,19 @@ class MainActivity : AppCompatActivity(),
 
     private fun applyCustomWindowInsets() {
         ViewCompat.setOnApplyWindowInsetsListener(binding.container) { _, insets ->
-            WindowInsetsCompat.Builder().setInsets(
-                WindowInsetsCompat.Type.systemBars(),
-                Insets.of(
-                    insets.getInsets(WindowInsetsCompat.Type.systemBars()).left,
-                    insets.getInsets(WindowInsetsCompat.Type.systemBars()).top,
-                    insets.getInsets(WindowInsetsCompat.Type.systemBars()).right,
-                    0
-                )
-            ).build()
+            WindowInsetsCompat.Builder()
+                .setInsets(
+                    WindowInsetsCompat.Type.systemBars(),
+                    Insets.of(
+                        insets.getInsets(WindowInsetsCompat.Type.systemBars()).left,
+                        insets.getInsets(WindowInsetsCompat.Type.systemBars()).top,
+                        insets.getInsets(WindowInsetsCompat.Type.systemBars()).right,
+                        0
+                    )
+                ).build()
         }
     }
+
 
     private fun computeWindowSizeClasses() {
         Log.d(TAG, "computeWindowSizeClasses")
@@ -681,13 +699,15 @@ class MainActivity : AppCompatActivity(),
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 levelViewModel.currentLevel.distinctUntilChangedBy { it.levelInfo.levelId }
                     .collect {
-                        if (it.levelInfo.levelId < 1000)
-                        {
+                        if (it.levelInfo.levelId < 1000) {
                             setLevelProgressIndicator(it.levelInfo, it.solutions.size)
-                        }
-                        else if (it.levelInfo.levelId > 1000) {
+                        } else if (it.levelInfo.levelId > 1000) {
                             val maxLevels = levelViewModel.getMaxLevelId() - 1000
-                            setLevelProgressIndicatorPlayerPack(it.levelInfo, it.solutions.size, maxLevels)
+                            setLevelProgressIndicatorPlayerPack(
+                                it.levelInfo,
+                                it.solutions.size,
+                                maxLevels
+                            )
                         }
                     }
             }
@@ -707,11 +727,15 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    private fun setLevelProgressIndicatorPlayerPack(level: LevelData, solutionsCount: Int, maxLevels:Int) {
+    private fun setLevelProgressIndicatorPlayerPack(
+        level: LevelData,
+        solutionsCount: Int,
+        maxLevels: Int
+    ) {
         binding.levelNumber.text =
-            if (solutionsCount > 1) "${level.levelId-1000}* - ${level.author}" else "${level.levelId-1000} - ${level.author}"
+            if (solutionsCount > 1) "${level.levelId - 1000}* - ${level.author}" else "${level.levelId - 1000} - ${level.author}"
         binding.gameProgress.progress =
-            ((level.levelId-1000).toFloat() / maxLevels.toFloat() * 100.0).toInt()
+            ((level.levelId - 1000).toFloat() / maxLevels.toFloat() * 100.0).toInt()
     }
 
     private fun setLevelProgressIndicator(level: LevelData, solutionsCount: Int) {
@@ -742,4 +766,4 @@ class MainActivity : AppCompatActivity(),
         super.onDestroy()
     }
 
-    }
+}

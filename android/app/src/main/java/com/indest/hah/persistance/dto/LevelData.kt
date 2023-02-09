@@ -29,5 +29,5 @@ data class LevelData(
     @ColumnInfo(name = "author")
     val author: String = "Anonymous",
     @ColumnInfo(name = "column_count")
-    val columnCount:Int = -1
+    val columnCount:Int = 7
 )

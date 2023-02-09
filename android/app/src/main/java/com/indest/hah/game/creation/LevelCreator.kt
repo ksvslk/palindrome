@@ -36,7 +36,6 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
             getDensitySettings(maxWordLength, container, info)
         val level = layoutInflater.inflate(R.layout.grid, container, false) as GridLayout
         level.columnCount = densitySettings.columnCount
-        getUpdatedLevelWithPossiblyNewColumnCount(info, level.columnCount)
         addLetters(level, densitySettings, info, context)
         addBlanks(densitySettings.columnCount, level, layoutInflater)
         addSlots(info.solutions.first().palindrome, level, densitySettings, context)

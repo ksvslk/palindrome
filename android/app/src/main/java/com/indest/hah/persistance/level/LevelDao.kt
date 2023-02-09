@@ -48,11 +48,11 @@ interface LevelDao {
     @Query("update level_info_table set best_score = score where best_score < score and level_id = :level")
     suspend fun updateBestScoreQuery(level: Int)
 
-    @Query("select sum(best_score) from level_info_table")
+    @Query("select sum(best_score) from level_info_table where level_id <= 100")
     suspend fun getTotalScore(): Int
 
     @Query("select sum(best_score) from level_info_table where level_id > 1000")
-    suspend fun getTotalPlayerLevelsScore(): Int
+    suspend fun getTotalPlayerLevelsScore(): Int?
 
     @Insert
     suspend fun insertLevelInfo(levels: LevelData)
@@ -360,7 +360,7 @@ interface LevelDao {
 
     @Query("select max(level_id) = :currentLevel from level_info_table where level_id >= :minLimit and level_id <= :maxLimit")
     //@Query("select 3 = :currentLevel from level_info_table")
-    suspend fun isFinalLevel(currentLevel: Int, minLimit:Int, maxLimit:Int): Boolean
+    suspend fun isFinalLevel(currentLevel: Int, minLimit:Int, maxLimit:Int): Int?
 
     @Query("select timestamp from interval where name = 'last_submission'")
     suspend fun getLastSubmissionTimestamp(): Long

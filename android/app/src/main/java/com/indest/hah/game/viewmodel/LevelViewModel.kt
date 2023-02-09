@@ -236,7 +236,7 @@ class LevelViewModel @Inject constructor(
     suspend fun isLastLevel(): Pair<Boolean, Boolean> {
         val lastGameLevel = levelRepository.isFinalLevel(_currentLevel.value.levelInfo.levelId, 1, 100)
         val lastPlayerLevel = levelRepository.isFinalLevel(_currentLevel.value.levelInfo.levelId, 1001, Int.MAX_VALUE)
-        return Pair(lastGameLevel, lastPlayerLevel)
+        return Pair(lastGameLevel == 1, lastPlayerLevel == 1)
     }
 
     private fun getNewUiState(
@@ -896,6 +896,7 @@ class LevelViewModel @Inject constructor(
             "timestamp" to FieldValue.serverTimestamp(),
             "user_name" to currentlySignedInPlayerName
         )
+
         Log.d(TAG, "fsDb: ${fsDb.app.options.toString()}")
         Log.d(TAG, "submitUserLevel: ${level.toString()}")
 

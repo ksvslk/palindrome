@@ -66,7 +66,8 @@ class LevelRepository @Inject constructor(
         levelDao.updateBestScoreQuery(level)
         if (level > 1000)
         {
-            return levelDao.getTotalPlayerLevelsScore().toLong()
+            val playerLevelScore = levelDao.getTotalPlayerLevelsScore()
+            return playerLevelScore?.toLong() ?: 0
         }
         return levelDao.getTotalScore().toLong()
     }
