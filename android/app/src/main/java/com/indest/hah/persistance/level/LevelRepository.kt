@@ -140,7 +140,7 @@ class LevelRepository @Inject constructor(
     suspend fun isAllowedToSubmitPalindrome():Boolean
     {
         val lastSubmission = levelDao.getLastSubmissionTimestamp()
-        if (lastSubmission == -1L) return true
+        if (lastSubmission == -1L || lastSubmission == null) return true
         val lastTime = Instant.ofEpochMilli(lastSubmission)
         val currentTime = Instant.now()
         val duration = Duration.between(lastTime, currentTime)

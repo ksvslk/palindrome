@@ -5,6 +5,9 @@ import android.graphics.*
 import android.os.Build
 import android.util.AttributeSet
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import com.indest.hah.R
 
 class HahConstraintLayout : ConstraintLayout {
@@ -15,6 +18,7 @@ class HahConstraintLayout : ConstraintLayout {
         attrs,
         defStyleAttr
     )
+
     constructor(
         context: Context?,
         attrs: AttributeSet?,
@@ -22,7 +26,7 @@ class HahConstraintLayout : ConstraintLayout {
         defStyleRes: Int
     ) : super(context!!, attrs, defStyleAttr, defStyleRes)
 
-    var isSadMode:Boolean = true
+    var isSadMode: Boolean = true
     private var paint: Paint
 
     init {
@@ -33,9 +37,9 @@ class HahConstraintLayout : ConstraintLayout {
     }
 
     override fun dispatchDraw(canvas: Canvas?) {
-        if(isSadMode) canvas?.saveLayer(null, paint)
+        if (isSadMode) canvas?.saveLayer(null, paint)
         super.dispatchDraw(canvas)
-        if(isSadMode) canvas?.restore()
+        if (isSadMode) canvas?.restore()
     }
 
 }

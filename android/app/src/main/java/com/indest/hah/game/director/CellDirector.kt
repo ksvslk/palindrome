@@ -69,14 +69,17 @@ class CellDirector constructor(
     private fun restoreSlotPlacements(info: Level) {
         when {
             info.lettersProperties.isNotEmpty() -> {
+                val slots = cells.filterIsInstance<Slot>()
+                val letters = cells.filterIsInstance<Letter>()
+                Log.d(TAG, slots.joinToString())
+                Log.d(TAG, letters.joinToString())
                 info.lettersProperties.forEach { letterProperties ->
                     if (letterProperties.friendIndex != -666) {
-                        val slot = cells.filterIsInstance<Slot>()
-                            .find { it.homeIndex == letterProperties.friendIndex }
-                        val letter = cells.filterIsInstance<Letter>()
-                            .find { it.homeIndex == letterProperties.homeIndex }
+                        val slot = slots.find { it.homeIndex == letterProperties.friendIndex }
+                        val letter = letters.find { it.homeIndex == letterProperties.homeIndex }
                         if (slot == null || letter == null) {
-                            Log.e(TAG, "Could not restore letter placements. ")
+                            Log.e(TAG, "Could not restore letter placements. Slot was $slot and letter was $letter. At least one of them is null.", )
+                            Log.e(TAG, "Letterproperties: ${letterProperties.toString()}")
                             return
                         }
 

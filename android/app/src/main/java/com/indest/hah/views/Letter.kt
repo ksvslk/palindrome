@@ -10,6 +10,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.View.HAPTIC_FEEDBACK_ENABLED
 import android.view.View.OnTouchListener
+import androidx.core.widget.TextViewCompat
 import com.indest.hah.other.C.NEUTRAL_LAYER
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -19,7 +20,7 @@ import com.indest.hah.game.director.Effects
 import com.indest.hah.game.director.LetterState
 import com.indest.hah.game.director.data.GlobalPosition
 
-@SuppressLint("ViewConstructor")
+@SuppressLint("ViewConstructor", "RestrictedApi")
 @AndroidEntryPoint
 class Letter @Inject constructor(
     context: Context,
@@ -95,6 +96,8 @@ class Letter @Inject constructor(
         homePos = pos
         currentPos = pos
         homeIndex = (parent as GridLayout).indexOfChild(this)
+        //text = homeIndex.toString() //TODO: REMOVE THIS!
+
         super.onSizeChanged(w, h, oldw, oldh)
     }
 
@@ -102,6 +105,7 @@ class Letter @Inject constructor(
         if (cell != null) {
             friend = cell as Slot?
             friendIndex = cell.homeIndex
+          //  text = friendIndex.toString() //TODO: REMOVE THIS!
         } else {
             friend = cell
             friendIndex = -666
@@ -112,6 +116,6 @@ class Letter @Inject constructor(
         setOnTouchListener(touchListen)
         translationZ = NEUTRAL_LAYER
         text = letter
-        setAutoSizeTextTypeWithDefaults(AUTO_SIZE_TEXT_TYPE_UNIFORM)
+        setAutoSizeTextTypeWithDefaults(TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM)
     }
 }

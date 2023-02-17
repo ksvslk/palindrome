@@ -13,6 +13,7 @@ import android.text.TextUtils.replace
 import android.util.Log
 import android.view.Gravity
 import android.view.View
+import android.view.WindowInsetsController
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -155,7 +156,6 @@ class MainActivity : AppCompatActivity(),
 
         generalViewModel.toString()
         applyCustomWindowInsets()
-        configureSwipeEdge()
         windowSizeClassUpdater()
         setUpNavController()
         progressBarUpdater()
@@ -166,23 +166,12 @@ class MainActivity : AppCompatActivity(),
         lifecycleScope.launch {
             levelViewModel.collectPlayerLevels()
         }
-    }
-
-    private fun configureSwipeEdge() {
-        val cap = resources.getDimension(R.dimen._1sdp).toInt()
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, windowInsets ->
-            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemGestures())
-            // Apply the insets as padding to the view. Here we're setting all of the
-            // dimensions, but apply as appropriate to your layout. You could also
-            // update the views margin if more appropriate.
-            view.updatePadding(cap, cap, cap, insets.bottom)
-
-            // Return CONSUMED if we don't want the window insets to keep being passed
-            // down to descendant views.
-            WindowInsetsCompat.CONSUMED
+        binding.root.doOnNextLayout {
+            val exclusions = listOf(Rect(0,0, it.width, it.height))
+            ViewCompat.setSystemGestureExclusionRects(binding.root, exclusions)
         }
     }
+
 
     private fun collectPlayerLevels() {
         lifecycleScope.launch {
@@ -660,6 +649,16 @@ class MainActivity : AppCompatActivity(),
                         0
                     )
                 ).build()
+        }
+    }
+
+    private fun hideSystemBars()
+    {
+        val windowInsetsController =
+            WindowCompat.getInsetsController(window, window.decorView)
+        window.decorView.setOnApplyWindowInsetsListener { view, windowInsets ->
+            windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
+            view.onApplyWindowInsets(windowInsets)
         }
     }
 

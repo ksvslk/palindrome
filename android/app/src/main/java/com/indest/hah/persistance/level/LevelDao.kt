@@ -363,7 +363,7 @@ interface LevelDao {
     suspend fun isFinalLevel(currentLevel: Int, minLimit:Int, maxLimit:Int): Int?
 
     @Query("select timestamp from interval where name = 'last_submission'")
-    suspend fun getLastSubmissionTimestamp(): Long
+    suspend fun getLastSubmissionTimestamp(): Long?
 
     @Query("update interval set timestamp=:time where name = 'last_submission'")
     suspend fun updateSubmissionTimestamp(time: Long)

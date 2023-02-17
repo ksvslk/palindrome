@@ -745,7 +745,7 @@ class LevelViewModel @Inject constructor(
     }
 
     suspend fun collectPlayerLevels() {
-/*        if (levelRepository.getMaxLevelId() > 1000) return
+       if (levelRepository.getMaxLevelId() > 1000) return
         val levelAndCount = insertPlayerLevels(debugPlayerLevels())
         Log.d(TAG, "levelAndCount: $levelAndCount")
         if (levelAndCount.second > 0) {
@@ -755,7 +755,7 @@ class LevelViewModel @Inject constructor(
                 ""
             ) else Triple(levelAndCount.first.levelId, 1, levelAndCount.first.author)
         }
-        return*/
+        return
         liveStoreRegistration?.remove()
         val maxLevelId = getMaxLevelId()
         val query = fsDb.collection("user_submitted_levels")
@@ -861,8 +861,28 @@ class LevelViewModel @Inject constructor(
             ),
             mapOf(
                 "No risk lawyer protégée, snack lederhosen obsesses bones! Oh, red elk can see, get or prey walks iron.".uppercase() to "102 Chars"
-            )
-            ,
+            ),
+            mapOf(
+                "DETARTRATED" to "1st"
+            ),
+            mapOf(
+                "PARTY TRAP" to "2nd"
+            ),
+            mapOf(
+                "WOLF A VALET SATANIST, I FEEL SEEN. I ATE DETAINEES, LEE FITS IN A TASTE, LAVA FLOW." to "3rd"
+            ),
+            mapOf(
+                "A MAN, A PLAN, A CANAL - PANAMA!" to "4th"
+            ),
+            mapOf(
+                "A NEW ORDER BEGAN, A MORE ROMAN AGE BRED ROWENA." to "5th"
+            ),
+            mapOf(
+                "NO, IT CAN, AS IT IS, IT IS A WAR. RAW AS IT IS, IT IS AN ACTION." to "6th"
+            ),
+            mapOf(
+              "DEB, BURY LEVI’S NET, SO FINE MESH. SUGAR RUBS BURR, A GUSH SEMEN IF OSTENSIVELY RUBBED" to "7th"
+            ),
             mapOf(
                 "TAAT".uppercase() to "Testing"
             )

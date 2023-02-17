@@ -20,7 +20,6 @@
 
     <dimen name="cell_container_width">@dimen/_30sdp</dimen>
 
-
-    <dimen name="max_box_size">@dimen/_23sdp</dimen>
+    <dimen name="max_box_size">@dimen/_22sdp</dimen>
 
 </resources>

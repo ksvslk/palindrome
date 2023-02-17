@@ -92,26 +92,31 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             add(ScoresFragment(), ScoresFragment().tag)
         }
     }
-
     private fun displayLevel(uiState: UiState) {
         binding.levelFragment.removeAllViews()
-        val levelGridLayout = levelCreator.getLevel(
-            uiState.level,
-            layoutInflater,
-            binding.levelFragment
-        )
-        val areColumnsDifferent = uiState.level.levelInfo.columnCount != levelGridLayout.first.columnCount
+        val densitySettings = levelCreator.getDensitySettings(binding.levelFragment, uiState.level)
+        Log.d(TAG, densitySettings.toString())
+        val areColumnsDifferent = uiState.level.levelInfo.columnCount != densitySettings.columnCount
 
         lifecycleScope.launch(Dispatchers.Main)
         {
             if (areColumnsDifferent)
             {
+                val newIndexes =
+                    levelCreator.getUpdatedLevelWithPossiblyNewColumnCount(uiState.level, densitySettings.columnCount)
                 viewModel.changeFriendIndexesBasedOnColumnCount(
-                    levelGridLayout.first.columnCount,
-                    levelGridLayout.second
+                    densitySettings.columnCount,
+                    newIndexes
                 )
                 return@launch
             }
+            binding.levelFragment.removeAllViewsInLayout()
+            val levelGridLayout = levelCreator.getLevel(
+                uiState.level,
+                layoutInflater,
+                binding.levelFragment,
+                densitySettings
+            )
             levelGridLayout.first.children.filterIsInstance<Cell<*, *>>().toMutableList().apply {
                 levelGridLayout.first.doOnPreDraw {
                     cellDirector = CellDirector(
@@ -122,7 +127,9 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             }
             binding.levelFragment.addView(levelGridLayout.first)
         }
-        if (areColumnsDifferent) return
+        if (areColumnsDifferent) {
+            return
+        }
 
         askForReview(uiState.level.levelInfo.levelId)
 
@@ -521,6 +528,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setFragmentResultListener(C.HINTS_REQUEST_KEY) { _, bundle ->
             if (viewModel.uiState.value.state != INTERMEDIATE) {
                 val premiumLetter = bundle.getBoolean(C.LETTER_PREMIUM_BUNDLE)
