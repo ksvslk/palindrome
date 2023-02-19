@@ -368,4 +368,7 @@ interface LevelDao {
     @Query("update interval set timestamp=:time where name = 'last_submission'")
     suspend fun updateSubmissionTimestamp(time: Long)
 
+    @Query("update level_info_table set author='Migrated' where level_id = :level")
+    suspend fun updateAuthorToMigrated(level: Int)
+
 }

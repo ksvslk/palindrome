@@ -97,7 +97,6 @@ class Letter @Inject constructor(
         currentPos = pos
         homeIndex = (parent as GridLayout).indexOfChild(this)
         //text = homeIndex.toString() //TODO: REMOVE THIS!
-
         super.onSizeChanged(w, h, oldw, oldh)
     }
 
@@ -105,7 +104,7 @@ class Letter @Inject constructor(
         if (cell != null) {
             friend = cell as Slot?
             friendIndex = cell.homeIndex
-          //  text = friendIndex.toString() //TODO: REMOVE THIS!
+            //text = friendIndex.toString() //TODO: REMOVE THIS!
         } else {
             friend = cell
             friendIndex = -666

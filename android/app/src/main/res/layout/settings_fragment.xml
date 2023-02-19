@@ -198,6 +198,15 @@
             android:paddingHorizontal="@dimen/_8sdp"
             android:visibility="gone" />
 
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/progress_circular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:indeterminate="true" >
+        </com.google.android.material.progressindicator.CircularProgressIndicator>
+
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/google_sign_out_button"
             android:layout_width="wrap_content"
@@ -205,6 +214,8 @@
             android:layout_marginHorizontal="@dimen/simple_dialog_header_left_margin"
             android:textColor="@color/colorOnBackground"
             android:text="@string/you_are_signed_in"
+            android:visibility="gone"
             android:textAppearance="@style/TextAppearance.OC.Body1" />
     </androidx.appcompat.widget.LinearLayoutCompat>
+
 </androidx.appcompat.widget.LinearLayoutCompat>

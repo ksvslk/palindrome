@@ -96,7 +96,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         binding.levelFragment.removeAllViews()
         val densitySettings = levelCreator.getDensitySettings(binding.levelFragment, uiState.level)
         Log.d(TAG, densitySettings.toString())
-        val areColumnsDifferent = uiState.level.levelInfo.columnCount != densitySettings.columnCount
+        val areColumnsDifferent = uiState.level.levelInfo.columnCount != densitySettings.columnCount || uiState.level.levelInfo.author == "NewVersion"
 
         lifecycleScope.launch(Dispatchers.Main)
         {

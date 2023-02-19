@@ -19,9 +19,11 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.games.PlayGames
+import com.google.android.gms.games.PlayGamesSdk
 import com.google.android.gms.games.Player
 import com.google.android.gms.tasks.Task
 import com.indest.hah.BuildConfig
+import com.indest.hah.MainActivity
 import com.indest.hah.R
 import com.indest.hah.databinding.SettingsFragmentBinding
 import com.indest.hah.game.viewmodel.LevelViewModel
@@ -83,20 +85,23 @@ class SettingsFragment : BottomSheetDialogFragmentCustom() {
 
                     when (accountStatus) {
                         AccountStatus.SIGNED_IN -> {
+                            Log.d(TAG, "Signed in.")
+                            binding.progressCircular.visibility = View.GONE
                             binding.googleSignInButton.visibility = View.GONE
                             binding.googleSignOutButton.visibility = View.VISIBLE
-                            activity?.let {
-                                PlayGames.getPlayersClient(it).currentPlayer.addOnCompleteListener {
-                                    if (isVisible)
-                                    {
-                                        binding.googleSignOutButton.text = "Signed in as ${it.result.displayName}"
-                                    }
-                                }
-                            }
+                            binding.googleSignOutButton.text = "Signed in as ${levelViewModel.currentlySignedInPlayerName}"
                         }
                         AccountStatus.SIGNED_OUT -> {
+                            Log.d(TAG, "Signed out.")
+                            binding.progressCircular.visibility = View.GONE
                             binding.googleSignOutButton.visibility = View.GONE
                             binding.googleSignInButton.visibility = View.VISIBLE
+                        }
+                        AccountStatus.LOADING -> {
+                            binding.progressCircular.visibility = View.VISIBLE
+                            binding.googleSignOutButton.visibility = View.GONE
+                            binding.googleSignInButton.visibility = View.GONE
+                            Log.d(TAG, "Loading, signing in!")
                         }
                         AccountStatus.NOT_SET -> {}
                     }
@@ -172,21 +177,8 @@ class SettingsFragment : BottomSheetDialogFragmentCustom() {
 
     private fun signInToGoogle() {
         activity?.let { activity ->
-            val gamesSignInClient = PlayGames.getGamesSignInClient(activity)
-            gamesSignInClient.signIn().addOnCompleteListener {
-                if (it.isSuccessful && it.result.isAuthenticated)
-                {
-                    generalViewModel.setAccountStatus(AccountStatus.SIGNED_IN)
-                    levelViewModel.setAccountStatus(AccountStatus.SIGNED_IN)
-                    levelViewModel.setUiStateLoading()
-                }
-                else {
-                    levelViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
-                    generalViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
-                }
-            }
+            (activity as MainActivity).signInWithFirebase()
         }
-
     }
 
     private fun changePreference(setting: String, value: Boolean) {

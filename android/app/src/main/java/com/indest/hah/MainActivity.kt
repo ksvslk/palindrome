@@ -115,6 +115,7 @@ class MainActivity : AppCompatActivity(),
         levelViewModel.setWindowSizeClass(WindowSizeClass.NOT_SET)
         levelViewModel.setBookMode(BookMode.NOT_SET)
         updateFoldModeInfo()
+        signInWithFirebase()
 
         val gamesSignInClient = PlayGames.getGamesSignInClient(this)
         gamesSignInClient.isAuthenticated.addOnCompleteListener { isAuthenticatedTask: Task<AuthenticationResult> ->
@@ -169,6 +170,46 @@ class MainActivity : AppCompatActivity(),
         binding.root.doOnNextLayout {
             val exclusions = listOf(Rect(0,0, it.width, it.height))
             ViewCompat.setSystemGestureExclusionRects(binding.root, exclusions)
+        }
+    }
+
+    fun signInWithFirebase()
+    {
+        levelViewModel.setAccountStatus(AccountStatus.LOADING)
+        generalViewModel.setAccountStatus(AccountStatus.LOADING)
+
+        val gamesSignInClient = PlayGames.getGamesSignInClient(this)
+        gamesSignInClient.isAuthenticated.addOnCompleteListener { isAuthenticatedTask: Task<AuthenticationResult> ->
+            Log.d(TAG, "addOnCompleteListener")
+
+            if (!isAuthenticatedTask.isSuccessful) {
+                // Disable Play Games Services integration
+                levelViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
+                generalViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
+                Log.d(TAG, "SIGNED_OUT")
+                levelViewModel.currentlySignedInPlayerName = "Unknown"
+                return@addOnCompleteListener
+            }
+
+            val authenticationResult = isAuthenticatedTask.result
+            if (!authenticationResult.isAuthenticated) {
+                // Disable Play Games Services integration
+                levelViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
+                generalViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
+                Log.d(TAG, "SIGNED_OUT")
+                levelViewModel.currentlySignedInPlayerName = "Unknown"
+                return@addOnCompleteListener
+            }
+
+            // Enable Play Games Services integration
+            Log.d(TAG, "SIGNED_IN")
+            signInToFirebaseWithCredential(gamesSignInClient)
+            levelViewModel.setAccountStatus(AccountStatus.SIGNED_IN)
+            generalViewModel.setAccountStatus(AccountStatus.SIGNED_IN)
+
+            PlayGames.getPlayersClient(this).currentPlayer.addOnCompleteListener { mTask: Task<Player> ->
+                levelViewModel.currentlySignedInPlayerName = mTask.result.displayName
+            }
         }
     }
 

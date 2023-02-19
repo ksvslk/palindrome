@@ -106,8 +106,12 @@ class LevelViewModel @Inject constructor(
         _competitionStatus.value = competitionAnnouncement
     }
 
-    suspend fun changeFriendIndexesBasedOnColumnCount(newColumnCount:Int, homeIndexNewFriendIndexes: List<Pair<Int,Int>>) {
+    suspend fun changeFriendIndexesBasedOnColumnCount(newColumnCount:Int, homeIndexNewFriendIndexes: Pair<Boolean, List<Pair<Int,Int>>>) {
         setUiStateWhenOnPause()
+        if (homeIndexNewFriendIndexes.first)
+        {
+            levelRepository.updateAuthorToMigrated(_uiState.value.level.levelInfo.levelId)
+        }
         if (_currentLevel.value.levelInfo.columnCount == -1)
         {
             levelRepository.changeColumnCount( _uiState.value.level.levelInfo.levelId, newColumnCount)
@@ -117,7 +121,7 @@ class LevelViewModel @Inject constructor(
                 _uiState.value.level.levelInfo.levelId,
                 newColumnCount,
              _currentLevel.value.lettersProperties,
-              homeIndexNewFriendIndexes
+              homeIndexNewFriendIndexes.second
             )
         }
     }
@@ -746,7 +750,7 @@ class LevelViewModel @Inject constructor(
 
     suspend fun collectPlayerLevels() {
        if (levelRepository.getMaxLevelId() > 1000) return
-        val levelAndCount = insertPlayerLevels(debugPlayerLevels())
+ /*       val levelAndCount = insertPlayerLevels(debugPlayerLevels())
         Log.d(TAG, "levelAndCount: $levelAndCount")
         if (levelAndCount.second > 0) {
             _newPlayerLevels.value = if (levelAndCount.second > 1) Triple(
@@ -755,7 +759,7 @@ class LevelViewModel @Inject constructor(
                 ""
             ) else Triple(levelAndCount.first.levelId, 1, levelAndCount.first.author)
         }
-        return
+        return*/
         liveStoreRegistration?.remove()
         val maxLevelId = getMaxLevelId()
         val query = fsDb.collection("user_submitted_levels")
