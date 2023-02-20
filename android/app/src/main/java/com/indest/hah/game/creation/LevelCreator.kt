@@ -30,7 +30,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         layoutInflater: LayoutInflater,
         container: ViewGroup,
         densitySettings: DensitySettings
-    ): Pair<GridLayout, Pair<Boolean,List<Pair<Int, Int>>>> {
+    ): Pair<GridLayout, Pair<Boolean, List<Pair<Int, Int>>>> {
         val level = layoutInflater.inflate(R.layout.grid, container, false) as GridLayout
         level.columnCount = densitySettings.columnCount
         Log.d(TAG, "DensitySettings: $densitySettings")
@@ -99,12 +99,9 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         val puzzleOnlyCount = puzzleOnlyLetters.count()
         val emptySlotsInTheEndNew =
             newColumnCount - puzzleOnlyLetters.chunked(newColumnCount).last().count()
-        val emptySlotsInTheEndOld =
-            info.levelInfo.columnCount - puzzleOnlyLetters.chunked(info.levelInfo.columnCount)
-                .last().count() + info.levelInfo.columnCount
         val firstIndexForNewColumnsCount = puzzleOnlyCount + emptySlotsInTheEndNew
-        val firstIndexForOldColumnsCount = puzzleOnlyCount + emptySlotsInTheEndOld
-        val oldList = getSolutionRows(palindrome, info.levelInfo.columnCount)
+        val firstIndexForOldColumnsCount = getFirstIndexForMigration(newColumnCount, info)
+        val oldList = getSolutionRows(palindrome, 7)
         val newList = getSolutionRows(palindrome, newColumnCount)
         val newIndexes = newList
             .joinToString("")
@@ -126,6 +123,28 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         return newFriendIndexesForHomes
     }
 
+
+    private fun getFirstIndexForMigration(newColumnCount: Int, info: Level): Int {
+        val puzzleOnlyLetters = getPuzzle(info)
+        val lastRowLettersCount =
+            puzzleOnlyLetters.chunked(newColumnCount).last().count()
+        Log.d(TAG, "lastRowLettersCount: $lastRowLettersCount")
+        Log.d(TAG, "info.levelInfo.columnCount: ${newColumnCount}")
+        val firstIndex = if (puzzleOnlyLetters.length <= newColumnCount) {
+            if (lastRowLettersCount == newColumnCount) {
+                3 * newColumnCount
+            } else {
+                2 * newColumnCount
+            }
+        } else {
+            if (lastRowLettersCount == newColumnCount) {
+                puzzleOnlyLetters.count() + 2 * newColumnCount
+            } else {
+                puzzleOnlyLetters.count() + (newColumnCount - lastRowLettersCount) + newColumnCount
+            }
+        }
+        return firstIndex
+    }
 
     private fun getPuzzle(info: Level): String {
         return info.lettersProperties
@@ -365,5 +384,6 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
             layoutInflater.inflate(R.layout.space, grid)
         }
     }
+
 
 }

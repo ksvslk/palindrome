@@ -96,7 +96,7 @@ class Letter @Inject constructor(
         homePos = pos
         currentPos = pos
         homeIndex = (parent as GridLayout).indexOfChild(this)
-        //text = homeIndex.toString() //TODO: REMOVE THIS!
+       // text = homeIndex.toString() //TODO: REMOVE THIS!
         super.onSizeChanged(w, h, oldw, oldh)
     }
 

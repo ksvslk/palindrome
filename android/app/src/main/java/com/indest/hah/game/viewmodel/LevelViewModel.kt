@@ -77,8 +77,7 @@ class LevelViewModel @Inject constructor(
         startCollectingLevelUpdate()
     }
 
-    private fun startCollectingLevelUpdate()
-    {
+    private fun startCollectingLevelUpdate() {
         viewModelScope.launch {
             levelRepository.latestLevelFlow()
                 .collect {
@@ -106,22 +105,25 @@ class LevelViewModel @Inject constructor(
         _competitionStatus.value = competitionAnnouncement
     }
 
-    suspend fun changeFriendIndexesBasedOnColumnCount(newColumnCount:Int, homeIndexNewFriendIndexes: Pair<Boolean, List<Pair<Int,Int>>>) {
+    suspend fun changeFriendIndexesBasedOnColumnCount(
+        newColumnCount: Int,
+        homeIndexNewFriendIndexes: Pair<Boolean, List<Pair<Int, Int>>>
+    ) {
         setUiStateWhenOnPause()
-        if (homeIndexNewFriendIndexes.first)
-        {
+        if (homeIndexNewFriendIndexes.first) {
             levelRepository.updateAuthorToMigrated(_uiState.value.level.levelInfo.levelId)
         }
-        if (_currentLevel.value.levelInfo.columnCount == -1)
-        {
-            levelRepository.changeColumnCount( _uiState.value.level.levelInfo.levelId, newColumnCount)
-        }
-        else {
-          levelRepository.changeFriendIndexesBasedOnColumnCount(
+        if (_currentLevel.value.levelInfo.columnCount == -1) {
+            levelRepository.changeColumnCount(
+                _uiState.value.level.levelInfo.levelId,
+                newColumnCount
+            )
+        } else {
+            levelRepository.changeFriendIndexesBasedOnColumnCount(
                 _uiState.value.level.levelInfo.levelId,
                 newColumnCount,
-             _currentLevel.value.lettersProperties,
-              homeIndexNewFriendIndexes.second
+                _currentLevel.value.lettersProperties,
+                homeIndexNewFriendIndexes.second
             )
         }
     }
@@ -238,8 +240,10 @@ class LevelViewModel @Inject constructor(
     }
 
     suspend fun isLastLevel(): Pair<Boolean, Boolean> {
-        val lastGameLevel = levelRepository.isFinalLevel(_currentLevel.value.levelInfo.levelId, 1, 100)
-        val lastPlayerLevel = levelRepository.isFinalLevel(_currentLevel.value.levelInfo.levelId, 1001, Int.MAX_VALUE)
+        val lastGameLevel =
+            levelRepository.isFinalLevel(_currentLevel.value.levelInfo.levelId, 1, 100)
+        val lastPlayerLevel =
+            levelRepository.isFinalLevel(_currentLevel.value.levelInfo.levelId, 1001, Int.MAX_VALUE)
         return Pair(lastGameLevel == 1, lastPlayerLevel == 1)
     }
 
@@ -749,8 +753,9 @@ class LevelViewModel @Inject constructor(
     }
 
     suspend fun collectPlayerLevels() {
-       if (levelRepository.getMaxLevelId() > 1000) return
- /*       val levelAndCount = insertPlayerLevels(debugPlayerLevels())
+        /*
+        if (levelRepository.getMaxLevelId() > 1000) return
+        val levelAndCount = insertPlayerLevels(debugPlayerLevels())
         Log.d(TAG, "levelAndCount: $levelAndCount")
         if (levelAndCount.second > 0) {
             _newPlayerLevels.value = if (levelAndCount.second > 1) Triple(
@@ -759,7 +764,8 @@ class LevelViewModel @Inject constructor(
                 ""
             ) else Triple(levelAndCount.first.levelId, 1, levelAndCount.first.author)
         }
-        return*/
+        */
+
         liveStoreRegistration?.remove()
         val maxLevelId = getMaxLevelId()
         val query = fsDb.collection("user_submitted_levels")
@@ -885,7 +891,7 @@ class LevelViewModel @Inject constructor(
                 "NO, IT CAN, AS IT IS, IT IS A WAR. RAW AS IT IS, IT IS AN ACTION." to "6th"
             ),
             mapOf(
-              "DEB, BURY LEVI’S NET, SO FINE MESH. SUGAR RUBS BURR, A GUSH SEMEN IF OSTENSIVELY RUBBED" to "7th"
+                "DEB, BURY LEVI’S NET, SO FINE MESH. SUGAR RUBS BURR, A GUSH SEMEN IF OSTENSIVELY RUBBED" to "7th"
             ),
             mapOf(
                 "TAAT".uppercase() to "Testing"

@@ -32,7 +32,9 @@ import com.indest.hah.ads.RewardType.*
 import com.indest.hah.databinding.LevelFragmentBinding
 import com.indest.hah.fx.Animations
 import com.indest.hah.fx.SoundPlayer
+import com.indest.hah.game.creation.BookMode
 import com.indest.hah.game.creation.LevelCreator
+import com.indest.hah.game.creation.LevelCreatorOld
 import com.indest.hah.game.creation.WindowSizeClass
 import com.indest.hah.game.director.CellDirector
 import com.indest.hah.game.viewmodel.ContainerState.*
@@ -64,6 +66,10 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     @Inject
     lateinit var levelCreator: LevelCreator
 
+    /*
+        @Inject
+       lateinit var levelCreator: LevelCreatorOld
+      */
     @Inject
     lateinit var animations: Animations
 
@@ -92,18 +98,42 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             add(ScoresFragment(), ScoresFragment().tag)
         }
     }
+
     private fun displayLevel(uiState: UiState) {
         binding.levelFragment.removeAllViews()
+        /*
+        Log.d(TAG, "uistate level: ${uiState.level.levelInfo}")
+        val levelGridLayout = levelCreator.getLevel(
+            uiState.level,
+            layoutInflater,
+            binding.levelFragment,
+            uiState.bookMode,
+            uiState.windowSizeClass
+        )
+        levelGridLayout.children.filterIsInstance<Cell<*, *>>().toMutableList().apply {
+            levelGridLayout.doOnPreDraw {
+                cellDirector = CellDirector(
+                    this,
+                    viewModel
+                )
+            }
+        }
+        binding.levelFragment.addView(levelGridLayout)
+        */
         val densitySettings = levelCreator.getDensitySettings(binding.levelFragment, uiState.level)
         Log.d(TAG, densitySettings.toString())
-        val areColumnsDifferent = uiState.level.levelInfo.columnCount != densitySettings.columnCount || uiState.level.levelInfo.author == "NewVersion"
+        val areColumnsDifferent =
+            uiState.level.levelInfo.columnCount != densitySettings.columnCount || uiState.level.levelInfo.author == "NewVersion"
 
         lifecycleScope.launch(Dispatchers.Main)
         {
-            if (areColumnsDifferent)
-            {
+
+            if (areColumnsDifferent) {
                 val newIndexes =
-                    levelCreator.getUpdatedLevelWithPossiblyNewColumnCount(uiState.level, densitySettings.columnCount)
+                    levelCreator.getUpdatedLevelWithPossiblyNewColumnCount(
+                        uiState.level,
+                        densitySettings.columnCount
+                    )
                 viewModel.changeFriendIndexesBasedOnColumnCount(
                     densitySettings.columnCount,
                     newIndexes
@@ -261,7 +291,10 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         }
     }
 
-    private fun showCorrectEffects(uiState: UiState, isLastLevel: Pair<Boolean, Boolean> = Pair(false, false)) {
+    private fun showCorrectEffects(
+        uiState: UiState,
+        isLastLevel: Pair<Boolean, Boolean> = Pair(false, false)
+    ) {
         cellDirector?.getCells()?.let { cells ->
             val cellsAnimation = animations.getCorrectSolutionAnimation(cells)
             cellsAnimation.doOnEnd {
@@ -367,10 +400,15 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         if (uiState.solutionData.showHintsBadge) showHintsBadge()
     }
 
-    private fun showContinueMessage(uiState: UiState, isLastLevel: Pair<Boolean, Boolean> = Pair(false, false)) {
+    private fun showContinueMessage(
+        uiState: UiState,
+        isLastLevel: Pair<Boolean, Boolean> = Pair(false, false)
+    ) {
         val continueMessage = MessageSnackBar.make(
             view = binding.levelFragment,
-            message = if (!isLastLevel.first && !isLastLevel.second) getString(R.string.tap_to_continue) else getString(R.string.tap_to_finish),
+            message = if (!isLastLevel.first && !isLastLevel.second) getString(R.string.tap_to_continue) else getString(
+                R.string.tap_to_finish
+            ),
             duration = Int.MAX_VALUE,
             windowSizeClassWidth = uiState.windowSizeClass,
             isBookMode = uiState.bookMode,
@@ -387,8 +425,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                 continueMessage.dismiss()
                 soundPlayer.play(soundPlayer.sounds.levelTransition, volume = 0.2f)
                 playTrainAnimation()
-                when (isLastLevel)
-                {
+                when (isLastLevel) {
                     Pair(false, false) -> {
                         viewModel.executeLevelCompleteActions()
                     }
