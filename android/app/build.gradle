@@ -115,6 +115,8 @@ kapt {
     correctErrorTypes true
 }
 
+apply plugin: 'com.google.gms.google-services'
+
 dependencies {
     def firebase_version = '31.2.0'
     def play_games_services_version = "17.0.0"
@@ -222,6 +224,3 @@ tasks.register('copyReleaseFilesToOneDirectory', Copy) {
 }
 tasks.findByName('copyReleaseFilesToOneDirectory').mustRunAfter ':app:bundleRelease'
 tasks.findByName('copyReleaseFilesToOneDirectory').dependsOn(':app:bundleRelease')
-
-
-apply plugin: 'com.google.gms.google-services'

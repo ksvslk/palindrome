@@ -101,7 +101,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
             newColumnCount - puzzleOnlyLetters.chunked(newColumnCount).last().count()
         val firstIndexForNewColumnsCount = puzzleOnlyCount + emptySlotsInTheEndNew
         val firstIndexForOldColumnsCount = getFirstIndexForMigration(newColumnCount, info)
-        val oldList = getSolutionRows(palindrome, 7)
+        val oldList = getSolutionRows(palindrome, info.levelInfo.columnCount)
         val newList = getSolutionRows(palindrome, newColumnCount)
         val newIndexes = newList
             .joinToString("")
