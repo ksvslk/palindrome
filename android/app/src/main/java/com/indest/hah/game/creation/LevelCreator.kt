@@ -49,8 +49,11 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         newColumnCount: Int
     ): Pair<Boolean, MutableList<Pair<Int, Int>>> {
         val newFriendIndexesForHomes = mutableListOf<Pair<Int, Int>>()
-        if (info.levelInfo.author == "NewVersion") {
+        if (info.levelInfo.author == "NewVersion" && info.levelInfo.columnCount != -1) {
             return Pair(true, migrateFromDatabase3_to_4(info, newColumnCount))
+        }
+        else if (info.levelInfo.author == "NewVersion") {
+            return Pair(true, newFriendIndexesForHomes)
         }
         if (info.levelInfo.columnCount != -1 && info.levelInfo.columnCount != newColumnCount) {
 
@@ -93,7 +96,6 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         newColumnCount: Int
     ): MutableList<Pair<Int, Int>> {
         val newFriendIndexesForHomes = mutableListOf<Pair<Int, Int>>()
-
         val palindrome = info.solutions.first().palindrome
         val puzzleOnlyLetters = getPuzzle(info)
         val puzzleOnlyCount = puzzleOnlyLetters.count()
