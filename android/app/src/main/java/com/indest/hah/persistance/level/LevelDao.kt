@@ -369,6 +369,12 @@ interface LevelDao {
     suspend fun updateSubmissionTimestamp(time: Long)
 
     @Query("update level_info_table set author='Migrated' where level_id = :level")
-    suspend fun updateAuthorToMigrated(level: Int)
+    suspend fun updateToMigrated(level: Int)
+
+    @Transaction
+    suspend fun updateAuthorToMigrated(level: Int, columnCount: Int) {
+        updateToMigrated(level)
+        changeColumnCount(level, columnCount)
+    }
 
 }

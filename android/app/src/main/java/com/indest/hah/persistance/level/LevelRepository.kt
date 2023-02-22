@@ -157,6 +157,7 @@ class LevelRepository @Inject constructor(
         levelDao.updateSubmissionTimestamp(millis)
     }
 
-    suspend fun updateAuthorToMigrated(level:Int) = levelDao.updateAuthorToMigrated(level)
+    suspend fun updateAuthorToMigrated(level:Int, newColumnCount:Int) =
+        levelDao.updateAuthorToMigrated(level, newColumnCount)
 
 }
