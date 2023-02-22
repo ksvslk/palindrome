@@ -177,7 +177,6 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
             Log.i(TAG, "newList: $newList")
             Log.i(TAG, "newIndexes: $newIndexes")
         }
-
         return newFriendIndexesForHomes
     }
 
