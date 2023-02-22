@@ -102,7 +102,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         val emptySlotsInTheEndNew =
             newColumnCount - puzzleOnlyLetters.chunked(newColumnCount).last().count()
         val firstIndexForNewColumnsCount = puzzleOnlyCount + emptySlotsInTheEndNew
-        val firstIndexForOldColumnsCount = getFirstIndexForMigration(newColumnCount, info)
+        val firstIndexForOldColumnsCount = getFirstIndexForMigration(info.levelInfo.columnCount, info)
         val oldList = getSolutionRows(palindrome, info.levelInfo.columnCount)
         val newList = getSolutionRows(palindrome, newColumnCount)
         val newIndexes = newList
@@ -116,12 +116,26 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
             .filter { it.value != ' ' }
             .map { i -> firstIndexForOldColumnsCount + i.index }
 
-        info.lettersProperties.filter { it.friendIndex != -666 }.forEach {
-            val placementInArrayOfMatchingFriend =
-                oldIndexes.first { nr -> nr == it.friendIndex }
-            val indexOfMatchingSlot = oldIndexes.indexOf(placementInArrayOfMatchingFriend)
-            newFriendIndexesForHomes.add(Pair(it.homeIndex, newIndexes[indexOfMatchingSlot]))
+        try {
+            info.lettersProperties.filter { it.friendIndex != -666 }.forEach {
+                val placementInArrayOfMatchingFriend =
+                    oldIndexes.first { nr -> nr == it.friendIndex }
+                val indexOfMatchingSlot = oldIndexes.indexOf(placementInArrayOfMatchingFriend)
+                newFriendIndexesForHomes.add(Pair(it.homeIndex, newIndexes[indexOfMatchingSlot]))
+            }
+        } catch(e:java.util.NoSuchElementException) {
+            Log.e(TAG, "Were not able to generate newFriendIndexesForHomes", e)
+            Log.i(TAG, "Letters properties: ${info.lettersProperties.filter { it.friendIndex != -666 }.joinToString()}")
+            Log.i(TAG, "puzzleOnlyCount: $puzzleOnlyCount")
+            Log.i(TAG, "palindrome: $palindrome")
+            Log.i(TAG, "firstIndexForOldColumnsCount: $firstIndexForOldColumnsCount")
+            Log.i(TAG, "oldList: $oldList")
+            Log.i(TAG, "oldIndexes: $oldIndexes")
+            Log.i(TAG, "firstIndexForNewColumnsCount: $firstIndexForNewColumnsCount")
+            Log.i(TAG, "newList: $newList")
+            Log.i(TAG, "newIndexes: $newIndexes")
         }
+
         return newFriendIndexesForHomes
     }
 
