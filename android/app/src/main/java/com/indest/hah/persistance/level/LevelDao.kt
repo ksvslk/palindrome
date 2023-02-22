@@ -64,20 +64,24 @@ interface LevelDao {
     suspend fun insertSolution(solution: Solution)
 
     @Query("select max(solution_id) from solution_table")
-    suspend fun getMaxSolutionId():Int
+    suspend fun getMaxSolutionId(): Int
 
     @Query("select * from level_info_table where level_id = (select max(level_id) from level_info_table)")
-    suspend fun getMaxLevel():LevelData
+    suspend fun getMaxLevel(): LevelData
 
     @Query("update letter_info_table set friend_index=(friend_index-(:columnDifference)) where owner_id = :level and friend_index != -666")
-    suspend fun changeFriendIndexes(level: Int, columnDifference:Int)
+    suspend fun changeFriendIndexes(level: Int, columnDifference: Int)
 
     @Query("update level_info_table set column_count = :newColumnCount where level_id = :level")
-    suspend fun changeColumnCount(level: Int, newColumnCount:Int)
+    suspend fun changeColumnCount(level: Int, newColumnCount: Int)
 
     @Transaction
-    suspend fun changeFriendIndexesBasedOnColumnCount(level: Int, columnCount:Int, letters:List<LetterProperties>, homeIndexNewFriendIndexes:List<Pair<Int,Int>>)
-    {
+    suspend fun changeFriendIndexesBasedOnColumnCount(
+        level: Int,
+        columnCount: Int,
+        letters: List<LetterProperties>,
+        homeIndexNewFriendIndexes: List<Pair<Int, Int>>
+    ) {
         homeIndexNewFriendIndexes.forEach {
             updateFriendIndexSub(it.first, it.second, level)
 
@@ -86,22 +90,22 @@ interface LevelDao {
     }
 
     @Transaction
-    suspend fun insertPlayerLevels(playerLevel:List<PlayerLevel>):Pair<LevelData, Int> {
+    suspend fun insertPlayerLevels(playerLevel: List<PlayerLevel>): Pair<LevelData, Int> {
         val previousLevelCount = getAllLevels().size
         playerLevel.forEach { level ->
             val puzzle = level.solutionToCategory.keys.firstOrNull() ?: ""
             insertLevelInfo(
-              LevelData(
-                  levelId = level.levelId.toInt(),
-                  puzzle = puzzle,
-                  categoryRewarded = false,
-                  progress = LevelProgress.TODO,
-                  score = puzzle.length * 100,
-                  best_score = 0,
-                  timeModified = 0,
-                  author = level.player,
-                  columnCount = -1
-              )
+                LevelData(
+                    levelId = level.levelId.toInt(),
+                    puzzle = puzzle,
+                    categoryRewarded = false,
+                    progress = LevelProgress.TODO,
+                    score = puzzle.length * 100,
+                    best_score = 0,
+                    timeModified = 0,
+                    author = level.player,
+                    columnCount = -1
+                )
             )
             level.solutionToCategory.entries.forEach { solutionToCategory ->
                 val maxSolutionId = getMaxSolutionId()
@@ -122,7 +126,7 @@ interface LevelDao {
     }
 
     @Query("select max(level_id) from level_info_table")
-    suspend fun getMaxLevelId():Int
+    suspend fun getMaxLevelId(): Int
 
     @Transaction
     suspend fun updateLevels(levels: List<Level>) {
@@ -151,7 +155,12 @@ interface LevelDao {
             val special = "player_centered_scores"
             if (interval.name == special) {
                 if (!isLimitAttained(special)) {
-                    val modifiedInterval = Interval(name = special, currentCount = 0, limitCount = interval.limitCount, -1L)
+                    val modifiedInterval = Interval(
+                        name = special,
+                        currentCount = 0,
+                        limitCount = interval.limitCount,
+                        -1L
+                    )
                     insertInterval(modifiedInterval)
                 }
             } else {
@@ -360,7 +369,7 @@ interface LevelDao {
 
     @Query("select max(level_id) = :currentLevel from level_info_table where level_id >= :minLimit and level_id <= :maxLimit")
     //@Query("select 3 = :currentLevel from level_info_table")
-    suspend fun isFinalLevel(currentLevel: Int, minLimit:Int, maxLimit:Int): Int?
+    suspend fun isFinalLevel(currentLevel: Int, minLimit: Int, maxLimit: Int): Int?
 
     @Query("select timestamp from interval where name = 'last_submission'")
     suspend fun getLastSubmissionTimestamp(): Long?
@@ -372,9 +381,19 @@ interface LevelDao {
     suspend fun updateToMigrated(level: Int)
 
     @Transaction
-    suspend fun updateAuthorToMigrated(level: Int, columnCount: Int) {
+    suspend fun updateAuthorToMigrated(
+        level: Int, columnCount: Int,
+        letters: List<LetterProperties>,
+        homeIndexNewFriendIndexes: List<Pair<Int, Int>>
+    ) {
         updateToMigrated(level)
         changeColumnCount(level, columnCount)
+        changeFriendIndexesBasedOnColumnCount(
+            level,
+            columnCount,
+            letters,
+            homeIndexNewFriendIndexes
+        )
     }
 
 }

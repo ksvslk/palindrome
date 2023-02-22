@@ -113,7 +113,9 @@ class LevelViewModel @Inject constructor(
         if (homeIndexNewFriendIndexes.first) {
             levelRepository.updateAuthorToMigrated(
                 _uiState.value.level.levelInfo.levelId,
-                newColumnCount
+                newColumnCount,
+                _currentLevel.value.lettersProperties,
+                homeIndexNewFriendIndexes.second
             )
         } else if (_currentLevel.value.levelInfo.columnCount == -1) {
             levelRepository.changeColumnCount(
