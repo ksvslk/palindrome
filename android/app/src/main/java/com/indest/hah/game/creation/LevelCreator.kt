@@ -51,11 +51,8 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
 
         val newFriendIndexesForHomes = mutableListOf<Pair<Int, Int>>()
         try {
-            if (info.levelInfo.author == "NewVersion" && info.levelInfo.columnCount != -1) {
+            if (info.levelInfo.author == "NewVersion") {
                 return Pair(true, migrateFromDatabase3_to_4(info, newColumnCount))
-            }
-            else if (info.levelInfo.author == "NewVersion") {
-                return Pair(true, newFriendIndexesForHomes)
             }
             if (info.levelInfo.columnCount != -1 && info.levelInfo.columnCount != newColumnCount) {
 
