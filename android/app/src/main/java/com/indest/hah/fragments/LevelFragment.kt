@@ -129,6 +129,10 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         {
 
             if (areColumnsDifferent) {
+                Log.d(TAG, "areColumnsDifferent is true.")
+                Log.d(TAG, "Author: ${uiState.level.levelInfo.author}")
+                Log.d(TAG, "uiState.level.levelInfo.columnCount: ${uiState.level.levelInfo.columnCount}")
+                Log.d(TAG, "densitySettings.columnCount: ${densitySettings.columnCount}")
                 val newIndexes =
                     levelCreator.getUpdatedLevelWithPossiblyNewColumnCount(
                         uiState.level,

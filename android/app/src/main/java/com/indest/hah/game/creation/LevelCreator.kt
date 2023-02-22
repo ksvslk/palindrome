@@ -78,7 +78,9 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                     .withIndex()
                     .filter { it.value != ' ' }
                     .map { i -> firstIndexForOldColumnsCount + i.index }
-
+                Log.d(TAG, "Starting to add indexes to NEW indexes list.")
+                Log.d(TAG, "oldIndexes: $oldIndexes")
+                Log.d(TAG, "newIndexes: $newIndexes")
                 info.lettersProperties.filter { it.friendIndex != -666 }.forEach {
                     val placementInArrayOfMatchingFriend =
                         oldIndexes.first { nr -> nr == it.friendIndex }
@@ -124,6 +126,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
             Log.i(TAG, "firstIndexForNewColumnsCount: $firstIndexForNewColumnsCount")
             Log.i(TAG, "newList: $newList")
             Log.i(TAG, "newIndexes: $newIndexes")
+            Log.i(TAG, "newFriendIndexesForHomes: $newFriendIndexesForHomes")
         }
 
         return Pair(false, mutableListOf())
@@ -134,6 +137,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         info: Level,
         newColumnCount: Int
     ): MutableList<Pair<Int, Int>> {
+        Log.d(TAG, "migrateFromDatabase3_to_4")
         val newFriendIndexesForHomes = mutableListOf<Pair<Int, Int>>()
         val palindrome = info.solutions.first().palindrome
         val puzzleOnlyLetters = getPuzzle(info)
@@ -154,7 +158,15 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
             .withIndex()
             .filter { it.value != ' ' }
             .map { i -> firstIndexForOldColumnsCount + i.index }
-
+        Log.i(TAG, "Letters properties: ${info.lettersProperties.filter { it.friendIndex != -666 }.joinToString()}")
+        Log.i(TAG, "puzzleOnlyCount: $puzzleOnlyCount")
+        Log.i(TAG, "palindrome: $palindrome")
+        Log.i(TAG, "firstIndexForOldColumnsCount: $firstIndexForOldColumnsCount")
+        Log.i(TAG, "oldList: $oldList")
+        Log.i(TAG, "oldIndexes: $oldIndexes")
+        Log.i(TAG, "firstIndexForNewColumnsCount: $firstIndexForNewColumnsCount")
+        Log.i(TAG, "newList: $newList")
+        Log.i(TAG, "newIndexes: $newIndexes")
         try {
             info.lettersProperties.filter { it.friendIndex != -666 }.forEach {
                 val placementInArrayOfMatchingFriend =
@@ -174,6 +186,8 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
             Log.i(TAG, "newList: $newList")
             Log.i(TAG, "newIndexes: $newIndexes")
         }
+        Log.i(TAG, "newFriendIndexesForHomes: $newFriendIndexesForHomes")
+
         return newFriendIndexesForHomes
     }
 
