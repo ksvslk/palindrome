@@ -127,7 +127,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
         lifecycleScope.launch(Dispatchers.Main)
         {
-
             if (areColumnsDifferent) {
                 Log.d(TAG, "areColumnsDifferent is true.")
                 Log.d(TAG, "Author: ${uiState.level.levelInfo.author}")

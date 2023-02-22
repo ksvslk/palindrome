@@ -184,7 +184,7 @@ class LevelViewModel @Inject constructor(
                 state == LOADING
             ) {
                 if (accountStatus == AccountStatus.SIGNED_IN) {
-                    variousEventChannel.send(VariousEvent.LoadGame)
+                    setUiStateLoading()
                 } else {
                     startCollectingLevelUpdate()
                 }
