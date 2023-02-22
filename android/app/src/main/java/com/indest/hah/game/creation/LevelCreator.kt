@@ -48,14 +48,54 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         info: Level,
         newColumnCount: Int
     ): Pair<Boolean, MutableList<Pair<Int, Int>>> {
+
         val newFriendIndexesForHomes = mutableListOf<Pair<Int, Int>>()
-        if (info.levelInfo.author == "NewVersion" && info.levelInfo.columnCount != -1) {
-            return Pair(true, migrateFromDatabase3_to_4(info, newColumnCount))
+        try {
+            if (info.levelInfo.author == "NewVersion" && info.levelInfo.columnCount != -1) {
+                return Pair(true, migrateFromDatabase3_to_4(info, newColumnCount))
+            }
+            else if (info.levelInfo.author == "NewVersion") {
+                return Pair(true, newFriendIndexesForHomes)
+            }
+            if (info.levelInfo.columnCount != -1 && info.levelInfo.columnCount != newColumnCount) {
+
+                val palindrome = info.solutions.first().palindrome
+                val puzzleOnlyLetters = getPuzzle(info)
+                val puzzleOnlyCount = puzzleOnlyLetters.count()
+                val emptySlotsInTheEndNew =
+                    newColumnCount - puzzleOnlyLetters.chunked(newColumnCount).last().count()
+                val emptySlotsInTheEndOld =
+                    info.levelInfo.columnCount - puzzleOnlyLetters.chunked(info.levelInfo.columnCount)
+                        .last().count()
+                val firstIndexForNewColumnsCount = puzzleOnlyCount + emptySlotsInTheEndNew
+                val firstIndexForOldColumnsCount = puzzleOnlyCount + emptySlotsInTheEndOld
+                val oldList = getSolutionRows(palindrome, info.levelInfo.columnCount)
+                val newList = getSolutionRows(palindrome, newColumnCount)
+                val newIndexes = newList
+                    .joinToString("")
+                    .withIndex()
+                    .filter { it.value != ' ' }
+                    .map { i -> firstIndexForNewColumnsCount + i.index }
+                val oldIndexes = oldList
+                    .joinToString("")
+                    .withIndex()
+                    .filter { it.value != ' ' }
+                    .map { i -> firstIndexForOldColumnsCount + i.index }
+
+                info.lettersProperties.filter { it.friendIndex != -666 }.forEach {
+                    val placementInArrayOfMatchingFriend =
+                        oldIndexes.first { nr -> nr == it.friendIndex }
+                    val indexOfMatchingSlot = oldIndexes.indexOf(placementInArrayOfMatchingFriend)
+                    newFriendIndexesForHomes.add(Pair(it.homeIndex, newIndexes[indexOfMatchingSlot]))
+                }
+                return Pair(false, newFriendIndexesForHomes)
+            }
         }
-        else if (info.levelInfo.author == "NewVersion") {
-            return Pair(true, newFriendIndexesForHomes)
-        }
-        if (info.levelInfo.columnCount != -1 && info.levelInfo.columnCount != newColumnCount) {
+        catch (e:java.lang.Exception)
+        {
+            Log.e(TAG, "We did not migrate successfully.", e)
+            Log.i(TAG, "info.levelInfo: ${info.levelInfo}")
+            Log.i(TAG, "info.lettersProperties: ${info.lettersProperties}")
 
             val palindrome = info.solutions.first().palindrome
             val puzzleOnlyLetters = getPuzzle(info)
@@ -79,17 +119,19 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                 .withIndex()
                 .filter { it.value != ' ' }
                 .map { i -> firstIndexForOldColumnsCount + i.index }
-
-            info.lettersProperties.filter { it.friendIndex != -666 }.forEach {
-                val placementInArrayOfMatchingFriend =
-                    oldIndexes.first { nr -> nr == it.friendIndex }
-                val indexOfMatchingSlot = oldIndexes.indexOf(placementInArrayOfMatchingFriend)
-                newFriendIndexesForHomes.add(Pair(it.homeIndex, newIndexes[indexOfMatchingSlot]))
-            }
-            return Pair(false, newFriendIndexesForHomes)
+            Log.i(TAG, "puzzleOnlyCount: $puzzleOnlyCount")
+            Log.i(TAG, "palindrome: $palindrome")
+            Log.i(TAG, "firstIndexForOldColumnsCount: $firstIndexForOldColumnsCount")
+            Log.i(TAG, "oldList: $oldList")
+            Log.i(TAG, "oldIndexes: $oldIndexes")
+            Log.i(TAG, "firstIndexForNewColumnsCount: $firstIndexForNewColumnsCount")
+            Log.i(TAG, "newList: $newList")
+            Log.i(TAG, "newIndexes: $newIndexes")
         }
+
         return Pair(false, mutableListOf())
     }
+
 
     private fun migrateFromDatabase3_to_4(
         info: Level,
