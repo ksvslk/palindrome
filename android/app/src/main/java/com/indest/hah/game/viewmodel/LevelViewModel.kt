@@ -111,14 +111,11 @@ class LevelViewModel @Inject constructor(
     ) {
         setUiStateWhenOnPause()
         if (homeIndexNewFriendIndexes.first) {
-            if (_uiState.value.level.levelInfo.columnCount != -1) {
-                levelRepository.updateAuthorToMigrated(
-                    _uiState.value.level.levelInfo.levelId,
-                    newColumnCount)
-            }
-
-        }
-        else if (_currentLevel.value.levelInfo.columnCount == -1) {
+            levelRepository.updateAuthorToMigrated(
+                _uiState.value.level.levelInfo.levelId,
+                newColumnCount
+            )
+        } else if (_currentLevel.value.levelInfo.columnCount == -1) {
             levelRepository.changeColumnCount(
                 _uiState.value.level.levelInfo.levelId,
                 newColumnCount
