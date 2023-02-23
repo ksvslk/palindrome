@@ -280,7 +280,7 @@ class LevelViewModel @Inject constructor(
         )
     }
 
-    private fun setUiStateLoading() {
+    fun setUiStateLoading() {
         _currentLevel.value = Level()
         _uiState.value = _uiState.value.copy(
             state = LOADING

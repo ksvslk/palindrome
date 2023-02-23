@@ -197,6 +197,7 @@ class MainActivity : AppCompatActivity(),
             levelViewModel.currentlySignedInPlayerName = mTask.result.displayName
             levelViewModel.setAccountStatus(AccountStatus.SIGNED_IN)
             generalViewModel.setAccountStatus(AccountStatus.SIGNED_IN)
+            levelViewModel.setUiStateLoading()
         }
     }
 
@@ -278,8 +279,8 @@ class MainActivity : AppCompatActivity(),
                     Log.d(TAG, "authTokenTask: isSuccessful")
                     authTokenTask.result?.let { serverAuthToken ->
                         val credential = PlayGamesAuthProvider.getCredential(serverAuthToken)
-                        auth.signInWithCredential(credential).addOnSuccessListener {
-                            Log.d(TAG, "UID: ${it.user?.uid}")
+                        auth.signInWithCredential(credential).addOnSuccessListener { authResult ->
+                            Log.d(TAG, "UID: ${authResult.user?.uid}")
                             Log.d(TAG, "Signed in to firebase")
                             lifecycleScope.launchWhenCreated {
                                 lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
