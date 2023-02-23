@@ -101,37 +101,13 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
     private fun displayLevel(uiState: UiState) {
         binding.levelFragment.removeAllViews()
-        /*
-        Log.d(TAG, "uistate level: ${uiState.level.levelInfo}")
-        val levelGridLayout = levelCreator.getLevel(
-            uiState.level,
-            layoutInflater,
-            binding.levelFragment,
-            uiState.bookMode,
-            uiState.windowSizeClass
-        )
-        levelGridLayout.children.filterIsInstance<Cell<*, *>>().toMutableList().apply {
-            levelGridLayout.doOnPreDraw {
-                cellDirector = CellDirector(
-                    this,
-                    viewModel
-                )
-            }
-        }
-        binding.levelFragment.addView(levelGridLayout)
-        */
         val densitySettings = levelCreator.getDensitySettings(binding.levelFragment, uiState.level)
         Log.d(TAG, densitySettings.toString())
         val areColumnsDifferent =
             uiState.level.levelInfo.columnCount != densitySettings.columnCount || uiState.level.levelInfo.author == "NewVersion"
-
         lifecycleScope.launch(Dispatchers.Main)
         {
             if (areColumnsDifferent) {
-                Log.d(TAG, "areColumnsDifferent is true.")
-                Log.d(TAG, "Author: ${uiState.level.levelInfo.author}")
-                Log.d(TAG, "uiState.level.levelInfo.columnCount: ${uiState.level.levelInfo.columnCount}")
-                Log.d(TAG, "densitySettings.columnCount: ${densitySettings.columnCount}")
                 val newIndexes =
                     levelCreator.getUpdatedLevelWithPossiblyNewColumnCount(
                         uiState.level,

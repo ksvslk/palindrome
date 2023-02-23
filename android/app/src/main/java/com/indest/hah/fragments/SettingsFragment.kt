@@ -177,7 +177,7 @@ class SettingsFragment : BottomSheetDialogFragmentCustom() {
 
     private fun signInToGoogle() {
         activity?.let { activity ->
-            (activity as MainActivity).signInWithFirebase()
+            (activity as MainActivity).signInManually()
         }
     }
 

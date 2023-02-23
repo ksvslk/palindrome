@@ -280,7 +280,8 @@ class LevelViewModel @Inject constructor(
         )
     }
 
-    fun setUiStateLoading() {
+    private fun setUiStateLoading() {
+        _currentLevel.value = Level()
         _uiState.value = _uiState.value.copy(
             state = LOADING
         )
@@ -514,8 +515,6 @@ class LevelViewModel @Inject constructor(
             VariousEvent()
 
         object LoadGame : VariousEvent()
-        object PalindromeSubmissionSucceeded : VariousEvent()
-        object PalindromeSubmissionFailed : VariousEvent()
     }
 
     sealed class SubmissionEvent {

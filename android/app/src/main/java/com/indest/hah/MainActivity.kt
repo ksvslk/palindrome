@@ -119,36 +119,7 @@ class MainActivity : AppCompatActivity(),
 
         val gamesSignInClient = PlayGames.getGamesSignInClient(this)
         gamesSignInClient.isAuthenticated.addOnCompleteListener { isAuthenticatedTask: Task<AuthenticationResult> ->
-            Log.d(TAG, "addOnCompleteListener")
-
-            if (!isAuthenticatedTask.isSuccessful) {
-                // Disable Play Games Services integration
-                levelViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
-                generalViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
-                Log.d(TAG, "SIGNED_OUT")
-                levelViewModel.currentlySignedInPlayerName = "Unknown"
-                return@addOnCompleteListener
-            }
-
-            val authenticationResult = isAuthenticatedTask.result
-            if (!authenticationResult.isAuthenticated) {
-                // Disable Play Games Services integration
-                levelViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
-                generalViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
-                Log.d(TAG, "SIGNED_OUT")
-                levelViewModel.currentlySignedInPlayerName = "Unknown"
-                return@addOnCompleteListener
-            }
-
-            // Enable Play Games Services integration
-            Log.d(TAG, "SIGNED_IN")
-            signInToFirebaseWithCredential(gamesSignInClient)
-            levelViewModel.setAccountStatus(AccountStatus.SIGNED_IN)
-            generalViewModel.setAccountStatus(AccountStatus.SIGNED_IN)
-
-            PlayGames.getPlayersClient(this).currentPlayer.addOnCompleteListener { mTask: Task<Player> ->
-                levelViewModel.currentlySignedInPlayerName = mTask.result.displayName
-            }
+            handleAuthTask(gamesSignInClient, isAuthenticatedTask)
         }
         requestLatestConsentInformation()
 
@@ -168,48 +139,64 @@ class MainActivity : AppCompatActivity(),
             levelViewModel.collectPlayerLevels()
         }
         binding.root.doOnNextLayout {
-            val exclusions = listOf(Rect(0,0, it.width, it.height))
+            val exclusions = listOf(Rect(0, 0, it.width, it.height))
             ViewCompat.setSystemGestureExclusionRects(binding.root, exclusions)
         }
     }
 
-    fun signInWithFirebase()
-    {
+
+    fun signInManually() {
         levelViewModel.setAccountStatus(AccountStatus.LOADING)
         generalViewModel.setAccountStatus(AccountStatus.LOADING)
+        val gamesSignInClient = PlayGames.getGamesSignInClient(this)
+        gamesSignInClient.signIn()
+            .addOnCompleteListener { isAuthenticatedTask: Task<AuthenticationResult> ->
+                handleAuthTask(gamesSignInClient, isAuthenticatedTask)
+            }
+    }
 
+
+    private fun signInWithFirebase() {
+        levelViewModel.setAccountStatus(AccountStatus.LOADING)
+        generalViewModel.setAccountStatus(AccountStatus.LOADING)
         val gamesSignInClient = PlayGames.getGamesSignInClient(this)
         gamesSignInClient.isAuthenticated.addOnCompleteListener { isAuthenticatedTask: Task<AuthenticationResult> ->
-            Log.d(TAG, "addOnCompleteListener")
+            handleAuthTask(gamesSignInClient, isAuthenticatedTask)
+        }
+    }
 
-            if (!isAuthenticatedTask.isSuccessful) {
-                // Disable Play Games Services integration
-                levelViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
-                generalViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
-                Log.d(TAG, "SIGNED_OUT")
-                levelViewModel.currentlySignedInPlayerName = "Unknown"
-                return@addOnCompleteListener
-            }
+    private fun handleAuthTask(
+        gamesSignInClient: GamesSignInClient,
+        isAuthenticatedTask: Task<AuthenticationResult>
+    ) {
+        Log.d(TAG, "addOnCompleteListener")
+        if (!isAuthenticatedTask.isSuccessful) {
+            // Disable Play Games Services integration
+            levelViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
+            generalViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
+            Log.d(TAG, "SIGNED_OUT")
+            levelViewModel.currentlySignedInPlayerName = "Unknown"
+            return
+        }
 
-            val authenticationResult = isAuthenticatedTask.result
-            if (!authenticationResult.isAuthenticated) {
-                // Disable Play Games Services integration
-                levelViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
-                generalViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
-                Log.d(TAG, "SIGNED_OUT")
-                levelViewModel.currentlySignedInPlayerName = "Unknown"
-                return@addOnCompleteListener
-            }
+        val authenticationResult = isAuthenticatedTask.result
+        if (!authenticationResult.isAuthenticated) {
+            // Disable Play Games Services integration
+            levelViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
+            generalViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
+            Log.d(TAG, "SIGNED_OUT")
+            levelViewModel.currentlySignedInPlayerName = "Unknown"
+            return
+        }
 
-            // Enable Play Games Services integration
-            Log.d(TAG, "SIGNED_IN")
-            signInToFirebaseWithCredential(gamesSignInClient)
+        // Enable Play Games Services integration
+        Log.d(TAG, "SIGNED_IN")
+        signInToFirebaseWithCredential(gamesSignInClient)
+
+        PlayGames.getPlayersClient(this).currentPlayer.addOnCompleteListener { mTask: Task<Player> ->
+            levelViewModel.currentlySignedInPlayerName = mTask.result.displayName
             levelViewModel.setAccountStatus(AccountStatus.SIGNED_IN)
             generalViewModel.setAccountStatus(AccountStatus.SIGNED_IN)
-
-            PlayGames.getPlayersClient(this).currentPlayer.addOnCompleteListener { mTask: Task<Player> ->
-                levelViewModel.currentlySignedInPlayerName = mTask.result.displayName
-            }
         }
     }
 
@@ -693,8 +680,7 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    private fun hideSystemBars()
-    {
+    private fun hideSystemBars() {
         val windowInsetsController =
             WindowCompat.getInsetsController(window, window.decorView)
         window.decorView.setOnApplyWindowInsetsListener { view, windowInsets ->
