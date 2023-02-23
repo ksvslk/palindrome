@@ -56,12 +56,21 @@ class StagesFragment : BottomSheetDialogFragmentCustom() {
                                         }
                                     }
                                 }
+                                binding.playerLevelsButton.visibility = View.VISIBLE
                             }
                             else {
                                 binding.submitYourLevelButton.visibility = View.GONE
+                                if (!generalViewModel.isPlayerLevelsAvailable())
+                                {
+                                    binding.playerLevelsButton.visibility = View.GONE
+                                }
                             }
                         }
                         false -> {
+                            if (!generalViewModel.isPlayerLevelsAvailable())
+                            {
+                                binding.playerLevelsButton.visibility = View.GONE
+                            }
                             binding.submitYourLevelButton.setOnClickListener(null)
                             binding.submitYourLevelButton.visibility = View.GONE
                         }

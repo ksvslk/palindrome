@@ -284,4 +284,9 @@ class GeneralViewModel @Inject constructor(
         return levelRepository.isAllowedToSubmitPalindrome()
     }
 
+    suspend fun isPlayerLevelsAvailable():Boolean
+    {
+        return levelRepository.getMaxLevelId() > 1000
+     }
+
 }
