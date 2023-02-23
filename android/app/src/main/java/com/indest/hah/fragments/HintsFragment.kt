@@ -52,7 +52,6 @@ class HintsFragment : BottomSheetDialogFragmentCustom() {
             {
                 launch {
                     viewModel.buttonState.collect {
-                        Log.d(TAG, "Update buttons!: ${it}")
                         binding.rewardCategoryButton.updateButtonUi(it)
                         binding.rewardPlaceLetter.updateButtonUi(it)
                         binding.purchaseButtonClues.updateButtonUi(it)

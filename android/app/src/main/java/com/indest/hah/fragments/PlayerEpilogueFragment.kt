@@ -82,10 +82,10 @@ class PlayerEpilogueFragment : Fragment(R.layout.epilogue_player_fragment) {
                 }.collect { (internet, accountStatus) ->
                     when (internet) {
                         true -> {
-                            if (accountStatus == AccountStatus.SIGNED_IN) {
+                            if (accountStatus == AccountStatus.SIGNED_IN_WITH_FIREBASE) {
                                 binding.submitYourOwn.visibility = View.VISIBLE
                                 binding.submitYourOwn.setOnClickListener {
-                                    lifecycleScope.launchWhenCreated {
+                                    lifecycleScope.launch {
                                         if (generalViewModel.isAllowedToSubmitPalindrome()) {
                                             findNavController().popBackStack()
                                             parentFragmentManager.commit {

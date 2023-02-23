@@ -69,7 +69,7 @@ class Letter @Inject constructor(
                 MotionEvent.ACTION_DOWN -> {
                     if (state == LetterState.HOME) {
                         addHapticFeedback(
-                            HapticFeedbackConstants.TEXT_HANDLE_MOVE
+                            HapticFeedbackConstants.KEYBOARD_TAP
                         )
                         state = LetterState.DRAGGING
                         state.executeActionDownBehaviour(this, v, e)
@@ -96,7 +96,6 @@ class Letter @Inject constructor(
         homePos = pos
         currentPos = pos
         homeIndex = (parent as GridLayout).indexOfChild(this)
-       // text = homeIndex.toString() //TODO: REMOVE THIS!
         super.onSizeChanged(w, h, oldw, oldh)
     }
 
@@ -104,7 +103,6 @@ class Letter @Inject constructor(
         if (cell != null) {
             friend = cell as Slot?
             friendIndex = cell.homeIndex
-            //text = friendIndex.toString() //TODO: REMOVE THIS!
         } else {
             friend = cell
             friendIndex = -666

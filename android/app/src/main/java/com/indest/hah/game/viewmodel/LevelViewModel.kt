@@ -14,7 +14,6 @@ import com.indest.hah.game.creation.BookMode
 import com.indest.hah.game.creation.WindowSizeClass
 import com.indest.hah.game.viewmodel.ContainerState.*
 import com.indest.hah.general.AccountStatus
-import com.indest.hah.general.CompetitionAnnouncement
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
 import com.indest.hah.persistance.dto.SaveGame
@@ -23,12 +22,10 @@ import com.indest.hah.persistance.level.LevelProgress
 import com.indest.hah.persistance.level.LevelRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 @HiltViewModel
@@ -45,8 +42,6 @@ class LevelViewModel @Inject constructor(
 
     private var _windowSizeClassWidth = MutableStateFlow(WindowSizeClass.NOT_SET)
     private var _bookMode = MutableStateFlow(BookMode.NOT_SET)
-
-    private val _competitionStatus = MutableStateFlow(CompetitionAnnouncement())
 
     private val _accountStatus = MutableStateFlow(AccountStatus.NOT_SET)
     private val _currentLevel = MutableStateFlow(Level())
@@ -97,13 +92,6 @@ class LevelViewModel @Inject constructor(
         Log.e(TAG, "Could not write snapshot or save game: ${throwable.message}")
     }
 
-    fun getCompetitionStatus(): CompetitionAnnouncement {
-        return _competitionStatus.value
-    }
-
-    fun setCompetitionStatus(competitionAnnouncement: CompetitionAnnouncement) {
-        _competitionStatus.value = competitionAnnouncement
-    }
 
     suspend fun changeFriendIndexesBasedOnColumnCount(
         newColumnCount: Int,
@@ -183,7 +171,7 @@ class LevelViewModel @Inject constructor(
                 windowSizeClass != WindowSizeClass.NOT_SET &&
                 state == LOADING
             ) {
-                if (accountStatus == AccountStatus.SIGNED_IN) {
+                if (accountStatus in setOf(AccountStatus.SIGNED_IN, AccountStatus.SIGNED_IN_WITH_FIREBASE)) {
                     setUiStateLoading()
                 } else {
                     startCollectingLevelUpdate()
@@ -451,12 +439,6 @@ class LevelViewModel @Inject constructor(
         }
     }
 
-    fun allLevelsFlow(): Flow<List<Pair<Boolean, LevelData>>> {
-        return flow {
-            emit(levelRepository.getAllLevels())
-        }
-    }
-
     fun allPlayerLevelsFlow(): Flow<List<Pair<Boolean, LevelData>>> {
         return flow {
             emit(levelRepository.getAllLevels().filter { it.second.levelId >= 1000 })
@@ -477,16 +459,17 @@ class LevelViewModel @Inject constructor(
 
     fun saveGameImmediately() {
         viewModelScope.launch(saveGameExceptionHandler) {
-            if (_accountStatus.value == AccountStatus.SIGNED_IN) {
+            if (_accountStatus.value in setOf(AccountStatus.SIGNED_IN, AccountStatus.SIGNED_IN_WITH_FIREBASE)) {
                 val saveGame = levelRepository.getLocalSaveGame()
-                variousEventChannel.send(VariousEvent.SaveGame(saveGame))
+                val maxLevelInProgress = levelRepository.getMaxLevelInProgress()?.toLong() ?: 1
+                variousEventChannel.send(VariousEvent.SaveGame(saveGame, maxLevelInProgress))
             }
         }
     }
 
     private fun submitScore() {
         viewModelScope.launch {
-            if (_accountStatus.value == AccountStatus.SIGNED_IN) {
+            if (_accountStatus.value in setOf(AccountStatus.SIGNED_IN, AccountStatus.SIGNED_IN_WITH_FIREBASE)) {
                 val totalScore = levelRepository.getTotalUpdatedScore(
                     _currentLevel.value.levelInfo.levelId
                 )
@@ -502,7 +485,7 @@ class LevelViewModel @Inject constructor(
 
     private fun unlockAchievement(achievement: String) {
         viewModelScope.launch {
-            if (_accountStatus.value == AccountStatus.SIGNED_IN) {
+            if (_accountStatus.value in setOf(AccountStatus.SIGNED_IN, AccountStatus.SIGNED_IN_WITH_FIREBASE)) {
                 variousEventChannel.send(VariousEvent.UnlockAchievement(achievement))
             }
         }
@@ -511,7 +494,7 @@ class LevelViewModel @Inject constructor(
     sealed class VariousEvent {
         data class UnlockAchievement(val achievement: String) : VariousEvent()
         data class SubmitScore(val score: Long, val playerLevels: Boolean) : VariousEvent()
-        data class SaveGame(val localSaveGame: com.indest.hah.persistance.dto.SaveGame) :
+        data class SaveGame(val localSaveGame: com.indest.hah.persistance.dto.SaveGame, val maxLevelInProgress:Long) :
             VariousEvent()
 
         object LoadGame : VariousEvent()
@@ -577,7 +560,6 @@ class LevelViewModel @Inject constructor(
 
     private fun updateSolutionState(index: Int, guess: String) {
         viewModelScope.launch {
-            //val solution = _currentLevel.value.levelInfo.solution.replace(" ", "")
             val solution = _currentLevel.value.solutions.first().palindrome.replace(" ", "")
             if (guess.length == solution.length) {
                 val playerGuess = guess.map { char ->
@@ -708,11 +690,6 @@ class LevelViewModel @Inject constructor(
         }
     }
 
-    fun logCompetitionRelatedEvent(event: String) {
-        viewModelScope.launch(Dispatchers.Default) {
-            firebaseAnalytics.logEvent(event, bundleOf())
-        }
-    }
 
     fun logPremiumHintUsage(hintType: RewardType) {
         viewModelScope.launch(Dispatchers.Default) {
@@ -756,19 +733,6 @@ class LevelViewModel @Inject constructor(
     }
 
     suspend fun collectPlayerLevels() {
-        /*
-        if (levelRepository.getMaxLevelId() > 1000) return
-        val levelAndCount = insertPlayerLevels(debugPlayerLevels())
-        Log.d(TAG, "levelAndCount: $levelAndCount")
-        if (levelAndCount.second > 0) {
-            _newPlayerLevels.value = if (levelAndCount.second > 1) Triple(
-                -1,
-                levelAndCount.second,
-                ""
-            ) else Triple(levelAndCount.first.levelId, 1, levelAndCount.first.author)
-        }
-        */
-
         liveStoreRegistration?.remove()
         val maxLevelId = getMaxLevelId()
         val query = fsDb.collection("user_submitted_levels")
@@ -817,7 +781,6 @@ class LevelViewModel @Inject constructor(
                     }
                 }
             }
-            Log.d(TAG, "New featured levels: $playerLevels")
             viewModelScope.launch {
                 if (playerLevels.size != 0) {
                     val levelAndCount = insertPlayerLevels(playerLevels)
@@ -831,82 +794,6 @@ class LevelViewModel @Inject constructor(
                 }
             }
         })
-    }
-
-    private fun debugPlayerLevels(): List<PlayerLevel> {
-        viewModelScope.launch {
-            for (i in 1..101)
-                levelRepository.updateLevelProgress(i, LevelProgress.REPLAY)
-        }
-        val palindromes = listOf(
-            mapOf(
-                "Sure, vile dog race cargo deliver us.".uppercase() to "37 Chars"
-            ),
-            mapOf(
-                "Now Sal, uvulae versus us reveal uvulas won.".uppercase() to "44 Chars"
-            ),
-            mapOf(
-                "No, it net tacit power, dog ego drew optic attention.".uppercase() to "53 Chars"
-            ),
-            mapOf(
-                "Tone diced, in words do grammar gods drown? I decide not.".uppercase() to "57 Chars"
-            ),
-            mapOf(
-                "Emits nets, a hot tide vortex, as axe trove ditto hastens time.".uppercase() to "63 Chars"
-            ),
-            mapOf(
-                "Dido site: buoy. Tide suffused it, I desuffused it. You bet I so did.".uppercase() to "69 Chars"
-            ),
-            mapOf(
-                "A Hayek rut? Did I stress Ed's gift o' hot figs? Desserts, I did. Turkey, aha!".uppercase() to "78 Chars"
-            ),
-            mapOf(
-                "Madam, in Eden, I'm Adam. A man, a plan, a canal, Panama! Never a foot too far, even.".uppercase() to "85 Chars"
-            ),
-            mapOf(
-                "Deb, bury Levi’s net, so fine mesh. Sugar rubs burr, a gush semen if ostensively rubbed.".uppercase() to "88 Chars"
-            ),
-            mapOf(
-                "Slam in, impugn it, a mit’s enemy brew enema made edamame newer by men estimating up minimals.".uppercase() to "94 Chars"
-            ),
-            mapOf(
-                "Enola: Ballet? Nemo: Na, Niagara bar again. Prawn Warp: Niagara bar again? — An Omen! Tell Abalone!".uppercase() to "99 Chars"
-            ),
-            mapOf(
-                "No risk lawyer protégée, snack lederhosen obsesses bones! Oh, red elk can see, get or prey walks iron.".uppercase() to "102 Chars"
-            ),
-            mapOf(
-                "DETARTRATED" to "1st"
-            ),
-            mapOf(
-                "PARTY TRAP" to "2nd"
-            ),
-            mapOf(
-                "WOLF A VALET SATANIST, I FEEL SEEN. I ATE DETAINEES, LEE FITS IN A TASTE, LAVA FLOW." to "3rd"
-            ),
-            mapOf(
-                "A MAN, A PLAN, A CANAL - PANAMA!" to "4th"
-            ),
-            mapOf(
-                "A NEW ORDER BEGAN, A MORE ROMAN AGE BRED ROWENA." to "5th"
-            ),
-            mapOf(
-                "NO, IT CAN, AS IT IS, IT IS A WAR. RAW AS IT IS, IT IS AN ACTION." to "6th"
-            ),
-            mapOf(
-                "DEB, BURY LEVI’S NET, SO FINE MESH. SUGAR RUBS BURR, A GUSH SEMEN IF OSTENSIVELY RUBBED" to "7th"
-            ),
-            mapOf(
-                "TAAT".uppercase() to "Testing"
-            )
-        )
-        val playerLevels = mutableListOf<PlayerLevel>()
-        palindromes.forEachIndexed { index, palindrome ->
-            playerLevels.add(
-                PlayerLevel(1000 + index + 1L, palindrome.values.first(), palindrome)
-            )
-        }
-        return playerLevels
     }
 
     fun resetNewPlayersLevels() {
@@ -929,9 +816,6 @@ class LevelViewModel @Inject constructor(
             "timestamp" to FieldValue.serverTimestamp(),
             "user_name" to currentlySignedInPlayerName
         )
-
-        Log.d(TAG, "fsDb: ${fsDb.app.options.toString()}")
-        Log.d(TAG, "submitUserLevel: ${level.toString()}")
 
         // Add a new document with a generated ID
         fsDb.collection("user_submitted_levels")

@@ -56,7 +56,7 @@ class ScoresFragment : BottomSheetDialogFragmentCustom() {
             dismiss()
         }
 
-        if (generalViewModel.accountStatus.value == AccountStatus.SIGNED_IN) {
+        if (generalViewModel.accountStatus.value in setOf(AccountStatus.SIGNED_IN, AccountStatus.SIGNED_IN_WITH_FIREBASE)) {
 
             val leaderboardId = if (generalViewModel.currentLevel.value.levelInfo.levelId > 1000) {
                 getString(R.string.leaderboard_player_levels_leaderboard)

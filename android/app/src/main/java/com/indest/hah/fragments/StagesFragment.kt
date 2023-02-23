@@ -38,11 +38,10 @@ class StagesFragment : BottomSheetDialogFragmentCustom() {
                 }.collect { (internet, accountStatus) ->
                     when (internet) {
                         true -> {
-                            if (accountStatus == AccountStatus.SIGNED_IN) {
+                            if (accountStatus == AccountStatus.SIGNED_IN_WITH_FIREBASE) {
                                 binding.submitYourLevelButton.visibility = View.VISIBLE
                                 binding.submitYourLevelButton.setOnClickListener {
-
-                                    lifecycleScope.launchWhenCreated {
+                                    launch {
                                         if (generalViewModel.isAllowedToSubmitPalindrome())
                                         {
                                             findNavController().popBackStack()
@@ -59,6 +58,7 @@ class StagesFragment : BottomSheetDialogFragmentCustom() {
                                 binding.playerLevelsButton.visibility = View.VISIBLE
                             }
                             else {
+                                binding.submitYourLevelButton.setOnClickListener(null)
                                 binding.submitYourLevelButton.visibility = View.GONE
                                 if (!generalViewModel.isPlayerLevelsAvailable())
                                 {

@@ -45,7 +45,7 @@ class CellDirector constructor(
                 if (!closestCell.hasFriend()) {
                     placeLetterInEmptyBox(letter, closestCell)
                     letter.addHapticFeedback(
-                        HapticFeedbackConstants.KEYBOARD_TAP
+                        HapticFeedbackConstants.CLOCK_TICK
                     )
                     return
                 } else if (closestCell.getTheFriend() == letter) {
@@ -71,8 +71,6 @@ class CellDirector constructor(
             info.lettersProperties.isNotEmpty() -> {
                 val slots = cells.filterIsInstance<Slot>()
                 val letters = cells.filterIsInstance<Letter>()
-                Log.d(TAG, slots.joinToString())
-                Log.d(TAG, letters.joinToString())
                 info.lettersProperties.forEach { letterProperties ->
                     if (letterProperties.friendIndex != -666) {
                         val slot = slots.find { it.homeIndex == letterProperties.friendIndex }
@@ -234,7 +232,7 @@ class CellDirector constructor(
 
     fun sendWrongSolutionLetterHome(uiState: UiState) {
         val lastLetter = cells.find { p -> p.homeIndex == uiState.solutionData.index } as Letter
-        lastLetter.addHapticFeedback(HapticFeedbackConstants.REJECT)
+        lastLetter.addHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
         sendLetterHome(lastLetter)
     }
 
@@ -310,7 +308,7 @@ class CellDirector constructor(
             topFriend?.setFriend(bottom)
             top.setFriend(null)
         }
-        bottom.addHapticFeedback(HapticFeedbackConstants.TEXT_HANDLE_MOVE)
+        bottom.addHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
     }
 
     fun rewardWithRandomLetter()

@@ -179,18 +179,9 @@ enum class LetterState : ILetterState {
                     if (durationModifier != 1)
                     {
                         letter.addHapticFeedback(
-                            HapticFeedbackConstants.CONFIRM
+                            HapticFeedbackConstants.CLOCK_TICK
                         )
                     }
-                  /*  if (durationModifier != 1) {
-                        try {
-                            //letter.findFragment<LevelFragment>().playUiContainerState()
-                        }
-                        catch (e:IllegalStateException)
-                        {
-                            Log.e(TAG, e.message.toString())
-                        }
-                    }*/
                 }
                 .start()
         }

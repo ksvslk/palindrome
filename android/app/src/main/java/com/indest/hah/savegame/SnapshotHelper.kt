@@ -31,10 +31,9 @@ import javax.inject.Singleton
 class SnapshotHelper @Inject constructor() {
 
     private val TAG = "SnapshotHelper"
-    private val MY_RESOLUTION_POLICY = RESOLUTION_POLICY_MOST_RECENTLY_MODIFIED
+    private val MY_RESOLUTION_POLICY = RESOLUTION_POLICY_HIGHEST_PROGRESS
 
-    suspend fun save(activity: Activity, saveGame: SaveGame) = withContext(Dispatchers.Default) {
-        //if (activity.isActivityTransitionRunning)
+    suspend fun save(activity: Activity, saveGame: SaveGame, lastProgressedLevel:Long) = withContext(Dispatchers.Default) {
         val snapshotsClient = PlayGames.getSnapshotsClient(activity)
 
         Log.d(TAG, "Trying to save game..")
@@ -47,14 +46,13 @@ class SnapshotHelper @Inject constructor() {
                 if (task.isSuccessful) {
                     task.result.data?.let { snapshot ->
                         val coverImage = getCoverImage(activity)
-                        val lastProgressedLevel = getLastProgressedLevel(saveGame.game)
                         val bytes = gameToBytes(saveGame)
                         writeSnapshot(
                             snapshot = snapshot,
                             data = bytes,
                             coverImage = coverImage,
-                            desc = "You are at level ${lastProgressedLevel.levelInfo.levelId}.",
-                            progress = lastProgressedLevel.levelInfo.levelId.toLong(),
+                            desc = "You are at level ${lastProgressedLevel}.",
+                            progress = lastProgressedLevel,
                             activity
                         ).addOnCompleteListener {
                             if (task.isSuccessful) {
@@ -104,16 +102,12 @@ class SnapshotHelper @Inject constructor() {
             }).addOnCompleteListener { return@addOnCompleteListener }
     }
 
+
     private fun getCoverImage(activity: Activity): Bitmap {
         return BitmapFactory.decodeResource(activity.resources, com.indest.hah.R.drawable.o3)
             ?: Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
     }
 
-    private fun getLastProgressedLevel(levels: List<Level>): Level {
-        val lastLevel = levels.findLast { it.levelInfo.progress == LevelProgress.IN_PROGRESS }
-        if (lastLevel != null) return lastLevel
-        else throw Exception("Levels did not have a last level IN_PROGRESS. Cannot write snapshot.")
-    }
 
     private fun writeSnapshot(
         snapshot: Snapshot,
@@ -149,7 +143,6 @@ class SnapshotHelper @Inject constructor() {
     }
 
     fun gameToBytes(saveGame: SaveGame): ByteArray {
-        //Log.d(TAG,"save game: ${Json.encodeToString(saveGame)}")
         return Json.encodeToString(saveGame).toByteArray()
     }
 

@@ -19,6 +19,7 @@
         android:layout_marginHorizontal="@dimen/default_large_margin"
         android:textColorHint="@color/textOnRewardedColor"
         app:counterEnabled="true"
+        app:counterMaxLength="@integer/maxUserPalindromeLength"
         app:endIconMode="custom"
         app:errorEnabled="true"
         app:errorIconDrawable="@drawable/ic_baseline_error_24"

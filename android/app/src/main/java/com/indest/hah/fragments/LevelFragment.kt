@@ -3,8 +3,6 @@ package com.indest.hah.fragments
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Context
-import android.content.pm.ActivityInfo
-import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -32,10 +30,7 @@ import com.indest.hah.ads.RewardType.*
 import com.indest.hah.databinding.LevelFragmentBinding
 import com.indest.hah.fx.Animations
 import com.indest.hah.fx.SoundPlayer
-import com.indest.hah.game.creation.BookMode
 import com.indest.hah.game.creation.LevelCreator
-import com.indest.hah.game.creation.LevelCreatorOld
-import com.indest.hah.game.creation.WindowSizeClass
 import com.indest.hah.game.director.CellDirector
 import com.indest.hah.game.viewmodel.ContainerState.*
 import com.indest.hah.game.viewmodel.LevelViewModel
@@ -48,7 +43,6 @@ import com.indest.hah.views.Cell
 import com.indest.hah.views.MessageSnackBar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -66,10 +60,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     @Inject
     lateinit var levelCreator: LevelCreator
 
-    /*
-        @Inject
-       lateinit var levelCreator: LevelCreatorOld
-      */
     @Inject
     lateinit var animations: Animations
 
@@ -155,7 +145,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.uiState.distinctUntilChangedBy { it.state }.collect { uiState ->
-                    Log.d(TAG, "${uiState}")
+                    Log.d(TAG, "Handling state in fragment: ${uiState}")
                     with(binding)
                     {
                         when (uiState.state) {
@@ -166,7 +156,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                                 levelFragment.alpha = .2f
                             }
                             PLAY -> {
-                                Log.d(TAG, "PLAY: ${uiState.level.levelInfo}")
                                 activateBottomNavBar()
                                 progressCircular.visibility = View.GONE
                                 levelFragment.notClickable = false
@@ -393,11 +382,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             isBookMode = uiState.bookMode,
             textSize = MessageSnackBar.Companion.TextSize.SMALL,
         )
-        /*
-        val tapToContinueAnimation = animations.getContinueAnimation(continueMessage)
-        allAnimations.add(tapToContinueAnimation)
-        tapToContinueAnimation.start()
-         */
 
         continueMessage.view.setOnClickListener {
             if (isVisible) {

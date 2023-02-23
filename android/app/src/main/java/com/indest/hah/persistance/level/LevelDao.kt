@@ -128,6 +128,9 @@ interface LevelDao {
     @Query("select max(level_id) from level_info_table")
     suspend fun getMaxLevelId(): Int
 
+    @Query("select max(level_id) from level_info_table where progress = :progress")
+    suspend fun getMaxLevelInProgress(progress: LevelProgress): Int?
+
     @Transaction
     suspend fun updateLevels(levels: List<Level>) {
         deleteSolutions()
@@ -324,7 +327,6 @@ interface LevelDao {
 
     @Transaction
     suspend fun persistInitialLettersInfo(levelNr: Int) = withContext(Dispatchers.Default) {
-        Log.d("DAO", "persistInitialLettersInfo, $levelNr")
         if (levelNr != 0) {
             val lettersCount = levelLettersCount(levelNr)
             val isLevelFinished = getLevelProgress(levelNr)
@@ -368,7 +370,6 @@ interface LevelDao {
     }
 
     @Query("select max(level_id) = :currentLevel from level_info_table where level_id >= :minLimit and level_id <= :maxLimit")
-    //@Query("select 3 = :currentLevel from level_info_table")
     suspend fun isFinalLevel(currentLevel: Int, minLimit: Int, maxLimit: Int): Int?
 
     @Query("select timestamp from interval where name = 'last_submission'")

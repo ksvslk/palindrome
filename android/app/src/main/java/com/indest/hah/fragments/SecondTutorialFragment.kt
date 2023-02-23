@@ -27,16 +27,8 @@ class SecondTutorialFragment : BottomSheetDialogFragment() {
         val b = SecondTutorialFragmentBinding.inflate(layoutInflater, container, false)
         _binding = b
         activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-        val competition = levelViewModel.getCompetitionStatus()
-        if (competition.show && !competition.accessedFromMenu) {
-            binding.limitedAmountText.text = "Limited amount - ${competition.prizesLeft} left!"
-            binding.competitionAnnouncement.visibility = View.VISIBLE
-            binding.tutorialCompleteText.visibility = View.GONE
-        }
-        else {
-            binding.tutorialCompleteText.visibility = View.VISIBLE
-            binding.competitionAnnouncement.visibility = View.GONE
-        }
+        binding.tutorialCompleteText.visibility = View.VISIBLE
+        binding.competitionAnnouncement.visibility = View.GONE
         return b.root
     }
 

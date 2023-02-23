@@ -1,19 +1,11 @@
 package com.indest.hah
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
-import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Rect
-import android.os.Build
 import android.os.Bundle
-import android.os.PersistableBundle
-import android.text.TextUtils.replace
 import android.util.Log
 import android.view.Gravity
 import android.view.View
-import android.view.WindowInsetsController
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -23,21 +15,15 @@ import androidx.core.graphics.Insets
 import androidx.core.view.*
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.commit
-import androidx.fragment.app.commit
-import androidx.fragment.app.replace
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoTracker
 import androidx.window.layout.WindowMetricsCalculator
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkRequest
 import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.gms.games.AuthenticationResult
 import com.google.android.gms.games.GamesSignInClient
 import com.google.android.gms.games.PlayGames
@@ -53,38 +39,27 @@ import com.google.android.ump.UserMessagingPlatform
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PlayGamesAuthProvider
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.firestore.*
 import com.indest.hah.ads.RewardType
 import com.indest.hah.databinding.ActivityMainBinding
 import com.indest.hah.fragments.*
 import com.indest.hah.fx.SoundPlayer
 import com.indest.hah.game.creation.BookMode
 import com.indest.hah.game.creation.WindowSizeClass
-import com.indest.hah.game.viewmodel.ContainerState
-import com.indest.hah.game.viewmodel.FirebaseCustom
 import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.general.AccountStatus
-import com.indest.hah.general.CompetitionAnnouncement
 import com.indest.hah.general.GeneralViewModel
 import com.indest.hah.other.C
 import com.indest.hah.other.hideSystemBars
 import com.indest.hah.persistance.dto.LevelData
 import com.indest.hah.persistance.dto.SaveGame
-import com.indest.hah.persistance.level.LevelProgress
 import com.indest.hah.savegame.SnapshotHelper
-import com.indest.hah.persistance.dto.PlayerLevel
 import com.indest.hah.views.ButtonState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 
@@ -142,6 +117,7 @@ class MainActivity : AppCompatActivity(),
             val exclusions = listOf(Rect(0, 0, it.width, it.height))
             ViewCompat.setSystemGestureExclusionRects(binding.root, exclusions)
         }
+
     }
 
 
@@ -169,12 +145,10 @@ class MainActivity : AppCompatActivity(),
         gamesSignInClient: GamesSignInClient,
         isAuthenticatedTask: Task<AuthenticationResult>
     ) {
-        Log.d(TAG, "addOnCompleteListener")
         if (!isAuthenticatedTask.isSuccessful) {
             // Disable Play Games Services integration
             levelViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
             generalViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
-            Log.d(TAG, "SIGNED_OUT")
             levelViewModel.currentlySignedInPlayerName = "Unknown"
             return
         }
@@ -184,23 +158,23 @@ class MainActivity : AppCompatActivity(),
             // Disable Play Games Services integration
             levelViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
             generalViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
-            Log.d(TAG, "SIGNED_OUT")
             levelViewModel.currentlySignedInPlayerName = "Unknown"
             return
         }
 
         // Enable Play Games Services integration
-        Log.d(TAG, "SIGNED_IN")
         signInToFirebaseWithCredential(gamesSignInClient)
+    }
 
+    private fun setPlayerNameAndSignedInStatus(accountStatus: AccountStatus)
+    {
         PlayGames.getPlayersClient(this).currentPlayer.addOnCompleteListener { mTask: Task<Player> ->
             levelViewModel.currentlySignedInPlayerName = mTask.result.displayName
-            levelViewModel.setAccountStatus(AccountStatus.SIGNED_IN)
-            generalViewModel.setAccountStatus(AccountStatus.SIGNED_IN)
+            levelViewModel.setAccountStatus(accountStatus)
+            generalViewModel.setAccountStatus(accountStatus)
             levelViewModel.setUiStateLoading()
         }
     }
-
 
     private fun collectPlayerLevels() {
         lifecycleScope.launch {
@@ -271,207 +245,26 @@ class MainActivity : AppCompatActivity(),
     }
 
     private fun signInToFirebaseWithCredential(gamesSignInClient: GamesSignInClient) {
-        Log.d(TAG, "signInToFirebaseWithCredential")
         gamesSignInClient
             .requestServerSideAccess(getString(R.string.oauth_game_server_client_id), false)
             .addOnCompleteListener { authTokenTask: Task<String?> ->
                 if (authTokenTask.isSuccessful) {
-                    Log.d(TAG, "authTokenTask: isSuccessful")
                     authTokenTask.result?.let { serverAuthToken ->
                         val credential = PlayGamesAuthProvider.getCredential(serverAuthToken)
                         auth.signInWithCredential(credential).addOnSuccessListener { authResult ->
-                            Log.d(TAG, "UID: ${authResult.user?.uid}")
-                            Log.d(TAG, "Signed in to firebase")
-                            lifecycleScope.launchWhenCreated {
-                                lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
-                                    Log.d(TAG, "Start collecting")
-                                    levelViewModel.uiState.collect { uiState ->
-                                        var maxLevel: Int? = null
-                                        val currentLevel = uiState.level.levelInfo.levelId
-                                        levelViewModel.allLevelsFlow().collect { levels ->
-                                            maxLevel =
-                                                levels.firstOrNull { it.second.progress == LevelProgress.TODO }?.second?.levelId
-                                        }
-                                        val currentInfo = levelViewModel.getCompetitionStatus()
-                                        if (uiState.state == ContainerState.PLAY) {
-                                            if (!currentInfo.show && !currentInfo.triedToParticipate) {
-                                                if (currentLevel == 1 && maxLevel == 2) {
-                                                    levelViewModel.setCompetitionStatus(
-                                                        currentInfo.copy(
-                                                            triedToParticipate = true
-                                                        )
-                                                    )
-                                                    tryToParticipateInCompetition()
-                                                }
-                                            }
-                                            if (!currentInfo.competitionEnded) {
-                                                if (currentLevel == 25 && maxLevel == 26 && !currentInfo.triedToOfferPrize) {
-                                                    levelViewModel.setCompetitionStatus(
-                                                        currentInfo.copy(
-                                                            triedToOfferPrize = true
-                                                        )
-                                                    )
-                                                    tryToObtainPromoCode()
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                            setPlayerNameAndSignedInStatus(AccountStatus.SIGNED_IN_WITH_FIREBASE)
+                        }.addOnFailureListener {
+                            setPlayerNameAndSignedInStatus(AccountStatus.SIGNED_IN)
+                            Log.e(TAG, "Were not able to log in to firebase", it)
                         }
                     }
                 } else {
+                    setPlayerNameAndSignedInStatus(AccountStatus.SIGNED_IN)
                     Log.w(TAG, "Firebase login failure.")
                 }
             }
     }
 
-    private fun tryToParticipateInCompetition() {
-        Log.d(TAG, "tryToParticipateInCompetition")
-        auth.currentUser?.let { user ->
-            Log.d(TAG, "user:exists")
-            val playerName = user.displayName
-            val uid = user.uid
-            Log.d(TAG, "Current user: $playerName and uid: $uid")
-
-            val db = Firebase.firestore
-            val docRef = db.collection("competitions/reach_25_1/participants/").document(uid)
-            val competitionRef = db.collection("competitions/").document("reach_25_1")
-            db.runTransaction { transaction ->
-                val snapshot = transaction.get(docRef)
-                val snapshotComp = transaction.get(competitionRef)
-                val prizesLeft = snapshotComp.getLong("prizes_left")!!
-                val finished = snapshot.getBoolean("finished")
-                val promoLink = snapshot.getString("promo_link")
-
-                if (prizesLeft <= 0) {
-                    CompetitionAnnouncement()
-                } else if (snapshot.exists() && finished == false) {
-                    showCompetitionToast(prizesLeft)
-                    CompetitionAnnouncement(show = true, prizesLeft)
-                } else if (snapshot.exists() && promoLink?.isNotEmpty() == true) {
-                    CompetitionAnnouncement()
-                } else {
-                    val data = hashMapOf(
-                        "finished" to false,
-                        "player_name" to playerName,
-                        "promo_link" to ""
-                    )
-                    transaction.set(docRef, data)
-                    CompetitionAnnouncement(show = true, prizesLeft)
-                }
-            }.addOnSuccessListener { result ->
-                Log.d(TAG, "Transaction completed successfully. State is $result.")
-                levelViewModel.setCompetitionStatus(result)
-            }.addOnFailureListener { e ->
-                levelViewModel.setCompetitionStatus(CompetitionAnnouncement())
-                Log.w(TAG, "Transaction failure - not added to competition", e)
-            }
-        }
-    }
-
-    private fun showCompetitionToast(prizesLeft: Long) {
-        val toast = Toast.makeText(
-            applicationContext,
-            "Reach level 25 to win Instant Clues! Only $prizesLeft prizes left!",
-            Toast.LENGTH_LONG
-        )
-        toast.show()
-        levelViewModel.logCompetitionRelatedEvent(FirebaseCustom.Events.COMPETITION_25_ANNOUNCED)
-    }
-
-    private fun tryToObtainPromoCode() {
-        Log.d(TAG, "tryToObtainPromoCode")
-        val user = auth.currentUser
-        val db = Firebase.firestore
-        user?.let {
-            Log.d(TAG, "got firebase user")
-            val uid = user.uid
-            val playerRef = db.collection("competitions/reach_25_1/participants/").document(uid)
-            playerRef.get().addOnSuccessListener { playerDocSnap ->
-                if (playerDocSnap.getBoolean("finished") == false) {
-                    Log.d(TAG, "Not finished yet")
-                    db.collection("competitions/reach_25_1/promo_codes/").limit(1)
-                        .get()
-                        .addOnSuccessListener {
-                            if (it.size() == 1) {
-                                val promoLink = it.documents[0]["promo_link"]
-                                Log.d(TAG, "Found promo code: $promoLink")
-
-                                val promoCodeRef =
-                                    db.collection("competitions/reach_25_1/promo_codes/")
-                                        .document(it.documents[0].id)
-                                val competitionRef =
-                                    db.collection("competitions/").document("reach_25_1")
-
-                                val playerData = hashMapOf(
-                                    "finished" to true,
-                                    "promo_link" to promoLink,
-                                )
-                                db.runBatch { batch ->
-                                    batch.delete(promoCodeRef)
-                                    batch.update(playerRef, playerData)
-                                    batch.update(
-                                        competitionRef,
-                                        "prizes_left",
-                                        FieldValue.increment(-1)
-                                    )
-                                }.addOnSuccessListener {
-                                    Log.d(TAG, "Successfully transferred promo code to player!")
-                                    announceEndWithReward(promoCode = promoLink as String)
-                                }.addOnFailureListener { ex ->
-                                    Log.d(
-                                        TAG,
-                                        "Something went wrong when transferring promo code to player!",
-                                        ex
-                                    )
-                                    announceEndWithoutReward()
-                                }
-                            } else {
-                                playerRef.update("finished", true)
-                                announceEndWithoutReward()
-                            }
-                        }
-                        .addOnFailureListener {
-                            Log.d(
-                                TAG,
-                                "Something went wrong while obtaining promo code! No promo codes left, user already rewarded or not enrolled!"
-                            )
-                        }
-                } else {
-                    Log.d(TAG, "Player already finished!")
-                }
-            }.addOnFailureListener {
-                Log.d(TAG, "Did not participate in competition. Do nothing.")
-            }
-        }
-    }
-
-    private fun announceEndWithReward(promoCode: String) {
-        levelViewModel.setCompetitionStatus(
-            levelViewModel.getCompetitionStatus().copy(competitionEnded = true)
-        )
-        val redeemLink = "https://play.google.com/redeem?code=$promoCode"
-        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val clip = ClipData.newPlainText("Redeem link", promoCode)
-        clipboard.setPrimaryClip(clip)
-        levelViewModel.logCompetitionRelatedEvent(FirebaseCustom.Events.COMPETITION_25_PRIZE)
-        supportFragmentManager.commit {
-            addToBackStack(PrizeFragment(redeemLink).tag)
-            add(PrizeFragment(redeemLink), PrizeFragment(redeemLink).tag)
-        }
-    }
-
-    private fun announceEndWithoutReward() {
-        levelViewModel.setCompetitionStatus(
-            levelViewModel.getCompetitionStatus().copy(competitionEnded = true)
-        )
-        levelViewModel.logCompetitionRelatedEvent(FirebaseCustom.Events.COMPETITION_25_FINISHED)
-        supportFragmentManager.commit {
-            addToBackStack(PrizeFragment().tag)
-            add(PrizeFragment(), PrizeFragment().tag)
-        }
-    }
 
     override fun onResume() {
         super.onResume()
@@ -551,7 +344,6 @@ class MainActivity : AppCompatActivity(),
 
     private fun collectVariousEvents() {
         lifecycleScope.launch {
-
             lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED)
             {
                 levelViewModel.variousEventFlow.collect { event ->
@@ -561,7 +353,7 @@ class MainActivity : AppCompatActivity(),
                             levelViewModel.loadLatestLevelFromCloudOrLocal(saveGame)
                         }
                         is LevelViewModel.VariousEvent.SaveGame -> {
-                            snapshotHelper.save(this@MainActivity, event.localSaveGame)
+                            snapshotHelper.save(this@MainActivity, event.localSaveGame, event.maxLevelInProgress)
                         }
                         is LevelViewModel.VariousEvent.SubmitScore -> {
                             submitScore(event.score, event.playerLevels)
@@ -773,6 +565,7 @@ class MainActivity : AppCompatActivity(),
             (level.levelId.toFloat() / levelsCount.toFloat() * 100.0).toInt()
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         Log.d(TAG, "onBackPressed")
         levelViewModel.saveGameImmediately()

@@ -144,11 +144,7 @@ class LevelRepository @Inject constructor(
         val lastTime = Instant.ofEpochMilli(lastSubmission)
         val currentTime = Instant.now()
         val duration = Duration.between(lastTime, currentTime)
-        //return duration.toHours() >= 24 TODO: Change back
-        Log.d(TAG, "Minutes: ${duration.toMinutes()}")
-        Log.d(TAG, "lastTime.toEpochMilli: ${lastTime.toEpochMilli()}")
-        Log.d(TAG, "currentTime.toEpochMilli: ${currentTime.toEpochMilli()}")
-        return duration.toMinutes() >= 5
+        return duration.toHours() >= 24
     }
 
     suspend fun updateSubmissionTimestamp()
@@ -165,5 +161,7 @@ class LevelRepository @Inject constructor(
         levelDao.updateAuthorToMigrated(level, newColumnCount, letters, homeIndexNewFriendIndexes)
     }
 
+    suspend fun getMaxLevelInProgress(): Int?
+        = levelDao.getMaxLevelInProgress(LevelProgress.IN_PROGRESS)
 
 }

@@ -60,11 +60,11 @@ class SubmissionFragment : BottomSheetDialogFragmentCustom() {
                 binding.enterPalindromeTextInputEditText.addTextChangedListener(object :
                     TextWatcher {
                     override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                        Log.d(TAG, "beforeTextChanged: $p0")
+                        //Log.d(TAG, "beforeTextChanged: $p0")
                     }
 
                     override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                        Log.d(TAG, "onTextChanged: $p0")
+                        //Log.d(TAG, "onTextChanged: $p0")
                     }
 
                     override fun afterTextChanged(p0: Editable?) {

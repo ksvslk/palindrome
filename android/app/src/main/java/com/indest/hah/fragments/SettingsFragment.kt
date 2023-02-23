@@ -85,7 +85,6 @@ class SettingsFragment : BottomSheetDialogFragmentCustom() {
 
                     when (accountStatus) {
                         AccountStatus.SIGNED_IN -> {
-                            Log.d(TAG, "Signed in.")
                             binding.progressCircular.visibility = View.GONE
                             binding.googleSignInButton.visibility = View.GONE
                             binding.googleSignOutButton.visibility = View.VISIBLE
@@ -104,6 +103,13 @@ class SettingsFragment : BottomSheetDialogFragmentCustom() {
                             Log.d(TAG, "Loading, signing in!")
                         }
                         AccountStatus.NOT_SET -> {}
+                        AccountStatus.SIGNED_IN_WITH_FIREBASE -> {
+                            Log.d(TAG, "Signed in with firebase.")
+                            binding.progressCircular.visibility = View.GONE
+                            binding.googleSignInButton.visibility = View.GONE
+                            binding.googleSignOutButton.visibility = View.VISIBLE
+                            binding.googleSignOutButton.text = "Signed in as ${levelViewModel.currentlySignedInPlayerName}"
+                        }
                     }
 
                     binding.googleSignInButton.setOnClickListener {
@@ -139,11 +145,6 @@ class SettingsFragment : BottomSheetDialogFragmentCustom() {
             changePreference(getString(R.string.vibration_on_pref), b2)
         }
         binding.tutorialButton.setOnClickListener {
-            levelViewModel.setCompetitionStatus(
-                levelViewModel.getCompetitionStatus().copy(
-                    accessedFromMenu = true
-                )
-            )
             findNavController().popBackStack()
             parentFragmentManager.commit {
                 addToBackStack(TutorialFragment().tag)

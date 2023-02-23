@@ -55,7 +55,6 @@ class LevelSelectFragment : BottomSheetDialogFragmentCustom() {
                     binding.levelSelectRecyclerview.adapter = LevelItemAdapter(currentLevelIcon, currentLevel, levels) {
                         it?.levelId?.let { nr ->
                             val currentlyActiveFragment = parentFragmentManager.findFragmentById(R.id.fragments_container)
-                            Log.d(TAG, "Currently active fragment: ${currentlyActiveFragment?.javaClass?.name}")
                             if (currentlyActiveFragment is LevelFragment)
                             {
                                 levelViewModel.setUiStateWhenOnPause()

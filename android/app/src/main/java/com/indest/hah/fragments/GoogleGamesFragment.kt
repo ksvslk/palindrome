@@ -44,7 +44,7 @@ class GoogleGamesFragment : BottomSheetDialogFragmentCustom() {
                 }.collect { (internet, accountStatus) ->
                     when (internet) {
                         true -> {
-                            if (accountStatus != AccountStatus.SIGNED_IN) {
+                            if (accountStatus !in setOf(AccountStatus.SIGNED_IN, AccountStatus.SIGNED_IN_WITH_FIREBASE)) {
                                 binding.alternativeScreen.findViewById<AppCompatTextView>(R.id.alternative_text).text =
                                     getString(R.string.please_sign_in)
                                 binding.achievementsButton.visibility = View.GONE

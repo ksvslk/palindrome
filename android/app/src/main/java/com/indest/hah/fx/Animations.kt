@@ -77,8 +77,6 @@ class Animations @Inject constructor(
     fun getCorrectSolutionAnimation(
         cells: MutableList<Cell<*, *>>,
     ): AnimatorSet {
-        Log.d("ANIMATIONS", "getCorrectSolutionAnimation")
-
         val animatorSet = AnimatorSet()
         val specialChars = ArrayList<Letter>()
         val letters = cells

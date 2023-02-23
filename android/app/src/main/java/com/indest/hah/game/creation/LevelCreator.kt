@@ -35,13 +35,11 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         level.columnCount = densitySettings.columnCount
         Log.d(TAG, "DensitySettings: $densitySettings")
         addLetters(level, densitySettings, info, context)
-        //addBlanks(densitySettings.columnCount, level, layoutInflater)
         addSlots(info.solutions.first().palindrome, level, densitySettings, context)
         return Pair(
             level,
             densitySettings.homeIndexNewFriendIndexes
         )
-
     }
 
     fun getUpdatedLevelWithPossiblyNewColumnCount(
@@ -78,9 +76,6 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                     .withIndex()
                     .filter { it.value != ' ' }
                     .map { i -> firstIndexForOldColumnsCount + i.index }
-                Log.d(TAG, "Starting to add indexes to NEW indexes list.")
-                Log.d(TAG, "oldIndexes: $oldIndexes")
-                Log.d(TAG, "newIndexes: $newIndexes")
                 info.lettersProperties.filter { it.friendIndex != -666 }.forEach {
                     val placementInArrayOfMatchingFriend =
                         oldIndexes.first { nr -> nr == it.friendIndex }
@@ -93,40 +88,6 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         catch (e:java.lang.Exception)
         {
             Log.e(TAG, "We did not migrate successfully.", e)
-            Log.i(TAG, "info.levelInfo: ${info.levelInfo}")
-            Log.i(TAG, "info.lettersProperties: ${info.lettersProperties}")
-
-            val palindrome = info.solutions.first().palindrome
-            val puzzleOnlyLetters = getPuzzle(info)
-            val puzzleOnlyCount = puzzleOnlyLetters.count()
-            val emptySlotsInTheEndNew =
-                newColumnCount - puzzleOnlyLetters.chunked(newColumnCount).last().count()
-            val emptySlotsInTheEndOld =
-                info.levelInfo.columnCount - puzzleOnlyLetters.chunked(info.levelInfo.columnCount)
-                    .last().count()
-            val firstIndexForNewColumnsCount = puzzleOnlyCount + emptySlotsInTheEndNew
-            val firstIndexForOldColumnsCount = puzzleOnlyCount + emptySlotsInTheEndOld
-            val oldList = getSolutionRows(palindrome, info.levelInfo.columnCount)
-            val newList = getSolutionRows(palindrome, newColumnCount)
-            val newIndexes = newList
-                .joinToString("")
-                .withIndex()
-                .filter { it.value != ' ' }
-                .map { i -> firstIndexForNewColumnsCount + i.index }
-            val oldIndexes = oldList
-                .joinToString("")
-                .withIndex()
-                .filter { it.value != ' ' }
-                .map { i -> firstIndexForOldColumnsCount + i.index }
-            Log.i(TAG, "puzzleOnlyCount: $puzzleOnlyCount")
-            Log.i(TAG, "palindrome: $palindrome")
-            Log.i(TAG, "firstIndexForOldColumnsCount: $firstIndexForOldColumnsCount")
-            Log.i(TAG, "oldList: $oldList")
-            Log.i(TAG, "oldIndexes: $oldIndexes")
-            Log.i(TAG, "firstIndexForNewColumnsCount: $firstIndexForNewColumnsCount")
-            Log.i(TAG, "newList: $newList")
-            Log.i(TAG, "newIndexes: $newIndexes")
-            Log.i(TAG, "newFriendIndexesForHomes: $newFriendIndexesForHomes")
         }
 
         return Pair(false, mutableListOf())
@@ -158,15 +119,6 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
             .withIndex()
             .filter { it.value != ' ' }
             .map { i -> firstIndexForOldColumnsCount + i.index }
-        Log.i(TAG, "Letters properties: ${info.lettersProperties.filter { it.friendIndex != -666 }.joinToString()}")
-        Log.i(TAG, "puzzleOnlyCount: $puzzleOnlyCount")
-        Log.i(TAG, "palindrome: $palindrome")
-        Log.i(TAG, "firstIndexForOldColumnsCount: $firstIndexForOldColumnsCount")
-        Log.i(TAG, "oldList: $oldList")
-        Log.i(TAG, "oldIndexes: $oldIndexes")
-        Log.i(TAG, "firstIndexForNewColumnsCount: $firstIndexForNewColumnsCount")
-        Log.i(TAG, "newList: $newList")
-        Log.i(TAG, "newIndexes: $newIndexes")
         try {
             info.lettersProperties.filter { it.friendIndex != -666 }.forEach {
                 val placementInArrayOfMatchingFriend =
@@ -176,18 +128,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
             }
         } catch(e:java.util.NoSuchElementException) {
             Log.e(TAG, "Were not able to generate newFriendIndexesForHomes", e)
-            Log.i(TAG, "Letters properties: ${info.lettersProperties.filter { it.friendIndex != -666 }.joinToString()}")
-            Log.i(TAG, "puzzleOnlyCount: $puzzleOnlyCount")
-            Log.i(TAG, "palindrome: $palindrome")
-            Log.i(TAG, "firstIndexForOldColumnsCount: $firstIndexForOldColumnsCount")
-            Log.i(TAG, "oldList: $oldList")
-            Log.i(TAG, "oldIndexes: $oldIndexes")
-            Log.i(TAG, "firstIndexForNewColumnsCount: $firstIndexForNewColumnsCount")
-            Log.i(TAG, "newList: $newList")
-            Log.i(TAG, "newIndexes: $newIndexes")
         }
-        Log.i(TAG, "newFriendIndexesForHomes: $newFriendIndexesForHomes")
-
         return newFriendIndexesForHomes
     }
 
@@ -196,8 +137,6 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         val puzzleOnlyLetters = getPuzzle(info)
         val lastRowLettersCount =
             puzzleOnlyLetters.chunked(newColumnCount).last().count()
-        Log.d(TAG, "lastRowLettersCount: $lastRowLettersCount")
-        Log.d(TAG, "info.levelInfo.columnCount: ${newColumnCount}")
         val firstIndex = if (puzzleOnlyLetters.length <= newColumnCount) {
             if (lastRowLettersCount == newColumnCount) {
                 3 * newColumnCount
@@ -213,6 +152,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         }
         return firstIndex
     }
+
 
     private fun getPuzzle(info: Level): String {
         return info.lettersProperties
@@ -247,7 +187,6 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         val columnsEnd = max(7, palindrome.length)
         for (cols in columns..columnsEnd) {
             val usedAreaRatio = getUsedAreaRatio(cols, puzzleOnlyLetters, palindrome, smallGap)
-            Log.d(TAG, "Used area ratio with column count $cols is: $usedAreaRatio")
             val newDistance = abs(usedAreaRatio - totalAreaRatio)
             val currentBestDistance = abs(closestColumnsRatio.second - totalAreaRatio)
             if (newDistance < currentBestDistance) {
@@ -297,9 +236,6 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
             )
 
         }
-        Log.d(TAG, "Final exceedingWidth: $exceedingWidth")
-        Log.d(TAG, "Final exceedingHeight: $exceedingHeight")
-        Log.d(TAG, "Actual width and height: $widthAndHeight")
 
         val homeIndexNewFriendIndexes = getUpdatedLevelWithPossiblyNewColumnCount(
             info = info,
@@ -444,12 +380,6 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                     acc.subList(0, acc.lastIndex) + last + s
                 }
             }
-        }
-    }
-
-    private fun addBlanks(columnCount: Int, grid: GridLayout, layoutInflater: LayoutInflater) {
-        for (i in 1..columnCount) {
-            layoutInflater.inflate(R.layout.space, grid)
         }
     }
 
