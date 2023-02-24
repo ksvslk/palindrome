@@ -31,20 +31,6 @@ interface LevelDao {
         updateChosenLevelTimestamp(currentLevelNr, chosenLevel)
     }
 
-    @Query("update level_info_table set progress = :progress where level_id = :current + 1")
-    suspend fun updateNextLevelProgress(current: Int, progress: LevelProgress)
-
-    @Query("select progress from level_info_table where level_id = :current + 1")
-    suspend fun getNextLevelProgress(current: Int): Int
-
-    @Transaction
-    suspend fun unlockNextLevel(current: Int) {
-        if (getNextLevelProgress(current) == 0) {
-            updateNextLevelProgress(current, LevelProgress.IN_PROGRESS)
-        }
-        updateChosenLevelTimestamp(current, current + 1)
-    }
-
     @Query("update level_info_table set best_score = score where best_score < score and level_id = :level")
     suspend fun updateBestScoreQuery(level: Int)
 
@@ -68,9 +54,6 @@ interface LevelDao {
 
     @Query("select * from level_info_table where level_id = (select max(level_id) from level_info_table)")
     suspend fun getMaxLevel(): LevelData
-
-    @Query("update letter_info_table set friend_index=(friend_index-(:columnDifference)) where owner_id = :level and friend_index != -666")
-    suspend fun changeFriendIndexes(level: Int, columnDifference: Int)
 
     @Query("update level_info_table set column_count = :newColumnCount where level_id = :level")
     suspend fun changeColumnCount(level: Int, newColumnCount: Int)

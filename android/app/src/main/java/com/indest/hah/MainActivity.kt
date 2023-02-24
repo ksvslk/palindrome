@@ -90,7 +90,6 @@ class MainActivity : AppCompatActivity(),
         levelViewModel.setWindowSizeClass(WindowSizeClass.NOT_SET)
         levelViewModel.setBookMode(BookMode.NOT_SET)
         updateFoldModeInfo()
-        signInWithFirebase()
 
         val gamesSignInClient = PlayGames.getGamesSignInClient(this)
         gamesSignInClient.isAuthenticated.addOnCompleteListener { isAuthenticatedTask: Task<AuthenticationResult> ->
@@ -108,11 +107,8 @@ class MainActivity : AppCompatActivity(),
         progressBarUpdater()
         collectRewardInfo()
         collectVariousEvents()
-        collectPlayerLevels()
+        collectPlayerLevelsForNotification()
 
-        lifecycleScope.launch {
-            levelViewModel.collectPlayerLevels()
-        }
         binding.root.doOnNextLayout {
             val exclusions = listOf(Rect(0, 0, it.width, it.height))
             ViewCompat.setSystemGestureExclusionRects(binding.root, exclusions)
@@ -131,15 +127,6 @@ class MainActivity : AppCompatActivity(),
             }
     }
 
-
-    private fun signInWithFirebase() {
-        levelViewModel.setAccountStatus(AccountStatus.LOADING)
-        generalViewModel.setAccountStatus(AccountStatus.LOADING)
-        val gamesSignInClient = PlayGames.getGamesSignInClient(this)
-        gamesSignInClient.isAuthenticated.addOnCompleteListener { isAuthenticatedTask: Task<AuthenticationResult> ->
-            handleAuthTask(gamesSignInClient, isAuthenticatedTask)
-        }
-    }
 
     private fun handleAuthTask(
         gamesSignInClient: GamesSignInClient,
@@ -166,6 +153,7 @@ class MainActivity : AppCompatActivity(),
         signInToFirebaseWithCredential(gamesSignInClient)
     }
 
+
     private fun setPlayerNameAndSignedInStatus(accountStatus: AccountStatus)
     {
         PlayGames.getPlayersClient(this).currentPlayer.addOnCompleteListener { mTask: Task<Player> ->
@@ -176,7 +164,8 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    private fun collectPlayerLevels() {
+
+    private fun collectPlayerLevelsForNotification() {
         lifecycleScope.launch {
             lifecycleScope.launchWhenCreated {
                 levelViewModel.newPlayerLevels.collectLatest { (levelNr, addedLevelsCount, author) ->

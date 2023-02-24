@@ -339,7 +339,9 @@ class LevelViewModel @Inject constructor(
                 startCollectingLevelUpdate()
             }
             launch {
-                collectPlayerLevels()
+                if (_accountStatus.value == AccountStatus.SIGNED_IN_WITH_FIREBASE){
+                    collectPlayerLevels()
+                }
             }
         }
     }
@@ -732,7 +734,7 @@ class LevelViewModel @Inject constructor(
         }
     }
 
-    suspend fun collectPlayerLevels() {
+    private suspend fun collectPlayerLevels() {
         liveStoreRegistration?.remove()
         val maxLevelId = getMaxLevelId()
         val query = fsDb.collection("user_submitted_levels")
