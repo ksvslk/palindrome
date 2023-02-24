@@ -1,6 +1,5 @@
 package com.indest.hah.persistance.level
 
-import android.util.Log
 import com.indest.hah.persistance.dto.*
 import kotlinx.coroutines.flow.Flow
 import java.time.Duration
@@ -161,7 +160,8 @@ class LevelRepository @Inject constructor(
         levelDao.updateAuthorToMigrated(level, newColumnCount, letters, homeIndexNewFriendIndexes)
     }
 
-    suspend fun getMaxLevelInProgress(): Int?
-        = levelDao.getMaxLevelInProgress(LevelProgress.IN_PROGRESS)
+
+    suspend fun getMaximumTimestamp():Long = levelDao.getMaximumTimestamp() ?: 0
+
 
 }

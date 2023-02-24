@@ -1,7 +1,6 @@
 package com.indest.hah.savegame
 
 import android.app.Activity
-import android.app.ActivityManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
@@ -13,19 +12,15 @@ import com.google.android.gms.games.snapshot.SnapshotMetadataChange
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.indest.hah.other.C
-import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.SaveGame
-import com.indest.hah.persistance.level.LevelProgress
 import dagger.hilt.android.scopes.ActivityScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
-import javax.inject.Singleton
 
 @ActivityScoped
 class SnapshotHelper @Inject constructor() {
@@ -33,7 +28,7 @@ class SnapshotHelper @Inject constructor() {
     private val TAG = "SnapshotHelper"
     private val MY_RESOLUTION_POLICY = RESOLUTION_POLICY_HIGHEST_PROGRESS
 
-    suspend fun save(activity: Activity, saveGame: SaveGame, lastProgressedLevel:Long) = withContext(Dispatchers.Default) {
+    suspend fun save(activity: Activity, saveGame: SaveGame, calculatedGameProgress:Long) = withContext(Dispatchers.Default) {
         val snapshotsClient = PlayGames.getSnapshotsClient(activity)
 
         Log.d(TAG, "Trying to save game..")
@@ -51,8 +46,8 @@ class SnapshotHelper @Inject constructor() {
                             snapshot = snapshot,
                             data = bytes,
                             coverImage = coverImage,
-                            desc = "You are at level ${lastProgressedLevel}.",
-                            progress = lastProgressedLevel,
+                            desc = "Calculated progress ${calculatedGameProgress}.",
+                            progress = calculatedGameProgress,
                             activity
                         ).addOnCompleteListener {
                             if (task.isSuccessful) {

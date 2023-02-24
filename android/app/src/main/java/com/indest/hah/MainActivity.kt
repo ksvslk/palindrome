@@ -342,7 +342,11 @@ class MainActivity : AppCompatActivity(),
                             levelViewModel.loadLatestLevelFromCloudOrLocal(saveGame)
                         }
                         is LevelViewModel.VariousEvent.SaveGame -> {
-                            snapshotHelper.save(this@MainActivity, event.localSaveGame, event.maxLevelInProgress)
+                            snapshotHelper.save(
+                                this@MainActivity,
+                                event.localSaveGame,
+                                event.calculatedGameProgress
+                            )
                         }
                         is LevelViewModel.VariousEvent.SubmitScore -> {
                             submitScore(event.score, event.playerLevels)
@@ -459,15 +463,6 @@ class MainActivity : AppCompatActivity(),
                         0
                     )
                 ).build()
-        }
-    }
-
-    private fun hideSystemBars() {
-        val windowInsetsController =
-            WindowCompat.getInsetsController(window, window.decorView)
-        window.decorView.setOnApplyWindowInsetsListener { view, windowInsets ->
-            windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
-            view.onApplyWindowInsets(windowInsets)
         }
     }
 

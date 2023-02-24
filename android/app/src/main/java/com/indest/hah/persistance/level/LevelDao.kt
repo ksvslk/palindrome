@@ -1,14 +1,12 @@
 package com.indest.hah.persistance.level
 
-import android.util.Log
 import androidx.room.*
 import com.indest.hah.game.creation.Shuffler
 import com.indest.hah.persistance.dto.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
-import java.time.Instant
-import java.util.Date
+
 
 @Dao
 interface LevelDao {
@@ -299,8 +297,6 @@ interface LevelDao {
         persistInitialLettersInfo(currentLevel)
     }
 
-/*    @Query("select solution from level_info_table where level_id=:level")
-    suspend fun getLevelSolution(level: Int): String*/
 
     @Query("select palindrome from solution_table where parent_id=:level")
     suspend fun getLevelSolutions(level: Int): List<String>
@@ -379,5 +375,8 @@ interface LevelDao {
             homeIndexNewFriendIndexes
         )
     }
+
+    @Query("select max(time_modified) from level_info_table")
+    suspend fun getMaximumTimestamp(): Long?
 
 }

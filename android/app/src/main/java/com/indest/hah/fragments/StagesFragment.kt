@@ -38,8 +38,8 @@ class StagesFragment : BottomSheetDialogFragmentCustom() {
                 }.collect { (internet, accountStatus) ->
                     when (internet) {
                         true -> {
+                            binding.submitYourLevelButton.visibility = View.VISIBLE
                             if (accountStatus == AccountStatus.SIGNED_IN_WITH_FIREBASE) {
-                                binding.submitYourLevelButton.visibility = View.VISIBLE
                                 binding.submitYourLevelButton.setOnClickListener {
                                     launch {
                                         if (generalViewModel.isAllowedToSubmitPalindrome())

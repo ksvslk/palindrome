@@ -463,8 +463,8 @@ class LevelViewModel @Inject constructor(
         viewModelScope.launch(saveGameExceptionHandler) {
             if (_accountStatus.value in setOf(AccountStatus.SIGNED_IN, AccountStatus.SIGNED_IN_WITH_FIREBASE)) {
                 val saveGame = levelRepository.getLocalSaveGame()
-                val maxLevelInProgress = levelRepository.getMaxLevelInProgress()?.toLong() ?: 1
-                variousEventChannel.send(VariousEvent.SaveGame(saveGame, maxLevelInProgress))
+                val calculatedGameProgress = levelRepository.getMaximumTimestamp()
+                variousEventChannel.send(VariousEvent.SaveGame(saveGame, calculatedGameProgress))
             }
         }
     }
@@ -496,7 +496,7 @@ class LevelViewModel @Inject constructor(
     sealed class VariousEvent {
         data class UnlockAchievement(val achievement: String) : VariousEvent()
         data class SubmitScore(val score: Long, val playerLevels: Boolean) : VariousEvent()
-        data class SaveGame(val localSaveGame: com.indest.hah.persistance.dto.SaveGame, val maxLevelInProgress:Long) :
+        data class SaveGame(val localSaveGame: com.indest.hah.persistance.dto.SaveGame, val calculatedGameProgress:Long) :
             VariousEvent()
 
         object LoadGame : VariousEvent()
