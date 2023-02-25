@@ -26,7 +26,7 @@ import javax.inject.Inject
 class SnapshotHelper @Inject constructor() {
 
     private val TAG = "SnapshotHelper"
-    private val MY_RESOLUTION_POLICY = RESOLUTION_POLICY_HIGHEST_PROGRESS
+    private val MY_RESOLUTION_POLICY = RESOLUTION_POLICY_MOST_RECENTLY_MODIFIED
 
     suspend fun save(activity: Activity, saveGame: SaveGame, calculatedGameProgress:Long) = withContext(Dispatchers.Default) {
         val snapshotsClient = PlayGames.getSnapshotsClient(activity)
