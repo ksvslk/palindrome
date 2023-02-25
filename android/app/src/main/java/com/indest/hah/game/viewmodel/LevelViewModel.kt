@@ -785,6 +785,8 @@ class LevelViewModel @Inject constructor(
             }
             viewModelScope.launch {
                 if (playerLevels.size != 0) {
+                    // Get Pair where first element is a level when only 1 level added
+                    // Second element is the level count when there are more than 1 level added.
                     val levelAndCount = insertPlayerLevels(playerLevels)
                     if (levelAndCount.second > 0) {
                         _newPlayerLevels.value = if (levelAndCount.second > 1) Triple(
@@ -813,10 +815,12 @@ class LevelViewModel @Inject constructor(
     suspend fun submitUserLevel(playersPalindrome: String) {
         // Create a new user with a first, middle, and last name
         val level = hashMapOf(
-            "is_featured" to false,
-            "level" to playersPalindrome,
+            "isFeatured" to false,
+            "levelId" to -1337,
+            "palindrome" to playersPalindrome,
+            "player" to currentlySignedInPlayerName,
+            "solutionToCategory" to hashMapOf(Pair(playersPalindrome, "[ADD_CATEGORY]")),
             "timestamp" to FieldValue.serverTimestamp(),
-            "user_name" to currentlySignedInPlayerName
         )
 
         // Add a new document with a generated ID

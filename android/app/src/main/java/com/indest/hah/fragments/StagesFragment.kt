@@ -29,46 +29,43 @@ class StagesFragment : BottomSheetDialogFragmentCustom() {
     private val generalViewModel: GeneralViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        Log.d(TAG, "onViewCreated")
         super.onViewCreated(view, savedInstanceState)
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED)
             {
+                Log.d(TAG, "Lifecycle.State.RESUMED")
+                val isAllowedToSubmit = generalViewModel.isAllowedToSubmitPalindrome()
                 generalViewModel.internet.combine(generalViewModel.accountStatus) { i, a ->
                     Pair(i, a)
                 }.collect { (internet, accountStatus) ->
                     when (internet) {
                         true -> {
+                            Log.d(TAG, "isAllowedToSubmit: $isAllowedToSubmit")
                             binding.submitYourLevelButton.visibility = View.VISIBLE
                             if (accountStatus == AccountStatus.SIGNED_IN_WITH_FIREBASE) {
                                 binding.submitYourLevelButton.setOnClickListener {
-                                    launch {
-                                        if (generalViewModel.isAllowedToSubmitPalindrome())
-                                        {
-                                            findNavController().popBackStack()
-                                            parentFragmentManager.commit {
-                                                addToBackStack(SubmissionFragment().tag)
-                                                add(SubmissionFragment(), SubmissionFragment().tag)
-                                            }
+                                    if (isAllowedToSubmit) {
+                                        findNavController().popBackStack()
+                                        parentFragmentManager.commit {
+                                            addToBackStack(SubmissionFragment().tag)
+                                            add(SubmissionFragment(), SubmissionFragment().tag)
                                         }
-                                        else {
-                                            showLimitedSubmissionsToast()
-                                        }
+                                    } else {
+                                        showLimitedSubmissionsToast()
                                     }
                                 }
                                 binding.playerLevelsButton.visibility = View.VISIBLE
-                            }
-                            else {
+                            } else {
                                 binding.submitYourLevelButton.setOnClickListener(null)
                                 binding.submitYourLevelButton.visibility = View.GONE
-                                if (!generalViewModel.isPlayerLevelsAvailable())
-                                {
+                                if (!generalViewModel.isPlayerLevelsAvailable()) {
                                     binding.playerLevelsButton.visibility = View.GONE
                                 }
                             }
                         }
                         false -> {
-                            if (!generalViewModel.isPlayerLevelsAvailable())
-                            {
+                            if (!generalViewModel.isPlayerLevelsAvailable()) {
                                 binding.playerLevelsButton.visibility = View.GONE
                             }
                             binding.submitYourLevelButton.setOnClickListener(null)
@@ -109,8 +106,7 @@ class StagesFragment : BottomSheetDialogFragmentCustom() {
         return b.root
     }
 
-    private fun showLimitedSubmissionsToast()
-    {
+    private fun showLimitedSubmissionsToast() {
         val toast = Toast.makeText(
             requireContext().applicationContext,
             "You can submit once per day.",

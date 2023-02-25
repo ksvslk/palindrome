@@ -53,6 +53,9 @@ interface LevelDao {
     @Query("select * from level_info_table where level_id = (select max(level_id) from level_info_table)")
     suspend fun getMaxLevel(): LevelData
 
+    @Query("select * from level_info_table where level_id = :id")
+    suspend fun getSpecificLevel(id:Long): LevelData
+
     @Query("update level_info_table set column_count = :newColumnCount where level_id = :level")
     suspend fun changeColumnCount(level: Int, newColumnCount: Int)
 
@@ -70,47 +73,53 @@ interface LevelDao {
         changeColumnCount(level, columnCount)
     }
 
+
+    @Query("select exists (select 1 from level_info_table where level_id = :id)")
+    suspend fun isLevelAdded(id: Long): Boolean
+
     @Transaction
     suspend fun insertPlayerLevels(playerLevel: List<PlayerLevel>): Pair<LevelData, Int> {
-        val previousLevelCount = getAllLevels().size
+        var newLevelsCount = 0
+        var oneLevelId = 1L
+
         playerLevel.forEach { level ->
-            val puzzle = level.solutionToCategory.keys.firstOrNull() ?: ""
-            insertLevelInfo(
-                LevelData(
-                    levelId = level.levelId.toInt(),
-                    puzzle = puzzle,
-                    categoryRewarded = false,
-                    progress = LevelProgress.TODO,
-                    score = puzzle.length * 100,
-                    best_score = 0,
-                    timeModified = 0,
-                    author = level.player,
-                    columnCount = -1
-                )
-            )
-            level.solutionToCategory.entries.forEach { solutionToCategory ->
-                val maxSolutionId = getMaxSolutionId()
-                insertSolution(
-                    Solution(
-                        solutionId = if (maxSolutionId == 100) 1001 else maxSolutionId + 1,
-                        parentId = level.levelId.toInt(),
-                        palindrome = solutionToCategory.key,
-                        hint = solutionToCategory.value,
-                        solved = false
+            if (!isLevelAdded(level.levelId)) {
+                val puzzle = level.solutionToCategory.keys.firstOrNull() ?: ""
+                insertLevelInfo(
+                    LevelData(
+                        levelId = level.levelId.toInt(),
+                        puzzle = puzzle,
+                        categoryRewarded = false,
+                        progress = LevelProgress.TODO,
+                        score = puzzle.length * 100,
+                        best_score = 0,
+                        timeModified = 0,
+                        author = level.player,
+                        columnCount = -1
                     )
                 )
+                level.solutionToCategory.entries.forEach { solutionToCategory ->
+                    val maxSolutionId = getMaxSolutionId()
+                    insertSolution(
+                        Solution(
+                            solutionId = if (maxSolutionId == 100) 1001 else maxSolutionId + 1,
+                            parentId = level.levelId.toInt(),
+                            palindrome = solutionToCategory.key,
+                            hint = solutionToCategory.value,
+                            solved = false
+                        )
+                    )
+                }
+                newLevelsCount++
+                oneLevelId = level.levelId
             }
         }
-        val newMaxLevelId = getMaxLevel()
-        val currentLevelCount = getAllLevels().size
-        return Pair(newMaxLevelId, currentLevelCount - previousLevelCount)
+        return Pair(getSpecificLevel(oneLevelId), newLevelsCount)
     }
 
     @Query("select max(level_id) from level_info_table")
     suspend fun getMaxLevelId(): Int
 
-    @Query("select max(level_id) from level_info_table where progress = :progress")
-    suspend fun getMaxLevelInProgress(progress: LevelProgress): Int?
 
     @Transaction
     suspend fun updateLevels(levels: List<Level>) {
@@ -344,8 +353,13 @@ interface LevelDao {
 
     @Transaction
     suspend fun updateLocalGame(saveGame: SaveGame) {
-        updateLevels(saveGame.game)
-        updateIntervals(saveGame.interval)
+        val localMaxTimestamp = getMaximumTimestamp() ?: 0
+        val cloudMaxTimestamp = saveGame.game.maxOfOrNull { it.levelInfo.timeModified } ?: -1
+        if (cloudMaxTimestamp > localMaxTimestamp)
+        {
+            updateLevels(saveGame.game)
+            updateIntervals(saveGame.interval)
+        }
     }
 
     @Query("select max(level_id) = :currentLevel from level_info_table where level_id >= :minLimit and level_id <= :maxLimit")
