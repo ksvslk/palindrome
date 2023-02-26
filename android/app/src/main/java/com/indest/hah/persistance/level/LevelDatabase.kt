@@ -87,7 +87,6 @@ abstract class LevelDatabase : RoomDatabase() {
                     database.execSQL("ALTER TABLE level_info_table ADD COLUMN author TEXT NOT NULL DEFAULT 'NewVersion'")
                     database.execSQL("ALTER TABLE level_info_table ADD COLUMN column_count INTEGER NOT NULL DEFAULT 7")
                     database.execSQL("ALTER TABLE interval ADD COLUMN timestamp INTEGER NOT NULL DEFAULT -1")
-                    database.execSQL("INSERT INTO interval VALUES (last_submission, -1, -1, -1)")
                 } catch (ex: SQLiteException) {
                     Log.w("LevelDatabase", "Altering database to migrate from version 2 to 3: " + ex.message)
                 }
