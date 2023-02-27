@@ -77,32 +77,32 @@ class PlayerEpilogueFragment : Fragment(R.layout.epilogue_player_fragment) {
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED)
             {
+                val isAllowedToSubmit = generalViewModel.isAllowedToSubmitPalindrome()
                 generalViewModel.internet.combine(generalViewModel.accountStatus) { i, a ->
                     Pair(i, a)
                 }.collect { (internet, accountStatus) ->
                     when (internet) {
                         true -> {
+                            binding.submitYourOwn.visibility = View.VISIBLE
                             if (accountStatus == AccountStatus.SIGNED_IN_WITH_FIREBASE) {
-                                binding.submitYourOwn.visibility = View.VISIBLE
                                 binding.submitYourOwn.setOnClickListener {
-                                    lifecycleScope.launch {
-                                        if (generalViewModel.isAllowedToSubmitPalindrome()) {
-                                            findNavController().popBackStack()
-                                            parentFragmentManager.commit {
-                                                addToBackStack(SubmissionFragment().tag)
-                                                add(SubmissionFragment(), SubmissionFragment().tag)
-                                            }
-                                        } else {
-                                            val toast = Toast.makeText(
-                                                requireContext().applicationContext,
-                                                "You can submit once per day.",
-                                                Toast.LENGTH_LONG
-                                            )
-                                            toast.show()
+                                    if (isAllowedToSubmit) {
+                                        findNavController().popBackStack()
+                                        parentFragmentManager.commit {
+                                            addToBackStack(SubmissionFragment().tag)
+                                            add(SubmissionFragment(), SubmissionFragment().tag)
                                         }
+                                    } else {
+                                        val toast = Toast.makeText(
+                                            requireContext().applicationContext,
+                                            "You can submit once per day.",
+                                            Toast.LENGTH_LONG
+                                        )
+                                        toast.show()
                                     }
                                 }
                             } else {
+                                binding.submitYourOwn.setOnClickListener(null)
                                 binding.submitYourOwn.visibility = View.GONE
                             }
                             binding.shareButtonPlayer.visibility = View.VISIBLE
@@ -132,12 +132,6 @@ class PlayerEpilogueFragment : Fragment(R.layout.epilogue_player_fragment) {
                     binding.shareButtonPlayer.setOnClickListener {
                         val shareIntent = generalViewModel.getShareIntent("EpilogueFragment")
                         startActivity(shareIntent)
-                    }
-                    binding.submitYourOwn.setOnClickListener {
-                        parentFragmentManager.commit {
-                            addToBackStack(SubmissionFragment().tag)
-                            add(SubmissionFragment(), SubmissionFragment().tag)
-                        }
                     }
                 }
             }
