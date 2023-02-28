@@ -87,7 +87,6 @@ class PlayerEpilogueFragment : Fragment(R.layout.epilogue_player_fragment) {
                             if (accountStatus == AccountStatus.SIGNED_IN_WITH_FIREBASE) {
                                 binding.submitYourOwn.setOnClickListener {
                                     if (isAllowedToSubmit) {
-                                        findNavController().popBackStack()
                                         parentFragmentManager.commit {
                                             addToBackStack(SubmissionFragment().tag)
                                             add(SubmissionFragment(), SubmissionFragment().tag)
