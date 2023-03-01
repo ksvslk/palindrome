@@ -382,9 +382,10 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             isBookMode = uiState.bookMode,
             textSize = MessageSnackBar.Companion.TextSize.SMALL,
         )
-
+        continueMessage.view.isClickable = true
         continueMessage.view.setOnClickListener {
             if (isVisible) {
+                it.isClickable = false
                 continueMessage.dismiss()
                 soundPlayer.play(soundPlayer.sounds.levelTransition, volume = 0.2f)
                 playTrainAnimation()
@@ -408,7 +409,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                             replace<PlayerEpilogueFragment>(R.id.fragments_container)
                         }
                     }
-
                 }
             }
         }
