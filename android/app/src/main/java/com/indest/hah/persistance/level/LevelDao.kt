@@ -314,7 +314,7 @@ interface LevelDao {
     suspend fun getLevelProgress(level: Int): LevelProgress
 
     @Transaction
-    suspend fun persistInitialLettersInfo(levelNr: Int) = withContext(Dispatchers.Default) {
+    suspend fun persistInitialLettersInfo(levelNr: Int) {
         if (levelNr != 0) {
             val lettersCount = levelLettersCount(levelNr)
             val isLevelFinished = getLevelProgress(levelNr)
