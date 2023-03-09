@@ -178,13 +178,10 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         val maxBoxSize = context.resources.getDimension(R.dimen.max_box_size)
 
         val totalAreaRatio = (usableWidth.toFloat() / usableHeight.toFloat())
-        Log.d(TAG, "Container width: $usableWidth")
-        Log.d(TAG, "Container height: $usableHeight")
-        Log.d(TAG, "Total area ratio: $totalAreaRatio")
-        Log.d(TAG, "Minimum word length (min columns): $columns")
 
-        var closestColumnsRatio = Pair(-1, Float.MAX_VALUE)
         val columnsEnd = max(7, palindrome.length)
+        var closestColumnsRatio = Pair(columns, Float.MAX_VALUE)
+
         for (cols in columns..columnsEnd) {
             val usedAreaRatio = getUsedAreaRatio(cols, puzzleOnlyLetters, palindrome, smallGap)
             val newDistance = abs(usedAreaRatio - totalAreaRatio)
@@ -193,11 +190,9 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                 closestColumnsRatio = Pair(cols, usedAreaRatio)
             }
         }
+
         val rowsCount =
-            puzzleOnlyLetters.chunked(closestColumnsRatio.first).count() + getSolutionRows(
-                palindrome,
-                closestColumnsRatio.first
-            ).count()
+            puzzleOnlyLetters.chunked(closestColumnsRatio.first).count() + getSolutionRows(palindrome, closestColumnsRatio.first).count()
 
         Log.d(
             TAG,
@@ -301,6 +296,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                 ""
             ) { acc, li -> acc + li.letter }
 
+        Log.d(TAG, "puzzle: $puzzle")
         for ((a, l) in puzzle.withIndex()) {
             if (l.isWhitespace()) {
                 continue

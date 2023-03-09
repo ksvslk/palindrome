@@ -3,22 +3,25 @@ package com.indest.hah.persistance.dto
 import androidx.annotation.Keep
 import androidx.room.*
 import com.indest.hah.persistance.level.LevelProgress
-import java.io.Serializable
 
 @Keep
 @kotlinx.serialization.Serializable
 class Level(
     @Embedded val levelInfo: LevelData,
+
     @Relation(
         parentColumn = "level_id",
-        entityColumn = "owner_id"
+        entityColumn = "owner_id",
+        entity = LetterProperties::class
     )
     val lettersProperties: List<LetterProperties>,
+
     @Relation(
         parentColumn = "level_id",
-        entityColumn = "parent_id"
+        entityColumn = "parent_id",
+        entity = Solution::class
     )
-    val solutions: List<Solution> = emptyList()
+    val solutions: List<Solution>
 ) {
     constructor() : this(
         LevelData(0,"_EMPTY_CONSTRUCTOR_",false, LevelProgress.IN_PROGRESS,0, 0, 0, "", 7),

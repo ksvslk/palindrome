@@ -57,7 +57,6 @@ class LevelSelectFragment : BottomSheetDialogFragmentCustom() {
                             val currentlyActiveFragment = parentFragmentManager.findFragmentById(R.id.fragments_container)
                             if (currentlyActiveFragment is LevelFragment)
                             {
-                                levelViewModel.setUiStateWhenOnPause()
                                 levelViewModel.changeLevel(nr)
                             }
                             else if (currentlyActiveFragment is EpilogueFragment || currentlyActiveFragment is PlayerEpilogueFragment)
@@ -65,7 +64,6 @@ class LevelSelectFragment : BottomSheetDialogFragmentCustom() {
                                 parentFragmentManager.commit {
                                     setReorderingAllowed(true)
                                     replace<LevelFragment>(R.id.fragments_container)
-                                    levelViewModel.setUiStateWhenOnPause()
                                     levelViewModel.changeLevel(nr)
                                 }
                             }

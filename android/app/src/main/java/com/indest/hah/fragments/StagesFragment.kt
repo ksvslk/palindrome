@@ -16,6 +16,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.indest.hah.R
 import com.indest.hah.databinding.StagesFragmentBinding
+import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.general.AccountStatus
 import com.indest.hah.general.GeneralViewModel
 import kotlinx.coroutines.flow.combine
@@ -27,6 +28,7 @@ class StagesFragment : BottomSheetDialogFragmentCustom() {
     private var _binding: StagesFragmentBinding? = null
     private val binding get() = _binding!!
     private val generalViewModel: GeneralViewModel by activityViewModels()
+    private val levelViewModel: LevelViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         Log.d(TAG, "onViewCreated")
@@ -36,7 +38,7 @@ class StagesFragment : BottomSheetDialogFragmentCustom() {
             {
                 Log.d(TAG, "Lifecycle.State.RESUMED")
                 val isAllowedToSubmit = generalViewModel.isAllowedToSubmitPalindrome()
-                generalViewModel.internet.combine(generalViewModel.accountStatus) { i, a ->
+                generalViewModel.internet.combine(levelViewModel.accountStatus) { i, a ->
                     Pair(i, a)
                 }.collect { (internet, accountStatus) ->
                     when (internet) {

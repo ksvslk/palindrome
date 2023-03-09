@@ -6,7 +6,7 @@ import com.indest.hah.game.director.data.GlobalPosition
 import com.indest.hah.game.director.enums.ColorSelector
 import com.indest.hah.game.director.enums.SoundSelector
 import com.indest.hah.game.viewmodel.LevelViewModel
-import com.indest.hah.game.viewmodel.UiState
+import com.indest.hah.game.viewmodel.SolutionData
 import com.indest.hah.views.Cell
 import com.indest.hah.views.Letter
 import com.indest.hah.views.Slot
@@ -230,8 +230,8 @@ class CellDirector constructor(
         if (isCorrectMove == false) viewModel.increaseMistakes()
     }
 
-    fun sendWrongSolutionLetterHome(uiState: UiState) {
-        val lastLetter = cells.find { p -> p.homeIndex == uiState.solutionData.index } as Letter
+    fun sendWrongSolutionLetterHome(solutionData: SolutionData) {
+        val lastLetter = cells.find { p -> p.homeIndex == solutionData.index } as Letter
         lastLetter.addHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
         sendLetterHome(lastLetter)
     }

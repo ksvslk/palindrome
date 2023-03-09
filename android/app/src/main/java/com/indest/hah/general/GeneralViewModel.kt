@@ -55,9 +55,6 @@ class GeneralViewModel @Inject constructor(
     private val _currentLevel = MutableStateFlow(Level())
     val currentLevel = _currentLevel.asStateFlow()
 
-    private val _accountStatus = MutableStateFlow(AccountStatus.SIGNED_OUT)
-    val accountStatus = _accountStatus.asStateFlow()
-
     private val _sadMode = MutableStateFlow(false)
 
     var refreshPurchases = false
@@ -143,9 +140,11 @@ class GeneralViewModel @Inject constructor(
         }
     }
 
-    fun setAccountStatus(accountStatus: AccountStatus) {
+    /*
+       fun setAccountStatus(accountStatus: AccountStatus) {
         _accountStatus.value = accountStatus
     }
+     */
 
     fun updateRewardState(rewardType: RewardType) {
         _rewardState.value = rewardType

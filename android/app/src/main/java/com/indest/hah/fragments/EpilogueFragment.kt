@@ -23,6 +23,7 @@ import com.indest.hah.MainActivity
 import com.indest.hah.R
 import com.indest.hah.databinding.EpilogueFragmentBinding
 import com.indest.hah.fx.Animations
+import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.general.AccountStatus
 import com.indest.hah.general.GeneralViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,6 +41,7 @@ class EpilogueFragment : Fragment(R.layout.epilogue_fragment) {
     private lateinit var binding: EpilogueFragmentBinding
     private var trainAnimator: ObjectAnimator? = null
     private val generalViewModel: GeneralViewModel by activityViewModels()
+    private val levelViewModel: LevelViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -74,7 +76,7 @@ class EpilogueFragment : Fragment(R.layout.epilogue_fragment) {
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED)
             {
-                generalViewModel.internet.combine(generalViewModel.accountStatus) { i, a ->
+                generalViewModel.internet.combine(levelViewModel.accountStatus) { i, a ->
                     Pair(i, a)
                 }.collect { (internet, _) ->
                     when (internet) {

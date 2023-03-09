@@ -35,4 +35,7 @@
     <color name="progressBackgroundColor">#434343</color>
 
     <color name="playerPackIndicatorColor">#A71DBE</color>
+
+    <color name="levelInProgressColor">#FFEB3B</color>
+    <color name="levelCompletedColor">#00FF66</color>
 </resources>

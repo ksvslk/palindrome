@@ -61,7 +61,6 @@ class PlayerLevelSelectFragment : BottomSheetDialogFragmentCustom() {
                             Log.d(TAG, "Currently active fragment: ${currentlyActiveFragment?.javaClass?.name}")
                             if (currentlyActiveFragment is LevelFragment || currentlyActiveFragment is NavHostFragment)
                             {
-                                levelViewModel.setUiStateWhenOnPause()
                                 levelViewModel.changeLevel(nr)
                             }
                             else if (currentlyActiveFragment is EpilogueFragment || currentlyActiveFragment is PlayerEpilogueFragment)
@@ -69,7 +68,6 @@ class PlayerLevelSelectFragment : BottomSheetDialogFragmentCustom() {
                                 parentFragmentManager.commit {
                                     setReorderingAllowed(true)
                                     replace<LevelFragment>(R.id.fragments_container)
-                                    levelViewModel.setUiStateWhenOnPause()
                                     levelViewModel.changeLevel(nr)
                                 }
                             }

@@ -4,12 +4,17 @@ import android.app.Application
 import android.os.Bundle
 import android.util.Log
 import androidx.core.os.bundleOf
+import androidx.fragment.app.commit
+import androidx.fragment.app.replace
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.firestore.*
+import com.indest.hah.MainActivity
 import com.indest.hah.R
 import com.indest.hah.ads.RewardType
+import com.indest.hah.fragments.EpilogueFragment
+import com.indest.hah.fragments.PlayerEpilogueFragment
 import com.indest.hah.game.creation.BookMode
 import com.indest.hah.game.creation.WindowSizeClass
 import com.indest.hah.game.viewmodel.ContainerState.*
@@ -37,15 +42,14 @@ class LevelViewModel @Inject constructor(
 
     private val TAG = "LevelViewModel"
 
-    private val _uiState = MutableStateFlow(UiState(level = Level(), solutionData = SolutionData()))
-    val uiState = _uiState.asStateFlow()
-
-    private var _windowSizeClassWidth = MutableStateFlow(WindowSizeClass.NOT_SET)
-    private var _bookMode = MutableStateFlow(BookMode.NOT_SET)
-
     private val _accountStatus = MutableStateFlow(AccountStatus.NOT_SET)
+    val accountStatus = _accountStatus.asStateFlow()
+
     private val _currentLevel = MutableStateFlow(Level())
     val currentLevel = _currentLevel.asStateFlow()
+
+    private val gameEventChannel = Channel<GameEvent>()
+    val gameEventFlow = gameEventChannel.receiveAsFlow()
 
     private val variousEventChannel = Channel<VariousEvent>()
     val variousEventFlow = variousEventChannel.receiveAsFlow()
@@ -72,12 +76,63 @@ class LevelViewModel @Inject constructor(
         startCollectingLevelUpdate()
     }
 
+
     private fun startCollectingLevelUpdate() {
         viewModelScope.launch {
-            levelRepository.latestLevelFlow()
-                .collect {
-                    _currentLevel.value = it
+            levelRepository.latestLevelFlow().collect {
+                val changeInColumnsCount =
+                    it.levelInfo.columnCount != _currentLevel.value.levelInfo.columnCount
+                val changeInLevelId = it.levelInfo.levelId != _currentLevel.value.levelInfo.levelId
+                _currentLevel.value = it
+                if (
+                    _currentLevel.value.levelInfo.levelId > 0 &&
+                    _currentLevel.value.solutions.isNotEmpty() &&
+                    (changeInColumnsCount || changeInLevelId)
+                ) {
+                    Log.d(
+                        TAG,
+                        "Latest level: ${it.levelInfo.levelId}, ${it.levelInfo}, Solutions: ${it.solutions}, Letters: ${it.lettersProperties}"
+                    )
+                    val progress = getProgressAndText()
+                    gameEventChannel.send(GameEvent.DisplayLevel(_currentLevel.value, progress))
                 }
+            }
+        }
+    }
+
+
+    fun resendCurrentLevel() {
+        if (_accountStatus.value != AccountStatus.LOADING) {
+            viewModelScope.launch {
+                if (
+                    _currentLevel.value.levelInfo.levelId > 0 &&
+                    _currentLevel.value.solutions.isNotEmpty()
+                ) {
+                    val progress = getProgressAndText()
+                    gameEventChannel.send(GameEvent.DisplayLevel(_currentLevel.value, progress))
+                }
+            }
+        }
+    }
+
+
+    private suspend fun getProgressAndText(): Pair<Int, String> {
+        val levelId = _currentLevel.value.levelInfo.levelId
+        val author = _currentLevel.value.levelInfo.author
+        val solutionsCount = _currentLevel.value.solutions.count()
+
+        // Game levels or player levels
+        return if (levelId > 1000) {
+            val maxLevels = levelRepository.getMaxLevelId() - 1000
+            val text =
+                if (solutionsCount > 1) "${levelId - 1000}* - $author" else "${levelId - 1000} - $author"
+            val progress = ((levelId - 1000).toFloat() / maxLevels.toFloat() * 100.0).toInt()
+            Pair(progress, text)
+        } else {
+            val levelsCount = levelRepository.getMaxGameLevelId()
+            val text = if (solutionsCount > 1) "$levelId*" else "$levelId"
+            val progress = (levelId / levelsCount.toFloat() * 100.0).toInt()
+            Pair(progress, text)
         }
     }
 
@@ -97,22 +152,22 @@ class LevelViewModel @Inject constructor(
         newColumnCount: Int,
         homeIndexNewFriendIndexes: Pair<Boolean, List<Pair<Int, Int>>>
     ) {
-        setUiStateWhenOnPause()
+        // All three change column count underneath
         if (homeIndexNewFriendIndexes.first) {
             levelRepository.updateAuthorToMigrated(
-                _uiState.value.level.levelInfo.levelId,
+                _currentLevel.value.levelInfo.levelId,
                 newColumnCount,
                 _currentLevel.value.lettersProperties,
                 homeIndexNewFriendIndexes.second
             )
         } else if (_currentLevel.value.levelInfo.columnCount == -1) {
             levelRepository.changeColumnCount(
-                _uiState.value.level.levelInfo.levelId,
+                _currentLevel.value.levelInfo.levelId,
                 newColumnCount
             )
         } else {
             levelRepository.changeFriendIndexesBasedOnColumnCount(
-                _uiState.value.level.levelInfo.levelId,
+                _currentLevel.value.levelInfo.levelId,
                 newColumnCount,
                 _currentLevel.value.lettersProperties,
                 homeIndexNewFriendIndexes.second
@@ -120,108 +175,28 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+
     fun setAccountStatus(accountStatus: AccountStatus) {
         _accountStatus.value = accountStatus
+        Log.d(TAG, "Set account status: ${_accountStatus.value}")
+        viewModelScope.launch {
+            when (accountStatus) {
+                AccountStatus.SIGNED_IN -> variousEventChannel.send(VariousEvent.LoadGame)
+                AccountStatus.SIGNED_OUT -> startCollectingLevelUpdate()
+                AccountStatus.LOADING -> gameEventChannel.send(GameEvent.ShowLoading)
+                AccountStatus.SIGNED_IN_WITH_FIREBASE -> variousEventChannel.send(VariousEvent.LoadGame)
+                AccountStatus.NOT_SET -> {} // do nothing
+            }
+        }
     }
 
-    fun setWindowSizeClass(windowSizeClass: WindowSizeClass) {
-        _windowSizeClassWidth.value = windowSizeClass
-        _uiState.value = _uiState.value.copy(
-            windowSizeClass = _windowSizeClassWidth.value
-        )
-    }
-
-    fun setBookMode(bookMode: BookMode) {
-        _bookMode.value = bookMode
-        _uiState.value = _uiState.value.copy(
-            bookMode = _bookMode.value
-        )
-    }
 
     init {
         viewModelScope.launch {
             levelRepository.init()
-            uiUpdater()
         }
     }
 
-    private suspend fun uiUpdater() {
-        combine(
-            _accountStatus,
-            _currentLevel,
-            _bookMode,
-            _windowSizeClassWidth
-        )
-        { accountStatus, level, bookMode, windowSizeClassWidth ->
-            {
-                Pair(Pair(accountStatus, level), Pair(bookMode, windowSizeClassWidth))
-            }
-        }.distinctUntilChanged().collect {
-
-            val level = it().first.second
-            val accountStatus = it().first.first
-            val bookMode = it().second.first
-            val windowSizeClass = it().second.second
-            val state = _uiState.value.state
-
-            if (
-                accountStatus != AccountStatus.NOT_SET &&
-                level.levelInfo.levelId == 0 &&
-                bookMode != BookMode.NOT_SET &&
-                windowSizeClass != WindowSizeClass.NOT_SET &&
-                state == LOADING
-            ) {
-                if (accountStatus in setOf(AccountStatus.SIGNED_IN, AccountStatus.SIGNED_IN_WITH_FIREBASE)) {
-                    setUiStateLoading()
-                } else {
-                    startCollectingLevelUpdate()
-                }
-            } else if (
-                level.levelInfo.levelId != 0 &&
-                accountStatus != AccountStatus.NOT_SET &&
-                bookMode != BookMode.NOT_SET &&
-                windowSizeClass != WindowSizeClass.NOT_SET
-            ) {
-                if (level.levelInfo.progress == LevelProgress.INTERMEDIATE && state != LEVEL_COMPLETE) {
-                    _uiState.value = getNewUiState(
-                        newState = INTERMEDIATE,
-                        refreshLevelUi = true,
-                        info = Pair(
-                            level,
-                            Triple(accountStatus, bookMode, windowSizeClass)
-                        )
-                    )
-                } else if (state == LEVEL_COMPLETE) {
-                    _uiState.value = getNewUiState(
-                        newState = LEVEL_COMPLETE,
-                        refreshLevelUi = true,
-                        info = Pair(
-                            level,
-                            Triple(accountStatus, bookMode, windowSizeClass)
-                        )
-                    )
-                } else if (state == PLAY || state == BUSY || state == MENU_ACTION) {
-                    _uiState.value = getNewUiState(
-                        newState = PLAY,
-                        refreshLevelUi = false,
-                        info = Pair(
-                            level,
-                            Triple(accountStatus, bookMode, windowSizeClass)
-                        )
-                    )
-                } else if (state == PAUSED || state == LOADING) {
-                    _uiState.value = getNewUiState(
-                        newState = PLAY,
-                        refreshLevelUi = true,
-                        info = Pair(
-                            level,
-                            Triple(accountStatus, bookMode, windowSizeClass)
-                        )
-                    )
-                }
-            }
-        }
-    }
 
     suspend fun isShowScores(): Boolean {
         val showScoresString =
@@ -231,6 +206,7 @@ class LevelViewModel @Inject constructor(
         return limitReached
     }
 
+
     suspend fun isLastLevel(): Pair<Boolean, Boolean> {
         val lastGameLevel =
             levelRepository.isFinalLevel(_currentLevel.value.levelInfo.levelId, 1, 100)
@@ -239,99 +215,10 @@ class LevelViewModel @Inject constructor(
         return Pair(lastGameLevel == 1, lastPlayerLevel == 1)
     }
 
-    private fun getNewUiState(
-        newState: ContainerState,
-        refreshLevelUi: Boolean = false,
-        info: Pair<Level, Triple<AccountStatus, BookMode, WindowSizeClass>>
-    ): UiState {
-        return _uiState.value.copy(
-            level = info.first,
-            state = newState,
-            accountStatus = info.second.first,
-            bookMode = info.second.second,
-            windowSizeClass = info.second.third,
-            solutionData = SolutionData(),
-            refreshLevelUi = refreshLevelUi
-        )
-    }
-
-    fun resetSolutionState() {
-        val newState = if (_uiState.value.state == BUSY) {
-            PLAY
-        } else {
-            _uiState.value.state
-        }
-        _uiState.value = _uiState.value.copy(
-            state = newState,
-            solutionData = SolutionData(),
-            refreshLevelUi = false
-        )
-    }
-
-    fun setUiStateLoading() {
-        _currentLevel.value = Level()
-        _uiState.value = _uiState.value.copy(
-            state = LOADING
-        )
-        viewModelScope.launch {
-            variousEventChannel.send(VariousEvent.LoadGame)
-        }
-    }
-
-    fun setUiStateBusy() {
-        _uiState.value = _uiState.value.copy(
-            state = BUSY,
-            solutionData = SolutionData(),
-            refreshLevelUi = false
-        )
-    }
-
-    fun setUiStateMenuAction() {
-        _uiState.value = _uiState.value.copy(
-            state = MENU_ACTION,
-            solutionData = SolutionData(),
-            refreshLevelUi = false
-        )
-    }
-
-    fun setUiStateWhenOnResume() {
-        if (_uiState.value.state == PAUSED && _windowSizeClassWidth.value != WindowSizeClass.NOT_SET && _bookMode.value != BookMode.NOT_SET) {
-            _uiState.value = _uiState.value.copy(
-                state = PLAY,
-                solutionData = SolutionData(),
-                refreshLevelUi = false
-            )
-        } else if (_uiState.value.state == MENU_ACTION) {
-            _uiState.value = _uiState.value.copy(
-                state = PLAY,
-                solutionData = SolutionData(),
-                refreshLevelUi = false
-            )
-        }
-
-    }
-
-    fun setUiStateWhenOnPause() {
-        if (_uiState.value.state == PLAY) {
-            _uiState.value = _uiState.value.copy(
-                state = PAUSED,
-                solutionData = SolutionData(),
-                refreshLevelUi = false
-            )
-        }
-    }
-
-    fun setUiStatePlayWhenBusy() {
-        if (_uiState.value.state == BUSY) {
-            _uiState.value = _uiState.value.copy(
-                state = PLAY,
-                solutionData = SolutionData()
-            )
-        }
-    }
 
     fun loadLatestLevelFromCloudOrLocal(saveGame: SaveGame?) {
         viewModelScope.launch(exceptionHandler) {
+            Log.d(TAG, "loadLatestLevelFromCloudOrLocal")
             if (saveGame != null) {
                 levelRepository.updateLocalGame(saveGame)
                 startCollectingLevelUpdate()
@@ -339,12 +226,13 @@ class LevelViewModel @Inject constructor(
                 startCollectingLevelUpdate()
             }
             launch {
-                if (_accountStatus.value == AccountStatus.SIGNED_IN_WITH_FIREBASE){
+                if (_accountStatus.value == AccountStatus.SIGNED_IN_WITH_FIREBASE) {
                     collectPlayerLevels()
                 }
             }
         }
     }
+
 
     fun updateLetters(topIndex: Int, bottomLetter: Char, bottomIndex: Int, topLetter: Char) {
         viewModelScope.launch {
@@ -360,6 +248,7 @@ class LevelViewModel @Inject constructor(
             }
         }
     }
+
 
     fun increaseMistakes() {
         viewModelScope.launch {
@@ -402,14 +291,15 @@ class LevelViewModel @Inject constructor(
         viewModelScope.launch {
             _currentLevel.value.levelInfo.let { levelInfo ->
                 val hintInterval = getApplication<Application>().getString(R.string.hint_suggestion)
-                levelRepository.setCountTo(hintInterval, 0)
-                levelRepository.nextLevelActions(
+                levelRepository.chooseLevelTransaction(
                     levelInfo.levelId,
-                    chosenLevel
+                    chosenLevel,
+                    hintInterval
                 )
             }
         }
     }
+
 
     fun resetIntervalCount(interval: String) {
         viewModelScope.launch {
@@ -417,8 +307,8 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+
     fun executeLevelCompleteActions() {
-        _uiState.value = _uiState.value.copy(state = PAUSED)
         val levelNr = _currentLevel.value.levelInfo.levelId
         val hintInterval = getApplication<Application>().getString(R.string.hint_suggestion)
         viewModelScope.launch {
@@ -430,8 +320,8 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+
     fun executeLevelCompleteActionsFinal() {
-        _uiState.value = _uiState.value.copy(state = PAUSED)
         val levelNr = _currentLevel.value.levelInfo.levelId
         Log.d(TAG, "executeLevelCompleteActionsFinal with level nr: $levelNr")
         val hintInterval = getApplication<Application>().getString(R.string.hint_suggestion)
@@ -441,11 +331,13 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+
     fun allPlayerLevelsFlow(): Flow<List<Pair<Boolean, LevelData>>> {
         return flow {
             emit(levelRepository.getAllLevels().filter { it.second.levelId >= 1000 })
         }
     }
+
 
     fun allGameLevelsFlow(): Flow<List<Pair<Boolean, LevelData>>> {
         return flow {
@@ -453,15 +345,21 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+
     fun allPalindromesFlow(): Flow<MutableSet<String>> {
         return flow {
             emit(levelRepository.getAllPalindromes())
         }
     }
 
+
     fun saveGameImmediately() {
         viewModelScope.launch(saveGameExceptionHandler) {
-            if (_accountStatus.value in setOf(AccountStatus.SIGNED_IN, AccountStatus.SIGNED_IN_WITH_FIREBASE)) {
+            if (_accountStatus.value in setOf(
+                    AccountStatus.SIGNED_IN,
+                    AccountStatus.SIGNED_IN_WITH_FIREBASE
+                )
+            ) {
                 val saveGame = levelRepository.getLocalSaveGame()
                 val calculatedGameProgress = levelRepository.getMaximumTimestamp()
                 variousEventChannel.send(VariousEvent.SaveGame(saveGame, calculatedGameProgress))
@@ -469,9 +367,14 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+
     private fun submitScore() {
         viewModelScope.launch {
-            if (_accountStatus.value in setOf(AccountStatus.SIGNED_IN, AccountStatus.SIGNED_IN_WITH_FIREBASE)) {
+            if (_accountStatus.value in setOf(
+                    AccountStatus.SIGNED_IN,
+                    AccountStatus.SIGNED_IN_WITH_FIREBASE
+                )
+            ) {
                 val totalScore = levelRepository.getTotalUpdatedScore(
                     _currentLevel.value.levelInfo.levelId
                 )
@@ -485,27 +388,49 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+
     private fun unlockAchievement(achievement: String) {
         viewModelScope.launch {
-            if (_accountStatus.value in setOf(AccountStatus.SIGNED_IN, AccountStatus.SIGNED_IN_WITH_FIREBASE)) {
+            if (_accountStatus.value in setOf(
+                    AccountStatus.SIGNED_IN,
+                    AccountStatus.SIGNED_IN_WITH_FIREBASE
+                )
+            ) {
                 variousEventChannel.send(VariousEvent.UnlockAchievement(achievement))
             }
         }
     }
 
+
+    sealed class GameEvent {
+        data class DisplayLevel(val level: Level, val progress: Pair<Int, String>) : GameEvent()
+        data class SolutionResult(
+            val solutionData: SolutionData,
+            val isLastLevel: Pair<Boolean, Boolean>
+        ) : GameEvent()
+
+        object ShowLoading : GameEvent()
+    }
+
+
     sealed class VariousEvent {
         data class UnlockAchievement(val achievement: String) : VariousEvent()
         data class SubmitScore(val score: Long, val playerLevels: Boolean) : VariousEvent()
-        data class SaveGame(val localSaveGame: com.indest.hah.persistance.dto.SaveGame, val calculatedGameProgress:Long) :
+        data class SaveGame(
+            val localSaveGame: com.indest.hah.persistance.dto.SaveGame,
+            val calculatedGameProgress: Long
+        ) :
             VariousEvent()
 
         object LoadGame : VariousEvent()
     }
 
+
     sealed class SubmissionEvent {
         object Succeeded : SubmissionEvent()
         object Failed : SubmissionEvent()
     }
+
 
     private fun updateAndConsiderFlawlessAchievements(
         solutionData: SolutionData
@@ -525,6 +450,7 @@ class LevelViewModel @Inject constructor(
             }
         }
     }
+
 
     private fun resolveLevelCompleteAchievements(solutionData: SolutionData) {
         val context = getApplication<Application>()
@@ -554,15 +480,19 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+
     private fun isSolutionCorrect(guess: String): Boolean {
         return _currentLevel.value.solutions.any {
             it.palindrome.replace(" ", "") == guess
         }
     }
 
+
     private fun updateSolutionState(index: Int, guess: String) {
         viewModelScope.launch {
             val solution = _currentLevel.value.solutions.first().palindrome.replace(" ", "")
+            var solutionData = SolutionData()
+
             if (guess.length == solution.length) {
                 val playerGuess = guess.map { char ->
                     if ("^([?!.,’])".contains(char)) "" else char
@@ -584,16 +514,12 @@ class LevelViewModel @Inject constructor(
                             _currentLevel.value.levelInfo.levelId,
                             LevelProgress.INTERMEDIATE
                         )
-                        val solutionData = SolutionData(
+                        solutionData = SolutionData(
                             solution = Solution.CORRECT,
                             index = index,
                             score = _currentLevel.value.levelInfo.score,
                             maxScore = maxScore,
                             showHintsBadge = false
-                        )
-                        _uiState.value = _uiState.value.copy(
-                            state = LEVEL_COMPLETE,
-                            solutionData = solutionData
                         )
                         resolveLevelCompleteAchievements(solutionData)
                         levelRepository.setCountTo(hintsInterval, 0)
@@ -602,16 +528,12 @@ class LevelViewModel @Inject constructor(
                     playerGuess.reversed() == playerGuess -> {
                         val showHintsBadge =
                             levelRepository.increaseCountAndGetResult(hintsInterval)
-                        val solutionData = SolutionData(
+                        solutionData = SolutionData(
                             solution = Solution.BOGUS_PALINDROME,
                             index = index,
                             score = _currentLevel.value.levelInfo.score,
                             maxScore = maxScore,
                             showHintsBadge = showHintsBadge
-                        )
-                        _uiState.value = _uiState.value.copy(
-                            state = BUSY,
-                            solutionData = solutionData
                         )
                         // Wrong Palindrome achievement
                         unlockAchievement(getApplication<Application>().getString(R.string.achievement_wrong_palindrome))
@@ -619,33 +541,21 @@ class LevelViewModel @Inject constructor(
                     else -> {
                         val showHintsBadge =
                             levelRepository.increaseCountAndGetResult(hintsInterval)
-                        val solutionData = SolutionData(
+                        solutionData = SolutionData(
                             solution = Solution.WRONG,
                             index = index,
                             score = _currentLevel.value.levelInfo.score,
                             maxScore = maxScore,
                             showHintsBadge = showHintsBadge
                         )
-                        _uiState.value = _uiState.value.copy(
-                            state = BUSY,
-                            solutionData = solutionData
-                        )
                     }
                 }
-            } else {
-                val solutionData = SolutionData(
-                    solution = Solution.NONE,
-                    index = -1,
-                    score = -1,
-                    maxScore = -1,
-                    showHintsBadge = false
-                )
-                _uiState.value = _uiState.value.copy(
-                    solutionData = solutionData
-                )
             }
+            val isLastLevel = isLastLevel()
+            gameEventChannel.send(GameEvent.SolutionResult(solutionData, isLastLevel))
         }
     }
+
 
     private fun logLevelStart() {
         viewModelScope.launch(Dispatchers.Default) {
@@ -664,6 +574,7 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+
     private fun logLevelEnd() {
         viewModelScope.launch(Dispatchers.Default) {
             val scoreToMaxRatio =
@@ -680,11 +591,13 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+
     fun logTutorialBegin() {
         viewModelScope.launch(Dispatchers.Default) {
             firebaseAnalytics.logEvent(FirebaseAnalytics.Event.TUTORIAL_BEGIN, bundleOf())
         }
     }
+
 
     fun logTutorialComplete() {
         viewModelScope.launch(Dispatchers.Default) {
@@ -714,6 +627,7 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+
     fun logRewardGiven(rewardType: RewardType) {
         viewModelScope.launch(Dispatchers.Default) {
             val currentLevel = _currentLevel.value.levelInfo.levelId
@@ -734,9 +648,10 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+
     private suspend fun collectPlayerLevels() {
         liveStoreRegistration?.remove()
-        val maxLevelId = getMaxLevelId()
+        val maxLevelId = levelRepository.getMaxLevelId()
         val query = fsDb.collection("user_submitted_levels")
             .whereEqualTo("isFeatured", true)
             .whereGreaterThan("levelId", maxLevelId)
@@ -800,17 +715,16 @@ class LevelViewModel @Inject constructor(
         })
     }
 
+
     fun resetNewPlayersLevels() {
         _newPlayerLevels.value = Triple(-1, -1, "")
     }
+
 
     private suspend fun insertPlayerLevels(playerLevels: List<PlayerLevel>): Pair<LevelData, Int> {
         return levelRepository.insertPlayerLevels(playerLevels)
     }
 
-    suspend fun getMaxLevelId(): Int {
-        return levelRepository.getMaxLevelId()
-    }
 
     suspend fun submitUserLevel(playersPalindrome: String) {
         // Create a new user with a first, middle, and last name

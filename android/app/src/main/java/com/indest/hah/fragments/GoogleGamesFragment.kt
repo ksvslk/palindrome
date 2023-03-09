@@ -39,7 +39,7 @@ class GoogleGamesFragment : BottomSheetDialogFragmentCustom() {
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED)
             {
-                generalViewModel.internet.combine(generalViewModel.accountStatus) { i, a ->
+                generalViewModel.internet.combine(levelViewModel.accountStatus) { i, a ->
                     Pair(i, a)
                 }.collect { (internet, accountStatus) ->
                     when (internet) {
@@ -99,7 +99,6 @@ class GoogleGamesFragment : BottomSheetDialogFragmentCustom() {
             leaderboardsClient.getLeaderboardIntent(id)
                 .continueWith {
                     if (it.isSuccessful) {
-                        levelViewModel.setUiStateMenuAction()
                         startActivity.launch(it.result)
                     }
                 }
@@ -111,7 +110,6 @@ class GoogleGamesFragment : BottomSheetDialogFragmentCustom() {
             val achievementsClient = PlayGames.getAchievementsClient(activity)
             achievementsClient.achievementsIntent.continueWith {
                 if (it.isSuccessful) {
-                    levelViewModel.setUiStateMenuAction()
                     startActivity.launch(it.result)
                 }
             }

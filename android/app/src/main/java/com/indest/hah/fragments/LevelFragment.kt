@@ -32,18 +32,19 @@ import com.indest.hah.fx.Animations
 import com.indest.hah.fx.SoundPlayer
 import com.indest.hah.game.creation.LevelCreator
 import com.indest.hah.game.director.CellDirector
-import com.indest.hah.game.viewmodel.ContainerState.*
 import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.game.viewmodel.Solution
 import com.indest.hah.game.viewmodel.Solution.*
+import com.indest.hah.game.viewmodel.SolutionData
 import com.indest.hah.game.viewmodel.UiState
 import com.indest.hah.other.C
 import com.indest.hah.other.VaryingProbability
+import com.indest.hah.persistance.dto.Level
+import com.indest.hah.persistance.level.LevelProgress
 import com.indest.hah.views.Cell
 import com.indest.hah.views.MessageSnackBar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -53,7 +54,9 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     private val TAG = "LevelFragment"
 
     private val viewModel: LevelViewModel by activityViewModels()
-    private lateinit var binding: LevelFragmentBinding
+    private var _binding: LevelFragmentBinding? = null
+    private val binding get() = _binding!!
+
     var cellDirector: CellDirector? = null
     private var allAnimations = mutableSetOf<ValueAnimator>()
 
@@ -66,21 +69,67 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     @Inject
     lateinit var soundPlayer: SoundPlayer
 
+    // first - reward letter, second - premium, third - reward type
+    private var reward = Triple(false, false, RewardType.NONE)
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+            setFragmentResultListener(C.HINTS_REQUEST_KEY) { _, bundle ->
+                val premiumLetter = bundle.getBoolean(C.LETTER_PREMIUM_BUNDLE)
+                val rewardType = RewardType.values()[bundle.getInt(C.LETTER_REWARD_TYPE_BUNDLE)]
+                reward = Triple(true, premiumLetter, rewardType)
+            }
+    }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        view.doOnLayout {
+            Log.d(TAG, "View width: ${view.width}")
+            collectGameUpdates()
+        }
+    }
+
+
+    private fun rewardWithLetter()
+    {
+        if (reward.first) {
+            if (!reward.second) {
+                rewardUserWithLetter(reward.third)
+            } else {
+                rewardUserWithLetter(LETTER)
+            }
+            reward = Triple(false, false, RewardType.NONE)
+        }
+    }
+
+
+    override fun onDestroy() {
+        allAnimations.forEach {
+            it.cancel()
+            it.removeAllListeners()
+        }
+        super.onDestroy()
+    }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = LevelFragmentBinding.inflate(layoutInflater, container, false)
+        _binding = LevelFragmentBinding.inflate(layoutInflater, container, false)
         activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         binding.levelFragment.layoutTransition = animations.getLayoutTransitionFade()
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        uiStateUpdater()
-    }
 
     private fun showPlayerCenteredScores() {
         childFragmentManager.commit {
@@ -89,18 +138,94 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         }
     }
 
-    private fun displayLevel(uiState: UiState) {
+    override fun onResume() {
+        super.onResume()
+        Log.d(TAG, "onResume")
+        viewModel.resendCurrentLevel()
+    }
+
+
+    private fun collectGameUpdates() {
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED)
+            {
+                Log.d(TAG, "collectGameUpdates")
+                viewModel.gameEventFlow.collect { event ->
+                    when (event) {
+                        is LevelViewModel.GameEvent.DisplayLevel -> {
+                            disableLoading()
+                            Log.d(TAG, "DisplayLevel")
+                            if (event.level.levelInfo.progress == LevelProgress.INTERMEDIATE) {
+                                displayLevel(event.level)
+                                showContinueMessage(viewModel.isLastLevel())
+                                deactivateBottomNavBar()
+                            }
+                            else {
+                                displayLevel(event.level)
+                                (requireActivity() as MainActivity).updateProgressBar(event.progress)
+                            }
+                        }
+                        is LevelViewModel.GameEvent.SolutionResult -> {
+                            Log.d(TAG, "SolutionResult")
+                            when (event.solutionData.solution) {
+                                CORRECT -> {
+                                    deactivateBottomNavBar()
+                                    showCorrectEffects(event.solutionData, event.isLastLevel)
+                                    binding.levelFragment.notClickable = true
+                                    hideHintsBadge()
+                                }
+                                WRONG, BOGUS_PALINDROME -> {
+                                    cellDirector?.sendWrongSolutionLetterHome(event.solutionData)
+                                    showWrongEffects(event.solutionData)
+                                }
+                                Solution.NONE -> {
+                                    Log.d(TAG, "Solution is: NONE")
+                                }
+                            }
+                        }
+                        LevelViewModel.GameEvent.ShowLoading -> {
+                            Log.d(TAG, "ShowLoading")
+                            enableLoading()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    private fun enableLoading()
+    {
+        deactivateBottomNavBar()
+        binding.progressCircular.visibility = View.VISIBLE
+        binding.levelFragment.notClickable = true
+        binding.levelFragment.alpha = .2f
+    }
+
+
+    private fun disableLoading()
+    {
+        activateBottomNavBar()
+        binding.progressCircular.visibility = View.GONE
+        binding.levelFragment.notClickable = false
+        binding.levelFragment.alpha = 1f
+    }
+
+
+    private fun displayLevel(level: Level) {
+        Log.d(TAG, "displayLevel.")
         binding.levelFragment.removeAllViews()
-        val densitySettings = levelCreator.getDensitySettings(binding.levelFragment, uiState.level)
+        binding.levelFragment.removeAllViewsInLayout()
+        val densitySettings = levelCreator.getDensitySettings(binding.levelFragment, level)
         Log.d(TAG, densitySettings.toString())
         val areColumnsDifferent =
-            uiState.level.levelInfo.columnCount != densitySettings.columnCount || uiState.level.levelInfo.author == "NewVersion"
+            level.levelInfo.columnCount != densitySettings.columnCount || level.levelInfo.author == "NewVersion"
         lifecycleScope.launch(Dispatchers.Main)
         {
             if (areColumnsDifferent) {
                 val newIndexes =
                     levelCreator.getUpdatedLevelWithPossiblyNewColumnCount(
-                        uiState.level,
+                        level,
                         densitySettings.columnCount
                     )
                 viewModel.changeFriendIndexesBasedOnColumnCount(
@@ -109,9 +234,8 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                 )
                 return@launch
             }
-            binding.levelFragment.removeAllViewsInLayout()
             val levelGridLayout = levelCreator.getLevel(
-                uiState.level,
+                level,
                 layoutInflater,
                 binding.levelFragment,
                 densitySettings
@@ -122,6 +246,14 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                         this,
                         viewModel
                     )
+                    rewardWithLetter()
+                    askForReview(level.levelInfo.levelId)
+                    lifecycleScope.launchWhenResumed {
+                        if (viewModel.isShowScores()) {
+                            showPlayerCenteredScores()
+                        }
+                        showTutorial()
+                    }
                 }
             }
             binding.levelFragment.addView(levelGridLayout.first)
@@ -130,94 +262,9 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             return
         }
 
-        askForReview(uiState.level.levelInfo.levelId)
-
-        lifecycleScope.launchWhenResumed {
-            if (viewModel.isShowScores()) {
-                showPlayerCenteredScores()
-            }
-            showTutorial()
-        }
         activity?.reportFullyDrawn();
     }
 
-    private fun uiStateUpdater() {
-        lifecycleScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
-                viewModel.uiState.distinctUntilChangedBy { it.state }.collect { uiState ->
-                    Log.d(TAG, "Handling state in fragment: ${uiState}")
-                    with(binding)
-                    {
-                        when (uiState.state) {
-                            LOADING -> {
-                                deactivateBottomNavBar()
-                                progressCircular.visibility = View.VISIBLE
-                                levelFragment.notClickable = true
-                                levelFragment.alpha = .2f
-                            }
-                            PLAY -> {
-                                activateBottomNavBar()
-                                progressCircular.visibility = View.GONE
-                                levelFragment.notClickable = false
-                                levelFragment.alpha = 1f
-                                if (uiState.refreshLevelUi) displayLevel(uiState)
-                            }
-                            INTERMEDIATE -> {
-                                deactivateGoods()
-                                progressCircular.visibility = View.GONE
-                                levelFragment.notClickable = true
-                                levelFragment.alpha = 1f
-                                if (uiState.refreshLevelUi) displayLevel(uiState)
-                                showContinueMessage(uiState)
-                            }
-                            BUSY -> {
-                                progressCircular.visibility = View.GONE
-                                levelFragment.notClickable = true
-                                levelFragment.alpha = 1f
-                                when (uiState.solutionData.solution) {
-                                    CORRECT -> {
-                                        Log.e(TAG, "Invalid state $uiState")
-                                    }
-                                    WRONG -> {
-                                        viewModel.resetSolutionState()
-                                        cellDirector?.sendWrongSolutionLetterHome(uiState)
-                                        showWrongEffects(uiState)
-                                    }
-                                    BOGUS_PALINDROME -> {
-                                        viewModel.resetSolutionState()
-                                        cellDirector?.sendWrongSolutionLetterHome(uiState)
-                                        showWrongEffects(uiState)
-                                    }
-                                    Solution.NONE -> {
-                                        Log.d(TAG, "Solution is: NONE")
-                                    }
-                                }
-                            }
-                            LEVEL_COMPLETE -> {
-                                deactivateGoods()
-                                val isLastLevel = viewModel.isLastLevel()
-                                Log.d(TAG, "isLastLevel: $isLastLevel")
-                                if (uiState.refreshLevelUi) {
-                                    displayLevel(uiState)
-                                    showContinueMessage(uiState, isLastLevel)
-                                } else {
-                                    showCorrectEffects(uiState, isLastLevel)
-                                }
-                                progressCircular.visibility = View.GONE
-                                levelFragment.notClickable = true
-                                levelFragment.alpha = 1f
-                                hideHintsBadge()
-                            }
-                            PAUSED -> {
-                            }
-                            MENU_ACTION -> {
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     private fun activateBottomNavBar() {
         (activity as? MainActivity)?.let { mainActivity ->
@@ -260,16 +307,16 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     }
 
     private fun showCorrectEffects(
-        uiState: UiState,
+        solutionData: SolutionData,
         isLastLevel: Pair<Boolean, Boolean> = Pair(false, false)
     ) {
         cellDirector?.getCells()?.let { cells ->
             val cellsAnimation = animations.getCorrectSolutionAnimation(cells)
             cellsAnimation.doOnEnd {
                 if (isAdded) {
-                    playMaxScoreAnimation(uiState.solutionData.score, uiState.solutionData.maxScore)
-                    val winningMessage = getWinningMessage(uiState)
-                    val scoreMessage = getScoreMessage(uiState)
+                    playMaxScoreAnimation(solutionData.score, solutionData.maxScore)
+                    val winningMessage = getWinningMessage(solutionData)
+                    val scoreMessage = getScoreMessage()
                     val winningMessageCallBack = object :
                         BaseTransientBottomBar.BaseCallback<MessageSnackBar>() {
                         override fun onDismissed(transientBottomBar: MessageSnackBar?, event: Int) {
@@ -281,8 +328,8 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                                 val scoreAnimation =
                                     animations.getScoreAnimation(
                                         scoreView,
-                                        uiState.solutionData.score,
-                                        uiState.solutionData.maxScore
+                                        solutionData.score,
+                                        solutionData.maxScore
                                     )
                                 scoreAnimation.start()
                             }
@@ -294,7 +341,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                         override fun onDismissed(transientBottomBar: MessageSnackBar?, event: Int) {
                             if (isVisible) {
                                 super.onDismissed(transientBottomBar, event)
-                                showContinueMessage(uiState, isLastLevel)
+                                showContinueMessage(isLastLevel)
                             }
                         }
                     }
@@ -316,9 +363,9 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         }
     }
 
-    private fun getWinningMessage(uiState: UiState): MessageSnackBar {
+    private fun getWinningMessage(solutionData: SolutionData): MessageSnackBar {
         val randomCorrectMessage =
-            if (uiState.solutionData.score == uiState.solutionData.maxScore) {
+            if (solutionData.score == solutionData.maxScore) {
                 resources.getStringArray(R.array.very_good_texts).random()
             } else {
                 resources.getStringArray(R.array.good_texts).random()
@@ -328,28 +375,24 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             view = binding.levelFragment,
             message = randomCorrectMessage,
             duration = 2000,
-            windowSizeClassWidth = uiState.windowSizeClass,
-            isBookMode = uiState.bookMode,
             textSize = MessageSnackBar.Companion.TextSize.BIG,
         )
     }
 
-    private fun getScoreMessage(uiState: UiState): MessageSnackBar {
+    private fun getScoreMessage(): MessageSnackBar {
         return MessageSnackBar.make(
             view = binding.levelFragment,
             message = "",
             duration = 2000,
-            windowSizeClassWidth = uiState.windowSizeClass,
-            isBookMode = uiState.bookMode,
             textSize = MessageSnackBar.Companion.TextSize.SMALL,
         )
     }
 
-    private fun showWrongEffects(uiState: UiState) {
+    private fun showWrongEffects(solutionData: SolutionData) {
         animations.getWrongSolutionAnimation(binding.levelFragment).start()
         soundPlayer.vibrateDoubleClick()
         val messageToDisplay =
-            if (uiState.solutionData.solution == BOGUS_PALINDROME)
+            if (solutionData.solution == BOGUS_PALINDROME)
                 resources.getStringArray(R.array.palindrome_wrong_texts).random()
             else
                 resources.getStringArray(R.array.solution_wrong_texts).random()
@@ -358,18 +401,15 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             view = binding.levelFragment,
             message = messageToDisplay,
             duration = 2000,
-            windowSizeClassWidth = uiState.windowSizeClass,
-            isBookMode = uiState.bookMode,
             textSize = MessageSnackBar.Companion.TextSize.SMALL,
             animateText = false,
             isViewEnabled = false
         )
         message.show()
-        if (uiState.solutionData.showHintsBadge) showHintsBadge()
+        if (solutionData.showHintsBadge) showHintsBadge()
     }
 
     private fun showContinueMessage(
-        uiState: UiState,
         isLastLevel: Pair<Boolean, Boolean> = Pair(false, false)
     ) {
         val continueMessage = MessageSnackBar.make(
@@ -378,13 +418,12 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                 R.string.tap_to_finish
             ),
             duration = Int.MAX_VALUE,
-            windowSizeClassWidth = uiState.windowSizeClass,
-            isBookMode = uiState.bookMode,
             textSize = MessageSnackBar.Companion.TextSize.SMALL,
         )
         continueMessage.view.isClickable = true
         continueMessage.view.setOnClickListener {
             if (isVisible) {
+                activateBottomNavBar()
                 it.isClickable = false
                 continueMessage.dismiss()
                 soundPlayer.play(soundPlayer.sounds.levelTransition, volume = 0.2f)
@@ -415,6 +454,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         continueMessage.show()
     }
 
+
     private fun playTrainAnimation() {
         val childCount =
             activity?.findViewById<LinearLayoutCompat>(R.id.trainLinearLayout)?.childCount
@@ -443,6 +483,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         }
     }
 
+
     private fun showTutorial() {
         context?.getSharedPreferences(
             getString(R.string.app_preferences),
@@ -463,6 +504,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         }
     }
 
+
     private fun showHintsBadge() {
         if (isVisible) {
             activity?.let {
@@ -482,6 +524,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         }
     }
 
+
     private fun askForReview(level: Int) {
         if (level == 8) {
             activity?.let {
@@ -489,7 +532,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                 val request = reviewManager.requestReviewFlow()
                 request.addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        viewModel.setUiStateMenuAction()
                         val reviewInfo = task.result
                         val flow = reviewManager.launchReviewFlow(it, reviewInfo)
                         flow.addOnCompleteListener { _ ->
@@ -502,6 +544,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             }
         }
     }
+
 
     private fun hideHintsBadge() {
         if (isVisible) {
@@ -524,30 +567,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             SAD_MODE -> {}
             SAD_AD_FAILED -> {}
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        setFragmentResultListener(C.HINTS_REQUEST_KEY) { _, bundle ->
-            if (viewModel.uiState.value.state != INTERMEDIATE) {
-                val premiumLetter = bundle.getBoolean(C.LETTER_PREMIUM_BUNDLE)
-                if (!premiumLetter) {
-                    val rewardType = RewardType.values()[bundle.getInt(C.LETTER_REWARD_TYPE_BUNDLE)]
-                    rewardUserWithLetter(rewardType)
-                } else {
-                    rewardUserWithLetter(LETTER)
-                }
-            }
-        }
-    }
-
-    override fun onDestroy() {
-        allAnimations.forEach {
-            it.cancel()
-            it.removeAllListeners()
-        }
-        super.onDestroy()
     }
 
 }

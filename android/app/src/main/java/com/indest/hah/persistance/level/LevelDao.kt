@@ -1,6 +1,8 @@
 package com.indest.hah.persistance.level
 
+import android.util.Log
 import androidx.room.*
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.indest.hah.game.creation.Shuffler
 import com.indest.hah.persistance.dto.*
 import kotlinx.coroutines.flow.Flow
@@ -23,7 +25,7 @@ interface LevelDao {
 
     @Transaction
     suspend fun nextLevelActions(currentLevelNr: Int, chosenLevel: Int) {
-        persistInitialLettersInfo(chosenLevel)
+        resetLevel(chosenLevel)
         updateChosenLevelTimestamp(currentLevelNr, chosenLevel)
     }
 
@@ -52,7 +54,7 @@ interface LevelDao {
     suspend fun getMaxLevel(): LevelData
 
     @Query("select * from level_info_table where level_id = :id")
-    suspend fun getSpecificLevel(id:Long): LevelData
+    suspend fun getSpecificLevel(id: Long): LevelData
 
     @Query("update level_info_table set column_count = :newColumnCount where level_id = :level")
     suspend fun changeColumnCount(level: Int, newColumnCount: Int)
@@ -108,6 +110,18 @@ interface LevelDao {
                         )
                     )
                 }
+                val solution = level.solutionToCategory.values.first()
+                val puzzleShuffled = Shuffler.getShuffledSolution(solution)
+                updatePuzzle(level.levelId.toInt(), puzzleShuffled)
+                puzzleShuffled.forEachIndexed { index, char ->
+                    insertLetterData(
+                        ownerId = level.levelId.toInt(),
+                        homeIndex = index,
+                        friendIndex = -666,
+                        letter = char,
+                        locked = false,
+                    )
+                }
                 newLevelsCount++
                 oneLevelId = level.levelId
             }
@@ -117,6 +131,9 @@ interface LevelDao {
 
     @Query("select max(level_id) from level_info_table")
     suspend fun getMaxLevelId(): Int
+
+    @Query("select max(level_id) from level_info_table where level_id < 1000")
+    suspend fun getMaxGameLevels(): Int
 
 
     @Transaction
@@ -275,71 +292,83 @@ interface LevelDao {
         // reset hint interval
         resetCount(hintInterval)
         // delete current level letters info
-        deleteLetterInfo(currentLevel)
-        // update current level progress
-        updateProgress(currentLevel, LevelProgress.REPLAY)
-        // update current level best score
-        updatePuzzle(currentLevel, "")
-        // Reset and make old level info
-        persistInitialLettersInfo(currentLevel)
-        // unlock next level (change progress and increase timestamp)
-        updateProgress(currentLevel + 1, LevelProgress.IN_PROGRESS)
+        resetLevel(currentLevel, LevelProgress.REPLAY)
         // update next level default letters and shuffled puzzle
-        persistInitialLettersInfo(currentLevel + 1)
+        resetLevel(currentLevel + 1)
         // update next level timestamp
         updateChosenLevelTimestamp(currentLevel, currentLevel + 1)
     }
 
     @Transaction
+    suspend fun chooseLevelActions(currentLevel: Int, chosenLevel: Int, hintInterval: String)
+    {
+        // reset hint interval
+        resetCount(hintInterval)
+        // update chosen level timestamp
+        updateChosenLevelTimestamp(currentLevelNr = currentLevel, chosenLevel = chosenLevel)
+    }
+
+
+    @Transaction
     suspend fun levelCompletedActionsFinal(currentLevel: Int, hintInterval: String) {
         // reset hint interval
         resetCount(hintInterval)
-        // delete current level letters info
-        deleteLetterInfo(currentLevel)
-        // update current level progress
-        updateProgress(currentLevel, LevelProgress.REPLAY)
-        // update current level best score
-        updatePuzzle(currentLevel, "")
         // Reset and make old level info
-        persistInitialLettersInfo(currentLevel)
+        resetLevel(currentLevel, LevelProgress.REPLAY)
     }
 
 
     @Query("select palindrome from solution_table where parent_id=:level")
     suspend fun getLevelSolutions(level: Int): List<String>
 
+    @Query("select count(*) from solution_table")
+    suspend fun debugGetSolutionsCount(): Int
+
     @Query("select progress from level_info_table where level_id=:level")
     suspend fun getLevelProgress(level: Int): LevelProgress
 
-    @Transaction
-    suspend fun persistInitialLettersInfo(levelNr: Int) {
-        if (levelNr != 0) {
-            val lettersCount = levelLettersCount(levelNr)
-            val isLevelFinished = getLevelProgress(levelNr)
-            if (lettersCount <= 0 && isLevelFinished != LevelProgress.INTERMEDIATE) {
-                val solution = getLevelSolutions(levelNr).first()
-                val puzzle = Shuffler.getShuffledSolution(solution)
-                val newScore = if (levelNr <= 100) levelNr * 100 else puzzle.trim().length * 100
-                updatePuzzle(levelNr, puzzle)
-                puzzle.forEachIndexed { index, char ->
-                    insertLetterData(
-                        ownerId = levelNr,
-                        homeIndex = index,
-                        friendIndex = -666,
-                        letter = char,
-                        locked = false,
-                    )
-                }
-                updateScore(newScore, levelNr)
-                updateProgress(levelNr, LevelProgress.IN_PROGRESS)
-            }
+
+    /** Steps taken to reset the level:
+            1. Delete letters info
+            2. Update puzzle (shuffle and set)
+            3. Update letters info to initial blank field (set friend to -666)
+            4. Update initial score to the max you can get from the level
+            5. Update progress to IN_PROGRESS or REPLAY (if just finished)
+     *
+     * @param levelNr level nr to be set to initial state.
+     * @param progress progress that should be set to this level after reset.
+     *
+     */
+    suspend fun resetLevel(levelNr: Int, progress: LevelProgress = LevelProgress.IN_PROGRESS) {
+        deleteLetterInfo(levelNr)
+        val levelSolutions = getLevelSolutions(levelNr)
+        // Start debug
+        val debugSolutionsCount = debugGetSolutionsCount()
+        FirebaseCrashlytics.getInstance()
+            .log("Level nr: $levelNr, level solutions: $levelSolutions, Count of solutions table: $debugSolutionsCount")
+        // End debug //TODO: remove if fixed
+        val solution = levelSolutions.first()
+        val puzzle = Shuffler.getShuffledSolution(solution)
+        updatePuzzle(levelNr, puzzle)
+        puzzle.forEachIndexed { index, char ->
+            insertLetterData(
+                ownerId = levelNr,
+                homeIndex = index,
+                friendIndex = -666,
+                letter = char,
+                locked = false,
+            )
         }
+        val newScore = if (levelNr <= 100) levelNr * 100 else puzzle.trim().length * 100
+        updateScore(newScore, levelNr)
+        updateProgress(levelNr, progress)
     }
+
 
     @Transaction
     suspend fun init() {
         val firstLevelProgress = getLevelProgress(1)
-        if (firstLevelProgress == LevelProgress.TODO) persistInitialLettersInfo(1)
+        if (firstLevelProgress == LevelProgress.TODO) resetLevel(1)
     }
 
     @Transaction
@@ -353,8 +382,7 @@ interface LevelDao {
     suspend fun updateLocalGame(saveGame: SaveGame) {
         val localMaxTimestamp = getMaximumTimestamp() ?: 0
         val cloudMaxTimestamp = saveGame.game.maxOfOrNull { it.levelInfo.timeModified } ?: -1
-        if (cloudMaxTimestamp > localMaxTimestamp)
-        {
+        if (cloudMaxTimestamp > localMaxTimestamp) {
             updateLevels(saveGame.game)
             updateIntervals(saveGame.interval)
         }

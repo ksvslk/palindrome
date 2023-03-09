@@ -45,4 +45,7 @@
     <color name="playNewLevelTextColor">#333333</color>
 
     <color name="playerPackIndicatorColor">#DA00FF</color>
+
+    <color name="levelInProgressColor">#002696</color>
+    <color name="levelCompletedColor">#08C00F</color>
 </resources>

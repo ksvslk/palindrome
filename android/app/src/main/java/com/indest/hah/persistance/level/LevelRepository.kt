@@ -29,6 +29,8 @@ class LevelRepository @Inject constructor(
 
     suspend fun getMaxLevelId():Int = levelDao.getMaxLevelId()
 
+    suspend fun getMaxGameLevelId():Int = levelDao.getMaxGameLevels()
+
     suspend fun insertPlayerLevels(playerLevels:List<PlayerLevel>):Pair<LevelData,Int> {
         return levelDao.insertPlayerLevels(playerLevels)
     }
@@ -110,6 +112,11 @@ class LevelRepository @Inject constructor(
     suspend fun executeLevelCompleteTransaction(current: Int, hintInterval: String) {
         levelDao.levelCompletedActions(current, hintInterval)
     }
+
+    suspend fun chooseLevelTransaction(currentLevel: Int, chosenLevel: Int, hintInterval: String) {
+        levelDao.chooseLevelActions(currentLevel, chosenLevel, hintInterval)
+    }
+
 
     suspend fun executeLevelCompleteTransactionFinal(current: Int, hintInterval: String) {
         levelDao.levelCompletedActionsFinal(current, hintInterval)

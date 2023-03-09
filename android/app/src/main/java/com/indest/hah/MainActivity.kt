@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
 import android.view.View
+import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -20,9 +21,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import androidx.window.layout.FoldingFeature
-import androidx.window.layout.WindowInfoTracker
-import androidx.window.layout.WindowMetricsCalculator
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.games.AuthenticationResult
 import com.google.android.gms.games.GamesSignInClient
@@ -44,19 +42,15 @@ import com.indest.hah.ads.RewardType
 import com.indest.hah.databinding.ActivityMainBinding
 import com.indest.hah.fragments.*
 import com.indest.hah.fx.SoundPlayer
-import com.indest.hah.game.creation.BookMode
-import com.indest.hah.game.creation.WindowSizeClass
 import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.general.AccountStatus
 import com.indest.hah.general.GeneralViewModel
 import com.indest.hah.other.C
 import com.indest.hah.other.hideSystemBars
-import com.indest.hah.persistance.dto.LevelData
 import com.indest.hah.persistance.dto.SaveGame
 import com.indest.hah.savegame.SnapshotHelper
 import com.indest.hah.views.ButtonState
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
@@ -87,9 +81,9 @@ class MainActivity : AppCompatActivity(),
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         auth = Firebase.auth
-        levelViewModel.setWindowSizeClass(WindowSizeClass.NOT_SET)
-        levelViewModel.setBookMode(BookMode.NOT_SET)
-        updateFoldModeInfo()
+
+        levelViewModel.setAccountStatus(AccountStatus.LOADING)
+        //generalViewModel.setAccountStatus(AccountStatus.LOADING)
 
         val gamesSignInClient = PlayGames.getGamesSignInClient(this)
         gamesSignInClient.isAuthenticated.addOnCompleteListener { isAuthenticatedTask: Task<AuthenticationResult> ->
@@ -102,9 +96,8 @@ class MainActivity : AppCompatActivity(),
 
         generalViewModel.toString()
         applyCustomWindowInsets()
-        windowSizeClassUpdater()
+
         setUpNavController()
-        progressBarUpdater()
         collectRewardInfo()
         collectVariousEvents()
         collectPlayerLevelsForNotification()
@@ -119,7 +112,7 @@ class MainActivity : AppCompatActivity(),
 
     fun signInManually() {
         levelViewModel.setAccountStatus(AccountStatus.LOADING)
-        generalViewModel.setAccountStatus(AccountStatus.LOADING)
+        //generalViewModel.setAccountStatus(AccountStatus.LOADING)
         val gamesSignInClient = PlayGames.getGamesSignInClient(this)
         gamesSignInClient.signIn()
             .addOnCompleteListener { isAuthenticatedTask: Task<AuthenticationResult> ->
@@ -132,35 +125,31 @@ class MainActivity : AppCompatActivity(),
         gamesSignInClient: GamesSignInClient,
         isAuthenticatedTask: Task<AuthenticationResult>
     ) {
-        if (!isAuthenticatedTask.isSuccessful) {
-            // Disable Play Games Services integration
+        val isAuthenticated = isAuthenticatedTask.isSuccessful &&
+                isAuthenticatedTask.result.isAuthenticated
+        if (isAuthenticated) {
+            // Continue with Play Games Services
+            signInToFirebaseWithCredential(gamesSignInClient)
+        } else {
+            // Disable your integration with Play Games Services or show a
+            // login button to ask  players to sign-in. Clicking it should
+            // call GamesSignInClient.signIn().
             levelViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
-            generalViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
+            //generalViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
             levelViewModel.currentlySignedInPlayerName = "Unknown"
-            return
         }
-
-        val authenticationResult = isAuthenticatedTask.result
-        if (!authenticationResult.isAuthenticated) {
-            // Disable Play Games Services integration
-            levelViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
-            generalViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
-            levelViewModel.currentlySignedInPlayerName = "Unknown"
-            return
-        }
-
-        // Enable Play Games Services integration
-        signInToFirebaseWithCredential(gamesSignInClient)
     }
 
 
     private fun setPlayerNameAndSignedInStatus(accountStatus: AccountStatus)
     {
         PlayGames.getPlayersClient(this).currentPlayer.addOnCompleteListener { mTask: Task<Player> ->
-            levelViewModel.currentlySignedInPlayerName = mTask.result.displayName
+            if (mTask.isSuccessful)
+            {
+                levelViewModel.currentlySignedInPlayerName = mTask.result.displayName
+            }
             levelViewModel.setAccountStatus(accountStatus)
-            generalViewModel.setAccountStatus(accountStatus)
-            levelViewModel.setUiStateLoading()
+            //generalViewModel.setAccountStatus(accountStatus)
         }
     }
 
@@ -201,7 +190,6 @@ class MainActivity : AppCompatActivity(),
                 .setAction("Play") {
                     if (multipleLevels == -1) {
                         supportFragmentManager.commit {
-                            levelViewModel.setUiStateWhenOnPause()
                             levelViewModel.changeLevel(lastAddedLevel)
                         }
                     } else {
@@ -257,22 +245,10 @@ class MainActivity : AppCompatActivity(),
 
     override fun onResume() {
         super.onResume()
-        levelViewModel.setUiStateWhenOnResume()
         generalViewModel.refreshPurchasesTriedRedeem()
         Log.d(TAG, "onResume")
     }
 
-    override fun onPause() {
-        super.onPause()
-        Log.d(TAG, "onPause")
-        levelViewModel.setUiStateWhenOnPause()
-    }
-
-    override fun onStop() {
-        levelViewModel.saveGameImmediately()
-        super.onStop()
-        Log.d(TAG, "onStop")
-    }
 
     private fun submitScore(score: Long, playerLevels: Boolean = false) {
         val leaderboardId = if (playerLevels) {
@@ -331,6 +307,7 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
+
     private fun collectVariousEvents() {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED)
@@ -354,7 +331,6 @@ class MainActivity : AppCompatActivity(),
                         is LevelViewModel.VariousEvent.UnlockAchievement -> {
                             unlockAchievement(event.achievement)
                         }
-                        else -> {}
                     }
                 }
             }
@@ -363,7 +339,6 @@ class MainActivity : AppCompatActivity(),
 
     private fun collectRewardInfo() {
         binding.watchAdTop.setOnClickListener {
-            levelViewModel.setUiStateBusy()
             generalViewModel.showRewardedVideo(this, RewardType.SAD_MODE)
             binding.watchAdTop.visibility = View.GONE
         }
@@ -373,13 +348,11 @@ class MainActivity : AppCompatActivity(),
                 launch {
                     generalViewModel.rewardState.distinctUntilChangedBy { it }.collect {
                         if (it == RewardType.SAD_MODE) {
-                            levelViewModel.setUiStatePlayWhenBusy()
                             levelViewModel.resetIntervalCount(getString(R.string.sad_mode_interval))
                             executeSadModeEffects(false)
                             generalViewModel.updateRewardState(RewardType.NONE)
                             levelViewModel.logRewardGiven(RewardType.SAD_MODE)
                         } else if (it == RewardType.SAD_AD_FAILED) {
-                            levelViewModel.setUiStatePlayWhenBusy()
                             executeSadModeEffects(true)
                             generalViewModel.updateRewardState(RewardType.NONE)
                         }
@@ -420,36 +393,6 @@ class MainActivity : AppCompatActivity(),
         toast.show()
     }
 
-    private fun updateFoldModeInfo() {
-        lifecycleScope.launch(Dispatchers.Main) {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                WindowInfoTracker.getOrCreate(this@MainActivity)
-                    .windowLayoutInfo(this@MainActivity)
-                    .collectLatest { newLayoutInfo ->
-                        val foldingFeature: FoldingFeature? =
-                            newLayoutInfo.displayFeatures.find { it is FoldingFeature } as? FoldingFeature
-                        val isBookMode = foldingFeature?.state == FoldingFeature.State.FLAT
-                        if (isBookMode) levelViewModel.setBookMode(bookMode = BookMode.BOOK_MODE)
-                        else levelViewModel.setBookMode(bookMode = BookMode.NOPE)
-                    }
-            }
-        }
-    }
-
-    private fun windowSizeClassUpdater() {
-        binding.container.addView(object : View(this) {
-            override fun onConfigurationChanged(newConfig: Configuration?) {
-                super.onConfigurationChanged(newConfig)
-                computeWindowSizeClasses()
-            }
-        })
-        computeWindowSizeClasses()
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        Log.d(TAG, "onConfigurationChanged")
-        super.onConfigurationChanged(newConfig)
-    }
 
     private fun applyCustomWindowInsets() {
         ViewCompat.setOnApplyWindowInsetsListener(binding.container) { _, insets ->
@@ -463,24 +406,10 @@ class MainActivity : AppCompatActivity(),
                         0
                     )
                 ).build()
+            WindowInsetsCompat.CONSUMED
         }
     }
 
-
-    private fun computeWindowSizeClasses() {
-        Log.d(TAG, "computeWindowSizeClasses")
-        val metrics = WindowMetricsCalculator.getOrCreate()
-            .computeCurrentWindowMetrics(this)
-
-        val widthDp = metrics.bounds.width() /
-                resources.displayMetrics.density
-        val widthWindowSizeClass = when {
-            widthDp < 600f -> WindowSizeClass.COMPACT
-            widthDp < 840f -> WindowSizeClass.MEDIUM
-            else -> WindowSizeClass.EXPANDED
-        }
-        levelViewModel.setWindowSizeClass(widthWindowSizeClass)
-    }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
@@ -497,25 +426,6 @@ class MainActivity : AppCompatActivity(),
         bottomNavigationView.menu.forEach { it.isChecked = true }
     }
 
-    private fun progressBarUpdater() {
-        lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                levelViewModel.currentLevel.distinctUntilChangedBy { it.levelInfo.levelId }
-                    .collect {
-                        if (it.levelInfo.levelId < 1000) {
-                            setLevelProgressIndicator(it.levelInfo, it.solutions.size)
-                        } else if (it.levelInfo.levelId > 1000) {
-                            val maxLevels = levelViewModel.getMaxLevelId() - 1000
-                            setLevelProgressIndicatorPlayerPack(
-                                it.levelInfo,
-                                it.solutions.size,
-                                maxLevels
-                            )
-                        }
-                    }
-            }
-        }
-    }
 
     private fun executeSadModeEffects(isSadMode: Boolean) {
         when (isSadMode) {
@@ -530,29 +440,16 @@ class MainActivity : AppCompatActivity(),
         }
     }
 
-    private fun setLevelProgressIndicatorPlayerPack(
-        level: LevelData,
-        solutionsCount: Int,
-        maxLevels: Int
-    ) {
-        binding.levelNumber.text =
-            if (solutionsCount > 1) "${level.levelId - 1000}* - ${level.author}" else "${level.levelId - 1000} - ${level.author}"
-        binding.gameProgress.progress =
-            ((level.levelId - 1000).toFloat() / maxLevels.toFloat() * 100.0).toInt()
+
+    fun updateProgressBar(progress:Pair<Int, String>) {
+        binding.levelNumber.text = progress.second
+        binding.gameProgress.progress = progress.first
     }
 
-    private fun setLevelProgressIndicator(level: LevelData, solutionsCount: Int) {
-        val levelsCount = 100
-        binding.levelNumber.text =
-            if (solutionsCount > 1) "${level.levelId}*" else "${level.levelId}"
-        binding.gameProgress.progress =
-            (level.levelId.toFloat() / levelsCount.toFloat() * 100.0).toInt()
-    }
 
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         Log.d(TAG, "onBackPressed")
-        levelViewModel.saveGameImmediately()
         val exitDialog = ExitGameDialogFragment()
         exitDialog.show(supportFragmentManager, C.EXIT_GAME_DIALOG_FRAGMENT)
     }

@@ -88,7 +88,6 @@ class HintsFragment : BottomSheetDialogFragmentCustom() {
             if (!viewModel.currentLevel.value.levelInfo.categoryRewarded) {
                 when (binding.rewardCategoryButton.buttonState) {
                     AD -> {
-                        levelViewModel.setUiStateBusy()
                         activity?.let {
                             viewModel.showRewardedVideo(it, CLUE)
                         }
@@ -107,7 +106,6 @@ class HintsFragment : BottomSheetDialogFragmentCustom() {
         binding.rewardPlaceLetter.setOnClickListener {
             when (binding.rewardPlaceLetter.buttonState) {
                 AD -> {
-                    levelViewModel.setUiStateBusy()
                     activity?.let {
                         viewModel.showRewardedVideo(it, LETTER)
                     }
@@ -148,7 +146,6 @@ class HintsFragment : BottomSheetDialogFragmentCustom() {
                 dismissAllowingStateLoss()
             }
             AD_FAILED -> {
-                levelViewModel.setUiStatePlayWhenBusy()
                 viewModel.updateRewardState(NONE)
             }
             SAD_MODE -> {}
@@ -196,7 +193,6 @@ class HintsFragment : BottomSheetDialogFragmentCustom() {
         view?.setOnClickListener {
             (view as? PurchaseButton)?.let { pb ->
                 pb.sku?.let { sku ->
-                    levelViewModel.setUiStateMenuAction()
                     Log.d(TAG, "launchBillingFlow: $sku")
                     activity?.let {
                         viewModel.launchBillingFlow(it, sku)

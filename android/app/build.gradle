@@ -120,13 +120,13 @@ apply plugin: 'com.google.gms.google-services'
 dependencies {
     def firebase_version = '31.2.0'
     def play_games_services_version = "17.0.0"
-    def sqlite_version = "2.2.0"
+    def sqlite_version = "2.3.0"
     def hilt_version = "2.42"
     def coroutine_version = '1.6.0'
     def work_version = '2.7.1'
     def coroutines_play_services_version = '1.4.1'
     def instant_apps_version = '18.0.1'
-    def room_version = '2.4.2'
+    def room_version = '2.5.0'
     def user_messaging_platform_version = '2.0.0'
     def google_play_services_auth_version = '20.4.1'
     def gridlayout_version = '1.0.0'

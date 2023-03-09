@@ -26,6 +26,7 @@ import com.indest.hah.R
 import com.indest.hah.databinding.EpilogueFragmentBinding
 import com.indest.hah.databinding.EpiloguePlayerFragmentBinding
 import com.indest.hah.fx.Animations
+import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.general.AccountStatus
 import com.indest.hah.general.GeneralViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,6 +44,7 @@ class PlayerEpilogueFragment : Fragment(R.layout.epilogue_player_fragment) {
     private lateinit var binding: EpiloguePlayerFragmentBinding
     private var trainAnimator: ObjectAnimator? = null
     private val generalViewModel: GeneralViewModel by activityViewModels()
+    private val levelViewModel: LevelViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -78,7 +80,7 @@ class PlayerEpilogueFragment : Fragment(R.layout.epilogue_player_fragment) {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED)
             {
                 val isAllowedToSubmit = generalViewModel.isAllowedToSubmitPalindrome()
-                generalViewModel.internet.combine(generalViewModel.accountStatus) { i, a ->
+                generalViewModel.internet.combine(levelViewModel.accountStatus) { i, a ->
                     Pair(i, a)
                 }.collect { (internet, accountStatus) ->
                     when (internet) {
