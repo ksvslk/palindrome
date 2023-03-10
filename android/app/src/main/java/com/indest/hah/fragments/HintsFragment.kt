@@ -118,18 +118,14 @@ class HintsFragment : BottomSheetDialogFragmentCustom() {
             }
             when (binding.rewardPlaceLetter.buttonState) {
                 AD -> {
+                    dismissAllowingStateLoss()
                     activity?.let {
                         viewModel.showRewardedVideo(it, LETTER)
                     }
                 }
                 PREMIUM -> {
                     levelViewModel.logPremiumHintUsage(LETTER)
-                    setFragmentResult(
-                        C.HINTS_REQUEST_KEY,
-                        bundleOf(
-                            C.LETTER_PREMIUM_BUNDLE to true
-                        )
-                    )
+                    viewModel.updateRewardState(LETTER)
                     dismissAllowingStateLoss()
                 }
                 NO_AD -> { /* No action. Button should be disabled in this state. */
@@ -159,11 +155,7 @@ class HintsFragment : BottomSheetDialogFragmentCustom() {
             }
             LETTER -> {
                 levelViewModel.logRewardGiven(rewardType)
-                setFragmentResult(
-                    C.HINTS_REQUEST_KEY,
-                    bundleOf(C.LETTER_REWARD_TYPE_BUNDLE to rewardType.ordinal)
-                )
-                viewModel.updateRewardState(NONE)
+                viewModel.updateRewardState(LETTER)
                 dismissAllowingStateLoss()
             }
             AD_FAILED -> {

@@ -115,12 +115,18 @@ class GeneralViewModel @Inject constructor(
             }
             launch {
                 _adsLiveData.asFlow().distinctUntilChanged().collect {
-                    if (it.second == RewardType.CLUE) {
-                        updateCategoryRewarded()
-                    } else if (it.second == RewardType.SAD_MODE) {
-                        persistSadMode(false)
+                    when (it.second) {
+                        RewardType.CLUE -> {
+                            updateCategoryRewarded()
+                        }
+                        RewardType.SAD_MODE -> {
+                            persistSadMode(false)
+                        }
+                        RewardType.LETTER -> {
+                        }
+                        else -> {}
                     }
-                    _rewardState.value = it.second
+                    updateRewardState(it.second)
                     updateUiState()
                 }
             }
@@ -141,12 +147,6 @@ class GeneralViewModel @Inject constructor(
             }
         }
     }
-
-    /*
-       fun setAccountStatus(accountStatus: AccountStatus) {
-        _accountStatus.value = accountStatus
-    }
-     */
 
     fun updateRewardState(rewardType: RewardType) {
         _rewardState.value = rewardType

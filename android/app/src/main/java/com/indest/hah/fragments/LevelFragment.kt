@@ -36,7 +36,7 @@ import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.game.viewmodel.Solution
 import com.indest.hah.game.viewmodel.Solution.*
 import com.indest.hah.game.viewmodel.SolutionData
-import com.indest.hah.other.C
+import com.indest.hah.general.GeneralViewModel
 import com.indest.hah.other.VaryingProbability
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.level.LevelProgress
@@ -44,6 +44,7 @@ import com.indest.hah.views.Cell
 import com.indest.hah.views.MessageSnackBar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -52,7 +53,8 @@ import javax.inject.Inject
 class LevelFragment : Fragment(R.layout.level_fragment) {
     private val TAG = "LevelFragment"
 
-    private val viewModel: LevelViewModel by activityViewModels()
+    private val levelViewModel: LevelViewModel by activityViewModels()
+    private val generalViewModel: GeneralViewModel by activityViewModels()
     private var _binding: LevelFragmentBinding? = null
     private val binding get() = _binding!!
 
@@ -69,38 +71,31 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     @Inject
     lateinit var soundPlayer: SoundPlayer
 
-    // first - reward letter, second - premium, third - reward type
-    private var reward = Triple(false, false, RewardType.NONE)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-            setFragmentResultListener(C.HINTS_REQUEST_KEY) { _, bundle ->
-                val premiumLetter = bundle.getBoolean(C.LETTER_PREMIUM_BUNDLE)
-                val rewardType = RewardType.values()[bundle.getInt(C.LETTER_REWARD_TYPE_BUNDLE)]
-                reward = Triple(true, premiumLetter, rewardType)
-                if (premiumLetter) rewardWithLetter()
+        Log.d(TAG, "onCreate")
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED)
+            {
+                generalViewModel.rewardState.collect { rewardType ->
+                    if (rewardType == LETTER)
+                    {
+                        generalViewModel.updateRewardState(RewardType.NONE)
+                        cellDirector?.rewardWithRandomLetter()
+                    }
+                }
             }
+        }
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d(TAG, "onViewCreated")
         view.doOnLayout {
             Log.d(TAG, "View width: ${view.width}")
             collectGameUpdates()
-        }
-    }
-
-
-    private fun rewardWithLetter()
-    {
-        if (reward.first) {
-            if (!reward.second) {
-                rewardUserWithLetter(reward.third)
-            } else {
-                rewardUserWithLetter(LETTER)
-            }
-            reward = Triple(false, false, RewardType.NONE)
         }
     }
 
@@ -111,11 +106,13 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             it.removeAllListeners()
         }
         super.onDestroy()
+        Log.d(TAG, "onDestroy")
     }
 
 
     override fun onDestroyView() {
         super.onDestroyView()
+        Log.d(TAG, "onDestroyView")
         _binding = null
     }
 
@@ -142,7 +139,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     override fun onResume() {
         super.onResume()
         Log.d(TAG, "onResume")
-        //viewModel.resendCurrentLevel()
     }
 
     private fun clearMessages()
@@ -160,15 +156,15 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED)
             {
                 Log.d(TAG, "collectGameUpdates")
-                viewModel.gameEventFlow.collect { event ->
+                levelViewModel.gameEventFlow.collect { event ->
                     when (event) {
                         is LevelViewModel.GameEvent.DisplayLevel -> {
-                            clearMessages()
                             disableLoading()
-                            Log.d(TAG, "DisplayLevel")
+                            clearMessages()
+                            Log.d(TAG, "GameEvent.DisplayLevel")
                             if (event.level.levelInfo.progress == LevelProgress.INTERMEDIATE) {
                                 displayLevel(event.level)
-                                showContinueMessage(viewModel.isLastLevel())
+                                showContinueMessage(levelViewModel.isLastLevel())
                             }
                             else {
                                 displayLevel(event.level)
@@ -176,7 +172,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                             }
                         }
                         is LevelViewModel.GameEvent.SolutionResult -> {
-                            Log.d(TAG, "SolutionResult")
+                            Log.d(TAG, "GameEvent.SolutionResult")
                             when (event.solutionData.solution) {
                                 CORRECT -> {
                                     showCorrectEffects(event.solutionData, event.isLastLevel)
@@ -193,12 +189,8 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                             }
                         }
                         LevelViewModel.GameEvent.ShowLoading -> {
-                            Log.d(TAG, "ShowLoading")
+                            Log.d(TAG, "GameEvent.ShowLoading")
                             enableLoading()
-                        }
-                        LevelViewModel.GameEvent.HideLoading -> {
-                            Log.d(TAG, "HideLoading")
-                            disableLoading()
                         }
                     }
                 }
@@ -235,12 +227,13 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         lifecycleScope.launch(Dispatchers.Main)
         {
             if (areColumnsDifferent) {
+                Log.d(TAG, "Different columns. Change friend indexes.")
                 val newIndexes =
                     levelCreator.getUpdatedLevelWithPossiblyNewColumnCount(
                         level,
                         densitySettings.columnCount
                     )
-                viewModel.changeFriendIndexesBasedOnColumnCount(
+                levelViewModel.changeFriendIndexesBasedOnColumnCount(
                     densitySettings.columnCount,
                     newIndexes
                 )
@@ -256,12 +249,12 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                 levelGridLayout.first.doOnPreDraw {
                     cellDirector = CellDirector(
                         this,
-                        viewModel
+                        levelViewModel
                     )
-                    rewardWithLetter()
                 }
             }
             binding.levelFragment.addView(levelGridLayout.first)
+            Log.d(TAG, "Added level grid to the root view.")
         }
         if (areColumnsDifferent) {
             return
@@ -271,14 +264,14 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
         if (level.levelInfo.levelId == 2)
         {
-           if (viewModel.isAllowedToSubmitAndSignedInToFirebase())
+           if (levelViewModel.isAllowedToSubmitAndSignedInToFirebase())
            {
                showSubmitPalindromesBadge()
            }
         }
 
         lifecycleScope.launchWhenResumed {
-            if (viewModel.isShowScores()) {
+            if (levelViewModel.isShowScores()) {
                 showPlayerCenteredScores()
             }
             showTutorial()
@@ -455,12 +448,12 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                 playTrainAnimation()
                 when (isLastLevel) {
                     Pair(false, false) -> {
-                        viewModel.executeLevelCompleteActions()
+                        levelViewModel.executeLevelCompleteActions()
                     }
                     Pair(true, false) -> {
                         soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.2f)
                         parentFragmentManager.commit {
-                            viewModel.executeLevelCompleteActionsFinal()
+                            levelViewModel.executeLevelCompleteActionsFinal()
                             setReorderingAllowed(true)
                             replace<EpilogueFragment>(R.id.fragments_container)
                         }
@@ -468,7 +461,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                     Pair(false, true) -> {
                         soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.2f)
                         parentFragmentManager.commit {
-                            viewModel.executeLevelCompleteActionsFinal()
+                            levelViewModel.executeLevelCompleteActionsFinal()
                             setReorderingAllowed(true)
                             replace<PlayerEpilogueFragment>(R.id.fragments_container)
                         }
@@ -483,7 +476,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     private fun playTrainAnimation() {
         val childCount =
             activity?.findViewById<LinearLayoutCompat>(R.id.trainLinearLayout)?.childCount
-        if (viewModel.currentLevel.replayCache.firstOrNull()?.levelInfo?.let {
+        if (levelViewModel.currentLevel.replayCache.firstOrNull()?.levelInfo?.let {
                 VaryingProbability.isAnimationPlayed(
                     it.levelId
                 )
@@ -516,7 +509,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         )?.let { sp ->
             val tutorialPassed = sp.getBoolean(getString(R.string.tutorial_passed), false)
             if (!tutorialPassed) {
-                viewModel.logTutorialBegin()
+                levelViewModel.logTutorialBegin()
                 childFragmentManager.commit {
                     addToBackStack(TutorialFragment().tag)
                     add(TutorialFragment(), TutorialFragment().tag)

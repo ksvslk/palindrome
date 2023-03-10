@@ -85,6 +85,7 @@ class LevelViewModel @Inject constructor(
                     it.levelInfo.columnCount != _currentLevel.value.levelInfo.columnCount
                 val changeInLevelId = it.levelInfo.levelId != _currentLevel.value.levelInfo.levelId
                 _currentLevel.value = it
+                Log.d(TAG, "Current level: ${it.levelInfo}")
                 if (isCurrentLevelLegit() && (changeInColumnsCount || changeInLevelId)) {
                     Log.d(
                         TAG,
@@ -198,18 +199,28 @@ class LevelViewModel @Inject constructor(
                         gameEventChannel.send(GameEvent.DisplayLevel(_currentLevel.value, progress))
                     }
                     else {
-                        Log.d(TAG, "SIGNED_OUT -> start collectin level updates, GameEvent.HideLoading")
-                        gameEventChannel.send(GameEvent.HideLoading)
+                        Log.d(TAG, "SIGNED_OUT -> start collecting level updates")
                         startCollectingLevelUpdate()
                     }
                 }
                 AccountStatus.LOADING -> {
                     Log.d(TAG, "LOADING -> GameEvent.ShowLoading")
-                    gameEventChannel.send(GameEvent.ShowLoading)
+                    if (!isCurrentLevelLegit()) {
+                        gameEventChannel.send(GameEvent.ShowLoading)
+                    }
+                    else  {
+                        val progress = getProgressAndText()
+                        gameEventChannel.send(GameEvent.DisplayLevel(_currentLevel.value, progress))
+                    }
                 }
                 AccountStatus.SIGNED_IN_WITH_FIREBASE -> {
-                    Log.d(TAG, "SIGNED_IN_WITH_FIREBASE -> VariousEvent.LoadGame")
-                    variousEventChannel.send(VariousEvent.LoadGame)
+                    if (_accountStatus.value != AccountStatus.SIGNED_IN) {
+                        Log.d(TAG, "SIGNED_IN_WITH_FIREBASE -> Previous state is not AccountStatus.SIGNED_IN so VariousEvent.LoadGame")
+                        variousEventChannel.send(VariousEvent.LoadGame)
+                    }
+                    else {
+                        Log.d(TAG, "SIGNED_IN_WITH_FIREBASE -> Previous state is  AccountStatus.SIGNED_IN, ignore and do not load game again!")
+                    }
                 }
                 AccountStatus.NOT_SET -> {
                     Log.d(TAG, "AccountStatus.NOT_SET")
@@ -446,7 +457,6 @@ class LevelViewModel @Inject constructor(
         ) : GameEvent()
 
         object ShowLoading : GameEvent()
-        object HideLoading : GameEvent()
     }
 
 

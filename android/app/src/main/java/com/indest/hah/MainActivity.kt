@@ -1,5 +1,6 @@
 package com.indest.hah
 
+import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.os.Handler
@@ -13,7 +14,10 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.Insets
-import androidx.core.view.*
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.doOnNextLayout
+import androidx.core.view.forEach
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
@@ -40,7 +44,8 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.indest.hah.ads.RewardType
 import com.indest.hah.databinding.ActivityMainBinding
-import com.indest.hah.fragments.*
+import com.indest.hah.fragments.ExitGameDialogFragment
+import com.indest.hah.fragments.PlayerLevelSelectFragment
 import com.indest.hah.fx.SoundPlayer
 import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.general.AccountStatus
@@ -53,17 +58,16 @@ import com.indest.hah.views.ButtonState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
-import kotlinx.coroutines.flow.lastOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.math.min
+
 
 private const val RECONNECT_TIMER_START_MILLISECONDS = 1L * 1000L
 private const val RECONNECT_TIMER_MAX_TIME_MILLISECONDS = 1000L * 60L * 15L // 15 minutes
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(),
-    ExitGameDialogFragment.ExitGameDialogListener {
+class MainActivity : AppCompatActivity() {
 
     private val TAG = "MainActivity"
     lateinit var binding: ActivityMainBinding
@@ -82,6 +86,12 @@ class MainActivity : AppCompatActivity(),
     @Inject
     lateinit var snapshotHelper: SnapshotHelper
     private lateinit var auth: FirebaseAuth
+
+
+    override fun onStop() {
+        super.onStop()
+        levelViewModel.saveGameImmediately()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate")
@@ -147,11 +157,16 @@ class MainActivity : AppCompatActivity(),
 
 
     private fun setPlayerNameAndSignedInStatus(accountStatus: AccountStatus) {
-        PlayGames.getPlayersClient(this).currentPlayer.addOnCompleteListener { mTask: Task<Player> ->
-            if (mTask.isSuccessful) {
-                levelViewModel.currentlySignedInPlayerName = mTask.result.displayName
+        if (levelViewModel.accountStatus.value !in setOf(
+                AccountStatus.SIGNED_IN,
+                AccountStatus.SIGNED_IN_WITH_FIREBASE)) {
+            PlayGames.getPlayersClient(this).currentPlayer.addOnCompleteListener { mTask: Task<Player> ->
+                if (mTask.isSuccessful) {
+                    levelViewModel.currentlySignedInPlayerName = mTask.result.displayName
+                }
+                Log.d(TAG, "setPlayerNameAndSignedInStatus_ set account status: ${accountStatus.name}")
+                levelViewModel.setAccountStatus(accountStatus)
             }
-            levelViewModel.setAccountStatus(accountStatus)
         }
     }
 
@@ -263,6 +278,7 @@ class MainActivity : AppCompatActivity(),
                 reconnectMilliseconds * 2,
                 RECONNECT_TIMER_MAX_TIME_MILLISECONDS
             )
+            Log.d(TAG, "retryFirebaseSignInWithExponentialBackoff with reconnectMilliseconds: ${reconnectMilliseconds}")
         }
     }
 
@@ -471,21 +487,6 @@ class MainActivity : AppCompatActivity(),
         binding.gameProgress.progress = progress.first
     }
 
-
-    @Deprecated("Deprecated in Java")
-    override fun onBackPressed() {
-        Log.d(TAG, "onBackPressed")
-        val exitDialog = ExitGameDialogFragment()
-        exitDialog.show(supportFragmentManager, C.EXIT_GAME_DIALOG_FRAGMENT)
-    }
-
-    override fun onDialogPositiveClick(dialog: DialogFragment) {
-        finishAndRemoveTask()
-    }
-
-    override fun onDialogNegativeClick(dialog: DialogFragment) {
-        dialog.dismiss()
-    }
 
     override fun onDestroy() {
         Log.d(TAG, "onDestroy")

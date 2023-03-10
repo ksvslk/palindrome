@@ -28,7 +28,7 @@ class SnapshotHelper @Inject constructor() {
     private val TAG = "SnapshotHelper"
     private val MY_RESOLUTION_POLICY = RESOLUTION_POLICY_MOST_RECENTLY_MODIFIED
 
-    suspend fun save(activity: Activity, saveGame: SaveGame, calculatedGameProgress:Long) = withContext(Dispatchers.Default) {
+    fun save(activity: Activity, saveGame: SaveGame, calculatedGameProgress:Long)  {
         val snapshotsClient = PlayGames.getSnapshotsClient(activity)
 
         Log.d(TAG, "Trying to save game..")
@@ -66,18 +66,18 @@ class SnapshotHelper @Inject constructor() {
         }
     }
 
-    suspend fun load(activity: Activity): SaveGame? = withContext(Dispatchers.IO) {
+    suspend fun load(activity: Activity): SaveGame?  {
         try {
             val bytes = getSaveGameBytes(activity).await()
             if (bytes != null) {
-                return@withContext bytesToGame(bytes)
+                return bytesToGame(bytes)
             } else {
                 throw Exception("Could not load game. Bytes return from the task was null.")
             }
         } catch (e: java.lang.Exception) {
             Log.e(TAG, "Message: ${e.message}. Cause: ${e.cause} ")
         }
-        return@withContext null
+        return null
     }
 
     private fun getSaveGameBytes(activity: Activity): Task<ByteArray?> {
