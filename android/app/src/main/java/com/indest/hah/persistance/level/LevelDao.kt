@@ -110,7 +110,7 @@ interface LevelDao {
                         )
                     )
                 }
-                val solution = level.solutionToCategory.values.first()
+                val solution = level.solutionToCategory.keys.first()
                 val puzzleShuffled = Shuffler.getShuffledSolution(solution)
                 updatePuzzle(level.levelId.toInt(), puzzleShuffled)
                 puzzleShuffled.forEachIndexed { index, char ->

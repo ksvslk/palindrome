@@ -186,20 +186,34 @@ class LevelViewModel @Inject constructor(
         Log.d(TAG, "Set account status: ${_accountStatus.value}")
         viewModelScope.launch {
             when (accountStatus) {
-                AccountStatus.SIGNED_IN -> variousEventChannel.send(VariousEvent.LoadGame)
+                AccountStatus.SIGNED_IN -> {
+                    Log.d(TAG, "SIGNED_IN -> VariousEvent.LoadGame")
+                    variousEventChannel.send(VariousEvent.LoadGame)
+                }
                 AccountStatus.SIGNED_OUT -> {
+                    Log.d(TAG, "SIGNED_OUT")
                     if (isCurrentLevelLegit()) {
+                        Log.d(TAG, "SIGNED_OUT -> current level legit, GameEvent.DisplayLevel")
                         val progress = getProgressAndText()
                         gameEventChannel.send(GameEvent.DisplayLevel(_currentLevel.value, progress))
                     }
                     else {
+                        Log.d(TAG, "SIGNED_OUT -> start collectin level updates, GameEvent.HideLoading")
                         gameEventChannel.send(GameEvent.HideLoading)
                         startCollectingLevelUpdate()
                     }
                 }
-                AccountStatus.LOADING -> gameEventChannel.send(GameEvent.ShowLoading)
-                AccountStatus.SIGNED_IN_WITH_FIREBASE -> variousEventChannel.send(VariousEvent.LoadGame)
-                AccountStatus.NOT_SET -> {} // do nothing
+                AccountStatus.LOADING -> {
+                    Log.d(TAG, "LOADING -> GameEvent.ShowLoading")
+                    gameEventChannel.send(GameEvent.ShowLoading)
+                }
+                AccountStatus.SIGNED_IN_WITH_FIREBASE -> {
+                    Log.d(TAG, "SIGNED_IN_WITH_FIREBASE -> VariousEvent.LoadGame")
+                    variousEventChannel.send(VariousEvent.LoadGame)
+                }
+                AccountStatus.NOT_SET -> {
+                    Log.d(TAG, "AccountStatus.NOT_SET")
+                }
             }
         }
     }
