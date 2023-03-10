@@ -35,6 +35,19 @@ class MessageSnackBar(
         getView().layoutParams = params
     }
 
+    private var _callback: BaseCallback<MessageSnackBar>? = null
+
+    override fun addCallback(callback: BaseCallback<MessageSnackBar>?): MessageSnackBar {
+        _callback = callback
+        return super.addCallback(callback)
+    }
+
+    fun removeMessageCallback()
+    {
+        removeCallback(_callback)
+    }
+
+
     companion object {
 
         private var tapToContinueAnimation:ObjectAnimator? = null

@@ -109,8 +109,8 @@ class LevelRepository @Inject constructor(
         return levelDao.isLimitAttained(name)
     }
 
-    suspend fun executeLevelCompleteTransaction(current: Int, hintInterval: String) {
-        levelDao.levelCompletedActions(current, hintInterval)
+    suspend fun executeLevelCompleteTransaction(current: Int, hintInterval: String, chosenLevel: Int) {
+        levelDao.levelCompletedActions(current, hintInterval, chosenLevel)
     }
 
     suspend fun chooseLevelTransaction(currentLevel: Int, chosenLevel: Int, hintInterval: String) {

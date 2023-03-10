@@ -12,6 +12,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.indest.hah.R
@@ -115,6 +116,15 @@ class StagesFragment : BottomSheetDialogFragmentCustom() {
             Toast.LENGTH_LONG
         )
         toast.show()
+    }
+
+    override fun onDestroyView() {
+        activity?.let {
+            val stagesBadge = it.findViewById<BottomNavigationView>(R.id.bottomNavView)
+                .getOrCreateBadge(R.id.navigation_stages)
+            stagesBadge.isVisible = false
+        }
+        super.onDestroyView()
     }
 
 }

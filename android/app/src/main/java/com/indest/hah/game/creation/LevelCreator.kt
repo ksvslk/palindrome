@@ -178,6 +178,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         val maxBoxSize = context.resources.getDimension(R.dimen.max_box_size)
 
         val totalAreaRatio = (usableWidth.toFloat() / usableHeight.toFloat())
+        Log.d(TAG, "Usable height: ${usableHeight}")
 
         val columnsEnd = max(7, palindrome.length)
         var closestColumnsRatio = Pair(columns, Float.MAX_VALUE)

@@ -2,6 +2,7 @@ package com.indest.hah.game.viewmodel
 
 import android.app.Application
 import android.os.Bundle
+import android.text.method.TextKeyListener.clear
 import android.util.Log
 import androidx.core.os.bundleOf
 import androidx.fragment.app.commit
@@ -84,11 +85,7 @@ class LevelViewModel @Inject constructor(
                     it.levelInfo.columnCount != _currentLevel.value.levelInfo.columnCount
                 val changeInLevelId = it.levelInfo.levelId != _currentLevel.value.levelInfo.levelId
                 _currentLevel.value = it
-                if (
-                    _currentLevel.value.levelInfo.levelId > 0 &&
-                    _currentLevel.value.solutions.isNotEmpty() &&
-                    (changeInColumnsCount || changeInLevelId)
-                ) {
+                if (isCurrentLevelLegit() && (changeInColumnsCount || changeInLevelId)) {
                     Log.d(
                         TAG,
                         "Latest level: ${it.levelInfo.levelId}, ${it.levelInfo}, Solutions: ${it.solutions}, Letters: ${it.lettersProperties}"
@@ -101,19 +98,27 @@ class LevelViewModel @Inject constructor(
     }
 
 
-    fun resendCurrentLevel() {
+    private fun isCurrentLevelLegit() =
+                _currentLevel.value.levelInfo.levelId > 0 &&
+                _currentLevel.value.solutions.isNotEmpty()
+
+
+/*    fun resendCurrentLevel() {
         if (_accountStatus.value != AccountStatus.LOADING) {
+            Log.d(TAG, "resendCurrentLevel")
             viewModelScope.launch {
-                if (
-                    _currentLevel.value.levelInfo.levelId > 0 &&
-                    _currentLevel.value.solutions.isNotEmpty()
-                ) {
+                if (isCurrentLevelLegit()) {
+                    Log.d(TAG, "We have a level! Let's send it to fragment.")
                     val progress = getProgressAndText()
                     gameEventChannel.send(GameEvent.DisplayLevel(_currentLevel.value, progress))
                 }
+                else {
+                    Log.d(TAG, "No level - ${_currentLevel.value}")
+                    startCollectingLevelUpdate()
+                }
             }
         }
-    }
+    }*/
 
 
     private suspend fun getProgressAndText(): Pair<Int, String> {
@@ -182,7 +187,16 @@ class LevelViewModel @Inject constructor(
         viewModelScope.launch {
             when (accountStatus) {
                 AccountStatus.SIGNED_IN -> variousEventChannel.send(VariousEvent.LoadGame)
-                AccountStatus.SIGNED_OUT -> startCollectingLevelUpdate()
+                AccountStatus.SIGNED_OUT -> {
+                    if (isCurrentLevelLegit()) {
+                        val progress = getProgressAndText()
+                        gameEventChannel.send(GameEvent.DisplayLevel(_currentLevel.value, progress))
+                    }
+                    else {
+                        gameEventChannel.send(GameEvent.HideLoading)
+                        startCollectingLevelUpdate()
+                    }
+                }
                 AccountStatus.LOADING -> gameEventChannel.send(GameEvent.ShowLoading)
                 AccountStatus.SIGNED_IN_WITH_FIREBASE -> variousEventChannel.send(VariousEvent.LoadGame)
                 AccountStatus.NOT_SET -> {} // do nothing
@@ -274,6 +288,7 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+
     fun updateFriendIndex(index: Int, newIndex: Int) {
         viewModelScope.launch {
             _currentLevel.value.levelInfo.let { levelInfo ->
@@ -287,15 +302,21 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+
     fun changeLevel(chosenLevel: Int) {
-        viewModelScope.launch {
-            _currentLevel.value.levelInfo.let { levelInfo ->
-                val hintInterval = getApplication<Application>().getString(R.string.hint_suggestion)
-                levelRepository.chooseLevelTransaction(
-                    levelInfo.levelId,
-                    chosenLevel,
-                    hintInterval
-                )
+        if(_currentLevel.value.levelInfo.progress == LevelProgress.INTERMEDIATE){
+            executeLevelCompleteActions(chosenLevel)
+        }
+        else {
+            viewModelScope.launch {
+                _currentLevel.value.levelInfo.let { levelInfo ->
+                    val hintInterval = getApplication<Application>().getString(R.string.hint_suggestion)
+                    levelRepository.chooseLevelTransaction(
+                        levelInfo.levelId,
+                        chosenLevel,
+                        hintInterval
+                    )
+                }
             }
         }
     }
@@ -308,14 +329,15 @@ class LevelViewModel @Inject constructor(
     }
 
 
-    fun executeLevelCompleteActions() {
+    fun executeLevelCompleteActions(changeLevelTo:Int = _currentLevel.value.levelInfo.levelId + 1) {
         val levelNr = _currentLevel.value.levelInfo.levelId
         val hintInterval = getApplication<Application>().getString(R.string.hint_suggestion)
+        Log.d(TAG, "Change level to: ${changeLevelTo}")
         viewModelScope.launch {
-            levelRepository.executeLevelCompleteTransaction(levelNr, hintInterval)
+            levelRepository.executeLevelCompleteTransaction(levelNr, hintInterval, changeLevelTo)
             levelRepository.increaseCount(getApplication<Application>().getString(R.string.sad_mode_interval))
             levelRepository.increaseCount(getApplication<Application>().getString(R.string.player_centered_scores))
-            saveGameImmediately()
+            if (changeLevelTo - _currentLevel.value.levelInfo.levelId == 1) saveGameImmediately()
             logLevelStart()
         }
     }
@@ -410,6 +432,7 @@ class LevelViewModel @Inject constructor(
         ) : GameEvent()
 
         object ShowLoading : GameEvent()
+        object HideLoading : GameEvent()
     }
 
 
@@ -753,6 +776,11 @@ class LevelViewModel @Inject constructor(
                     submissionChannel.send(SubmissionEvent.Failed)
                 }
             }
+    }
+
+    fun isAllowedToSubmitAndSignedInToFirebase():Boolean
+    {
+       return _accountStatus.value == AccountStatus.SIGNED_IN_WITH_FIREBASE
     }
 
 }

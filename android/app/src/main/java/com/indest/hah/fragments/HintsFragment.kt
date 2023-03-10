@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
@@ -26,6 +27,7 @@ import com.indest.hah.fx.SoundPlayer
 import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.general.GeneralViewModel
 import com.indest.hah.other.C
+import com.indest.hah.persistance.level.LevelProgress
 import com.indest.hah.views.ButtonState.*
 import com.indest.hah.views.PurchaseButton
 import dagger.hilt.android.AndroidEntryPoint
@@ -85,6 +87,11 @@ class HintsFragment : BottomSheetDialogFragmentCustom() {
         addBillingFlowOnClickToPurchaseButton(binding.purchaseAllInclusivePack)
 
         binding.rewardCategoryButton.setOnClickListener {
+            if (levelViewModel.currentLevel.value.levelInfo.progress == LevelProgress.INTERMEDIATE)
+            {
+                levelIsCompletedToast()
+                return@setOnClickListener
+            }
             if (!viewModel.currentLevel.value.levelInfo.categoryRewarded) {
                 when (binding.rewardCategoryButton.buttonState) {
                     AD -> {
@@ -104,6 +111,11 @@ class HintsFragment : BottomSheetDialogFragmentCustom() {
         }
 
         binding.rewardPlaceLetter.setOnClickListener {
+            if (levelViewModel.currentLevel.value.levelInfo.progress == LevelProgress.INTERMEDIATE)
+            {
+                levelIsCompletedToast()
+                return@setOnClickListener
+            }
             when (binding.rewardPlaceLetter.buttonState) {
                 AD -> {
                     activity?.let {
@@ -124,6 +136,15 @@ class HintsFragment : BottomSheetDialogFragmentCustom() {
                 }
             }
         }
+    }
+
+    private fun levelIsCompletedToast() {
+        val toast = Toast.makeText(
+            requireContext().applicationContext,
+            "Level is already completed.",
+            Toast.LENGTH_SHORT
+        )
+        toast.show()
     }
 
     private fun handleRewards(rewardType: RewardType) {

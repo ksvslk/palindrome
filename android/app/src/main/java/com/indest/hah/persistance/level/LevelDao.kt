@@ -288,15 +288,17 @@ interface LevelDao {
     suspend fun updatePuzzle(level: Int, puzzle: String)
 
     @Transaction
-    suspend fun levelCompletedActions(currentLevel: Int, hintInterval: String) {
+    suspend fun levelCompletedActions(currentLevel: Int, hintInterval: String, chosenLevel: Int) {
         // reset hint interval
         resetCount(hintInterval)
         // delete current level letters info
         resetLevel(currentLevel, LevelProgress.REPLAY)
-        // update next level default letters and shuffled puzzle
+        // update chosen level default letters and shuffled puzzle (when level was chosen from level select)
+        if (getLevelProgress(chosenLevel) != LevelProgress.IN_PROGRESS) resetLevel(chosenLevel)
+        // reset next level no matter what
         resetLevel(currentLevel + 1)
         // update next level timestamp
-        updateChosenLevelTimestamp(currentLevel, currentLevel + 1)
+        updateChosenLevelTimestamp(currentLevel, chosenLevel)
     }
 
     @Transaction

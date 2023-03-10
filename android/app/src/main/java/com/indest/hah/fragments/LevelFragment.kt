@@ -36,7 +36,6 @@ import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.game.viewmodel.Solution
 import com.indest.hah.game.viewmodel.Solution.*
 import com.indest.hah.game.viewmodel.SolutionData
-import com.indest.hah.game.viewmodel.UiState
 import com.indest.hah.other.C
 import com.indest.hah.other.VaryingProbability
 import com.indest.hah.persistance.dto.Level
@@ -59,6 +58,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
     var cellDirector: CellDirector? = null
     private var allAnimations = mutableSetOf<ValueAnimator>()
+    private var messages = mutableListOf<MessageSnackBar>()
 
     @Inject
     lateinit var levelCreator: LevelCreator
@@ -78,6 +78,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                 val premiumLetter = bundle.getBoolean(C.LETTER_PREMIUM_BUNDLE)
                 val rewardType = RewardType.values()[bundle.getInt(C.LETTER_REWARD_TYPE_BUNDLE)]
                 reward = Triple(true, premiumLetter, rewardType)
+                if (premiumLetter) rewardWithLetter()
             }
     }
 
@@ -141,7 +142,16 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     override fun onResume() {
         super.onResume()
         Log.d(TAG, "onResume")
-        viewModel.resendCurrentLevel()
+        //viewModel.resendCurrentLevel()
+    }
+
+    private fun clearMessages()
+    {
+        messages.forEach {
+            it.removeMessageCallback()
+            it.dismiss()
+        }
+        messages.clear()
     }
 
 
@@ -153,12 +163,12 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                 viewModel.gameEventFlow.collect { event ->
                     when (event) {
                         is LevelViewModel.GameEvent.DisplayLevel -> {
+                            clearMessages()
                             disableLoading()
                             Log.d(TAG, "DisplayLevel")
                             if (event.level.levelInfo.progress == LevelProgress.INTERMEDIATE) {
                                 displayLevel(event.level)
                                 showContinueMessage(viewModel.isLastLevel())
-                                deactivateBottomNavBar()
                             }
                             else {
                                 displayLevel(event.level)
@@ -169,7 +179,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                             Log.d(TAG, "SolutionResult")
                             when (event.solutionData.solution) {
                                 CORRECT -> {
-                                    deactivateBottomNavBar()
                                     showCorrectEffects(event.solutionData, event.isLastLevel)
                                     binding.levelFragment.notClickable = true
                                     hideHintsBadge()
@@ -186,6 +195,10 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                         LevelViewModel.GameEvent.ShowLoading -> {
                             Log.d(TAG, "ShowLoading")
                             enableLoading()
+                        }
+                        LevelViewModel.GameEvent.HideLoading -> {
+                            Log.d(TAG, "HideLoading")
+                            disableLoading()
                         }
                     }
                 }
@@ -213,7 +226,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
 
     private fun displayLevel(level: Level) {
-        Log.d(TAG, "displayLevel.")
         binding.levelFragment.removeAllViews()
         binding.levelFragment.removeAllViewsInLayout()
         val densitySettings = levelCreator.getDensitySettings(binding.levelFragment, level)
@@ -247,19 +259,29 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                         viewModel
                     )
                     rewardWithLetter()
-                    askForReview(level.levelInfo.levelId)
-                    lifecycleScope.launchWhenResumed {
-                        if (viewModel.isShowScores()) {
-                            showPlayerCenteredScores()
-                        }
-                        showTutorial()
-                    }
                 }
             }
             binding.levelFragment.addView(levelGridLayout.first)
         }
         if (areColumnsDifferent) {
             return
+        }
+
+        askForReview(level.levelInfo.levelId)
+
+        if (level.levelInfo.levelId == 2)
+        {
+           if (viewModel.isAllowedToSubmitAndSignedInToFirebase())
+           {
+               showSubmitPalindromesBadge()
+           }
+        }
+
+        lifecycleScope.launchWhenResumed {
+            if (viewModel.isShowScores()) {
+                showPlayerCenteredScores()
+            }
+            showTutorial()
         }
 
         activity?.reportFullyDrawn();
@@ -297,14 +319,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         }
     }
 
-    private fun deactivateGoods() {
-        (activity as? MainActivity)?.let { mainActivity ->
-            mainActivity.binding.bottomNavView.menu.findItem(R.id.navigation_goods).isEnabled =
-                false
-            mainActivity.binding.bottomNavView.menu.findItem(R.id.navigation_goods)
-                .setIcon(R.drawable.ic_baseline_disabled_by_default_24)
-        }
-    }
 
     private fun showCorrectEffects(
         solutionData: SolutionData,
@@ -371,21 +385,38 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                 resources.getStringArray(R.array.good_texts).random()
             }
 
-        return MessageSnackBar.make(
+        val winningMessage = MessageSnackBar.make(
             view = binding.levelFragment,
             message = randomCorrectMessage,
             duration = 2000,
             textSize = MessageSnackBar.Companion.TextSize.BIG,
         )
+        messages.add(winningMessage)
+        return winningMessage
     }
 
     private fun getScoreMessage(): MessageSnackBar {
-        return MessageSnackBar.make(
+        val scoreMessage = MessageSnackBar.make(
             view = binding.levelFragment,
             message = "",
             duration = 2000,
             textSize = MessageSnackBar.Companion.TextSize.SMALL,
         )
+        messages.add(scoreMessage)
+        return scoreMessage
+    }
+
+    private fun getContinueMessage(isLastLevel: Pair<Boolean, Boolean>):MessageSnackBar {
+        val continueMessage = MessageSnackBar.make(
+            view = binding.levelFragment,
+            message = if (!isLastLevel.first && !isLastLevel.second) getString(R.string.tap_to_continue) else getString(
+                R.string.tap_to_finish
+            ),
+            duration = Int.MAX_VALUE,
+            textSize = MessageSnackBar.Companion.TextSize.SMALL,
+        )
+        messages.add(continueMessage)
+        return continueMessage
     }
 
     private fun showWrongEffects(solutionData: SolutionData) {
@@ -409,17 +440,11 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         if (solutionData.showHintsBadge) showHintsBadge()
     }
 
+
     private fun showContinueMessage(
         isLastLevel: Pair<Boolean, Boolean> = Pair(false, false)
     ) {
-        val continueMessage = MessageSnackBar.make(
-            view = binding.levelFragment,
-            message = if (!isLastLevel.first && !isLastLevel.second) getString(R.string.tap_to_continue) else getString(
-                R.string.tap_to_finish
-            ),
-            duration = Int.MAX_VALUE,
-            textSize = MessageSnackBar.Companion.TextSize.SMALL,
-        )
+        val continueMessage = getContinueMessage(isLastLevel)
         continueMessage.view.isClickable = true
         continueMessage.view.setOnClickListener {
             if (isVisible) {
@@ -525,6 +550,26 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     }
 
 
+    private fun showSubmitPalindromesBadge() {
+        if (isVisible) {
+            activity?.let {
+                val stagesBadge = it.findViewById<BottomNavigationView>(R.id.bottomNavView)
+                    .getOrCreateBadge(R.id.navigation_stages)
+                stagesBadge.backgroundColor =
+                    ContextCompat.getColor(it.applicationContext, R.color.hintsNotificationColor)
+                stagesBadge.badgeGravity = BadgeDrawable.TOP_END
+                val text = getString(R.string.send_a_cool_palindrome)
+                val duration = Toast.LENGTH_LONG
+                Toast.makeText(it.applicationContext, text, duration).show()
+                soundPlayer.play(soundPlayer.sounds.hintNotification)
+                if (!stagesBadge.isVisible) {
+                    stagesBadge.isVisible = true
+                }
+            }
+        }
+    }
+
+
     private fun askForReview(level: Int) {
         if (level == 8) {
             activity?.let {
@@ -555,6 +600,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             }
         }
     }
+
 
     private fun rewardUserWithLetter(rewardType: RewardType = RewardType.NONE) {
         when (rewardType) {

@@ -59,6 +59,8 @@ class GeneralViewModel @Inject constructor(
 
     var refreshPurchases = false
 
+    fun isConnectedToInternet() = _internet.value ?: false
+
     fun refreshPurchasesTriedRedeem()
     {
         viewModelScope.launch {

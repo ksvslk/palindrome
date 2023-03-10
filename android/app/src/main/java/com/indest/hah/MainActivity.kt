@@ -1,12 +1,12 @@
 package com.indest.hah
 
-import android.content.res.Configuration
 import android.graphics.Rect
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.Gravity
 import android.view.View
-import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -53,9 +53,13 @@ import com.indest.hah.views.ButtonState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.lastOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.min
 
+private const val RECONNECT_TIMER_START_MILLISECONDS = 1L * 1000L
+private const val RECONNECT_TIMER_MAX_TIME_MILLISECONDS = 1000L * 60L * 15L // 15 minutes
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(),
@@ -67,6 +71,10 @@ class MainActivity : AppCompatActivity(),
     private val generalViewModel: GeneralViewModel by viewModels()
     private var consentInformation: ConsentInformation? = null
     private var consentForm: ConsentForm? = null
+
+    // how long before trying reconnect to firebase
+    private var reconnectMilliseconds = RECONNECT_TIMER_START_MILLISECONDS
+    private val handler = Handler(Looper.getMainLooper())
 
     @Inject
     lateinit var soundPlayer: SoundPlayer
@@ -83,7 +91,6 @@ class MainActivity : AppCompatActivity(),
         auth = Firebase.auth
 
         levelViewModel.setAccountStatus(AccountStatus.LOADING)
-        //generalViewModel.setAccountStatus(AccountStatus.LOADING)
 
         val gamesSignInClient = PlayGames.getGamesSignInClient(this)
         gamesSignInClient.isAuthenticated.addOnCompleteListener { isAuthenticatedTask: Task<AuthenticationResult> ->
@@ -112,7 +119,6 @@ class MainActivity : AppCompatActivity(),
 
     fun signInManually() {
         levelViewModel.setAccountStatus(AccountStatus.LOADING)
-        //generalViewModel.setAccountStatus(AccountStatus.LOADING)
         val gamesSignInClient = PlayGames.getGamesSignInClient(this)
         gamesSignInClient.signIn()
             .addOnCompleteListener { isAuthenticatedTask: Task<AuthenticationResult> ->
@@ -135,21 +141,17 @@ class MainActivity : AppCompatActivity(),
             // login button to ask  players to sign-in. Clicking it should
             // call GamesSignInClient.signIn().
             levelViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
-            //generalViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
             levelViewModel.currentlySignedInPlayerName = "Unknown"
         }
     }
 
 
-    private fun setPlayerNameAndSignedInStatus(accountStatus: AccountStatus)
-    {
+    private fun setPlayerNameAndSignedInStatus(accountStatus: AccountStatus) {
         PlayGames.getPlayersClient(this).currentPlayer.addOnCompleteListener { mTask: Task<Player> ->
-            if (mTask.isSuccessful)
-            {
+            if (mTask.isSuccessful) {
                 levelViewModel.currentlySignedInPlayerName = mTask.result.displayName
             }
             levelViewModel.setAccountStatus(accountStatus)
-            //generalViewModel.setAccountStatus(accountStatus)
         }
     }
 
@@ -229,17 +231,39 @@ class MainActivity : AppCompatActivity(),
                     authTokenTask.result?.let { serverAuthToken ->
                         val credential = PlayGamesAuthProvider.getCredential(serverAuthToken)
                         auth.signInWithCredential(credential).addOnSuccessListener { authResult ->
+                            reconnectMilliseconds = RECONNECT_TIMER_START_MILLISECONDS
                             setPlayerNameAndSignedInStatus(AccountStatus.SIGNED_IN_WITH_FIREBASE)
                         }.addOnFailureListener {
+                            retryFirebaseSignInWithExponentialBackoff(gamesSignInClient)
                             setPlayerNameAndSignedInStatus(AccountStatus.SIGNED_IN)
                             Log.e(TAG, "Were not able to log in to firebase", it)
                         }
                     }
                 } else {
+                    retryFirebaseSignInWithExponentialBackoff(gamesSignInClient)
                     setPlayerNameAndSignedInStatus(AccountStatus.SIGNED_IN)
                     Log.w(TAG, "Firebase login failure.")
                 }
             }
+    }
+
+    /**
+     * Retries the billing service connection with exponential backoff, maxing out at the time
+     * specified by RECONNECT_TIMER_MAX_TIME_MILLISECONDS.
+     */
+    private fun retryFirebaseSignInWithExponentialBackoff(gamesSignInClient: GamesSignInClient) {
+        if (generalViewModel.isConnectedToInternet()) {
+            handler.postDelayed(
+                {
+                    signInToFirebaseWithCredential(gamesSignInClient)
+                },
+                reconnectMilliseconds
+            )
+            reconnectMilliseconds = min(
+                reconnectMilliseconds * 2,
+                RECONNECT_TIMER_MAX_TIME_MILLISECONDS
+            )
+        }
     }
 
 
@@ -395,7 +419,7 @@ class MainActivity : AppCompatActivity(),
 
 
     private fun applyCustomWindowInsets() {
-        ViewCompat.setOnApplyWindowInsetsListener(binding.container) { _, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.container) { view, insets ->
             WindowInsetsCompat.Builder()
                 .setInsets(
                     WindowInsetsCompat.Type.systemBars(),
@@ -415,6 +439,7 @@ class MainActivity : AppCompatActivity(),
         super.onWindowFocusChanged(hasFocus)
         hideSystemBars(binding.root)
     }
+
 
     private fun setUpNavController() {
         val navHostFragment =
@@ -441,7 +466,7 @@ class MainActivity : AppCompatActivity(),
     }
 
 
-    fun updateProgressBar(progress:Pair<Int, String>) {
+    fun updateProgressBar(progress: Pair<Int, String>) {
         binding.levelNumber.text = progress.second
         binding.gameProgress.progress = progress.first
     }

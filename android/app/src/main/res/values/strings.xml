@@ -83,10 +83,11 @@
     <string name="placeholder">…</string>
     <string name="ok">OK</string>
     <string name="sign_in_other_error">Something went wrong while signing in.</string>
-    <string name="watch_ad_top_notice">Watch ad to exit Sad Mode (10 levels)</string>
+    <string name="watch_ad_top_notice">Watch ad = no Sad Mode</string>
     <string name="entering_sad_mode">You are in Sad Mode 😕</string>
     <string name="entering_normal_mode">You are in Normal Mode 😆</string>
     <string name="hints_are_available">Hints can be found below ↙️</string>
+    <string name="send_a_cool_palindrome">Send palindromes ↓ </string>
     <string name="last_submission">last_submission</string>
 
     <string-array name="save_24_percent_label">
