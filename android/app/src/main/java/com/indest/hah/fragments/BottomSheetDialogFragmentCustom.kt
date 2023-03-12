@@ -3,7 +3,6 @@ package com.indest.hah.fragments
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.View
-import android.view.ViewTreeObserver
 import android.widget.FrameLayout
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog

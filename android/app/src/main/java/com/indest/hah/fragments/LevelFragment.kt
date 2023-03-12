@@ -15,7 +15,10 @@ import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
 import androidx.core.view.*
-import androidx.fragment.app.*
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.commit
+import androidx.fragment.app.replace
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -26,7 +29,7 @@ import com.google.android.play.core.review.ReviewManagerFactory
 import com.indest.hah.MainActivity
 import com.indest.hah.R
 import com.indest.hah.ads.RewardType
-import com.indest.hah.ads.RewardType.*
+import com.indest.hah.ads.RewardType.LETTER
 import com.indest.hah.databinding.LevelFragmentBinding
 import com.indest.hah.fx.Animations
 import com.indest.hah.fx.SoundPlayer
@@ -44,7 +47,6 @@ import com.indest.hah.views.Cell
 import com.indest.hah.views.MessageSnackBar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -262,7 +264,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
         askForReview(level.levelInfo.levelId)
 
-        if (level.levelInfo.levelId == 2)
+        if (level.levelInfo.levelId == 5)
         {
            if (levelViewModel.isAllowedToSubmitAndSignedInToFirebase())
            {
@@ -591,20 +593,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                     .getOrCreateBadge(R.id.navigation_goods)
                 hintBadge.isVisible = false
             }
-        }
-    }
-
-
-    private fun rewardUserWithLetter(rewardType: RewardType = RewardType.NONE) {
-        when (rewardType) {
-            LETTER -> {
-                cellDirector?.rewardWithRandomLetter()
-            }
-            CLUE -> {}
-            RewardType.NONE -> {}
-            AD_FAILED -> {}
-            SAD_MODE -> {}
-            SAD_AD_FAILED -> {}
         }
     }
 

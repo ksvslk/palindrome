@@ -2,7 +2,6 @@ package com.indest.hah.views
 
 import android.animation.ObjectAnimator
 import android.content.Context
-import android.content.res.Configuration.*
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +12,8 @@ import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.indest.hah.R
 import com.indest.hah.other.findSuitableParent
-import com.indest.hah.views.MessageSnackBar.Companion.TextSize.*
+import com.indest.hah.views.MessageSnackBar.Companion.TextSize.BIG
+import com.indest.hah.views.MessageSnackBar.Companion.TextSize.SMALL
 
 
 class MessageSnackBar(

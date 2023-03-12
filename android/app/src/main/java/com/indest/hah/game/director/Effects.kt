@@ -4,8 +4,6 @@ import android.content.Context
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.view.HapticFeedbackConstants
-import android.view.View
 import androidx.core.content.ContextCompat
 import com.indest.hah.R
 import com.indest.hah.fx.SoundPlayer

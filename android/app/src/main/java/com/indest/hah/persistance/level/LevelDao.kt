@@ -1,6 +1,5 @@
 package com.indest.hah.persistance.level
 
-import android.util.Log
 import androidx.room.*
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.indest.hah.game.creation.Shuffler
@@ -295,8 +294,9 @@ interface LevelDao {
         resetLevel(currentLevel, LevelProgress.REPLAY)
         // update chosen level default letters and shuffled puzzle (when level was chosen from level select)
         if (getLevelProgress(chosenLevel) != LevelProgress.IN_PROGRESS) resetLevel(chosenLevel)
-        // reset next level no matter what
-        resetLevel(currentLevel + 1)
+        // reset next level if it exists
+        val nextLevel = currentLevel + 1
+        if (isLevelAdded(nextLevel.toLong())) resetLevel(nextLevel)
         // update next level timestamp
         updateChosenLevelTimestamp(currentLevel, chosenLevel)
     }

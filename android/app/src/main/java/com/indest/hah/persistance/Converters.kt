@@ -2,7 +2,6 @@ package com.indest.hah.persistance
 
 import androidx.room.TypeConverter
 import com.indest.hah.persistance.level.LevelProgress
-import java.util.*
 
 class Converters {
 

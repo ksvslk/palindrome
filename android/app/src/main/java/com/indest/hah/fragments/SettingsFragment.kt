@@ -18,10 +18,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.common.SignInButton
-import com.google.android.gms.games.PlayGames
-import com.google.android.gms.games.PlayGamesSdk
-import com.google.android.gms.games.Player
-import com.google.android.gms.tasks.Task
 import com.indest.hah.BuildConfig
 import com.indest.hah.MainActivity
 import com.indest.hah.R

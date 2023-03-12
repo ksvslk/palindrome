@@ -11,10 +11,9 @@ import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.indest.hah.R
 import com.indest.hah.fragments.LevelFragment
 import com.indest.hah.game.director.enums.ColorSelector
-import com.indest.hah.views.Letter
 import com.indest.hah.other.C.NEUTRAL_LAYER
 import com.indest.hah.other.C.TOP_LAYER
-import java.lang.IllegalStateException
+import com.indest.hah.views.Letter
 import kotlin.math.abs
 import kotlin.math.log2
 

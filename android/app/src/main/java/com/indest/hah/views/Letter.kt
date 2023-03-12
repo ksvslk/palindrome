@@ -4,21 +4,18 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.os.Build
-import android.os.VibrationEffect
 import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
-import android.view.View
-import android.view.View.HAPTIC_FEEDBACK_ENABLED
 import android.view.View.OnTouchListener
 import androidx.core.widget.TextViewCompat
-import com.indest.hah.other.C.NEUTRAL_LAYER
-import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import androidx.gridlayout.widget.GridLayout
 import com.indest.hah.R
 import com.indest.hah.game.director.Effects
 import com.indest.hah.game.director.LetterState
 import com.indest.hah.game.director.data.GlobalPosition
+import com.indest.hah.other.C.NEUTRAL_LAYER
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @SuppressLint("ViewConstructor", "RestrictedApi")
 @AndroidEntryPoint

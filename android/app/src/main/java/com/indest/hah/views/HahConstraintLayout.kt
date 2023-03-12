@@ -1,14 +1,12 @@
 package com.indest.hah.views
 
 import android.content.Context
-import android.graphics.*
-import android.os.Build
+import android.graphics.Canvas
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
+import android.graphics.Paint
 import android.util.AttributeSet
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updatePadding
-import com.indest.hah.R
 
 class HahConstraintLayout : ConstraintLayout {
     constructor(context: Context?) : super(context!!)

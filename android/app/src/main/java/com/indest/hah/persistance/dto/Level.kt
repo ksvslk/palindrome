@@ -1,7 +1,8 @@
 package com.indest.hah.persistance.dto
 
 import androidx.annotation.Keep
-import androidx.room.*
+import androidx.room.Embedded
+import androidx.room.Relation
 import com.indest.hah.persistance.level.LevelProgress
 
 @Keep

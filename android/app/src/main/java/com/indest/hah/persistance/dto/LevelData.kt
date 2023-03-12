@@ -5,7 +5,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.indest.hah.persistance.level.LevelProgress
-import java.io.Serializable
 
 @Keep
 @kotlinx.serialization.Serializable

@@ -7,17 +7,17 @@ import com.indest.hah.game.director.enums.ColorSelector
 import com.indest.hah.game.director.enums.SoundSelector
 import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.game.viewmodel.SolutionData
-import com.indest.hah.views.Cell
-import com.indest.hah.views.Letter
-import com.indest.hah.views.Slot
-import com.indest.hah.persistance.level.LevelProgress
-import com.indest.hah.persistance.dto.Level
 import com.indest.hah.other.C.BOTTOM_LAYER
 import com.indest.hah.other.C.MIDDLE_LAYER
 import com.indest.hah.other.C.NEUTRAL_LAYER
 import com.indest.hah.other.C.REWARDED_ANIM_MUL
 import com.indest.hah.other.C.REWARDED_ANIM_MUL_DEFAULT
 import com.indest.hah.other.C.TOP_LAYER
+import com.indest.hah.persistance.dto.Level
+import com.indest.hah.persistance.level.LevelProgress
+import com.indest.hah.views.Cell
+import com.indest.hah.views.Letter
+import com.indest.hah.views.Slot
 import kotlin.math.abs
 
 class CellDirector constructor(

@@ -1,10 +1,11 @@
 package com.indest.hah.fragments
 
-import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
-import android.view.*
-import android.widget.FrameLayout
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
@@ -13,8 +14,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.indest.hah.R
 import com.indest.hah.databinding.StagesFragmentBinding
 import com.indest.hah.game.viewmodel.LevelViewModel
