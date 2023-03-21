@@ -17,7 +17,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ViewFlipper
-            android:id="@+id/reward_button_flipper"
+            android:id="@+id/reward_button_flipper_player"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:autoStart="true"
@@ -82,11 +82,11 @@
             android:layout_marginBottom="@dimen/tutorial_container_margin"
             android:gravity="center"
             android:paddingHorizontal="@dimen/_32sdp"
-            android:text="@string/game_completed_message"
+            android:text="@string/final_screen_message"
             android:textAppearance="@style/TextAppearance.OC.Headline6" />
 
         <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/epilogue_screen_menu"
+            android:id="@+id/final_screen_menu_player"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -94,9 +94,8 @@
             app:divider="@drawable/divider"
             app:showDividers="middle">
 
-
             <com.indest.hah.views.AnyButton
-                android:id="@+id/player_level_select_button"
+                android:id="@+id/submit_your_own"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/simple_dialog_item_height"
                 android:layout_margin="@dimen/_2sdp"
@@ -104,11 +103,11 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:orientation="horizontal"
-                anybutton:any_button_icon="@drawable/ic_baseline_groups_24"
-                anybutton:any_button_title="@string/player_level_select" />
+                anybutton:any_button_icon="@drawable/ic_baseline_library_add_36"
+                anybutton:any_button_title="@string/submit_level" />
 
             <com.indest.hah.views.AnyButton
-                android:id="@+id/share_button"
+                android:id="@+id/share_button_player"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/simple_dialog_item_height"
                 android:layout_margin="@dimen/_2sdp"
@@ -120,7 +119,7 @@
                 anybutton:any_button_title="@string/share" />
 
             <com.indest.hah.views.AnyButton
-                android:id="@+id/feedback_button"
+                android:id="@+id/feedback_button_player"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/simple_dialog_item_height"
                 android:layout_margin="@dimen/_2sdp"
@@ -142,6 +141,19 @@
                 android:orientation="horizontal"
                 anybutton:any_button_icon="@drawable/baseline_list_alt_black_36"
                 anybutton:any_button_title="@string/level_select" />
+
+            <com.indest.hah.views.AnyButton
+                android:id="@+id/player_level_select_button"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/simple_dialog_item_height"
+                android:layout_margin="@dimen/_2sdp"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="horizontal"
+                anybutton:any_button_icon="@drawable/ic_baseline_groups_24"
+                anybutton:any_button_title="@string/player_level_select" />
+
         </androidx.appcompat.widget.LinearLayoutCompat>
 
     </androidx.appcompat.widget.LinearLayoutCompat>

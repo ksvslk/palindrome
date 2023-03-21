@@ -6,9 +6,11 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Space
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.gridlayout.widget.GridLayout
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.indest.hah.R
 import com.indest.hah.game.director.LetterState
 import com.indest.hah.persistance.dto.Level
@@ -55,7 +57,6 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                 return Pair(true, migrateFromDatabase3_to_4(info, newColumnCount))
             }
             if (info.levelInfo.columnCount != -1 && info.levelInfo.columnCount != newColumnCount) {
-
                 val palindrome = info.solutions.first().palindrome
                 val puzzleOnlyLetters = getPuzzle(info)
                 val puzzleOnlyCount = puzzleOnlyLetters.count()
@@ -89,7 +90,14 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         }
         catch (e:java.lang.Exception)
         {
-            Log.e(TAG, "We did not migrate successfully.", e)
+            val c = FirebaseCrashlytics.getInstance()
+            c.setCustomKey("ColumnCount", info.levelInfo.columnCount)
+            c.setCustomKey("newColumnCount", newColumnCount)
+            c.setCustomKey("puzzle", info.levelInfo.puzzle)
+            c.setCustomKey("letters", info.lettersProperties.joinToString())
+            c.recordException(e)
+            Toast.makeText(context, "Something went terribly wrong :O. Please restart the app and/or clear caches if problems still exist.", Toast.LENGTH_LONG).show()
+            Log.e(TAG, "Failed to get new friend indexes for homes.", e)
         }
 
         return Pair(false, mutableListOf())
@@ -300,7 +308,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
             ) { acc, li -> acc + li.letter }
 
         Log.d(TAG, "puzzle: $puzzle")
-        for ((a, l) in puzzle.withIndex()) {
+        for ((_, l) in puzzle.withIndex()) {
             if (l.isWhitespace()) {
                 continue
             }

@@ -12,12 +12,12 @@ import android.view.WindowManager
 import android.widget.CompoundButton
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.common.SignInButton
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.BuildConfig
 import com.indest.hah.MainActivity
 import com.indest.hah.R
@@ -30,7 +30,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class SettingsFragment : BottomSheetDialogFragmentCustom() {
+class SettingsFragment : BottomSheetDialogFragment() {
     private val TAG = "SettingsFragment"
     private var _binding: SettingsFragmentBinding? = null
     private val binding get() = _binding!!
@@ -55,17 +55,17 @@ class SettingsFragment : BottomSheetDialogFragmentCustom() {
                         context?.let {
                             when (internet) {
                                 true -> {
-                                    val playStoreIntent = Intent(Intent.ACTION_VIEW).apply {
+                                    Intent(Intent.ACTION_VIEW).apply {
                                         data = Uri.parse(getString(R.string.app_package_url))
                                         setPackage(getString(R.string.vending_package))
-                                    }
-                                    if (playStoreIntent.resolveActivity(it.packageManager) != null) {
-                                        startActivity(playStoreIntent)
-                                    } else {
-                                        val browserIntent = Intent(Intent.ACTION_VIEW).apply {
-                                            data = Uri.parse(getString(R.string.app_package_url))
+                                        if (this.resolveActivity(it.packageManager) != null) {
+                                            startActivity(this)
+                                        } else {
+                                            val browserIntent = Intent(Intent.ACTION_VIEW).apply {
+                                                data = Uri.parse(getString(R.string.app_package_url))
+                                            }
+                                            startActivity(browserIntent)
                                         }
-                                        startActivity(browserIntent)
                                     }
                                 }
                                 false -> {
@@ -141,11 +141,7 @@ class SettingsFragment : BottomSheetDialogFragmentCustom() {
             changePreference(getString(R.string.vibration_on_pref), b2)
         }
         binding.tutorialButton.setOnClickListener {
-            findNavController().popBackStack()
-            parentFragmentManager.commit {
-                addToBackStack(TutorialFragment().tag)
-                add(TutorialFragment(), TutorialFragment().tag)
-            }
+            findNavController().navigate(R.id.action_navigation_settings_to_navigation_tutorial)
         }
         binding.versionInfo.text =
             "${BuildConfig.VERSION_CODE}\n${BuildConfig.VERSION_NAME}\n${BuildConfig.GIT_HASH}"

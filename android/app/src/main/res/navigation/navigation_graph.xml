@@ -19,75 +19,67 @@
             android:id="@+id/action_navigation_gameplay_to_navigation_settings"
             app:destination="@id/navigation_settings" />
         <action
-            android:id="@+id/action_navigation_level_to_navigation_epilogue"
-            app:destination="@id/navigation_epilogue" />
-        <action
             android:id="@+id/action_navigation_level_to_navigation_tutorial"
             app:destination="@id/navigation_tutorial" />
         <action
             android:id="@+id/action_navigation_level_to_navigation_stages"
             app:destination="@id/navigation_stages" />
         <action
-            android:id="@+id/action_navigation_level_to_navigation_player_epilogue"
-            app:destination="@id/navigation_player_epilogue" />
+            android:id="@+id/action_navigation_level_to_navigation_final_screen"
+            app:destination="@id/navigation_final_screen" />
+        <action
+            android:id="@+id/action_navigation_level_to_navigation_scores"
+            app:destination="@id/navigation_scores" />
     </fragment>
 
-    <fragment
+    <dialog
         android:id="@+id/navigation_tutorial"
         android:name="com.indest.hah.fragments.TutorialFragment"
         android:label="@string/tutorial"
         tools:layout="@layout/tutorial_fragment" >
         <action
-            android:id="@+id/action_navigation_tutorial_to_navigation_level"
-            app:destination="@id/navigation_level" />
-        <action
             android:id="@+id/action_navigation_tutorial_to_navigation_third_tutorial"
-            app:destination="@id/navigation_third_tutorial" />
-    </fragment>
+            app:destination="@id/navigation_third_tutorial"
+            app:popUpTo="@id/navigation_level" />
+    </dialog>
 
-    <fragment
+    <dialog
         android:id="@+id/navigation_second_tutorial"
         android:name="com.indest.hah.fragments.SecondTutorialFragment"
         android:label="@string/tutorial"
-        tools:layout="@layout/second_tutorial_fragment" >
-        <action
-            android:id="@+id/action_navigation_second_tutorial_to_navigation_level"
-            app:destination="@id/navigation_level" />
-    </fragment>
+        tools:layout="@layout/second_tutorial_fragment" />
 
-    <fragment
+    <dialog
         android:id="@+id/navigation_third_tutorial"
         android:name="com.indest.hah.fragments.ThirdTutorialFragment"
         android:label="@string/tutorial"
         tools:layout="@layout/third_tutorial_fragment" >
         <action
             android:id="@+id/action_navigation_third_tutorial_to_navigation_second_tutorial"
+            app:popUpTo="@id/navigation_level"
             app:destination="@id/navigation_second_tutorial" />
-        <action
-            android:id="@+id/action_navigation_third_tutorial_to_navigation_level"
-            app:destination="@id/navigation_level" />
-    </fragment>
+    </dialog>
 
 
     <fragment
-        android:id="@+id/navigation_epilogue"
-        android:name="com.indest.hah.fragments.EpilogueFragment"
-        android:label="EpilogueFragment"
-        tools:layout="@layout/epilogue_fragment">
+        android:id="@+id/navigation_final_screen"
+        android:name="com.indest.hah.fragments.FinalScreenFragment"
+        android:label="FinalScreenFragment"
+        tools:layout="@layout/final_screen_fragment">
         <action
-            android:id="@+id/action_navigation_epilogue_to_navigation_level"
-            app:destination="@id/navigation_level" />
-    </fragment>
-
-
-    <fragment
-        android:id="@+id/navigation_player_epilogue"
-        android:name="com.indest.hah.fragments.PlayerEpilogueFragment"
-        android:label="PlayerEpilogueFragment"
-        tools:layout="@layout/epilogue_player_fragment">
+            android:id="@+id/action_navigation_final_screen_to_navigation_level"
+            app:destination="@id/navigation_level"
+            app:popUpTo="@id/navigation_level"
+            app:popUpToInclusive="true" />
         <action
-            android:id="@+id/action_navigation_player_epilogue_to_navigation_level2"
-            app:destination="@id/navigation_level" />
+            android:id="@+id/action_navigation_final_screen_to_navigation_level_select"
+            app:destination="@id/navigation_level_select" />
+        <action
+            android:id="@+id/action_navigation_final_screen_to_navigation_player_level_select"
+            app:destination="@id/navigation_player_level_select" />
+        <action
+            android:id="@+id/action_navigation_final_screen_to_navigation_submission"
+            app:destination="@id/navigation_submission" />
     </fragment>
 
 
@@ -96,20 +88,14 @@
         android:name="com.indest.hah.fragments.HintsFragment"
         android:label="@string/hints"
         tools:layout="@layout/hints_fragment" >
-        <action
-            android:id="@+id/action_navigation_goods_to_navigation_gameplay"
-            app:destination="@id/navigation_level" />
+
     </dialog>
 
     <dialog
         android:id="@+id/navigation_google_games"
         android:name="com.indest.hah.fragments.GoogleGamesFragment"
         android:label="@string/play_games"
-        tools:layout="@layout/google_games_fragment" >
-        <action
-            android:id="@+id/action_navigation_google_games_to_navigation_gameplay"
-            app:destination="@id/navigation_level" />
-    </dialog>
+        tools:layout="@layout/google_games_fragment" />
 
     <dialog
         android:id="@+id/navigation_settings"
@@ -117,11 +103,9 @@
         android:label="@string/settings"
         tools:layout="@layout/settings_fragment" >
         <action
-            android:id="@+id/action_navigation_settings_to_navigation_gameplay"
-            app:destination="@id/navigation_level" />
-        <action
-            android:id="@+id/action_navigation_settings_to_navigation_level_select"
-            app:destination="@id/navigation_level_select" />
+            android:id="@+id/action_navigation_settings_to_navigation_tutorial"
+            app:destination="@id/navigation_tutorial"
+            app:popUpTo="@id/navigation_level" />
     </dialog>
 
     <dialog
@@ -130,16 +114,16 @@
         android:label="@string/stages"
         tools:layout="@layout/stages_fragment" >
         <action
-            android:id="@+id/action_navigation_stages_to_navigation_level"
-            app:destination="@id/navigation_level" />
-        <action
             android:id="@+id/action_navigation_stages_to_navigation_level_select"
+            app:popUpTo="@id/navigation_level"
             app:destination="@id/navigation_level_select" />
         <action
             android:id="@+id/action_navigation_stages_to_navigation_submission"
+            app:popUpTo="@id/navigation_level"
             app:destination="@id/navigation_submission" />
         <action
             android:id="@+id/action_navigation_stages_to_navigation_player_level_select"
+            app:popUpTo="@id/navigation_level"
             app:destination="@id/navigation_player_level_select" />
     </dialog>
 
@@ -147,11 +131,13 @@
         android:id="@+id/navigation_submission"
         android:name="com.indest.hah.fragments.SubmissionFragment"
         android:label="@string/submit_level"
-        tools:layout="@layout/submission_fragment" >
-        <action
-            android:id="@+id/action_navigation_submission_to_navigation_level"
-            app:destination="@id/navigation_level" />
-    </dialog>
+        tools:layout="@layout/submission_fragment" />
+
+    <dialog
+        android:id="@+id/navigation_scores"
+        android:name="com.indest.hah.fragments.ScoresFragment"
+        android:label="@string/player_centered_scores"
+        tools:layout="@layout/score_fragment" />
 
     <dialog
         android:id="@+id/navigation_level_select"
@@ -159,8 +145,10 @@
         android:label="@string/level_select"
         tools:layout="@layout/level_select_fragment" >
         <action
-            android:id="@+id/action_navigation_level_select_to_navigation_settings"
-            app:destination="@id/navigation_level" />
+            android:id="@+id/action_navigation_level_select_to_navigation_level"
+            app:destination="@id/navigation_level"
+            app:popUpTo="@id/navigation_level"
+            app:popUpToInclusive="true" />
     </dialog>
 
     <dialog
@@ -170,7 +158,9 @@
         tools:layout="@layout/player_level_select_fragment" >
         <action
             android:id="@+id/action_navigation_player_level_select_to_navigation_level"
-            app:destination="@id/navigation_level" />
+            app:destination="@id/navigation_level"
+            app:popUpTo="@id/navigation_level"
+            app:popUpToInclusive="true" />
     </dialog>
 
 </navigation>

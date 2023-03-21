@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.FrameLayout
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.commit
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -35,10 +35,8 @@ class SecondTutorialFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.continueButton.setOnClickListener {
-            parentFragmentManager.commit {
-                dismiss()
-                levelViewModel.logTutorialComplete()
-            }
+            findNavController().popBackStack()
+            levelViewModel.logTutorialComplete()
         }
 
         this.dialog?.let { dialog ->

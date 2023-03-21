@@ -12,13 +12,14 @@ import com.google.android.gms.common.images.ImageManager
 import com.google.android.gms.games.PlayGames
 import com.google.android.gms.games.leaderboard.LeaderboardVariant.COLLECTION_PUBLIC
 import com.google.android.gms.games.leaderboard.LeaderboardVariant.TIME_SPAN_ALL_TIME
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.databinding.ScoreFragmentBinding
 import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.general.AccountStatus
 import com.indest.hah.general.GeneralViewModel
 
-class ScoresFragment : BottomSheetDialogFragmentCustom() {
+class ScoresFragment : BottomSheetDialogFragment() {
     private var _binding: ScoreFragmentBinding? = null
     private val binding get() = _binding!!
     private val TAG = "ScoresFragment"

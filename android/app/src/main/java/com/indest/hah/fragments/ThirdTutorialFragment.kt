@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.FrameLayout
-import androidx.fragment.app.commit
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -35,11 +35,7 @@ class ThirdTutorialFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.startButton.setOnClickListener {
-            parentFragmentManager.commit {
-                dismiss()
-                setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top)
-                add(SecondTutorialFragment(), SecondTutorialFragment().tag)
-            }
+            findNavController().navigate(R.id.action_navigation_third_tutorial_to_navigation_second_tutorial)
         }
         this.dialog?.let { dialog ->
             val d = dialog as BottomSheetDialog

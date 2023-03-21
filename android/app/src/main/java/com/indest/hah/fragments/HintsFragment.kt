@@ -15,7 +15,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.ads.RewardType
 import com.indest.hah.ads.RewardType.*
@@ -32,7 +34,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HintsFragment : BottomSheetDialogFragmentCustom() {
+class HintsFragment : BottomSheetDialogFragment() {
     private val TAG = "HintsFragment"
     private var _binding: HintsFragmentBinding? = null
     private val binding get() = _binding!!
@@ -70,7 +72,7 @@ class HintsFragment : BottomSheetDialogFragmentCustom() {
         if (uniqueHints.isNotEmpty()) {
             val hints =
                 if (uniqueHints.size > 1) uniqueHints.joinToString(" / ") { it } else uniqueHints.first()
-            binding.rewardCategoryButton.setClue(hints, uniqueHints.size > 1)
+            binding.rewardCategoryButton.setClue(hints)
         }
         if (viewModel.currentLevel.value.levelInfo.categoryRewarded) {
             binding.rewardCategoryButton.showClue()

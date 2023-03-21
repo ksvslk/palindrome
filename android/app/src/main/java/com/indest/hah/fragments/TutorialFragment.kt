@@ -14,7 +14,7 @@ import android.widget.FrameLayout
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import androidx.core.view.doOnLayout
-import androidx.fragment.app.commit
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -46,12 +46,8 @@ class TutorialFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.continueButton.setOnClickListener {
-            parentFragmentManager.commit {
-                cleanUp()
-                dismiss()
-                setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_out_top)
-                add(ThirdTutorialFragment(), ThirdTutorialFragment().tag)
-            }
+            cleanUp()
+            findNavController().navigate(R.id.action_navigation_tutorial_to_navigation_third_tutorial)
         }
         view.doOnLayout {
             repeatingTutorialAnimation()

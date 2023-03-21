@@ -13,6 +13,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.games.PlayGames
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.databinding.GoogleGamesFragmentBinding
 import com.indest.hah.game.viewmodel.LevelViewModel
@@ -21,7 +22,7 @@ import com.indest.hah.general.GeneralViewModel
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
-class GoogleGamesFragment : BottomSheetDialogFragmentCustom() {
+class GoogleGamesFragment : BottomSheetDialogFragment() {
 
     private val TAG = "GoogleGamesFragment"
     private val startActivity =

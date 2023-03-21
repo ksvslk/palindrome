@@ -121,9 +121,8 @@ dependencies {
     def firebase_version = '31.2.0'
     def play_games_services_version = "17.0.0"
     def sqlite_version = "2.3.0"
-    def hilt_version = "2.42"
+    def hilt_version = "2.45"
     def coroutine_version = '1.6.0'
-    def work_version = '2.7.1'
     def coroutines_play_services_version = '1.4.1'
     def instant_apps_version = '18.0.1'
     def room_version = '2.5.0'
@@ -132,7 +131,7 @@ dependencies {
     def gridlayout_version = '1.0.0'
     def constraintlayout_version = '2.1.4'
     def material_version = '1.8.0'
-    def appcompat_version = '1.6.0'
+    def appcompat_version = '1.6.1'
     def androidx_core_version = '1.9.0'
     def junit_version = '4.13.2'
     def espresso_core_version = '3.4.0'
@@ -160,11 +159,10 @@ dependencies {
     implementation "androidx.collection:collection-ktx:$androidx_collection"
 
     implementation platform("com.google.firebase:firebase-bom:$firebase_version")
-    implementation 'com.google.firebase:firebase-appcheck-debug:16.1.1' // only one needed to specify version because in beta
+   // implementation 'com.google.firebase:firebase-appcheck-debug:16.1.1' // only one needed to specify version because in beta
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
     implementation 'com.google.firebase:firebase-firestore-ktx'
-    implementation 'com.google.firebase:firebase-inappmessaging-display-ktx'
     implementation "com.google.firebase:firebase-auth-ktx"
     implementation 'com.google.firebase:firebase-appcheck-playintegrity'
 
@@ -193,7 +191,7 @@ dependencies {
     implementation "androidx.profileinstaller:profileinstaller:1.2.2"
     implementation "androidx.window:window:$window_manager_version"
     implementation "com.google.android.play:core-ktx:$play_core_ktx"
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version") // Big changes: https://developer.android.com/jetpack/androidx/releases/lifecycle
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_runtime_ktx")
     implementation("androidx.room:room-ktx:$room_version")
     kapt "androidx.room:room-compiler:$room_version"
@@ -202,15 +200,13 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$coroutines_play_services_version"
-    implementation "androidx.work:work-runtime-ktx:$work_version"
-    implementation "androidx.hilt:hilt-work:$hilt_work_version"
     implementation "androidx.sqlite:sqlite-ktx:$sqlite_version"
     implementation "androidx.sqlite:sqlite-framework:$sqlite_version"
     kapt "androidx.hilt:hilt-compiler:$hilt_work_version"
 
     //debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.8.1'
     testImplementation 'uk.co.jemos.podam:podam:7.2.5.RELEASE'
-    testImplementation "org.mockito.kotlin:mockito-kotlin:4.0.0"
+    testImplementation "org.mockito.kotlin:mockito-kotlin:4.1.0"
     testImplementation "junit:junit:$junit_version"
     testImplementation 'org.slf4j:slf4j-nop:1.7.25'
     testImplementation "com.google.truth:truth:1.1.3"

@@ -8,12 +8,12 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.databinding.StagesFragmentBinding
 import com.indest.hah.game.viewmodel.LevelViewModel
@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 
-class StagesFragment : BottomSheetDialogFragmentCustom() {
+class StagesFragment : BottomSheetDialogFragment() {
     private val TAG = "StagesFragment"
     private var _binding: StagesFragmentBinding? = null
     private val binding get() = _binding!!
@@ -48,11 +48,7 @@ class StagesFragment : BottomSheetDialogFragmentCustom() {
                             if (accountStatus == AccountStatus.SIGNED_IN_WITH_FIREBASE) {
                                 binding.submitYourLevelButton.setOnClickListener {
                                     if (isAllowedToSubmit) {
-                                        findNavController().popBackStack()
-                                        parentFragmentManager.commit {
-                                            addToBackStack(SubmissionFragment().tag)
-                                            add(SubmissionFragment(), SubmissionFragment().tag)
-                                        }
+                                        findNavController().navigate(R.id.action_navigation_stages_to_navigation_submission)
                                     } else {
                                         showLimitedSubmissionsToast()
                                     }
@@ -90,20 +86,11 @@ class StagesFragment : BottomSheetDialogFragmentCustom() {
         val b = StagesFragmentBinding.inflate(layoutInflater, container, false)
         _binding = b
         binding.gameLevelsButton.setOnClickListener {
-            findNavController().popBackStack()
-            parentFragmentManager.commit {
-                addToBackStack(LevelSelectFragment().tag)
-                add(LevelSelectFragment(), LevelSelectFragment().tag)
-            }
+            findNavController().navigate(R.id.action_navigation_stages_to_navigation_level_select)
         }
         binding.playerLevelsButton.setOnClickListener {
-            findNavController().popBackStack()
-            parentFragmentManager.commit {
-                addToBackStack(PlayerLevelSelectFragment().tag)
-                add(PlayerLevelSelectFragment(), PlayerLevelSelectFragment().tag)
-            }
+            findNavController().navigate(R.id.action_navigation_stages_to_navigation_player_level_select)
         }
-
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         return b.root
     }

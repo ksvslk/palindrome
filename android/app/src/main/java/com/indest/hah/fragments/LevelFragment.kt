@@ -15,13 +15,11 @@ import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
 import androidx.core.view.*
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.commit
-import androidx.fragment.app.replace
+import androidx.fragment.app.*
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.BaseTransientBottomBar
@@ -132,10 +130,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
 
     private fun showPlayerCenteredScores() {
-        childFragmentManager.commit {
-            addToBackStack(ScoresFragment().tag)
-            add(ScoresFragment(), ScoresFragment().tag)
-        }
+        findNavController().navigate(R.id.action_navigation_level_to_navigation_scores)
     }
 
     override fun onResume() {
@@ -279,12 +274,13 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             showTutorial()
         }
 
-        activity?.reportFullyDrawn();
+        activity?.reportFullyDrawn()
     }
 
 
     private fun activateBottomNavBar() {
         (activity as? MainActivity)?.let { mainActivity ->
+            mainActivity.binding.bottomNavView.visibility = View.VISIBLE
             mainActivity.binding.bottomNavView.menu.forEach { menuItem ->
                 menuItem.isEnabled = true
                 when (menuItem.itemId) {
@@ -452,21 +448,9 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                     Pair(false, false) -> {
                         levelViewModel.executeLevelCompleteActions()
                     }
-                    Pair(true, false) -> {
+                    Pair(true, false), Pair(false, true) -> {
                         soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.2f)
-                        parentFragmentManager.commit {
-                            levelViewModel.executeLevelCompleteActionsFinal()
-                            setReorderingAllowed(true)
-                            replace<EpilogueFragment>(R.id.fragments_container)
-                        }
-                    }
-                    Pair(false, true) -> {
-                        soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.2f)
-                        parentFragmentManager.commit {
-                            levelViewModel.executeLevelCompleteActionsFinal()
-                            setReorderingAllowed(true)
-                            replace<PlayerEpilogueFragment>(R.id.fragments_container)
-                        }
+                        findNavController().navigate(R.id.action_navigation_level_to_navigation_final_screen)
                     }
                 }
             }
@@ -512,10 +496,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             val tutorialPassed = sp.getBoolean(getString(R.string.tutorial_passed), false)
             if (!tutorialPassed) {
                 levelViewModel.logTutorialBegin()
-                childFragmentManager.commit {
-                    addToBackStack(TutorialFragment().tag)
-                    add(TutorialFragment(), TutorialFragment().tag)
-                }
+                findNavController().navigate(R.id.action_navigation_level_to_navigation_tutorial)
                 with(sp.edit()) {
                     putBoolean(getString(R.string.tutorial_passed), true)
                     apply()

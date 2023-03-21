@@ -58,6 +58,7 @@ class LevelViewModel @Inject constructor(
     val newPlayerLevels = _newPlayerLevels.asStateFlow()
 
     var currentlySignedInPlayerName = "Unknown"
+    var tempSubmissionPalindrome = ""
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Log.e(
@@ -91,26 +92,8 @@ class LevelViewModel @Inject constructor(
 
 
     private fun isCurrentLevelLegit() =
-                _currentLevel.value.levelInfo.levelId > 0 &&
+        _currentLevel.value.levelInfo.levelId > 0 &&
                 _currentLevel.value.solutions.isNotEmpty()
-
-
-/*    fun resendCurrentLevel() {
-        if (_accountStatus.value != AccountStatus.LOADING) {
-            Log.d(TAG, "resendCurrentLevel")
-            viewModelScope.launch {
-                if (isCurrentLevelLegit()) {
-                    Log.d(TAG, "We have a level! Let's send it to fragment.")
-                    val progress = getProgressAndText()
-                    gameEventChannel.send(GameEvent.DisplayLevel(_currentLevel.value, progress))
-                }
-                else {
-                    Log.d(TAG, "No level - ${_currentLevel.value}")
-                    startCollectingLevelUpdate()
-                }
-            }
-        }
-    }*/
 
 
     private suspend fun getProgressAndText(): Pair<Int, String> {
@@ -131,12 +114,6 @@ class LevelViewModel @Inject constructor(
             val progress = (levelId / levelsCount.toFloat() * 100.0).toInt()
             Pair(progress, text)
         }
-    }
-
-
-    override fun onCleared() {
-        super.onCleared()
-        liveStoreRegistration?.remove()
     }
 
 
@@ -188,8 +165,7 @@ class LevelViewModel @Inject constructor(
                         Log.d(TAG, "SIGNED_OUT -> current level legit, GameEvent.DisplayLevel")
                         val progress = getProgressAndText()
                         gameEventChannel.send(GameEvent.DisplayLevel(_currentLevel.value, progress))
-                    }
-                    else {
+                    } else {
                         Log.d(TAG, "SIGNED_OUT -> start collecting level updates")
                         startCollectingLevelUpdate()
                     }
@@ -198,19 +174,19 @@ class LevelViewModel @Inject constructor(
                     Log.d(TAG, "LOADING -> GameEvent.ShowLoading")
                     if (!isCurrentLevelLegit()) {
                         gameEventChannel.send(GameEvent.ShowLoading)
-                    }
-                    else  {
+                    } else {
                         val progress = getProgressAndText()
                         gameEventChannel.send(GameEvent.DisplayLevel(_currentLevel.value, progress))
                     }
                 }
                 AccountStatus.SIGNED_IN_WITH_FIREBASE -> {
                     if (_accountStatus.value != AccountStatus.SIGNED_IN) {
-                        Log.d(TAG, "SIGNED_IN_WITH_FIREBASE -> Previous state is not AccountStatus.SIGNED_IN so VariousEvent.LoadGame")
                         variousEventChannel.send(VariousEvent.LoadGame)
-                    }
-                    else {
-                        Log.d(TAG, "SIGNED_IN_WITH_FIREBASE -> Previous state is  AccountStatus.SIGNED_IN, ignore and do not load game again!")
+                    } else {
+                        Log.d(
+                            TAG,
+                            "SIGNED_IN_WITH_FIREBASE -> Previous state is  AccountStatus.SIGNED_IN, ignore and do not load game again!"
+                        )
                     }
                 }
                 AccountStatus.NOT_SET -> {
@@ -256,9 +232,7 @@ class LevelViewModel @Inject constructor(
                 startCollectingLevelUpdate()
             }
             launch {
-                if (_accountStatus.value == AccountStatus.SIGNED_IN_WITH_FIREBASE) {
-                    collectPlayerLevels()
-                }
+                subscribeToRealTimePlayerLevelUpdates()
             }
         }
     }
@@ -320,13 +294,13 @@ class LevelViewModel @Inject constructor(
 
 
     fun changeLevel(chosenLevel: Int) {
-        if(_currentLevel.value.levelInfo.progress == LevelProgress.INTERMEDIATE){
+        if (_currentLevel.value.levelInfo.progress == LevelProgress.INTERMEDIATE) {
             executeLevelCompleteActions(chosenLevel)
-        }
-        else {
+        } else {
             viewModelScope.launch {
                 _currentLevel.value.levelInfo.let { levelInfo ->
-                    val hintInterval = getApplication<Application>().getString(R.string.hint_suggestion)
+                    val hintInterval =
+                        getApplication<Application>().getString(R.string.hint_suggestion)
                     levelRepository.chooseLevelTransaction(
                         levelInfo.levelId,
                         chosenLevel,
@@ -345,7 +319,7 @@ class LevelViewModel @Inject constructor(
     }
 
 
-    fun executeLevelCompleteActions(changeLevelTo:Int = _currentLevel.value.levelInfo.levelId + 1) {
+    fun executeLevelCompleteActions(changeLevelTo: Int = _currentLevel.value.levelInfo.levelId + 1) {
         val levelNr = _currentLevel.value.levelInfo.levelId
         val hintInterval = getApplication<Application>().getString(R.string.hint_suggestion)
         Log.d(TAG, "Change level to: ${changeLevelTo}")
@@ -687,70 +661,75 @@ class LevelViewModel @Inject constructor(
     }
 
 
-    private suspend fun collectPlayerLevels() {
-        liveStoreRegistration?.remove()
-        val maxLevelId = levelRepository.getMaxLevelId()
-        val query = fsDb.collection("user_submitted_levels")
-            .whereEqualTo("isFeatured", true)
-            .whereGreaterThan("levelId", maxLevelId)
-        liveStoreRegistration = query.addSnapshotListener(EventListener { snapshots, e ->
-            if (e != null) {
-                Log.w(TAG, "listen:error", e)
-                return@EventListener
-            }
-            val playerLevels = mutableListOf<PlayerLevel>()
-            snapshots?.let { snap ->
-                for (dc in snap.documentChanges) {
-                    when (dc.type) {
-                        DocumentChange.Type.ADDED -> {
-                            try {
-                                dc.document.data.let { levelValues ->
-                                    val solutionsToCategories =
-                                        levelValues["solutionToCategory"] as Map<String, String>
-                                    if (solutionsToCategories.isEmpty()) throw Exception("Solutions were empty")
-                                    playerLevels.add(
-                                        PlayerLevel(
-                                            levelValues["levelId"] as Long,
-                                            levelValues["player"] as String,
-                                            solutionsToCategories
+    private suspend fun subscribeToRealTimePlayerLevelUpdates() {
+        if (_accountStatus.value == AccountStatus.SIGNED_IN_WITH_FIREBASE) {
+            val maxLevelId = levelRepository.getMaxLevelId()
+            val query = fsDb.collection("user_submitted_levels")
+                .whereEqualTo("isFeatured", true)
+                .whereGreaterThan("levelId", maxLevelId)
+            liveStoreRegistration = query.addSnapshotListener(EventListener { snapshots, e ->
+                if (e != null) {
+                    Log.w(TAG, "listen:error", e)
+                    return@EventListener
+                }
+                val playerLevels = mutableListOf<PlayerLevel>()
+                snapshots?.let { snap ->
+                    for (dc in snap.documentChanges) {
+                        when (dc.type) {
+                            DocumentChange.Type.ADDED -> {
+                                try {
+                                    dc.document.data.let { levelValues ->
+                                        val solutionsToCategories =
+                                            levelValues["solutionToCategory"] as Map<String, String>
+                                        if (solutionsToCategories.isEmpty()) throw Exception("Solutions were empty")
+                                        playerLevels.add(
+                                            PlayerLevel(
+                                                levelValues["levelId"] as Long,
+                                                levelValues["player"] as String,
+                                                solutionsToCategories
+                                            )
                                         )
+                                    }
+                                } catch (e: Exception) {
+                                    Log.w(
+                                        TAG,
+                                        "Something went wrong when parsing the user level from FB.",
+                                        e
                                     )
+                                    return@EventListener
                                 }
-                            } catch (e: Exception) {
-                                Log.w(
-                                    TAG,
-                                    "Something went wrong when parsing the user level from FB.",
-                                    e
-                                )
-                                return@EventListener
                             }
+                            DocumentChange.Type.MODIFIED -> Log.d(
+                                TAG,
+                                "Modified level: " + dc.document.data
+                            )
+                            DocumentChange.Type.REMOVED -> Log.d(
+                                TAG,
+                                "Removed level: " + dc.document.data
+                            )
                         }
-                        DocumentChange.Type.MODIFIED -> Log.d(
-                            TAG,
-                            "Modified level: " + dc.document.data
-                        )
-                        DocumentChange.Type.REMOVED -> Log.d(
-                            TAG,
-                            "Removed level: " + dc.document.data
-                        )
                     }
                 }
-            }
-            viewModelScope.launch {
-                if (playerLevels.size != 0) {
-                    // Get Pair where first element is a level when only 1 level added
-                    // Second element is the level count when there are more than 1 level added.
-                    val levelAndCount = insertPlayerLevels(playerLevels)
-                    if (levelAndCount.second > 0) {
-                        _newPlayerLevels.value = if (levelAndCount.second > 1) Triple(
-                            -1,
-                            levelAndCount.second,
-                            ""
-                        ) else Triple(levelAndCount.first.levelId, 1, levelAndCount.first.author)
+                viewModelScope.launch {
+                    if (playerLevels.size != 0) {
+                        // Get Pair where first element is a level when only 1 level added
+                        // Second element is the level count when there are more than 1 level added.
+                        val levelAndCount = insertPlayerLevels(playerLevels)
+                        if (levelAndCount.second > 0) {
+                            _newPlayerLevels.value = if (levelAndCount.second > 1) Triple(
+                                -1,
+                                levelAndCount.second,
+                                ""
+                            ) else Triple(
+                                levelAndCount.first.levelId,
+                                1,
+                                levelAndCount.first.author
+                            )
+                        }
                     }
                 }
-            }
-        })
+            })
+        }
     }
 
 
@@ -793,9 +772,8 @@ class LevelViewModel @Inject constructor(
             }
     }
 
-    fun isAllowedToSubmitAndSignedInToFirebase():Boolean
-    {
-       return _accountStatus.value == AccountStatus.SIGNED_IN_WITH_FIREBASE
+    fun isAllowedToSubmitAndSignedInToFirebase(): Boolean {
+        return _accountStatus.value == AccountStatus.SIGNED_IN_WITH_FIREBASE
     }
 
 }

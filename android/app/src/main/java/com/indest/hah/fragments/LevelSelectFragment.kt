@@ -9,11 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.commit
-import androidx.fragment.app.replace
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.databinding.LevelSelectFragmentBinding
 import com.indest.hah.game.viewmodel.LevelViewModel
@@ -21,7 +21,7 @@ import com.indest.hah.other.LevelItemAdapter
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class LevelSelectFragment : BottomSheetDialogFragmentCustom() {
+class LevelSelectFragment : BottomSheetDialogFragment() {
     private val TAG = "LevelSelectFragment"
     private var _binding: LevelSelectFragmentBinding? = null
     private val binding get() = _binding!!
@@ -57,13 +57,10 @@ class LevelSelectFragment : BottomSheetDialogFragmentCustom() {
                             {
                                 levelViewModel.changeLevel(nr)
                             }
-                            else if (currentlyActiveFragment is EpilogueFragment || currentlyActiveFragment is PlayerEpilogueFragment)
+                            else if (currentlyActiveFragment is FinalScreenFragment)
                             {
-                                parentFragmentManager.commit {
-                                    setReorderingAllowed(true)
-                                    replace<LevelFragment>(R.id.fragments_container)
-                                    levelViewModel.changeLevel(nr)
-                                }
+                                levelViewModel.changeLevel(nr)
+                                findNavController().navigate(R.id.action_navigation_level_select_to_navigation_level)
                             }
                             dismiss()
                         }

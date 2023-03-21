@@ -1,14 +1,23 @@
 package com.indest.hah.other
 
 import android.content.Context
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.text.isDigitsOnly
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.indest.hah.R
+
+
+fun String.isPalindrome():Boolean {
+    val testString = this.lowercase()
+        .replace("""[\W+]""".toRegex(), "")
+    return testString.length >= 3 && testString == testString.reversed()
+}
 
 
 fun AppCompatActivity.hideSystemBars(viewGroup: ViewGroup) {

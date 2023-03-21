@@ -8,20 +8,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.animation.doOnEnd
 import androidx.core.view.doOnNextLayout
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.MainActivity
 import com.indest.hah.R
-import com.indest.hah.databinding.EpilogueFragmentBinding
+import com.indest.hah.databinding.FinalScreenFragmentBinding
 import com.indest.hah.fx.Animations
 import com.indest.hah.game.viewmodel.LevelViewModel
+import com.indest.hah.general.AccountStatus
 import com.indest.hah.general.GeneralViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.combine
@@ -30,11 +32,11 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class EpilogueFragment : Fragment(R.layout.epilogue_fragment) {
+class FinalScreenFragment : BottomSheetDialogFragment() {
 
     @Inject
     lateinit var animations: Animations
-    private lateinit var binding: EpilogueFragmentBinding
+    private lateinit var binding: FinalScreenFragmentBinding
     private var trainAnimator: ObjectAnimator? = null
     private val generalViewModel: GeneralViewModel by activityViewModels()
     private val levelViewModel: LevelViewModel by activityViewModels()
@@ -44,8 +46,11 @@ class EpilogueFragment : Fragment(R.layout.epilogue_fragment) {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = EpilogueFragmentBinding.inflate(layoutInflater, container, false)
+        binding = FinalScreenFragmentBinding.inflate(layoutInflater, container, false)
         activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+        (activity as? MainActivity)?.binding?.bottomNavView?.let {
+           it.visibility = View.INVISIBLE
+        }
         return binding.root
     }
 
@@ -72,21 +77,44 @@ class EpilogueFragment : Fragment(R.layout.epilogue_fragment) {
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED)
             {
+                val isAllowedToSubmit = generalViewModel.isAllowedToSubmitPalindrome()
                 generalViewModel.internet.combine(levelViewModel.accountStatus) { i, a ->
                     Pair(i, a)
-                }.collect { (internet, _) ->
+                }.collect { (internet, accountStatus) ->
                     when (internet) {
                         true -> {
-                            binding.shareButton.visibility = View.VISIBLE
-                            binding.feedbackButton.visibility = View.VISIBLE
+                            binding.submitYourOwn.visibility = View.VISIBLE
+                            if (accountStatus == AccountStatus.SIGNED_IN_WITH_FIREBASE) {
+                                binding.submitYourOwn.setOnClickListener {
+                                    if (isAllowedToSubmit) {
+                                        findNavController().navigate(R.id.action_navigation_final_screen_to_navigation_submission)
+                                    } else {
+                                        val toast = Toast.makeText(
+                                            requireContext().applicationContext,
+                                            "You can submit once per day.",
+                                            Toast.LENGTH_LONG
+                                        )
+                                        toast.show()
+                                    }
+                                }
+                            } else {
+                                binding.submitYourOwn.setOnClickListener(null)
+                                binding.submitYourOwn.visibility = View.GONE
+                            }
+                            binding.shareButtonPlayer.visibility = View.VISIBLE
+                            binding.feedbackButtonPlayer.visibility = View.VISIBLE
                         }
                         false -> {
-                            binding.shareButton.visibility = View.GONE
-                            binding.feedbackButton.visibility = View.GONE
+                            binding.shareButtonPlayer.visibility = View.GONE
+                            binding.shareButtonPlayer.setOnClickListener(null)
+                            binding.feedbackButtonPlayer.visibility = View.GONE
+                            binding.feedbackButtonPlayer.setOnClickListener(null)
+                            binding.submitYourOwn.visibility = View.GONE
+                            binding.submitYourOwn.setOnClickListener(null)
                         }
                     }
 
-                    binding.feedbackButton.setOnClickListener {
+                    binding.feedbackButtonPlayer.setOnClickListener {
                         val intent = Intent(Intent.ACTION_VIEW).apply {
                             data = Uri.parse(getString(R.string.app_package_url))
                             setPackage(getString(R.string.vending_package))
@@ -97,21 +125,17 @@ class EpilogueFragment : Fragment(R.layout.epilogue_fragment) {
                             }
                         }
                     }
-                    binding.shareButton.setOnClickListener {
-                        val shareIntent = generalViewModel.getShareIntent("EpilogueFragment")
+                    binding.shareButtonPlayer.setOnClickListener {
+                        val shareIntent = generalViewModel.getShareIntent("FinalScreenFragment")
                         startActivity(shareIntent)
                     }
+
                     binding.levelSelectButton.setOnClickListener {
-                        parentFragmentManager.commit {
-                            addToBackStack(LevelSelectFragment().tag)
-                            add(LevelSelectFragment(), LevelSelectFragment().tag)
-                        }
+                        findNavController().navigate(R.id.action_navigation_final_screen_to_navigation_level_select)
                     }
+
                     binding.playerLevelSelectButton.setOnClickListener {
-                        parentFragmentManager.commit {
-                            addToBackStack(PlayerLevelSelectFragment().tag)
-                            add(PlayerLevelSelectFragment(), PlayerLevelSelectFragment().tag)
-                        }
+                        findNavController().navigate(R.id.action_navigation_final_screen_to_navigation_player_level_select)
                     }
                 }
             }

@@ -9,12 +9,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.commit
-import androidx.fragment.app.replace
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.databinding.PlayerLevelSelectFragmentBinding
 import com.indest.hah.game.viewmodel.LevelViewModel
@@ -23,7 +23,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class PlayerLevelSelectFragment : BottomSheetDialogFragmentCustom() {
+class PlayerLevelSelectFragment : BottomSheetDialogFragment() {
     private val TAG = "PlayerLevelSelectFrag"
     private var _binding: PlayerLevelSelectFragmentBinding? = null
     private val binding get() = _binding!!
@@ -55,18 +55,14 @@ class PlayerLevelSelectFragment : BottomSheetDialogFragmentCustom() {
                     binding.playerLevelSelectRecyclerview.adapter = LevelItemAdapter(currentLevelIcon, currentLevel, playerLevels, true) {
                         it?.levelId?.let { nr ->
                             val currentlyActiveFragment = parentFragmentManager.findFragmentById(R.id.fragments_container)
-                            Log.d(TAG, "Currently active fragment: ${currentlyActiveFragment?.javaClass?.name}")
                             if (currentlyActiveFragment is LevelFragment || currentlyActiveFragment is NavHostFragment)
                             {
                                 levelViewModel.changeLevel(nr)
                             }
-                            else if (currentlyActiveFragment is EpilogueFragment || currentlyActiveFragment is PlayerEpilogueFragment)
+                            else if (currentlyActiveFragment is FinalScreenFragment)
                             {
-                                parentFragmentManager.commit {
-                                    setReorderingAllowed(true)
-                                    replace<LevelFragment>(R.id.fragments_container)
-                                    levelViewModel.changeLevel(nr)
-                                }
+                                levelViewModel.changeLevel(nr)
+                                findNavController().navigate(R.id.action_navigation_player_level_select_to_navigation_level)
                             }
                             dismiss()
                         }

@@ -82,14 +82,9 @@ class RewardButton : LinearLayoutCompat {
         this.isClickable = false
     }
 
-    fun setClue(clue:String, moreThanOne:Boolean = false)
+    fun setClue(clue: String)
     {
         findViewById<AppCompatTextView>(R.id.reward_button_flipper_hidden_title).text = clue
-    /*    if (moreThanOne)
-        {
-            findViewById<AppCompatTextView>(R.id.reward_button_flipper_hidden_title)
-                .setTextAppearance(context, R.style.TextAppearance_OC_SmallHintText)
-        }*/
     }
 
     fun updateButtonUi(info: GeneralViewModel.ButtonInfo) {

@@ -344,11 +344,6 @@ interface LevelDao {
     suspend fun resetLevel(levelNr: Int, progress: LevelProgress = LevelProgress.IN_PROGRESS) {
         deleteLetterInfo(levelNr)
         val levelSolutions = getLevelSolutions(levelNr)
-        // Start debug
-        val debugSolutionsCount = debugGetSolutionsCount()
-        FirebaseCrashlytics.getInstance()
-            .log("Level nr: $levelNr, level solutions: $levelSolutions, Count of solutions table: $debugSolutionsCount")
-        // End debug //TODO: remove if fixed
         val solution = levelSolutions.first()
         val puzzle = Shuffler.getShuffledSolution(solution)
         updatePuzzle(levelNr, puzzle)

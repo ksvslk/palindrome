@@ -36,6 +36,7 @@
     <string name="helper_text_limit">Length limit</string>
     <string name="min_length_error">Minimum length is&#160;</string>
     <string name="max_length_error">Maximum length is&#160;</string>
+    <string name="all_digits_error">Cannot be all digits</string>
     <string name="palindrome_exists">Palindrome is already added</string>
     <string name="not_a_palindrome_error">Solution must be a palindrome</string>
     <string name="levels">Levels</string>
@@ -72,8 +73,7 @@
     <string name="not_quite_solution">Incorrect palindrome!</string>
     <string name="tap_to_continue">Tap to continue</string>
     <string name="tap_to_finish">Tap to finish!</string>
-    <string name="game_completed_message">Check out also the player levels and send your own palindrome!</string>
-    <string name="player_game_completed_message">Did you complete all the player levels? Nice! Now send your own!</string>
+    <string name="final_screen_message">Check out also the levels you have not played yet! Or send cool palindromes which can be featured in the game!</string>
     <string name="game_completed_shout">Yay!</string>
     <string name="game_completed_shout_smiley">(>‿◠)✌</string>
     <string name="game_completed_shout_shout2">Winning!</string>

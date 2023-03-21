@@ -17,10 +17,11 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.forEach
-import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.gms.ads.MobileAds
@@ -42,7 +43,8 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.indest.hah.ads.RewardType
 import com.indest.hah.databinding.ActivityMainBinding
-import com.indest.hah.fragments.PlayerLevelSelectFragment
+import com.indest.hah.fragments.FinalScreenFragment
+import com.indest.hah.fragments.LevelFragment
 import com.indest.hah.fx.SoundPlayer
 import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.general.AccountStatus
@@ -65,7 +67,7 @@ private const val RECONNECT_TIMER_MAX_TIME_MILLISECONDS = 1000L * 60L * 15L // 1
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    private val TAG = "MainActivity"
+    private val TAG = "MainActivity_"
     lateinit var binding: ActivityMainBinding
     private val levelViewModel: LevelViewModel by viewModels()
     private val generalViewModel: GeneralViewModel by viewModels()
@@ -157,12 +159,17 @@ class MainActivity : AppCompatActivity() {
     private fun setPlayerNameAndSignedInStatus(accountStatus: AccountStatus) {
         if (levelViewModel.accountStatus.value !in setOf(
                 AccountStatus.SIGNED_IN,
-                AccountStatus.SIGNED_IN_WITH_FIREBASE)) {
+                AccountStatus.SIGNED_IN_WITH_FIREBASE
+            )
+        ) {
             PlayGames.getPlayersClient(this).currentPlayer.addOnCompleteListener { mTask: Task<Player> ->
                 if (mTask.isSuccessful) {
                     levelViewModel.currentlySignedInPlayerName = mTask.result.displayName
                 }
-                Log.d(TAG, "setPlayerNameAndSignedInStatus_ set account status: ${accountStatus.name}")
+                Log.d(
+                    TAG,
+                    "setPlayerNameAndSignedInStatus_ set account status: ${accountStatus.name}"
+                )
                 levelViewModel.setAccountStatus(accountStatus)
             }
         }
@@ -192,26 +199,34 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun showNewLevelMessage(
+
+    fun showNewLevelMessage(
         player: String,
         lastAddedLevel: Int,
         multipleLevels: Int = -1
     ) {
+
         val snackMessage =
             if (multipleLevels == -1) "New level by $player!" else "$multipleLevels levels added!"
-
         val snack =
             Snackbar.make(findViewById(android.R.id.content), snackMessage, 15000)
                 .setAction("Play") {
                     if (multipleLevels == -1) {
-                        supportFragmentManager.commit {
+
+                        val currentlyActiveFragment = supportFragmentManager.findFragmentById(R.id.fragments_container)
+                        if (currentlyActiveFragment is FinalScreenFragment) {
+                            val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragments_container) as NavHostFragment
+                            val navController = navHostFragment.navController
+                            levelViewModel.changeLevel(lastAddedLevel)
+                            navController.navigate(R.id.action_navigation_final_screen_to_navigation_level)
+                        } else {
                             levelViewModel.changeLevel(lastAddedLevel)
                         }
+
                     } else {
-                        supportFragmentManager.commit {
-                            addToBackStack(PlayerLevelSelectFragment().tag)
-                            add(PlayerLevelSelectFragment(), PlayerLevelSelectFragment().tag)
-                        }
+                        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragments_container) as NavHostFragment
+                        val navController = navHostFragment.navController
+                        navController.navigate(R.id.action_navigation_stages_to_navigation_player_level_select)
                     }
                 }
                 .setTextColor(
@@ -243,7 +258,7 @@ class MainActivity : AppCompatActivity() {
                 if (authTokenTask.isSuccessful) {
                     authTokenTask.result?.let { serverAuthToken ->
                         val credential = PlayGamesAuthProvider.getCredential(serverAuthToken)
-                        auth.signInWithCredential(credential).addOnSuccessListener { authResult ->
+                        auth.signInWithCredential(credential).addOnSuccessListener { _ ->
                             reconnectMilliseconds = RECONNECT_TIMER_START_MILLISECONDS
                             setPlayerNameAndSignedInStatus(AccountStatus.SIGNED_IN_WITH_FIREBASE)
                         }.addOnFailureListener {
@@ -276,7 +291,10 @@ class MainActivity : AppCompatActivity() {
                 reconnectMilliseconds * 2,
                 RECONNECT_TIMER_MAX_TIME_MILLISECONDS
             )
-            Log.d(TAG, "retryFirebaseSignInWithExponentialBackoff with reconnectMilliseconds: ${reconnectMilliseconds}")
+            Log.d(
+                TAG,
+                "retryFirebaseSignInWithExponentialBackoff with reconnectMilliseconds: ${reconnectMilliseconds}"
+            )
         }
     }
 
@@ -433,7 +451,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun applyCustomWindowInsets() {
-        ViewCompat.setOnApplyWindowInsetsListener(binding.container) { view, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.container) { _, insets ->
             WindowInsetsCompat.Builder()
                 .setInsets(
                     WindowInsetsCompat.Type.systemBars(),
@@ -460,6 +478,13 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.fragments_container) as NavHostFragment
         val navController = navHostFragment.navController
         val bottomNavigationView: BottomNavigationView = binding.bottomNavView
+        navController.addOnDestinationChangedListener { navController: NavController, navDestination: NavDestination, bundle: Bundle? ->
+            Log.d(TAG, "Destination changed to: ${navDestination.displayName}")
+            Log.d(TAG, "    Back stack: ${navController.backQueue.count()}")
+            navController.backQueue.forEach {
+                Log.d(TAG, "    Dest.: ${it.destination.displayName}")
+            }
+        }
         bottomNavigationView.setupWithNavController(navController)
         bottomNavigationView.menu.setGroupCheckable(0, true, false)
         bottomNavigationView.menu.forEach { it.isChecked = true }

@@ -9,15 +9,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
+import androidx.core.text.isDigitsOnly
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.databinding.SubmissionFragmentBinding
 import com.indest.hah.game.viewmodel.LevelViewModel
+import com.indest.hah.other.isPalindrome
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 
-class SubmissionFragment : BottomSheetDialogFragmentCustom() {
+class SubmissionFragment : BottomSheetDialogFragment() {
     private val TAG = "SubmissionFragment"
     private var _binding: SubmissionFragmentBinding? = null
     private val binding get() = _binding!!
@@ -35,11 +38,6 @@ class SubmissionFragment : BottomSheetDialogFragmentCustom() {
         return b.root
     }
 
-    private fun isPalindrome(string: String): Boolean {
-        val testString = string.lowercase()
-            .replace("""[\W+]""".toRegex(), "")
-        return testString == testString.reversed()
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -58,8 +56,8 @@ class SubmissionFragment : BottomSheetDialogFragmentCustom() {
                     override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                         //Log.d(TAG, "onTextChanged: $p0")
                     }
-
                     override fun afterTextChanged(p0: Editable?) {
+                        levelViewModel.tempSubmissionPalindrome = p0.toString()
                         val errors = mutableListOf<String>()
                         if (p0.toString().isEmpty()) {
                             errors.clear()
@@ -78,6 +76,10 @@ class SubmissionFragment : BottomSheetDialogFragmentCustom() {
                         } else if (p0.toString().length > resources.getInteger(R.integer.maxUserPalindromeLength)) {
                             errors.add(getString(R.string.max_length_error) + resources.getInteger(R.integer.maxUserPalindromeLength))
                             binding.enterPalindromeTextInputLayout.endIconDrawable = null
+                        }
+                        else if (p0.toString().isDigitsOnly()) {
+                            errors.add(getString(R.string.all_digits_error))
+                            binding.enterPalindromeTextInputLayout.endIconDrawable = null
                         } else {
                             errors.remove(
                                 getString(R.string.min_length_error) + resources.getInteger(
@@ -90,7 +92,7 @@ class SubmissionFragment : BottomSheetDialogFragmentCustom() {
                                 )
                             )
                             errors.remove(getString(R.string.palindrome_exists))
-                            if (isPalindrome(p0.toString())) {
+                            if (p0.toString().isPalindrome()) {
                                 errors.remove(getString(R.string.not_a_palindrome_error))
                                 binding.enterPalindromeTextInputLayout.error = null
                                 binding.enterPalindromeTextInputLayout.errorIconDrawable = null
@@ -133,6 +135,8 @@ class SubmissionFragment : BottomSheetDialogFragmentCustom() {
                     }
                 })
             }
+            if (levelViewModel.tempSubmissionPalindrome.isNotEmpty())
+                binding.enterPalindromeTextInputLayout.editText?.setText(levelViewModel.tempSubmissionPalindrome)
         }
 
         binding.sendLevelButton.setOnClickListener {
@@ -160,8 +164,6 @@ class SubmissionFragment : BottomSheetDialogFragmentCustom() {
                                 binding.enterPalindromeTextInputLayout.visibility = View.VISIBLE
                             }
                             this.cancel()
-                        }
-                        else -> {
                         }
                     }
                 }

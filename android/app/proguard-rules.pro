@@ -50,9 +50,8 @@
 # Report
 -printusage app/build/outputs/mapping/release/usage.txt
 
--keep class * implements android.os.Parcelable {
-   public static final android.os.Parcelable$Creator *;
-}
+-keepnames class * extends android.os.Parcelable
+-keepnames class * extends java.io.Serializable
 
 -keep class com.google.android.gms.** { *; }
 
