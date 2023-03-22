@@ -52,17 +52,10 @@ class LevelSelectFragment : BottomSheetDialogFragment() {
                     val currentLevelIcon = getCurrentLevelIcon(currentLevel)
                     binding.levelSelectRecyclerview.adapter = LevelItemAdapter(currentLevelIcon, currentLevel, levels) {
                         it?.levelId?.let { nr ->
-                            val currentlyActiveFragment = parentFragmentManager.findFragmentById(R.id.fragments_container)
-                            if (currentlyActiveFragment is LevelFragment)
-                            {
-                                levelViewModel.changeLevel(nr)
-                            }
-                            else if (currentlyActiveFragment is FinalScreenFragment)
-                            {
+                            if (nr != currentLevel) {
                                 levelViewModel.changeLevel(nr)
                                 findNavController().navigate(R.id.action_navigation_level_select_to_navigation_level)
                             }
-                            dismiss()
                         }
                     }
                 }

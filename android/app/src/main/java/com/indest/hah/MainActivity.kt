@@ -43,8 +43,6 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.indest.hah.ads.RewardType
 import com.indest.hah.databinding.ActivityMainBinding
-import com.indest.hah.fragments.FinalScreenFragment
-import com.indest.hah.fragments.LevelFragment
 import com.indest.hah.fx.SoundPlayer
 import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.general.AccountStatus
@@ -200,33 +198,34 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    fun showNewLevelMessage(
+    private fun showNewLevelMessage(
         player: String,
         lastAddedLevel: Int,
         multipleLevels: Int = -1
     ) {
-
         val snackMessage =
             if (multipleLevels == -1) "New level by $player!" else "$multipleLevels levels added!"
         val snack =
             Snackbar.make(findViewById(android.R.id.content), snackMessage, 15000)
                 .setAction("Play") {
-                    if (multipleLevels == -1) {
+                    val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragments_container) as NavHostFragment
+                    val navController = navHostFragment.navController
+                    val currentlyActiveFragment = navHostFragment.navController.currentDestination?.id
 
-                        val currentlyActiveFragment = supportFragmentManager.findFragmentById(R.id.fragments_container)
-                        if (currentlyActiveFragment is FinalScreenFragment) {
-                            val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragments_container) as NavHostFragment
-                            val navController = navHostFragment.navController
+                    // Check if there is only one new level
+                    if (multipleLevels == -1) {
+                        if (currentlyActiveFragment == R.id.navigation_final_screen) { // If on the final screen
                             levelViewModel.changeLevel(lastAddedLevel)
                             navController.navigate(R.id.action_navigation_final_screen_to_navigation_level)
-                        } else {
+                        } else { // If on any other screen
                             levelViewModel.changeLevel(lastAddedLevel)
                         }
-
-                    } else {
-                        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragments_container) as NavHostFragment
-                        val navController = navHostFragment.navController
-                        navController.navigate(R.id.action_navigation_stages_to_navigation_player_level_select)
+                    } else { // If there are multiple new levels
+                        if (currentlyActiveFragment == R.id.navigation_final_screen) { // If on the final screen
+                            navController.navigate(R.id.action_navigation_final_screen_to_navigation_player_level_select)
+                        } else { // If on any other screen
+                            navController.navigate(R.id.action_navigation_level_to_navigation_stages)
+                        }
                     }
                 }
                 .setTextColor(
@@ -478,13 +477,13 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.fragments_container) as NavHostFragment
         val navController = navHostFragment.navController
         val bottomNavigationView: BottomNavigationView = binding.bottomNavView
-        navController.addOnDestinationChangedListener { navController: NavController, navDestination: NavDestination, bundle: Bundle? ->
+   /*     navController.addOnDestinationChangedListener { navController: NavController, navDestination: NavDestination, bundle: Bundle? ->
             Log.d(TAG, "Destination changed to: ${navDestination.displayName}")
             Log.d(TAG, "    Back stack: ${navController.backQueue.count()}")
             navController.backQueue.forEach {
                 Log.d(TAG, "    Dest.: ${it.destination.displayName}")
             }
-        }
+        }*/
         bottomNavigationView.setupWithNavController(navController)
         bottomNavigationView.menu.setGroupCheckable(0, true, false)
         bottomNavigationView.menu.forEach { it.isChecked = true }

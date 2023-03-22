@@ -54,17 +54,10 @@ class PlayerLevelSelectFragment : BottomSheetDialogFragment() {
                     val currentLevelIcon = getString(R.string.level_unknown)
                     binding.playerLevelSelectRecyclerview.adapter = LevelItemAdapter(currentLevelIcon, currentLevel, playerLevels, true) {
                         it?.levelId?.let { nr ->
-                            val currentlyActiveFragment = parentFragmentManager.findFragmentById(R.id.fragments_container)
-                            if (currentlyActiveFragment is LevelFragment || currentlyActiveFragment is NavHostFragment)
-                            {
-                                levelViewModel.changeLevel(nr)
-                            }
-                            else if (currentlyActiveFragment is FinalScreenFragment)
-                            {
+                            if (nr != currentLevel) {
                                 levelViewModel.changeLevel(nr)
                                 findNavController().navigate(R.id.action_navigation_player_level_select_to_navigation_level)
                             }
-                            dismiss()
                         }
                     }
                 }

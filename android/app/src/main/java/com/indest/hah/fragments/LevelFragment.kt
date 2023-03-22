@@ -218,7 +218,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         binding.levelFragment.removeAllViews()
         binding.levelFragment.removeAllViewsInLayout()
         val densitySettings = levelCreator.getDensitySettings(binding.levelFragment, level)
-        Log.d(TAG, densitySettings.toString())
         val areColumnsDifferent =
             level.levelInfo.columnCount != densitySettings.columnCount || level.levelInfo.author == "NewVersion"
         lifecycleScope.launch(Dispatchers.Main)
@@ -449,6 +448,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                         levelViewModel.executeLevelCompleteActions()
                     }
                     Pair(true, false), Pair(false, true) -> {
+                        levelViewModel.executeLevelCompleteActionsFinal()
                         soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.2f)
                         findNavController().navigate(R.id.action_navigation_level_to_navigation_final_screen)
                     }
