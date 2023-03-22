@@ -20,8 +20,6 @@ import androidx.core.view.forEach
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.NavController
-import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.gms.ads.MobileAds
@@ -477,13 +475,6 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.fragments_container) as NavHostFragment
         val navController = navHostFragment.navController
         val bottomNavigationView: BottomNavigationView = binding.bottomNavView
-   /*     navController.addOnDestinationChangedListener { navController: NavController, navDestination: NavDestination, bundle: Bundle? ->
-            Log.d(TAG, "Destination changed to: ${navDestination.displayName}")
-            Log.d(TAG, "    Back stack: ${navController.backQueue.count()}")
-            navController.backQueue.forEach {
-                Log.d(TAG, "    Dest.: ${it.destination.displayName}")
-            }
-        }*/
         bottomNavigationView.setupWithNavController(navController)
         bottomNavigationView.menu.setGroupCheckable(0, true, false)
         bottomNavigationView.menu.forEach { it.isChecked = true }
