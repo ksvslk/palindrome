@@ -47,7 +47,6 @@ class MessageSnackBar(
         removeCallback(_callback)
     }
 
-
     companion object {
 
         private var tapToContinueAnimation:ObjectAnimator? = null

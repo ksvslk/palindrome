@@ -105,6 +105,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             it.cancel()
             it.removeAllListeners()
         }
+        clearMessages()
         super.onDestroy()
         Log.d(TAG, "onDestroy")
     }
@@ -158,7 +159,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                         is LevelViewModel.GameEvent.DisplayLevel -> {
                             disableLoading()
                             clearMessages()
-                            Log.d(TAG, "GameEvent.DisplayLevel")
+                            Log.d(TAG, event.level.levelInfo.toString())
                             if (event.level.levelInfo.progress == LevelProgress.INTERMEDIATE) {
                                 displayLevel(event.level)
                                 showContinueMessage(levelViewModel.isLastLevel())
@@ -180,8 +181,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                                     cellDirector?.sendWrongSolutionLetterHome(event.solutionData)
                                     showWrongEffects(event.solutionData)
                                 }
-                                Solution.NONE -> {
-                                    Log.d(TAG, "Solution is: NONE")
+                                NONE -> {
                                 }
                             }
                         }
