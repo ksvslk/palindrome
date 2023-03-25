@@ -19,6 +19,7 @@ import com.indest.hah.R
 import com.indest.hah.databinding.PlayerLevelSelectFragmentBinding
 import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.other.LevelItemAdapter
+import com.indest.hah.other.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -56,7 +57,7 @@ class PlayerLevelSelectFragment : BottomSheetDialogFragment() {
                         it?.levelId?.let { nr ->
                             if (nr != currentLevel) {
                                 levelViewModel.changeLevel(nr)
-                                findNavController().navigate(R.id.action_navigation_player_level_select_to_navigation_level)
+                                findNavController().safeNavigate(R.id.action_navigation_player_level_select_to_navigation_level)
                             }
                         }
                     }

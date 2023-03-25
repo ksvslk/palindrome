@@ -46,6 +46,7 @@ import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.general.AccountStatus
 import com.indest.hah.general.GeneralViewModel
 import com.indest.hah.other.hideSystemBars
+import com.indest.hah.other.safeNavigate
 import com.indest.hah.persistance.dto.SaveGame
 import com.indest.hah.savegame.SnapshotHelper
 import com.indest.hah.views.ButtonState
@@ -214,15 +215,15 @@ class MainActivity : AppCompatActivity() {
                     if (multipleLevels == -1) {
                         if (currentlyActiveFragment == R.id.navigation_final_screen) { // If on the final screen
                             levelViewModel.changeLevel(lastAddedLevel)
-                            navController.navigate(R.id.action_navigation_final_screen_to_navigation_level)
+                            navController.safeNavigate(R.id.action_navigation_final_screen_to_navigation_level)
                         } else { // If on any other screen
                             levelViewModel.changeLevel(lastAddedLevel)
                         }
                     } else { // If there are multiple new levels
                         if (currentlyActiveFragment == R.id.navigation_final_screen) { // If on the final screen
-                            navController.navigate(R.id.action_navigation_final_screen_to_navigation_player_level_select)
+                            navController.safeNavigate(R.id.action_navigation_final_screen_to_navigation_player_level_select)
                         } else { // If on any other screen
-                            navController.navigate(R.id.action_navigation_level_to_navigation_stages)
+                            navController.safeNavigate(R.id.action_navigation_level_to_navigation_stages)
                         }
                     }
                 }

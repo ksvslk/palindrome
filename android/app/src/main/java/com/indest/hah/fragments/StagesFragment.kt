@@ -19,6 +19,7 @@ import com.indest.hah.databinding.StagesFragmentBinding
 import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.general.AccountStatus
 import com.indest.hah.general.GeneralViewModel
+import com.indest.hah.other.safeNavigate
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
@@ -48,7 +49,7 @@ class StagesFragment : BottomSheetDialogFragment() {
                             if (accountStatus == AccountStatus.SIGNED_IN_WITH_FIREBASE) {
                                 binding.submitYourLevelButton.setOnClickListener {
                                     if (isAllowedToSubmit) {
-                                        findNavController().navigate(R.id.action_navigation_stages_to_navigation_submission)
+                                        findNavController().safeNavigate(R.id.action_navigation_stages_to_navigation_submission)
                                     } else {
                                         showLimitedSubmissionsToast()
                                     }
@@ -86,10 +87,10 @@ class StagesFragment : BottomSheetDialogFragment() {
         val b = StagesFragmentBinding.inflate(layoutInflater, container, false)
         _binding = b
         binding.gameLevelsButton.setOnClickListener {
-            findNavController().navigate(R.id.action_navigation_stages_to_navigation_level_select)
+            findNavController().safeNavigate(R.id.action_navigation_stages_to_navigation_level_select)
         }
         binding.playerLevelsButton.setOnClickListener {
-            findNavController().navigate(R.id.action_navigation_stages_to_navigation_player_level_select)
+            findNavController().safeNavigate(R.id.action_navigation_stages_to_navigation_player_level_select)
         }
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         return b.root

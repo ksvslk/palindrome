@@ -39,6 +39,7 @@ import com.indest.hah.game.viewmodel.Solution.*
 import com.indest.hah.game.viewmodel.SolutionData
 import com.indest.hah.general.GeneralViewModel
 import com.indest.hah.other.VaryingProbability
+import com.indest.hah.other.safeNavigate
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.level.LevelProgress
 import com.indest.hah.views.Cell
@@ -131,7 +132,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
 
     private fun showPlayerCenteredScores() {
-        findNavController().navigate(R.id.action_navigation_level_to_navigation_scores)
+        findNavController().safeNavigate(R.id.action_navigation_level_to_navigation_scores)
     }
 
     override fun onResume() {
@@ -450,7 +451,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                     Pair(true, false), Pair(false, true) -> {
                         levelViewModel.executeLevelCompleteActionsFinal()
                         soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.2f)
-                        findNavController().navigate(R.id.action_navigation_level_to_navigation_final_screen)
+                        findNavController().safeNavigate(R.id.action_navigation_level_to_navigation_final_screen)
                     }
                 }
             }
@@ -496,7 +497,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             val tutorialPassed = sp.getBoolean(getString(R.string.tutorial_passed), false)
             if (!tutorialPassed) {
                 levelViewModel.logTutorialBegin()
-                findNavController().navigate(R.id.action_navigation_level_to_navigation_tutorial)
+                findNavController().safeNavigate(R.id.action_navigation_level_to_navigation_tutorial)
                 with(sp.edit()) {
                     putBoolean(getString(R.string.tutorial_passed), true)
                     apply()

@@ -25,6 +25,7 @@ import com.indest.hah.fx.Animations
 import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.general.AccountStatus
 import com.indest.hah.general.GeneralViewModel
+import com.indest.hah.other.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
@@ -87,7 +88,7 @@ class FinalScreenFragment : BottomSheetDialogFragment() {
                             if (accountStatus == AccountStatus.SIGNED_IN_WITH_FIREBASE) {
                                 binding.submitYourOwn.setOnClickListener {
                                     if (isAllowedToSubmit) {
-                                        findNavController().navigate(R.id.action_navigation_final_screen_to_navigation_submission)
+                                        findNavController().safeNavigate(R.id.action_navigation_final_screen_to_navigation_submission)
                                     } else {
                                         val toast = Toast.makeText(
                                             requireContext().applicationContext,
@@ -131,11 +132,11 @@ class FinalScreenFragment : BottomSheetDialogFragment() {
                     }
 
                     binding.levelSelectButton.setOnClickListener {
-                        findNavController().navigate(R.id.action_navigation_final_screen_to_navigation_level_select)
+                        findNavController().safeNavigate(R.id.action_navigation_final_screen_to_navigation_level_select)
                     }
 
                     binding.playerLevelSelectButton.setOnClickListener {
-                        findNavController().navigate(R.id.action_navigation_final_screen_to_navigation_player_level_select)
+                        findNavController().safeNavigate(R.id.action_navigation_final_screen_to_navigation_player_level_select)
                     }
                 }
             }

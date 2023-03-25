@@ -12,6 +12,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.databinding.ThirdTutorialFragmentBinding
+import com.indest.hah.other.safeNavigate
 
 class ThirdTutorialFragment : BottomSheetDialogFragment() {
     private var _binding: ThirdTutorialFragmentBinding? = null
@@ -35,7 +36,7 @@ class ThirdTutorialFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.startButton.setOnClickListener {
-            findNavController().navigate(R.id.action_navigation_third_tutorial_to_navigation_second_tutorial)
+            findNavController().safeNavigate(R.id.action_navigation_third_tutorial_to_navigation_second_tutorial)
         }
         this.dialog?.let { dialog ->
             val d = dialog as BottomSheetDialog

@@ -25,6 +25,7 @@ import com.indest.hah.databinding.SettingsFragmentBinding
 import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.general.AccountStatus
 import com.indest.hah.general.GeneralViewModel
+import com.indest.hah.other.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
@@ -141,7 +142,7 @@ class SettingsFragment : BottomSheetDialogFragment() {
             changePreference(getString(R.string.vibration_on_pref), b2)
         }
         binding.tutorialButton.setOnClickListener {
-            findNavController().navigate(R.id.action_navigation_settings_to_navigation_tutorial)
+            findNavController().safeNavigate(R.id.action_navigation_settings_to_navigation_tutorial)
         }
         binding.versionInfo.text =
             "${BuildConfig.VERSION_CODE}\n${BuildConfig.VERSION_NAME}\n${BuildConfig.GIT_HASH}"

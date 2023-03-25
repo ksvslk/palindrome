@@ -20,6 +20,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.databinding.TutorialFragmentBinding
+import com.indest.hah.other.safeNavigate
 
 class TutorialFragment : BottomSheetDialogFragment() {
 
@@ -47,7 +48,7 @@ class TutorialFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.continueButton.setOnClickListener {
             cleanUp()
-            findNavController().navigate(R.id.action_navigation_tutorial_to_navigation_third_tutorial)
+            findNavController().safeNavigate(R.id.action_navigation_tutorial_to_navigation_third_tutorial)
         }
         view.doOnLayout {
             repeatingTutorialAnimation()
