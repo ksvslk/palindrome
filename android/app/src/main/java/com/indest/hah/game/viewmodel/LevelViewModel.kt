@@ -507,7 +507,7 @@ class LevelViewModel @Inject constructor(
 
             if (guess.length == solution.length) {
                 val playerGuess = guess.map { char ->
-                    if ("^([?!.,’])".contains(char)) "" else char
+                    if ("^([?!.,’':-])".contains(char)) "" else char
                 }.joinToString("")
 
                 val hintsInterval =

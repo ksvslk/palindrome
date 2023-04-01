@@ -16,10 +16,8 @@ package com.example.benchmark
  * limitations under the License.
  */
 
-import android.graphics.Point
 import androidx.benchmark.macro.ExperimentalBaselineProfilesApi
 import androidx.benchmark.macro.junit4.BaselineProfileRule
-import androidx.test.uiautomator.By
 import org.junit.Rule
 import org.junit.Test
 
@@ -40,33 +38,5 @@ class BaselineProfileGenerator {
             // optimizing for app startup. But you can also navigate and scroll
             // through your most important UI.
             startActivityAndWait()
-            device.run {
-                waitForIdle()
-                val next1 = findObject(By.text("Next"))
-                next1?.click()
-                waitForIdle()
-                val next2 = findObject(By.text("Next"))
-                next2?.click()
-                waitForIdle()
-                findObject(By.text("Play"))?.click()
-                waitForIdle()
-                val letter = findObject(By.text("W"))
-                if (letter?.isEnabled == true) letter.drag(Point(100,100))
-                waitForIdle()
-            }
-
-       /*     device.waitForIdle()
-
-            device.run {
-                findObject(By.text("Interests"))
-                    .click()
-                waitForIdle()
-                findObject(By.text("Accessibility")).scroll(Direction.DOWN, 2000f)
-                waitForIdle()
-                findObject(By.text("People")).click()
-                waitForIdle()
-                findObject(By.textStartsWith("Android")).scroll(Direction.DOWN, 2000f)
-                waitForIdle()
-            }*/
         }
 }

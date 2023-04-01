@@ -273,8 +273,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             }
             showTutorial()
         }
-
-        activity?.reportFullyDrawn()
     }
 
 
