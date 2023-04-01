@@ -45,7 +45,6 @@ android {
             firebaseCrashlytics {
                 mappingFileUploadEnabled false
             }
-            signingConfig signingConfigs.'instant-release'
         }
         debug {
             minifyEnabled false
