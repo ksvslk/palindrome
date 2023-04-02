@@ -22,6 +22,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.games.AuthenticationResult
 import com.google.android.gms.games.GamesSignInClient
 import com.google.android.gms.games.PlayGames
@@ -96,6 +97,7 @@ class MainActivity : AppCompatActivity() {
             handleAuthTask(gamesSignInClient, isAuthenticatedTask)
         }
         requestLatestConsentInformation()
+        MobileAds.initialize(applicationContext)
 
         generalViewModel.toString()
         applyCustomWindowInsets()

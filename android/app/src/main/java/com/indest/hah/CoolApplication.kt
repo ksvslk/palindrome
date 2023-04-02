@@ -20,6 +20,7 @@ class CoolApplication : Application() {
             //DebugAppCheckProviderFactory.getInstance()
             PlayIntegrityAppCheckProviderFactory.getInstance()
         )
+
 /*       if (BuildConfig.DEBUG)
         {
             LeakCanary.config = LeakCanary.config.run {
