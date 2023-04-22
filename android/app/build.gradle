@@ -61,7 +61,7 @@ android {
                 debugSymbolLevel = 'full'
             }
             firebaseCrashlytics {
-                mappingFileUploadEnabled false
+                mappingFileUploadEnabled true
             }
         }
         debug {
@@ -100,19 +100,19 @@ android {
     productFlavors {
         instant {
             firebaseCrashlytics {
-                mappingFileUploadEnabled false
+                mappingFileUploadEnabled true
             }
         }
         regular {
             versionCode = defaultConfig.versionCode + 1000
             firebaseCrashlytics {
-                mappingFileUploadEnabled false
+                mappingFileUploadEnabled true
             }
         }
     }
 
     compileOptions {
-        coreLibraryDesugaringEnabled false
+        coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
@@ -244,11 +244,10 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-core:3.5.1"
     androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_test_version"
 }
-/*
+
 tasks.register('copyReleaseFilesToOneDirectory', Copy) {
     from layout.buildDirectory.file("outputs/bundle/instantRelease/app-instant-release.aab"),layout.buildDirectory.file("outputs/bundle/regularRelease/app-regular-release.aab")
     into layout.buildDirectory.dir("outputs/bundle/")
 }
 tasks.findByName('copyReleaseFilesToOneDirectory').mustRunAfter ':app:bundleRelease'
 tasks.findByName('copyReleaseFilesToOneDirectory').dependsOn(':app:bundleRelease')
-*/
