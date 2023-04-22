@@ -35,13 +35,13 @@ class SecondTutorialFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.continueButton.setOnClickListener {
-            findNavController().popBackStack()
+            dismissAllowingStateLoss()
             levelViewModel.logTutorialComplete()
         }
 
         this.dialog?.let { dialog ->
             val d = dialog as BottomSheetDialog
-            val bottomSheet = d.findViewById<View>(R.id.design_bottom_sheet) as FrameLayout
+            val bottomSheet = d.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as FrameLayout
             val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
             bottomSheetBehavior.peekHeight = bottomSheet.height

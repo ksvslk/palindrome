@@ -1,5 +1,7 @@
-<androidx.appcompat.widget.AppCompatImageView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.AppCompatImageView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:saveEnabled="false"
+    tools:viewBindingIgnore="true"
     android:layout_width="@dimen/_23sdp"
     android:layout_height="@dimen/_24sdp"
-    android:background="@drawable/ic_carriage_center"/>
+    android:background="@drawable/ic_carriage_center" />

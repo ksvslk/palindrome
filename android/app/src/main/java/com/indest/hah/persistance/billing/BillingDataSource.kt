@@ -16,7 +16,7 @@
 
 package com.sample.android.trivialdrivesample.billing
 
-import android.app.Activity
+import androidx.appcompat.app.AppCompatActivity
 import android.app.Application
 import android.os.Handler
 import android.os.Looper
@@ -66,6 +66,9 @@ private const val RECONNECT_TIMER_START_MILLISECONDS = 1L * 1000L
 private const val RECONNECT_TIMER_MAX_TIME_MILLISECONDS = 1000L * 60L * 15L // 15 minutes
 private const val SKU_DETAILS_REQUERY_TIME = 1000L * 60L * 60L * 4L // 4 hours
 
+@Suppress("KotlinConstantConditions", "KDocUnresolvedReference", "KDocUnresolvedReference",
+    "KDocUnresolvedReference"
+)
 class BillingDataSource private constructor(
     application: Application,
     private val defaultScope: CoroutineScope,
@@ -407,7 +410,7 @@ class BillingDataSource private constructor(
      * @param sku SKU (Product ID) to be purchased
      * @return true if launch is successful
      */
-    fun launchBillingFlow(activity: Activity?, sku: String) {
+    fun launchBillingFlow(activity: AppCompatActivity?, sku: String) {
         Log.d(TAG, "launchBillingFlow: $sku")
         val skuDetails = skuDetailsMap[sku]?.value
         Log.d(TAG, "skuDetails: $skuDetails")

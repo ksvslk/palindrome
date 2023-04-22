@@ -2,6 +2,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:saveEnabled="false"
+    tools:viewBindingIgnore="true"
     android:id="@+id/score_item"
     android:layout_width="match_parent"
     android:layout_height="@dimen/simple_dialog_item_height"
@@ -10,25 +12,31 @@
     android:orientation="horizontal">
 
     <androidx.appcompat.widget.LinearLayoutCompat
+        android:saveEnabled="false"
+        
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
-        android:background="?android:attr/selectableItemBackground"
+        android:background="?attr/selectableItemBackground"
         android:weightSum="8"
         android:orientation="horizontal">
 
         <ImageView
+            android:saveEnabled="false"
+            
             android:id="@+id/icon"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:contentDescription="@string/rewarded_place_letter"
             android:layout_marginHorizontal="@dimen/default_gap"
-            android:src="@drawable/letter_icon"
+            app:srcCompat="@drawable/letter_icon"
             app:tint="@color/colorOnPrimary"
             android:layout_weight="1"
             tools:ignore="RtlSymmetry" />
 
         <androidx.appcompat.widget.LinearLayoutCompat
+            android:saveEnabled="false"
+            
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
@@ -36,6 +44,8 @@
             android:orientation="vertical">
 
             <androidx.appcompat.widget.AppCompatTextView
+                android:saveEnabled="false"
+                
                 android:id="@+id/name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -44,6 +54,8 @@
                 android:textAppearance="@style/TextAppearance.OC.Body1" />
 
             <androidx.appcompat.widget.AppCompatTextView
+                android:saveEnabled="false"
+                
                 android:id="@+id/score"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -53,6 +65,8 @@
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <androidx.appcompat.widget.AppCompatTextView
+            android:saveEnabled="false"
+            
             android:id="@+id/rank"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

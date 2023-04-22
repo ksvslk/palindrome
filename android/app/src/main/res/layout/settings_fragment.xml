@@ -3,6 +3,7 @@
     xmlns:anybutton="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:saveEnabled="false"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
@@ -13,6 +14,8 @@
     app:showDividers="middle">
 
     <androidx.appcompat.widget.LinearLayoutCompat
+        android:saveEnabled="false"
+        
         android:id="@+id/settings_dialog_title"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_header_height"
@@ -20,6 +23,8 @@
         android:orientation="horizontal">
 
         <androidx.appcompat.widget.AppCompatTextView
+            android:saveEnabled="false"
+            
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -27,6 +32,8 @@
             android:textAppearance="@style/TextAppearance.OC.Headline5" />
 
         <androidx.appcompat.widget.AppCompatTextView
+            android:saveEnabled="false"
+            
             android:id="@+id/version_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -41,23 +48,29 @@
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.LinearLayoutCompat
+        android:saveEnabled="false"
+        
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:weightSum="2"
         android:orientation="horizontal">
 
         <androidx.appcompat.widget.LinearLayoutCompat
+            android:saveEnabled="false"
+            
             android:id="@+id/vibration_button"
             android:layout_width="wrap_content"
             android:layout_weight="1"
             android:layout_height="@dimen/simple_dialog_item_height"
             android:layout_margin="@dimen/_2sdp"
-            android:background="?android:attr/selectableItemBackground"
+            android:background="?attr/selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
             android:orientation="horizontal">
 
             <com.google.android.material.switchmaterial.SwitchMaterial
+                android:saveEnabled="false"
+                
                 android:id="@+id/vibration_switch"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -72,17 +85,21 @@
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <androidx.appcompat.widget.LinearLayoutCompat
+            android:saveEnabled="false"
+            
             android:id="@+id/sound_button"
             android:layout_width="wrap_content"
             android:layout_weight="1"
             android:layout_height="@dimen/simple_dialog_item_height"
             android:layout_margin="@dimen/_2sdp"
-            android:background="?android:attr/selectableItemBackground"
+            android:background="?attr/selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
             android:orientation="horizontal">
 
             <com.google.android.material.switchmaterial.SwitchMaterial
+                android:saveEnabled="false"
+                
                 android:id="@+id/sound_switch"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -99,16 +116,20 @@
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.LinearLayoutCompat
+        android:saveEnabled="false"
+        
         android:id="@+id/tutorial_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
         android:layout_margin="@dimen/_2sdp"
-        android:background="?android:attr/selectableItemBackground"
+        android:background="?attr/selectableItemBackground"
         android:clickable="true"
         android:focusable="true"
         android:orientation="horizontal">
 
         <androidx.appcompat.widget.AppCompatImageView
+            android:saveEnabled="false"
+            
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -121,6 +142,8 @@
             tools:ignore="RtlSymmetry" />
 
         <androidx.appcompat.widget.LinearLayoutCompat
+            android:saveEnabled="false"
+            
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginRight="@dimen/simple_dialog_header_left_margin"
@@ -130,6 +153,8 @@
             android:weightSum="2">
 
             <androidx.appcompat.widget.AppCompatTextView
+                android:saveEnabled="false"
+                
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -140,16 +165,20 @@
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.LinearLayoutCompat
+        android:saveEnabled="false"
+        
         android:id="@+id/rate_game_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
         android:layout_margin="@dimen/_2sdp"
-        android:background="?android:attr/selectableItemBackground"
+        android:background="?attr/selectableItemBackground"
         android:clickable="true"
         android:focusable="true"
         android:orientation="horizontal">
 
         <androidx.appcompat.widget.AppCompatImageView
+            android:saveEnabled="false"
+            
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
@@ -162,6 +191,8 @@
             tools:ignore="RtlSymmetry" />
 
         <androidx.appcompat.widget.AppCompatTextView
+            android:saveEnabled="false"
+            
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clickable="false"
@@ -171,11 +202,13 @@
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <com.indest.hah.views.AnyButton
+        android:saveEnabled="false"
+        
         android:id="@+id/share_button_settings"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
         android:layout_margin="@dimen/_2sdp"
-        android:background="?android:attr/selectableItemBackground"
+        android:background="?attr/selectableItemBackground"
         android:clickable="true"
         android:focusable="true"
         android:orientation="horizontal"
@@ -183,6 +216,8 @@
         anybutton:any_button_title="@string/share" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
+        android:saveEnabled="false"
+        
         android:id="@+id/google_sign_in_out_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
@@ -191,6 +226,8 @@
         android:orientation="vertical">
 
         <com.google.android.gms.common.SignInButton
+            android:saveEnabled="false"
+            
             android:id="@+id/google_sign_in_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -199,6 +236,8 @@
             android:visibility="gone" />
 
         <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:saveEnabled="false"
+            
             android:id="@+id/progress_circular"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -208,6 +247,8 @@
         </com.google.android.material.progressindicator.CircularProgressIndicator>
 
         <androidx.appcompat.widget.AppCompatTextView
+            android:saveEnabled="false"
+            
             android:id="@+id/google_sign_out_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -50,10 +50,10 @@ class ScoresFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.scoresDialogTitle1.setOnClickListener {
-            dismiss()
+            dismissAllowingStateLoss()
         }
         binding.scoresDialogTitle2.setOnClickListener {
-            dismiss()
+            dismissAllowingStateLoss()
         }
 
         if (levelViewModel.accountStatus.value in setOf(AccountStatus.SIGNED_IN, AccountStatus.SIGNED_IN_WITH_FIREBASE)) {
@@ -131,11 +131,11 @@ class ScoresFragment : BottomSheetDialogFragment() {
                         }
                         leaderBoardScores?.release()
                     }.addOnFailureListener {
-                        dismiss()
+                        dismissAllowingStateLoss()
                     }
             }
         } else {
-            dismiss()
+            dismissAllowingStateLoss()
         }
     }
 }

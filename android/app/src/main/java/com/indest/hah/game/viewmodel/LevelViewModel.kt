@@ -93,7 +93,8 @@ class LevelViewModel @Inject constructor(
 
     private fun isCurrentLevelLegit() =
         _currentLevel.value.levelInfo.levelId > 0 &&
-                _currentLevel.value.solutions.isNotEmpty()
+                _currentLevel.value.solutions.isNotEmpty() &&
+                _currentLevel.value.levelInfo.puzzle != ""
 
 
     private suspend fun getProgressAndText(): Pair<Int, String> {
@@ -160,12 +161,8 @@ class LevelViewModel @Inject constructor(
                     variousEventChannel.send(VariousEvent.LoadGame)
                 }
                 AccountStatus.SIGNED_OUT -> {
-                    Log.d(TAG, "SIGNED_OUT")
-                    if (isCurrentLevelLegit()) {
-                        Log.d(TAG, "SIGNED_OUT -> current level legit, GameEvent.DisplayLevel")
-                        val progress = getProgressAndText()
-                        gameEventChannel.send(GameEvent.DisplayLevel(_currentLevel.value, progress))
-                    } else {
+
+                    if(!isCurrentLevelLegit()) {
                         Log.d(TAG, "SIGNED_OUT -> start collecting level updates")
                         startCollectingLevelUpdate()
                     }

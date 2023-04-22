@@ -1,10 +1,15 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:saveEnabled="false"
+    tools:viewBindingIgnore="true"
     android:layout_width="match_parent"
     android:layout_height="@dimen/_48sdp"
     android:layout_marginLeft="@dimen/default_margin"
     android:layout_marginRight="@dimen/default_margin"
     android:gravity="center">
     <TextView
+        android:saveEnabled="false"
+        
         android:id="@+id/levelSelectView"
         android:gravity="center"
         android:layout_width="match_parent"

@@ -44,8 +44,8 @@ class Letter @Inject constructor(
         context.getSharedPreferences(
             context.getString(R.string.app_preferences),
             Context.MODE_PRIVATE
-        )?.let {
-            if (isSoundEffectsEnabled && it.getBoolean(
+        )?.apply {
+            if (isSoundEffectsEnabled && this.getBoolean(
                     context.getString(
                         R.string.vibration_on_pref
                     ), true

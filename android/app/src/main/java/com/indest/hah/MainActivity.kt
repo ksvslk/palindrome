@@ -18,6 +18,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.forEach
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.enableSavedStateHandles
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
@@ -84,12 +85,11 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate")
+        super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         auth = Firebase.auth
-
         levelViewModel.setAccountStatus(AccountStatus.LOADING)
 
         val gamesSignInClient = PlayGames.getGamesSignInClient(this)
@@ -111,7 +111,7 @@ class MainActivity : AppCompatActivity() {
             val exclusions = listOf(Rect(0, 0, it.width, it.height))
             ViewCompat.setSystemGestureExclusionRects(binding.root, exclusions)
         }
-
+        Log.d(TAG, "All onCreate finished!")
     }
 
 
@@ -172,8 +172,9 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun collectPlayerLevelsForNotification() {
-        lifecycleScope.launch {
-            lifecycleScope.launchWhenCreated {
+        lifecycleScope.launch {/*
+            lifecycleScope.launchWhenCreated { */
+            lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 levelViewModel.newPlayerLevels.collectLatest { (levelNr, addedLevelsCount, author) ->
                     if (levelNr == -1 && addedLevelsCount == -1 && author == "") return@collectLatest
                     if (addedLevelsCount == 1) {
@@ -205,9 +206,11 @@ class MainActivity : AppCompatActivity() {
         val snack =
             Snackbar.make(findViewById(android.R.id.content), snackMessage, 15000)
                 .setAction("Play") {
-                    val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragments_container) as NavHostFragment
+                    val navHostFragment =
+                        supportFragmentManager.findFragmentById(R.id.fragments_container) as NavHostFragment
                     val navController = navHostFragment.navController
-                    val currentlyActiveFragment = navHostFragment.navController.currentDestination?.id
+                    val currentlyActiveFragment =
+                        navHostFragment.navController.currentDestination?.id
 
                     // Check if there is only one new level
                     if (multipleLevels == -1) {
@@ -240,7 +243,7 @@ class MainActivity : AppCompatActivity() {
                 )
         val params = snack.view.layoutParams as FrameLayout.LayoutParams
         params.gravity = Gravity.TOP
-        params.topMargin = resources.getDimension(R.dimen._16sdp).toInt()
+        params.topMargin = resources.getDimension(com.intuit.sdp.R.dimen._16sdp).toInt()
         snack.view.layoutParams = params
         snack.view.background =
             ContextCompat.getDrawable(applicationContext, R.drawable.new_level_message_rectangle)
@@ -370,6 +373,7 @@ class MainActivity : AppCompatActivity() {
                             val saveGame: SaveGame? = snapshotHelper.load(this@MainActivity)
                             levelViewModel.loadLatestLevelFromCloudOrLocal(saveGame)
                         }
+
                         is LevelViewModel.VariousEvent.SaveGame -> {
                             snapshotHelper.save(
                                 this@MainActivity,
@@ -377,9 +381,11 @@ class MainActivity : AppCompatActivity() {
                                 event.calculatedGameProgress
                             )
                         }
+
                         is LevelViewModel.VariousEvent.SubmitScore -> {
                             submitScore(event.score, event.playerLevels)
                         }
+
                         is LevelViewModel.VariousEvent.UnlockAchievement -> {
                             unlockAchievement(event.achievement)
                         }
@@ -486,6 +492,7 @@ class MainActivity : AppCompatActivity() {
                 showSadModeToast()
                 soundPlayer.play(soundPlayer.sounds.sadMode, volume = 0.5f)
             }
+
             false -> {
                 showNormalModeToast()
                 soundPlayer.play(soundPlayer.sounds.normalMode, volume = 0.5f)

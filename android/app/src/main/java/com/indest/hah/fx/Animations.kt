@@ -173,37 +173,7 @@ class Animations @Inject constructor(
         return animatorSet
     }
 
-    fun getLayoutTransition(): LayoutTransition {
-        val scaleDown: Animator = ObjectAnimator.ofPropertyValuesHolder(
-            null as Any?,
-            PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, 0f),
-            PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, 0f)
-        )
-        scaleDown.duration = 300
-        scaleDown.interpolator = DecelerateInterpolator()
-        val scaleUp: Animator = ObjectAnimator.ofPropertyValuesHolder(
-            null as Any?,
-            PropertyValuesHolder.ofFloat(View.SCALE_X, 0f, 1f),
-            PropertyValuesHolder.ofFloat(View.SCALE_Y, 0f, 1f)
-        )
-        scaleUp.duration = 300
-        scaleUp.startDelay = 300
-        scaleUp.interpolator = OvershootInterpolator(1.2f)
-
-        val itemLayoutTransition = LayoutTransition()
-        //itemLayoutTransition.setAnimator(LayoutTransition.APPEARING, scaleUp)
-        itemLayoutTransition.setAnimator(LayoutTransition.DISAPPEARING, scaleDown)
-
-        return itemLayoutTransition
-    }
-
     fun getLayoutTransitionFade(): LayoutTransition {
-   /*     val fadeOut: Animator = ObjectAnimator.ofPropertyValuesHolder(
-            null as Any?,
-            PropertyValuesHolder.ofFloat(View.ALPHA, 1f, 0f)
-        )
-        fadeOut.duration = 300
-        fadeOut.interpolator = DecelerateInterpolator()*/
         val fadeIn: Animator = ObjectAnimator.ofPropertyValuesHolder(
             null as Any?,
             PropertyValuesHolder.ofFloat(View.ALPHA, 0f, 1f)
@@ -213,7 +183,6 @@ class Animations @Inject constructor(
 
         val itemLayoutTransition = LayoutTransition()
         itemLayoutTransition.setAnimator(LayoutTransition.APPEARING, fadeIn)
-        //itemLayoutTransition.setAnimator(LayoutTransition.DISAPPEARING, fadeOut)
 
         return itemLayoutTransition
     }
@@ -334,15 +303,6 @@ class Animations @Inject constructor(
             }
         animatorSet.play(shakeX)
         return animatorSet
-    }
-
-    fun getContinueAnimation(tapToContinue: MessageSnackBar): ObjectAnimator {
-        val tapToContinueAnimation =
-            ObjectAnimator.ofFloat(tapToContinue.view, View.ALPHA, 1f, 0.5f)
-        tapToContinueAnimation.duration = 1000
-        tapToContinueAnimation.repeatCount = ObjectAnimator.INFINITE
-        tapToContinueAnimation.repeatMode = ObjectAnimator.REVERSE
-        return tapToContinueAnimation
     }
 
 }

@@ -1,5 +1,8 @@
+@file:Suppress("PropertyName")
+
 package com.indest.hah.other
 
+import android.annotation.SuppressLint
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -50,6 +53,7 @@ class LevelItemAdapter(
     }
 
     // Replace the contents of a view (invoked by the layout manager)
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(levelItemViewHolder: LevelItemViewHolder, position: Int) {
         Log.d(TAG, "onBindViewHolder")
         // Get element from your dataset at this position and replace the

@@ -1,6 +1,7 @@
 package com.indest.hah
 
 import android.app.Application
+import android.util.Log
 import com.google.firebase.FirebaseApp
 import com.google.firebase.appcheck.FirebaseAppCheck
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory

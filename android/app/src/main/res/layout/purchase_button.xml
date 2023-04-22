@@ -1,13 +1,8 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-  <!--  <com.google.android.material.progressindicator.LinearProgressIndicator
-        android:id="@+id/progress_bar"
-        android:translationZ="2dp"
-        android:indeterminate="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>-->
     <androidx.appcompat.widget.AppCompatImageView
+        android:saveEnabled="false"
+        tools:viewBindingIgnore="true"
         android:id="@+id/purchase_button_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -19,6 +14,8 @@
         tools:ignore="RtlSymmetry" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
+        android:saveEnabled="false"
+        
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clickable="false"
@@ -28,6 +25,8 @@
         android:weightSum="2">
 
         <androidx.appcompat.widget.LinearLayoutCompat
+            android:saveEnabled="false"
+            
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -36,6 +35,8 @@
             android:orientation="vertical">
 
             <androidx.appcompat.widget.AppCompatTextView
+                android:saveEnabled="false"
+                
                 android:id="@+id/purchase_button_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -44,6 +45,8 @@
                 android:textAppearance="@style/TextAppearance.OC.Body1" />
 
             <androidx.appcompat.widget.AppCompatTextView
+                android:saveEnabled="false"
+                
                 android:id="@+id/purchase_button_subtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -56,6 +59,8 @@
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <androidx.appcompat.widget.LinearLayoutCompat
+            android:saveEnabled="false"
+            
             android:id="@+id/purchase_button_label_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -64,6 +69,8 @@
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatTextView
+                android:saveEnabled="false"
+                
                 android:id="@+id/purchase_button_label_first"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -75,6 +82,8 @@
                 android:textColor="@color/colorOnPrimary" />
 
             <androidx.appcompat.widget.AppCompatTextView
+                android:saveEnabled="false"
+                
                 android:id="@+id/purchase_button_label_space"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -83,6 +92,8 @@
                 android:textAppearance="@style/TextAppearance.OC.Caption" />
 
             <androidx.appcompat.widget.AppCompatTextView
+                android:saveEnabled="false"
+                
                 android:id="@+id/purchase_button_label_second"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

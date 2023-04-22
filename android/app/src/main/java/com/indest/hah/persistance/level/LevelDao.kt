@@ -234,7 +234,7 @@ interface LevelDao {
     }
 
     @Transaction
-    @Query("select *, max(time_modified) from level_info_table")
+    @Query("select *, max(time_modified) from level_info_table where puzzle != ''")
     fun getLastLevel(): Flow<Level>
 
     @Query("update or ignore letter_info_table set friend_index = :newFriendIndex where home_index = :homeIndex and owner_id = :level")

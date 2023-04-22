@@ -26,9 +26,6 @@ class Effects @Inject constructor(
     val onReleaseColorChangeDuration: Long = 200L
     val animateToHomeDurationMultiplier = 50
 
-    // Audio, sound and vibration
-    private val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-
     // Colors
     private val actionDownNoFriend = AnimationColor(
         viewStart = ContextCompat.getColor(context, R.color.colorPrimary),
@@ -62,8 +59,8 @@ class Effects @Inject constructor(
         context.getSharedPreferences(
             context.getString(R.string.app_preferences),
             Context.MODE_PRIVATE
-        )?.let {
-            if (soundPlayer.isRingerModeNotNormal() || !it.getBoolean(
+        )?.apply {
+            if (soundPlayer.isRingerModeNotNormal() || !this.getBoolean(
                     context.getString(R.string.sound_on_pref),
                     true
                 )
@@ -101,31 +98,6 @@ class Effects @Inject constructor(
 
     fun getLockedTextColor(): Int {
         return ContextCompat.getColor(context, R.color.textOnRewardedColor)
-    }
-
-    fun addShortVibration(length: Long = 20) {
-        context.getSharedPreferences(
-            context.getString(R.string.app_preferences),
-            Context.MODE_PRIVATE
-        )?.let {
-            if (soundPlayer.isRingerModeNotSilent() && it.getBoolean(
-                    context.getString(
-                        R.string.vibration_on_pref
-                    ), true
-                )
-            ) {
-                if (Build.VERSION.SDK_INT >= 26) {
-                    vibrator.vibrate(
-                        VibrationEffect.createOneShot(
-                            length,
-                            VibrationEffect.DEFAULT_AMPLITUDE
-                        )
-                    )
-                } else {
-                    vibrator.vibrate(length)
-                }
-            }
-        }
     }
 
 }

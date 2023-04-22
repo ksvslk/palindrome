@@ -2,10 +2,15 @@
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:gravity="center_vertical"
+    android:saveEnabled="false"
+    tools:viewBindingIgnore="true"
     android:orientation="vertical">
 
     <androidx.appcompat.widget.AppCompatTextView
+        android:saveEnabled="false"
+        
         android:id="@+id/hint_revealed_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

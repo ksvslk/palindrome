@@ -1,6 +1,6 @@
 package com.indest.hah.general
 
-import android.app.Activity
+import androidx.appcompat.app.AppCompatActivity
 import android.app.Application
 import android.content.Context
 import android.content.Intent
@@ -152,11 +152,11 @@ class GeneralViewModel @Inject constructor(
         _rewardState.value = rewardType
     }
 
-    fun showRewardedVideo(activity: Activity, rewardType: RewardType) {
+    fun showRewardedVideo(activity: AppCompatActivity, rewardType: RewardType) {
         _adsLiveData.showRewardedVideo(activity, rewardType)
     }
 
-    fun launchBillingFlow(activity: Activity, sku: String) {
+    fun launchBillingFlow(activity: AppCompatActivity, sku: String) {
         _billingDataSource.launchBillingFlow(activity, sku)
     }
 

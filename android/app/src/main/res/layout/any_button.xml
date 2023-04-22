@@ -1,8 +1,10 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:viewBindingIgnore="true">
 
     <androidx.appcompat.widget.AppCompatImageView
+        android:saveEnabled="false"
+        
         android:id="@+id/any_button_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -13,6 +15,8 @@
         tools:ignore="RtlSymmetry" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
+        android:saveEnabled="false"
+        
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginRight="@dimen/simple_dialog_header_left_margin"
@@ -22,6 +26,8 @@
         android:weightSum="1">
 
         <androidx.appcompat.widget.LinearLayoutCompat
+            android:saveEnabled="false"
+            
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -30,6 +36,8 @@
             android:orientation="vertical">
 
             <androidx.appcompat.widget.AppCompatTextView
+                android:saveEnabled="false"
+                
                 android:id="@+id/any_button_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <style name="Theme.OC" parent="Base.Theme.OC">
         <item name="colorPrimary">@color/colorSecondary</item>
         <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>
@@ -23,6 +23,6 @@
         <item name="colorSecondary">@color/colorSecondary</item>
         <item name="colorSurface">@color/colorSurface</item>
         <item name="colorOnSurface">@color/colorOnPrimary</item>
-        <item name="android:backgroundTint">@color/darkBlue</item>
+        <item name="backgroundTint">@color/darkBlue</item>
     </style>
 </resources>

@@ -1,7 +1,8 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
         <androidx.appcompat.widget.AppCompatImageView
+            android:saveEnabled="false"
+            tools:viewBindingIgnore="true"
             android:id="@+id/reward_button_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -12,6 +13,8 @@
             tools:ignore="RtlSymmetry" />
 
         <ViewFlipper
+            android:saveEnabled="false"
+            
             android:id="@+id/reward_button_flipper"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -20,12 +23,16 @@
             android:outAnimation="@android:anim/slide_out_right">
 
             <androidx.appcompat.widget.LinearLayoutCompat
+                android:saveEnabled="false"
+                
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:orientation="vertical">
 
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:saveEnabled="false"
+                    
                     android:id="@+id/reward_button_flipper_revealed_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -34,6 +41,8 @@
                     android:textAppearance="@style/TextAppearance.OC.Body1" />
 
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:saveEnabled="false"
+                    
                     android:id="@+id/reward_button_flipper_revealed_subtitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -46,12 +55,16 @@
             </androidx.appcompat.widget.LinearLayoutCompat>
 
             <androidx.appcompat.widget.LinearLayoutCompat
+                android:saveEnabled="false"
+                
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:orientation="vertical">
 
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:saveEnabled="false"
+                    
                     android:id="@+id/reward_button_flipper_hidden_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

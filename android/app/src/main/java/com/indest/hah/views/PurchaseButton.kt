@@ -129,7 +129,7 @@ class PurchaseButton : LinearLayoutCompat {
             if (skus.isNotEmpty()) hideLabel()
             else showLabelIfApplicable()
             visibilityChangingSkus.forEach {
-                if (it.intersect(skus) == it) {
+                if (it.intersect(skus.toSet()) == it) {
                     purchasedInSomeWay = true
                     return@forEach
                 }

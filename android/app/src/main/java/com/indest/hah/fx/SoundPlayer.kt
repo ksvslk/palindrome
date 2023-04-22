@@ -23,21 +23,23 @@ class SoundPlayer @Inject constructor(
         context.getSharedPreferences(
             context.getString(R.string.app_preferences),
             Context.MODE_PRIVATE
-        )?.let {
+        )?.apply {
             if (audioManager.ringerMode != AudioManager.RINGER_MODE_NORMAL ||
-                !it.getBoolean(context.getString(R.string.sound_on_pref), true)
+                !this.getBoolean(context.getString(R.string.sound_on_pref), true)
             ) return
             soundPool.play(id, volume, volume, 1, 0, 1.0f)
         }
+
     }
 
     fun playNote(index: Int, volume: Float = 0.1f) {
+
         context.getSharedPreferences(
             context.getString(R.string.app_preferences),
             Context.MODE_PRIVATE
-        )?.let {
+        )?.apply {
             if (audioManager.ringerMode != AudioManager.RINGER_MODE_NORMAL ||
-                !it.getBoolean(context.getString(R.string.sound_on_pref), true)
+                !this.getBoolean(context.getString(R.string.sound_on_pref), true)
             ) return
             if (index <= (sounds.noteSounds.size - 1))
             {
@@ -50,7 +52,7 @@ class SoundPlayer @Inject constructor(
         }
     }
 
-    fun isRingerModeNotSilent(): Boolean {
+    private fun isRingerModeNotSilent(): Boolean {
         return audioManager.ringerMode != AudioManager.RINGER_MODE_SILENT
     }
 
@@ -62,14 +64,15 @@ class SoundPlayer @Inject constructor(
         context.getSharedPreferences(
             context.getString(R.string.app_preferences),
             Context.MODE_PRIVATE
-        )?.let {
-            if (isRingerModeNotSilent() && it.getBoolean(
+        )?.apply {
+            if (isRingerModeNotSilent() && this.getBoolean(
                     context.getString(R.string.vibration_on_pref),
                     true
-                ) && it.getBoolean(context.getString(R.string.sad_mode_pref), false)
+                ) && this.getBoolean(context.getString(R.string.sad_mode_pref), false)
             ) {
                 val doubleClickPattern = longArrayOf(0, 50, 50, 50)
                 val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+
                 when {
                     Build.VERSION.SDK_INT >= 26 -> {
                         vibrator.vibrate(

@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -92,7 +93,7 @@ class HintsFragment : BottomSheetDialogFragment() {
             if (!viewModel.currentLevel.value.levelInfo.categoryRewarded) {
                 when (binding.rewardCategoryButton.buttonState) {
                     AD -> {
-                        activity?.let {
+                        (activity as? AppCompatActivity)?.let {
                             viewModel.showRewardedVideo(it, CLUE)
                         }
                     }
@@ -116,7 +117,7 @@ class HintsFragment : BottomSheetDialogFragment() {
             when (binding.rewardPlaceLetter.buttonState) {
                 AD -> {
                     dismissAllowingStateLoss()
-                    activity?.let {
+                    (activity as? AppCompatActivity)?.let {
                         viewModel.showRewardedVideo(it, LETTER)
                     }
                 }
@@ -204,7 +205,7 @@ class HintsFragment : BottomSheetDialogFragment() {
             (view as? PurchaseButton)?.let { pb ->
                 pb.sku?.let { sku ->
                     Log.d(TAG, "launchBillingFlow: $sku")
-                    activity?.let {
+                    (activity as? AppCompatActivity)?.let {
                         viewModel.launchBillingFlow(it, sku)
                     }
                 }

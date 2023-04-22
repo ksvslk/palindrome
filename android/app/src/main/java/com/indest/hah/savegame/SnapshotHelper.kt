@@ -1,6 +1,6 @@
 package com.indest.hah.savegame
 
-import android.app.Activity
+import androidx.appcompat.app.AppCompatActivity
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
@@ -27,7 +27,7 @@ class SnapshotHelper @Inject constructor() {
     private val TAG = "SnapshotHelper"
     private val MY_RESOLUTION_POLICY = RESOLUTION_POLICY_MOST_RECENTLY_MODIFIED
 
-    fun save(activity: Activity, saveGame: SaveGame, calculatedGameProgress:Long)  {
+    fun save(activity: AppCompatActivity, saveGame: SaveGame, calculatedGameProgress:Long)  {
         val snapshotsClient = PlayGames.getSnapshotsClient(activity)
 
         Log.d(TAG, "Trying to save game..")
@@ -65,7 +65,7 @@ class SnapshotHelper @Inject constructor() {
         }
     }
 
-    suspend fun load(activity: Activity): SaveGame?  {
+    suspend fun load(activity: AppCompatActivity): SaveGame?  {
         try {
             val bytes = getSaveGameBytes(activity).await()
             if (bytes != null) {
@@ -79,7 +79,7 @@ class SnapshotHelper @Inject constructor() {
         return null
     }
 
-    private fun getSaveGameBytes(activity: Activity): Task<ByteArray?> {
+    private fun getSaveGameBytes(activity: AppCompatActivity): Task<ByteArray?> {
         val snapshotsClient = PlayGames.getSnapshotsClient(activity)
         return snapshotsClient.open(C.SAVE_GAME, true, MY_RESOLUTION_POLICY)
             .addOnFailureListener { Log.e(TAG, "Error while opening Snapshot.", it.cause) }
@@ -97,7 +97,7 @@ class SnapshotHelper @Inject constructor() {
     }
 
 
-    private fun getCoverImage(activity: Activity): Bitmap {
+    private fun getCoverImage(activity: AppCompatActivity): Bitmap {
         return BitmapFactory.decodeResource(activity.resources, com.indest.hah.R.drawable.o3)
             ?: Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
     }
@@ -109,7 +109,7 @@ class SnapshotHelper @Inject constructor() {
         coverImage: Bitmap,
         desc: String,
         progress: Long,
-        activity: Activity
+        activity: AppCompatActivity
     ): Task<SnapshotMetadata?> {
 
         val snapshotsClient = PlayGames.getSnapshotsClient(

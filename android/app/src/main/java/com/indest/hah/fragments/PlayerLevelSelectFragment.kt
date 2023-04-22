@@ -9,7 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
@@ -21,6 +23,7 @@ import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.other.LevelItemAdapter
 import com.indest.hah.other.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
@@ -49,19 +52,24 @@ class PlayerLevelSelectFragment : BottomSheetDialogFragment() {
 
     private fun setUpRecyclerView()
     {
-        lifecycleScope.launchWhenCreated {
+        //lifecycleScope.launchWhenCreated {
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 levelViewModel.allPlayerLevelsFlow().collect { playerLevels ->
-                    val currentLevel = levelViewModel.currentLevel.replayCache.firstOrNull()?.levelInfo?.levelId
+                    val currentLevel =
+                        levelViewModel.currentLevel.replayCache.firstOrNull()?.levelInfo?.levelId
                     val currentLevelIcon = getString(R.string.level_unknown)
-                    binding.playerLevelSelectRecyclerview.adapter = LevelItemAdapter(currentLevelIcon, currentLevel, playerLevels, true) {
-                        it?.levelId?.let { nr ->
-                            if (nr != currentLevel) {
-                                levelViewModel.changeLevel(nr)
-                                findNavController().safeNavigate(R.id.action_navigation_player_level_select_to_navigation_level)
+                    binding.playerLevelSelectRecyclerview.adapter =
+                        LevelItemAdapter(currentLevelIcon, currentLevel, playerLevels, true) {
+                            it?.levelId?.let { nr ->
+                                if (nr != currentLevel) {
+                                    levelViewModel.changeLevel(nr)
+                                    findNavController().safeNavigate(R.id.action_navigation_player_level_select_to_navigation_level)
+                                }
                             }
                         }
-                    }
                 }
+            }
         }
     }
 

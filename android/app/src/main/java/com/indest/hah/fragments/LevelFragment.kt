@@ -46,6 +46,8 @@ import com.indest.hah.views.Cell
 import com.indest.hah.views.MessageSnackBar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -79,6 +81,11 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED)
             {
+                if (levelViewModel.isShowScores()) {
+                    showPlayerCenteredScores()
+                }
+                showTutorial()
+
                 generalViewModel.rewardState.collect { rewardType ->
                     if (rewardType == LETTER)
                     {
@@ -86,6 +93,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                         cellDirector?.rewardWithRandomLetter()
                     }
                 }
+
             }
         }
     }
@@ -158,6 +166,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                 levelViewModel.gameEventFlow.collect { event ->
                     when (event) {
                         is LevelViewModel.GameEvent.DisplayLevel -> {
+                            Log.d(TAG, "GameEvent.DisplayLevel")
                             disableLoading()
                             clearMessages()
                             Log.d(TAG, event.level.levelInfo.toString())
@@ -216,11 +225,14 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
 
     private fun displayLevel(level: Level) {
+        Log.d(TAG, "displayLevel")
         binding.levelFragment.removeAllViews()
         binding.levelFragment.removeAllViewsInLayout()
+        Log.d(TAG, "removeAllViews")
         val densitySettings = levelCreator.getDensitySettings(binding.levelFragment, level)
         val areColumnsDifferent =
             level.levelInfo.columnCount != densitySettings.columnCount || level.levelInfo.author == "NewVersion"
+        Log.d(TAG, "areColumnsDifferent: $areColumnsDifferent")
         lifecycleScope.launch(Dispatchers.Main)
         {
             if (areColumnsDifferent) {
@@ -258,22 +270,11 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         }
 
         askForReview(level.levelInfo.levelId)
+        showSubmitPalindromesBadge(level.levelInfo.levelId)
 
-        if (level.levelInfo.levelId == 5)
-        {
-           if (levelViewModel.isAllowedToSubmitAndSignedInToFirebase())
-           {
-               showSubmitPalindromesBadge()
-           }
-        }
-
-        lifecycleScope.launchWhenResumed {
-            if (levelViewModel.isShowScores()) {
-                showPlayerCenteredScores()
-            }
-            showTutorial()
-        }
     }
+
+
 
 
     private fun activateBottomNavBar() {
@@ -313,10 +314,13 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         solutionData: SolutionData,
         isLastLevel: Pair<Boolean, Boolean> = Pair(false, false)
     ) {
+
         cellDirector?.getCells()?.let { cells ->
             val cellsAnimation = animations.getCorrectSolutionAnimation(cells)
+
             cellsAnimation.doOnEnd {
                 if (isAdded) {
+
                     playMaxScoreAnimation(solutionData.score, solutionData.maxScore)
                     val winningMessage = getWinningMessage(solutionData)
                     val scoreMessage = getScoreMessage()
@@ -525,25 +529,30 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     }
 
 
-    private fun showSubmitPalindromesBadge() {
-        if (isVisible) {
-            activity?.let {
-                val stagesBadge = it.findViewById<BottomNavigationView>(R.id.bottomNavView)
-                    .getOrCreateBadge(R.id.navigation_stages)
-                stagesBadge.backgroundColor =
-                    ContextCompat.getColor(it.applicationContext, R.color.hintsNotificationColor)
-                stagesBadge.badgeGravity = BadgeDrawable.TOP_END
-                val text = getString(R.string.send_a_cool_palindrome)
-                val duration = Toast.LENGTH_LONG
-                Toast.makeText(it.applicationContext, text, duration).show()
-                soundPlayer.play(soundPlayer.sounds.hintNotification)
-                if (!stagesBadge.isVisible) {
-                    stagesBadge.isVisible = true
+    private fun showSubmitPalindromesBadge(levelId: Int) {
+        if (levelId == 5)
+        {
+            if (levelViewModel.isAllowedToSubmitAndSignedInToFirebase())
+            {
+                if (isVisible) {
+                    activity?.let {
+                        val stagesBadge = it.findViewById<BottomNavigationView>(R.id.bottomNavView)
+                            .getOrCreateBadge(R.id.navigation_stages)
+                        stagesBadge.backgroundColor =
+                            ContextCompat.getColor(it.applicationContext, R.color.hintsNotificationColor)
+                        stagesBadge.badgeGravity = BadgeDrawable.TOP_END
+                        val text = getString(R.string.send_a_cool_palindrome)
+                        val duration = Toast.LENGTH_LONG
+                        Toast.makeText(it.applicationContext, text, duration).show()
+                        soundPlayer.play(soundPlayer.sounds.hintNotification)
+                        if (!stagesBadge.isVisible) {
+                            stagesBadge.isVisible = true
+                        }
+                    }
                 }
             }
         }
     }
-
 
     private fun askForReview(level: Int) {
         if (level == 8) {

@@ -54,9 +54,11 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         val newFriendIndexesForHomes = mutableListOf<Pair<Int, Int>>()
         try {
             if (info.levelInfo.author == "NewVersion") {
-                return Pair(true, migrateFromDatabase3_to_4(info, newColumnCount))
+                return Pair(true, migrateFromDatabase3to4(info, newColumnCount))
             }
             if (info.levelInfo.columnCount != -1 && info.levelInfo.columnCount != newColumnCount) {
+                Log.d(TAG, "ColumnCount: "+ info.levelInfo.columnCount)
+                Log.d(TAG, "newColumnCount: $newColumnCount")
                 val palindrome = info.solutions.first().palindrome
                 val puzzleOnlyLetters = getPuzzle(info)
                 val puzzleOnlyCount = puzzleOnlyLetters.count()
@@ -104,7 +106,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
     }
 
 
-    private fun migrateFromDatabase3_to_4(
+    private fun migrateFromDatabase3to4(
         info: Level,
         newColumnCount: Int
     ): MutableList<Pair<Int, Int>> {
@@ -181,14 +183,14 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         val palindrome = info.solutions.first().palindrome
         val columns = palindrome.split(" ").maxBy { it.length }.length
         val boxDecreaseRate = 1.01f
-        val smallGap = context.resources.getDimensionPixelSize(R.dimen._2sdp)
+        val smallGap = context.resources.getDimensionPixelSize(com.intuit.sdp.R.dimen._2sdp)
         val usableWidth = container.width
         val usableHeight = container.height
         val widthAndHeight = Pair(usableWidth, usableHeight)
         val maxBoxSize = context.resources.getDimension(R.dimen.max_box_size)
 
         val totalAreaRatio = (usableWidth.toFloat() / usableHeight.toFloat())
-        Log.d(TAG, "Usable height: ${usableHeight}")
+        Log.d(TAG, "Usable height: $usableHeight")
 
         val columnsEnd = max(7, palindrome.length)
         var closestColumnsRatio = Pair(columns, Float.MAX_VALUE)
@@ -242,6 +244,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
             )
 
         }
+
 
         val homeIndexNewFriendIndexes = getUpdatedLevelWithPossiblyNewColumnCount(
             info = info,

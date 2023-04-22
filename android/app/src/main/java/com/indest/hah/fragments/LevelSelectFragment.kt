@@ -9,7 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -20,6 +22,7 @@ import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.other.LevelItemAdapter
 import com.indest.hah.other.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class LevelSelectFragment : BottomSheetDialogFragment() {
@@ -45,28 +48,31 @@ class LevelSelectFragment : BottomSheetDialogFragment() {
         setUpRecyclerView()
     }
 
-    private fun setUpRecyclerView()
-    {
-        lifecycleScope.launchWhenCreated {
+    private fun setUpRecyclerView() {
+        // lifecycleScope.launchWhenCreated {
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 levelViewModel.allGameLevelsFlow().collect { levels ->
-                    val currentLevel = levelViewModel.currentLevel.replayCache.firstOrNull()?.levelInfo?.levelId
+                    val currentLevel =
+                        levelViewModel.currentLevel.replayCache.firstOrNull()?.levelInfo?.levelId
                     val currentLevelIcon = getCurrentLevelIcon(currentLevel)
-                    binding.levelSelectRecyclerview.adapter = LevelItemAdapter(currentLevelIcon, currentLevel, levels) {
-                        it?.levelId?.let { nr ->
-                            if (nr != currentLevel) {
-                                levelViewModel.changeLevel(nr)
-                                findNavController().safeNavigate(R.id.action_navigation_level_select_to_navigation_level)
+                    binding.levelSelectRecyclerview.adapter =
+                        LevelItemAdapter(currentLevelIcon, currentLevel, levels) {
+                            it?.levelId?.let { nr ->
+                                if (nr != currentLevel) {
+                                    levelViewModel.changeLevel(nr)
+                                    findNavController().safeNavigate(R.id.action_navigation_level_select_to_navigation_level)
+                                }
                             }
                         }
-                    }
                 }
+            }
         }
     }
 
-    private fun getCurrentLevelIcon(level:Int?):String
-    {
+    private fun getCurrentLevelIcon(level: Int?): String {
         level?.let {
-            return when(it) {
+            return when (it) {
                 in 1..20 -> getString(R.string.levels_1_20)
                 in 21..40 -> getString(R.string.levels_21_40)
                 in 41..60 -> getString(R.string.levels_41_60)
@@ -85,13 +91,11 @@ class LevelSelectFragment : BottomSheetDialogFragment() {
         return bottomSheetDialog
     }
 
-    private fun scrollToPositionOnShow(bottomSheetDialog:BottomSheetDialog)
-    {
+    private fun scrollToPositionOnShow(bottomSheetDialog: BottomSheetDialog) {
         bottomSheetDialog.setOnShowListener { dialog: DialogInterface ->
             val bsd = dialog as BottomSheetDialog
             bsd.behavior.state = STATE_EXPANDED
-            if (isVisible)
-            {
+            if (isVisible) {
                 levelViewModel.currentLevel.replayCache.firstOrNull()?.let {
                     binding.levelSelectRecyclerview.scrollToPosition(it.levelInfo.levelId - 1)
                 }

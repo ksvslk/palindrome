@@ -16,7 +16,7 @@ abstract class Cell<T, F>(context: Context) : AppCompatTextView(context) {
 
     init {
         val params = GridLayout.LayoutParams()
-        val dp = context.resources.getDimensionPixelSize(R.dimen._2sdp)
+        val dp = context.resources.getDimensionPixelSize(com.intuit.sdp.R.dimen._2sdp)
         params.setMargins(dp, dp, dp, dp)
         layoutParams = params
     }

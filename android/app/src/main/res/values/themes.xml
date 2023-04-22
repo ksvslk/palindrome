@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <style name="Theme.OC" parent="Base.Theme.OC">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>
@@ -20,15 +20,15 @@
 
     <!-- Base application theme. -->
     <style name="Base.Theme.OC" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-       <item name="android:windowNoTitle">true</item>
+       <item name="windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowActionBarOverlay">true</item>
+        <item name="windowActionBarOverlay">true</item>
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowTranslucentNavigation">true</item>
         <item name="fontFamily">@font/yantramanav_bold</item>
         <item name="android:transitionName">@transition/level_number_transition</item>
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor" >?attr/colorPrimaryVariant</item>
         <item name="materialAlertDialogTheme">@style/ThemeOverlay.App.MaterialAlertDialog</item>
         <item name="bottomSheetDialogTheme">@style/HehBottomSheetDialogTheme</item>
         <item name="bottomNavigationStyle">@style/Widget.MaterialComponents.BottomNavigationView</item>
@@ -56,7 +56,7 @@
         <item name="colorSecondary">@color/colorSecondary</item>
         <item name="colorSurface">@color/colorSurface</item>
         <item name="colorOnSurface">@color/colorOnPrimary</item>
-        <item name="android:backgroundTint">@color/colorSurface</item>
+        <item name="backgroundTint">@color/colorSurface</item>
         <item name="titleTextColor">@color/colorSurface</item>
     </style>
 

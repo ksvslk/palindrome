@@ -1,10 +1,13 @@
+@file:Suppress("PrivatePropertyName")
+
 package com.indest.hah.ads
 
-import android.app.Activity
+import androidx.appcompat.app.AppCompatActivity
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
@@ -18,6 +21,7 @@ import kotlin.math.min
 private const val AD_RELOAD_TIMER_START_MILLISECONDS = 1L * 1000L
 private const val AD_RELOAD_TIMER_MAX_TIME_MILLISECONDS = 1000L * 60L * 5L // 5 minutes
 
+@Suppress("PrivatePropertyName")
 class AdsLiveData (private val context: Context) : LiveData<Pair<Boolean, RewardType>>() {
     private val TAG = "AdsLiveData"
 
@@ -79,7 +83,7 @@ class AdsLiveData (private val context: Context) : LiveData<Pair<Boolean, Reward
         }
     }
 
-    fun showRewardedVideo(activity: Activity, rewardedType: RewardType) {
+    fun showRewardedVideo(activity: FragmentActivity, rewardedType: RewardType) {
         Log.d(TAG, "showRewardedVideo")
         _rewardedAd?.fullScreenContentCallback =
             object : FullScreenContentCallback() {
