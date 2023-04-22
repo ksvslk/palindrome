@@ -249,11 +249,13 @@ tasks.register('copyReleaseFilesToOneDirectory', Copy) {
     from layout.buildDirectory.file("outputs/bundle/instantRelease/app-instant-release.aab"),layout.buildDirectory.file("outputs/bundle/regularRelease/app-regular-release.aab")
     into layout.buildDirectory.dir("outputs/bundle/")
     dependencies {
-        ':app:produceRegularReleaseBundleIdeListingFile'
+
     }
 }
-
-
-tasks.findByName('copyReleaseFilesToOneDirectory').mustRunAfter ':app:bundleRelease'
+tasks.findByName('copyReleaseFilesToOneDirectory').mustRunAfter(':app:produceRegularReleaseBundleIdeListingFile')
+tasks.findByName('copyReleaseFilesToOneDirectory').dependsOn(':app:produceRegularReleaseBundleIdeListingFile')
+tasks.findByName('copyReleaseFilesToOneDirectory').mustRunAfter(':app:produceInstantReleaseBundleIdeListingFile')
+tasks.findByName('copyReleaseFilesToOneDirectory').dependsOn(':app:produceInstantReleaseBundleIdeListingFile')
+tasks.findByName('copyReleaseFilesToOneDirectory').mustRunAfter(':app:bundleRelease')
 tasks.findByName('copyReleaseFilesToOneDirectory').dependsOn(':app:bundleRelease')
 
