@@ -55,7 +55,6 @@ class LevelItemAdapter(
     // Replace the contents of a view (invoked by the layout manager)
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(levelItemViewHolder: LevelItemViewHolder, position: Int) {
-        Log.d(TAG, "onBindViewHolder")
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
         val levelNr = if (playerLevel) dataSet[position].second.levelId - 1000 else dataSet[position].second.levelId

@@ -24,6 +24,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.common.wrappers.InstantApps
 import com.google.android.gms.games.AuthenticationResult
 import com.google.android.gms.games.GamesSignInClient
 import com.google.android.gms.games.PlayGames
@@ -36,6 +37,7 @@ import com.google.android.ump.ConsentForm
 import com.google.android.ump.ConsentInformation
 import com.google.android.ump.ConsentRequestParameters
 import com.google.android.ump.UserMessagingPlatform
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PlayGamesAuthProvider
 import com.google.firebase.auth.ktx.auth
@@ -85,11 +87,11 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.d(TAG, "onCreate")
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         auth = Firebase.auth
+
         levelViewModel.setAccountStatus(AccountStatus.LOADING)
 
         val gamesSignInClient = PlayGames.getGamesSignInClient(this)
@@ -97,7 +99,7 @@ class MainActivity : AppCompatActivity() {
             handleAuthTask(gamesSignInClient, isAuthenticatedTask)
         }
         requestLatestConsentInformation()
-        MobileAds.initialize(applicationContext)
+        //MobileAds.initialize(applicationContext)
 
         generalViewModel.toString()
         applyCustomWindowInsets()
@@ -111,13 +113,11 @@ class MainActivity : AppCompatActivity() {
             val exclusions = listOf(Rect(0, 0, it.width, it.height))
             ViewCompat.setSystemGestureExclusionRects(binding.root, exclusions)
         }
-        Log.d(TAG, "All onCreate finished!")
     }
 
 
     override fun onStop() {
         super.onStop()
-        Log.d(TAG, "onStop")
         levelViewModel.saveGameImmediately()
     }
 
@@ -161,10 +161,6 @@ class MainActivity : AppCompatActivity() {
                 if (mTask.isSuccessful) {
                     levelViewModel.currentlySignedInPlayerName = mTask.result.displayName
                 }
-                Log.d(
-                    TAG,
-                    "setPlayerNameAndSignedInStatus_ set account status: ${accountStatus.name}"
-                )
                 levelViewModel.setAccountStatus(accountStatus)
             }
         }
@@ -290,10 +286,6 @@ class MainActivity : AppCompatActivity() {
                 reconnectMilliseconds * 2,
                 RECONNECT_TIMER_MAX_TIME_MILLISECONDS
             )
-            Log.d(
-                TAG,
-                "retryFirebaseSignInWithExponentialBackoff with reconnectMilliseconds: ${reconnectMilliseconds}"
-            )
         }
     }
 
@@ -301,7 +293,6 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         generalViewModel.refreshPurchasesTriedRedeem()
-        Log.d(TAG, "onResume")
     }
 
 
@@ -508,7 +499,6 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onDestroy() {
-        Log.d(TAG, "onDestroy")
         super.onDestroy()
     }
 

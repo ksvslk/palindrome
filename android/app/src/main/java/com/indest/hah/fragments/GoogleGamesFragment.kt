@@ -83,8 +83,6 @@ class GoogleGamesFragment : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
-        Log.d(TAG, "onCreateView")
         val b = GoogleGamesFragmentBinding.inflate(layoutInflater, container, false)
         _binding = b
         activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)

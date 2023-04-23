@@ -169,4 +169,10 @@
     <string name="levels_81_100">🦁</string>
     <string name="level_unknown">🌖</string>
 
+
+    <!-- ANALYTICS KEYS -->
+    <string name="analytics_user_prop">app_type</string>
+    <string name="status_installed">installed</string>
+    <string name="status_instant">instant</string>
+
 </resources>

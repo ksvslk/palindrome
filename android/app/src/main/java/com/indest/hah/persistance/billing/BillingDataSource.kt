@@ -103,7 +103,6 @@ class BillingDataSource private constructor(
     override fun onBillingSetupFinished(billingResult: BillingResult) {
         val responseCode = billingResult.responseCode
         val debugMessage = billingResult.debugMessage
-        Log.d(TAG, "onBillingSetupFinished: $responseCode $debugMessage")
         when (responseCode) {
             BillingClient.BillingResponseCode.OK -> {
                 // The billing client is ready. You can query purchases here.
@@ -199,10 +198,6 @@ class BillingDataSource private constructor(
                     )
                 } else {
                     for (skuDetails in skuDetailsList) {
-                        Log.d(
-                            TAG,
-                            "onSkuDetailsResponse: SKU: ${skuDetails.sku}, TITLE: ${skuDetails.title}, PRICE:${skuDetails.price}"
-                        )
                         val sku = skuDetails.sku
                         val detailsMutableFlow = skuDetailsMap[sku]
                         detailsMutableFlow?.tryEmit(skuDetails)
@@ -254,7 +249,6 @@ class BillingDataSource private constructor(
         purchases.
      */
     suspend fun refreshPurchases() {
-        Log.d(TAG, "Refreshing purchases.")
         val purchasesResult = billingClient.queryPurchasesAsync(BillingClient.SkuType.INAPP)
         val billingResult = purchasesResult.billingResult
         if (billingResult.responseCode != BillingClient.BillingResponseCode.OK) {
@@ -262,8 +256,6 @@ class BillingDataSource private constructor(
         } else {
             processPurchaseList(purchasesResult.purchasesList, knownInappSKUs)
         }
-
-        Log.d(TAG, "Refreshing purchases finished.")
     }
 
 
@@ -411,9 +403,7 @@ class BillingDataSource private constructor(
      * @return true if launch is successful
      */
     fun launchBillingFlow(activity: AppCompatActivity?, sku: String) {
-        Log.d(TAG, "launchBillingFlow: $sku")
         val skuDetails = skuDetailsMap[sku]?.value
-        Log.d(TAG, "skuDetails: $skuDetails")
         if (null != skuDetails) {
             val billingFlowParamsBuilder = BillingFlowParams.newBuilder()
             billingFlowParamsBuilder.setSkuDetails(skuDetails)
@@ -486,7 +476,6 @@ class BillingDataSource private constructor(
      */
     override fun onResume(owner: LifecycleOwner) {
         super.onResume(owner)
-        Log.d(TAG, "onResume")
         // this just avoids an extra purchase refresh after we finish a billing flow
         if (!billingFlowInProcess.value) {
             if (billingClient.isReady) {

@@ -32,19 +32,16 @@ class StagesFragment : BottomSheetDialogFragment() {
     private val levelViewModel: LevelViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        Log.d(TAG, "onViewCreated")
         super.onViewCreated(view, savedInstanceState)
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED)
             {
-                Log.d(TAG, "Lifecycle.State.RESUMED")
                 val isAllowedToSubmit = generalViewModel.isAllowedToSubmitPalindrome()
                 generalViewModel.internet.combine(levelViewModel.accountStatus) { i, a ->
                     Pair(i, a)
                 }.collect { (internet, accountStatus) ->
                     when (internet) {
                         true -> {
-                            Log.d(TAG, "isAllowedToSubmit: $isAllowedToSubmit")
                             binding.submitYourLevelButton.visibility = View.VISIBLE
                             if (accountStatus == AccountStatus.SIGNED_IN_WITH_FIREBASE) {
                                 binding.submitYourLevelButton.setOnClickListener {
@@ -83,7 +80,6 @@ class StagesFragment : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        Log.d(TAG, "onCreateView")
         val b = StagesFragmentBinding.inflate(layoutInflater, container, false)
         _binding = b
         binding.gameLevelsButton.setOnClickListener {

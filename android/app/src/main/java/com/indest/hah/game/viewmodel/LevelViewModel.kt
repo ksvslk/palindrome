@@ -77,12 +77,7 @@ class LevelViewModel @Inject constructor(
                     it.levelInfo.columnCount != _currentLevel.value.levelInfo.columnCount
                 val changeInLevelId = it.levelInfo.levelId != _currentLevel.value.levelInfo.levelId
                 _currentLevel.value = it
-                Log.d(TAG, "Current level: ${it.levelInfo}")
                 if (isCurrentLevelLegit() && (changeInColumnsCount || changeInLevelId)) {
-                    Log.d(
-                        TAG,
-                        "Latest level: ${it.levelInfo.levelId}, ${it.levelInfo}, Solutions: ${it.solutions}, Letters: ${it.lettersProperties}"
-                    )
                     val progress = getProgressAndText()
                     gameEventChannel.send(GameEvent.DisplayLevel(_currentLevel.value, progress))
                 }
@@ -153,22 +148,18 @@ class LevelViewModel @Inject constructor(
 
     fun setAccountStatus(accountStatus: AccountStatus) {
         _accountStatus.value = accountStatus
-        Log.d(TAG, "Set account status: ${_accountStatus.value}")
         viewModelScope.launch {
             when (accountStatus) {
                 AccountStatus.SIGNED_IN -> {
-                    Log.d(TAG, "SIGNED_IN -> VariousEvent.LoadGame")
                     variousEventChannel.send(VariousEvent.LoadGame)
                 }
                 AccountStatus.SIGNED_OUT -> {
 
                     if(!isCurrentLevelLegit()) {
-                        Log.d(TAG, "SIGNED_OUT -> start collecting level updates")
                         startCollectingLevelUpdate()
                     }
                 }
                 AccountStatus.LOADING -> {
-                    Log.d(TAG, "LOADING -> GameEvent.ShowLoading")
                     if (!isCurrentLevelLegit()) {
                         gameEventChannel.send(GameEvent.ShowLoading)
                     } else {
@@ -179,16 +170,9 @@ class LevelViewModel @Inject constructor(
                 AccountStatus.SIGNED_IN_WITH_FIREBASE -> {
                     if (_accountStatus.value != AccountStatus.SIGNED_IN) {
                         variousEventChannel.send(VariousEvent.LoadGame)
-                    } else {
-                        Log.d(
-                            TAG,
-                            "SIGNED_IN_WITH_FIREBASE -> Previous state is  AccountStatus.SIGNED_IN, ignore and do not load game again!"
-                        )
                     }
                 }
-                AccountStatus.NOT_SET -> {
-                    Log.d(TAG, "AccountStatus.NOT_SET")
-                }
+                AccountStatus.NOT_SET -> { }
             }
         }
     }
@@ -221,7 +205,6 @@ class LevelViewModel @Inject constructor(
 
     fun loadLatestLevelFromCloudOrLocal(saveGame: SaveGame?) {
         viewModelScope.launch(exceptionHandler) {
-            Log.d(TAG, "loadLatestLevelFromCloudOrLocal")
             if (saveGame != null) {
                 levelRepository.updateLocalGame(saveGame)
                 startCollectingLevelUpdate()
@@ -319,7 +302,6 @@ class LevelViewModel @Inject constructor(
     fun executeLevelCompleteActions(changeLevelTo: Int = _currentLevel.value.levelInfo.levelId + 1) {
         val levelNr = _currentLevel.value.levelInfo.levelId
         val hintInterval = getApplication<Application>().getString(R.string.hint_suggestion)
-        Log.d(TAG, "Change level to: ${changeLevelTo}")
         viewModelScope.launch {
             levelRepository.executeLevelCompleteTransaction(levelNr, hintInterval, changeLevelTo)
             levelRepository.increaseCount(getApplication<Application>().getString(R.string.sad_mode_interval))
@@ -332,7 +314,6 @@ class LevelViewModel @Inject constructor(
 
     fun executeLevelCompleteActionsFinal() {
         val levelNr = _currentLevel.value.levelInfo.levelId
-        Log.d(TAG, "executeLevelCompleteActionsFinal with level nr: $levelNr")
         val hintInterval = getApplication<Application>().getString(R.string.hint_suggestion)
         viewModelScope.launch {
             levelRepository.executeLevelCompleteTransactionFinal(levelNr, hintInterval)
@@ -696,14 +677,8 @@ class LevelViewModel @Inject constructor(
                                     return@EventListener
                                 }
                             }
-                            DocumentChange.Type.MODIFIED -> Log.d(
-                                TAG,
-                                "Modified level: " + dc.document.data
-                            )
-                            DocumentChange.Type.REMOVED -> Log.d(
-                                TAG,
-                                "Removed level: " + dc.document.data
-                            )
+                            DocumentChange.Type.MODIFIED -> {}
+                            DocumentChange.Type.REMOVED -> {}
                         }
                     }
                 }
@@ -755,7 +730,6 @@ class LevelViewModel @Inject constructor(
         fsDb.collection("user_submitted_levels")
             .add(level)
             .addOnSuccessListener { documentReference ->
-                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
                 viewModelScope.launch {
                     levelRepository.updateSubmissionTimestamp()
                     submissionChannel.send(SubmissionEvent.Succeeded)

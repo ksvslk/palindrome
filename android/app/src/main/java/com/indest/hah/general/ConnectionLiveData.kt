@@ -28,14 +28,11 @@ class ConnectionLiveData(context: Context) : LiveData<Boolean>() {
         if (validNetworks.size > 0) {
             if (isConnectedToInternet()) {
                 postValue(true)
-                Log.d(TAG, "Internet connection: YES.")
             } else {
                 postValue(false)
-                Log.d(TAG, "Internet connection: NO.")
             }
         } else {
             postValue(false)
-            Log.d(TAG, "Internet connection: NO.")
         }
     }
 

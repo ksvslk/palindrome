@@ -35,12 +35,10 @@ class AdsLiveData (private val context: Context) : LiveData<Pair<Boolean, Reward
     }
 
     override fun onActive() {
-        Log.d(TAG, "onActive")
         loadRewardedAd()
     }
 
     override fun onInactive() {
-        Log.d(TAG, "onInactive")
         _rewardedAd = null
         postValue(Pair(false, RewardType.NONE))
     }
@@ -57,7 +55,6 @@ class AdsLiveData (private val context: Context) : LiveData<Pair<Boolean, Reward
                     }
 
                     override fun onAdLoaded(rewardedAd: RewardedAd) {
-                        Log.d(TAG, "Ad was loaded.")
                         _rewardedAd = rewardedAd
                         postValue(Pair(true, RewardType.NONE))
                     }
@@ -71,7 +68,6 @@ class AdsLiveData (private val context: Context) : LiveData<Pair<Boolean, Reward
         {
             handler.postDelayed(
                 {
-                    Log.d(TAG, "Trying to reload ads. adReloadMilliseconds: $adReloadMilliseconds ")
                     loadRewardedAd()
                 },
                 adReloadMilliseconds
@@ -84,11 +80,9 @@ class AdsLiveData (private val context: Context) : LiveData<Pair<Boolean, Reward
     }
 
     fun showRewardedVideo(activity: FragmentActivity, rewardedType: RewardType) {
-        Log.d(TAG, "showRewardedVideo")
         _rewardedAd?.fullScreenContentCallback =
             object : FullScreenContentCallback() {
                 override fun onAdDismissedFullScreenContent() {
-                    Log.d(TAG, "Ad was dismissed.")
                     // Don't forget to set the ad reference to null so you
                     // don't show the ad a second time.
                     _rewardedAd = null
@@ -104,7 +98,6 @@ class AdsLiveData (private val context: Context) : LiveData<Pair<Boolean, Reward
                 }
 
                 override fun onAdFailedToShowFullScreenContent(adError: AdError) {
-                    Log.d(TAG, "Ad failed to show.")
                     // Don't forget to set the ad reference to null so you
                     // don't show the ad a second time.
                     _rewardedAd = null
@@ -113,13 +106,12 @@ class AdsLiveData (private val context: Context) : LiveData<Pair<Boolean, Reward
                 }
 
                 override fun onAdShowedFullScreenContent() {
-                    Log.d(TAG, "Ad showed fullscreen content.")
+
                 }
             }
         _rewardedAd?.show(
             activity
         ) {
-            Log.d(TAG, "User earned the reward.")
             _rewardEarned = true
         }
     }

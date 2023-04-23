@@ -11,9 +11,7 @@ import android.view.WindowManager
 import androidx.core.content.ContextCompat
 import androidx.core.text.isDigitsOnly
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.databinding.SubmissionFragmentBinding
@@ -21,7 +19,6 @@ import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.other.isPalindrome
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 class SubmissionFragment : BottomSheetDialogFragment() {
     private val TAG = "SubmissionFragment"
@@ -47,148 +44,131 @@ class SubmissionFragment : BottomSheetDialogFragment() {
         binding.sendLevelButton.isEnabled = false
         binding.sendLevelButton.alpha = 0.5f
 
-        lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
-                levelViewModel.allPalindromesFlow().collect { palindromes ->
-                    binding.enterPalindromeTextInputEditText.addTextChangedListener(object :
-                        TextWatcher {
-                        override fun beforeTextChanged(
-                            p0: CharSequence?,
-                            p1: Int,
-                            p2: Int,
-                            p3: Int
+        lifecycleScope.launchWhenCreated {
+            levelViewModel.allPalindromesFlow().collect { palindromes ->
+                binding.enterPalindromeTextInputEditText.addTextChangedListener(object :
+                    TextWatcher {
+                    override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                        //Log.d(TAG, "beforeTextChanged: $p0")
+                    }
+
+                    override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                        //Log.d(TAG, "onTextChanged: $p0")
+                    }
+                    override fun afterTextChanged(p0: Editable?) {
+                        levelViewModel.tempSubmissionPalindrome = p0.toString()
+                        val errors = mutableListOf<String>()
+                        if (p0.toString().isEmpty()) {
+                            errors.clear()
+                            binding.enterPalindromeTextInputLayout.error = null
+                            binding.enterPalindromeTextInputLayout.endIconDrawable = null
+                            binding.enterPalindromeTextInputLayout.errorIconDrawable = null
+                        } else if (p0.toString().length < resources.getInteger(R.integer.minUserPalindromeLength)) {
+                            errors.add(getString(R.string.min_length_error) + resources.getInteger(R.integer.minUserPalindromeLength))
+                            binding.enterPalindromeTextInputLayout.endIconDrawable = null
+                        } else if (palindromes.contains(
+                                p0?.toString()?.replace("[!?’,.;:'\\-\"\\s]".toRegex(), "")
+                            )
                         ) {
-                            //Log.d(TAG, "beforeTextChanged: $p0")
+                            errors.add(getString(R.string.palindrome_exists))
+                            binding.enterPalindromeTextInputLayout.endIconDrawable = null
+                        } else if (p0.toString().length > resources.getInteger(R.integer.maxUserPalindromeLength)) {
+                            errors.add(getString(R.string.max_length_error) + resources.getInteger(R.integer.maxUserPalindromeLength))
+                            binding.enterPalindromeTextInputLayout.endIconDrawable = null
                         }
-
-                        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                            //Log.d(TAG, "onTextChanged: $p0")
-                        }
-
-                        override fun afterTextChanged(p0: Editable?) {
-                            levelViewModel.tempSubmissionPalindrome = p0.toString()
-                            val errors = mutableListOf<String>()
-                            if (p0.toString().isEmpty()) {
-                                errors.clear()
+                        else if (p0.toString().isDigitsOnly()) {
+                            errors.add(getString(R.string.all_digits_error))
+                            binding.enterPalindromeTextInputLayout.endIconDrawable = null
+                        } else {
+                            errors.remove(
+                                getString(R.string.min_length_error) + resources.getInteger(
+                                    R.integer.minUserPalindromeLength
+                                )
+                            )
+                            errors.remove(
+                                getString(R.string.max_length_error) + resources.getInteger(
+                                    R.integer.maxUserPalindromeLength
+                                )
+                            )
+                            errors.remove(getString(R.string.palindrome_exists))
+                            if (p0.toString().isPalindrome()) {
+                                errors.remove(getString(R.string.not_a_palindrome_error))
                                 binding.enterPalindromeTextInputLayout.error = null
-                                binding.enterPalindromeTextInputLayout.endIconDrawable = null
                                 binding.enterPalindromeTextInputLayout.errorIconDrawable = null
-                            } else if (p0.toString().length < resources.getInteger(R.integer.minUserPalindromeLength)) {
-                                errors.add(
-                                    getString(R.string.min_length_error) + resources.getInteger(
-                                        R.integer.minUserPalindromeLength
+                                binding.enterPalindromeTextInputLayout.endIconDrawable =
+                                    ContextCompat.getDrawable(
+                                        requireContext(),
+                                        R.drawable.ic_baseline_check_circle_24
                                     )
-                                )
-                                binding.enterPalindromeTextInputLayout.endIconDrawable = null
-                            } else if (palindromes.contains(
-                                    p0?.toString()?.replace("[!?’,.;:'\\-\"\\s]".toRegex(), "")
-                                )
-                            ) {
-                                errors.add(getString(R.string.palindrome_exists))
-                                binding.enterPalindromeTextInputLayout.endIconDrawable = null
-                            } else if (p0.toString().length > resources.getInteger(R.integer.maxUserPalindromeLength)) {
-                                errors.add(
-                                    getString(R.string.max_length_error) + resources.getInteger(
-                                        R.integer.maxUserPalindromeLength
-                                    )
-                                )
-                                binding.enterPalindromeTextInputLayout.endIconDrawable = null
-                            } else if (p0.toString().isDigitsOnly()) {
-                                errors.add(getString(R.string.all_digits_error))
-                                binding.enterPalindromeTextInputLayout.endIconDrawable = null
                             } else {
-                                errors.remove(
-                                    getString(R.string.min_length_error) + resources.getInteger(
-                                        R.integer.minUserPalindromeLength
-                                    )
-                                )
-                                errors.remove(
-                                    getString(R.string.max_length_error) + resources.getInteger(
-                                        R.integer.maxUserPalindromeLength
-                                    )
-                                )
-                                errors.remove(getString(R.string.palindrome_exists))
-                                if (p0.toString().isPalindrome()) {
-                                    errors.remove(getString(R.string.not_a_palindrome_error))
-                                    binding.enterPalindromeTextInputLayout.error = null
-                                    binding.enterPalindromeTextInputLayout.errorIconDrawable = null
-                                    binding.enterPalindromeTextInputLayout.endIconDrawable =
-                                        ContextCompat.getDrawable(
-                                            requireContext(),
-                                            R.drawable.ic_baseline_check_circle_24
-                                        )
-                                } else {
-                                    errors.add(getString(R.string.not_a_palindrome_error))
-                                    binding.enterPalindromeTextInputLayout.endIconDrawable = null
-                                    binding.enterPalindromeTextInputLayout.error =
-                                        "Not a palindrome"
-                                    binding.enterPalindromeTextInputLayout.errorIconDrawable =
-                                        ContextCompat.getDrawable(
-                                            requireContext(),
-                                            R.drawable.ic_baseline_error_24
-                                        )
-                                }
-                            }
-                            if (errors.size > 1) {
-                                binding.enterPalindromeTextInputLayout.error =
-                                    errors.joinToString(", ")
-                            } else {
-                                binding.enterPalindromeTextInputLayout.error = errors.joinToString()
+                                errors.add(getString(R.string.not_a_palindrome_error))
+                                binding.enterPalindromeTextInputLayout.endIconDrawable = null
+                                binding.enterPalindromeTextInputLayout.error = "Not a palindrome"
                                 binding.enterPalindromeTextInputLayout.errorIconDrawable =
                                     ContextCompat.getDrawable(
                                         requireContext(),
                                         R.drawable.ic_baseline_error_24
                                     )
                             }
-
-                            if (errors.size == 0 && p0.toString().isNotEmpty()) {
-                                binding.enterPalindromeTextInputLayout.errorIconDrawable = null
-                                binding.sendLevelButton.alpha = 1f
-                                binding.sendLevelButton.isEnabled = true
-                            } else {
-                                binding.sendLevelButton.alpha = 0.5f
-                                binding.sendLevelButton.isEnabled = false
-                            }
                         }
-                    })
-                }
-                if (levelViewModel.tempSubmissionPalindrome.isNotEmpty())
-                    binding.enterPalindromeTextInputLayout.editText?.setText(levelViewModel.tempSubmissionPalindrome)
+                        if (errors.size > 1) {
+                            binding.enterPalindromeTextInputLayout.error =
+                                errors.joinToString(", ")
+                        } else {
+                            binding.enterPalindromeTextInputLayout.error = errors.joinToString()
+                            binding.enterPalindromeTextInputLayout.errorIconDrawable =
+                                ContextCompat.getDrawable(
+                                    requireContext(),
+                                    R.drawable.ic_baseline_error_24
+                                )
+                        }
+
+                        if (errors.size == 0 && p0.toString().isNotEmpty()) {
+                            binding.enterPalindromeTextInputLayout.errorIconDrawable = null
+                            binding.sendLevelButton.alpha = 1f
+                            binding.sendLevelButton.isEnabled = true
+                        } else {
+                            binding.sendLevelButton.alpha = 0.5f
+                            binding.sendLevelButton.isEnabled = false
+                        }
+                    }
+                })
             }
+            if (levelViewModel.tempSubmissionPalindrome.isNotEmpty())
+                binding.enterPalindromeTextInputLayout.editText?.setText(levelViewModel.tempSubmissionPalindrome)
+        }
 
-            binding.sendLevelButton.setOnClickListener {
-                lifecycleScope.launch {
-                    binding.enterPalindromeTextInputLayout.visibility = View.GONE
-                    binding.sendLevelFlipper.showNext()
-                    levelViewModel.submissionEventFlow.collect { event ->
-                        when (event) {
-                            LevelViewModel.SubmissionEvent.Succeeded -> {
-                                binding.sendLevelFlipper.showNext()
-                                binding.sendLevelSuccessView.visibility = View.VISIBLE
-                                binding.enterPalindromeTextInputLayout.visibility = View.GONE
-                                lifecycleScope.launch {
-                                    delay(3000)
-                                    dismissAllowingStateLoss()
-                                }
-                                this.cancel()
+        binding.sendLevelButton.setOnClickListener {
+            lifecycleScope.launchWhenCreated {
+                binding.enterPalindromeTextInputLayout.visibility = View.GONE
+                binding.sendLevelFlipper.showNext()
+                levelViewModel.submissionEventFlow.collect { event ->
+                    when (event) {
+                        LevelViewModel.SubmissionEvent.Succeeded -> {
+                            binding.sendLevelFlipper.showNext()
+                            binding.sendLevelSuccessView.visibility = View.VISIBLE
+                            binding.enterPalindromeTextInputLayout.visibility = View.GONE
+                            lifecycleScope.launchWhenCreated {
+                                delay(3000)
+                                dismissAllowingStateLoss()
                             }
-
-                            LevelViewModel.SubmissionEvent.Failed -> {
+                            this.cancel()
+                        }
+                        LevelViewModel.SubmissionEvent.Failed -> {
+                            binding.sendLevelFlipper.showNext()
+                            binding.sendLevelFailedView.visibility = View.VISIBLE
+                            binding.sendLevelFailedButton.setOnClickListener {
+                                binding.sendLevelFailedView.visibility = View.GONE
                                 binding.sendLevelFlipper.showNext()
-                                binding.sendLevelFailedView.visibility = View.VISIBLE
-                                binding.sendLevelFailedButton.setOnClickListener {
-                                    binding.sendLevelFailedView.visibility = View.GONE
-                                    binding.sendLevelFlipper.showNext()
-                                    binding.enterPalindromeTextInputLayout.visibility = View.VISIBLE
-                                }
-                                this.cancel()
+                                binding.enterPalindromeTextInputLayout.visibility = View.VISIBLE
                             }
+                            this.cancel()
                         }
                     }
                 }
-                lifecycleScope.launch {
-                    levelViewModel.submitUserLevel(binding.enterPalindromeTextInputLayout.editText?.text.toString())
-                }
+            }
+            lifecycleScope.launchWhenCreated {
+                levelViewModel.submitUserLevel(binding.enterPalindromeTextInputLayout.editText?.text.toString())
             }
         }
     }

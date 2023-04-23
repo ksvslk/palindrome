@@ -37,7 +37,6 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
     ): Pair<GridLayout, Pair<Boolean, List<Pair<Int, Int>>>> {
         val level = layoutInflater.inflate(R.layout.grid, container, false) as GridLayout
         level.columnCount = densitySettings.columnCount
-        Log.d(TAG, "DensitySettings: $densitySettings")
         addLetters(level, densitySettings, info, context)
         addSlots(info.solutions.first().palindrome, level, densitySettings, context)
         return Pair(
@@ -57,8 +56,6 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                 return Pair(true, migrateFromDatabase3to4(info, newColumnCount))
             }
             if (info.levelInfo.columnCount != -1 && info.levelInfo.columnCount != newColumnCount) {
-                Log.d(TAG, "ColumnCount: "+ info.levelInfo.columnCount)
-                Log.d(TAG, "newColumnCount: $newColumnCount")
                 val palindrome = info.solutions.first().palindrome
                 val puzzleOnlyLetters = getPuzzle(info)
                 val puzzleOnlyCount = puzzleOnlyLetters.count()
@@ -110,7 +107,6 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         info: Level,
         newColumnCount: Int
     ): MutableList<Pair<Int, Int>> {
-        Log.d(TAG, "migrateFromDatabase3_to_4")
         val newFriendIndexesForHomes = mutableListOf<Pair<Int, Int>>()
         val palindrome = info.solutions.first().palindrome
         val puzzleOnlyLetters = getPuzzle(info)
@@ -190,7 +186,6 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         val maxBoxSize = context.resources.getDimension(R.dimen.max_box_size)
 
         val totalAreaRatio = (usableWidth.toFloat() / usableHeight.toFloat())
-        Log.d(TAG, "Usable height: $usableHeight")
 
         val columnsEnd = max(7, palindrome.length)
         var closestColumnsRatio = Pair(columns, Float.MAX_VALUE)
@@ -206,11 +201,6 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
 
         val rowsCount =
             puzzleOnlyLetters.chunked(closestColumnsRatio.first).count() + getSolutionRows(palindrome, closestColumnsRatio.first).count()
-
-        Log.d(
-            TAG,
-            "Best columns count for this screen is ${closestColumnsRatio.first} with ratio ${closestColumnsRatio.second} (ideal is $totalAreaRatio)"
-        )
 
         var boxSize = maxBoxSize
 
@@ -310,7 +300,6 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                 ""
             ) { acc, li -> acc + li.letter }
 
-        Log.d(TAG, "puzzle: $puzzle")
         for ((_, l) in puzzle.withIndex()) {
             if (l.isWhitespace()) {
                 continue

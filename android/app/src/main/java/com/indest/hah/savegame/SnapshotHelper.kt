@@ -29,8 +29,6 @@ class SnapshotHelper @Inject constructor() {
 
     fun save(activity: AppCompatActivity, saveGame: SaveGame, calculatedGameProgress:Long)  {
         val snapshotsClient = PlayGames.getSnapshotsClient(activity)
-
-        Log.d(TAG, "Trying to save game..")
         snapshotsClient.open(
             C.SAVE_GAME,
             true,
@@ -48,13 +46,7 @@ class SnapshotHelper @Inject constructor() {
                             desc = "Calculated progress ${calculatedGameProgress}.",
                             progress = calculatedGameProgress,
                             activity
-                        ).addOnCompleteListener {
-                            if (task.isSuccessful) {
-                                Log.d(TAG, "Successfully written the snapshot!")
-                            } else {
-                                Log.d(TAG, "Failed to write snapshot!")
-                            }
-                        }
+                        )
                     }
                 } else {
                     throw task.exception ?: Exception("Could not save the snapshot.")

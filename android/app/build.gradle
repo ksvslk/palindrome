@@ -145,6 +145,10 @@ kapt {
     correctErrorTypes true
 }
 
+configurations.all {
+    exclude group: 'com.google.android.gms', module: 'play-services-safetynet'
+}
+
 apply plugin: 'com.google.gms.google-services'
 
 dependencies {
@@ -172,8 +176,8 @@ dependencies {
     def nav_version = '2.5.3'
     def lifecycle_version = '2.6.1'
     def lifecycle_runtime_ktx = '2.6.1'
-    def sdp_version = '1.0.6'
-    def ssp_version = '1.0.6'
+    def sdp_version = '1.1.0'
+    def ssp_version = '1.1.0'
     def window_manager_version = '1.0.0'
     def ads_version = '22.0.0'
     def billing_version = '4.1.0'
@@ -181,12 +185,9 @@ dependencies {
     def kotlinx_serialization = '1.3.3'
     def androidx_collection = "1.2.0"
     def play_core_ktx = "1.8.1"
-    def startup_runtime = "1.2.0-alpha02"
 
    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.3")
 
-
-    implementation "androidx.startup:startup-runtime:$startup_runtime"
     implementation "androidx.collection:collection-ktx:$androidx_collection"
 
     implementation platform("com.google.firebase:firebase-bom:$firebase_version")

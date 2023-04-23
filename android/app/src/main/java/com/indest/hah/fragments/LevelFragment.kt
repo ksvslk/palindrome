@@ -77,7 +77,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d(TAG, "onCreate")
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED)
             {
@@ -101,9 +100,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d(TAG, "onViewCreated")
         view.doOnLayout {
-            Log.d(TAG, "View width: ${view.width}")
             collectGameUpdates()
         }
     }
@@ -116,13 +113,11 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         }
         clearMessages()
         super.onDestroy()
-        Log.d(TAG, "onDestroy")
     }
 
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Log.d(TAG, "onDestroyView")
         _binding = null
     }
 
@@ -145,7 +140,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
     override fun onResume() {
         super.onResume()
-        Log.d(TAG, "onResume")
     }
 
     private fun clearMessages()
@@ -162,14 +156,11 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED)
             {
-                Log.d(TAG, "collectGameUpdates")
                 levelViewModel.gameEventFlow.collect { event ->
                     when (event) {
                         is LevelViewModel.GameEvent.DisplayLevel -> {
-                            Log.d(TAG, "GameEvent.DisplayLevel")
                             disableLoading()
                             clearMessages()
-                            Log.d(TAG, event.level.levelInfo.toString())
                             if (event.level.levelInfo.progress == LevelProgress.INTERMEDIATE) {
                                 displayLevel(event.level)
                                 showContinueMessage(levelViewModel.isLastLevel())
@@ -180,7 +171,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                             }
                         }
                         is LevelViewModel.GameEvent.SolutionResult -> {
-                            Log.d(TAG, "GameEvent.SolutionResult")
                             when (event.solutionData.solution) {
                                 CORRECT -> {
                                     showCorrectEffects(event.solutionData, event.isLastLevel)
@@ -196,7 +186,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                             }
                         }
                         LevelViewModel.GameEvent.ShowLoading -> {
-                            Log.d(TAG, "GameEvent.ShowLoading")
                             enableLoading()
                         }
                     }
@@ -225,18 +214,14 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
 
     private fun displayLevel(level: Level) {
-        Log.d(TAG, "displayLevel")
         binding.levelFragment.removeAllViews()
         binding.levelFragment.removeAllViewsInLayout()
-        Log.d(TAG, "removeAllViews")
         val densitySettings = levelCreator.getDensitySettings(binding.levelFragment, level)
         val areColumnsDifferent =
             level.levelInfo.columnCount != densitySettings.columnCount || level.levelInfo.author == "NewVersion"
-        Log.d(TAG, "areColumnsDifferent: $areColumnsDifferent")
         lifecycleScope.launch(Dispatchers.Main)
         {
             if (areColumnsDifferent) {
-                Log.d(TAG, "Different columns. Change friend indexes.")
                 val newIndexes =
                     levelCreator.getUpdatedLevelWithPossiblyNewColumnCount(
                         level,
@@ -263,7 +248,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                 }
             }
             binding.levelFragment.addView(levelGridLayout.first)
-            Log.d(TAG, "Added level grid to the root view.")
         }
         if (areColumnsDifferent) {
             return
@@ -564,7 +548,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                         val reviewInfo = task.result
                         val flow = reviewManager.launchReviewFlow(it, reviewInfo)
                         flow.addOnCompleteListener { _ ->
-                            Log.d(TAG, "Review flow completed.")
                         }
                     } else {
                         Log.e(TAG, "Error requesting review flow: ${task.exception?.message}")

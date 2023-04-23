@@ -36,14 +36,12 @@ class LevelSelectFragment : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        Log.d(TAG, "onCreateView")
         _binding = LevelSelectFragmentBinding.inflate(layoutInflater, container, false)
         activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        Log.d(TAG, "onViewCreated")
         super.onViewCreated(view, savedInstanceState)
         setUpRecyclerView()
     }
@@ -85,7 +83,6 @@ class LevelSelectFragment : BottomSheetDialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        Log.d(TAG, "onCreateDialog")
         val bottomSheetDialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
         scrollToPositionOnShow(bottomSheetDialog)
         return bottomSheetDialog

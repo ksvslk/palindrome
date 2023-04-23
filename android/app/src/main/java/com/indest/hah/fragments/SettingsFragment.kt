@@ -88,7 +88,6 @@ class SettingsFragment : BottomSheetDialogFragment() {
                             binding.googleSignOutButton.text = "Signed in as ${levelViewModel.currentlySignedInPlayerName}"
                         }
                         AccountStatus.SIGNED_OUT -> {
-                            Log.d(TAG, "Signed out.")
                             binding.progressCircular.visibility = View.GONE
                             binding.googleSignOutButton.visibility = View.GONE
                             binding.googleSignInButton.visibility = View.VISIBLE
@@ -97,11 +96,9 @@ class SettingsFragment : BottomSheetDialogFragment() {
                             binding.progressCircular.visibility = View.VISIBLE
                             binding.googleSignOutButton.visibility = View.GONE
                             binding.googleSignInButton.visibility = View.GONE
-                            Log.d(TAG, "Loading, signing in!")
                         }
                         AccountStatus.NOT_SET -> {}
                         AccountStatus.SIGNED_IN_WITH_FIREBASE -> {
-                            Log.d(TAG, "Signed in with firebase.")
                             binding.progressCircular.visibility = View.GONE
                             binding.googleSignInButton.visibility = View.GONE
                             binding.googleSignOutButton.visibility = View.VISIBLE
@@ -162,7 +159,6 @@ class SettingsFragment : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        Log.d(TAG, "onCreateView")
         val b = SettingsFragmentBinding.inflate(layoutInflater, container, false)
         _binding = b
         activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)

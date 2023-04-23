@@ -2,7 +2,9 @@ package com.indest.hah
 
 import android.app.Application
 import android.util.Log
+import com.google.android.gms.common.wrappers.InstantApps
 import com.google.firebase.FirebaseApp
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.appcheck.FirebaseAppCheck
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import dagger.hilt.android.HiltAndroidApp
@@ -20,6 +22,12 @@ class CoolApplication : Application() {
         firebaseAppCheck.installAppCheckProviderFactory(
             //DebugAppCheckProviderFactory.getInstance()
             PlayIntegrityAppCheckProviderFactory.getInstance()
+        )
+        FirebaseAnalytics.getInstance(applicationContext).setUserProperty(
+            getString(R.string.analytics_user_prop),
+            if (InstantApps.isInstantApp(applicationContext)) getString(R.string.status_instant) else getString(
+                R.string.status_installed
+            )
         )
 
 /*       if (BuildConfig.DEBUG)

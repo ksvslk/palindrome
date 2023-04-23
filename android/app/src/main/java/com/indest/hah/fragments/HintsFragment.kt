@@ -17,6 +17,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.google.android.gms.ads.MobileAds
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
@@ -62,7 +63,6 @@ class HintsFragment : BottomSheetDialogFragment() {
                 }
                 launch {
                     viewModel.rewardState.distinctUntilChangedBy { it }.collect {
-                        Log.d(TAG, "Reward actually given: $it")
                         handleRewards(it)
                     }
                 }
@@ -174,7 +174,6 @@ class HintsFragment : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        Log.d(TAG, "onCreateView")
         val b = HintsFragmentBinding.inflate(layoutInflater, container, false)
         _binding = b
 
@@ -204,7 +203,6 @@ class HintsFragment : BottomSheetDialogFragment() {
         view?.setOnClickListener {
             (view as? PurchaseButton)?.let { pb ->
                 pb.sku?.let { sku ->
-                    Log.d(TAG, "launchBillingFlow: $sku")
                     (activity as? AppCompatActivity)?.let {
                         viewModel.launchBillingFlow(it, sku)
                     }

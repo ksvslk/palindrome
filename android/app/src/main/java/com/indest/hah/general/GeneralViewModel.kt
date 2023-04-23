@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.app.Application
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.core.os.bundleOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.asFlow
@@ -134,7 +133,6 @@ class GeneralViewModel @Inject constructor(
             launch {
                 levelRepository.intervalAttainedFlow(application.getString(R.string.sad_mode_interval))
                     .distinctUntilChanged().collect {
-                        Log.d(TAG, "Interval reached: $it")
                         levelRepository.setCountTo(
                             application.getString(R.string.sad_mode_interval),
                             0
