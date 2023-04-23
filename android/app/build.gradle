@@ -167,7 +167,7 @@ dependencies {
     def gridlayout_version = '1.0.0'
     def constraintlayout_version = '2.1.4'
     def material_version = '1.8.0'
-    def appcompat_version = '1.6.1'
+    def appcompat_version = '1.4.1'
     def androidx_core_version = '1.10.0'
     def junit_version = '4.13.2'
     def coroutines_test_version = '1.5.2'
@@ -235,6 +235,7 @@ dependencies {
     implementation "androidx.sqlite:sqlite-ktx:$sqlite_version"
     implementation "androidx.sqlite:sqlite-framework:$sqlite_version"
     kapt "androidx.hilt:hilt-compiler:$hilt_work_version"
+    implementation 'com.google.android.ump:user-messaging-platform:2.0.0'
 
     //debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.8.1'
     testImplementation 'uk.co.jemos.podam:podam:7.2.5.RELEASE'
@@ -249,9 +250,6 @@ dependencies {
 tasks.register('copyReleaseFilesToOneDirectory', Copy) {
     from layout.buildDirectory.file("outputs/bundle/instantRelease/app-instant-release.aab"),layout.buildDirectory.file("outputs/bundle/regularRelease/app-regular-release.aab")
     into layout.buildDirectory.dir("outputs/bundle/")
-    dependencies {
-
-    }
 }
 tasks.findByName('copyReleaseFilesToOneDirectory').mustRunAfter(':app:produceRegularReleaseBundleIdeListingFile')
 tasks.findByName('copyReleaseFilesToOneDirectory').dependsOn(':app:produceRegularReleaseBundleIdeListingFile')

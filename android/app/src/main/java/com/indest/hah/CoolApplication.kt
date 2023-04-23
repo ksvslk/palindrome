@@ -1,7 +1,6 @@
 package com.indest.hah
 
 import android.app.Application
-import android.util.Log
 import com.google.android.gms.common.wrappers.InstantApps
 import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
