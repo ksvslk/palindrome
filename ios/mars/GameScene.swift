@@ -14,8 +14,9 @@ class GameScene: SKScene {
         "MALAYALAM",
         "AMEN ICY CINEMA!",
         "TACO CAT",
-        "SUMS ARE NOT SET AS A TEST ON ERASMUS",
-        "DOC, NOTE I DISSENT: A FAST NEVER PREVENTS A FATNESS. I DIET ON COD."
+        "SUMS ARE NOT SET AS A TEST ON ERASMUS SUMS ARE NOT SET AS A TEST ON ERASMUS",
+        "DOC, NOTE I DISSENT: A FAST NEVER PREVENTS A FATNESS. I DIET ON COD.",
+        "DO ROOTS NAP? STOP! HAMMER TIME! EMIT R.E.M., MAH POTS! PANS, TOO, ROD! MAH POTS! PANS, TOO, ROD!MAH POTS! PANS, TOO, ROD!MAH POTS! PANS, TOO, ROD!"
     ]
     
 
@@ -46,7 +47,7 @@ class GameScene: SKScene {
         let centerX = self.frame.midX
         let centerY = self.frame.midY
    
-        gridNode.position = CGPoint(x: centerX - gridWidth/2 + slotSize.width/2, y: centerY + gridHeight)
+
 
         for (rowIndex, rowOfChars) in allCells.enumerated() {
             for (colIndex, char) in rowOfChars.enumerated() {
@@ -59,6 +60,7 @@ class GameScene: SKScene {
                 case (true, _):
                     let letter = Letter(letter: String(char), size: CGSize(width: slotSize.width, height: slotSize.height))
                     letter.position = CGPoint(x: CGFloat(colIndex) * (slotSize.width + spacing), y: -CGFloat(rowIndex) * (slotSize.height + spacing))
+                    print(letter.position)
                     letter.zPosition = 0
                     letter.isUserInteractionEnabled = true
                     gridNode.addChild(letter)
@@ -70,6 +72,13 @@ class GameScene: SKScene {
                 }
             }
         }
+       
+        print(viewSize)
+        print(gridWidth)
+        let height = ((CGFloat(boxSize) + spacing) * CGFloat(allCells.count-1))
+        let width = ((CGFloat(boxSize) + spacing) * CGFloat(numCols-1))
+        gridNode.position = CGPoint(x:-width/2,y:height/2)
+  
     }
 
     
