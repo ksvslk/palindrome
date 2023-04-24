@@ -14,7 +14,8 @@ class GameScene: SKScene {
         "MALAYALAM",
         "AMEN ICY CINEMA!",
         "TACO CAT",
-        "SUMS ARE NOT SET AS A TEST ON ERASMUS"
+        "SUMS ARE NOT SET AS A TEST ON ERASMUS",
+        "DOC, NOTE I DISSENT: A FAST NEVER PREVENTS A FATNESS. I DIET ON COD."
     ]
     
 
@@ -22,7 +23,7 @@ class GameScene: SKScene {
       
         let viewSize = CGSize(width: view.bounds.size.width, height: view.bounds.size.height)
         self.size = viewSize
-        let gameField = getDensitySettings(palindrome: palindromes[4], viewSize:viewSize)
+        let gameField = getDensitySettings(palindrome: palindromes[6], viewSize:viewSize)
         let allCells = gameField.letterRows + gameField.solutionRows
 
         // Create the grid node
