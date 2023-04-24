@@ -99,7 +99,7 @@ class MainActivity : AppCompatActivity() {
             handleAuthTask(gamesSignInClient, isAuthenticatedTask)
         }
         requestLatestConsentInformation()
-        //MobileAds.initialize(applicationContext)
+        MobileAds.initialize(applicationContext)
 
         generalViewModel.toString()
         applyCustomWindowInsets()
