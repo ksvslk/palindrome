@@ -21,7 +21,7 @@ class Cell: SKSpriteNode {
         super.init(texture: texture, color: color, size: size)
         self.homeIndex = homeIndex
         self.position = self.originalPosition
-        self.zPosition = 0
+        self.zPosition = C.NEUTRAL_LAYER
         self.anchorPoint = CGPoint(x: 0.5, y: 0.5)
     }
     

@@ -17,6 +17,7 @@ class Slot: Cell {
     
     init(homeIndex:Int, size: CGSize, originalPosition: CGPoint) {
         super.init(homeIndex: homeIndex, texture: nil, color: Theme.colorSecondaryVariant, size: size, originalPosition: originalPosition)
+        self.zPosition = C.BOTTOM_LAYER
     }
     
     required init?(coder aDecoder: NSCoder) {

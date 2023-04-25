@@ -8,7 +8,7 @@
 import Foundation
 
 class CellDirector {
-     
+    
     var cells: [Cell]
     
     init(cells: [Cell]) {
@@ -18,9 +18,13 @@ class CellDirector {
     
     func handleCollisions(letter: Letter)
     {
-        let candidateCells = getCandidateCells(letter: letter)
+        print("I AM NOW IN HANDLE COLLISIONS")
+        guard let candidateCells = getCandidateCells(letter: letter), !candidateCells.isEmpty else {
+            print("no candidate cells - send letter home")
+            return
+        }
         guard let closestCell = getClosestCell(to: letter, from: candidateCells) else {
-            print("sendLetterHome - no collisions")
+            print("no collisions - send letter home")
             return
         }
         
@@ -35,6 +39,7 @@ class CellDirector {
             if (closestCell.friend == nil)
             {
                 print("placeLetterInEmptyBox(letter, closestCell)")
+                placeLetterInEmptyBox(letter: letter, slot: closestCell as! Slot)
                 return
             }
             else if (closestCell.friend == letter) {
@@ -44,7 +49,38 @@ class CellDirector {
         case .none:
             return
         }
-
+        
+    }
+    
+    
+    private func placeLetterInEmptyBox(
+        letter: Letter,
+        slot: Slot,
+        isRewarded: Bool = false,
+        isLastRewardedLetter: Bool = false
+    ) {
+        
+        //TODO: Implement rewarded letter
+        letter.friend = nil
+        slot.friend = letter
+        letter.friend = slot
+        letter.originalPosition = slot.originalPosition
+        // TODO: adjust state of letter to animation?
+        //TODO: set different animation length for rewarded letter
+        //TODO: update friend index in database and if rewarded set it locked
+        //TODO: check if correct move and increase mistakes if so
+    }
+    
+    private func sendLetterHome(letter: Letter, isRewarded: Bool = false) {
+        if (isRewarded) {
+            letter.zPosition = C.MIDDLE_LAYER
+        }
+        if (letter.friend != nil) {
+            //TODO: increase mistakes
+            letter.friend?.friend = nil
+            letter.friend = nil
+            //TODO: update friend indexes
+        }
     }
     
     
@@ -55,7 +91,7 @@ class CellDirector {
     }
     
     
-    private func getCandidateCells(letter: Letter) -> [Cell] {
+    private func getCandidateCells(letter: Letter) -> Optional<[Cell]> {
         var candidateCells = [Cell]()
         
         for droppedTo in cells {

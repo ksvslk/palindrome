@@ -44,7 +44,7 @@ class Letter: Cell {
         let location = touch.location(in: self.parent!)
         
         if self.frame.contains(location) {
-            self.zPosition = 1
+            self.zPosition = C.TOP_LAYER
             isUserInteractionEnabled = false
             originalPosition = self.position
             state = CellState.dragging
@@ -71,12 +71,14 @@ class Letter: Cell {
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard state == CellState.dragging else { return }
         
+        //TODO: is this completed before code continues?
         cellDirector.handleCollisions(letter: self)
+        print("I AM NOW IN TOUCHES ENDED AFTER CALLING COLLISION FUNCTION")
         
         let moveAction = SKAction.move(to: originalPosition, duration: Letter.moveDuration)
         moveAction.timingMode = .easeInEaseOut
         self.run(moveAction) {
-            self.zPosition = 0
+            self.zPosition = C.NEUTRAL_LAYER
             self.animateColor(to: Theme.colorPrimary, duration: Letter.colorChangeDuration, timingMode: SKActionTimingMode.easeOut)
             let newScale = max(self.xScale - 0.2, 1.0)
             let scaleAction = SKAction.scale(to: newScale, duration: Letter.colorChangeDuration)
@@ -91,7 +93,7 @@ class Letter: Cell {
     // maybe abrupt end would be better here?
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard state == CellState.dragging else { return }
-        self.zPosition = 0
+        self.zPosition = C.NEUTRAL_LAYER
         self.state = CellState.home
         self.scale(to: CGSize(width: 1.0, height: 1.0))
         self.position = originalPosition
