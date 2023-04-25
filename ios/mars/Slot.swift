@@ -15,8 +15,8 @@ class Slot: Cell {
         set {}
     }
     
-    init(homeIndex:Int, size: CGSize, originalPosition: CGPoint) {
-        super.init(homeIndex: homeIndex, texture: nil, color: Theme.colorSecondaryVariant, size: size, originalPosition: originalPosition)
+    init(homeIndex:Int, size: CGSize, homePosition: CGPoint) {
+        super.init(homeIndex: homeIndex, texture: nil, color: Theme.colorSecondaryVariant, size: size, homePosition: homePosition)
         self.zPosition = C.BOTTOM_LAYER
     }
     

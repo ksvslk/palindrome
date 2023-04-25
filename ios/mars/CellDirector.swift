@@ -18,13 +18,14 @@ class CellDirector {
     
     func handleCollisions(letter: Letter)
     {
-        print("I AM NOW IN HANDLE COLLISIONS")
         guard let candidateCells = getCandidateCells(letter: letter), !candidateCells.isEmpty else {
             print("no candidate cells - send letter home")
+            sendLetterHome(letter: letter)
             return
         }
         guard let closestCell = getClosestCell(to: letter, from: candidateCells) else {
             print("no collisions - send letter home")
+            sendLetterHome(letter: letter)
             return
         }
         
@@ -60,15 +61,15 @@ class CellDirector {
         isLastRewardedLetter: Bool = false
     ) {
         
-        //TODO: Implement rewarded letter
+        // TODO: Implement rewarded letter
         letter.friend = nil
         slot.friend = letter
         letter.friend = slot
-        letter.originalPosition = slot.originalPosition
+        letter.currentPosition = slot.homePosition
         // TODO: adjust state of letter to animation?
-        //TODO: set different animation length for rewarded letter
-        //TODO: update friend index in database and if rewarded set it locked
-        //TODO: check if correct move and increase mistakes if so
+        // TODO: set different animation length for rewarded letter
+        // TODO: update friend index in database and if rewarded set it locked
+        // TODO: check if correct move and increase mistakes if so
     }
     
     private func sendLetterHome(letter: Letter, isRewarded: Bool = false) {
@@ -76,10 +77,11 @@ class CellDirector {
             letter.zPosition = C.MIDDLE_LAYER
         }
         if (letter.friend != nil) {
-            //TODO: increase mistakes
+            // TODO: increase mistakes
             letter.friend?.friend = nil
             letter.friend = nil
-            //TODO: update friend indexes
+            letter.currentPosition = letter.homePosition
+            // TODO: update friend indexes
         }
     }
     

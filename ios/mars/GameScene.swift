@@ -52,7 +52,7 @@ class GameScene: SKScene {
                     let letter = Letter(
                         homeIndex: rowIndex*colIndex,
                         letter: String(char), size: CGSize(width: slotSize.width, height: slotSize.height),
-                        originalPosition: CGPoint(x: CGFloat(colIndex) * (slotSize.width + spacing), y: -CGFloat(rowIndex) * (slotSize.height + spacing)),
+                        homePosition: CGPoint(x: CGFloat(colIndex) * (slotSize.width + spacing), y: -CGFloat(rowIndex) * (slotSize.height + spacing)),
                         cellDirector: cellDirector
                     )
                     gridNode.addChild(letter)
@@ -61,7 +61,7 @@ class GameScene: SKScene {
                     let slot = Slot(
                         homeIndex: rowIndex*colIndex,
                         size: CGSize(width: slotSize.width, height: slotSize.height),
-                        originalPosition: CGPoint(x: CGFloat(colIndex) * (slotSize.width + spacing), y: -CGFloat(rowIndex) * (slotSize.height + spacing))
+                        homePosition: CGPoint(x: CGFloat(colIndex) * (slotSize.width + spacing), y: -CGFloat(rowIndex) * (slotSize.height + spacing))
                     )
                     gridNode.addChild(slot)
                     cellDirector.cells.append(slot)

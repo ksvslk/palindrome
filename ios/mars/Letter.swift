@@ -18,9 +18,9 @@ class Letter: Cell {
     }
     private var cellDirector: CellDirector
     
-    init(homeIndex:Int, letter: String, size: CGSize, originalPosition: CGPoint, cellDirector: CellDirector) {
+    init(homeIndex:Int, letter: String, size: CGSize, homePosition: CGPoint, cellDirector: CellDirector) {
         self.cellDirector = cellDirector
-        super.init(homeIndex: homeIndex, texture: nil, color: Theme.colorPrimary, size: size, originalPosition: originalPosition)
+        super.init(homeIndex: homeIndex, texture: nil, color: Theme.colorPrimary, size: size, homePosition: homePosition)
         isUserInteractionEnabled = true
         let letterLabel = SKLabelNode(text: letter)
         letterLabel.fontName = Theme.letterFont
@@ -46,7 +46,7 @@ class Letter: Cell {
         if self.frame.contains(location) {
             self.zPosition = C.TOP_LAYER
             isUserInteractionEnabled = false
-            originalPosition = self.position
+            currentPosition = self.position
             state = CellState.dragging
             self.animateColor(to: Theme.colorSecondary, duration: Letter.colorChangeDuration, timingMode: SKActionTimingMode.easeInEaseOut)
             self.run(SKAction.scale(by: 1 + Letter.scaleAmount, duration: Letter.colorChangeDuration))
@@ -75,7 +75,7 @@ class Letter: Cell {
         cellDirector.handleCollisions(letter: self)
         print("I AM NOW IN TOUCHES ENDED AFTER CALLING COLLISION FUNCTION")
         
-        let moveAction = SKAction.move(to: originalPosition, duration: Letter.moveDuration)
+        let moveAction = SKAction.move(to: currentPosition, duration: Letter.moveDuration)
         moveAction.timingMode = .easeInEaseOut
         self.run(moveAction) {
             self.zPosition = C.NEUTRAL_LAYER
@@ -96,7 +96,7 @@ class Letter: Cell {
         self.zPosition = C.NEUTRAL_LAYER
         self.state = CellState.home
         self.scale(to: CGSize(width: 1.0, height: 1.0))
-        self.position = originalPosition
+        self.position = currentPosition
         self.isUserInteractionEnabled = true
     }
     
