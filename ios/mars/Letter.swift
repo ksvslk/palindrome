@@ -7,14 +7,19 @@
 
 import SpriteKit
 
-class Letter: Cell<Letter, Slot> {
+class Letter: Cell {
     
     static let moveDuration = 1.0
     static let colorChangeDuration = 0.5
     static let scaleAmount: CGFloat = 0.1
+    override var cellType : CellType {
+        get { return CellType.letter }
+        set {}
+    }
+    private var cellDirector: CellDirector
     
-    
-    init(homeIndex:Int, letter: String, size: CGSize, originalPosition: CGPoint) {
+    init(homeIndex:Int, letter: String, size: CGSize, originalPosition: CGPoint, cellDirector: CellDirector) {
+        self.cellDirector = cellDirector
         super.init(homeIndex: homeIndex, texture: nil, color: Theme.colorPrimary, size: size, originalPosition: originalPosition)
         isUserInteractionEnabled = true
         let letterLabel = SKLabelNode(text: letter)
@@ -65,6 +70,8 @@ class Letter: Cell<Letter, Slot> {
     // touch event is completed successfully
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard state == CellState.dragging else { return }
+        
+        cellDirector.handleCollisions(letter: self)
         
         let moveAction = SKAction.move(to: originalPosition, duration: Letter.moveDuration)
         moveAction.timingMode = .easeInEaseOut

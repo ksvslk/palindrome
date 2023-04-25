@@ -8,7 +8,12 @@
 import Foundation
 import SpriteKit
 
-class Slot: Cell<Slot, Letter> {
+class Slot: Cell {
+    
+    override var cellType : CellType {
+        get { return CellType.slot }
+        set {}
+    }
     
     init(homeIndex:Int, size: CGSize, originalPosition: CGPoint) {
         super.init(homeIndex: homeIndex, texture: nil, color: Theme.colorSecondaryVariant, size: size, originalPosition: originalPosition)

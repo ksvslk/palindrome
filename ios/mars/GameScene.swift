@@ -7,6 +7,7 @@ class GameScene: SKScene {
     let spacing = 5.0
     let edgePadding = 16
     let maxBoxSize = 40.0
+    var cellDirector:CellDirector = CellDirector(cells: [Cell]())
     
     let palindromes = [
         "DAD",
@@ -51,9 +52,11 @@ class GameScene: SKScene {
                     let letter = Letter(
                         homeIndex: rowIndex*colIndex,
                         letter: String(char), size: CGSize(width: slotSize.width, height: slotSize.height),
-                        originalPosition: CGPoint(x: CGFloat(colIndex) * (slotSize.width + spacing), y: -CGFloat(rowIndex) * (slotSize.height + spacing))
+                        originalPosition: CGPoint(x: CGFloat(colIndex) * (slotSize.width + spacing), y: -CGFloat(rowIndex) * (slotSize.height + spacing)),
+                        cellDirector: cellDirector
                     )
                     gridNode.addChild(letter)
+                    cellDirector.cells.append(letter)
                 case (false, _):
                     let slot = Slot(
                         homeIndex: rowIndex*colIndex,
@@ -61,6 +64,7 @@ class GameScene: SKScene {
                         originalPosition: CGPoint(x: CGFloat(colIndex) * (slotSize.width + spacing), y: -CGFloat(rowIndex) * (slotSize.height + spacing))
                     )
                     gridNode.addChild(slot)
+                    cellDirector.cells.append(slot)
                 }
             }
         }
@@ -68,7 +72,7 @@ class GameScene: SKScene {
         let height = ((CGFloat(boxSize) + spacing) * CGFloat(allCells.count - 1))
         let width = ((CGFloat(boxSize) + spacing) * CGFloat(numCols - 1))
         gridNode.position = CGPoint(x:-width/2,y:height/2)
-        
+
     }
     
     
