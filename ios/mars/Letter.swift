@@ -70,11 +70,15 @@ class Letter: Cell {
     // touch event is completed successfully
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard state == CellState.dragging else { return }
-        
-        //TODO: is this completed before code continues?
+       
         cellDirector.handleCollisions(letter: self)
-        print("I AM NOW IN TOUCHES ENDED AFTER CALLING COLLISION FUNCTION")
         
+        moveLetter()
+    }
+    
+    func moveLetter()
+    {
+        state = CellState.resolving
         let moveAction = SKAction.move(to: currentPosition, duration: Letter.moveDuration)
         moveAction.timingMode = .easeInEaseOut
         self.run(moveAction) {

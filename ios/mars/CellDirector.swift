@@ -33,6 +33,7 @@ class CellDirector {
         case CellType.letter:
             if (closestCell.state == CellState.home)
             {
+                switchLetterPositions(top: letter, bottom: closestCell as! Letter)
                 print(" switchLetterPositions(letter, closestCell)")
                 return
             }
@@ -61,15 +62,11 @@ class CellDirector {
         isLastRewardedLetter: Bool = false
     ) {
         
-        // TODO: Implement rewarded letter
+        // TODO: stuff missing
         letter.friend = nil
         slot.friend = letter
         letter.friend = slot
         letter.currentPosition = slot.homePosition
-        // TODO: adjust state of letter to animation?
-        // TODO: set different animation length for rewarded letter
-        // TODO: update friend index in database and if rewarded set it locked
-        // TODO: check if correct move and increase mistakes if so
     }
     
     private func sendLetterHome(letter: Letter, isRewarded: Bool = false) {
@@ -77,11 +74,49 @@ class CellDirector {
             letter.zPosition = C.MIDDLE_LAYER
         }
         if (letter.friend != nil) {
-            // TODO: increase mistakes
+            // TODO: stuff missing
             letter.friend?.friend = nil
             letter.friend = nil
             letter.currentPosition = letter.homePosition
-            // TODO: update friend indexes
+        }
+    }
+    
+    private func switchLetterPositions(
+        top: Letter,
+        bottom: Letter,
+        isRewarded: Bool = false
+    ) {
+        //TODO: stuff missing
+        let tempBottomCurrent = bottom.currentPosition
+        bottom.currentPosition = top.currentPosition
+        top.currentPosition = tempBottomCurrent
+        
+        let tempBottomHome = bottom.homePosition
+        bottom.homePosition = top.homePosition
+        top.homePosition = tempBottomHome
+        
+        switchFriends(bottom: bottom, top: top)
+        bottom.zPosition = C.MIDDLE_LAYER
+        bottom.moveLetter()
+    }
+    
+  
+    private func switchFriends(bottom: Letter, top: Letter) {
+        let bottomFriend = bottom.friend
+        let topFriend = top.friend
+        if (bottom.friend != nil && top.friend != nil) {
+            bottom.friend = topFriend
+            top.friend = bottomFriend
+            topFriend?.friend = bottom
+            bottomFriend?.friend = top
+        } else if (bottom.friend != nil && top.friend == nil) {
+            top.friend = bottomFriend
+            bottomFriend?.friend = top
+            bottom.friend = nil
+        } else if (top.friend != nil && bottom.friend == nil) {
+            bottom.friend = topFriend
+            topFriend?.friend = bottom
+            top.friend = nil
         }
     }
     
