@@ -8,35 +8,15 @@
 import Foundation
 import SpriteKit
 
-class Slot: SKSpriteNode {
+class Slot: Cell<Slot, Letter> {
     
-    var letter: Letter?
-    
-    func addLetter(_ letter: Letter) {
-        guard self.letter == nil else { return }
-        
-        self.letter = letter
-        letter.removeFromParent()
-        letter.position = self.position
-        self.parent?.addChild(letter)
+    init(homeIndex:Int, size: CGSize, originalPosition: CGPoint) {
+        super.init(homeIndex: homeIndex, texture: nil, color: Theme.colorSecondaryVariant, size: size, originalPosition: originalPosition)
     }
     
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let letter = letter, let touch = touches.first else { return }
-        
-        let location = touch.location(in: self.parent!)
-        
-        if self.frame.contains(location) {
-            letter.isDragging = false
-            
-            let moveAction = SKAction.move(to: self.position, duration: 0.2)
-            moveAction.timingMode = .easeOut
-            letter.run(moveAction)
-            
-            self.letter = nil
-        } else {
-            letter.isDragging = true
-        }
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
+   
 }

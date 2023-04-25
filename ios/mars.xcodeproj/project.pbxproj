@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		B141D53C29F6816200FE9B39 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B141D53B29F6816200FE9B39 /* Theme.swift */; };
 		B141D54329F6B44500FE9B39 /* yantramanav_bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B141D54029F681B300FE9B39 /* yantramanav_bold.ttf */; };
+		B163AA4429F7ED18006C8BE6 /* Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B163AA4329F7ED18006C8BE6 /* Cell.swift */; };
+		B163AA4829F7FA2F006C8BE6 /* CellState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B163AA4729F7FA2F006C8BE6 /* CellState.swift */; };
 		B1D2710229EDB24500E01AC8 /* GameField.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1D2710129EDB24500E01AC8 /* GameField.swift */; };
 		B1D2710429EDB2B700E01AC8 /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1D2710329EDB2B700E01AC8 /* Extension.swift */; };
 		B1E8974E29EC5001001B942F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1E8974D29EC5001001B942F /* AppDelegate.swift */; };
@@ -29,6 +31,8 @@
 		B141D53E29F681B300FE9B39 /* yantramanav_medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = yantramanav_medium.ttf; sourceTree = "<group>"; };
 		B141D53F29F681B300FE9B39 /* roboto_medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = roboto_medium.ttf; sourceTree = "<group>"; };
 		B141D54029F681B300FE9B39 /* yantramanav_bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = yantramanav_bold.ttf; sourceTree = "<group>"; };
+		B163AA4329F7ED18006C8BE6 /* Cell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cell.swift; sourceTree = "<group>"; };
+		B163AA4729F7FA2F006C8BE6 /* CellState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellState.swift; sourceTree = "<group>"; };
 		B1D2710129EDB24500E01AC8 /* GameField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameField.swift; sourceTree = "<group>"; };
 		B1D2710329EDB2B700E01AC8 /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
 		B1E8974A29EC5001001B942F /* mars.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = mars.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -84,6 +88,7 @@
 		B1E8974C29EC5001001B942F /* mars */ = {
 			isa = PBXGroup;
 			children = (
+				B163AA4329F7ED18006C8BE6 /* Cell.swift */,
 				B13A246729F6DCDA0045DF3D /* Info.plist */,
 				B141D53D29F6817700FE9B39 /* Fonts */,
 				B1E8974D29EC5001001B942F /* AppDelegate.swift */,
@@ -99,6 +104,7 @@
 				B1D2710129EDB24500E01AC8 /* GameField.swift */,
 				B1D2710329EDB2B700E01AC8 /* Extension.swift */,
 				B141D53B29F6816200FE9B39 /* Theme.swift */,
+				B163AA4729F7FA2F006C8BE6 /* CellState.swift */,
 			);
 			path = mars;
 			sourceTree = "<group>";
@@ -178,10 +184,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1E8975429EC5001001B942F /* GameScene.swift in Sources */,
+				B163AA4829F7FA2F006C8BE6 /* CellState.swift in Sources */,
 				B141D53C29F6816200FE9B39 /* Theme.swift in Sources */,
 				B1E8975629EC5001001B942F /* GameViewController.swift in Sources */,
 				B1D2710429EDB2B700E01AC8 /* Extension.swift in Sources */,
 				B1D2710229EDB24500E01AC8 /* GameField.swift in Sources */,
+				B163AA4429F7ED18006C8BE6 /* Cell.swift in Sources */,
 				B1E8974E29EC5001001B942F /* AppDelegate.swift in Sources */,
 				B1E8978C29ED42EE001B942F /* Slot.swift in Sources */,
 				B1E8978A29ED41EA001B942F /* Letter.swift in Sources */,
@@ -265,7 +273,7 @@
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_EXPAND_BUILD_SETTINGS = YES;
 				INFOPLIST_FILE = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -325,7 +333,7 @@
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_EXPAND_BUILD_SETTINGS = YES;
 				INFOPLIST_FILE = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -353,7 +361,7 @@
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -384,7 +392,7 @@
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

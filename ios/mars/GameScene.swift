@@ -2,7 +2,7 @@ import SpriteKit
 import GameplayKit
 
 class GameScene: SKScene {
-    
+        
     var gridNode: SKNode!
     let spacing = 5.0
     let edgePadding = 16
@@ -19,36 +19,26 @@ class GameScene: SKScene {
         "DO ROOTS NAP? STOP! HAMMER TIME! EMIT R.E.M., MAH POTS! PANS, TOO, ROD! MAH POTS! PANS, TOO, ROD!MAH POTS! PANS, TOO, ROD!MAH POTS! PANS, TOO, ROD!"
     ]
     
-
+    
     override func didMove(to view: SKView) {
-      
+        
         let viewSize = CGSize(width: view.bounds.size.width, height: view.bounds.size.height)
         self.size = viewSize
-        let gameField = getDensitySettings(palindrome: palindromes[6], viewSize:viewSize)
+        let gameField = getDensitySettings(palindrome: palindromes[1], viewSize:viewSize)
         let allCells = gameField.letterRows + gameField.solutionRows
-
+        
         // Create the grid node
         gridNode = SKNode()
         addChild(gridNode)
         
         // Set the number of rows and columns and box size
-        let numRows = gameField.letterRows.count
         let numCols = gameField.columns
         let boxSize = gameField.boxSize
-
+        
         // Set the size of each slot and the spacing between slots
         let slotSize = CGSize(width: Double(boxSize), height: Double(boxSize))
-
-        // Calculate the total width and height of the grid
-        let gridWidth = CGFloat(numCols) * slotSize.width + CGFloat(numCols - 1) * spacing
-        let gridHeight = CGFloat(numRows) * slotSize.height + CGFloat(numRows - 1) * spacing
-
-        // Set the position of the grid node to the center of the scene
-        let centerX = self.frame.midX
-        let centerY = self.frame.midY
-   
-
-
+        
+        
         for (rowIndex, rowOfChars) in allCells.enumerated() {
             for (colIndex, char) in rowOfChars.enumerated() {
                 switch (rowIndex < gameField.letterRows.count, char) {
@@ -58,29 +48,29 @@ class GameScene: SKScene {
                     space.zPosition = 0
                     gridNode.addChild(space)
                 case (true, _):
-                    let letter = Letter(letter: String(char), size: CGSize(width: slotSize.width, height: slotSize.height))
-                    letter.position = CGPoint(x: CGFloat(colIndex) * (slotSize.width + spacing), y: -CGFloat(rowIndex) * (slotSize.height + spacing))
-                    print(letter.position)
-                    letter.zPosition = 0
-                    letter.isUserInteractionEnabled = true
+                    let letter = Letter(
+                        homeIndex: rowIndex*colIndex,
+                        letter: String(char), size: CGSize(width: slotSize.width, height: slotSize.height),
+                        originalPosition: CGPoint(x: CGFloat(colIndex) * (slotSize.width + spacing), y: -CGFloat(rowIndex) * (slotSize.height + spacing))
+                    )
                     gridNode.addChild(letter)
                 case (false, _):
-                    let slot = SKSpriteNode(color: Theme.colorSecondaryVariant, size: CGSize(width: slotSize.width, height: slotSize.height) )
-                    slot.position = CGPoint(x: CGFloat(colIndex) * (slotSize.width + spacing), y: -CGFloat(rowIndex) * (slotSize.height + spacing))
-                    slot.zPosition = 0
+                    let slot = Slot(
+                        homeIndex: rowIndex*colIndex,
+                        size: CGSize(width: slotSize.width, height: slotSize.height),
+                        originalPosition: CGPoint(x: CGFloat(colIndex) * (slotSize.width + spacing), y: -CGFloat(rowIndex) * (slotSize.height + spacing))
+                    )
                     gridNode.addChild(slot)
                 }
             }
         }
-       
-        print(viewSize)
-        print(gridWidth)
-        let height = ((CGFloat(boxSize) + spacing) * CGFloat(allCells.count-1))
-        let width = ((CGFloat(boxSize) + spacing) * CGFloat(numCols-1))
+        
+        let height = ((CGFloat(boxSize) + spacing) * CGFloat(allCells.count - 1))
+        let width = ((CGFloat(boxSize) + spacing) * CGFloat(numCols - 1))
         gridNode.position = CGPoint(x:-width/2,y:height/2)
-  
+        
     }
-
+    
     
     func getDensitySettings(palindrome: String, viewSize: CGSize) -> GameField
     {
@@ -115,7 +105,7 @@ class GameScene: SKScene {
         let boxDecreaseRate = 1.05
         
         var exceedingWidth = getUsedWidth(columns: closestColumnsRatio.0, boxSize: Float(boxSize), gap: Int(spacing)) >= Float(viewSize.width)
-   
+        
         var exceedingHeight = getUsedHeight(rowsCount: solutionRows.count, boxSize: Float(boxSize), gap: Int(spacing)) >= Float(viewSize.height)
         
         while(exceedingWidth || exceedingHeight)
@@ -124,8 +114,8 @@ class GameScene: SKScene {
             exceedingWidth = getUsedWidth(columns: closestColumnsRatio.0, boxSize: Float(boxSize), gap: Int(spacing)) >= Float(viewSize.width)
             exceedingHeight = getUsedHeight(rowsCount: solutionRows.count, boxSize: Float(boxSize), gap: Int(spacing)) >= Float(viewSize.height)
         }
-
-
+        
+        
         return GameField(
             columns: closestColumnsRatio.0,
             letterRows: letterRows,
