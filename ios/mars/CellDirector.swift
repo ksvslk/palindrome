@@ -63,7 +63,7 @@ class CellDirector {
     ) {
         
         // TODO: stuff missing
-        letter.friend = nil
+        letter.friend?.friend = nil
         slot.friend = letter
         letter.friend = slot
         letter.currentPosition = slot.homePosition

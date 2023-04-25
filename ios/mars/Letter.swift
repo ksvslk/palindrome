@@ -9,7 +9,7 @@ import SpriteKit
 
 class Letter: Cell {
     
-    static let moveDuration = 1.0
+    static let moveDuration = 0.7
     static let colorChangeDuration = 0.5
     static let scaleAmount: CGFloat = 0.1
     override var cellType : CellType {
