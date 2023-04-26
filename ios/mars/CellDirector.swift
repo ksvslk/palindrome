@@ -15,7 +15,6 @@ class CellDirector {
         self.cells = cells
     }
     
-    
     func handleCollisions(letter: Letter)
     {
         guard let candidateCells = getCandidateCells(letter: letter), !candidateCells.isEmpty else {

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21513" systemVersion="21G419" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="GameLevel" representedClassName="GameLevel" syncable="YES" codeGenerationType="class">
+        <attribute name="levelNumber" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="level" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Level" inverseName="gameLevel" inverseEntity="Level"/>
+    </entity>
+    <entity name="Interval" representedClassName="Interval" syncable="YES" codeGenerationType="class">
+        <attribute name="currentCount" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="limitCount" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="name" attributeType="String" defaultValueString=""/>
+        <attribute name="timeStamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+    </entity>
+    <entity name="LetterData" representedClassName="LetterData" syncable="YES" codeGenerationType="class">
+        <attribute name="friendIndex" attributeType="Integer 64" defaultValueString="-888" usesScalarValueType="YES"/>
+        <attribute name="homeIndex" attributeType="Integer 64" defaultValueString="-888" usesScalarValueType="YES"/>
+        <attribute name="letter" attributeType="String" defaultValueString=""/>
+        <attribute name="locked" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <relationship name="level" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Level" inverseName="letters" inverseEntity="Level"/>
+    </entity>
+    <entity name="Level" representedClassName="Level" syncable="YES" codeGenerationType="class">
+        <attribute name="author" optional="YES" attributeType="String" defaultValueString=""/>
+        <attribute name="bestScore" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="categoryRewarded" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="columnCount" attributeType="Integer 64" defaultValueString="7" usesScalarValueType="YES"/>
+        <attribute name="progress" attributeType="Integer 64" defaultValueString="1" usesScalarValueType="YES"/>
+        <attribute name="score" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="timeModified" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="gameLevel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="GameLevel" inverseName="level" inverseEntity="GameLevel"/>
+        <relationship name="letters" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="LetterData" inverseName="level" inverseEntity="LetterData"/>
+        <relationship name="playerLevel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PlayerLevel" inverseName="level" inverseEntity="PlayerLevel"/>
+        <relationship name="solutions" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Solution" inverseName="level" inverseEntity="Solution"/>
+    </entity>
+    <entity name="PlayerLevel" representedClassName="PlayerLevel" syncable="YES" codeGenerationType="class">
+        <attribute name="author" attributeType="String" defaultValueString=""/>
+        <attribute name="levelNumber" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="level" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Level" inverseName="playerLevel" inverseEntity="Level"/>
+    </entity>
+    <entity name="Solution" representedClassName="Solution" syncable="YES" codeGenerationType="class">
+        <attribute name="hint" attributeType="String" defaultValueString=""/>
+        <attribute name="palindrome" attributeType="String" defaultValueString=""/>
+        <attribute name="solved" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <relationship name="level" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Level" inverseName="solutions" inverseEntity="Level"/>
+    </entity>
+</model>
