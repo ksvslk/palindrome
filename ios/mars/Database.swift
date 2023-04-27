@@ -8,14 +8,14 @@
 import Foundation
 import CoreData
 
-class ViewModel {
+class Database {
     
-    static let shared = ViewModel()
+    static let shared = Database()
     
     private let persistentContainer: NSPersistentContainer
     private let context: NSManagedObjectContext
     
-    var currentLevel: GameLevel?
+    var currentLevel: Level?
     
     private init() {
         persistentContainer = NSPersistentContainer(name: "Model")
@@ -30,14 +30,21 @@ class ViewModel {
     
     func saveInitialData() {
         let palindrome = "MMO"
-        let gameLevel = GameLevel(context: context)
-        gameLevel.levelNumber = 1
-        gameLevel.level = Level(context: context)
-        gameLevel.level?.score = 300
-        gameLevel.level?.letters = NSSet(array: getArrayOfLetters(palindrome: palindrome))
+        let level = Level(context: context)
+        level.levelNumber = 1
+        level.score = 300
+     
+        let lettersArray = palindrome.map { char in
+            let letter = LetterData(context: context)
+            letter.letter = String(char)
+            return letter
+        }
+        level.letters = NSSet(array: lettersArray)
+        
         let solution = Solution(context: context)
         solution.palindrome = "MOM"
-        gameLevel.level?.solutions = NSSet(array: [solution])
+        solution.hint = "Parent"
+        level.solutions = NSSet(array: [solution])
         
         do {
             try context.save()
@@ -46,30 +53,23 @@ class ViewModel {
         }
     }
     
+    
     func changeGameLevel(nr: Int)
     {
-        let request: NSFetchRequest<GameLevel> = GameLevel.fetchRequest()
+        
+        let request: NSFetchRequest<Level> = Level.fetchRequest()
         request.predicate = NSPredicate(format: "levelNumber = %@", String(nr))
         
-        var fetchedLevels: [GameLevel] = []
+        var fetchedLevels: [Level] = []
         do {
             fetchedLevels = try context.fetch(request)
         } catch {
             print("Error fetching level")
         }
         if !fetchedLevels.isEmpty { currentLevel = fetchedLevels.first }
-        print("Loaded level:", (currentLevel!.level?.letters))
+        print(currentLevel)
+        
     }
     
-    
-    func getArrayOfLetters(palindrome:String) -> [LetterData]
-    {
-        palindrome.map { char in
-            let letter = LetterData(context: context)
-            letter.letter = String(char)
-            return letter
-        }
-    }
-
     
 }

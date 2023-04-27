@@ -141,10 +141,10 @@ class CellDirector {
         
         return candidateCells
     }
-    
+    /*
     private func restoreSlotPlacements(info: Level)
     {
         
     }
-    
+    */
 }
