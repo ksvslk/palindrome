@@ -23,6 +23,8 @@ class GameScene: SKScene {
     
     override func didMove(to view: SKView) {
         
+        let currentLevel = Database.shared.currentLevel!
+        
         let viewSize = CGSize(width: view.bounds.size.width, height: view.bounds.size.height)
         self.size = viewSize
         let gameField = getDensitySettings(palindrome: palindromes[1], viewSize:viewSize)
