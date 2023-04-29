@@ -21,6 +21,7 @@ class GameScene: SKScene {
     ]
     
     
+    // MARK: Initialize
     override func didMove(to view: SKView) {
 
         let currentLevel = Database.shared.currentLevel!
@@ -44,6 +45,7 @@ class GameScene: SKScene {
         let slotSize = CGSize(width: Double(boxSize), height: Double(boxSize))
         
         
+        // Can we add all just Cells - only Letters have LetterData?
         for (rowIndex, rowOfChars) in allCells.enumerated() {
             for (colIndex, char) in rowOfChars.enumerated() {
          
@@ -84,6 +86,7 @@ class GameScene: SKScene {
     }
     
     
+    // MARK: Density settings
     func getDensitySettings(palindrome: String, viewSize: CGSize) -> GameField
     {
         let puzzleOnlyLetters = palindrome.replacingOccurrences(
@@ -137,6 +140,7 @@ class GameScene: SKScene {
     }
     
     
+    // MARK: Solution rows
     func getSolutionRows(puzzle: String, cols: Int) -> [String] {
         let words = puzzle.split(separator: " ")
         var lines: [String] = []
@@ -168,6 +172,7 @@ class GameScene: SKScene {
     }
     
     
+    // MARK: Used area ratio
     private func getUsedAreaRatio(columns: Int, puzzleOnlyLetters: String, palindrome: String, smallGap: Int) -> Float {
         
         let rowsCount = puzzleOnlyLetters.chunked(into: columns).count
@@ -186,10 +191,14 @@ class GameScene: SKScene {
         return usedWidth / usedHeight
     }
     
+    
+    // MARK: Used height
     private func getUsedHeight(rowsCount: Int, boxSize: Float, gap: Int) -> Float {
         return Float(rowsCount) * (boxSize + Float(gap)) + 2 * (boxSize + Float(gap))
     }
     
+    
+    // MARK: Used width
     private func getUsedWidth(columns: Int, boxSize: Float, gap: Int) -> Float {
         return Float(columns) * (boxSize + Float(gap)) + 2 * (boxSize + Float(gap))
     }

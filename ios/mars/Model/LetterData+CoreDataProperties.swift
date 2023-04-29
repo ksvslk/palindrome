@@ -2,7 +2,7 @@
 //  LetterData+CoreDataProperties.swift
 //  mars
 //
-//  Created by ksvslk on 27.04.2023.
+//  Created by Mina on 29.04.2023.
 //
 //
 
@@ -21,8 +21,9 @@ extension LetterData {
     @NSManaged public var letter: String
     @NSManaged public var locked: Bool
     @NSManaged public var level: Level
-    
+
     public override var debugDescription: String {
         return "\(letter) - (Home: \(homeIndex), Friend: \(friendIndex))"
     }
+    
 }

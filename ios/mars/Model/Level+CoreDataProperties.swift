@@ -2,7 +2,7 @@
 //  Level+CoreDataProperties.swift
 //  mars
 //
-//  Created by ksvslk on 27.04.2023.
+//  Created by Mina on 29.04.2023.
 //
 //
 
@@ -11,7 +11,7 @@ import CoreData
 
 
 extension Level {
-    
+
     enum Progress: Int {
         case todo = 1
         case in_progress = 2
@@ -22,7 +22,7 @@ extension Level {
     @nonobjc public class func fetchRequest() -> NSFetchRequest<Level> {
         return NSFetchRequest<Level>(entityName: "Level")
     }
-    
+
     @NSManaged public var author: String
     @NSManaged public var bestScore: Int64
     @NSManaged public var categoryRewarded: Bool
@@ -31,6 +31,7 @@ extension Level {
     @NSManaged public var progress: Int64
     @NSManaged public var score: Int64
     @NSManaged public var timeModified: Date?
+    @NSManaged public var shuffledPuzzle: String
     @NSManaged public var letters: NSSet
     @NSManaged public var solutions: NSSet
     
@@ -47,7 +48,7 @@ extension Level {
     }
 
     public override var debugDescription: String {
-        return "Level: \(levelNumber) \n Letters: \(lettersArr) \n Solutions: \(solutionsArr) \n Progress: \(String(describing: Level.Progress(rawValue: Int(progress)))) \n Columns: \(columnCount) \n Score: \(score) \n Best score: \(bestScore) \n Modified: \(String(describing: timeModified)) \n Category rewarded: \(categoryRewarded) \n Author: \(author)"
+        return "Level: \(levelNumber) \n Letters: \(lettersArr) \n Solutions: \(solutionsArr) \n Progress: \(String(describing: Level.Progress(rawValue: Int(progress)))) \n Columns: \(columnCount) \n Score: \(score) \n Best score: \(bestScore) \n Modified: \(String(describing: timeModified)) \n Category rewarded: \(categoryRewarded) \n Author: \(author) \n Shuffled puzzle: \(shuffledPuzzle)"
     }
 
 }

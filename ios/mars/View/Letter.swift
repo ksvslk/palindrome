@@ -72,20 +72,19 @@ class Letter: Cell {
     // touch event is completed successfully
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard state == CellState.dragging else { return }
-       
         cellDirector.handleCollisions(letter: self)
-        
         moveLetter()
     }
     
     func moveLetter()
     {
+        let endColor = friend != nil ? Theme.colorSecondary : Theme.colorPrimary
         state = CellState.resolving
         let moveAction = SKAction.move(to: currentPosition, duration: Letter.moveDuration)
         moveAction.timingMode = .easeInEaseOut
         self.run(moveAction) {
             self.zPosition = C.NEUTRAL_LAYER
-            self.animateColor(to: Theme.colorPrimary, duration: Letter.colorChangeDuration, timingMode: SKActionTimingMode.easeOut)
+            self.animateColor(to: endColor, duration: Letter.colorChangeDuration, timingMode: SKActionTimingMode.easeOut)
             let newScale = max(self.xScale - 0.2, 1.0)
             let scaleAction = SKAction.scale(to: newScale, duration: Letter.colorChangeDuration)
             self.run(scaleAction) {
