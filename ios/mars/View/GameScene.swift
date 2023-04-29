@@ -22,12 +22,14 @@ class GameScene: SKScene {
     
     
     override func didMove(to view: SKView) {
-        
+
         let currentLevel = Database.shared.currentLevel!
-        
         let viewSize = CGSize(width: view.bounds.size.width, height: view.bounds.size.height)
         self.size = viewSize
-        let gameField = getDensitySettings(palindrome: palindromes[1], viewSize:viewSize)
+        let gameField = getDensitySettings(
+            palindrome: currentLevel.solutionsArr.first!.palindrome,
+            viewSize:viewSize
+        )
         let allCells = gameField.letterRows + gameField.solutionRows
         
         // Create the grid node
@@ -44,6 +46,9 @@ class GameScene: SKScene {
         
         for (rowIndex, rowOfChars) in allCells.enumerated() {
             for (colIndex, char) in rowOfChars.enumerated() {
+         
+                let index = rowIndex * gameField.columns + colIndex
+            
                 switch (rowIndex < gameField.letterRows.count, char) {
                 case (true, " "), (false, " "):
                     let space = SKSpriteNode(color: .clear, size: CGSize(width: slotSize.width, height: slotSize.height))
@@ -52,7 +57,7 @@ class GameScene: SKScene {
                     gridNode.addChild(space)
                 case (true, _):
                     let letter = Letter(
-                        homeIndex: rowIndex*colIndex,
+                        homeIndex: index,
                         letter: String(char), size: CGSize(width: slotSize.width, height: slotSize.height),
                         homePosition: CGPoint(x: CGFloat(colIndex) * (slotSize.width + spacing), y: -CGFloat(rowIndex) * (slotSize.height + spacing)),
                         cellDirector: cellDirector
@@ -61,7 +66,7 @@ class GameScene: SKScene {
                     cellDirector.cells.append(letter)
                 case (false, _):
                     let slot = Slot(
-                        homeIndex: rowIndex*colIndex,
+                        homeIndex: index,
                         size: CGSize(width: slotSize.width, height: slotSize.height),
                         homePosition: CGPoint(x: CGFloat(colIndex) * (slotSize.width + spacing), y: -CGFloat(rowIndex) * (slotSize.height + spacing))
                     )
@@ -74,7 +79,8 @@ class GameScene: SKScene {
         let height = ((CGFloat(boxSize) + spacing) * CGFloat(allCells.count - 1))
         let width = ((CGFloat(boxSize) + spacing) * CGFloat(numCols - 1))
         gridNode.position = CGPoint(x:-width/2,y:height/2)
-
+        
+        
     }
     
     

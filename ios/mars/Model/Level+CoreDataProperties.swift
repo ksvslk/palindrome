@@ -11,11 +11,18 @@ import CoreData
 
 
 extension Level {
-
+    
+    enum Progress: Int {
+        case todo = 1
+        case in_progress = 2
+        case replay = 3
+        case intermediate = 4
+    }
+    
     @nonobjc public class func fetchRequest() -> NSFetchRequest<Level> {
         return NSFetchRequest<Level>(entityName: "Level")
     }
-
+    
     @NSManaged public var author: String
     @NSManaged public var bestScore: Int64
     @NSManaged public var categoryRewarded: Bool
@@ -34,9 +41,13 @@ extension Level {
     public var solutionsArr: [Solution] {
         solutions.allObjects as? [Solution] ?? []
     }
+    
+    var levelProgress: Progress {
+        return Progress(rawValue: Int(progress)) ?? Progress.todo
+    }
 
     public override var debugDescription: String {
-        return "Level: \(levelNumber) \n Letters: \(lettersArr) \n Solutions: \(solutionsArr) \n Progress: \(LevelProgress(rawValue: Int(progress))) \n Columns: \(columnCount) \n Score: \(score) \n Best score: \(bestScore) \n Modified: \(timeModified) \n Category rewarded: \(categoryRewarded) \n Author: \(author)"
+        return "Level: \(levelNumber) \n Letters: \(lettersArr) \n Solutions: \(solutionsArr) \n Progress: \(String(describing: Level.Progress(rawValue: Int(progress)))) \n Columns: \(columnCount) \n Score: \(score) \n Best score: \(bestScore) \n Modified: \(String(describing: timeModified)) \n Category rewarded: \(categoryRewarded) \n Author: \(author)"
     }
 
 }

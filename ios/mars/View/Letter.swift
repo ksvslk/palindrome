@@ -17,6 +17,7 @@ class Letter: Cell {
         set {}
     }
     private var cellDirector: CellDirector
+    var letterData: LetterData = LetterData()
     
     init(homeIndex:Int, letter: String, size: CGSize, homePosition: CGPoint, cellDirector: CellDirector) {
         self.cellDirector = cellDirector
@@ -30,6 +31,7 @@ class Letter: Cell {
         letterLabel.fontColor = Theme.colorOnPrimary
         addChild(letterLabel)
     }
+    
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

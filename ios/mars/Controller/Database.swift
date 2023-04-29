@@ -71,5 +71,12 @@ class Database {
         
     }
     
+    func resetLevel(level:Int, progress: Level.Progress = Level.Progress.in_progress)
+    {
+        // delete letters info for level
+        let request: NSFetchRequest<Level> = Level.fetchRequest()
+     
+    }
+    
     
 }

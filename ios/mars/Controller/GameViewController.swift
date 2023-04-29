@@ -36,6 +36,8 @@ class GameViewController: UIViewController {
     
     private func loadMainScene()
     {
+        Database.shared.changeGameLevel(nr: 1)
+       
         // Load 'GameScene.sks' as a GKScene. This provides gameplay related content
         // including entities and graphs.
         if let scene = GKScene(fileNamed: "GameScene") {

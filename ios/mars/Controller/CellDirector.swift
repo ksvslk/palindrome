@@ -12,6 +12,15 @@ class CellDirector {
     var cells: [Cell]
     
     init(cells: [Cell]) {
+        
+        // TODO: handle TODO level state
+
+        
+        if (Database.shared.currentLevel?.levelProgress == Level.Progress.todo)
+        {
+            //TODO: change indexes for letters and the progress to in_progress, also column count
+       
+        }
         self.cells = cells
     }
     
