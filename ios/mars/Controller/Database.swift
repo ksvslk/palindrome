@@ -78,7 +78,6 @@ class Database {
     
     func changeGameLevel(nr: Int)
     {
-        
         let request: NSFetchRequest<Level> = Level.fetchRequest()
         request.predicate = NSPredicate(format: "levelNumber = %@", String(nr))
         
@@ -88,8 +87,12 @@ class Database {
         } catch {
             print("Error fetching level")
         }
+        
+        
+        
         if !fetchedLevels.isEmpty { currentLevel = fetchedLevels.first }
-        print(currentLevel)
+        
+        // TODO: When level has -1 columns (brand new level), we should also set the columns in the same transaction
         
     }
     

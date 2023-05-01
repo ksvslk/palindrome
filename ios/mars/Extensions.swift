@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SpriteKit
 
 extension CGPoint {
     func distance(point: CGPoint) -> CGFloat {

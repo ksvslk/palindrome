@@ -26,6 +26,7 @@
 		B1B33A8B29FDB66D00DFA59F /* Solution+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B33A8329FDB66D00DFA59F /* Solution+CoreDataProperties.swift */; };
 		B1B33A8D29FDBC0300DFA59F /* Shuffler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B33A8C29FDBC0300DFA59F /* Shuffler.swift */; };
 		B1B33ABA29FE6F2D00DFA59F /* ShufflerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B33AB929FE6F2D00DFA59F /* ShufflerTests.swift */; };
+		B1B33AC629FFD91F00DFA59F /* GameFieldCreator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B33AC529FFD91F00DFA59F /* GameFieldCreator.swift */; };
 		B1D2710229EDB24500E01AC8 /* GameField.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1D2710129EDB24500E01AC8 /* GameField.swift */; };
 		B1E8974E29EC5001001B942F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1E8974D29EC5001001B942F /* AppDelegate.swift */; };
 		B1E8975429EC5001001B942F /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1E8975329EC5001001B942F /* GameScene.swift */; };
@@ -75,6 +76,7 @@
 		B1B33AAE29FE69BC00DFA59F /* marsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = marsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1B33AB929FE6F2D00DFA59F /* ShufflerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShufflerTests.swift; sourceTree = "<group>"; };
 		B1B33ABE29FFA88000DFA59F /* mars.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = mars.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B1B33AC529FFD91F00DFA59F /* GameFieldCreator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameFieldCreator.swift; sourceTree = "<group>"; };
 		B1D2710129EDB24500E01AC8 /* GameField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameField.swift; sourceTree = "<group>"; };
 		B1E8974D29EC5001001B942F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B1E8975329EC5001001B942F /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
@@ -168,6 +170,7 @@
 				B1E8975A29EC5002001B942F /* Assets.xcassets */,
 				B144A88229FA66B40067A080 /* Model.xcdatamodeld */,
 				B1B33A8C29FDBC0300DFA59F /* Shuffler.swift */,
+				B1B33AC529FFD91F00DFA59F /* GameFieldCreator.swift */,
 			);
 			path = mars;
 			sourceTree = "<group>";
@@ -353,6 +356,7 @@
 				B128451029F82ACE00C8F13D /* Extensions.swift in Sources */,
 				B1FE7A4D29F80E82007D7954 /* CellDirector.swift in Sources */,
 				B1B33A8929FDB66D00DFA59F /* LetterData+CoreDataProperties.swift in Sources */,
+				B1B33AC629FFD91F00DFA59F /* GameFieldCreator.swift in Sources */,
 				B163AA4429F7ED18006C8BE6 /* Cell.swift in Sources */,
 				B1E8974E29EC5001001B942F /* AppDelegate.swift in Sources */,
 				B1E8978C29ED42EE001B942F /* Slot.swift in Sources */,

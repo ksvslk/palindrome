@@ -8,8 +8,8 @@
 import Foundation
 
 struct GameField {
-    let columns:Int
-    let letterRows:[String]
-    let solutionRows:[String]
-    let boxSize:Float
+    let columns: Int
+    let letterRows: [String]
+    let solutionRows: [String]
+    let boxSize: CGSize
 }
