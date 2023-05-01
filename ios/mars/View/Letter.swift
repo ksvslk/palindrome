@@ -18,9 +18,11 @@ class Letter: Cell {
     }
     private var cellDirector: CellDirector
     
+    var letterData: LetterData = LetterData() // TODO: Implement!
+    
     
     // MARK: Initialize
-    init(homeIndex:Int, letter: String, size: CGSize, homePosition: CGPoint, cellDirector: CellDirector) {
+    init(homeIndex:Int64, letter: String, size: CGSize, homePosition: CGPoint, cellDirector: CellDirector) {
         self.cellDirector = cellDirector
         super.init(homeIndex: homeIndex, texture: nil, color: Theme.colorPrimary, size: size, homePosition: homePosition)
         isUserInteractionEnabled = true

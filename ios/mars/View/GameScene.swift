@@ -46,6 +46,7 @@ class GameScene: SKScene {
     }
     
     // MARK: Add box nodes to the grid
+    // TODO: WARNING! Does not check if the GameFieldCreator and database version of level match (different columns)
     private func alternativeAddGameNodes(
         letters: [LetterData],
         allCells: [String],
@@ -53,12 +54,12 @@ class GameScene: SKScene {
         gridNode: inout SKNode
     ) throws {
         
-        var homeIndexesToPositions = [Int:CGPoint]()
+        var homeIndexesToPositions = [Int64:CGPoint]()
         
         for (rowIndex, rowOfChars) in allCells.enumerated() {
             for (colIndex, char) in rowOfChars.enumerated() {
                 
-                let index = rowIndex * gameField.columns + colIndex
+                let index = Int64(rowIndex * gameField.columns + colIndex)
                 
                 switch (rowIndex < gameField.letterRows.count, char) {
                 case (true, " "), (false, " "):
@@ -72,7 +73,7 @@ class GameScene: SKScene {
                     
                     if isLetterWithFriend != nil {
                         let space = getBlankNode(gameField: gameField, rowIndex: rowIndex, colIndex: colIndex)
-                        homeIndexesToPositions[index] = space.position
+                        homeIndexesToPositions[Int64(index)] = space.position
                         gridNode.addChild(space)
                     } else {
                         let letter = getLetterNode(
@@ -99,7 +100,7 @@ class GameScene: SKScene {
                     if let letterWithFriend = letters.first(where: { data in data.friendIndex == index }) {
                         let letter = getLetterNode(
                             char: letterWithFriend.letter,
-                            currentIndex: Int(letterWithFriend.homeIndex),
+                            currentIndex: letterWithFriend.homeIndex,
                             gameField: gameField,
                             rowIndex: rowIndex,
                             colIndex: colIndex
@@ -107,7 +108,7 @@ class GameScene: SKScene {
                         letter.friend = slot
                         letter.color = Theme.colorSecondary
                         
-                        if let position = homeIndexesToPositions[Int(letterWithFriend.homeIndex)] {
+                        if let position = homeIndexesToPositions[letterWithFriend.homeIndex] {
                             letter.homePosition = position
                         } else {
                             throw LevelCreationError.positionForHomeIndexNotFoundInMap
@@ -133,7 +134,7 @@ class GameScene: SKScene {
     
     
     // MARK: Get Letter node
-    private func getLetterNode(char: String, currentIndex: Int, gameField: GameField, rowIndex: Int, colIndex: Int) -> Letter
+    private func getLetterNode(char: String, currentIndex: Int64, gameField: GameField, rowIndex: Int, colIndex: Int) -> Letter
     {
         return Letter(
             homeIndex: currentIndex,
@@ -145,7 +146,7 @@ class GameScene: SKScene {
     
     
     // MARK: Get Slot node
-    private func getSlotNode(currentIndex: Int, gameField: GameField, rowIndex: Int, colIndex: Int) -> Slot
+    private func getSlotNode(currentIndex: Int64, gameField: GameField, rowIndex: Int, colIndex: Int) -> Slot
     {
         return Slot(
             homeIndex: currentIndex,

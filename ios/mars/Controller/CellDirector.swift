@@ -97,6 +97,18 @@ class CellDirector {
     }
     
     
+    private func placeLetterInEmptySlotAlternative(
+        letter: Letter,
+        slot: Slot,
+        isRewarded: Bool = false,
+        isLastRewardedLetter: Bool = false
+    )
+    {
+        letter.letterData.friendIndex = slot.homeIndex
+        
+    }
+    
+    
     // MARK: Send to home
     private func sendLetterHome(letter: Letter, isRewarded: Bool = false) {
         if (isRewarded) {
