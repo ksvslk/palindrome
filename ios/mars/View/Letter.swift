@@ -18,6 +18,8 @@ class Letter: Cell {
     }
     private var cellDirector: CellDirector
     
+    
+    // MARK: Initialize
     init(homeIndex:Int, letter: String, size: CGSize, homePosition: CGPoint, cellDirector: CellDirector) {
         self.cellDirector = cellDirector
         super.init(homeIndex: homeIndex, texture: nil, color: Theme.colorPrimary, size: size, homePosition: homePosition)
@@ -37,6 +39,7 @@ class Letter: Cell {
     }
     
     
+    // MARK: Touches began
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
         guard state == CellState.home else { return }
@@ -54,9 +57,11 @@ class Letter: Cell {
         }
     }
     
+    
     /*
      When dragging the Letter should move to the same place where the mouse it with some delay/ease animation.
      */
+    // MARK: Touches moved
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard state == CellState.dragging else { return }
         
@@ -68,13 +73,30 @@ class Letter: Cell {
         self.position = newPosition
     }
     
+    
     // touch event is completed successfully
+    // MARK: Touches ended
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard state == CellState.dragging else { return }
         cellDirector.handleCollisions(letter: self)
         moveLetter()
     }
     
+    
+    // touch event is interrupted or canceled (system events like phone call)
+    // maybe abrupt end would be better here?
+    // MARK: Touches cancelled
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard state == CellState.dragging else { return }
+        self.zPosition = C.NEUTRAL_LAYER
+        self.state = CellState.home
+        self.scale(to: CGSize(width: 1.0, height: 1.0))
+        self.position = currentPosition
+        self.isUserInteractionEnabled = true
+    }
+    
+    
+    // MARK: Move action
     func moveLetter()
     {
         let endColor = friend != nil ? Theme.colorSecondary : Theme.colorPrimary
@@ -93,19 +115,9 @@ class Letter: Cell {
         }
     }
     
-    // touch event is interrupted or canceled (system events like phone call)
-    // maybe abrupt end would be better here?
-    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard state == CellState.dragging else { return }
-        self.zPosition = C.NEUTRAL_LAYER
-        self.state = CellState.home
-        self.scale(to: CGSize(width: 1.0, height: 1.0))
-        self.position = currentPosition
-        self.isUserInteractionEnabled = true
-    }
     
-    
-    func animateColor(to color: UIColor, duration: CGFloat, timingMode: SKActionTimingMode) {
+    // MARK: Animate color
+    private func animateColor(to color: UIColor, duration: CGFloat, timingMode: SKActionTimingMode) {
         let colorAction = SKAction.colorize(with: color, colorBlendFactor: 1, duration: duration)
         colorAction.timingMode = timingMode
         self.run(colorAction)

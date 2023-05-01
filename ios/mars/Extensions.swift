@@ -8,12 +8,15 @@
 import Foundation
 import SpriteKit
 
+// MARK: Distance between CGPoint's
 extension CGPoint {
     func distance(point: CGPoint) -> CGFloat {
         return CGFloat(hypotf(Float(point.x - self.x), Float(point.y - self.y)))
     }
 }
 
+
+// MARK: Slice String to equal parts
 extension String {
     func chunked(into size: Int) -> [String] {
         var result = [String]()

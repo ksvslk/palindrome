@@ -11,29 +11,7 @@ import GameplayKit
 
 class GameViewController: UIViewController {
     
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        print("traitCollectionDidChange")
-        loadMainScene()
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        print("viewDidLoad")
-        loadMainScene()
-    }
-    
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        if UIDevice.current.userInterfaceIdiom == .phone {
-            return .allButUpsideDown
-        } else {
-            return .all
-        }
-    }
-    
-    override var prefersStatusBarHidden: Bool {
-        return true
-    }
-    
+    // MARK: Load main scene
     private func loadMainScene()
     {
         Database.shared.changeGameLevel(nr: 1)
@@ -62,5 +40,36 @@ class GameViewController: UIViewController {
             }
         }
     }
+    
+    
+    // MARK: UI mode change
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        print("traitCollectionDidChange")
+        loadMainScene()
+    }
+    
+    
+    // MARK: View did load
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        print("viewDidLoad")
+        loadMainScene()
+    }
+    
+    
+    // MARK: UI orientation
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            return .allButUpsideDown
+        } else {
+            return .all
+        }
+    }
+    
+    // MARK: Status bar
+    override var prefersStatusBarHidden: Bool {
+        return true
+    }
+    
     
 }

@@ -12,18 +12,11 @@ class CellDirector {
     var cells: [Cell]
     
     init(cells: [Cell]) {
-        
-        // TODO: handle TODO level state
-
-        
-        if (Database.shared.currentLevel?.levelProgress == Level.Progress.todo)
-        {
-            //TODO: change indexes for letters and the progress to in_progress, also column count
-       
-        }
         self.cells = cells
     }
     
+    
+    // MARK: Handle collisions
     func handleCollisions(letter: Letter)
     {
         guard let candidateCells = getCandidateCells(letter: letter), !candidateCells.isEmpty else {
@@ -63,6 +56,32 @@ class CellDirector {
     }
     
     
+    // MARK: Get colliding Cells
+    private func getCandidateCells(letter: Letter) -> Optional<[Cell]> {
+        var candidateCells = [Cell]()
+        
+        for droppedTo in cells {
+            if letter.intersects(droppedTo) && letter != droppedTo {
+                guard (droppedTo.cellType == CellType.letter && droppedTo.state == CellState.home) || droppedTo.cellType == CellType.slot else {
+                    continue
+                }
+                candidateCells.append(droppedTo)
+            }
+        }
+        
+        return candidateCells
+    }
+    
+    
+    // MARK: Get closest Cell
+    private func getClosestCell(to: Letter, from: [Cell]) -> Cell? {
+        return from.min { (a, b) in
+            a.position.distance(point: to.position) < b.position.distance(point: to.position)
+        }
+    }
+    
+    
+    // MARK: Place in empty Slot
     private func placeLetterInEmptyBox(
         letter: Letter,
         slot: Slot,
@@ -77,6 +96,8 @@ class CellDirector {
         letter.currentPosition = slot.homePosition
     }
     
+    
+    // MARK: Send to home
     private func sendLetterHome(letter: Letter, isRewarded: Bool = false) {
         if (isRewarded) {
             letter.zPosition = C.MIDDLE_LAYER
@@ -89,6 +110,8 @@ class CellDirector {
         }
     }
     
+    
+    // MARK: Switch positions
     private func switchLetterPositions(
         top: Letter,
         bottom: Letter,
@@ -108,7 +131,8 @@ class CellDirector {
         bottom.moveLetter()
     }
     
-  
+    
+    // MARK: Switch friends
     private func switchFriends(bottom: Letter, top: Letter) {
         let bottomFriend = bottom.friend
         let topFriend = top.friend
@@ -127,33 +151,6 @@ class CellDirector {
             top.friend = nil
         }
     }
-    
-    
-    private func getClosestCell(to: Letter, from: [Cell]) -> Cell? {
-        return from.min { (a, b) in
-            a.position.distance(point: to.position) < b.position.distance(point: to.position)
-        }
-    }
-    
-    
-    private func getCandidateCells(letter: Letter) -> Optional<[Cell]> {
-        var candidateCells = [Cell]()
-        
-        for droppedTo in cells {
-            if letter.intersects(droppedTo) && letter != droppedTo {
-                guard (droppedTo.cellType == CellType.letter && droppedTo.state == CellState.home) || droppedTo.cellType == CellType.slot else {
-                    continue
-                }
-                candidateCells.append(droppedTo)
-            }
-        }
-        
-        return candidateCells
-    }
-    /*
-    private func restoreSlotPlacements(info: Level)
-    {
-        
-    }
-    */
+
+
 }

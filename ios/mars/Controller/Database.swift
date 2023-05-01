@@ -23,6 +23,8 @@ class Database {
     
     var currentLevel: Level?
     
+    
+    // MARK: Initialize
     private init() {
         persistentContainer = NSPersistentContainer(name: "Model")
         persistentContainer.loadPersistentStores { _, error in
@@ -35,6 +37,7 @@ class Database {
     }
     
     
+    // MARK: Add new level
     func addNewLevel(
         levelNr: Int,
         palindrome: String,
@@ -73,9 +76,7 @@ class Database {
     }
     
     
-    func resetLevel(levelNr: Int) { }
-    
-    
+    // MARK: Change level
     func changeGameLevel(nr: Int)
     {
         let request: NSFetchRequest<Level> = Level.fetchRequest()
@@ -92,15 +93,15 @@ class Database {
         
         if !fetchedLevels.isEmpty { currentLevel = fetchedLevels.first }
         
-        // TODO: When level has -1 columns (brand new level), we should also set the columns in the same transaction
+        // TODO: When level has -1 columns (brand new level), we should also set the columns in the same transaction.
         
     }
     
+    
+    // MARK: Reset Level
     func resetLevel(level:Int, progress: Level.Progress = Level.Progress.in_progress)
     {
-        // delete letters info for level
-        let request: NSFetchRequest<Level> = Level.fetchRequest()
-        
+        // TODO: Implement!
     }
     
     

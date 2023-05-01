@@ -22,7 +22,8 @@ extension Level {
     @nonobjc public class func fetchRequest() -> NSFetchRequest<Level> {
         return NSFetchRequest<Level>(entityName: "Level")
     }
-
+    
+    // MARK: Properties
     @NSManaged public var author: String
     @NSManaged public var bestScore: Int64
     @NSManaged public var categoryRewarded: Bool
@@ -35,14 +36,18 @@ extension Level {
     @NSManaged public var letters: NSSet
     @NSManaged public var solutions: NSSet
     
+    
+    // MARK: Property helpers
     public var lettersArr: [LetterData] {
         letters.allObjects as? [LetterData] ?? []
     }
     
+
     public var solutionsArr: [Solution] {
         solutions.allObjects as? [Solution] ?? []
     }
     
+
     var levelProgress: Progress {
         return Progress(rawValue: Int(progress)) ?? Progress.todo
     }
