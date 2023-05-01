@@ -50,7 +50,7 @@ class GameScene: SKScene {
             for (colIndex, char) in rowOfChars.enumerated() {
          
                 let index = rowIndex * gameField.columns + colIndex
-            
+                print(index)
                 switch (rowIndex < gameField.letterRows.count, char) {
                 case (true, " "), (false, " "):
                     let space = SKSpriteNode(color: .clear, size: CGSize(width: slotSize.width, height: slotSize.height))

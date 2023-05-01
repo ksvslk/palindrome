@@ -74,8 +74,8 @@
 		B1B33A8C29FDBC0300DFA59F /* Shuffler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shuffler.swift; sourceTree = "<group>"; };
 		B1B33AAE29FE69BC00DFA59F /* marsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = marsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1B33AB929FE6F2D00DFA59F /* ShufflerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShufflerTests.swift; sourceTree = "<group>"; };
+		B1B33ABE29FFA88000DFA59F /* mars.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = mars.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1D2710129EDB24500E01AC8 /* GameField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameField.swift; sourceTree = "<group>"; };
-		B1E8974A29EC5001001B942F /* mars.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = mars.app; path = "/Users/ksvslk/Documents/imars/build/Debug-iphoneos/mars.app"; sourceTree = "<absolute>"; };
 		B1E8974D29EC5001001B942F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B1E8975329EC5001001B942F /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
 		B1E8975529EC5001001B942F /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
@@ -146,6 +146,7 @@
 				B1E8974C29EC5001001B942F /* mars */,
 				B1B33AAE29FE69BC00DFA59F /* marsTests.xctest */,
 				B1B33AAF29FE69BC00DFA59F /* marsTests */,
+				B1B33ABE29FFA88000DFA59F /* mars.app */,
 			);
 			sourceTree = "<group>";
 		};
@@ -255,7 +256,7 @@
 			);
 			name = mars;
 			productName = test;
-			productReference = B1E8974A29EC5001001B942F /* mars.app */;
+			productReference = B1B33ABE29FFA88000DFA59F /* mars.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -266,7 +267,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1430;
-				LastUpgradeCheck = 1420;
+				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					B1B33AAD29FE69BC00DFA59F = {
 						CreatedOnToolsVersion = 14.3;
@@ -482,7 +483,7 @@
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_EXPAND_BUILD_SETTINGS = YES;
 				INFOPLIST_FILE = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -542,7 +543,7 @@
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_EXPAND_BUILD_SETTINGS = YES;
 				INFOPLIST_FILE = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -570,7 +571,7 @@
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -601,7 +602,7 @@
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

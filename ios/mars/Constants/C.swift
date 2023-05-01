@@ -14,4 +14,6 @@ struct C {
     static let BOTTOM_LAYER = CGFloat(-1)
     static let REWARDED_ANIM_MUL = 3
     static let REWARDED_ANIM_MUL_DEFAULT = 1
+    
+    static let SCORE_LETTER_MULTIPLIER = 100 // Each letter in level will give 100 points
 }

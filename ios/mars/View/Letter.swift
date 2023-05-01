@@ -17,7 +17,6 @@ class Letter: Cell {
         set {}
     }
     private var cellDirector: CellDirector
-    var letterData: LetterData = LetterData()
     
     init(homeIndex:Int, letter: String, size: CGSize, homePosition: CGPoint, cellDirector: CellDirector) {
         self.cellDirector = cellDirector

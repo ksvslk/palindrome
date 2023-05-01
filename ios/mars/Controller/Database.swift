@@ -10,6 +10,12 @@ import CoreData
 
 class Database {
     
+    enum DatabaseError: Error {
+        case couldNotInsertLevel
+        case insufficientFunds(coinsNeeded: Int)
+        case outOfStock
+    }
+    
     static let shared = Database()
     
     private let persistentContainer: NSPersistentContainer
@@ -28,30 +34,46 @@ class Database {
         
     }
     
-    func saveInitialData() {
-        let palindrome = "MMO"
+    
+    func addNewLevel(
+        levelNr: Int,
+        palindrome: String,
+        solutionsToHints: [String:String],
+        author: String = ""
+    )
+    {
+        guard !palindrome.isEmpty || !solutionsToHints.isEmpty else { return }
         let level = Level(context: context)
-        level.levelNumber = 1
-        level.score = 300
-     
-        let lettersArray = palindrome.map { char in
+        level.levelNumber = Int64(levelNr)
+        level.shuffledPuzzle = Shuffler.getShuffledSolution(
+            solutionsWithWhiteSpace: Array(solutionsToHints.keys)
+        )
+        level.author = author
+        level.categoryRewarded = false
+        level.bestScore = Int64(level.shuffledPuzzle.count * C.SCORE_LETTER_MULTIPLIER)
+        level.letters = NSSet(array: level.shuffledPuzzle.enumerated().map { (index, char) in
             let letter = LetterData(context: context)
             letter.letter = String(char)
+            letter.homeIndex = Int64(index)
             return letter
-        }
-        level.letters = NSSet(array: lettersArray)
-        
-        let solution = Solution(context: context)
-        solution.palindrome = "MOM"
-        solution.hint = "Parent"
-        level.solutions = NSSet(array: [solution])
+        })
+        level.solutions = NSSet(array: solutionsToHints.map({ (key: String, value: String) in
+            let solution = Solution(context: context)
+            solution.palindrome = key
+            solution.hint = value
+            return solution
+        }))
         
         do {
             try context.save()
         } catch {
             print("Error saving item: \(error)")
         }
+        
     }
+    
+    
+    func resetLevel(levelNr: Int) { }
     
     
     func changeGameLevel(nr: Int)
@@ -75,7 +97,7 @@ class Database {
     {
         // delete letters info for level
         let request: NSFetchRequest<Level> = Level.fetchRequest()
-     
+        
     }
     
     

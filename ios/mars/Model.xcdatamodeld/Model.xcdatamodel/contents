@@ -7,17 +7,17 @@
         <attribute name="timeStamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
     </entity>
     <entity name="LetterData" representedClassName="LetterData" syncable="YES">
-        <attribute name="friendIndex" attributeType="Integer 64" defaultValueString="-888" usesScalarValueType="YES"/>
-        <attribute name="homeIndex" attributeType="Integer 64" defaultValueString="-888" usesScalarValueType="YES"/>
+        <attribute name="friendIndex" attributeType="Integer 64" defaultValueString="-1" usesScalarValueType="YES"/>
+        <attribute name="homeIndex" attributeType="Integer 64" defaultValueString="-1" usesScalarValueType="YES"/>
         <attribute name="letter" attributeType="String" defaultValueString=""/>
         <attribute name="locked" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
-        <relationship name="level" maxCount="1" deletionRule="Nullify" destinationEntity="Level" inverseName="letters" inverseEntity="Level"/>
+        <relationship name="level" maxCount="1" deletionRule="Cascade" destinationEntity="Level" inverseName="letters" inverseEntity="Level"/>
     </entity>
     <entity name="Level" representedClassName="Level" syncable="YES">
         <attribute name="author" attributeType="String" defaultValueString=""/>
         <attribute name="bestScore" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="categoryRewarded" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
-        <attribute name="columnCount" attributeType="Integer 64" defaultValueString="7" usesScalarValueType="YES"/>
+        <attribute name="columnCount" attributeType="Integer 64" defaultValueString="-1" usesScalarValueType="YES"/>
         <attribute name="levelNumber" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="progress" attributeType="Integer 64" defaultValueString="1" usesScalarValueType="YES"/>
         <attribute name="score" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
@@ -30,6 +30,11 @@
         <attribute name="hint" attributeType="String" defaultValueString=""/>
         <attribute name="palindrome" attributeType="String" defaultValueString=""/>
         <attribute name="solved" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
-        <relationship name="level" maxCount="1" deletionRule="Nullify" destinationEntity="Level" inverseName="solutions" inverseEntity="Level"/>
+        <relationship name="level" maxCount="1" deletionRule="Cascade" destinationEntity="Level" inverseName="solutions" inverseEntity="Level"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="palindrome"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
     </entity>
 </model>

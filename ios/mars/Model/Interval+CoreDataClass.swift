@@ -11,5 +11,4 @@ import CoreData
 
 @objc(Interval)
 public class Interval: NSManagedObject {
-
 }
