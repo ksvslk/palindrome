@@ -13,8 +13,8 @@ struct GameFieldCreator {
     static let edgePadding = 16
     static let maxBoxSize = 40.0
     
-    // MARK: Density settings
-    static func getDensitySettings(palindrome: String, viewSize: CGSize) -> GameField
+    // MARK: Create game field
+    static func getGameField(palindrome: String, viewSize: CGSize) -> GameField
     {
         let puzzleOnlyLetters = palindrome.replacingOccurrences(
             of: "\\s+",
