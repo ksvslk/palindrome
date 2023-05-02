@@ -101,8 +101,6 @@ class Database {
             print("Error fetching level")
         }
         
-        
-        
         if !fetchedLevels.isEmpty { currentLevel = fetchedLevels.first }
         
         // TODO: When level has -1 columns (brand new level), we should also set the columns in the same transaction.
@@ -125,6 +123,9 @@ class Database {
         } catch {
             print("Error changing friend index: \(error)")
         }
+#if DEBUG
+        assertFriendIndexesAreUniqueForEachLetter()
+#endif
     }
     
     
@@ -136,13 +137,44 @@ class Database {
         bottom.friendIndex = tempTopFriendIndex
         top.homeIndex = bottom.homeIndex
         bottom.homeIndex = tempTopHomeIndex
-
+        
         do {
             try context.save()
         } catch {
             print("Error switching friend indexes: \(error)")
         }
+#if DEBUG
+        assertFriendIndexesAreUniqueForEachLetter()
+#endif
+        
     }
     
+#if DEBUG
+    private func assertFriendIndexesAreUniqueForEachLetter()
+    {
+        let request: NSFetchRequest<LetterData> = LetterData.fetchRequest()
+        request.predicate = NSPredicate(format: "level.levelNumber = %@", currentLevel!.objectID)
+        let attributeName = "friendIndex"
+        
+        var fetchedLetters: [LetterData] = []
+        do {
+            fetchedLetters = try context.fetch(request)
+        } catch {
+            print("Error while trying to count friendIndexes")
+        }
+        let uniqueValues = Set(fetchedLetters.compactMap({
+            let friendIndex = $0.value(forKey: attributeName) as? Int64
+            if (friendIndex != -1) {
+                return friendIndex
+            }
+            else {
+                return nil
+            }
+        }))
+        assert(uniqueValues.count == fetchedLetters.filter({ data in
+            data.friendIndex != -1
+        }).count)
+    }
+#endif
     
 }

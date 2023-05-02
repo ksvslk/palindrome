@@ -44,25 +44,14 @@ class GameScene: SKScene {
         gridNode.position = CGPoint(x:-width/2,y:height/2)
         print(allCells)
 #if DEBUG
-        validateNodesCount(grid: gridNode, level: currentLevel, cells: allCells)
+        assertThatEachLetterHasSlot(grid: gridNode, level: currentLevel)
+        assertDatabaseAndActualLettersCount(grid: gridNode, level: currentLevel)
+        assertTotalGridNodesCount(grid: gridNode, level: currentLevel, cells: allCells)
 #endif
     }
     
     
-    private func validateNodesCount(grid: SKNode, level: Level, cells:[String])
-    {
-        let actualGridChildrenCount = grid.children.count
-        let expectedGridChildrenCount = 2 * level.lettersArr.count + level.lettersArr.filter { letterData in letterData.friendIndex != -1
-        }.count + cells.compactMap { str in
-            str.allSatisfy { chr in
-                chr == " "
-            }
-        }.count
-        assert(expectedGridChildrenCount == actualGridChildrenCount)
-    }
-    
-    
-    // MARK: Add box nodes to the grid
+    // MARK: Create the grid
     // TODO: WARNING! Does not check if the GameFieldCreator and database version of level match (different columns)
     private func alternativeAddGameNodes(
         letters: [LetterData],
@@ -143,6 +132,44 @@ class GameScene: SKScene {
         }
         
     }
+    
+    
+    // MARK: Assert grid correctness
+#if DEBUG
+    private func assertThatEachLetterHasSlot(grid:SKNode, level: Level)
+    {
+        let actualLettersCount = grid.children.filter { sknode in
+            sknode as? Letter != nil
+        }.count
+        let actualSlotsCount = grid.children.filter { sknode in
+            sknode as? Slot != nil
+        }.count
+        assert(actualLettersCount == actualSlotsCount)
+    }
+    
+    
+    private func assertDatabaseAndActualLettersCount(grid:SKNode, level: Level)
+    {
+        let actualLettersCount = grid.children.filter { sknode in
+            sknode as? Letter != nil
+        }.count
+        let expectedLettersCount = level.lettersArr.count
+        assert(expectedLettersCount == actualLettersCount)
+    }
+    
+    
+    private func assertTotalGridNodesCount(grid: SKNode, level: Level, cells:[String])
+    {
+        let actualGridChildrenCount = grid.children.count
+        let expectedGridChildrenCount = 2 * level.lettersArr.count + level.lettersArr.filter { letterData in letterData.friendIndex != -1
+        }.count + cells.compactMap { str in
+            str.allSatisfy { chr in
+                chr == " "
+            }
+        }.count
+        assert(expectedGridChildrenCount == actualGridChildrenCount)
+    }
+#endif
     
     
     // MARK: Get SKSpriteNode node

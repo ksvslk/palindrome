@@ -13,14 +13,23 @@ class CellDirector {
     
     init(cells: [Cell]) {
         self.cells = cells
-       
+        
+    }
+    
+    // MARK: Main handle
+    func handleCollisions(letter: Letter)
+    {
+        checkCollisionsForAction(letter: letter)
+#if DEBUG
+        assertThatLettersHaveUniqueFriends()
+        assertThatMaximumOfTwoCellsHaveSameCoordinates()
+#endif
     }
     
     
-    // MARK: Handle collisions
-    func handleCollisions(letter: Letter)
+    // MARK: Check collisions for action
+    private func checkCollisionsForAction(letter: Letter)
     {
-       
         guard let candidateCells = getCandidateCells(letter: letter), !candidateCells.isEmpty else {
             print("no candidate cells - send letter home")
             sendLetterHome(letter: letter)
@@ -31,9 +40,7 @@ class CellDirector {
             sendLetterHome(letter: letter)
             return
         }
-        print(candidateCells.count)
-        print(closestCell.homeIndex)
-     
+        
         switch closestCell.cellType {
         case CellType.letter:
             if (closestCell.state == CellState.home)
@@ -54,11 +61,57 @@ class CellDirector {
                 return
             }
         case .none:
-            
             return
         }
-        print("In the end, it does not even matter. Should not be here")
+        
     }
+    
+    // MARK: Assert cells correctness
+#if DEBUG
+    private func assertThatMaximumOfTwoCellsHaveSameCoordinates()
+    {
+        struct Point : Hashable {
+            let x: CGFloat
+            let y: CGFloat
+            
+            var debugDescription: String {
+                return "X: \(x), Y: \(y)"
+            }
+        }
+        
+        let uniqueCoordinates = cells.compactMap({ cell in
+            if (cell.cellType == .letter)
+            {
+                return Point(x: cell.currentPosition.x, y: cell.currentPosition.y)
+            }
+            else {
+                return Point(x: cell.homePosition.x, y: cell.homePosition.y)
+            }
+        })
+        var countDict = Dictionary<Point, Int>()
+        for tuple in uniqueCoordinates {
+            countDict[tuple, default: 0] += 1
+        }
+        assert(countDict.filter({ element in
+            element.value > 2
+        }).count == 0)
+    }
+    
+    private func assertThatLettersHaveUniqueFriends()
+    {
+        let uniqueFriendIndexes = Set(cells.compactMap({ cell in
+            if (cell.cellType == .letter)
+            {
+                return cell.friend?.homeIndex
+            }
+            else {
+                return nil
+            }
+        }))
+        let allLettersWithFriends = cells.filter({ $0.cellType == .letter && $0.friend != nil })
+        assert(uniqueFriendIndexes.count == allLettersWithFriends.count)
+    }
+#endif
     
     
     // MARK: Get colliding Cells
@@ -93,7 +146,7 @@ class CellDirector {
         isRewarded: Bool = false,
         isLastRewardedLetter: Bool = false
     ) {
-
+        
         Database.shared.changeFriendIndex(
             letter: letter.data,
             newFriendIndex: slot.homeIndex
@@ -112,7 +165,7 @@ class CellDirector {
             letter.zPosition = C.MIDDLE_LAYER
         }
         if (letter.friend != nil) {
-
+            
             Database.shared.changeFriendIndex(
                 letter: letter.data,
                 newFriendIndex: -1
@@ -167,6 +220,6 @@ class CellDirector {
             top.friend = nil
         }
     }
-
-
+    
+    
 }
