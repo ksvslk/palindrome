@@ -45,6 +45,18 @@ class Database {
         author: String = ""
     )
     {
+        
+        let request: NSFetchRequest<Level> = Level.fetchRequest()
+        request.predicate = NSPredicate(format: "levelNumber = %@", String(levelNr))
+        
+        var fetchedLevels: [Level] = []
+        do {
+            fetchedLevels = try context.fetch(request)
+        } catch {
+            print("Error fetching level")
+        }
+        if !fetchedLevels.isEmpty { return }
+        
         guard !palindrome.isEmpty || !solutionsToHints.isEmpty else { return }
         let level = Level(context: context)
         level.levelNumber = Int64(levelNr)
@@ -102,6 +114,34 @@ class Database {
     func resetLevel(level:Int, progress: Level.Progress = Level.Progress.in_progress)
     {
         // TODO: Implement!
+    }
+    
+    
+    func changeFriendIndex(letter: LetterData, newFriendIndex: Int64)
+    {
+        letter.friendIndex = newFriendIndex
+        do {
+            try context.save()
+        } catch {
+            print("Error changing friend index: \(error)")
+        }
+    }
+    
+    
+    func switchFriendIndexes(top: LetterData, bottom: LetterData)
+    {
+        let tempTopFriendIndex = top.friendIndex
+        let tempTopHomeIndex = top.homeIndex
+        top.friendIndex = bottom.friendIndex
+        bottom.friendIndex = tempTopFriendIndex
+        top.homeIndex = bottom.homeIndex
+        bottom.homeIndex = tempTopHomeIndex
+
+        do {
+            try context.save()
+        } catch {
+            print("Error switching friend indexes: \(error)")
+        }
     }
     
     

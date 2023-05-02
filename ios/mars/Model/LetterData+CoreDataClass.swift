@@ -11,5 +11,5 @@ import CoreData
 
 @objc(LetterData)
 public class LetterData: NSManagedObject {
-
+    
 }

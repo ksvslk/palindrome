@@ -16,17 +16,18 @@ class Letter: Cell {
         get { return CellType.letter }
         set {}
     }
+    // MARK: Property references
     private var cellDirector: CellDirector
-    
-    var letterData: LetterData = LetterData() // TODO: Implement!
+    var data: LetterData
     
     
     // MARK: Initialize
-    init(homeIndex:Int64, letter: String, size: CGSize, homePosition: CGPoint, cellDirector: CellDirector) {
+    init(data: LetterData, size: CGSize, homePosition: CGPoint, cellDirector: CellDirector) {
         self.cellDirector = cellDirector
-        super.init(homeIndex: homeIndex, texture: nil, color: Theme.colorPrimary, size: size, homePosition: homePosition)
+        self.data = data
+        super.init(homeIndex: data.homeIndex, texture: nil, color: Theme.colorPrimary, size: size, homePosition: homePosition)
         isUserInteractionEnabled = true
-        let letterLabel = SKLabelNode(text: letter)
+        let letterLabel = SKLabelNode(text: data.letter)
         letterLabel.fontName = Theme.letterFont
         letterLabel.fontSize = size.width / 1.5
         letterLabel.verticalAlignmentMode = .center

@@ -45,6 +45,7 @@ class GameScene: SKScene {
         
     }
     
+    
     // MARK: Add box nodes to the grid
     // TODO: WARNING! Does not check if the GameFieldCreator and database version of level match (different columns)
     private func alternativeAddGameNodes(
@@ -67,18 +68,18 @@ class GameScene: SKScene {
                     gridNode.addChild(space)
                     
                 case (true, _):
-                    let isLetterWithFriend = letters.first { data in
-                        data.homeIndex == index && data.friendIndex != -1
-                    }
+                    let letterWithFriend = letters.first { data in
+                        data.homeIndex == index
+                    }!
                     
-                    if isLetterWithFriend != nil {
+                    if letterWithFriend.friendIndex != -1 {
                         let space = getBlankNode(gameField: gameField, rowIndex: rowIndex, colIndex: colIndex)
                         homeIndexesToPositions[Int64(index)] = space.position
                         gridNode.addChild(space)
                     } else {
+                        assert(index == letterWithFriend.homeIndex)
                         let letter = getLetterNode(
-                            char: String(char),
-                            currentIndex: index,
+                            data: letterWithFriend,
                             gameField: gameField,
                             rowIndex: rowIndex,
                             colIndex: colIndex
@@ -97,14 +98,18 @@ class GameScene: SKScene {
                     gridNode.addChild(slot)
                     cellDirector.cells.append(slot)
                     
-                    if let letterWithFriend = letters.first(where: { data in data.friendIndex == index }) {
+                    
+                    if let letterWithFriend = letters.first(where: { data in
+                        data.friendIndex == index
+                    }) {
+                        
                         let letter = getLetterNode(
-                            char: letterWithFriend.letter,
-                            currentIndex: letterWithFriend.homeIndex,
+                            data: letterWithFriend,
                             gameField: gameField,
                             rowIndex: rowIndex,
                             colIndex: colIndex
                         )
+                        slot.friend = letter
                         letter.friend = slot
                         letter.color = Theme.colorSecondary
                         
@@ -120,6 +125,7 @@ class GameScene: SKScene {
                 }
             }
         }
+  
     }
     
     
@@ -134,11 +140,10 @@ class GameScene: SKScene {
     
     
     // MARK: Get Letter node
-    private func getLetterNode(char: String, currentIndex: Int64, gameField: GameField, rowIndex: Int, colIndex: Int) -> Letter
+    private func getLetterNode(data: LetterData, gameField: GameField, rowIndex: Int, colIndex: Int) -> Letter
     {
         return Letter(
-            homeIndex: currentIndex,
-            letter: char, size: CGSize(width: gameField.boxSize.width, height:  gameField.boxSize.height),
+            data: data, size: CGSize(width: gameField.boxSize.width, height:  gameField.boxSize.height),
             homePosition: CGPoint(x: CGFloat(colIndex) * (gameField.boxSize.width + GameFieldCreator.spacing), y: -CGFloat(rowIndex) * (gameField.boxSize.height + GameFieldCreator.spacing)),
             cellDirector: cellDirector
         )

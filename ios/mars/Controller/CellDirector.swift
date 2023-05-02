@@ -13,12 +13,14 @@ class CellDirector {
     
     init(cells: [Cell]) {
         self.cells = cells
+       
     }
     
     
     // MARK: Handle collisions
     func handleCollisions(letter: Letter)
     {
+       
         guard let candidateCells = getCandidateCells(letter: letter), !candidateCells.isEmpty else {
             print("no candidate cells - send letter home")
             sendLetterHome(letter: letter)
@@ -29,7 +31,9 @@ class CellDirector {
             sendLetterHome(letter: letter)
             return
         }
-        
+        print(candidateCells.count)
+        print(closestCell.homeIndex)
+     
         switch closestCell.cellType {
         case CellType.letter:
             if (closestCell.state == CellState.home)
@@ -50,9 +54,10 @@ class CellDirector {
                 return
             }
         case .none:
+            
             return
         }
-        
+        print("In the end, it does not even matter. Should not be here")
     }
     
     
@@ -62,7 +67,7 @@ class CellDirector {
         
         for droppedTo in cells {
             if letter.intersects(droppedTo) && letter != droppedTo {
-                guard (droppedTo.cellType == CellType.letter && droppedTo.state == CellState.home) || droppedTo.cellType == CellType.slot else {
+                guard (droppedTo.cellType == CellType.letter && droppedTo.state == CellState.home) || (droppedTo.cellType == CellType.slot && droppedTo.friend == nil) else {
                     continue
                 }
                 candidateCells.append(droppedTo)
@@ -88,24 +93,16 @@ class CellDirector {
         isRewarded: Bool = false,
         isLastRewardedLetter: Bool = false
     ) {
+
+        Database.shared.changeFriendIndex(
+            letter: letter.data,
+            newFriendIndex: slot.homeIndex
+        )
         
-        // TODO: stuff missing
         letter.friend?.friend = nil
         slot.friend = letter
         letter.friend = slot
         letter.currentPosition = slot.homePosition
-    }
-    
-    
-    private func placeLetterInEmptySlotAlternative(
-        letter: Letter,
-        slot: Slot,
-        isRewarded: Bool = false,
-        isLastRewardedLetter: Bool = false
-    )
-    {
-        letter.letterData.friendIndex = slot.homeIndex
-        
     }
     
     
@@ -115,7 +112,12 @@ class CellDirector {
             letter.zPosition = C.MIDDLE_LAYER
         }
         if (letter.friend != nil) {
-            // TODO: stuff missing
+
+            Database.shared.changeFriendIndex(
+                letter: letter.data,
+                newFriendIndex: -1
+            )
+            
             letter.friend?.friend = nil
             letter.friend = nil
             letter.currentPosition = letter.homePosition
@@ -130,6 +132,8 @@ class CellDirector {
         isRewarded: Bool = false
     ) {
         //TODO: stuff missing
+        Database.shared.switchFriendIndexes(top: top.data, bottom: bottom.data)
+        
         let tempBottomCurrent = bottom.currentPosition
         bottom.currentPosition = top.currentPosition
         top.currentPosition = tempBottomCurrent
