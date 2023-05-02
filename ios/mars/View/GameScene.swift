@@ -42,7 +42,23 @@ class GameScene: SKScene {
         let height = ((gameField.boxSize.height + GameFieldCreator.spacing) * CGFloat(allCells.count - 1))
         let width = ((gameField.boxSize.width + GameFieldCreator.spacing) * CGFloat(gameField.columns - 1))
         gridNode.position = CGPoint(x:-width/2,y:height/2)
-        
+        print(allCells)
+#if DEBUG
+        validateNodesCount(grid: gridNode, level: currentLevel, cells: allCells)
+#endif
+    }
+    
+    
+    private func validateNodesCount(grid: SKNode, level: Level, cells:[String])
+    {
+        let actualGridChildrenCount = grid.children.count
+        let expectedGridChildrenCount = 2 * level.lettersArr.count + level.lettersArr.filter { letterData in letterData.friendIndex != -1
+        }.count + cells.compactMap { str in
+            str.allSatisfy { chr in
+                chr == " "
+            }
+        }.count
+        assert(expectedGridChildrenCount == actualGridChildrenCount)
     }
     
     
@@ -125,7 +141,7 @@ class GameScene: SKScene {
                 }
             }
         }
-  
+        
     }
     
     

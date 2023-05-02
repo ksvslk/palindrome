@@ -18,7 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print("Application directory: \(NSHomeDirectory())")
    
         Database.shared.addNewLevel(levelNr: 1, palindrome: "TENET", solutionsToHints: ["TENET":"Movie"])
-         
+        Database.shared.addNewLevel(levelNr: 2, palindrome: "A NUT FOR A JAR OF TUNA.", solutionsToHints: ["A NUT FOR A JAR OF TUNA.":"Food"])
         
         return true
     }
