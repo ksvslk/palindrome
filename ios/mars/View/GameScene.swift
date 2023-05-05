@@ -11,19 +11,33 @@ class GameScene: SKScene {
     
     // MARK: Initialize level
     override func didMove(to view: SKView) {
-        
+        print("didMove")
+        cellDirector.cells.removeAll()
+       
         // Get current level
         let currentLevel = Database.shared.currentLevel!
         
         // Get and set view size
         let viewSize = CGSize(width: view.bounds.size.width, height: view.bounds.size.height)
         self.size = viewSize
-        
+
         // Create game field representation which will be used to creat the UI grid
         let gameField = GameFieldCreator.getGameField(
             palindrome: currentLevel.solutionsArr.first!.palindrome,
-            viewSize:viewSize
+            viewSize:viewSize,
+            level:currentLevel
         )
+      
+        
+        if (currentLevel.columnCount == -1)
+        {
+            Database.shared.updateColumnCount(
+                newColumntCount: Int64(gameField.columns),
+                oldFriendToNewFriendIndex: [:]
+            )
+  
+        }
+     
         let allCells = gameField.letterRows + gameField.solutionRows
         
         // Create the grid node
@@ -31,29 +45,29 @@ class GameScene: SKScene {
         addChild(gridNode)
         
         // Add `Letter`-s, `Slot`-s and `SKSpriteNode`-s to the grid
-        //addGameNodes(allCells: allCells, gameField: gameField, gridNode: &gridNode)
         do {
-            try alternativeAddGameNodes(letters: currentLevel.lettersArr, allCells: allCells, gameField: gameField, gridNode: &gridNode)
+            try addGameNodes(letters: currentLevel.lettersArr, allCells: allCells, gameField: gameField, gridNode: &gridNode)
         } catch {
             print("Could not add nodes to grid.")
         }
-        
+
         // Change the position of the grid
         let height = ((gameField.boxSize.height + GameFieldCreator.spacing) * CGFloat(allCells.count - 1))
         let width = ((gameField.boxSize.width + GameFieldCreator.spacing) * CGFloat(gameField.columns - 1))
         gridNode.position = CGPoint(x:-width/2,y:height/2)
-        print(allCells)
+
 #if DEBUG
         assertThatEachLetterHasSlot(grid: gridNode, level: currentLevel)
         assertDatabaseAndActualLettersCount(grid: gridNode, level: currentLevel)
         assertTotalGridNodesCount(grid: gridNode, level: currentLevel, cells: allCells)
 #endif
+ 
     }
     
     
     // MARK: Create the grid
     // TODO: WARNING! Does not check if the GameFieldCreator and database version of level match (different columns)
-    private func alternativeAddGameNodes(
+    private func addGameNodes(
         letters: [LetterData],
         allCells: [String],
         gameField: GameField,
@@ -65,8 +79,9 @@ class GameScene: SKScene {
         for (rowIndex, rowOfChars) in allCells.enumerated() {
             for (colIndex, char) in rowOfChars.enumerated() {
                 
-                let index = Int64(rowIndex * gameField.columns + colIndex)
-                
+                let index = Int64(rowIndex * gameField.columns + colIndex + 1)
+               
+           
                 switch (rowIndex < gameField.letterRows.count, char) {
                 case (true, " "), (false, " "):
                     let space = getBlankNode(gameField: gameField, rowIndex: rowIndex, colIndex: colIndex)
@@ -100,10 +115,10 @@ class GameScene: SKScene {
                         rowIndex: rowIndex,
                         colIndex: colIndex
                     )
+              
                     gridNode.addChild(slot)
                     cellDirector.cells.append(slot)
-                    
-                    
+              
                     if let letterWithFriend = letters.first(where: { data in
                         data.friendIndex == index
                     }) {
@@ -130,7 +145,6 @@ class GameScene: SKScene {
                 }
             }
         }
-        
     }
     
     
@@ -161,12 +175,7 @@ class GameScene: SKScene {
     private func assertTotalGridNodesCount(grid: SKNode, level: Level, cells:[String])
     {
         let actualGridChildrenCount = grid.children.count
-        let expectedGridChildrenCount = 2 * level.lettersArr.count + level.lettersArr.filter { letterData in letterData.friendIndex != -1
-        }.count + cells.compactMap { str in
-            str.allSatisfy { chr in
-                chr == " "
-            }
-        }.count
+        let expectedGridChildrenCount = cells.joined().count + level.lettersArr.filter { letterData in letterData.friendIndex != -1 }.count
         assert(expectedGridChildrenCount == actualGridChildrenCount)
     }
 #endif

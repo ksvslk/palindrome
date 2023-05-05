@@ -14,7 +14,7 @@ class GameViewController: UIViewController {
     // MARK: Load main scene
     private func loadMainScene()
     {
-        Database.shared.changeGameLevel(nr: 2)
+        Database.shared.changeGameLevel(nr:1)
        
         // Load 'GameScene.sks' as a GKScene. This provides gameplay related content
         // including entities and graphs.
@@ -31,14 +31,17 @@ class GameViewController: UIViewController {
                 // Present the scene
                 if let view = self.view as! SKView? {
                     view.presentScene(sceneNode, transition: SKTransition.crossFade(withDuration: 1))
-                    print(view.center)
                     view.ignoresSiblingOrder = true
-                    
                     view.showsFPS = true
                     view.showsNodeCount = true
                 }
             }
         }
+    }
+    
+    private func reloadScene()
+    {
+        
     }
     
     

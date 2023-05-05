@@ -14,13 +14,14 @@ struct GameFieldCreator {
     static let maxBoxSize = 40.0
     
     // MARK: Create game field
-    static func getGameField(palindrome: String, viewSize: CGSize) -> GameField
+    static func getGameField(palindrome: String, viewSize: CGSize, level: Level) -> GameField
     {
         let puzzleOnlyLetters = palindrome.replacingOccurrences(
             of: "\\s+",
             with: "",
             options: .regularExpression
         )
+        
         let columns = palindrome.split(separator: " ").max { $0.count < $1.count }!.count
         let totalAreaRatio = Float(viewSize.width) / Float(viewSize.height)
         let columnsEnd = max(7, palindrome.count)
@@ -57,6 +58,7 @@ struct GameFieldCreator {
             exceedingHeight = getUsedHeight(rowsCount: solutionRows.count, boxSize: Float(boxSize), gap: Int(spacing)) >= Float(viewSize.height)
         }
         
+        updateFriendIndexesIfNeeded(palindrome: palindrome, puzzleOnlyLetters:puzzleOnlyLetters, info: level, newColumnCount: closestColumnsRatio.0)
         
         return GameField(
             columns: closestColumnsRatio.0,
@@ -69,33 +71,19 @@ struct GameFieldCreator {
     
     // MARK: Solution rows
     static func getSolutionRows(puzzle: String, cols: Int) -> [String] {
-        let words = puzzle.split(separator: " ")
-        var lines: [String] = []
-        var currentLine = ""
-        
-        for word in words {
-            let wordLength = word.count
-            if currentLine.isEmpty {
-                currentLine = String(word)
+        let puzzleWords = puzzle.split(separator: " ")
+        return puzzleWords.reduce(into: [String]()) { acc, s in
+            if acc.isEmpty {
+                acc.append(String(s))
+            } else if acc.last!.count + s.count + 1 <= cols {
+                acc[acc.count - 1] += " " + s
             } else {
-                let spaceCount = currentLine.count == 0 ? 0 : 1
-                let potentialLength = currentLine.count + spaceCount + wordLength
-                if potentialLength <= cols {
-                    currentLine.append(" \(word)")
-                } else {
-                    let padding = String(repeating: " ", count: cols - currentLine.count)
-                    lines.append(currentLine + padding)
-                    currentLine = String(word)
-                }
+                let blankCount = cols - acc.last!.count > 0 ? cols - acc.last!.count : 0
+                let last = acc.last! + String(repeating: " ", count: blankCount)
+                acc[acc.count - 1] = last
+                acc.append(String(s))
             }
         }
-        
-        if !currentLine.isEmpty {
-            let padding = String(repeating: " ", count: cols - currentLine.count)
-            lines.append(currentLine + padding)
-        }
-        
-        return lines
     }
     
     
@@ -130,4 +118,49 @@ struct GameFieldCreator {
         return Float(columns) * (boxSize + Float(gap)) + 2 * (boxSize + Float(gap))
     }
     
+    
+    // MARK: Update friend indexes
+    static private func updateFriendIndexesIfNeeded(palindrome: String, puzzleOnlyLetters:String, info: Level, newColumnCount: Int) {
+     
+        if info.columnCount != -1 && info.columnCount != newColumnCount {
+
+            let firstIndexForNewColumnsCount =
+                puzzleOnlyLetters.chunked(into: newColumnCount).count * newColumnCount + 1
+            let firstIndexForOldColumnsCount =
+                puzzleOnlyLetters.chunked(into: Int(info.columnCount)).count * Int(info.columnCount) + 1
+            
+            print("firstIndexForOldColumnsCount: \(firstIndexForOldColumnsCount), cols: \(info.columnCount)")
+            print("firstIndexForNewColumnsCount: \(firstIndexForNewColumnsCount), cols: \(newColumnCount)")
+
+            let oldList = getSolutionRows(puzzle: palindrome, cols: Int(info.columnCount))
+            let newList = getSolutionRows(puzzle: palindrome, cols: newColumnCount)
+            
+            let newIndexes = newList
+                .joined()
+                .enumerated()
+                .filter { $0.element != " " }
+                .map { firstIndexForNewColumnsCount + $0.offset  }
+            let oldIndexes = oldList
+                .joined()
+                .enumerated()
+                .filter { $0.element != " " }
+                .map { firstIndexForOldColumnsCount + $0.offset  }
+            
+            print("oldIndexes: ", oldIndexes)
+            print("newIndexes: ", newIndexes)
+            
+            let oldFriendToNewFriendIndex = Dictionary(uniqueKeysWithValues: zip(oldIndexes, newIndexes))
+          
+            if (!oldFriendToNewFriendIndex.isEmpty)
+            {
+                Database.shared.updateColumnCount(
+                    newColumntCount: Int64(newColumnCount),
+                    oldFriendToNewFriendIndex: oldFriendToNewFriendIndex
+                )
+            }
+            
+        }
+    }
+ 
+
 }

@@ -69,7 +69,7 @@ class Database {
         level.letters = NSSet(array: level.shuffledPuzzle.enumerated().map { (index, char) in
             let letter = LetterData(context: context)
             letter.letter = String(char)
-            letter.homeIndex = Int64(index)
+            letter.homeIndex = Int64(index) + 1
             return letter
         })
         level.solutions = NSSet(array: solutionsToHints.map({ (key: String, value: String) in
@@ -108,6 +108,23 @@ class Database {
     }
     
     
+    func updateCurrentLevel()
+    {
+        let request: NSFetchRequest<Level> = Level.fetchRequest()
+        request.predicate = NSPredicate(format: "levelNumber = %@", String(currentLevel!.levelNumber))
+        var fetchedLevels: [Level] = []
+        do {
+            fetchedLevels = try context.fetch(request)
+        } catch {
+            print("Error fetching level")
+        }
+        
+        if !fetchedLevels.isEmpty {
+            currentLevel = fetchedLevels.first
+        }
+    }
+    
+    
     // MARK: Reset Level
     func resetLevel(level:Int, progress: Level.Progress = Level.Progress.in_progress)
     {
@@ -126,6 +143,35 @@ class Database {
 #if DEBUG
         assertFriendIndexesAreUniqueForEachLetter()
 #endif
+    }
+    
+    // MARK: Update column and letters friends
+    func updateColumnCount(newColumntCount: Int64, oldFriendToNewFriendIndex:[Int:Int])
+    {
+        if (!oldFriendToNewFriendIndex.isEmpty)
+        {
+            currentLevel?.lettersArr.forEach({ letterData in
+                
+                if (letterData.friendIndex != -1)
+                {
+                    let newFriendIndex = oldFriendToNewFriendIndex[Int(letterData.friendIndex)]!
+                    letterData.friendIndex = Int64(newFriendIndex)
+   
+                }
+           
+            })
+        }
+  
+        currentLevel?.columnCount = newColumntCount
+       
+        do {
+            try context.save()
+        } catch {
+            print("Error changing columnd count: \(error)")
+        }
+        
+        updateCurrentLevel()
+     
     }
     
     
