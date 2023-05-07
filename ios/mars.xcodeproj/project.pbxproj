@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		B128451029F82ACE00C8F13D /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B128450F29F82ACE00C8F13D /* Extensions.swift */; };
 		B1299D7029F962F4007B2668 /* Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1299D6F29F962F4007B2668 /* Database.swift */; };
+		B13966B62A082D5000EF75A0 /* place_letter.wav in Resources */ = {isa = PBXBuildFile; fileRef = B13966B52A082D5000EF75A0 /* place_letter.wav */; };
+		B13966B82A082D6500EF75A0 /* switch_letters.wav in Resources */ = {isa = PBXBuildFile; fileRef = B13966B72A082D6500EF75A0 /* switch_letters.wav */; };
+		B13966BA2A08300800EF75A0 /* CollisionResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13966B92A08300800EF75A0 /* CollisionResult.swift */; };
 		B141D53C29F6816200FE9B39 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B141D53B29F6816200FE9B39 /* Theme.swift */; };
 		B141D54329F6B44500FE9B39 /* yantramanav_bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B141D54029F681B300FE9B39 /* yantramanav_bold.ttf */; };
 		B144A88429FA66B40067A080 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B144A88229FA66B40067A080 /* Model.xcdatamodeld */; };
@@ -55,6 +58,9 @@
 		B128450F29F82ACE00C8F13D /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		B1299D6F29F962F4007B2668 /* Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Database.swift; sourceTree = "<group>"; };
 		B13966AE2A069DD400EF75A0 /* mars.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = mars.entitlements; sourceTree = "<group>"; };
+		B13966B52A082D5000EF75A0 /* place_letter.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = place_letter.wav; sourceTree = "<group>"; };
+		B13966B72A082D6500EF75A0 /* switch_letters.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = switch_letters.wav; sourceTree = "<group>"; };
+		B13966B92A08300800EF75A0 /* CollisionResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollisionResult.swift; sourceTree = "<group>"; };
 		B13A246729F6DCDA0045DF3D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B141D53B29F6816200FE9B39 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		B141D53E29F681B300FE9B39 /* yantramanav_medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = yantramanav_medium.ttf; sourceTree = "<group>"; };
@@ -110,6 +116,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B13966B42A082D0B00EF75A0 /* Sounds */ = {
+			isa = PBXGroup;
+			children = (
+				B13966B72A082D6500EF75A0 /* switch_letters.wav */,
+				B13966B52A082D5000EF75A0 /* place_letter.wav */,
+			);
+			path = Sounds;
+			sourceTree = "<group>";
+		};
 		B141D53D29F6817700FE9B39 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
@@ -156,6 +171,7 @@
 		B1E8974C29EC5001001B942F /* mars */ = {
 			isa = PBXGroup;
 			children = (
+				B13966B42A082D0B00EF75A0 /* Sounds */,
 				B13966AE2A069DD400EF75A0 /* mars.entitlements */,
 				B1F5CA2029FAED5E0061FA65 /* Controller */,
 				B1F5CA1F29FAED470061FA65 /* DTO */,
@@ -195,6 +211,7 @@
 			children = (
 				B1F6B12C29F8208300EEEC17 /* CellType.swift */,
 				B163AA4729F7FA2F006C8BE6 /* CellState.swift */,
+				B13966B92A08300800EF75A0 /* CollisionResult.swift */,
 			);
 			path = Enum;
 			sourceTree = "<group>";
@@ -314,7 +331,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B13966B62A082D5000EF75A0 /* place_letter.wav in Resources */,
 				B1E8975929EC5001001B942F /* Main.storyboard in Resources */,
+				B13966B82A082D6500EF75A0 /* switch_letters.wav in Resources */,
 				B16F207229FBBB2400E8DFCE /* Actions.sks in Resources */,
 				B16F207029FBBAFC00E8DFCE /* GameScene.sks in Resources */,
 				B141D54329F6B44500FE9B39 /* yantramanav_bold.ttf in Resources */,
@@ -355,6 +374,7 @@
 				B1F6B12D29F8208300EEEC17 /* CellType.swift in Sources */,
 				B1B33A8629FDB66D00DFA59F /* Level+CoreDataClass.swift in Sources */,
 				B1D2710229EDB24500E01AC8 /* GameField.swift in Sources */,
+				B13966BA2A08300800EF75A0 /* CollisionResult.swift in Sources */,
 				B128451029F82ACE00C8F13D /* Extensions.swift in Sources */,
 				B1FE7A4D29F80E82007D7954 /* CellDirector.swift in Sources */,
 				B1B33A8929FDB66D00DFA59F /* LetterData+CoreDataProperties.swift in Sources */,

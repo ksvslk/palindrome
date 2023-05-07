@@ -6,14 +6,22 @@
 //
 
 import Foundation
+import SpriteKit
 
 struct C {
     static let TOP_LAYER = CGFloat(3)
     static let MIDDLE_LAYER = CGFloat(2)
     static let NEUTRAL_LAYER = CGFloat(1)
     static let BOTTOM_LAYER = CGFloat(-1)
-    static let REWARDED_ANIM_MUL = 3
-    static let REWARDED_ANIM_MUL_DEFAULT = 1
+    static let REWARDED_ANIMATION_MODIFIER = CGFloat(3)
+    static let ANIMATION_MODIFIER = CGFloat(1)
+    
+    // Transition durations
+    static let ON_CLICK_COLOR_CHANGE_ANIMATION = CGFloat(0.2)
+    static let ON_RELEASE_COLOR_CHANGE_ANIMATION = CGFloat(0.2)
+    static let HOME_ANIMATION_MULTIPLIER = CGFloat(0.05)
+
     
     static let SCORE_LETTER_MULTIPLIER = 100 // Each letter in level will give 100 points
+       
 }

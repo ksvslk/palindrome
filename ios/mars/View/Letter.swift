@@ -9,8 +9,6 @@ import SpriteKit
 
 class Letter: Cell {
     
-    static let moveDuration = 0.7
-    static let colorChangeDuration = 0.5
     static let scaleAmount: CGFloat = 0.1
     override var cellType : CellType {
         get { return CellType.letter }
@@ -19,7 +17,9 @@ class Letter: Cell {
     // MARK: Property references
     private var cellDirector: CellDirector
     var data: LetterData
-    
+    // Sounds
+    let PLACE_LETTER_SOUND_ACTION = SKAction.playSoundFileNamed("place_letter.wav", waitForCompletion: false)
+    let SWITCH_LETTER_SOUND_ACTION = SKAction.playSoundFileNamed("switch_letters.wav", waitForCompletion: false)
     
     // MARK: Initialize
     init(data: LetterData, size: CGSize, homePosition: CGPoint, cellDirector: CellDirector) {
@@ -49,14 +49,14 @@ class Letter: Cell {
         guard let touch = touches.first else { return }
         
         let location = touch.location(in: self.parent!)
-        
+   
         if self.frame.contains(location) {
             self.zPosition = C.TOP_LAYER
             isUserInteractionEnabled = false
             currentPosition = self.position
             state = CellState.dragging
-            self.animateColor(to: Theme.colorSecondary, duration: Letter.colorChangeDuration, timingMode: SKActionTimingMode.easeInEaseOut)
-            self.run(SKAction.scale(by: 1 + Letter.scaleAmount, duration: Letter.colorChangeDuration))
+            self.animateColor(to: Theme.colorSecondary, duration: C.ON_CLICK_COLOR_CHANGE_ANIMATION, timingMode: SKActionTimingMode.easeInEaseOut)
+            self.run(SKAction.scale(by: 1 + Letter.scaleAmount, duration: C.ON_CLICK_COLOR_CHANGE_ANIMATION))
         }
     }
     
@@ -81,7 +81,8 @@ class Letter: Cell {
     // MARK: Touches ended
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard state == CellState.dragging else { return }
-        cellDirector.handleCollisions(letter: self)
+        let collisionResult = cellDirector.handleCollisions(letter: self)
+        playSound(collisionResult: collisionResult)
         moveLetter()
     }
     
@@ -102,15 +103,22 @@ class Letter: Cell {
     // MARK: Move action
     func moveLetter()
     {
+        // Get some value that represents how much was moved ignoring the actual physical
+        // distance. Log applied to Euclidean distance to make it very small.
+        let distance = log2((abs(position.distance(point: currentPosition))))
+        print(distance)
+        let duration = distance.isFinite ? abs(distance * C.HOME_ANIMATION_MULTIPLIER * C.ANIMATION_MODIFIER) : C.ON_RELEASE_COLOR_CHANGE_ANIMATION
+        print("Duration: \(duration)")
+        print("On release duration: \(C.ON_RELEASE_COLOR_CHANGE_ANIMATION)")
         let endColor = friend != nil ? Theme.colorSecondary : Theme.colorPrimary
         state = CellState.resolving
-        let moveAction = SKAction.move(to: currentPosition, duration: Letter.moveDuration)
+        let moveAction = SKAction.move(to: currentPosition, duration: duration)
         moveAction.timingMode = .easeInEaseOut
         self.run(moveAction) {
             self.zPosition = C.NEUTRAL_LAYER
-            self.animateColor(to: endColor, duration: Letter.colorChangeDuration, timingMode: SKActionTimingMode.easeOut)
+            self.animateColor(to: endColor, duration: duration, timingMode: SKActionTimingMode.easeOut)
             let newScale = max(self.xScale - 0.2, 1.0)
-            let scaleAction = SKAction.scale(to: newScale, duration: Letter.colorChangeDuration)
+            let scaleAction = SKAction.scale(to: newScale, duration: duration)
             self.run(scaleAction) {
                 self.state = CellState.home
                 self.isUserInteractionEnabled = true
@@ -124,6 +132,19 @@ class Letter: Cell {
         let colorAction = SKAction.colorize(with: color, colorBlendFactor: 1, duration: duration)
         colorAction.timingMode = timingMode
         self.run(colorAction)
+    }
+    
+    
+    private func playSound(collisionResult: CollisionResult)
+    {
+        switch collisionResult {
+        case .landing:
+            self.run(PLACE_LETTER_SOUND_ACTION)
+        case .switching:
+            self.run(SWITCH_LETTER_SOUND_ACTION)
+        case .nothing:
+            return
+        }
     }
     
 }

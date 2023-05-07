@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SpriteKit
 
 class CellDirector {
     
@@ -17,28 +18,30 @@ class CellDirector {
     }
     
     // MARK: Main handle
-    func handleCollisions(letter: Letter)
+    func handleCollisions(letter: Letter) -> CollisionResult
     {
-        checkCollisionsForAction(letter: letter)
+        let result = checkCollisionsForAction(letter: letter)
 #if DEBUG
         assertThatLettersHaveUniqueFriends()
         assertThatMaximumOfTwoCellsHaveSameCoordinates()
 #endif
+        return result
     }
     
     
     // MARK: Check collisions for action
-    private func checkCollisionsForAction(letter: Letter)
+    private func checkCollisionsForAction(letter: Letter) -> CollisionResult
     {
+        
         guard let candidateCells = getCandidateCells(letter: letter), !candidateCells.isEmpty else {
             print("no candidate cells - send letter home")
             sendLetterHome(letter: letter)
-            return
+            return CollisionResult.nothing
         }
         guard let closestCell = getClosestCell(to: letter, from: candidateCells) else {
             print("no collisions - send letter home")
             sendLetterHome(letter: letter)
-            return
+            return CollisionResult.nothing
         }
         
         switch closestCell.cellType {
@@ -47,24 +50,25 @@ class CellDirector {
             {
                 switchLetterPositions(top: letter, bottom: closestCell as! Letter)
                 print(" switchLetterPositions(letter, closestCell)")
-                return
+                return CollisionResult.switching
             }
         case CellType.slot:
             if (closestCell.friend == nil)
             {
                 print("placeLetterInEmptyBox(letter, closestCell)")
                 placeLetterInEmptyBox(letter: letter, slot: closestCell as! Slot)
-                return
+                return CollisionResult.landing
             }
             else if (closestCell.friend == letter) {
                 print("landLetterInSameSlotItWasDraggedFrom")
-                return
+                return CollisionResult.landing
             }
         case .none:
-            return
+            return CollisionResult.nothing
         }
-        
+        return CollisionResult.nothing
     }
+    
     
     // MARK: Assert cells correctness
 #if DEBUG
