@@ -8,6 +8,7 @@
 import Foundation
 import CoreData
 
+
 class Database {
     
     enum DatabaseError: Error {
@@ -26,7 +27,11 @@ class Database {
     
     // MARK: Initialize
     private init() {
-        persistentContainer = NSPersistentContainer(name: "Model")
+        if #available(iOS 13.0, *) {
+            persistentContainer = NSPersistentCloudKitContainer(name: "Model")
+        } else {
+            persistentContainer = NSPersistentContainer(name: "Model")
+        }
         persistentContainer.loadPersistentStores { _, error in
             if let error = error {
                 fatalError("Failed to load Core Data stack: \(error)")

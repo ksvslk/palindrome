@@ -11,7 +11,7 @@
         <attribute name="homeIndex" attributeType="Integer 64" defaultValueString="-1" usesScalarValueType="YES"/>
         <attribute name="letter" attributeType="String" defaultValueString=""/>
         <attribute name="locked" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
-        <relationship name="level" maxCount="1" deletionRule="Cascade" destinationEntity="Level" inverseName="letters" inverseEntity="Level"/>
+        <relationship name="level" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="Level" inverseName="letters" inverseEntity="Level"/>
     </entity>
     <entity name="Level" representedClassName="Level" syncable="YES">
         <attribute name="author" attributeType="String" defaultValueString=""/>
@@ -23,18 +23,13 @@
         <attribute name="score" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="shuffledPuzzle" attributeType="String" defaultValueString=""/>
         <attribute name="timeModified" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <relationship name="letters" toMany="YES" deletionRule="Cascade" destinationEntity="LetterData" inverseName="level" inverseEntity="LetterData"/>
-        <relationship name="solutions" toMany="YES" deletionRule="Cascade" destinationEntity="Solution" inverseName="level" inverseEntity="Solution"/>
+        <relationship name="letters" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="LetterData" inverseName="level" inverseEntity="LetterData"/>
+        <relationship name="solutions" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Solution" inverseName="level" inverseEntity="Solution"/>
     </entity>
     <entity name="Solution" representedClassName="Solution" syncable="YES">
         <attribute name="hint" attributeType="String" defaultValueString=""/>
         <attribute name="palindrome" attributeType="String" defaultValueString=""/>
         <attribute name="solved" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
-        <relationship name="level" maxCount="1" deletionRule="Cascade" destinationEntity="Level" inverseName="solutions" inverseEntity="Level"/>
-        <uniquenessConstraints>
-            <uniquenessConstraint>
-                <constraint value="palindrome"/>
-            </uniquenessConstraint>
-        </uniquenessConstraints>
+        <relationship name="level" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="Level" inverseName="solutions" inverseEntity="Level"/>
     </entity>
 </model>
