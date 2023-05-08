@@ -11,5 +11,4 @@ enum CollisionResult {
     case landing
     case switching
     case nothing
-
 }

@@ -34,12 +34,12 @@ class CellDirector {
     {
         
         guard let candidateCells = getCandidateCells(letter: letter), !candidateCells.isEmpty else {
-            print("no candidate cells - send letter home")
+            print("CellDirector: no candidate cells - send letter home")
             sendLetterHome(letter: letter)
             return CollisionResult.nothing
         }
         guard let closestCell = getClosestCell(to: letter, from: candidateCells) else {
-            print("no collisions - send letter home")
+            print("CellDirector: no collisions - send letter home")
             sendLetterHome(letter: letter)
             return CollisionResult.nothing
         }
@@ -49,18 +49,18 @@ class CellDirector {
             if (closestCell.state == CellState.home)
             {
                 switchLetterPositions(top: letter, bottom: closestCell as! Letter)
-                print(" switchLetterPositions(letter, closestCell)")
+                print("CellDirector: switchLetterPositions(letter, closestCell)")
                 return CollisionResult.switching
             }
         case CellType.slot:
             if (closestCell.friend == nil)
             {
-                print("placeLetterInEmptyBox(letter, closestCell)")
+                print("CellDirector: placeLetterInEmptyBox(letter, closestCell)")
                 placeLetterInEmptyBox(letter: letter, slot: closestCell as! Slot)
                 return CollisionResult.landing
             }
             else if (closestCell.friend == letter) {
-                print("landLetterInSameSlotItWasDraggedFrom")
+                print("CellDirector: landLetterInSameSlotItWasDraggedFrom")
                 return CollisionResult.landing
             }
         case .none:

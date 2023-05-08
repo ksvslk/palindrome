@@ -9,17 +9,27 @@ class GameScene: SKScene {
     
     var cellDirector: CellDirector = CellDirector(cells: [Cell]())
     
+
     // MARK: Initialize level
     override func didMove(to view: SKView) {
-        print("didMove")
+        print("GameScene: didMove")
+        print("GameScene: safeAreaInsets: \( self.view?.safeAreaInsets)")
+        
+        layoutScene(view: view)
+    }
+  
+    
+    private func layoutScene(view: SKView)
+    {
         cellDirector.cells.removeAll()
        
         // Get current level
         let currentLevel = Database.shared.currentLevel!
-        
+       
         // Get and set view size
-        let viewSize = CGSize(width: view.bounds.size.width, height: view.bounds.size.height)
-        self.size = viewSize
+        let viewSize = CGSize(width: view.bounds.size.width-view.safeAreaInsets.left-view.safeAreaInsets.right, height: view.bounds.size.height - view.safeAreaInsets.bottom-view.safeAreaInsets.top)
+
+        self.view!.backgroundColor = UIColor.red
 
         // Create game field representation which will be used to creat the UI grid
         let gameField = GameFieldCreator.getGameField(
@@ -48,7 +58,7 @@ class GameScene: SKScene {
         do {
             try addGameNodes(letters: currentLevel.lettersArr, allCells: allCells, gameField: gameField, gridNode: &gridNode)
         } catch {
-            print("Could not add nodes to grid.")
+            print("GameScene: Could not add nodes to grid.")
         }
 
         // Change the position of the grid
@@ -61,7 +71,6 @@ class GameScene: SKScene {
         assertDatabaseAndActualLettersCount(grid: gridNode, level: currentLevel)
         assertTotalGridNodesCount(grid: gridNode, level: currentLevel, cells: allCells)
 #endif
- 
     }
     
     
