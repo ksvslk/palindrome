@@ -17,18 +17,18 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="N7a-iH-IFn">
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="R30-Mw-aM6">
                                 <rect key="frame" x="0.0" y="774" width="393" height="44"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <items>
-                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="Ec5-Hl-ohd"/>
-                                    <barButtonItem title="Item" style="plain" id="Uhd-in-DYt"/>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="kAX-mj-wUu"/>
+                                    <barButtonItem image="gamecontroller.fill" catalog="system" style="plain" id="Uhd-in-DYt"/>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="QaO-K0-mS3"/>
-                                    <barButtonItem title="Item" style="plain" id="yyp-jo-Kfh"/>
+                                    <barButtonItem title="Item" image="lightbulb.fill" catalog="system" style="plain" id="yyp-jo-Kfh"/>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="5RV-Wv-ZzZ"/>
-                                    <barButtonItem title="Item" style="plain" id="yA7-s9-p3d"/>
+                                    <barButtonItem title="Item" image="list.bullet" catalog="system" style="plain" id="yA7-s9-p3d"/>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="1fd-cS-Ebf"/>
-                                    <barButtonItem title="Item" style="plain" id="Ylb-WD-GVr"/>
+                                    <barButtonItem title="Item" image="gear" catalog="system" style="plain" id="Ylb-WD-GVr"/>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="tX7-Rd-a7K"/>
                                 </items>
                             </toolbar>
@@ -43,6 +43,10 @@
         </scene>
     </scenes>
     <resources>
+        <image name="gamecontroller.fill" catalog="system" width="128" height="79"/>
+        <image name="gear" catalog="system" width="128" height="122"/>
+        <image name="lightbulb.fill" catalog="system" width="92" height="128"/>
+        <image name="list.bullet" catalog="system" width="128" height="87"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

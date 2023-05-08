@@ -13,11 +13,15 @@ class GameScene: SKScene {
     // MARK: Initialize level
     override func didMove(to view: SKView) {
         print("GameScene: didMove")
-        print("GameScene: safeAreaInsets: \( self.view?.safeAreaInsets)")
-        
+        print("GameScene: didMove safeAreaInsets: \( self.view?.safeAreaInsets)")
         layoutScene(view: view)
     }
+    
+    override func didChangeSize(_ oldSize: CGSize) {
+        print("GameScene: didChangeSize safeAreaInsets: \( self.view?.safeAreaInsets)")
+    }
   
+    
     
     private func layoutScene(view: SKView)
     {

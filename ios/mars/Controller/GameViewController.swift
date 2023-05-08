@@ -24,13 +24,10 @@ class GameViewController: UIViewController {
             if let sceneNode = scene.rootNode as! GameScene? {
                 
                 // Set the scale mode to scale to fit the window
-               
                 sceneNode.backgroundColor = Theme.backgroundColor
-                
-                
+            
                 // Present the scene
                 if let view = self.view as! SKView? {
-      
                     view.presentScene(sceneNode, transition: SKTransition.crossFade(withDuration: 1))
                     view.ignoresSiblingOrder = true
                     view.showsFPS = true
@@ -39,6 +36,11 @@ class GameViewController: UIViewController {
                 }
             }
         }
+    }
+    
+    override func viewSafeAreaInsetsDidChange() {
+        print("GameViewController: viewSafeAreaInsetsDidChange")
+        print("GameViewController: \( self.view?.safeAreaInsets)")
     }
     
     
@@ -59,7 +61,7 @@ class GameViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         print("GameViewController: viewDidLoad")
-       
+        print("GameViewController: \( self.view?.safeAreaInsets)")
     }
     
     
@@ -75,6 +77,7 @@ class GameViewController: UIViewController {
     
     // MARK: Status bar
     override var prefersStatusBarHidden: Bool {
+        
         return true
     }
     
