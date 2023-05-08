@@ -29,10 +29,17 @@ class GameScene: SKScene {
        
         // Get current level
         let currentLevel = Database.shared.currentLevel!
-       
+      
+        let topSafeArea = view.safeAreaInsets.top == 0.0 ? 59.0 : view.safeAreaInsets.top
+        let safeAreaHorizontal = view.safeAreaInsets.left + view.safeAreaInsets.right + 16.0
+        let safeAreaVertical = topSafeArea + view.safeAreaInsets.bottom + 44.0
         // Get and set view size
-        let viewSize = CGSize(width: view.bounds.size.width-view.safeAreaInsets.left-view.safeAreaInsets.right, height: view.bounds.size.height - view.safeAreaInsets.bottom-view.safeAreaInsets.top)
-
+        let viewSize = CGSize(
+            width: view.bounds.width - safeAreaHorizontal,
+            height: view.bounds.height - safeAreaVertical)
+        
+      
+        print("VIew size: \(viewSize)")
         self.view!.backgroundColor = UIColor.red
 
         // Create game field representation which will be used to creat the UI grid
