@@ -36,13 +36,29 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <items>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="kAX-mj-wUu"/>
-                                    <barButtonItem image="gamecontroller.fill" catalog="system" style="plain" id="Uhd-in-DYt"/>
+                                    <barButtonItem image="gamecontroller.fill" catalog="system" style="plain" id="Uhd-in-DYt">
+                                        <connections>
+                                            <action selector="onGameCenterButtonTap:" destination="BV1-FR-VrT" id="6oP-3y-MLO"/>
+                                        </connections>
+                                    </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="QaO-K0-mS3"/>
-                                    <barButtonItem title="Item" image="lightbulb.fill" catalog="system" style="plain" id="yyp-jo-Kfh"/>
+                                    <barButtonItem title="Item" image="lightbulb.fill" catalog="system" style="plain" id="yyp-jo-Kfh">
+                                        <connections>
+                                            <action selector="onHintsButtonTap:" destination="BV1-FR-VrT" id="SzH-sC-TCw"/>
+                                        </connections>
+                                    </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="5RV-Wv-ZzZ"/>
-                                    <barButtonItem title="Item" image="list.bullet" catalog="system" style="plain" id="yA7-s9-p3d"/>
+                                    <barButtonItem title="Item" image="list.bullet" catalog="system" style="plain" id="yA7-s9-p3d">
+                                        <connections>
+                                            <action selector="onLevelsButtonTap:" destination="BV1-FR-VrT" id="oQW-2f-tzK"/>
+                                        </connections>
+                                    </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="1fd-cS-Ebf"/>
-                                    <barButtonItem title="Item" image="gear" catalog="system" style="plain" id="Ylb-WD-GVr"/>
+                                    <barButtonItem title="Item" image="gear" catalog="system" style="plain" id="Ylb-WD-GVr">
+                                        <connections>
+                                            <action selector="onSettingsButtonTap:" destination="BV1-FR-VrT" id="R0U-pe-nRJ"/>
+                                        </connections>
+                                    </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="tX7-Rd-a7K"/>
                                 </items>
                                 <color key="tintColor" name="colorOnBackground"/>

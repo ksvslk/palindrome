@@ -13,8 +13,6 @@ class Database {
     
     enum DatabaseError: Error {
         case couldNotInsertLevel
-        case insufficientFunds(coinsNeeded: Int)
-        case outOfStock
     }
     
     static let shared = Database()

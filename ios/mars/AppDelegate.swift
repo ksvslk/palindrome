@@ -17,6 +17,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         print("Application directory: \(NSHomeDirectory())")
         
+        let userDefaults = UserDefaults.standard
+        userDefaults.register(
+            defaults: [
+                C.SOUND_ON: true,
+                C.VIBRATION_ON: true
+            ]
+        )
+      
+        
         let pal = "Edit pepper genome, nadir by hybrid anemone. Grep peptide?".uppercased()
         //Database.shared.addNewLevel(levelNr: 1, palindrome: "TACO CAT", solutionsToHints: ["TACO CAT":"Cats"])
         Database.shared.addNewLevel(levelNr: 1, palindrome: pal, solutionsToHints: [pal:"Food"])

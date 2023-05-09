@@ -137,13 +137,16 @@ class Letter: Cell {
     
     private func playSound(collisionResult: CollisionResult)
     {
-        switch collisionResult {
-        case .landing:
-            self.run(PLACE_LETTER_SOUND_ACTION)
-        case .switching:
-            self.run(SWITCH_LETTER_SOUND_ACTION)
-        case .nothing:
-            return
+        if (UserDefaults.standard.bool(forKey: C.SOUND_ON))
+        {
+            switch collisionResult {
+            case .landing:
+                self.run(PLACE_LETTER_SOUND_ACTION)
+            case .switching:
+                self.run(SWITCH_LETTER_SOUND_ACTION)
+            case .nothing:
+                return
+            }
         }
     }
     

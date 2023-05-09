@@ -11,6 +11,60 @@ import GameplayKit
 
 class GameViewController: UIViewController {
     
+    @IBAction func onSettingsButtonTap(_ sender: Any) {
+        let sheet = UIAlertController.settingsSheet {
+            print("onTutorialTap")
+        } onFeedbackTap: {
+            print("onFeedbackTap")
+        } onShareTap: {
+            print("onShareTap")
+        }
+
+        present(sheet, animated: true, completion: nil)
+    }
+    
+    @IBAction func onLevelsButtonTap(_ sender: Any) {
+        let sheet = UIAlertController.levelSelectSheet {
+            print("onSubmitLevelTap")
+        } onPlayerLevelsTap: {
+            print("onPlayerLevelsTap")
+        } onGameLevelsTap: {
+            print("onGameLevelsTap")
+        }
+        present(sheet, animated: true, completion: nil)
+    }
+    
+    @IBAction func onHintsButtonTap(_ sender: Any) {
+        let sheet = UIAlertController.hintsSheet {
+            print("onLetterRewardedAdsTap")
+        } onHintRewardedAdsTap: {
+            print("onHintRewardedAdsTap")
+        } onUnlimitedLettersPurchaseTap: {
+            print("onUnlimitedLettersPurchaseTap")
+        } onUnlimitedHintsPurchaseTap: {
+            print("onUnlimitedHintsPurchaseTap")
+        } onRemoveIntermediateAdsPurchaseTap: {
+            print("onRemoveIntermediateAdsPurchaseTap")
+        } onAllInPackPurchaseTap: {
+            print("onAllInPackPurchaseTap!")
+        }
+
+        present(sheet, animated: true, completion: nil)
+    }
+    
+    @IBAction func onGameCenterButtonTap(_ sender: Any)
+    {
+        let sheet = UIAlertController.gameCenterSheet {
+            print("onGameLeaderBoardTap")
+        } onPlayerLeaderBoardTap: {
+            print("onPlayerLeaderBoardTap")
+        } onAchievementsTap: {
+            print("onAchievementsTap")
+        }
+        present(sheet, animated: true, completion: nil)
+    }
+    
+    
     // MARK: Load main scene
     private func loadMainScene()
     {
