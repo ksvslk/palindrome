@@ -19,8 +19,13 @@ class GameLevelSelectController: UIViewController {
         self.collectionView.delegate = self
         self.collectionView.register(LevelSelectCell.self, forCellWithReuseIdentifier: "subclassedcell")
         self.collectionView.alwaysBounceVertical = true
-        // set the background to be white
-        self.collectionView.backgroundColor = Theme.backgroundColor
+
+        // Add blur effect
+        self.collectionView.backgroundColor = UIColor.clear
+        let blurEffect = UIBlurEffect(style: .regular)
+        let blurEffectView = UIVisualEffectView(effect: blurEffect)
+        blurEffectView.frame = self.collectionView.bounds
+        self.collectionView.backgroundView = blurEffectView
     }
     
     override func loadView() {
