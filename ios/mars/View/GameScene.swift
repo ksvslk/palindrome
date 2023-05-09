@@ -43,13 +43,16 @@ class GameScene: SKScene {
             width: view.bounds.width - horizontalSafe,
             height: view.bounds.height - bottomSafe - topSafe)
 
-        debugRect(
-            width: viewSize.width,
-            height: viewSize.height,
-            color:SKColor.systemOrange,
-            topErr: topSafe,
-            bottomErr: bottomSafe
-        )
+        /*
+         debugRect(
+             width: viewSize.width,
+             height: viewSize.height,
+             color:SKColor.systemOrange,
+             topErr: topSafe,
+             bottomErr: bottomSafe
+         )
+         */
+  
         
         print("View size: \(viewSize)")
 

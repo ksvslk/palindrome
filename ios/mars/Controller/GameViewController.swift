@@ -28,9 +28,11 @@ class GameViewController: UIViewController {
             print("onSubmitLevelTap")
         } onPlayerLevelsTap: {
             print("onPlayerLevelsTap")
+            self.present(GameLevelSelectController(), animated: true, completion: nil)
         } onGameLevelsTap: {
             print("onGameLevelsTap")
         }
+        
         present(sheet, animated: true, completion: nil)
     }
     
@@ -88,8 +90,10 @@ class GameViewController: UIViewController {
                     view.showsNodeCount = true
                 
                 }
+               
             }
         }
+        
     }
 
     

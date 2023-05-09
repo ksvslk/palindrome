@@ -128,6 +128,24 @@ class Database {
     }
     
     
+    func getAllLevelNumbers() -> [Int]
+    {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Level")
+        fetchRequest.resultType = .dictionaryResultType
+        fetchRequest.propertiesToFetch = ["levelNumber"]
+
+        var levels:[Int] = []
+        
+        do {
+            let results = try context.fetch(fetchRequest) as! [NSDictionary]
+            levels = results.compactMap { $0.value(forKey: "levelNumber") as? Int }
+        } catch {
+            print("Error fetching names: \(error)")
+        }
+        return levels
+    }
+    
+    
     // MARK: Reset Level
     func resetLevel(level:Int, progress: Level.Progress = Level.Progress.in_progress)
     {

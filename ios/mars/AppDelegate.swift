@@ -29,8 +29,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let pal = "Edit pepper genome, nadir by hybrid anemone. Grep peptide?".uppercased()
         //Database.shared.addNewLevel(levelNr: 1, palindrome: "TACO CAT", solutionsToHints: ["TACO CAT":"Cats"])
         Database.shared.addNewLevel(levelNr: 1, palindrome: pal, solutionsToHints: [pal:"Food"])
+        Database.shared.getAllLevelNumbers()
         return true
     }
+    
     
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
