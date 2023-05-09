@@ -25,7 +25,7 @@ class GameViewController: UIViewController {
                 
                 // Set the scale mode to scale to fit the window
                 sceneNode.backgroundColor = Theme.backgroundColor
-            
+                
                 // Present the scene
                 if let view = self.view as! SKView? {
                     view.presentScene(sceneNode, transition: SKTransition.crossFade(withDuration: 1))
@@ -37,22 +37,10 @@ class GameViewController: UIViewController {
             }
         }
     }
-    
-    override func viewSafeAreaInsetsDidChange() {
-        print("GameViewController: viewSafeAreaInsetsDidChange")
-        print("GameViewController: \( self.view?.safeAreaInsets)")
-    }
-    
-    
-    override func viewDidLayoutSubviews() {
-        print("GameViewController: viewDidLayoutSubviews")
-        loadMainScene()
-    }
-    
+
     
     // MARK: UI mode change
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        print("GameViewController: traitCollectionDidChange")
         loadMainScene()
     }
     
@@ -60,8 +48,7 @@ class GameViewController: UIViewController {
     // MARK: View did load
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("GameViewController: viewDidLoad")
-        print("GameViewController: \( self.view?.safeAreaInsets)")
+        loadMainScene()
     }
     
     
@@ -77,7 +64,6 @@ class GameViewController: UIViewController {
     
     // MARK: Status bar
     override var prefersStatusBarHidden: Bool {
-        
         return true
     }
     

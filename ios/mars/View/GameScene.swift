@@ -12,16 +12,20 @@ class GameScene: SKScene {
 
     // MARK: Initialize level
     override func didMove(to view: SKView) {
-        print("GameScene: didMove")
-        print("GameScene: didMove safeAreaInsets: \( self.view?.safeAreaInsets)")
         layoutScene(view: view)
     }
     
-    override func didChangeSize(_ oldSize: CGSize) {
-        print("GameScene: didChangeSize safeAreaInsets: \( self.view?.safeAreaInsets)")
-    }
-  
     
+    private func debugRect(width:CGFloat, height:CGFloat, color:SKColor, topErr:CGFloat = 0.0, bottomErr:CGFloat = 0.0)
+    {
+        let rectangle = SKShapeNode(rectOf: CGSize(width: width, height: height))
+        rectangle.strokeColor = color
+        rectangle.lineWidth = 2.0
+        rectangle.position.y -= topErr
+        rectangle.position.y += bottomErr
+        self.addChild(rectangle)
+    }
+
     
     private func layoutScene(view: SKView)
     {
@@ -29,18 +33,25 @@ class GameScene: SKScene {
        
         // Get current level
         let currentLevel = Database.shared.currentLevel!
-      
-        let topSafeArea = view.safeAreaInsets.top == 0.0 ? 59.0 : view.safeAreaInsets.top
-        let safeAreaHorizontal = view.safeAreaInsets.left + view.safeAreaInsets.right + 16.0
-        let safeAreaVertical = topSafeArea + view.safeAreaInsets.bottom + 44.0
+
+        let horizontalSafe = 16.0
+        let bottomSafe = 34.0 + 44.0 + 8.0
+        let topSafe = 59.0 + 4.0 + 8.0
+        
         // Get and set view size
         let viewSize = CGSize(
-            width: view.bounds.width - safeAreaHorizontal,
-            height: view.bounds.height - safeAreaVertical)
+            width: view.bounds.width - horizontalSafe,
+            height: view.bounds.height - bottomSafe - topSafe)
+
+        debugRect(
+            width: viewSize.width,
+            height: viewSize.height,
+            color:SKColor.systemOrange,
+            topErr: topSafe,
+            bottomErr: bottomSafe
+        )
         
-      
-        print("VIew size: \(viewSize)")
-        self.view!.backgroundColor = UIColor.red
+        print("View size: \(viewSize)")
 
         // Create game field representation which will be used to creat the UI grid
         let gameField = GameFieldCreator.getGameField(
@@ -56,7 +67,6 @@ class GameScene: SKScene {
                 newColumntCount: Int64(gameField.columns),
                 oldFriendToNewFriendIndex: [:]
             )
-  
         }
      
         let allCells = gameField.letterRows + gameField.solutionRows
@@ -75,7 +85,9 @@ class GameScene: SKScene {
         // Change the position of the grid
         let height = ((gameField.boxSize.height + GameFieldCreator.spacing) * CGFloat(allCells.count - 1))
         let width = ((gameField.boxSize.width + GameFieldCreator.spacing) * CGFloat(gameField.columns - 1))
-        gridNode.position = CGPoint(x:-width/2,y:height/2)
+        gridNode.position = CGPoint(x:-width/2.0,y:height/2.0)
+        gridNode.position.y -= topSafe
+        gridNode.position.y += bottomSafe
 
 #if DEBUG
         assertThatEachLetterHasSlot(grid: gridNode, level: currentLevel)
