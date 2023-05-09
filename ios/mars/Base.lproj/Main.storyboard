@@ -4,6 +4,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21678"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -25,6 +26,7 @@
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="50" lineBreakMode="middleTruncation" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yiR-FG-tXg">
                                 <rect key="frame" x="51" y="0.0" width="39" height="51"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="tintColor" name="colorOnBackground"/>
                                 <fontDescription key="fontDescription" name="Yantramanav-Bold" family="Yantramanav" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -43,10 +45,12 @@
                                     <barButtonItem title="Item" image="gear" catalog="system" style="plain" id="Ylb-WD-GVr"/>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="tX7-Rd-a7K"/>
                                 </items>
+                                <color key="tintColor" name="colorOnBackground"/>
                             </toolbar>
                             <progressView opaque="NO" clipsSubviews="YES" contentMode="scaleAspectFill" verticalHuggingPriority="750" fixedFrame="YES" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="zUv-77-gZa">
                                 <rect key="frame" x="0.0" y="47" width="393" height="4"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                <color key="tintColor" name="successBoxColor"/>
                             </progressView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="4qk-I5-YsI"/>
@@ -63,6 +67,12 @@
         <image name="gear" catalog="system" width="128" height="122"/>
         <image name="lightbulb.fill" catalog="system" width="92" height="128"/>
         <image name="list.bullet" catalog="system" width="128" height="87"/>
+        <namedColor name="colorOnBackground">
+            <color red="0.20399999618530273" green="0.30199998617172241" blue="0.29399999976158142" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="successBoxColor">
+            <color red="0.18400000035762787" green="0.93699997663497925" blue="0.69800001382827759" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
