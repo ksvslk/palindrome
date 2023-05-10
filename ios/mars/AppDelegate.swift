@@ -24,12 +24,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 C.VIBRATION_ON: true
             ]
         )
-      
-        
-        let pal = "Edit pepper genome, nadir by hybrid anemone. Grep peptide?".uppercased()
-        //Database.shared.addNewLevel(levelNr: 1, palindrome: "TACO CAT", solutionsToHints: ["TACO CAT":"Cats"])
-        Database.shared.addNewLevel(levelNr: 1, palindrome: pal, solutionsToHints: [pal:"Food"])
-        Database.shared.getAllLevelNumbers()
+        Database.shared.initializeDatabaseWithGameLevels()
         return true
     }
     

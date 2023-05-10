@@ -13,6 +13,8 @@ class Database {
     
     enum DatabaseError: Error {
         case couldNotInsertLevel
+        case couldNotInitializeGame(error: String)
+        case couldNotFindJson(error: String)
     }
     
     static let shared = Database()
@@ -40,6 +42,46 @@ class Database {
     }
     
     
+    // MARK: Add game levels (1 time)
+    func initializeDatabaseWithGameLevels()
+    {
+
+        if (maxLevelNumber() >= 100) { return }
+        
+        let start = CFAbsoluteTimeGetCurrent()
+      
+        struct JsonLevel: Codable {
+            var nr:Int
+            var solutionToCategory: Dictionary<String, String>
+        }
+        var levels = [JsonLevel]()
+        let resource = "game_levels"
+        
+        if let path = Bundle.main.path(forResource: resource, ofType: "json") {
+            do {
+                let data = try Data(contentsOf: URL(fileURLWithPath: path), options: .alwaysMapped)
+                let list = try JSONDecoder().decode([JsonLevel].self, from: data)
+                levels = list
+            } catch let error {
+                fatalError(error.localizedDescription)
+            }
+        } else {
+            fatalError("Json was not found from path: \(resource)")
+        }
+        
+        levels.forEach { jsonLevel in
+            addNewLevel(
+                levelNr: jsonLevel.nr,
+                palindrome: jsonLevel.solutionToCategory.first!.key,
+                solutionsToHints: jsonLevel.solutionToCategory
+            )
+        }
+        
+        let diff = CFAbsoluteTimeGetCurrent() - start
+        print("Inserting all levels to database took \(diff) seconds")
+    }
+    
+    
     // MARK: Add new level
     func addNewLevel(
         levelNr: Int,
@@ -48,7 +90,6 @@ class Database {
         author: String = ""
     )
     {
-        
         let request: NSFetchRequest<Level> = Level.fetchRequest()
         request.predicate = NSPredicate(format: "levelNumber = %@", String(levelNr))
         
@@ -111,6 +152,25 @@ class Database {
     }
     
     
+    func maxLevelNumber() -> Int {
+        let request: NSFetchRequest<Level> = Level.fetchRequest()
+        request.resultType = .dictionaryResultType
+        request.propertiesToFetch = ["levelNumber"]
+        request.sortDescriptors = [NSSortDescriptor(key: "levelNumber", ascending: false)]
+        request.fetchLimit = 1
+
+        do {
+            let result = try context.fetch(request) as! [NSDictionary]
+            if let maxLevelNumber = result.first?["levelNumber"] as? Int {
+                return maxLevelNumber
+            }
+        } catch {
+            print("Error getting maximum level from database.")
+        }
+        return -1
+    }
+    
+    
     func updateCurrentLevel()
     {
         let request: NSFetchRequest<Level> = Level.fetchRequest()
@@ -130,10 +190,10 @@ class Database {
     
     func getAllLevelNumbers() -> [Int]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Level")
+        let fetchRequest: NSFetchRequest<Level> = Level.fetchRequest()
         fetchRequest.resultType = .dictionaryResultType
         fetchRequest.propertiesToFetch = ["levelNumber"]
-
+        
         var levels:[Int] = []
         
         do {
@@ -177,14 +237,14 @@ class Database {
                 {
                     let newFriendIndex = oldFriendToNewFriendIndex[Int(letterData.friendIndex)]!
                     letterData.friendIndex = Int64(newFriendIndex)
-   
+                    
                 }
-           
+                
             })
         }
-  
+        
         currentLevel?.columnCount = newColumntCount
-       
+        
         do {
             try context.save()
         } catch {
@@ -192,7 +252,7 @@ class Database {
         }
         
         updateCurrentLevel()
-     
+        
     }
     
     

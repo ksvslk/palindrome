@@ -22,7 +22,7 @@ class GameLevelSelectController: UIViewController {
 
         // Add blur effect
         self.collectionView.backgroundColor = UIColor.clear
-        let blurEffect = UIBlurEffect(style: .regular)
+        let blurEffect = UIBlurEffect(style: .prominent)
         let blurEffectView = UIVisualEffectView(effect: blurEffect)
         blurEffectView.frame = self.collectionView.bounds
         self.collectionView.backgroundView = blurEffectView
