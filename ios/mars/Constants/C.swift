@@ -29,5 +29,6 @@ struct C {
     // User defaults
     static let VIBRATION_ON = "VIBRATION_ON"
     static let SOUND_ON = "SOUND_ON"
+    static let LOGGED_IN = "LOGGED_IN"
     
 }

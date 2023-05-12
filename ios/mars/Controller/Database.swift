@@ -37,6 +37,9 @@ class Database {
                 fatalError("Failed to load Core Data stack: \(error)")
             }
         }
+     
+        let description = persistentContainer.persistentStoreDescriptions.first
+        description?.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
         context = persistentContainer.viewContext
         
     }
@@ -73,7 +76,8 @@ class Database {
             addNewLevel(
                 levelNr: jsonLevel.nr,
                 palindrome: jsonLevel.solutionToCategory.first!.key,
-                solutionsToHints: jsonLevel.solutionToCategory
+                solutionsToHints: jsonLevel.solutionToCategory,
+                progress: jsonLevel.nr == 1 ? Level.Progress.in_progress : Level.Progress.locked
             )
         }
         
@@ -87,7 +91,8 @@ class Database {
         levelNr: Int,
         palindrome: String,
         solutionsToHints: [String:String],
-        author: String = ""
+        author: String = "",
+        progress: Level.Progress = Level.Progress.in_progress
     )
     {
         let request: NSFetchRequest<Level> = Level.fetchRequest()
@@ -116,6 +121,7 @@ class Database {
             letter.homeIndex = Int64(index) + 1
             return letter
         })
+        level.progress = Int64(progress.rawValue)
         level.solutions = NSSet(array: solutionsToHints.map({ (key: String, value: String) in
             let solution = Solution(context: context)
             solution.palindrome = key
@@ -140,7 +146,9 @@ class Database {
         
         var fetchedLevels: [Level] = []
         do {
+            context.transactionAuthor = "changeGameLevel"
             fetchedLevels = try context.fetch(request)
+            context.transactionAuthor = nil
         } catch {
             print("Error fetching level")
         }
@@ -152,6 +160,7 @@ class Database {
     }
     
     
+    // MARK: Get max level number
     func maxLevelNumber() -> Int {
         let request: NSFetchRequest<Level> = Level.fetchRequest()
         request.resultType = .dictionaryResultType
@@ -171,7 +180,8 @@ class Database {
     }
     
     
-    func updateCurrentLevel()
+    // MARK: Refresh current level
+    func refreshCurrentLevel()
     {
         let request: NSFetchRequest<Level> = Level.fetchRequest()
         request.predicate = NSPredicate(format: "levelNumber = %@", String(currentLevel!.levelNumber))
@@ -188,19 +198,25 @@ class Database {
     }
     
     
-    func getAllLevelNumbers() -> [Int]
+    // MARK: Get all levels with progress
+    func getAllGameLevels() -> [Level.Progress]
     {
-        let fetchRequest: NSFetchRequest<Level> = Level.fetchRequest()
-        fetchRequest.resultType = .dictionaryResultType
-        fetchRequest.propertiesToFetch = ["levelNumber"]
+        let request: NSFetchRequest<Level> = Level.fetchRequest()
+        request.predicate = NSPredicate(format: "levelNumber <= %@", argumentArray: [100])
+        let sortDescriptor = NSSortDescriptor(key: "levelNumber", ascending: true)
+        request.sortDescriptors = [sortDescriptor]
         
-        var levels:[Int] = []
+        var levels:[Level.Progress] = []
         
         do {
-            let results = try context.fetch(fetchRequest) as! [NSDictionary]
-            levels = results.compactMap { $0.value(forKey: "levelNumber") as? Int }
+            context.transactionAuthor = "getAllGameLevels"
+            let results = try context.fetch(request) as [Level]
+            context.transactionAuthor = nil
+            results.forEach { level in
+                levels.append(level.levelProgress)
+            }
         } catch {
-            print("Error fetching names: \(error)")
+            print("Error fetching results: \(error.localizedDescription)")
         }
         return levels
     }
@@ -251,7 +267,7 @@ class Database {
             print("Error changing columnd count: \(error)")
         }
         
-        updateCurrentLevel()
+        refreshCurrentLevel()
         
     }
     

@@ -8,8 +8,14 @@
 import UIKit
 import SpriteKit
 import GameplayKit
+import GameKit
 
-class GameViewController: UIViewController {
+class GameViewController: UIViewController, GKGameCenterControllerDelegate {
+    func gameCenterViewControllerDidFinish(_ gameCenterViewController: GKGameCenterViewController) {
+        // Dismiss the view controller.
+        gameCenterViewController.dismiss(animated:true)
+    }
+    
     
     @IBAction func onSettingsButtonTap(_ sender: Any) {
         let sheet = UIAlertController.settingsSheet {
@@ -28,9 +34,9 @@ class GameViewController: UIViewController {
             print("onSubmitLevelTap")
         } onPlayerLevelsTap: {
             print("onPlayerLevelsTap")
-            self.present(GameLevelSelectController(), animated: true, completion: nil)
         } onGameLevelsTap: {
             print("onGameLevelsTap")
+            self.present(GameLevelSelectController(), animated: true, completion: nil)
         }
         
         present(sheet, animated: true, completion: nil)
@@ -58,19 +64,42 @@ class GameViewController: UIViewController {
     {
         let sheet = UIAlertController.gameCenterSheet {
             print("onGameLeaderBoardTap")
+            self.showLeaderboard(name: "game_leaderboard")
         } onPlayerLeaderBoardTap: {
             print("onPlayerLeaderBoardTap")
+            self.showLeaderboard(name: "player_leaderboard")
         } onAchievementsTap: {
             print("onAchievementsTap")
+            // Display a list of achievements.
+            let viewController = GKGameCenterViewController(state: .achievements)
+            viewController.gameCenterDelegate = self
+            self.present(viewController, animated: true, completion: nil)
         }
         present(sheet, animated: true, completion: nil)
     }
     
     
-    // MARK: Load main scene
-    private func loadMainScene()
+    private func showLeaderboard(name:String)
     {
-        Database.shared.changeGameLevel(nr:1)
+        let viewController = GKGameCenterViewController(
+                        leaderboardID: name,
+                        playerScope: .global,
+                        timeScope: .allTime)
+        viewController.gameCenterDelegate = self
+        self.present(viewController, animated: true, completion: nil)
+    }
+    
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        print("Collection view at row \(collectionView.tag) selected index path \(indexPath)")
+    }
+    
+    
+    // MARK: Load main scene
+    private func loadMainScene(levelNr: Int = 1)
+    {
+        Database.shared.changeGameLevel(nr:levelNr)
        
         // Load 'GameScene.sks' as a GKScene. This provides gameplay related content
         // including entities and graphs.
@@ -124,6 +153,5 @@ class GameViewController: UIViewController {
     override var prefersStatusBarHidden: Bool {
         return true
     }
-    
-    
+  
 }

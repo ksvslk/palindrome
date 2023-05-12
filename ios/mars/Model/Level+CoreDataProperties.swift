@@ -13,10 +13,9 @@ import CoreData
 extension Level {
 
     enum Progress: Int {
-        case todo = 1
-        case in_progress = 2
-        case replay = 3
-        case intermediate = 4
+        case in_progress = 1
+        case completed = 2
+        case locked = 3
     }
     
     @nonobjc public class func fetchRequest() -> NSFetchRequest<Level> {
@@ -49,7 +48,7 @@ extension Level {
     
 
     var levelProgress: Progress {
-        return Progress(rawValue: Int(progress)) ?? Progress.todo
+        return Progress(rawValue: Int(progress)) ?? Progress.in_progress
     }
 
     public override var debugDescription: String {

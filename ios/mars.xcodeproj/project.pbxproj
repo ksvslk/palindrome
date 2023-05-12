@@ -13,6 +13,7 @@
 		B1313BAE2A0ACCCF005830AB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B1313BAD2A0ACCCF005830AB /* LaunchScreen.storyboard */; };
 		B1313BB22A0AD12C005830AB /* LevelSelectCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1313BB12A0AD12C005830AB /* LevelSelectCell.swift */; };
 		B1313BB42A0B6F33005830AB /* game_levels.json in Resources */ = {isa = PBXBuildFile; fileRef = B1313BB32A0B6F33005830AB /* game_levels.json */; };
+		B1313BB62A0E200B005830AB /* MenuSheetExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1313BB52A0E200B005830AB /* MenuSheetExtensions.swift */; };
 		B13966B62A082D5000EF75A0 /* place_letter.wav in Resources */ = {isa = PBXBuildFile; fileRef = B13966B52A082D5000EF75A0 /* place_letter.wav */; };
 		B13966B82A082D6500EF75A0 /* switch_letters.wav in Resources */ = {isa = PBXBuildFile; fileRef = B13966B72A082D6500EF75A0 /* switch_letters.wav */; };
 		B13966BA2A08300800EF75A0 /* CollisionResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13966B92A08300800EF75A0 /* CollisionResult.swift */; };
@@ -34,7 +35,6 @@
 		B1B33A8D29FDBC0300DFA59F /* Shuffler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B33A8C29FDBC0300DFA59F /* Shuffler.swift */; };
 		B1B33ABA29FE6F2D00DFA59F /* ShufflerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B33AB929FE6F2D00DFA59F /* ShufflerTests.swift */; };
 		B1B33AC629FFD91F00DFA59F /* GameFieldCreator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B33AC529FFD91F00DFA59F /* GameFieldCreator.swift */; };
-		B1B83F952A0A513A00FB4C72 /* ActionSheetItemStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B83F942A0A513A00FB4C72 /* ActionSheetItemStyle.swift */; };
 		B1D2710229EDB24500E01AC8 /* GameField.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1D2710129EDB24500E01AC8 /* GameField.swift */; };
 		B1E8974E29EC5001001B942F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1E8974D29EC5001001B942F /* AppDelegate.swift */; };
 		B1E8975429EC5001001B942F /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1E8975329EC5001001B942F /* GameScene.swift */; };
@@ -65,6 +65,7 @@
 		B1313BAD2A0ACCCF005830AB /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		B1313BB12A0AD12C005830AB /* LevelSelectCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelSelectCell.swift; sourceTree = "<group>"; };
 		B1313BB32A0B6F33005830AB /* game_levels.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = game_levels.json; sourceTree = "<group>"; };
+		B1313BB52A0E200B005830AB /* MenuSheetExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuSheetExtensions.swift; sourceTree = "<group>"; };
 		B13966AE2A069DD400EF75A0 /* mars.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = mars.entitlements; sourceTree = "<group>"; };
 		B13966B52A082D5000EF75A0 /* place_letter.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = place_letter.wav; sourceTree = "<group>"; };
 		B13966B72A082D6500EF75A0 /* switch_letters.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = switch_letters.wav; sourceTree = "<group>"; };
@@ -92,7 +93,6 @@
 		B1B33AB929FE6F2D00DFA59F /* ShufflerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShufflerTests.swift; sourceTree = "<group>"; };
 		B1B33ABE29FFA88000DFA59F /* mars.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = mars.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1B33AC529FFD91F00DFA59F /* GameFieldCreator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameFieldCreator.swift; sourceTree = "<group>"; };
-		B1B83F942A0A513A00FB4C72 /* ActionSheetItemStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionSheetItemStyle.swift; sourceTree = "<group>"; };
 		B1D2710129EDB24500E01AC8 /* GameField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameField.swift; sourceTree = "<group>"; };
 		B1E8974D29EC5001001B942F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B1E8975329EC5001001B942F /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
@@ -124,6 +124,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B1313BB82A0E2EC4005830AB /* Button */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Button;
+			sourceTree = "<group>";
+		};
 		B13966B42A082D0B00EF75A0 /* Sounds */ = {
 			isa = PBXGroup;
 			children = (
@@ -179,9 +186,8 @@
 		B1E8974C29EC5001001B942F /* mars */ = {
 			isa = PBXGroup;
 			children = (
-				B1313BB32A0B6F33005830AB /* game_levels.json */,
+				B1313BB82A0E2EC4005830AB /* Button */,
 				B13966B42A082D0B00EF75A0 /* Sounds */,
-				B13966AE2A069DD400EF75A0 /* mars.entitlements */,
 				B1F5CA2029FAED5E0061FA65 /* Controller */,
 				B1F5CA1F29FAED470061FA65 /* DTO */,
 				B1F5CA1D29FAECB70061FA65 /* Constants */,
@@ -190,15 +196,17 @@
 				B1F5CA1A29FAEB160061FA65 /* View */,
 				B1C1065329FAAB2E006026A2 /* Model */,
 				B1E8974D29EC5001001B942F /* AppDelegate.swift */,
+				B1313BB52A0E200B005830AB /* MenuSheetExtensions.swift */,
 				B128450F29F82ACE00C8F13D /* Extensions.swift */,
+				B1B33A8C29FDBC0300DFA59F /* Shuffler.swift */,
+				B1B33AC529FFD91F00DFA59F /* GameFieldCreator.swift */,
 				B13A246729F6DCDA0045DF3D /* Info.plist */,
+				B13966AE2A069DD400EF75A0 /* mars.entitlements */,
 				B1E8975729EC5001001B942F /* Main.storyboard */,
 				B1313BAD2A0ACCCF005830AB /* LaunchScreen.storyboard */,
 				B1E8975A29EC5002001B942F /* Assets.xcassets */,
+				B1313BB32A0B6F33005830AB /* game_levels.json */,
 				B144A88229FA66B40067A080 /* Model.xcdatamodeld */,
-				B1B33A8C29FDBC0300DFA59F /* Shuffler.swift */,
-				B1B33AC529FFD91F00DFA59F /* GameFieldCreator.swift */,
-				B1B83F942A0A513A00FB4C72 /* ActionSheetItemStyle.swift */,
 			);
 			path = mars;
 			sourceTree = "<group>";
@@ -371,7 +379,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1B33A8529FDB66D00DFA59F /* Interval+CoreDataProperties.swift in Sources */,
-				B1B83F952A0A513A00FB4C72 /* ActionSheetItemStyle.swift in Sources */,
 				B1E8975429EC5001001B942F /* GameScene.swift in Sources */,
 				B1EF06DE29F8477600DD78A6 /* C.swift in Sources */,
 				B1B33A8A29FDB66D00DFA59F /* Solution+CoreDataClass.swift in Sources */,
@@ -386,6 +393,7 @@
 				B1B33A8729FDB66D00DFA59F /* Level+CoreDataProperties.swift in Sources */,
 				B144A88429FA66B40067A080 /* Model.xcdatamodeld in Sources */,
 				B1B33A8B29FDB66D00DFA59F /* Solution+CoreDataProperties.swift in Sources */,
+				B1313BB62A0E200B005830AB /* MenuSheetExtensions.swift in Sources */,
 				B1F6B12D29F8208300EEEC17 /* CellType.swift in Sources */,
 				B1313BAA2A0ABEB1005830AB /* GameLevelSelectController.swift in Sources */,
 				B1B33A8629FDB66D00DFA59F /* Level+CoreDataClass.swift in Sources */,
@@ -517,7 +525,7 @@
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_EXPAND_BUILD_SETTINGS = YES;
 				INFOPLIST_FILE = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -577,7 +585,7 @@
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_EXPAND_BUILD_SETTINGS = YES;
 				INFOPLIST_FILE = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -606,7 +614,7 @@
 				INFOPLIST_KEY_UIRequiresFullScreen = NO;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -638,7 +646,7 @@
 				INFOPLIST_KEY_UIRequiresFullScreen = NO;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
