@@ -3,6 +3,7 @@ import GameplayKit
 
 class GameScene: SKScene {
     
+
     enum LevelCreationError: Error {
         case positionForHomeIndexNotFoundInMap
     }
@@ -13,6 +14,7 @@ class GameScene: SKScene {
     // MARK: Initialize level
     override func didMove(to view: SKView) {
         layoutScene(view: view)
+
     }
     
     
@@ -27,6 +29,7 @@ class GameScene: SKScene {
     }
 
     
+    // MARK: Main scene layout
     private func layoutScene(view: SKView)
     {
         cellDirector.cells.removeAll()
@@ -100,7 +103,7 @@ class GameScene: SKScene {
     }
     
     
-    // MARK: Create the grid
+    // MARK: Add nodes to the grid
     // TODO: WARNING! Does not check if the GameFieldCreator and database version of level match (different columns)
     private func addGameNodes(
         letters: [LetterData],

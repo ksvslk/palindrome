@@ -25,6 +25,7 @@ struct C {
     
     // Score
     static let SCORE_LETTER_MULTIPLIER = 100 // Each letter in level will give 100 points
+    static let SCORE_TAG = "SCORE_TAG"
     
     // User defaults
     static let VIBRATION_ON = "VIBRATION_ON"

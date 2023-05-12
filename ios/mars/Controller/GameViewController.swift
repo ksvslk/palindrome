@@ -11,14 +11,72 @@ import GameplayKit
 import GameKit
 
 class GameViewController: UIViewController, GKGameCenterControllerDelegate {
+    
+    @IBOutlet weak var infoLabel: NumberLabel!
+    
     func gameCenterViewControllerDidFinish(_ gameCenterViewController: GKGameCenterViewController) {
         // Dismiss the view controller.
         gameCenterViewController.dismiss(animated:true)
     }
     
     
+    @objc func handleLevelEnding(_ sender: UITapGestureRecognizer) {
+        print("handleLevelEnding")
+        self.infoLabel.alpha = 0.0
+        self.infoLabel.text = String()
+        self.view.removeGestureRecognizer(sender)
+    }
+
+    
+    func animateMessageSequence(messages: [String], isLastMessageTapToContinue:Bool = false) {
+        var localMessages = messages
+        guard let nextMessage = localMessages.popLast() else { return }
+        infoLabel.alpha = 0.0
+        infoLabel.text = nextMessage
+        
+        // Define your animation parameters here
+        var duration = 1.0
+        let appearanceDelay = 0.0
+        let disappearanceDelay = 1.0
+        if (nextMessage == C.SCORE_TAG)
+        {
+            duration = 2.0
+            //TODO: Ask scores straight from database?
+            infoLabel.animate(endNumber: 300, maxNumber: 300, duration: duration / 2)
+        }
+        
+        UIView.animate(withDuration: duration, delay: appearanceDelay, animations: {
+            self.infoLabel.alpha = 1.0
+        }, completion: { [self] _ in
+            if (isLastMessageTapToContinue && messages.count == 1)
+            {
+                let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.handleLevelEnding(_:)))
+                tapGesture.cancelsTouchesInView = true
+                view.addGestureRecognizer(tapGesture)
+            }
+            else {
+         
+                UIView.animate(withDuration: duration, delay: disappearanceDelay, animations: {
+                    self.infoLabel.alpha = 0.0
+                }, completion: { _ in
+                    self.animateMessageSequence(
+                        messages: localMessages,
+                        isLastMessageTapToContinue: isLastMessageTapToContinue
+                    )
+                })
+            }
+        })
+    }
+    
+    
     @IBAction func onSettingsButtonTap(_ sender: Any) {
         let sheet = UIAlertController.settingsSheet {
+            //let messages = ["Tap to continue", C.SCORE_TAG, "Great job!"]
+            let messages = ["Wrong solution!"]
+            self.animateMessageSequence(
+                messages: messages,
+                isLastMessageTapToContinue: false
+            )
             print("onTutorialTap")
         } onFeedbackTap: {
             print("onFeedbackTap")
@@ -28,6 +86,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
 
         present(sheet, animated: true, completion: nil)
     }
+    
     
     @IBAction func onLevelsButtonTap(_ sender: Any) {
         let sheet = UIAlertController.levelSelectSheet {
@@ -59,6 +118,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
 
         present(sheet, animated: true, completion: nil)
     }
+    
     
     @IBAction func onGameCenterButtonTap(_ sender: Any)
     {
