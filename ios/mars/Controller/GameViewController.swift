@@ -12,6 +12,7 @@ import GameKit
 
 class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     
+    @IBOutlet weak var infoLabelButton: UIButton!
     @IBOutlet weak var infoLabel: NumberLabel!
     
     func gameCenterViewControllerDidFinish(_ gameCenterViewController: GKGameCenterViewController) {
@@ -19,14 +20,13 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         gameCenterViewController.dismiss(animated:true)
     }
     
-    
-    @objc func handleLevelEnding(_ sender: UITapGestureRecognizer) {
-        print("handleLevelEnding")
-        self.infoLabel.alpha = 0.0
-        self.infoLabel.text = String()
-        self.view.removeGestureRecognizer(sender)
-    }
 
+    @IBAction func infoLabelToucheDown(_ sender: UIButton) {
+        print("infoLabelToucheDown")
+        infoLabel.alpha = 0.0
+        infoLabel.text = String()
+        infoLabelButton.isEnabled = false
+    }
     
     func animateMessageSequence(messages: [String], isLastMessageTapToContinue:Bool = false) {
         var localMessages = messages
@@ -50,9 +50,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         }, completion: { [self] _ in
             if (isLastMessageTapToContinue && messages.count == 1)
             {
-                let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.handleLevelEnding(_:)))
-                tapGesture.cancelsTouchesInView = true
-                view.addGestureRecognizer(tapGesture)
+                infoLabelButton.isEnabled = true
             }
             else {
          
@@ -71,11 +69,11 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     
     @IBAction func onSettingsButtonTap(_ sender: Any) {
         let sheet = UIAlertController.settingsSheet {
-            //let messages = ["Tap to continue", C.SCORE_TAG, "Great job!"]
-            let messages = ["Wrong solution!"]
+            let messages = ["Tap to continue", C.SCORE_TAG, "Great job!"]
+            //let messages = ["Wrong solution!"]
             self.animateMessageSequence(
                 messages: messages,
-                isLastMessageTapToContinue: false
+                isLastMessageTapToContinue: true
             )
             print("onTutorialTap")
         } onFeedbackTap: {
