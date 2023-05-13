@@ -41,7 +41,7 @@ class LevelSelectCell: UICollectionViewCell {
     // Handle the tap action in this method
     @objc func didTapCell(_ sender: UITapGestureRecognizer) {
         let integerLevel = Int(label.text ?? "-1")
-        print("didTapCell nr: \(integerLevel)")
+        print("didTapCell nr: \(String(describing: integerLevel))")
     }
     
     

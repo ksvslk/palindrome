@@ -37,7 +37,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     {
         GKLocalPlayer.local.authenticateHandler = { viewController, error in
             
-            if let viewController = viewController {
+            if let _ = viewController {
                 // Present the view controller so the player can sign in.
                 return
             }
