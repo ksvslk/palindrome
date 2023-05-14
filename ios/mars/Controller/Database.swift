@@ -23,10 +23,12 @@ class Database {
     private let context: NSManagedObjectContext
     
     var currentLevel: Level?
+    
+    // MARK: Closures for UI layer
     var levelChangedClosure: (() -> Void)?
     var solutionCheckResultClosure: ((_ solutionCheckResult:SolutionCheckResult) -> Void)?
     
-    // MARK: Initialize
+   
     private init() {
         if #available(iOS 13.0, *) {
             persistentContainer = NSPersistentCloudKitContainer(name: "Model")
@@ -264,6 +266,7 @@ class Database {
     }
     
     
+    // MARK: Check player guess
     func checkSolutionCorrectness()
     {
         var letters: [LetterData] = []
@@ -285,11 +288,10 @@ class Database {
             solutionCheckResultClosure?(result)
         }
  
-        
     }
     
     
-    // MARK: Update column, letters friends
+    // MARK: Update column;letters
     func updateColumnCount(newColumntCount: Int64, oldFriendToNewFriendIndex:[Int:Int])
     {
         if (!oldFriendToNewFriendIndex.isEmpty)

@@ -17,8 +17,9 @@ extension CGPoint {
 }
 
 
-// MARK: Slice String to equal parts
 extension String {
+    
+    // MARK: Chunk string
     func chunked(into size: Int) -> [String] {
         var result = [String]()
         for i in stride(from: 0, to: self.count, by: size) {
@@ -33,6 +34,8 @@ extension String {
         return result
     }
     
+    
+    //MARK: Is string palindrome?
     func isPalindrome() -> Bool {
          let testString = self.lowercased()
              .replacingOccurrences(of: #"[\W+]"#, with: "", options: .regularExpression)

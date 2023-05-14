@@ -173,9 +173,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
                     view.ignoresSiblingOrder = true
                     view.showsFPS = true
                     view.showsNodeCount = true
-                
                 }
-               
             }
         }
         
@@ -197,6 +195,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     }
     
     
+    // MARK: Subscribe level change
     private func subscribeToLevelChange()
     {
         Database.shared.levelChangedClosure = { [weak self] in
@@ -210,6 +209,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     }
     
     
+    // MARK: Subscribe solution result
     private func subscribeToSolutionCheckResult()
     {
         
@@ -231,6 +231,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     }
     
     
+    // MARK: Change progress bar 
     private func changeProgressBarUI(levelNr:Int)
     {
         if (levelNr <= 100)
