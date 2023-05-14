@@ -24,7 +24,7 @@ class Database {
     
     var currentLevel: Level?
     var levelChangedClosure: (() -> Void)?
-    
+    var solutionCheckResultClosure: ((_ solutionCheckResult:SolutionCheckResult) -> Void)?
     
     // MARK: Initialize
     private init() {
@@ -238,7 +238,7 @@ class Database {
 #if DEBUG
         assertFriendIndexesAreUniqueForEachLetter()
 #endif
-        printCurrentSolution()
+        checkSolutionCorrectness()
     }
     
     
@@ -257,14 +257,14 @@ class Database {
         } catch {
             print("Error switching friend indexes: \(error)")
         }
+        checkSolutionCorrectness()
 #if DEBUG
         assertFriendIndexesAreUniqueForEachLetter()
 #endif
-        printCurrentSolution()
     }
     
     
-    func printCurrentSolution()
+    func checkSolutionCorrectness()
     {
         var letters: [LetterData] = []
         let request: NSFetchRequest<LetterData> = LetterData.fetchRequest()
@@ -279,7 +279,13 @@ class Database {
         }
         
         let result = SolutionChecker.getGuessResult(guess: letters, solutions: currentLevel!.solutionsArr)
-        print("RESULT FROM SOLUTIONCHECKER: \(result)")
+       
+        if (result != SolutionCheckResult.invalid_guess)
+        {
+            solutionCheckResultClosure?(result)
+        }
+ 
+        
     }
     
     

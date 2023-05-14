@@ -11,4 +11,5 @@ enum SolutionCheckResult {
     case correct
     case wrong
     case bogus_palindrome
+    case invalid_guess
 }

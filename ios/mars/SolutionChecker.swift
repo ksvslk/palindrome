@@ -33,8 +33,9 @@ class SolutionChecker {
             if (currentGuess.isPalindrome()) {
                     return SolutionCheckResult.bogus_palindrome
             }
+            return SolutionCheckResult.wrong
         }
-        return SolutionCheckResult.wrong
+        return SolutionCheckResult.invalid_guess
     }
     
     

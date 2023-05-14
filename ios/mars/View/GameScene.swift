@@ -3,6 +3,13 @@ import GameplayKit
 
 class GameScene: SKScene {
     
+    
+    private var gridNode:SKNode = SKNode()
+    
+    enum State {
+        case animating
+        case normal
+    }
 
     enum LevelCreationError: Error {
         case positionForHomeIndexNotFoundInMap
@@ -14,7 +21,6 @@ class GameScene: SKScene {
     // MARK: Initialize level
     override func didMove(to view: SKView) {
         layoutScene(view: view)
-
     }
     
     
@@ -26,6 +32,35 @@ class GameScene: SKScene {
         rectangle.position.y -= topErr
         rectangle.position.y += bottomErr
         self.addChild(rectangle)
+    }
+    
+    
+    func shakeAnimation()
+    {
+        let startingPosition = gridNode.position
+        let amplitudeX: CGFloat = 12
+        let frequency: CGFloat = 5
+        let duration: TimeInterval = 1.0
+        let numberOfShakes = 1
+        let attenuationFactor: CGFloat = 0.2
+
+        let amplitudeAction = SKAction.customAction(withDuration: duration) { node, elapsedTime in
+            let progress = elapsedTime / CGFloat(duration)
+            let amplitudeFactor = pow(2.0, -elapsedTime / duration) * sin(elapsedTime * frequency * CGFloat.pi * 2.0)
+            let attenuatedFactor = amplitudeFactor * pow(attenuationFactor, progress)
+            node.position.x = startingPosition.x + attenuatedFactor * amplitudeX
+        }
+
+        let resetAction = SKAction.run {
+            self.gridNode.position = startingPosition
+        }
+
+        let sequenceAction = SKAction.sequence([amplitudeAction, resetAction])
+        let repeatAction = SKAction.repeat(sequenceAction, count: numberOfShakes)
+
+        gridNode.run(repeatAction) {
+            assert(self.gridNode.position == startingPosition, "Node position is \(self.gridNode.position), but should be \(startingPosition)")
+        }
     }
 
     
@@ -75,7 +110,7 @@ class GameScene: SKScene {
         let allCells = gameField.letterRows + gameField.solutionRows
         
         // Create the grid node
-        var gridNode = SKNode()
+        gridNode = SKNode()
         addChild(gridNode)
         
         // Add `Letter`-s, `Slot`-s and `SKSpriteNode`-s to the grid

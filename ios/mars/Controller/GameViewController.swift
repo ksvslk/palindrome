@@ -12,6 +12,8 @@ import GameKit
 
 class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     
+    private var gameScene: GameScene?
+    
     @IBOutlet weak var progressBar: UIProgressView!
     @IBOutlet weak var levelNumberLabel: UILabel!
     @IBOutlet weak var infoLabelButton: UIButton!
@@ -159,14 +161,15 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         if let scene = GKScene(fileNamed: "GameScene") {
             
             // Get the SKScene from the loaded GKScene
-            if let sceneNode = scene.rootNode as! GameScene? {
+            gameScene = scene.rootNode as! GameScene?
+            if (gameScene != nil) {
                 
                 // Set the scale mode to scale to fit the window
-                sceneNode.backgroundColor = Theme.backgroundColor
+                gameScene!.backgroundColor = Theme.backgroundColor
                 
                 // Present the scene
                 if let view = self.view as! SKView? {
-                    view.presentScene(sceneNode, transition: SKTransition.push(with: SKTransitionDirection.left, duration: 1.0))
+                    view.presentScene(gameScene!, transition: SKTransition.push(with: SKTransitionDirection.left, duration: 1.0))
                     view.ignoresSiblingOrder = true
                     view.showsFPS = true
                     view.showsNodeCount = true
@@ -188,16 +191,45 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     // MARK: View did load
     override func viewDidLoad() {
         super.viewDidLoad()
+        subscribeToLevelChange()
+        subscribeToSolutionCheckResult()
+        Database.shared.changeGameLevel(nr: 20)
+    }
+    
+    
+    private func subscribeToLevelChange()
+    {
         Database.shared.levelChangedClosure = { [weak self] in
             guard let self = self else { return }
-            loadMainScene()
             print("Current level changed to \(Database.shared.currentLevel?.levelNumber)")
+            loadMainScene()
             let levelNr = Database.shared.currentLevel!.levelNumber
             levelNumberLabel.text = String(levelNr)
             changeProgressBarUI(levelNr: Int(levelNr))
         }
-        Database.shared.changeGameLevel(nr: 20)
     }
+    
+    
+    private func subscribeToSolutionCheckResult()
+    {
+        
+        Database.shared.solutionCheckResultClosure = { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .correct:
+                print("Correct solution!")
+            case .wrong:
+                print("Wrong solution!")
+                gameScene?.shakeAnimation()
+            case .bogus_palindrome:
+                print("Bogus solution!")
+                gameScene?.shakeAnimation()
+            case .invalid_guess:
+                print("Should not be here!")
+            }
+        }
+    }
+    
     
     private func changeProgressBarUI(levelNr:Int)
     {
