@@ -22,18 +22,7 @@ class Database {
     private let persistentContainer: NSPersistentContainer
     private let context: NSManagedObjectContext
     
-    private var _currentLevel: Level?
-    var currentLevel: Level? {
-        get {
-            return _currentLevel
-        }
-        set {
-            _currentLevel = newValue
-            levelChangedClosure?()
-        }
-    }
-    
-    
+    var currentLevel: Level?
     var levelChangedClosure: (() -> Void)?
     
     
@@ -165,7 +154,10 @@ class Database {
             print("Error fetching level")
         }
         
-        if !fetchedLevels.isEmpty { currentLevel = fetchedLevels.first }
+        if !fetchedLevels.isEmpty {
+            currentLevel = fetchedLevels.first
+            levelChangedClosure?()
+        }
         
         // TODO: When level has -1 columns (brand new level), we should also set the columns in the same transaction.
         
