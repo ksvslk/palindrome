@@ -29,38 +29,24 @@ class LevelSelectCell: UICollectionViewCell {
             label.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
         
-        // Add a tap gesture recognizer to the cell's contentView
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapCell(_:)))
-        contentView.addGestureRecognizer(tapGesture)
-        
         // Set default appearance
         updateAppearance()
     }
-    
-    
-    // Handle the tap action in this method
-    @objc func didTapCell(_ sender: UITapGestureRecognizer) {
-        let integerLevel = Int(label.text ?? "-1")
-        print("didTapCell nr: \(String(describing: integerLevel))")
-    }
-    
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     var isCellEnabled: Bool = true {
-           didSet {
-               updateAppearance()
-           }
-       }
+        didSet {
+            updateAppearance()
+        }
+    }
     
     private func updateAppearance() {
-          contentView.alpha = isCellEnabled ? 1.0 : 0.5
-        contentView.isUserInteractionEnabled = isCellEnabled
-        disabledEffectView.isUserInteractionEnabled = isCellEnabled
-          disabledEffectView.isHidden = isCellEnabled
-      }
+        contentView.alpha = isCellEnabled ? 1.0 : 0.5
+        disabledEffectView.isHidden = isCellEnabled
+    }
     
     private let disabledEffectView: UIVisualEffectView = {
         let blurEffect = UIBlurEffect(style: .regular)

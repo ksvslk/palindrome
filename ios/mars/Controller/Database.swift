@@ -22,7 +22,19 @@ class Database {
     private let persistentContainer: NSPersistentContainer
     private let context: NSManagedObjectContext
     
-    var currentLevel: Level?
+    private var _currentLevel: Level?
+    var currentLevel: Level? {
+        get {
+            return _currentLevel
+        }
+        set {
+            _currentLevel = newValue
+            levelChangedClosure?()
+        }
+    }
+    
+    
+    var levelChangedClosure: (() -> Void)?
     
     
     // MARK: Initialize
@@ -143,7 +155,7 @@ class Database {
     {
         let request: NSFetchRequest<Level> = Level.fetchRequest()
         request.predicate = NSPredicate(format: "levelNumber = %@", String(nr))
-        
+        print("CHANGE LEVEL TO: \(nr)")
         var fetchedLevels: [Level] = []
         do {
             context.transactionAuthor = "changeGameLevel"

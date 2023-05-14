@@ -12,6 +12,8 @@ import GameKit
 
 class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     
+    @IBOutlet weak var progressBar: UIProgressView!
+    @IBOutlet weak var levelNumberLabel: UILabel!
     @IBOutlet weak var infoLabelButton: UIButton!
     @IBOutlet weak var infoLabel: NumberLabel!
     
@@ -55,7 +57,6 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
             print("onGameLevelsTap")
             self.present(GameLevelSelectController(), animated: true, completion: nil)
         }
-        
         present(sheet, animated: true, completion: nil)
     }
     
@@ -149,11 +150,10 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     }
     
     
+    
     // MARK: Load main scene
-    private func loadMainScene(levelNr: Int = 80)
+    private func loadMainScene()
     {
-        Database.shared.changeGameLevel(nr:levelNr)
-       
         // Load 'GameScene.sks' as a GKScene. This provides gameplay related content
         // including entities and graphs.
         if let scene = GKScene(fileNamed: "GameScene") {
@@ -166,7 +166,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
                 
                 // Present the scene
                 if let view = self.view as! SKView? {
-                    view.presentScene(sceneNode, transition: SKTransition.crossFade(withDuration: 1))
+                    view.presentScene(sceneNode, transition: SKTransition.push(with: SKTransitionDirection.left, duration: 1.0))
                     view.ignoresSiblingOrder = true
                     view.showsFPS = true
                     view.showsNodeCount = true
@@ -188,7 +188,27 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     // MARK: View did load
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadMainScene()
+        Database.shared.levelChangedClosure = { [weak self] in
+            guard let self = self else { return }
+            loadMainScene()
+            print("Current level changed to \(Database.shared.currentLevel?.levelNumber)")
+            let levelNr = Database.shared.currentLevel!.levelNumber
+            levelNumberLabel.text = String(levelNr)
+            changeProgressBarUI(levelNr: Int(levelNr))
+        }
+        Database.shared.changeGameLevel(nr: 20)
+    }
+    
+    private func changeProgressBarUI(levelNr:Int)
+    {
+        if (levelNr <= 100)
+        {
+            let progressPercentage = levelNr
+            let progressValue = Float(progressPercentage) / 100.0
+            progressBar.setProgress(progressValue, animated: true)
+        }
+        // TODO: Handle player levels
+   
     }
     
     
@@ -205,11 +225,6 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     // MARK: Status bar
     override var prefersStatusBarHidden: Bool {
         return true
-    }
-    
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print("Collection view at row \(collectionView.tag) selected index path \(indexPath)")
     }
     
     

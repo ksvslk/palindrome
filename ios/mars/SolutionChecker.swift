@@ -23,7 +23,6 @@ class SolutionChecker {
         if (guess.allSatisfy({ letter in
             letter.friendIndex != -1
         })) {
-            print("GUESS: \(guess)")
             let currentGuess = guess.map({ l in charsToIgnoreRegex.contains(l.letter) ? "" : l.letter }).joined()
             for solution in solutions {
                 let correctSolution = getSolutionWithoutExtras(str: solution.palindrome)

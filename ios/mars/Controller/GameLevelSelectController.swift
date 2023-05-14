@@ -48,8 +48,9 @@ class GameLevelSelectController: UIViewController {
 extension GameLevelSelectController: UICollectionViewDelegate {
     // if the user clicks on a cell, display a message
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
-        print("Collection view at row \(collectionView.tag) selected index path \(indexPath)")
+        print("Collection view at row \(collectionView.tag) selected level nr \(indexPath.item + 1)")
+        dismiss(animated: true)
+        Database.shared.changeGameLevel(nr: indexPath.item + 1)
     }
 }
 
@@ -66,13 +67,17 @@ extension GameLevelSelectController: UICollectionViewDataSource {
             switch progress {
             case .in_progress:
                 cell.isCellEnabled = true
+                cell.isUserInteractionEnabled = true
             case .completed:
                 cell.isCellEnabled = true
+                cell.isUserInteractionEnabled = true
             case .locked:
-                cell.isCellEnabled = false
+                cell.isCellEnabled = true// TODO: change back
+                cell.isUserInteractionEnabled = true // TODO: change back
             }
             return cell
         }
+        
         fatalError("Unable to dequeue subclassed cell")
     }
 }

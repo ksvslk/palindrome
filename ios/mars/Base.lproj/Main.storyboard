@@ -93,6 +93,8 @@
                     <connections>
                         <outlet property="InfoLabel" destination="U0P-xJ-B7b" id="pDl-TG-xhO"/>
                         <outlet property="infoLabelButton" destination="lY4-YA-Xyy" id="xjj-M8-RXU"/>
+                        <outlet property="levelNumberLabel" destination="yiR-FG-tXg" id="gUN-BU-g5V"/>
+                        <outlet property="progressBar" destination="zUv-77-gZa" id="SF1-0t-mR0"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
