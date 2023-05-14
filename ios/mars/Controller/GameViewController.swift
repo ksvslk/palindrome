@@ -150,7 +150,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     
     
     // MARK: Load main scene
-    private func loadMainScene(levelNr: Int = 1)
+    private func loadMainScene(levelNr: Int = 80)
     {
         Database.shared.changeGameLevel(nr:levelNr)
        

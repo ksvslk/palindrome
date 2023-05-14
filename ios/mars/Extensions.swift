@@ -32,6 +32,13 @@ extension String {
         }
         return result
     }
+    
+    func isPalindrome() -> Bool {
+         let testString = self.lowercased()
+             .replacingOccurrences(of: #"[\W+]"#, with: "", options: .regularExpression)
+         return testString.count >= 3 && testString == String(testString.reversed())
+     }
+    
 }
 
 

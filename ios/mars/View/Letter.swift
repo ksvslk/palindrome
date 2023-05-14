@@ -106,10 +106,7 @@ class Letter: Cell {
         // Get some value that represents how much was moved ignoring the actual physical
         // distance. Log applied to Euclidean distance to make it very small.
         let distance = log2((abs(position.distance(point: currentPosition))))
-        print(distance)
         let duration = distance.isFinite ? abs(distance * C.HOME_ANIMATION_MULTIPLIER * C.ANIMATION_MODIFIER) : C.ON_RELEASE_COLOR_CHANGE_ANIMATION
-        print("Duration: \(duration)")
-        print("On release duration: \(C.ON_RELEASE_COLOR_CHANGE_ANIMATION)")
         let endColor = friend != nil ? Theme.colorSecondary : Theme.colorPrimary
         state = CellState.resolving
         let moveAction = SKAction.move(to: currentPosition, duration: duration)

@@ -55,9 +55,6 @@ class GameScene: SKScene {
              bottomErr: bottomSafe
          )
          */
-  
-        
-        print("View size: \(viewSize)")
 
         // Create game field representation which will be used to creat the UI grid
         let gameField = GameFieldCreator.getGameField(

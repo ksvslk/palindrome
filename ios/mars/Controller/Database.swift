@@ -37,7 +37,7 @@ class Database {
                 fatalError("Failed to load Core Data stack: \(error)")
             }
         }
-     
+        
         let description = persistentContainer.persistentStoreDescriptions.first
         description?.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
         context = persistentContainer.viewContext
@@ -48,11 +48,11 @@ class Database {
     // MARK: Add game levels (1 time)
     func initializeDatabaseWithGameLevels()
     {
-
+        
         if (maxLevelNumber() >= 100) { return }
         
         let start = CFAbsoluteTimeGetCurrent()
-      
+        
         struct JsonLevel: Codable {
             var nr:Int
             var solutionToCategory: Dictionary<String, String>
@@ -167,7 +167,7 @@ class Database {
         request.propertiesToFetch = ["levelNumber"]
         request.sortDescriptors = [NSSortDescriptor(key: "levelNumber", ascending: false)]
         request.fetchLimit = 1
-
+        
         do {
             let result = try context.fetch(request) as! [NSDictionary]
             if let maxLevelNumber = result.first?["levelNumber"] as? Int {
@@ -222,13 +222,7 @@ class Database {
     }
     
     
-    // MARK: Reset Level
-    func resetLevel(level:Int, progress: Level.Progress = Level.Progress.in_progress)
-    {
-        // TODO: Implement!
-    }
-    
-    
+    // MARK: Change friend index
     func changeFriendIndex(letter: LetterData, newFriendIndex: Int64)
     {
         letter.friendIndex = newFriendIndex
@@ -240,38 +234,11 @@ class Database {
 #if DEBUG
         assertFriendIndexesAreUniqueForEachLetter()
 #endif
-    }
-    
-    // MARK: Update column and letters friends
-    func updateColumnCount(newColumntCount: Int64, oldFriendToNewFriendIndex:[Int:Int])
-    {
-        if (!oldFriendToNewFriendIndex.isEmpty)
-        {
-            currentLevel?.lettersArr.forEach({ letterData in
-                
-                if (letterData.friendIndex != -1)
-                {
-                    let newFriendIndex = oldFriendToNewFriendIndex[Int(letterData.friendIndex)]!
-                    letterData.friendIndex = Int64(newFriendIndex)
-                    
-                }
-                
-            })
-        }
-        
-        currentLevel?.columnCount = newColumntCount
-        
-        do {
-            try context.save()
-        } catch {
-            print("Error changing columnd count: \(error)")
-        }
-        
-        refreshCurrentLevel()
-        
+        printCurrentSolution()
     }
     
     
+    // MARK: Switch friend indexes
     func switchFriendIndexes(top: LetterData, bottom: LetterData)
     {
         let tempTopFriendIndex = top.friendIndex
@@ -289,8 +256,54 @@ class Database {
 #if DEBUG
         assertFriendIndexesAreUniqueForEachLetter()
 #endif
-        
+        printCurrentSolution()
     }
+    
+    
+    func printCurrentSolution()
+    {
+        var letters: [LetterData] = []
+        let request: NSFetchRequest<LetterData> = LetterData.fetchRequest()
+        request.predicate = NSPredicate(format: "level.levelNumber = %@", currentLevel!.objectID)
+        let sortDescriptor = NSSortDescriptor(key: "friendIndex", ascending: true)
+        request.sortDescriptors = [sortDescriptor]
+        
+        do {
+            letters = try context.fetch(request)
+        } catch let error as NSError {
+            print("Could not fetch. \(error), \(error.userInfo)")
+        }
+        
+        let result = SolutionChecker.getGuessResult(guess: letters, solutions: currentLevel!.solutionsArr)
+        print("RESULT FROM SOLUTIONCHECKER: \(result)")
+    }
+    
+    
+    // MARK: Update column, letters friends
+    func updateColumnCount(newColumntCount: Int64, oldFriendToNewFriendIndex:[Int:Int])
+    {
+        if (!oldFriendToNewFriendIndex.isEmpty)
+        {
+            currentLevel?.lettersArr.forEach({ letterData in
+                
+                if (letterData.friendIndex != -1)
+                {
+                    let newFriendIndex = oldFriendToNewFriendIndex[Int(letterData.friendIndex)]!
+                    letterData.friendIndex = Int64(newFriendIndex)
+                    
+                }
+                
+            })
+        }
+        currentLevel?.columnCount = newColumntCount
+        do {
+            try context.save()
+        } catch {
+            print("Error changing columnd count: \(error)")
+        }
+        refreshCurrentLevel()
+    }
+    
     
 #if DEBUG
     private func assertFriendIndexesAreUniqueForEachLetter()
