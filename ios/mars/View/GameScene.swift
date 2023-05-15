@@ -5,6 +5,7 @@ class GameScene: SKScene {
     
     
     private var gridNode:SKNode = SKNode()
+    private var startingPosition:CGPoint = CGPoint.zero
     
     enum GameState {
         case play
@@ -39,7 +40,7 @@ class GameScene: SKScene {
     // MARK: Wrong solution animation
     func shakeAnimation()
     {
-        let startingPosition = gridNode.position
+       
         let amplitudeX: CGFloat = 12
         let frequency: CGFloat = 5
         let duration: TimeInterval = 1.0
@@ -50,20 +51,19 @@ class GameScene: SKScene {
             let progress = elapsedTime / CGFloat(duration)
             let amplitudeFactor = pow(2.0, -elapsedTime / duration) * sin(elapsedTime * frequency * CGFloat.pi * 2.0)
             let attenuatedFactor = amplitudeFactor * pow(attenuationFactor, progress)
-            node.position.x = startingPosition.x + attenuatedFactor * amplitudeX
+            node.position.x = self.startingPosition.x + attenuatedFactor * amplitudeX
         }
 
         let resetAction = SKAction.run {
-            self.gridNode.position = startingPosition
+            self.gridNode.position = self.startingPosition
+            self.view?.isUserInteractionEnabled = true
+            assert(self.gridNode.position == self.startingPosition, "Node position is \(self.gridNode.position), but should be \(self.startingPosition)")
         }
 
         let sequenceAction = SKAction.sequence([amplitudeAction, resetAction])
         let repeatAction = SKAction.repeat(sequenceAction, count: numberOfShakes)
 
-        gridNode.run(repeatAction) {
-            self.view?.isUserInteractionEnabled = true
-            assert(self.gridNode.position == startingPosition, "Node position is \(self.gridNode.position), but should be \(startingPosition)")
-        }
+        gridNode.run(repeatAction)
     }
 
     
@@ -129,6 +129,7 @@ class GameScene: SKScene {
         gridNode.position = CGPoint(x:-width/2.0,y:height/2.0)
         gridNode.position.y -= topSafe
         gridNode.position.y += bottomSafe
+        startingPosition = gridNode.position
 
 #if DEBUG
         assertThatEachLetterHasSlot(grid: gridNode, level: currentLevel)
