@@ -6,9 +6,10 @@ class GameScene: SKScene {
     
     private var gridNode:SKNode = SKNode()
     
-    enum State {
+    enum GameState {
+        case play
         case animating
-        case normal
+        case completed
     }
 
     enum LevelCreationError: Error {
@@ -60,6 +61,7 @@ class GameScene: SKScene {
         let repeatAction = SKAction.repeat(sequenceAction, count: numberOfShakes)
 
         gridNode.run(repeatAction) {
+            self.view?.isUserInteractionEnabled = true
             assert(self.gridNode.position == startingPosition, "Node position is \(self.gridNode.position), but should be \(startingPosition)")
         }
     }

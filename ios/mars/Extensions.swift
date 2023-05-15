@@ -41,7 +41,23 @@ extension String {
              .replacingOccurrences(of: #"[\W+]"#, with: "", options: .regularExpression)
          return testString.count >= 3 && testString == String(testString.reversed())
      }
-    
+
 }
 
 
+extension UIImpactFeedbackGenerator {
+    func impactOccuredCustom(intensity:CGFloat)
+    {
+        if (UserDefaults.standard.bool(forKey: C.VIBRATION_ON))
+        {
+            self.impactOccurred(intensity: intensity)
+        }
+    }
+}
+
+
+extension UINotificationFeedbackGenerator {
+    func notificationOccuredCustom(notificationType: FeedbackType){
+        self.notificationOccurred(notificationType)
+    }
+}

@@ -18,8 +18,12 @@ class Letter: Cell {
     private var cellDirector: CellDirector
     var data: LetterData
     // Sounds
-    let PLACE_LETTER_SOUND_ACTION = SKAction.playSoundFileNamed("place_letter.wav", waitForCompletion: false)
-    let SWITCH_LETTER_SOUND_ACTION = SKAction.playSoundFileNamed("switch_letters.wav", waitForCompletion: false)
+
+    let PLACE_LETTER_SOUND_ACTION = SKAction.playSoundFileNamed("place_letter_quiet.wav", waitForCompletion: false)
+    let SWITCH_LETTER_SOUND_ACTION = SKAction.playSoundFileNamed("switch_letters_quiet.wav", waitForCompletion: false)
+    
+    private var feedbackGenerator : UIImpactFeedbackGenerator? = nil
+    
     
     // MARK: Initialize
     init(data: LetterData, size: CGSize, homePosition: CGPoint, cellDirector: CellDirector) {
@@ -44,12 +48,13 @@ class Letter: Cell {
     
     // MARK: Touches began
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
+
+        self.scene?.view?.isUserInteractionEnabled = false
         guard state == CellState.home else { return }
         guard let touch = touches.first else { return }
         
         let location = touch.location(in: self.parent!)
-   
+        
         if self.frame.contains(location) {
             self.zPosition = C.TOP_LAYER
             isUserInteractionEnabled = false
@@ -58,6 +63,11 @@ class Letter: Cell {
             self.animateColor(to: Theme.colorSecondary, duration: C.ON_CLICK_COLOR_CHANGE_ANIMATION, timingMode: SKActionTimingMode.easeInEaseOut)
             self.run(SKAction.scale(by: 1 + Letter.scaleAmount, duration: C.ON_CLICK_COLOR_CHANGE_ANIMATION))
         }
+        // Instantiate a new generator.
+        feedbackGenerator = UIImpactFeedbackGenerator()
+        // Prepare the generator when the gesture begins.
+        feedbackGenerator?.impactOccuredCustom(intensity: 0.3)
+        feedbackGenerator?.prepare()
     }
     
     
@@ -83,7 +93,8 @@ class Letter: Cell {
         guard state == CellState.dragging else { return }
         let collisionResult = cellDirector.handleCollisions(letter: self)
         playSound(collisionResult: collisionResult)
-        moveLetter()
+        playHapticFeedback(collisionResult: collisionResult)
+        moveLetter(enableSceneTouch: collisionResult == CollisionResult.nothing)
     }
     
     
@@ -97,11 +108,12 @@ class Letter: Cell {
         self.scale(to: CGSize(width: 1.0, height: 1.0))
         self.position = currentPosition
         self.isUserInteractionEnabled = true
+        self.scene?.view?.isUserInteractionEnabled = true
     }
     
     
     // MARK: Move action
-    func moveLetter()
+    func moveLetter(enableSceneTouch:Bool = true)
     {
         // Get some value that represents how much was moved ignoring the actual physical
         // distance. Log applied to Euclidean distance to make it very small.
@@ -119,6 +131,9 @@ class Letter: Cell {
             self.run(scaleAction) {
                 self.state = CellState.home
                 self.isUserInteractionEnabled = true
+                if (enableSceneTouch) {
+                    self.scene?.view?.isUserInteractionEnabled = true
+                }
             }
         }
     }
@@ -144,6 +159,19 @@ class Letter: Cell {
             case .nothing:
                 return
             }
+        }
+    }
+    
+    
+    private func playHapticFeedback(collisionResult: CollisionResult)
+    {
+        switch collisionResult {
+        case .landing:
+            feedbackGenerator?.impactOccuredCustom(intensity: 0.9)
+        case .switching:
+            feedbackGenerator?.impactOccuredCustom(intensity: 0.6)
+        case .nothing:
+            feedbackGenerator?.impactOccuredCustom(intensity: 0.3)
         }
     }
     

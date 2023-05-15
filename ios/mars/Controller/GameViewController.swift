@@ -173,6 +173,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
                     view.ignoresSiblingOrder = true
                     view.showsFPS = true
                     view.showsNodeCount = true
+                    view.isMultipleTouchEnabled = false
                 }
             }
         }
@@ -212,20 +213,26 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     // MARK: Subscribe solution result
     private func subscribeToSolutionCheckResult()
     {
+        let feedbackGenerator = UINotificationFeedbackGenerator()
         
         Database.shared.solutionCheckResultClosure = { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .correct:
                 print("Correct solution!")
+                feedbackGenerator.notificationOccuredCustom(notificationType: .success)
+                gameScene?.view?.isUserInteractionEnabled = true
             case .wrong:
                 print("Wrong solution!")
+                feedbackGenerator.notificationOccuredCustom(notificationType: .error)
                 gameScene?.shakeAnimation()
             case .bogus_palindrome:
                 print("Bogus solution!")
+                feedbackGenerator.notificationOccuredCustom(notificationType: .warning)
                 gameScene?.shakeAnimation()
             case .invalid_guess:
-                print("Should not be here!")
+                print("No guess, enable touch.")
+                gameScene?.view?.isUserInteractionEnabled = true
             }
         }
     }

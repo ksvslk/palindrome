@@ -17,6 +17,8 @@
 		B1313BBE2A0E66E9005830AB /* NumberLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1313BBD2A0E66E9005830AB /* NumberLabel.swift */; };
 		B1313BC02A0F7E72005830AB /* SolutionCheckResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1313BBF2A0F7E72005830AB /* SolutionCheckResult.swift */; };
 		B1313BC22A0F8386005830AB /* SolutionChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1313BC12A0F8386005830AB /* SolutionChecker.swift */; };
+		B1313BCF2A1279D6005830AB /* place_letter_quiet.wav in Resources */ = {isa = PBXBuildFile; fileRef = B1313BCD2A1279D6005830AB /* place_letter_quiet.wav */; };
+		B1313BD02A1279D6005830AB /* switch_letters_quiet.wav in Resources */ = {isa = PBXBuildFile; fileRef = B1313BCE2A1279D6005830AB /* switch_letters_quiet.wav */; };
 		B13966B62A082D5000EF75A0 /* place_letter.wav in Resources */ = {isa = PBXBuildFile; fileRef = B13966B52A082D5000EF75A0 /* place_letter.wav */; };
 		B13966B82A082D6500EF75A0 /* switch_letters.wav in Resources */ = {isa = PBXBuildFile; fileRef = B13966B72A082D6500EF75A0 /* switch_letters.wav */; };
 		B13966BA2A08300800EF75A0 /* CollisionResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13966B92A08300800EF75A0 /* CollisionResult.swift */; };
@@ -72,6 +74,8 @@
 		B1313BBD2A0E66E9005830AB /* NumberLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberLabel.swift; sourceTree = "<group>"; };
 		B1313BBF2A0F7E72005830AB /* SolutionCheckResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolutionCheckResult.swift; sourceTree = "<group>"; };
 		B1313BC12A0F8386005830AB /* SolutionChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolutionChecker.swift; sourceTree = "<group>"; };
+		B1313BCD2A1279D6005830AB /* place_letter_quiet.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = place_letter_quiet.wav; sourceTree = "<group>"; };
+		B1313BCE2A1279D6005830AB /* switch_letters_quiet.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = switch_letters_quiet.wav; sourceTree = "<group>"; };
 		B13966AE2A069DD400EF75A0 /* mars.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = mars.entitlements; sourceTree = "<group>"; };
 		B13966B52A082D5000EF75A0 /* place_letter.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = place_letter.wav; sourceTree = "<group>"; };
 		B13966B72A082D6500EF75A0 /* switch_letters.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = switch_letters.wav; sourceTree = "<group>"; };
@@ -140,6 +144,8 @@
 		B13966B42A082D0B00EF75A0 /* Sounds */ = {
 			isa = PBXGroup;
 			children = (
+				B1313BCD2A1279D6005830AB /* place_letter_quiet.wav */,
+				B1313BCE2A1279D6005830AB /* switch_letters_quiet.wav */,
 				B13966B72A082D6500EF75A0 /* switch_letters.wav */,
 				B13966B52A082D5000EF75A0 /* place_letter.wav */,
 			);
@@ -365,8 +371,10 @@
 				B1E8975929EC5001001B942F /* Main.storyboard in Resources */,
 				B13966B82A082D6500EF75A0 /* switch_letters.wav in Resources */,
 				B16F207229FBBB2400E8DFCE /* Actions.sks in Resources */,
+				B1313BD02A1279D6005830AB /* switch_letters_quiet.wav in Resources */,
 				B1313BB42A0B6F33005830AB /* game_levels.json in Resources */,
 				B16F207029FBBAFC00E8DFCE /* GameScene.sks in Resources */,
+				B1313BCF2A1279D6005830AB /* place_letter_quiet.wav in Resources */,
 				B141D54329F6B44500FE9B39 /* yantramanav_bold.ttf in Resources */,
 				B1E8975B29EC5002001B942F /* Assets.xcassets in Resources */,
 			);

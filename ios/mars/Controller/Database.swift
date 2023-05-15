@@ -31,7 +31,7 @@ class Database {
    
     private init() {
         if #available(iOS 13.0, *) {
-            persistentContainer = NSPersistentCloudKitContainer(name: "Model")
+            persistentContainer = NSPersistentContainer(name: "Model") // TODO: Change to CloudContainer..
         } else {
             persistentContainer = NSPersistentContainer(name: "Model")
         }
@@ -41,8 +41,6 @@ class Database {
             }
         }
         
-        let description = persistentContainer.persistentStoreDescriptions.first
-        description?.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
         context = persistentContainer.viewContext
         
     }
@@ -149,9 +147,7 @@ class Database {
         print("CHANGE LEVEL TO: \(nr)")
         var fetchedLevels: [Level] = []
         do {
-            context.transactionAuthor = "changeGameLevel"
             fetchedLevels = try context.fetch(request)
-            context.transactionAuthor = nil
         } catch {
             print("Error fetching level")
         }
@@ -237,10 +233,11 @@ class Database {
         } catch {
             print("Error changing friend index: \(error)")
         }
+        refreshCurrentLevel()
+        checkSolutionCorrectness()
 #if DEBUG
         assertFriendIndexesAreUniqueForEachLetter()
 #endif
-        checkSolutionCorrectness()
     }
     
     
@@ -259,6 +256,7 @@ class Database {
         } catch {
             print("Error switching friend indexes: \(error)")
         }
+        refreshCurrentLevel()
         checkSolutionCorrectness()
 #if DEBUG
         assertFriendIndexesAreUniqueForEachLetter()
@@ -283,10 +281,7 @@ class Database {
         
         let result = SolutionChecker.getGuessResult(guess: letters, solutions: currentLevel!.solutionsArr)
        
-        if (result != SolutionCheckResult.invalid_guess)
-        {
-            solutionCheckResultClosure?(result)
-        }
+        solutionCheckResultClosure?(result)
  
     }
     
