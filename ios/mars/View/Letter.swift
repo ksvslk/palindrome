@@ -30,13 +30,13 @@ class Letter: Cell {
         self.cellDirector = cellDirector
         self.data = data
         super.init(homeIndex: data.homeIndex, texture: nil, color: Theme.colorPrimary, size: size, homePosition: homePosition)
-        isUserInteractionEnabled = true
         let letterLabel = SKLabelNode(text: data.letter)
         letterLabel.fontName = Theme.letterFont
         letterLabel.fontSize = size.width / 1.5
         letterLabel.verticalAlignmentMode = .center
         letterLabel.horizontalAlignmentMode = .center
         letterLabel.fontColor = Theme.colorOnPrimary
+        isUserInteractionEnabled = true
         addChild(letterLabel)
     }
     
@@ -48,7 +48,7 @@ class Letter: Cell {
     
     // MARK: Touches began
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-
+        guard StateManager.shared.currentState == .play else { return }
         StateManager.shared.currentState = .animating
         guard state == CellState.home else { return }
         guard let touch = touches.first else { return }
@@ -57,7 +57,6 @@ class Letter: Cell {
         
         if self.frame.contains(location) {
             self.zPosition = C.TOP_LAYER
-            isUserInteractionEnabled = false
             currentPosition = self.position
             state = CellState.dragging
             self.animateColor(to: Theme.colorSecondary, duration: C.ON_CLICK_COLOR_CHANGE_ANIMATION, timingMode: SKActionTimingMode.easeInEaseOut)
@@ -107,7 +106,6 @@ class Letter: Cell {
         self.state = CellState.home
         self.scale(to: CGSize(width: 1.0, height: 1.0))
         self.position = currentPosition
-        self.isUserInteractionEnabled = true
         StateManager.shared.currentState = .play
     }
     
@@ -130,7 +128,6 @@ class Letter: Cell {
             let scaleAction = SKAction.scale(to: newScale, duration: duration)
             self.run(scaleAction) {
                 self.state = CellState.home
-                self.isUserInteractionEnabled = true
                 if (enableSceneTouch) {
                     StateManager.shared.currentState = .play
                 }

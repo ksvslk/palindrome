@@ -14,16 +14,18 @@ class GameScene: SKScene {
         handleGameState()
     }
     
+    
+    // MARK: Handle game state
     private func handleGameState()
     {
         StateManager.shared.stateDidChange = { state in
             switch state {
             case .play:
-                self.view?.isUserInteractionEnabled = true
+                print("Now in .play")
             case .animating:
-                self.view?.isUserInteractionEnabled = false
+                print("Now in .animating")
             case .completed:
-                self.view?.isUserInteractionEnabled = false
+                print("Now in .completed")
             }
         }
     }
@@ -66,6 +68,12 @@ class GameScene: SKScene {
         let repeatAction = SKAction.repeat(sequenceAction, count: numberOfShakes)
         
         gridNode.run(repeatAction)
+    }
+    
+    
+    func winningAnimation()
+    {
+        //TODO: Copy as much from Kotlin as possible
     }
     
     

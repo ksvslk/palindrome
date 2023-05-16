@@ -154,6 +154,14 @@ class Database {
         
         if !fetchedLevels.isEmpty {
             currentLevel = fetchedLevels.first
+            switch currentLevel!.levelProgress {
+            case .in_progress:
+                StateManager.shared.currentState = .play
+            case .completed:
+                StateManager.shared.currentState = .completed
+            case .locked:
+                fatalError("Level progress should not be .locked here.")
+            }
             levelChangedClosure?()
         }
         
@@ -278,9 +286,18 @@ class Database {
         }
         
         let result = SolutionChecker.getGuessResult(guess: letters, solutions: currentLevel!.solutionsArr)
-       
+        if (result == SolutionCheckResult.correct)
+        {
+            //TODO: setCurrentLevelCompleted and other stuff that needs to be done when complete
+        }
         solutionCheckResultClosure?(result)
  
+    }
+    
+    
+    private func setCurrentLevelCompleted()
+    {
+        //TODO: Object change and save context or query like save?
     }
     
     

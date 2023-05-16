@@ -61,3 +61,5 @@ extension UINotificationFeedbackGenerator {
         self.notificationOccurred(notificationType)
     }
 }
+
+

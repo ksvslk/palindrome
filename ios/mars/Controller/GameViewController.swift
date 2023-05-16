@@ -193,7 +193,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         super.viewDidLoad()
         subscribeToLevelChange()
         subscribeToSolutionCheckResult()
-        Database.shared.changeGameLevel(nr: 20)
+        Database.shared.changeGameLevel(nr: 1)
     }
     
     
