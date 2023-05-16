@@ -21,15 +21,15 @@ class GameScene: SKScene {
         StateManager.shared.stateDidChange = { state in
             switch state {
             case .play:
-                print("Now in .play")
+                print("Now in .play (GameScene)")
             case .animating:
-                print("Now in .animating")
+                print("Now in .animating (GameScene)")
             case .completed:
-                print("Now in .completed")
+                print("Now in .completed (GameScene)")
             }
         }
     }
-    
+
     
     private func debugRect(width:CGFloat, height:CGFloat, color:SKColor, topErr:CGFloat = 0.0, bottomErr:CGFloat = 0.0)
     {
@@ -71,9 +71,70 @@ class GameScene: SKScene {
     }
     
     
-    func winningAnimation()
+    func winningAnimation(animationDoneClosure: @escaping () -> Void)
     {
+        let lastSoundAction = SKAction.playSound(soundFile: "correct.wav")
+        
+        func playCorrectSolutionBoxEffect(node:SKSpriteNode, delay:CGFloat, soundAction:SKAction, isLast:Bool) {
+            let colorAction = SKAction.colorize(with: Theme.successBoxColor, colorBlendFactor: 1, duration: 0.5)
+            let soundAndColorAction = SKAction.group([soundAction, colorAction])
+            let waitAction = SKAction.wait(forDuration: delay)
+            let sequence = !isLast ? SKAction.sequence([waitAction, soundAndColorAction])
+                                    : SKAction.sequence([waitAction, soundAndColorAction, lastSoundAction])
+            node.run(sequence) {
+                if (isLast)
+                {
+                    animationDoneClosure()
+                }
+            }
+        }
+        
+        let soundActions =
+        [
+            SKAction.playSound(soundFile: "c3_outer.wav"),
+            SKAction.playSound(soundFile: "c4_outer.wav"),
+            SKAction.playSound(soundFile: "g3_outer.wav"),
+            SKAction.playSound(soundFile: "c4_outer.wav"),
+            SKAction.playSound(soundFile: "c5_outer.wav"),
+            SKAction.playSound(soundFile: "g4_outer.wav"),
+            SKAction.playSound(soundFile: "c5_outer.wav"),
+            SKAction.playSound(soundFile: "g5_outer.wav"),
+            SKAction.playSound(soundFile: "c5_outer.wav"),
+            SKAction.playSound(soundFile: "c3_outer.wav"),
+            SKAction.playSound(soundFile: "c5_outer.wav"),
+            SKAction.playSound(soundFile: "c6_outer.wav")
+        ]
+        let soundCount = soundActions.count
+        
         //TODO: Copy as much from Kotlin as possible
+        let spriteNodes = cellDirector.cells.compactMap { $0 as? Letter }.sorted { l1, l2 in
+            l1.data.friendIndex < l2.data.friendIndex
+        }
+        let numNodes = spriteNodes.count
+        let middleIndex = (numNodes % 2 == 0) ? nil : (numNodes / 2)
+        
+        for i in stride(from: 0, to: numNodes/2, by: 1) {
+            let isLastAnimation = i == (numNodes / 2) - 1 && middleIndex == nil
+            
+            var noteSoundId = i <= (soundCount - 1) ? i : 11
+            var soundAction = soundActions[noteSoundId]
+            
+            let leftIndex = i
+            let rightIndex = numNodes - i - 1
+            let leftNode = spriteNodes[leftIndex]
+            let rightNode = spriteNodes[rightIndex]
+            
+            playCorrectSolutionBoxEffect(node: leftNode, delay: CGFloat(i)/3, soundAction:soundAction, isLast: false)
+            playCorrectSolutionBoxEffect(node: rightNode, delay: CGFloat(i)/3, soundAction:soundAction, isLast: isLastAnimation)
+            
+            if let middleIndex = middleIndex, (i + 1) == middleIndex {
+                let j = i + 1
+                noteSoundId = j <= (soundCount - 1) ? j : 11
+                soundAction = soundActions[noteSoundId]
+                playCorrectSolutionBoxEffect(node: spriteNodes[middleIndex], delay: CGFloat(i+1)/2, soundAction:soundAction, isLast: true)
+            }
+        }
+        
     }
     
     

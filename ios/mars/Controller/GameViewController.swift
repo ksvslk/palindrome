@@ -23,6 +23,9 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     // MARK: TAP info label (button)
     @IBAction func infoLabelToucheDown(_ sender: UIButton) {
         print("infoLabelToucheDown")
+        Database.shared.changeToNextLevel()
+        let nextLevelSoundAction = SKAction.playSound(soundFile: "level_transition.mp3")
+        self.gameScene?.run(nextLevelSoundAction)
         infoLabel.alpha = 0.0
         infoLabel.text = String()
         infoLabelButton.isEnabled = false
@@ -32,12 +35,6 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     // MARK: TAP Settings
     @IBAction func onSettingsButtonTap(_ sender: Any) {
         let sheet = UIAlertController.settingsSheet {
-            let messages = ["Tap to continue", C.SCORE_TAG, "Great job!"]
-            //let messages = ["Wrong solution!"]
-            self.animateMessageSequence(
-                messages: messages,
-                isLastMessageTapToContinue: true
-            )
             print("onTutorialTap")
         } onFeedbackTap: {
             print("onFeedbackTap")
@@ -135,6 +132,8 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
             duration = duration * 2
             //TODO: Ask scores straight from database?
             infoLabel.animate(endNumber: 300, maxNumber: 300, duration: duration / 2)
+            let tickingSoundAction = SKAction.playSound(soundFile: "score_tick.wav")
+            self.gameScene?.run(tickingSoundAction)
         }
         
         UIView.animate(withDuration: duration, delay: appearanceDelay, animations: {
@@ -223,6 +222,15 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
                 print("Correct solution!")
                 feedbackGenerator.notificationOccuredCustom(notificationType: .success)
                 StateManager.shared.currentState = .completed
+                gameScene?.winningAnimation {
+                    print("Show now messages of a great win in GameViewController!")
+                    let messages = ["Tap to continue", C.SCORE_TAG, "Great job!"]
+                    //let messages = ["Wrong solution!"]
+                    self.animateMessageSequence(
+                        messages: messages,
+                        isLastMessageTapToContinue: true
+                    )
+                }
                 //TODO: animation with messages
             case .wrong:
                 print("Wrong solution!")

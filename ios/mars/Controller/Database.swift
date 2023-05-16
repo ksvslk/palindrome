@@ -78,7 +78,8 @@ class Database {
                 levelNr: jsonLevel.nr,
                 palindrome: jsonLevel.solutionToCategory.first!.key,
                 solutionsToHints: jsonLevel.solutionToCategory,
-                progress: jsonLevel.nr == 1 ? Level.Progress.in_progress : Level.Progress.locked
+                //progress: jsonLevel.nr == 1 ? Level.Progress.in_progress : Level.Progress.locked
+                progress: Level.Progress.in_progress
             )
         }
         
@@ -139,6 +140,13 @@ class Database {
     }
     
     
+    func changeToNextLevel()
+    {
+        let nextLevel = currentLevel!.levelNumber + 1
+        changeGameLevel(nr: Int(nextLevel))
+    }
+    
+    
     // MARK: Change level
     func changeGameLevel(nr: Int)
     {
@@ -163,6 +171,7 @@ class Database {
                 fatalError("Level progress should not be .locked here.")
             }
             levelChangedClosure?()
+            checkSolutionCorrectness()
         }
         
         // TODO: When level has -1 columns (brand new level), we should also set the columns in the same transaction.

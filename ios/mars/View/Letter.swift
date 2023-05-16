@@ -19,8 +19,8 @@ class Letter: Cell {
     var data: LetterData
     // Sounds
 
-    let PLACE_LETTER_SOUND_ACTION = SKAction.playSoundFileNamed("place_letter_quiet.wav", waitForCompletion: false)
-    let SWITCH_LETTER_SOUND_ACTION = SKAction.playSoundFileNamed("switch_letters_quiet.wav", waitForCompletion: false)
+    let PLACE_LETTER_SOUND_ACTION = SKAction.playSound(soundFile: "place_letter_quiet.wav")
+    let SWITCH_LETTER_SOUND_ACTION = SKAction.playSound(soundFile: "switch_letters_quiet.wav")
     
     private var feedbackGenerator : UIImpactFeedbackGenerator? = nil
     
@@ -137,12 +137,12 @@ class Letter: Cell {
     
     
     // MARK: Animate color
-    private func animateColor(to color: UIColor, duration: CGFloat, timingMode: SKActionTimingMode) {
+    func animateColor(to color: UIColor, duration: CGFloat, timingMode: SKActionTimingMode) {
         let colorAction = SKAction.colorize(with: color, colorBlendFactor: 1, duration: duration)
         colorAction.timingMode = timingMode
         self.run(colorAction)
     }
-    
+
     
     private func playSound(collisionResult: CollisionResult)
     {

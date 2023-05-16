@@ -37,11 +37,11 @@ extension String {
     
     //MARK: Is string palindrome?
     func isPalindrome() -> Bool {
-         let testString = self.lowercased()
-             .replacingOccurrences(of: #"[\W+]"#, with: "", options: .regularExpression)
-         return testString.count >= 3 && testString == String(testString.reversed())
-     }
-
+        let testString = self.lowercased()
+            .replacingOccurrences(of: #"[\W+]"#, with: "", options: .regularExpression)
+        return testString.count >= 3 && testString == String(testString.reversed())
+    }
+    
 }
 
 
@@ -62,4 +62,13 @@ extension UINotificationFeedbackGenerator {
     }
 }
 
-
+extension SKAction {
+    static func playSound(soundFile: String) -> SKAction
+    {
+        let soundEnabled = UserDefaults.standard.bool(forKey: C.SOUND_ON)
+        guard soundEnabled else {
+            return SKAction.wait(forDuration: 0)
+        }
+        return SKAction.playSoundFileNamed(soundFile, waitForCompletion: false)
+    }
+}
