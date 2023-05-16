@@ -36,7 +36,7 @@ class StateManager {
          case .animating:
              return newState == .play || newState == .completed
          case .completed:
-             return false
+             return newState == .play
          }
      }
     

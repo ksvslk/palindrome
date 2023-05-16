@@ -140,8 +140,27 @@ class Database {
     }
     
     
+    func resetLevel()
+    {
+        currentLevel!.progress = Int64(Level.Progress.in_progress.rawValue)
+        currentLevel!.letters = NSSet(array: currentLevel!.shuffledPuzzle.enumerated().map { (index, char) in
+            let letter = LetterData(context: context)
+            letter.letter = String(char)
+            letter.homeIndex = Int64(index) + 1
+            return letter
+        })
+        
+        do {
+            try context.save()
+        } catch {
+            print("Error saving item: \(error)")
+        }
+    }
+    
+    
     func changeToNextLevel()
     {
+        resetLevel()
         let nextLevel = currentLevel!.levelNumber + 1
         changeGameLevel(nr: Int(nextLevel))
     }
