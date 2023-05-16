@@ -3,26 +3,29 @@ import GameplayKit
 
 class GameScene: SKScene {
     
-    
     private var gridNode:SKNode = SKNode()
     private var startingPosition:CGPoint = CGPoint.zero
+    private var cellDirector: CellDirector = CellDirector(cells: [Cell]())
     
-    enum GameState {
-        case play
-        case animating
-        case completed
-    }
-
-    enum LevelCreationError: Error {
-        case positionForHomeIndexNotFoundInMap
-    }
     
-    var cellDirector: CellDirector = CellDirector(cells: [Cell]())
-    
-
     // MARK: Initialize level
     override func didMove(to view: SKView) {
         layoutScene(view: view)
+        handleGameState()
+    }
+    
+    private func handleGameState()
+    {
+        StateManager.shared.stateDidChange = { state in
+            switch state {
+            case .play:
+                self.view?.isUserInteractionEnabled = true
+            case .animating:
+                self.view?.isUserInteractionEnabled = false
+            case .completed:
+                self.view?.isUserInteractionEnabled = false
+            }
+        }
     }
     
     
@@ -37,44 +40,43 @@ class GameScene: SKScene {
     }
     
     
-    // MARK: Wrong solution animation
+    // MARK: Shake animation
     func shakeAnimation()
     {
-       
         let amplitudeX: CGFloat = 12
         let frequency: CGFloat = 5
         let duration: TimeInterval = 1.0
         let numberOfShakes = 1
         let attenuationFactor: CGFloat = 0.2
-
+        
         let amplitudeAction = SKAction.customAction(withDuration: duration) { node, elapsedTime in
             let progress = elapsedTime / CGFloat(duration)
             let amplitudeFactor = pow(2.0, -elapsedTime / duration) * sin(elapsedTime * frequency * CGFloat.pi * 2.0)
             let attenuatedFactor = amplitudeFactor * pow(attenuationFactor, progress)
             node.position.x = self.startingPosition.x + attenuatedFactor * amplitudeX
         }
-
+        
         let resetAction = SKAction.run {
             self.gridNode.position = self.startingPosition
-            self.view?.isUserInteractionEnabled = true
+            StateManager.shared.currentState = .play
             assert(self.gridNode.position == self.startingPosition, "Node position is \(self.gridNode.position), but should be \(self.startingPosition)")
         }
-
+        
         let sequenceAction = SKAction.sequence([amplitudeAction, resetAction])
         let repeatAction = SKAction.repeat(sequenceAction, count: numberOfShakes)
-
+        
         gridNode.run(repeatAction)
     }
-
+    
     
     // MARK: Main scene layout
     private func layoutScene(view: SKView)
     {
         cellDirector.cells.removeAll()
-       
+        
         // Get current level
         let currentLevel = Database.shared.currentLevel!
-
+        
         let horizontalSafe = 16.0
         let bottomSafe = 34.0 + 44.0 + 8.0
         let topSafe = 59.0 + 4.0 + 8.0
@@ -83,24 +85,24 @@ class GameScene: SKScene {
         let viewSize = CGSize(
             width: view.bounds.width - horizontalSafe,
             height: view.bounds.height - bottomSafe - topSafe)
-
+        
         /*
          debugRect(
-             width: viewSize.width,
-             height: viewSize.height,
-             color:SKColor.systemOrange,
-             topErr: topSafe,
-             bottomErr: bottomSafe
+         width: viewSize.width,
+         height: viewSize.height,
+         color:SKColor.systemOrange,
+         topErr: topSafe,
+         bottomErr: bottomSafe
          )
          */
-
+        
         // Create game field representation which will be used to creat the UI grid
         let gameField = GameFieldCreator.getGameField(
             palindrome: currentLevel.solutionsArr.first!.palindrome,
             viewSize:viewSize,
             level:currentLevel
         )
-      
+        
         
         if (currentLevel.columnCount == -1)
         {
@@ -109,7 +111,7 @@ class GameScene: SKScene {
                 oldFriendToNewFriendIndex: [:]
             )
         }
-     
+        
         let allCells = gameField.letterRows + gameField.solutionRows
         
         // Create the grid node
@@ -122,7 +124,7 @@ class GameScene: SKScene {
         } catch {
             print("GameScene: Could not add nodes to grid.")
         }
-
+        
         // Change the position of the grid
         let height = ((gameField.boxSize.height + GameFieldCreator.spacing) * CGFloat(allCells.count - 1))
         let width = ((gameField.boxSize.width + GameFieldCreator.spacing) * CGFloat(gameField.columns - 1))
@@ -130,7 +132,7 @@ class GameScene: SKScene {
         gridNode.position.y -= topSafe
         gridNode.position.y += bottomSafe
         startingPosition = gridNode.position
-
+        
 #if DEBUG
         assertThatEachLetterHasSlot(grid: gridNode, level: currentLevel)
         assertDatabaseAndActualLettersCount(grid: gridNode, level: currentLevel)
@@ -154,8 +156,8 @@ class GameScene: SKScene {
             for (colIndex, char) in rowOfChars.enumerated() {
                 
                 let index = Int64(rowIndex * gameField.columns + colIndex + 1)
-               
-           
+                
+                
                 switch (rowIndex < gameField.letterRows.count, char) {
                 case (true, " "), (false, " "):
                     let space = getBlankNode(gameField: gameField, rowIndex: rowIndex, colIndex: colIndex)
@@ -189,10 +191,10 @@ class GameScene: SKScene {
                         rowIndex: rowIndex,
                         colIndex: colIndex
                     )
-              
+                    
                     gridNode.addChild(slot)
                     cellDirector.cells.append(slot)
-              
+                    
                     if let letterWithFriend = letters.first(where: { data in
                         data.friendIndex == index
                     }) {
@@ -285,5 +287,11 @@ class GameScene: SKScene {
             homePosition: CGPoint(x: CGFloat(colIndex) * (gameField.boxSize.width + GameFieldCreator.spacing), y: -CGFloat(rowIndex) * (gameField.boxSize.height + GameFieldCreator.spacing))
         )
     }
+    
+    
+    enum LevelCreationError: Error {
+        case positionForHomeIndexNotFoundInMap
+    }
+    
     
 }

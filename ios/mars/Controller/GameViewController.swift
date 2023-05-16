@@ -19,7 +19,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     @IBOutlet weak var infoLabelButton: UIButton!
     @IBOutlet weak var infoLabel: NumberLabel!
     
-
+    
     // MARK: TAP info label (button)
     @IBAction func infoLabelToucheDown(_ sender: UIButton) {
         print("infoLabelToucheDown")
@@ -44,7 +44,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         } onShareTap: {
             print("onShareTap")
         }
-
+        
         present(sheet, animated: true, completion: nil)
     }
     
@@ -66,9 +66,16 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     // MARK: TAP Hints
     @IBAction func onHintsButtonTap(_ sender: Any) {
         let sheet = UIAlertController.hintsSheet {
-            print("onLetterRewardedAdsTap")
+            if (StateManager.shared.currentState == GameState.play)
+            {
+                print("onLetterRewardedAdsTap")
+            }
+            
         } onHintRewardedAdsTap: {
-            print("onHintRewardedAdsTap")
+            if (StateManager.shared.currentState == GameState.play)
+            {
+                print("onHintRewardedAdsTap")
+            }
         } onUnlimitedLettersPurchaseTap: {
             print("onUnlimitedLettersPurchaseTap")
         } onUnlimitedHintsPurchaseTap: {
@@ -78,7 +85,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         } onAllInPackPurchaseTap: {
             print("onAllInPackPurchaseTap!")
         }
-
+        
         present(sheet, animated: true, completion: nil)
     }
     
@@ -89,17 +96,17 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         let sheet = UIAlertController.gameCenterSheet {
             print("onGameLeaderBoardTap")
             let viewController = GKGameCenterViewController(
-                            leaderboardID: C.GAME_LEADERBOARD,
-                            playerScope: .global,
-                            timeScope: .allTime)
+                leaderboardID: C.GAME_LEADERBOARD,
+                playerScope: .global,
+                timeScope: .allTime)
             viewController.gameCenterDelegate = self
             self.present(viewController, animated: true, completion: nil)
         } onPlayerLeaderBoardTap: {
             print("onPlayerLeaderBoardTap")
             let viewController = GKGameCenterViewController(
-                            leaderboardID: C.PLAYER_LEADERBOARD,
-                            playerScope: .global,
-                            timeScope: .allTime)
+                leaderboardID: C.PLAYER_LEADERBOARD,
+                playerScope: .global,
+                timeScope: .allTime)
             viewController.gameCenterDelegate = self
             self.present(viewController, animated: true, completion: nil)
         } onAchievementsTap: {
@@ -138,7 +145,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
                 infoLabelButton.isEnabled = true
             }
             else {
-         
+                
                 UIView.animate(withDuration: duration, delay: disappearanceDelay, animations: {
                     self.infoLabel.alpha = 0.0
                 }, completion: { _ in
@@ -156,30 +163,24 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     // MARK: Load main scene
     private func loadMainScene()
     {
-        // Load 'GameScene.sks' as a GKScene. This provides gameplay related content
-        // including entities and graphs.
-        if let scene = GKScene(fileNamed: "GameScene") {
-            
-            // Get the SKScene from the loaded GKScene
-            gameScene = scene.rootNode as! GameScene?
-            if (gameScene != nil) {
-                
-                // Set the scale mode to scale to fit the window
-                gameScene!.backgroundColor = Theme.backgroundColor
-                
-                // Present the scene
-                if let view = self.view as! SKView? {
-                    view.presentScene(gameScene!, transition: SKTransition.push(with: SKTransitionDirection.left, duration: 1.0))
-                    view.ignoresSiblingOrder = true
-                    view.showsFPS = true
-                    view.showsNodeCount = true
-                    view.isMultipleTouchEnabled = false
-                }
-            }
+        guard let scene = GKScene(fileNamed: "GameScene"),
+              let gameScene = scene.rootNode as? GameScene,
+              let view = self.view as? SKView else {
+            return
         }
+
+        gameScene.backgroundColor = Theme.backgroundColor
+
+        view.presentScene(gameScene, transition: SKTransition.push(with: SKTransitionDirection.left, duration: 1.0))
+        view.ignoresSiblingOrder = true
+        view.showsFPS = true
+        view.showsNodeCount = true
+        view.isMultipleTouchEnabled = false
+
+        self.gameScene = gameScene // Set the global variable to the gameScene instance
         
     }
-
+    
     
     // MARK: UI mode change
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -221,24 +222,27 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
             case .correct:
                 print("Correct solution!")
                 feedbackGenerator.notificationOccuredCustom(notificationType: .success)
-                gameScene?.view?.isUserInteractionEnabled = true
+                StateManager.shared.currentState = .completed
+                //TODO: animation with messages
             case .wrong:
                 print("Wrong solution!")
                 feedbackGenerator.notificationOccuredCustom(notificationType: .error)
                 gameScene?.shakeAnimation()
+                //TODO: animation with messages
             case .bogus_palindrome:
                 print("Bogus solution!")
                 feedbackGenerator.notificationOccuredCustom(notificationType: .warning)
                 gameScene?.shakeAnimation()
+                //TODO: animation with messages
             case .invalid_guess:
                 print("No guess, enable touch.")
-                gameScene?.view?.isUserInteractionEnabled = true
+                StateManager.shared.currentState = .play
             }
         }
     }
     
     
-    // MARK: Change progress bar 
+    // MARK: Change progress bar
     private func changeProgressBarUI(levelNr:Int)
     {
         if (levelNr <= 100)
@@ -248,7 +252,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
             progressBar.setProgress(progressValue, animated: true)
         }
         // TODO: Handle player levels
-   
+        
     }
     
     
@@ -273,5 +277,5 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         gameCenterViewController.dismiss(animated:true)
     }
     
-  
+    
 }

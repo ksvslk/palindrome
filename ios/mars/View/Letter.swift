@@ -49,7 +49,7 @@ class Letter: Cell {
     // MARK: Touches began
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 
-        self.scene?.view?.isUserInteractionEnabled = false
+        StateManager.shared.currentState = .animating
         guard state == CellState.home else { return }
         guard let touch = touches.first else { return }
         
@@ -108,7 +108,7 @@ class Letter: Cell {
         self.scale(to: CGSize(width: 1.0, height: 1.0))
         self.position = currentPosition
         self.isUserInteractionEnabled = true
-        self.scene?.view?.isUserInteractionEnabled = true
+        StateManager.shared.currentState = .play
     }
     
     
@@ -132,7 +132,7 @@ class Letter: Cell {
                 self.state = CellState.home
                 self.isUserInteractionEnabled = true
                 if (enableSceneTouch) {
-                    self.scene?.view?.isUserInteractionEnabled = true
+                    StateManager.shared.currentState = .play
                 }
             }
         }

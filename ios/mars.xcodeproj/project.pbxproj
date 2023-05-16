@@ -19,6 +19,8 @@
 		B1313BC22A0F8386005830AB /* SolutionChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1313BC12A0F8386005830AB /* SolutionChecker.swift */; };
 		B1313BCF2A1279D6005830AB /* place_letter_quiet.wav in Resources */ = {isa = PBXBuildFile; fileRef = B1313BCD2A1279D6005830AB /* place_letter_quiet.wav */; };
 		B1313BD02A1279D6005830AB /* switch_letters_quiet.wav in Resources */ = {isa = PBXBuildFile; fileRef = B1313BCE2A1279D6005830AB /* switch_letters_quiet.wav */; };
+		B1313BD22A135D6F005830AB /* GameState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1313BD12A135D6F005830AB /* GameState.swift */; };
+		B1313BD42A135FAD005830AB /* StateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1313BD32A135FAD005830AB /* StateManager.swift */; };
 		B13966B62A082D5000EF75A0 /* place_letter.wav in Resources */ = {isa = PBXBuildFile; fileRef = B13966B52A082D5000EF75A0 /* place_letter.wav */; };
 		B13966B82A082D6500EF75A0 /* switch_letters.wav in Resources */ = {isa = PBXBuildFile; fileRef = B13966B72A082D6500EF75A0 /* switch_letters.wav */; };
 		B13966BA2A08300800EF75A0 /* CollisionResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13966B92A08300800EF75A0 /* CollisionResult.swift */; };
@@ -76,6 +78,8 @@
 		B1313BC12A0F8386005830AB /* SolutionChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolutionChecker.swift; sourceTree = "<group>"; };
 		B1313BCD2A1279D6005830AB /* place_letter_quiet.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = place_letter_quiet.wav; sourceTree = "<group>"; };
 		B1313BCE2A1279D6005830AB /* switch_letters_quiet.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = switch_letters_quiet.wav; sourceTree = "<group>"; };
+		B1313BD12A135D6F005830AB /* GameState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameState.swift; sourceTree = "<group>"; };
+		B1313BD32A135FAD005830AB /* StateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateManager.swift; sourceTree = "<group>"; };
 		B13966AE2A069DD400EF75A0 /* mars.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = mars.entitlements; sourceTree = "<group>"; };
 		B13966B52A082D5000EF75A0 /* place_letter.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = place_letter.wav; sourceTree = "<group>"; };
 		B13966B72A082D6500EF75A0 /* switch_letters.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = switch_letters.wav; sourceTree = "<group>"; };
@@ -246,6 +250,7 @@
 				B163AA4729F7FA2F006C8BE6 /* CellState.swift */,
 				B13966B92A08300800EF75A0 /* CollisionResult.swift */,
 				B1313BBF2A0F7E72005830AB /* SolutionCheckResult.swift */,
+				B1313BD12A135D6F005830AB /* GameState.swift */,
 			);
 			path = Enum;
 			sourceTree = "<group>";
@@ -274,6 +279,7 @@
 				B1E8975529EC5001001B942F /* GameViewController.swift */,
 				B1FE7A4C29F80E82007D7954 /* CellDirector.swift */,
 				B1313BA92A0ABEB1005830AB /* GameLevelSelectController.swift */,
+				B1313BD32A135FAD005830AB /* StateManager.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -400,6 +406,7 @@
 				B1313BC22A0F8386005830AB /* SolutionChecker.swift in Sources */,
 				B1EF06DE29F8477600DD78A6 /* C.swift in Sources */,
 				B1B33A8A29FDB66D00DFA59F /* Solution+CoreDataClass.swift in Sources */,
+				B1313BD42A135FAD005830AB /* StateManager.swift in Sources */,
 				B1313BB22A0AD12C005830AB /* LevelSelectCell.swift in Sources */,
 				B1B33A8829FDB66D00DFA59F /* LetterData+CoreDataClass.swift in Sources */,
 				B163AA4829F7FA2F006C8BE6 /* CellState.swift in Sources */,
@@ -416,6 +423,7 @@
 				B1F6B12D29F8208300EEEC17 /* CellType.swift in Sources */,
 				B1313BAA2A0ABEB1005830AB /* GameLevelSelectController.swift in Sources */,
 				B1B33A8629FDB66D00DFA59F /* Level+CoreDataClass.swift in Sources */,
+				B1313BD22A135D6F005830AB /* GameState.swift in Sources */,
 				B1D2710229EDB24500E01AC8 /* GameField.swift in Sources */,
 				B13966BA2A08300800EF75A0 /* CollisionResult.swift in Sources */,
 				B1313BBE2A0E66E9005830AB /* NumberLabel.swift in Sources */,

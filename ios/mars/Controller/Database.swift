@@ -211,9 +211,7 @@ class Database {
         var levels:[Level.Progress] = []
         
         do {
-            context.transactionAuthor = "getAllGameLevels"
             let results = try context.fetch(request) as [Level]
-            context.transactionAuthor = nil
             results.forEach { level in
                 levels.append(level.levelProgress)
             }
