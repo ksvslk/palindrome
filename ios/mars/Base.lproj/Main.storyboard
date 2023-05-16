@@ -70,7 +70,7 @@
                                 <color key="tintColor" name="successBoxColor"/>
                             </progressView>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lY4-YA-Xyy">
-                                <rect key="frame" x="16" y="59" width="343" height="248"/>
+                                <rect key="frame" x="0.0" y="47" width="375" height="542"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <color key="tintColor" name="transparentColor"/>
@@ -79,9 +79,8 @@
                                     <action selector="infoLabelToucheDown:" destination="BV1-FR-VrT" eventType="touchDown" id="quT-4N-1du"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="U0P-xJ-B7b" customClass="NumberLabel" customModule="mars" customModuleProvider="target">
-                                <rect key="frame" x="16" y="59" width="343" height="248"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="none" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="U0P-xJ-B7b" customClass="NumberLabel" customModule="mars" customModuleProvider="target">
+                                <rect key="frame" x="187.5" y="203.5" width="0.0" height="0.0"/>
                                 <fontDescription key="fontDescription" name="Yantramanav-Bold" family="Yantramanav" pointSize="27"/>
                                 <color key="textColor" name="colorOnPrimary"/>
                                 <nil key="highlightedColor"/>
@@ -89,6 +88,10 @@
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="4qk-I5-YsI"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="U0P-xJ-B7b" firstAttribute="centerX" secondItem="3se-qz-xqx" secondAttribute="centerX" id="7rT-My-RUv"/>
+                            <constraint firstItem="U0P-xJ-B7b" firstAttribute="centerY" secondItem="3se-qz-xqx" secondAttribute="centerY" constant="-130" id="XlQ-tl-ksV"/>
+                        </constraints>
                     </view>
                     <connections>
                         <outlet property="InfoLabel" destination="U0P-xJ-B7b" id="pDl-TG-xhO"/>
