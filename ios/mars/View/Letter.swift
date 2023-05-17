@@ -50,7 +50,7 @@ class Letter: Cell {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard StateManager.shared.currentState == .play else { return }
         print("Touching and state is \(StateManager.shared.currentState) (Letter)")
-        StateManager.shared.currentState = .animating
+     
         guard state == CellState.home else { return }
         guard let touch = touches.first else { return }
         
@@ -94,6 +94,7 @@ class Letter: Cell {
         let collisionResult = cellDirector.handleCollisions(letter: self)
         playSound(collisionResult: collisionResult)
         playHapticFeedback(collisionResult: collisionResult)
+        print("Collision result: \(collisionResult)")
         moveLetter(enableSceneTouch: collisionResult == CollisionResult.nothing)
     }
     
@@ -107,13 +108,13 @@ class Letter: Cell {
         self.state = CellState.home
         self.scale(to: CGSize(width: 1.0, height: 1.0))
         self.position = currentPosition
-        StateManager.shared.currentState = .play
     }
     
     
     // MARK: Move action
     func moveLetter(enableSceneTouch:Bool = true)
     {
+
         // Get some value that represents how much was moved ignoring the actual physical
         // distance. Log applied to Euclidean distance to make it very small.
         let distance = log2((abs(position.distance(point: currentPosition))))
@@ -129,10 +130,6 @@ class Letter: Cell {
             let scaleAction = SKAction.scale(to: newScale, duration: duration)
             self.run(scaleAction) {
                 self.state = CellState.home
-                if (enableSceneTouch)
-                {
-                    StateManager.shared.currentState = .play
-                }
             }
         }
     }
@@ -140,6 +137,7 @@ class Letter: Cell {
     
     // MARK: Animate color
     func animateColor(to color: UIColor, duration: CGFloat, timingMode: SKActionTimingMode) {
+        guard StateManager.shared.currentState != .completed else { return }
         let colorAction = SKAction.colorize(with: color, colorBlendFactor: 1, duration: duration)
         colorAction.timingMode = timingMode
         self.run(colorAction)

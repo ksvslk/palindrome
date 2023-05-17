@@ -48,6 +48,7 @@ class GameScene: SKScene {
     // MARK: Shake animation
     func shakeAnimation()
     {
+        StateManager.shared.currentState = .animating
         let amplitudeX: CGFloat = 12
         let frequency: CGFloat = 5
         let duration: TimeInterval = 1.0
@@ -93,7 +94,6 @@ class GameScene: SKScene {
             SKAction.playSound(soundFile: "c6_outer.wav")
         ]
         
-        
         func playCorrectSolutionBoxEffect(node:SKSpriteNode, delay:CGFloat, soundAction:SKAction, isLast:Bool) {
             let colorAction = SKAction.colorize(with: Theme.successBoxColor, colorBlendFactor: 1, duration: 0.5)
             let soundAndColorAction = SKAction.group([soundAction, colorAction])
@@ -108,7 +108,6 @@ class GameScene: SKScene {
             }
         }
         
-        
         let soundCount = soundActions.count
         
         //TODO: Copy as much from Kotlin as possible
@@ -117,7 +116,7 @@ class GameScene: SKScene {
         }
         let numNodes = spriteNodes.count
         let middleIndex = (numNodes % 2 == 0) ? nil : (numNodes / 2)
-        
+        let delayMultiplier = 2.5
         for i in stride(from: 0, to: numNodes/2, by: 1) {
             let isLastAnimation = i == (numNodes / 2) - 1 && middleIndex == nil
             
@@ -129,14 +128,19 @@ class GameScene: SKScene {
             let leftNode = spriteNodes[leftIndex]
             let rightNode = spriteNodes[rightIndex]
             
-            playCorrectSolutionBoxEffect(node: leftNode, delay: CGFloat(i)/3, soundAction:soundAction, isLast: false)
-            playCorrectSolutionBoxEffect(node: rightNode, delay: CGFloat(i)/3, soundAction:soundAction, isLast: isLastAnimation)
+            playCorrectSolutionBoxEffect(node: leftNode, delay: CGFloat(i+1)/delayMultiplier, soundAction:soundAction, isLast: false)
+            playCorrectSolutionBoxEffect(node: rightNode, delay: CGFloat(i+1)/delayMultiplier, soundAction:soundAction, isLast: isLastAnimation)
             
             if let middleIndex = middleIndex, (i + 1) == middleIndex {
                 let j = i + 1
                 noteSoundId = j <= (soundCount - 1) ? j : 11
                 soundAction = soundActions[noteSoundId]
-                playCorrectSolutionBoxEffect(node: spriteNodes[middleIndex], delay: CGFloat(i+1)/2, soundAction:soundAction, isLast: true)
+                playCorrectSolutionBoxEffect(
+                    node: spriteNodes[middleIndex],
+                    delay: CGFloat(i+2)/delayMultiplier,
+                    soundAction:soundAction,
+                    isLast: true
+                )
             }
         }
         

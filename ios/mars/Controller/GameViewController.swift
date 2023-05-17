@@ -125,9 +125,9 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         infoLabel.text = nextMessage
         
         // Define your animation parameters here
-        var duration = 1.0
+        var duration = 0.5
         let appearanceDelay = 0.0
-        let disappearanceDelay = 0.25
+        let disappearanceDelay = 0.4
         if (nextMessage == C.SCORE_TAG)
         {
             duration = duration * 2
