@@ -25,7 +25,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         print("infoLabelToucheDown")
         StateManager.shared.currentState = .reset
         Database.shared.changeToNextLevel()
-        let nextLevelSoundAction = SKAction.playSound(soundFile: "level_transition.mp3")
+        let nextLevelSoundAction = SKAction.playSound(soundFile: "level_transition.wav")
         self.gameScene?.run(nextLevelSoundAction)
         infoLabel.alpha = 0.0
         infoLabel.text = String()

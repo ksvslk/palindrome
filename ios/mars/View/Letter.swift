@@ -19,8 +19,8 @@ class Letter: Cell {
     var data: LetterData
     // Sounds
 
-    let PLACE_LETTER_SOUND_ACTION = SKAction.playSound(soundFile: "place_letter_quiet.wav")
-    let SWITCH_LETTER_SOUND_ACTION = SKAction.playSound(soundFile: "switch_letters_quiet.wav")
+    let PLACE_LETTER_SOUND_ACTION = SKAction.playSound(soundFile: "place_letter.wav")
+    let SWITCH_LETTER_SOUND_ACTION = SKAction.playSound(soundFile: "switch_letters.wav")
     
     private var feedbackGenerator : UIImpactFeedbackGenerator? = nil
     
