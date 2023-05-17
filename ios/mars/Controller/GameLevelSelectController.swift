@@ -26,6 +26,11 @@ class GameLevelSelectController: UIViewController {
         let blurEffectView = UIVisualEffectView(effect: blurEffect)
         blurEffectView.frame = self.collectionView.bounds
         self.collectionView.backgroundView = blurEffectView
+        DispatchQueue.main.async {
+            let currentLevel = Database.shared.currentLevel!.levelNumber
+            let indexPath = IndexPath(item: Int(currentLevel), section: 0)
+            self.collectionView.scrollToItem(at: indexPath, at: .centeredVertically, animated: false)
+        }
     }
     
     override func loadView() {
