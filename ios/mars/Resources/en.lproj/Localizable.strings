@@ -1,0 +1,26 @@
+/* 
+  Localizable.strings
+  mars
+
+  Created by Mina on 17.05.2023.
+  
+*/
+
+//MARK: Global
+"cancel" = "Cancel";
+
+//MARK: Hints menu
+// Title
+"hints_title" = "Hints";
+"hints_subtitle" = "Sometimes lose, always win!";
+
+// Ads buttons
+"watch_letter_ad" = "Watch Ad for Letter";
+"watch_hint_ad" = "Watch Ad for Hint";
+
+// Purchase buttons
+"purchase_letters" = "Unlimited Letters";
+"purchase_hints" = "Unlimited Hints";
+"purchase_no_ads" = "Remove Intermediate Ads";
+"purchase_all" = "All-In Pack";
+

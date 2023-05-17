@@ -31,6 +31,7 @@
 		B1313C382A1502C5005830AB /* c6_outer.wav in Resources */ = {isa = PBXBuildFile; fileRef = B1313C2F2A1502C5005830AB /* c6_outer.wav */; };
 		B1313C392A1502C5005830AB /* c4_outer.wav in Resources */ = {isa = PBXBuildFile; fileRef = B1313C302A1502C5005830AB /* c4_outer.wav */; };
 		B1313C3A2A1502C5005830AB /* correct.wav in Resources */ = {isa = PBXBuildFile; fileRef = B1313C312A1502C5005830AB /* correct.wav */; };
+		B1313C4A2A155B49005830AB /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B1313C4C2A155B49005830AB /* Localizable.strings */; };
 		B13966BA2A08300800EF75A0 /* CollisionResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13966B92A08300800EF75A0 /* CollisionResult.swift */; };
 		B141D53C29F6816200FE9B39 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B141D53B29F6816200FE9B39 /* Theme.swift */; };
 		B141D54329F6B44500FE9B39 /* yantramanav_bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B141D54029F681B300FE9B39 /* yantramanav_bold.ttf */; };
@@ -98,6 +99,7 @@
 		B1313C2F2A1502C5005830AB /* c6_outer.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = c6_outer.wav; sourceTree = "<group>"; };
 		B1313C302A1502C5005830AB /* c4_outer.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = c4_outer.wav; sourceTree = "<group>"; };
 		B1313C312A1502C5005830AB /* correct.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = correct.wav; sourceTree = "<group>"; };
+		B1313C4B2A155B49005830AB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B13966AE2A069DD400EF75A0 /* mars.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = mars.entitlements; sourceTree = "<group>"; };
 		B13966B92A08300800EF75A0 /* CollisionResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollisionResult.swift; sourceTree = "<group>"; };
 		B13A246729F6DCDA0045DF3D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -159,6 +161,14 @@
 			children = (
 			);
 			path = Button;
+			sourceTree = "<group>";
+		};
+		B1313C3B2A155395005830AB /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				B1313C4C2A155B49005830AB /* Localizable.strings */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		B13966B42A082D0B00EF75A0 /* Sounds */ = {
@@ -226,6 +236,7 @@
 		B1E8974C29EC5001001B942F /* mars */ = {
 			isa = PBXGroup;
 			children = (
+				B1313C3B2A155395005830AB /* Resources */,
 				B1313BB82A0E2EC4005830AB /* Button */,
 				B13966B42A082D0B00EF75A0 /* Sounds */,
 				B1F5CA2029FAED5E0061FA65 /* Controller */,
@@ -408,6 +419,7 @@
 				B1313BB42A0B6F33005830AB /* game_levels.json in Resources */,
 				B1313C332A1502C5005830AB /* g5_outer.wav in Resources */,
 				B1313C282A150196005830AB /* place_letter.wav in Resources */,
+				B1313C4A2A155B49005830AB /* Localizable.strings in Resources */,
 				B1313C382A1502C5005830AB /* c6_outer.wav in Resources */,
 				B16F207029FBBAFC00E8DFCE /* GameScene.sks in Resources */,
 				B1313C322A1502C5005830AB /* c5_outer.wav in Resources */,
@@ -481,6 +493,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		B1313C4C2A155B49005830AB /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B1313C4B2A155B49005830AB /* en */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
 		B1E8975729EC5001001B942F /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (

@@ -43,7 +43,18 @@ extension UIAlertController {
         alertController.addAction(playerLeaderboardAction)
         alertController.addAction(achievementsAction)
         alertController.addAction(cancelAction)
+        
         return alertController
+    }
+    
+    
+    
+    
+    enum HintButtonState {
+        case ad_available
+        case no_ads
+        case hint_revealed
+        case hint_waiting
     }
     
     
@@ -56,45 +67,59 @@ extension UIAlertController {
         onRemoveIntermediateAdsPurchaseTap: @escaping () -> Void,
         onAllInPackPurchaseTap: @escaping () -> Void
     ) -> UIAlertController {
+
         let alertController =
-        UIAlertController(title: "Hints", message: "Sometimes lose, always win!", preferredStyle: .actionSheet)
+        UIAlertController(title:"hints_title"~, message: "hints_subtitle"~, preferredStyle: .actionSheet)
         alertController.view.tintColor = Theme.colorOnBackground
         
-        let letterRewardedAdsAction = UIAlertAction(title: "Watch Ad for Letter", style: .default) { (action:UIAlertAction) in
+        
+        let letterRewardedAdsAction = UIAlertAction(title: "watch_letter_ad"~, style: .default) { (action:UIAlertAction) in
             onLetterRewardedAdsTap()
         }
-        letterRewardedAdsAction.setValue(UIImage(systemName: "video.circle"), forKey: "image")
+        let videoCircleImage = UIImage(systemName: "video.circle")?.withTintColor(
+            Theme.hintsNotificationColor,
+            renderingMode: UIImage.RenderingMode.alwaysOriginal
+        )
+
+        letterRewardedAdsAction.setValue(videoCircleImage, forKey: "image")
         
-        let hintRewardedAdsAction = UIAlertAction(title: "Watch Ad for Hint", style: .default) { (action:UIAlertAction) in
+        let hintRewardedAdsAction = UIAlertAction(title: "watch_hint_ad"~, style: .default) { (action:UIAlertAction) in
             onHintRewardedAdsTap()
         }
-        hintRewardedAdsAction.setValue(UIImage(systemName: "video.circle"), forKey: "image")
+        hintRewardedAdsAction.setValue(videoCircleImage, forKey: "image")
         
-        let unlimitedLettersPurchaseAction = UIAlertAction(title: "Unlimited Letters", style: .default) { (action:UIAlertAction) in
+        let unlimitedLettersPurchaseAction = UIAlertAction(title: "purchase_letters"~, style: .default) { (action:UIAlertAction) in
             onUnlimitedLettersPurchaseTap()
         }
-        unlimitedLettersPurchaseAction.setValue(UIImage(systemName: "dollarsign.circle"), forKey: "image")
         
-        let unlimitedHintsPurchaseAction = UIAlertAction(title: "Unlimited Hints", style: .default) { (action:UIAlertAction) in
+        let dollarSignImage = UIImage(systemName: "dollarsign.circle")?.withTintColor(
+            Theme.playNewLevelColor,
+            renderingMode: UIImage.RenderingMode.alwaysOriginal
+        )
+        
+        unlimitedLettersPurchaseAction.setValue(dollarSignImage, forKey: "image")
+        
+        let unlimitedHintsPurchaseAction = UIAlertAction(title: "purchase_hints"~, style: .default) { (action:UIAlertAction) in
             onUnlimitedHintsPurchaseTap()
         }
-        unlimitedHintsPurchaseAction.setValue(UIImage(systemName: "dollarsign.circle"), forKey: "image")
+        unlimitedHintsPurchaseAction.setValue(dollarSignImage, forKey: "image")
         
-        let removeIntermediateAdsPurchaseAction = UIAlertAction(title: "Remove Intermediate Ads", style: .default) { (action:UIAlertAction) in
+        let removeIntermediateAdsPurchaseAction = UIAlertAction(title: "purchase_no_ads"~, style: .default) { (action:UIAlertAction) in
             onRemoveIntermediateAdsPurchaseTap()
         }
-        removeIntermediateAdsPurchaseAction.setValue(UIImage(systemName: "dollarsign.circle"), forKey: "image")
+        removeIntermediateAdsPurchaseAction.setValue(dollarSignImage, forKey: "image")
         
-        let allInPackPurchaseAction = UIAlertAction(title: "All-In Pack", style: .default) { (action:UIAlertAction) in
+        let allInPackPurchaseAction = UIAlertAction(title: "purchase_all"~, style: .default) { (action:UIAlertAction) in
             onAllInPackPurchaseTap()
         }
-        allInPackPurchaseAction.setValue(UIImage(systemName: "dollarsign.circle"), forKey: "image")
+        allInPackPurchaseAction.setValue(dollarSignImage, forKey: "image")
         
         
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (action:UIAlertAction) in
+        let cancelAction = UIAlertAction(title: "cancel"~, style: .cancel) { (action:UIAlertAction) in
             // Handle Cancel
         }
         
+        // ADD OR NOT? Purchased or not?
         alertController.addAction(letterRewardedAdsAction)
         alertController.addAction(hintRewardedAdsAction)
         alertController.addAction(unlimitedLettersPurchaseAction)
@@ -205,3 +230,10 @@ extension UIAlertController {
     
 }
 
+postfix operator ~
+
+postfix func ~ (string: String) -> String {
+    let localizedString = NSLocalizedString(string, comment: "")
+    assert(localizedString != string, "Localized string not found for key: \(string)")
+    return localizedString
+}
