@@ -18,7 +18,7 @@ class StateManager {
          }
          set(newState) {
              guard isTransitionAllowed(from: _currentState, to: newState) else {
-                 //print("Transition not allowed from \(currentState) to \(newState)")
+                 print("Transition not allowed from \(currentState) to \(newState)")
                  return // transition not allowed, do nothing
              }
              print("Transitioning from \(_currentState) to \(newState) (StateManager)")
@@ -32,7 +32,7 @@ class StateManager {
      private func isTransitionAllowed(from oldState: GameState, to newState: GameState) -> Bool {
          switch oldState {
          case .play:
-             return newState == .animating
+             return newState == .animating || newState == .completed
          case .animating:
              return newState == .play || newState == .completed
          case .completed:

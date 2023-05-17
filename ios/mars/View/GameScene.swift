@@ -1,4 +1,5 @@
 import SpriteKit
+import AVFAudio
 import GameplayKit
 
 class GameScene: SKScene {
@@ -31,7 +32,7 @@ class GameScene: SKScene {
             }
         }
     }
-
+    
     
     private func debugRect(width:CGFloat, height:CGFloat, color:SKColor, topErr:CGFloat = 0.0, bottomErr:CGFloat = 0.0)
     {
@@ -71,26 +72,11 @@ class GameScene: SKScene {
         
         gridNode.run(repeatAction)
     }
-    
+
     
     func winningAnimation(animationDoneClosure: @escaping () -> Void)
     {
         let lastSoundAction = SKAction.playSound(soundFile: "correct.wav")
-        
-        func playCorrectSolutionBoxEffect(node:SKSpriteNode, delay:CGFloat, soundAction:SKAction, isLast:Bool) {
-            let colorAction = SKAction.colorize(with: Theme.successBoxColor, colorBlendFactor: 1, duration: 0.5)
-            let soundAndColorAction = SKAction.group([soundAction, colorAction])
-            let waitAction = SKAction.wait(forDuration: delay)
-            let sequence = !isLast ? SKAction.sequence([waitAction, soundAndColorAction])
-                                    : SKAction.sequence([waitAction, soundAndColorAction, lastSoundAction])
-            node.run(sequence) {
-                if (isLast)
-                {
-                    animationDoneClosure()
-                }
-            }
-        }
-        
         let soundActions =
         [
             SKAction.playSound(soundFile: "c3_outer.wav"),
@@ -106,6 +92,23 @@ class GameScene: SKScene {
             SKAction.playSound(soundFile: "c5_outer.wav"),
             SKAction.playSound(soundFile: "c6_outer.wav")
         ]
+        
+        
+        func playCorrectSolutionBoxEffect(node:SKSpriteNode, delay:CGFloat, soundAction:SKAction, isLast:Bool) {
+            let colorAction = SKAction.colorize(with: Theme.successBoxColor, colorBlendFactor: 1, duration: 0.5)
+            let soundAndColorAction = SKAction.group([soundAction, colorAction])
+            let waitAction = SKAction.wait(forDuration: delay)
+            let sequence = !isLast ? SKAction.sequence([waitAction, soundAndColorAction])
+            : SKAction.sequence([waitAction, soundAndColorAction, lastSoundAction])
+            node.run(sequence) {
+                if (isLast)
+                {
+                    animationDoneClosure()
+                }
+            }
+        }
+        
+        
         let soundCount = soundActions.count
         
         //TODO: Copy as much from Kotlin as possible
