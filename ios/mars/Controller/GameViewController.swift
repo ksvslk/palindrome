@@ -23,6 +23,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     // MARK: TAP info label (button)
     @IBAction func infoLabelToucheDown(_ sender: UIButton) {
         print("infoLabelToucheDown")
+        StateManager.shared.currentState = .reset
         Database.shared.changeToNextLevel()
         let nextLevelSoundAction = SKAction.playSound(soundFile: "level_transition.mp3")
         self.gameScene?.run(nextLevelSoundAction)
@@ -219,7 +220,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
             guard let self = self else { return }
             switch result {
             case .correct:
-                print("Correct solution!")
+                print("Correct solution! (GameViewController)")
                 feedbackGenerator.notificationOccuredCustom(notificationType: .success)
                 StateManager.shared.currentState = .completed
                 gameScene?.winningAnimation {
@@ -233,17 +234,17 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
                 }
                 //TODO: animation with messages
             case .wrong:
-                print("Wrong solution!")
+                print("Wrong solution. (GameViewController)")
                 feedbackGenerator.notificationOccuredCustom(notificationType: .error)
                 gameScene?.shakeAnimation()
                 //TODO: animation with messages
             case .bogus_palindrome:
-                print("Bogus solution!")
+                print("Bogus solution. (GameViewController)")
                 feedbackGenerator.notificationOccuredCustom(notificationType: .warning)
                 gameScene?.shakeAnimation()
                 //TODO: animation with messages
             case .invalid_guess:
-                print("No guess, enable touch.")
+                print("Not enough letters. (GameViewController)")
                 StateManager.shared.currentState = .play
             }
         }

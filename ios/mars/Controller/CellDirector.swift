@@ -48,8 +48,8 @@ class CellDirector {
         case CellType.letter:
             if (closestCell.state == CellState.home)
             {
-                switchLetterPositions(top: letter, bottom: closestCell as! Letter)
                 print("CellDirector: switchLetterPositions(letter, closestCell)")
+                switchLetterPositions(top: letter, bottom: closestCell as! Letter)
                 return CollisionResult.switching
             }
         case CellType.slot:

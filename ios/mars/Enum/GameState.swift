@@ -11,4 +11,5 @@ enum GameState {
     case play
     case animating
     case completed
+    case reset
 }

@@ -49,6 +49,7 @@ class Letter: Cell {
     // MARK: Touches began
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard StateManager.shared.currentState == .play else { return }
+        print("Touching and state is \(StateManager.shared.currentState) (Letter)")
         StateManager.shared.currentState = .animating
         guard state == CellState.home else { return }
         guard let touch = touches.first else { return }
@@ -128,7 +129,8 @@ class Letter: Cell {
             let scaleAction = SKAction.scale(to: newScale, duration: duration)
             self.run(scaleAction) {
                 self.state = CellState.home
-                if (enableSceneTouch) {
+                if (enableSceneTouch)
+                {
                     StateManager.shared.currentState = .play
                 }
             }

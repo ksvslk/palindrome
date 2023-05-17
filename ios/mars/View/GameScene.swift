@@ -15,10 +15,10 @@ class GameScene: SKScene {
     }
     
     
-    // MARK: Handle game state
+    // MARK: Handle ongoing game state
     private func handleGameState()
     {
-        StateManager.shared.stateDidChange = { state in
+        StateManager.shared.stateDidChange = { [self] state in
             switch state {
             case .play:
                 print("Now in .play (GameScene)")
@@ -26,6 +26,8 @@ class GameScene: SKScene {
                 print("Now in .animating (GameScene)")
             case .completed:
                 print("Now in .completed (GameScene)")
+            case .reset:
+                print("Now in .reset (GameScene)")
             }
         }
     }
