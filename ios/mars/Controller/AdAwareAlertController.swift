@@ -8,14 +8,19 @@
 import Foundation
 import UIKit
 
-class AdAwareAlertController: UIAlertController, AdAvailabilityDelegate {
+class AdAwareAlertController: UIAlertController, AdAvailabilityDelegate, PurchasesDelegate {
+    
+    func purchasesChanged(ownedProducts: [String]) {
+        print("purchasesChanged: \(ownedProducts)")
+    }
+    
     
     func adAvailabilityDidChange(isAvailable: Bool) {
         // Update the actions of the UIAlertController here
-        updateActions(adAvailable: isAvailable)
+        updateAdsActions(adAvailable: isAvailable)
     }
     
-    func updateActions(adAvailable: Bool) {
+    func updateAdsActions(adAvailable: Bool) {
         // Implement your logic to update the actions based on ad availability
         // For example, enable/disable specific actions
         print("Update actions for ad aware alert controller. Ad available: \(adAvailable)")

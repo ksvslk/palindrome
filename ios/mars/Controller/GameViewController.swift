@@ -229,7 +229,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         } onAllInPackPurchaseTap: {
             print("onAllInPackPurchaseTap!")
         }
-        sheet.updateActions(adAvailable: adManager!.adAvailable)
+        sheet.updateAdsActions(adAvailable: adManager!.adAvailable)
         adManager?.delegate = sheet
         
         present(sheet, animated: true, completion: nil)

@@ -19,8 +19,8 @@
 "watch_letter_ad" = "Watch ad for letter"; // Free
 "watch_hint_ad" = "Watch ad for hint"; // Free
 "ad_not_available" = "Ad not available";
-"place_letter" = "Give me a letter"; // Premium
-"reveal_hint" = "Give me a hint"; // Premium
+"place_letter" = "Place letter"; // Premium
+"reveal_hint" = "Reveal clue"; // Premium
 
 
 // Purchase buttons

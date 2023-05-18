@@ -36,4 +36,11 @@ struct C {
     static let GAME_LEADERBOARD = "game_leaderboard"
     static let PLAYER_LEADERBOARD = "player_leaderboard"
     
+    // Product IDs
+    static let PURCHASE_LETTERS_ID = "purchase_letters" // 2.99
+    static let PURCHASE_HINTS_ID = "purchase_hints" // 1.99
+    static let PURCHASE_NO_ADS_ID = "purchase_no_ads" // 1.99
+    static let PURCHASE_ALL_ID = "purchase_all" // 4.99
+    
 }
+
