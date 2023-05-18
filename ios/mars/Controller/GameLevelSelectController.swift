@@ -33,6 +33,10 @@ class GameLevelSelectController: UIViewController {
         }
     }
     
+    @objc func dismissModal() {
+        dismiss(animated: true, completion: nil)
+    }
+    
     override func loadView() {
         // create a layout to be used
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
@@ -47,7 +51,7 @@ class GameLevelSelectController: UIViewController {
         // set the view to be this UICollectionView
         self.view = collectionView
     }
-
+    
 }
 
 extension GameLevelSelectController: UICollectionViewDelegate {

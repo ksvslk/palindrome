@@ -13,10 +13,17 @@ class AdManager: NSObject, GADFullScreenContentDelegate {
     
     private var rewardedAd: GADRewardedAd?
     var rewardToBeGiven:Reward = Reward.none
+    weak var delegate: AdAvailabilityDelegate?
     
- 
+    var adAvailable: Bool = false {
+        didSet {
+            // delegate ad availability change to the hints menu (AdAwareAlertController)
+            delegate?.adAvailabilityDidChange(isAvailable: adAvailable)
+        }
+    }
+    
+    
     override init() {
-        //self.adAvailabilityChange = adChange
         super.init()
         self.loadRewardedAd()
     }
@@ -26,6 +33,7 @@ class AdManager: NSObject, GADFullScreenContentDelegate {
         fatalError("init(coder:) has not been implemented")
     }
     
+    
     func loadRewardedAd() {
         let request = GADRequest()
         GADRewardedAd.load(withAdUnitID: "ca-app-pub-3940256099942544/1712485313", request: request, completionHandler: { [self] ad, error in
@@ -34,7 +42,7 @@ class AdManager: NSObject, GADFullScreenContentDelegate {
                 return
             }
             rewardedAd = ad
-            //adAvailabilityChange()
+            adAvailable = true
             print("Rewarded ad loaded.")
         })
     }
@@ -43,10 +51,9 @@ class AdManager: NSObject, GADFullScreenContentDelegate {
     func show(viewController: UIViewController, rewardType:Reward) {
         if let ad = rewardedAd {
             ad.present(fromRootViewController: viewController) {
-                let reward = ad.adReward
-                print("Reward received with currency \(reward.amount), amount \(reward.amount.doubleValue)")
-                // TODO: Reward the user.
                 self.rewardToBeGiven = rewardType
+                self.rewardedAd = nil
+                self.adAvailable = false
                 self.loadRewardedAd()
             }
         } else {
@@ -71,6 +78,6 @@ class AdManager: NSObject, GADFullScreenContentDelegate {
     func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
         print("Ad did dismiss full screen content.")
     }
-
+    
     
 }

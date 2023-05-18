@@ -155,45 +155,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     }
     
     
-    
-    private func rewardWithHint()
-    {
-        /*
-         let hintNotification = UIAlertController(title: "Hint", message: "", preferredStyle: .alert)
-         hintNotification.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: {_ in }))
-         present(hintNotification, animated: true)
-         */
-        
-        let modalViewController = UIViewController()
-        modalViewController.modalPresentationStyle = .formSheet
-        modalViewController.view.backgroundColor = Theme.backgroundColor
-        
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissModal))
-               modalViewController.view.addGestureRecognizer(tapGesture)
-        
-        let wordLabel = UILabel()
-        wordLabel.text = "NATURE"
-        wordLabel.textAlignment = .center
-        wordLabel.font = UIFont(name: Theme.letterFont, size: 24)
-        wordLabel.frame = CGRect(x: 0, y: 0, width: 200, height: 100)
-        wordLabel.center = modalViewController.view.center
-        modalViewController.view.addSubview(wordLabel)
-        
-        present(modalViewController, animated: true, completion: nil)
-    }
-    
-    
-    @objc func dismissModal() {
-           dismiss(animated: true, completion: nil)
-       }
-    
-    
-    private func rewardWithLetter()
-    {
-        print("REWARD GIVEN: Moving letter 'A' to first position")
-    }
-    
-    
+    // MARK: Handle earned rewards
     override func viewDidAppear(_ animated: Bool) {
         print("viewDidAppear")
         guard adManager != nil else { return }
@@ -208,9 +170,44 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     }
     
     
+    // MARK: Reward with letter
+    private func rewardWithLetter()
+    {
+        print("REWARD GIVEN: Moving letter 'A' to first position")
+    }
+    
+    
+    // MARK: Reward with hint
+    private func rewardWithHint()
+    {
+        let modalViewController = UIViewController()
+        modalViewController.modalPresentationStyle = .formSheet
+        modalViewController.view.backgroundColor = Theme.backgroundColor
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissModal))
+        modalViewController.view.addGestureRecognizer(tapGesture)
+        
+        let wordLabel = UILabel()
+        wordLabel.text = Database.shared.currentLevel!.solutionsArr.first?.hint
+        wordLabel.textAlignment = .center
+        wordLabel.font = UIFont(name: Theme.letterFont, size: 24)
+        wordLabel.frame = CGRect(x: 0, y: 0, width: 200, height: 200)
+        wordLabel.center = modalViewController.view.center
+        modalViewController.view.addSubview(wordLabel)
+        
+        present(modalViewController, animated: true, completion: nil)
+    }
+    
+    
+    @objc func dismissModal() {
+        dismiss(animated: true, completion: nil)
+    }
+    
+    
     // MARK: TAP Hints
     @IBAction func onHintsButtonTap(_ sender: Any) {
-        let sheet = UIAlertController.hintsSheet {
+        
+        let sheet = AdAwareAlertController.hintsSheet {
             if (StateManager.shared.currentState == GameState.play)
             {
                 print("onLetterRewardedAdsTap")
@@ -232,6 +229,8 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         } onAllInPackPurchaseTap: {
             print("onAllInPackPurchaseTap!")
         }
+        sheet.updateActions(adAvailable: adManager!.adAvailable)
+        adManager?.delegate = sheet
         
         present(sheet, animated: true, completion: nil)
     }

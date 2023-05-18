@@ -64,28 +64,34 @@ extension UIAlertController {
         onUnlimitedHintsPurchaseTap: @escaping () -> Void,
         onRemoveIntermediateAdsPurchaseTap: @escaping () -> Void,
         onAllInPackPurchaseTap: @escaping () -> Void
-    ) -> UIAlertController {
+    ) -> AdAwareAlertController {
 
         let alertController =
-        UIAlertController(title:"hints_title"~, message: "hints_subtitle"~, preferredStyle: .actionSheet)
+        AdAwareAlertController(title:"hints_title"~, message: "hints_subtitle"~, preferredStyle: .actionSheet)
         alertController.view.tintColor = Theme.colorOnBackground
-        
-        let letterRewardedAdsAction = UIAlertAction(title: "watch_letter_ad"~, style: .default) { (action:UIAlertAction) in
-            onLetterRewardedAdsTap()
-        }
         
         let videoCircleImage = UIImage(systemName: "video.circle")?.withTintColor(
             Theme.hintsNotificationColor,
             renderingMode: UIImage.RenderingMode.alwaysOriginal
         )
+        
+        // Ads Letters button
+        let letterRewardedAdsAction = UIAlertAction(title: "watch_letter_ad"~, style: .default) { (action:UIAlertAction) in
+            onLetterRewardedAdsTap()
+        }
+        letterRewardedAdsAction.accessibilityIdentifier = "watch_letter_ad"
         letterRewardedAdsAction.setValue(videoCircleImage, forKey: "image")
         
         
+        // Ads Hints button
         let hintRewardedAdsAction = UIAlertAction(title: "watch_hint_ad"~, style: .default) { (action:UIAlertAction) in
             onHintRewardedAdsTap()
         }
+        hintRewardedAdsAction.accessibilityIdentifier = "watch_hint_ad"
         hintRewardedAdsAction.setValue(videoCircleImage, forKey: "image")
         
+        
+        // Purchase letters button
         let unlimitedLettersPurchaseAction = UIAlertAction(title: "purchase_letters"~, style: .default) { (action:UIAlertAction) in
             onUnlimitedLettersPurchaseTap()
         }
@@ -97,18 +103,21 @@ extension UIAlertController {
         unlimitedLettersPurchaseAction.setValue(dollarSignImage, forKey: "image")
         
         
+        // Purchase hints button
         let unlimitedHintsPurchaseAction = UIAlertAction(title: "purchase_hints"~, style: .default) { (action:UIAlertAction) in
             onUnlimitedHintsPurchaseTap()
         }
         unlimitedHintsPurchaseAction.setValue(dollarSignImage, forKey: "image")
         
         
+        // Purchase no ads button
         let removeIntermediateAdsPurchaseAction = UIAlertAction(title: "purchase_no_ads"~, style: .default) { (action:UIAlertAction) in
             onRemoveIntermediateAdsPurchaseTap()
         }
         removeIntermediateAdsPurchaseAction.setValue(dollarSignImage, forKey: "image")
         
         
+        // Purchase all-in button
         let allInPackPurchaseAction = UIAlertAction(title: "purchase_all"~, style: .default) { (action:UIAlertAction) in
             onAllInPackPurchaseTap()
         }
