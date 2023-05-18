@@ -9,6 +9,8 @@ import UIKit
 import SpriteKit
 import GameplayKit
 import GameKit
+import GoogleMobileAds
+
 
 class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     
@@ -18,6 +20,98 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     @IBOutlet weak var levelNumberLabel: UILabel!
     @IBOutlet weak var infoLabelButton: UIButton!
     @IBOutlet weak var infoLabel: NumberLabel!
+    
+    private var adManager: AdManager?
+    
+    // MARK: View did load
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        adManager = AdManager()
+        subscribeToLevelChange()
+        subscribeToSolutionCheckResult()
+        Database.shared.changeGameLevel(nr: 1)
+    }
+    
+    
+    // MARK: Listen level changes
+    private func subscribeToLevelChange()
+    {
+        Database.shared.levelChangedClosure = { [weak self] in
+            guard let self = self else { return }
+            print("Current level changed to \(Database.shared.currentLevel?.levelNumber)")
+            loadMainScene()
+            let levelNr = Database.shared.currentLevel!.levelNumber
+            levelNumberLabel.text = String(levelNr)
+            changeProgressBarUI(levelNr: Int(levelNr))
+        }
+    }
+    
+    
+    // MARK: Listen solution changes
+    private func subscribeToSolutionCheckResult()
+    {
+        let feedbackGenerator = UINotificationFeedbackGenerator()
+        
+        Database.shared.solutionCheckResultClosure = { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .correct:
+                print("Correct solution! (GameViewController)")
+                feedbackGenerator.notificationOccuredCustom(notificationType: .success)
+                StateManager.shared.currentState = .completed
+                gameScene?.winningAnimation {
+                    print("Show now messages of a great win in GameViewController!")
+                    let messages = ["Tap to continue", C.SCORE_TAG, "Great job!"]
+                    //let messages = ["Wrong solution!"]
+                    self.animateMessageSequence(
+                        messages: messages,
+                        isLastMessageTapToContinue: true
+                    )
+                }
+                //TODO: animation with messages
+            case .wrong:
+                print("Wrong solution. (GameViewController)")
+                feedbackGenerator.notificationOccuredCustom(notificationType: .error)
+                gameScene?.shakeAnimation()
+                //TODO: animation with messages
+            case .bogus_palindrome:
+                print("Bogus solution. (GameViewController)")
+                feedbackGenerator.notificationOccuredCustom(notificationType: .warning)
+                gameScene?.shakeAnimation()
+                //TODO: animation with messages
+            case .invalid_guess:
+                print("Not enough letters. (GameViewController)")
+                StateManager.shared.currentState = .play
+            }
+        }
+    }
+    
+    
+    // MARK: Load main scene
+    private func loadMainScene()
+    {
+        guard let scene = GKScene(fileNamed: "GameScene"),
+              let gameScene = scene.rootNode as? GameScene,
+              let view = self.view as? SKView else {
+            return
+        }
+        
+        gameScene.backgroundColor = Theme.backgroundColor
+        
+        view.presentScene(gameScene, transition: SKTransition.push(with: SKTransitionDirection.left, duration: 1.0))
+        view.ignoresSiblingOrder = true
+        view.showsFPS = true
+        view.showsNodeCount = true
+        view.isMultipleTouchEnabled = false
+        
+        self.gameScene = gameScene // Set the global variable to the gameScene instance
+    }
+    
+    
+    // MARK: UI mode change
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        loadMainScene()
+    }
     
     
     // MARK: TAP info label (button)
@@ -61,18 +155,73 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     }
     
     
+    
+    private func rewardWithHint()
+    {
+        /*
+         let hintNotification = UIAlertController(title: "Hint", message: "", preferredStyle: .alert)
+         hintNotification.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: {_ in }))
+         present(hintNotification, animated: true)
+         */
+        
+        let modalViewController = UIViewController()
+        modalViewController.modalPresentationStyle = .formSheet
+        modalViewController.view.backgroundColor = Theme.backgroundColor
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissModal))
+               modalViewController.view.addGestureRecognizer(tapGesture)
+        
+        let wordLabel = UILabel()
+        wordLabel.text = "NATURE"
+        wordLabel.textAlignment = .center
+        wordLabel.font = UIFont(name: Theme.letterFont, size: 24)
+        wordLabel.frame = CGRect(x: 0, y: 0, width: 200, height: 100)
+        wordLabel.center = modalViewController.view.center
+        modalViewController.view.addSubview(wordLabel)
+        
+        present(modalViewController, animated: true, completion: nil)
+    }
+    
+    
+    @objc func dismissModal() {
+           dismiss(animated: true, completion: nil)
+       }
+    
+    
+    private func rewardWithLetter()
+    {
+        print("REWARD GIVEN: Moving letter 'A' to first position")
+    }
+    
+    
+    override func viewDidAppear(_ animated: Bool) {
+        print("viewDidAppear")
+        guard adManager != nil else { return }
+        switch adManager!.rewardToBeGiven {
+        case Reward.letter:
+            rewardWithLetter()
+        case Reward.hint:
+            rewardWithHint()
+        case Reward.none:
+            print("NO reward!")
+        }
+    }
+    
+    
     // MARK: TAP Hints
     @IBAction func onHintsButtonTap(_ sender: Any) {
         let sheet = UIAlertController.hintsSheet {
             if (StateManager.shared.currentState == GameState.play)
             {
                 print("onLetterRewardedAdsTap")
+                self.adManager?.show(viewController: self, rewardType: Reward.letter)
             }
             
         } onHintRewardedAdsTap: {
             if (StateManager.shared.currentState == GameState.play)
             {
                 print("onHintRewardedAdsTap")
+                self.adManager?.show(viewController: self, rewardType: Reward.hint)
             }
         } onUnlimitedLettersPurchaseTap: {
             print("onUnlimitedLettersPurchaseTap")
@@ -159,98 +308,6 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     }
     
     
-    
-    // MARK: Load main scene
-    private func loadMainScene()
-    {
-        guard let scene = GKScene(fileNamed: "GameScene"),
-              let gameScene = scene.rootNode as? GameScene,
-              let view = self.view as? SKView else {
-            return
-        }
-
-        gameScene.backgroundColor = Theme.backgroundColor
-
-        view.presentScene(gameScene, transition: SKTransition.push(with: SKTransitionDirection.left, duration: 1.0))
-        view.ignoresSiblingOrder = true
-        view.showsFPS = true
-        view.showsNodeCount = true
-        view.isMultipleTouchEnabled = false
-
-        self.gameScene = gameScene // Set the global variable to the gameScene instance
-        
-    }
-    
-    
-    // MARK: UI mode change
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        loadMainScene()
-    }
-    
-    
-    // MARK: View did load
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        subscribeToLevelChange()
-        subscribeToSolutionCheckResult()
-        Database.shared.changeGameLevel(nr: 1)
-    }
-    
-    
-    // MARK: Subscribe level change
-    private func subscribeToLevelChange()
-    {
-        Database.shared.levelChangedClosure = { [weak self] in
-            guard let self = self else { return }
-            print("Current level changed to \(Database.shared.currentLevel?.levelNumber)")
-            loadMainScene()
-            let levelNr = Database.shared.currentLevel!.levelNumber
-            levelNumberLabel.text = String(levelNr)
-            changeProgressBarUI(levelNr: Int(levelNr))
-        }
-    }
-    
-    
-    // MARK: Subscribe solution result
-    private func subscribeToSolutionCheckResult()
-    {
-        let feedbackGenerator = UINotificationFeedbackGenerator()
-        
-        Database.shared.solutionCheckResultClosure = { [weak self] result in
-            guard let self = self else { return }
-            switch result {
-            case .correct:
-                print("Correct solution! (GameViewController)")
-                feedbackGenerator.notificationOccuredCustom(notificationType: .success)
-                StateManager.shared.currentState = .completed
-                gameScene?.winningAnimation {
-                    print("Show now messages of a great win in GameViewController!")
-                    let messages = ["Tap to continue", C.SCORE_TAG, "Great job!"]
-                    //let messages = ["Wrong solution!"]
-                    self.animateMessageSequence(
-                        messages: messages,
-                        isLastMessageTapToContinue: true
-                    )
-                }
-                //TODO: animation with messages
-            case .wrong:
-                print("Wrong solution. (GameViewController)")
-                feedbackGenerator.notificationOccuredCustom(notificationType: .error)
-                gameScene?.shakeAnimation()
-                //TODO: animation with messages
-            case .bogus_palindrome:
-                print("Bogus solution. (GameViewController)")
-                feedbackGenerator.notificationOccuredCustom(notificationType: .warning)
-                gameScene?.shakeAnimation()
-                //TODO: animation with messages
-            case .invalid_guess:
-                print("Not enough letters. (GameViewController)")
-                StateManager.shared.currentState = .play
-            }
-        }
-    }
-    
-    
     // MARK: Change progress bar
     private func changeProgressBarUI(levelNr:Int)
     {
@@ -281,10 +338,10 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     }
     
     
+    //MARK: Dismiss GameCenter
     func gameCenterViewControllerDidFinish(_ gameCenterViewController: GKGameCenterViewController) {
         // Dismiss the view controller.
         gameCenterViewController.dismiss(animated:true)
     }
-    
     
 }

@@ -7,6 +7,7 @@
 
 import UIKit
 import GameKit
+import GoogleMobileAds
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -18,6 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         print("application")
         print("Application directory: \(NSHomeDirectory())")
+        GADMobileAds.sharedInstance().start(completionHandler: nil)
         
         let userDefaults = UserDefaults.standard
         userDefaults.register(

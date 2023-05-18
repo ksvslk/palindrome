@@ -48,8 +48,6 @@ extension UIAlertController {
     }
     
     
-    
-    
     enum HintButtonState {
         case ad_available
         case no_ads
@@ -72,16 +70,16 @@ extension UIAlertController {
         UIAlertController(title:"hints_title"~, message: "hints_subtitle"~, preferredStyle: .actionSheet)
         alertController.view.tintColor = Theme.colorOnBackground
         
-        
         let letterRewardedAdsAction = UIAlertAction(title: "watch_letter_ad"~, style: .default) { (action:UIAlertAction) in
             onLetterRewardedAdsTap()
         }
+        
         let videoCircleImage = UIImage(systemName: "video.circle")?.withTintColor(
             Theme.hintsNotificationColor,
             renderingMode: UIImage.RenderingMode.alwaysOriginal
         )
-
         letterRewardedAdsAction.setValue(videoCircleImage, forKey: "image")
+        
         
         let hintRewardedAdsAction = UIAlertAction(title: "watch_hint_ad"~, style: .default) { (action:UIAlertAction) in
             onHintRewardedAdsTap()
@@ -96,18 +94,20 @@ extension UIAlertController {
             Theme.playNewLevelColor,
             renderingMode: UIImage.RenderingMode.alwaysOriginal
         )
-        
         unlimitedLettersPurchaseAction.setValue(dollarSignImage, forKey: "image")
+        
         
         let unlimitedHintsPurchaseAction = UIAlertAction(title: "purchase_hints"~, style: .default) { (action:UIAlertAction) in
             onUnlimitedHintsPurchaseTap()
         }
         unlimitedHintsPurchaseAction.setValue(dollarSignImage, forKey: "image")
         
+        
         let removeIntermediateAdsPurchaseAction = UIAlertAction(title: "purchase_no_ads"~, style: .default) { (action:UIAlertAction) in
             onRemoveIntermediateAdsPurchaseTap()
         }
         removeIntermediateAdsPurchaseAction.setValue(dollarSignImage, forKey: "image")
+        
         
         let allInPackPurchaseAction = UIAlertAction(title: "purchase_all"~, style: .default) { (action:UIAlertAction) in
             onAllInPackPurchaseTap()
