@@ -96,7 +96,7 @@ extension UIBarButtonItem {
     
     func addBadge(number: Int, withOffset offset: CGPoint = CGPoint.zero, andColor color: UIColor = UIColor.red, andFilled filled: Bool = true) {
         guard let view = self.value(forKey: "view") as? UIView else { return }
-        
+      
         badgeLayer?.removeFromSuperlayer()
         
         // Initialize Badge

@@ -20,7 +20,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     @IBOutlet weak var progressBar: UIProgressView!
     @IBOutlet weak var levelNumberLabel: UILabel!
     @IBOutlet weak var infoLabelButton: UIButton!
-    @IBOutlet weak var infoLabel: NumberLabel!
+
     
     private var adManager: AdManager?
     
@@ -88,7 +88,6 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
                 gameScene?.winningAnimation {
                     print("Show now messages of a great win in GameViewController!")
                     let messages = ["Tap to continue", C.SCORE_TAG, "Great job!"]
-                    //let messages = ["Wrong solution!"]
                     self.animateMessageSequence(
                         messages: messages,
                         isLastMessageTapToContinue: true
@@ -99,11 +98,19 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
                 print("Wrong solution. (GameViewController)")
                 feedbackGenerator.notificationOccuredCustom(notificationType: .error)
                 gameScene?.shakeAnimation()
+                self.animateMessageSequence(
+                    messages: ["Wrong solution!"],
+                    isLastMessageTapToContinue: false
+                )
                 //TODO: animation with messages
             case .bogus_palindrome:
                 print("Bogus solution. (GameViewController)")
                 feedbackGenerator.notificationOccuredCustom(notificationType: .warning)
                 gameScene?.shakeAnimation()
+                self.animateMessageSequence(
+                    messages: ["Bogus solution!"],
+                    isLastMessageTapToContinue: false
+                )
                 //TODO: animation with messages
             case .invalid_guess:
                 print("Not enough letters. (GameViewController)")
@@ -140,19 +147,17 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         loadMainScene()
     }
     
-    
-    // MARK: TAP info label (button)
-    @IBAction func infoLabelToucheDown(_ sender: UIButton) {
+    @IBAction func infoButtonTouch(_ sender: Any) {
         print("infoLabelToucheDown")
         StateManager.shared.currentState = .reset
         Database.shared.changeToNextLevel()
         let nextLevelSoundAction = SKAction.playSound(soundFile: "level_transition.wav")
         self.gameScene?.run(nextLevelSoundAction)
-        infoLabel.alpha = 0.0
-        infoLabel.text = String()
+        infoLabelButton.alpha = 0.0
+        infoLabelButton.titleLabel?.text = String()
         infoLabelButton.isEnabled = false
     }
-    
+
     
     // MARK: TAP Settings
     @IBAction func onSettingsButtonTap(_ sender: Any) {
@@ -276,7 +281,6 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         case Reward.none:
             print("NO reward!")
         }
-        rewardWithHint()
     }
 
     
@@ -319,33 +323,35 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     private func animateMessageSequence(messages: [String], isLastMessageTapToContinue:Bool = false) {
         var localMessages = messages
         guard let nextMessage = localMessages.popLast() else { return }
-        infoLabel.alpha = 0.0
-        infoLabel.text = nextMessage
+        infoLabelButton.alpha = 0.0
+        infoLabelButton.setTitle(nextMessage, for: .normal)
         
         // Define your animation parameters here
-        var duration = 0.5
+        var duration = 1.0
         let appearanceDelay = 0.0
         let disappearanceDelay = 0.4
         if (nextMessage == C.SCORE_TAG)
         {
-            duration = duration * 2
             //TODO: Ask scores straight from database?
-            infoLabel.animate(endNumber: 300, maxNumber: 300, duration: duration / 2)
+            var currentNumber = 30
+            let targetNumber = 100
+            let animationDuration = duration * 2 // Animation duration in seconds
+            let animationInterval = animationDuration / Double(targetNumber)  // Time interval between number updates
             let tickingSoundAction = SKAction.playSound(soundFile: "score_tick.wav")
             self.gameScene?.run(tickingSoundAction)
+            self.infoLabelButton.setTitle("\(currentNumber) of \(targetNumber) points", for: .normal)
         }
         
         UIView.animate(withDuration: duration, delay: appearanceDelay, animations: {
-            self.infoLabel.alpha = 1.0
+            self.infoLabelButton.alpha = 1.0
         }, completion: { [self] _ in
             if (isLastMessageTapToContinue && messages.count == 1)
             {
                 infoLabelButton.isEnabled = true
             }
             else {
-                
                 UIView.animate(withDuration: duration, delay: disappearanceDelay, animations: {
-                    self.infoLabel.alpha = 0.0
+                    self.infoLabelButton.alpha = 0.0
                 }, completion: { _ in
                     self.animateMessageSequence(
                         messages: localMessages,
