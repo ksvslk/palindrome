@@ -4,6 +4,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21678"/>
+        <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -42,7 +43,8 @@
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="QaO-K0-mS3"/>
-                                    <barButtonItem title="Item" image="lightbulb.fill" catalog="system" style="plain" id="yyp-jo-Kfh">
+                                    <barButtonItem title="Item" style="plain" id="yyp-jo-Kfh">
+                                        <imageReference key="image" image="lightbulb.fill" catalog="system" variableValue="0.0"/>
                                         <connections>
                                             <action selector="onHintsButtonTap:" destination="BV1-FR-VrT" id="SzH-sC-TCw"/>
                                         </connections>
@@ -95,6 +97,7 @@
                     </view>
                     <connections>
                         <outlet property="InfoLabel" destination="U0P-xJ-B7b" id="pDl-TG-xhO"/>
+                        <outlet property="hintToolbarItem" destination="yyp-jo-Kfh" id="zCt-Ez-vEX"/>
                         <outlet property="infoLabelButton" destination="lY4-YA-Xyy" id="xjj-M8-RXU"/>
                         <outlet property="levelNumberLabel" destination="yiR-FG-tXg" id="gUN-BU-g5V"/>
                         <outlet property="progressBar" destination="zUv-77-gZa" id="SF1-0t-mR0"/>

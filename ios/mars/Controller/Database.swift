@@ -27,8 +27,9 @@ class Database {
     // MARK: Closures for UI layer
     var levelChangedClosure: (() -> Void)?
     var solutionCheckResultClosure: ((_ solutionCheckResult:SolutionCheckResult) -> Void)?
+    var hintsSuggestionClosure: (() -> Void)?
     
-   
+    
     private init() {
         if #available(iOS 13.0, *) {
             persistentContainer = NSPersistentContainer(name: "Model") // TODO: Change to CloudContainer..
@@ -82,9 +83,39 @@ class Database {
                 progress: Level.Progress.in_progress
             )
         }
+        addInterval(name: C.HINT_INTERVAL, limitCount: 5)
         
         let diff = CFAbsoluteTimeGetCurrent() - start
         print("Inserting all levels to database took \(diff) seconds")
+        
+    }
+    
+    
+    // MARK: Add interval
+    private func addInterval(name: String, limitCount: Int64) {
+        // Create a fetch request to check if an interval with the same name already exists
+        let fetchRequest: NSFetchRequest<Interval> = Interval.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "name == %@", name)
+        
+        do {
+            // Execute the fetch request
+            let matchingIntervals = try context.fetch(fetchRequest)
+            
+            if matchingIntervals.isEmpty {
+                // No matching interval found, create and save a new interval
+                let interval = Interval(context: context)
+                interval.currentCount = 0
+                interval.limitCount = limitCount
+                interval.name = name
+                
+                try context.save()
+            } else {
+                // A matching interval already exists, handle the duplicate case
+                print("Interval with name '\(name)' already exists.")
+            }
+        } catch {
+            print("Error fetching intervals: \(error)")
+        }
     }
     
     
@@ -163,6 +194,49 @@ class Database {
         resetLevel()
         let nextLevel = currentLevel!.levelNumber + 1
         changeGameLevel(nr: Int(nextLevel))
+    }
+    
+    
+    // MARK: Increase interal -> result
+    private func updateCurrentCount(forName name: String) -> Bool {
+        var result = false
+        
+        // Get the managed object context
+        let context = persistentContainer.viewContext
+        
+        // Perform the transaction in a block
+        context.performAndWait {
+            // Create a fetch request to retrieve the object with the specified name
+            let fetchRequest: NSFetchRequest<Interval> = Interval.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "name == %@", name)
+            
+            do {
+                // Fetch the object
+                let objects = try context.fetch(fetchRequest)
+                
+                if let object = objects.first {
+                    // Increase the currentCount
+                    object.currentCount += 1
+                    
+                    // Compare with the limitCount
+                    if object.currentCount == object.limitCount {
+                        // Reset currentCount to 0
+                        object.currentCount = 0
+                        
+                        // Set the result to true
+                        result = true
+                    }
+                }
+                
+                // Save the changes
+                try context.save()
+            } catch {
+                // Handle the error
+                print("Error: \(error)")
+            }
+        }
+        
+        return result
     }
     
     
@@ -318,8 +392,14 @@ class Database {
         {
             //TODO: setCurrentLevelCompleted and other stuff that needs to be done when complete
         }
+       
         solutionCheckResultClosure?(result)
- 
+        if (result == SolutionCheckResult.bogus_palindrome || result == SolutionCheckResult.wrong)
+        {
+            let hintsIntervalReached = updateCurrentCount(forName: C.HINT_INTERVAL)
+            if (hintsIntervalReached) { hintsSuggestionClosure?() }
+        }
+        
     }
     
     
@@ -352,6 +432,7 @@ class Database {
             print("Error changing columnd count: \(error)")
         }
         refreshCurrentLevel()
+        
     }
     
     

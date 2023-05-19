@@ -16,6 +16,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     
     private var gameScene: GameScene?
     
+    @IBOutlet weak var hintToolbarItem: UIBarButtonItem!
     @IBOutlet weak var progressBar: UIProgressView!
     @IBOutlet weak var levelNumberLabel: UILabel!
     @IBOutlet weak var infoLabelButton: UIButton!
@@ -29,10 +30,11 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         adManager = AdManager()
         subscribeToLevelChange()
         subscribeToSolutionCheckResult()
+        subscribeToHintsSuggestion()
         Database.shared.changeGameLevel(nr: 1)
     
     }
-    
+
     
     // MARK: Listen level changes
     private func subscribeToLevelChange()
@@ -57,7 +59,19 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
             SKStoreReviewController.requestReview(in: windowScene)
         }
     }
-
+    
+    
+    // MARK: Listen hint interval
+    private func subscribeToHintsSuggestion()
+    {
+        Database.shared.hintsSuggestionClosure = {
+            let popSoundAction = SKAction.playSound(soundFile: "hint_notification.wav")
+            self.gameScene?.run(popSoundAction)
+            self.hintToolbarItem.addBadge(number: 1, andColor: Theme.hintsNotificationColor)
+            Toast.show(message: "You can find hints below ↙️", controller: self, timeShown: 4.0)
+        }
+    }
+    
     
     // MARK: Listen solution changes
     private func subscribeToSolutionCheckResult()
@@ -117,6 +131,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         view.isMultipleTouchEnabled = false
         
         self.gameScene = gameScene // Set the global variable to the gameScene instance
+        hintToolbarItem.removeBadge()
     }
     
     
@@ -146,7 +161,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         } onFeedbackTap: {
             print("onFeedbackTap")
             guard let writeReviewURL = URL(string: C.APP_FEEDBACK_URL)
-                else { fatalError("Expected a valid URL") }
+            else { fatalError("Expected a valid URL") }
             UIApplication.shared.open(writeReviewURL, options: [:], completionHandler: nil)
         } onShareTap: {
             print("onShareTap")
@@ -166,6 +181,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     
     // MARK: TAP Levels
     @IBAction func onLevelsButtonTap(_ sender: Any) {
+        
         let sheet = UIAlertController.levelSelectSheet {
             print("onSubmitLevelTap")
         } onPlayerLevelsTap: {
@@ -180,74 +196,11 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         present(sheet, animated: true, completion: nil)
     }
     
-    
-    // MARK: Handle earned rewards
-    override func viewDidAppear(_ animated: Bool) {
-        print("viewDidAppear")
-        guard adManager != nil else { return }
-        switch adManager!.rewardToBeGiven {
-        case Reward.letter:
-            rewardWithLetter()
-        case Reward.hint:
-            rewardWithHint()
-        case Reward.none:
-            print("NO reward!")
-        }
-    }
-    
-    
-    // MARK: Reward with letter
-    private func rewardWithLetter()
-    {
-        print("REWARD GIVEN: Moving letter 'A' to first position")
-    }
-    
-    
-    // MARK: Reward with hint
-    private func rewardWithHint()
-    {
-        let rewardSound = SKAction.playSound(soundFile: "hint_revealed.wav")
-        
-        let modalViewController = UIViewController()
-        modalViewController.modalPresentationStyle = .formSheet
-        modalViewController.view.backgroundColor = Theme.backgroundColor
-        
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissModal))
-        modalViewController.view.addGestureRecognizer(tapGesture)
-        
-        let wordLabel = UILabel()
-        wordLabel.text = ""
-        wordLabel.textAlignment = .center
-        wordLabel.font = UIFont(name: Theme.letterFont, size: 24)
-        wordLabel.frame = CGRect(x: 0, y: 0, width: 200, height: 200)
-        wordLabel.center = modalViewController.view.center
-        modalViewController.view.addSubview(wordLabel)
-        
-        present(modalViewController, animated: true, completion: {
-            let textToReveal = Database.shared.currentLevel?.solutionsArr.first?.hint ?? ""
-            var currentIndex = 0
-            self.gameScene?.run(rewardSound)
-            Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { timer in
-                let currentText = String(textToReveal.prefix(currentIndex))
-                wordLabel.text = currentText
-                currentIndex += 1
-                
-                if currentIndex > textToReveal.count {
-                    timer.invalidate()
-                }
-            }
-        })
-    }
-    
-    
-    @objc func dismissModal() {
-        dismiss(animated: true, completion: nil)
-    }
-    
+   
     
     // MARK: TAP Hints
     @IBAction func onHintsButtonTap(_ sender: Any) {
-        
+        hintToolbarItem.removeBadge()
         let sheet = ReactiveAlertController.hintsSheet {
             if (StateManager.shared.currentState == GameState.play)
             {
@@ -308,6 +261,70 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
             popoverController.barButtonItem = sender as? UIBarButtonItem
         }
         present(sheet, animated: true, completion: nil)
+    }
+    
+    
+    // MARK: View did appear
+    override func viewDidAppear(_ animated: Bool) {
+        print("viewDidAppear")
+        guard adManager != nil else { return }
+        switch adManager!.rewardToBeGiven {
+        case Reward.letter:
+            rewardWithLetter()
+        case Reward.hint:
+            rewardWithHint()
+        case Reward.none:
+            print("NO reward!")
+        }
+    }
+
+    
+    // MARK: Reward with letter
+    private func rewardWithLetter()
+    {
+        print("REWARD GIVEN: Moving letter 'A' to first position")
+    }
+    
+    
+    // MARK: Reward with hint
+    private func rewardWithHint()
+    {
+        let rewardSound = SKAction.playSound(soundFile: "hint_revealed.wav")
+        
+        let modalViewController = UIViewController()
+        modalViewController.modalPresentationStyle = .formSheet
+        modalViewController.view.backgroundColor = Theme.backgroundColor
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissModal))
+        modalViewController.view.addGestureRecognizer(tapGesture)
+        
+        let wordLabel = UILabel()
+        wordLabel.text = ""
+        wordLabel.textAlignment = .center
+        wordLabel.font = UIFont(name: Theme.letterFont, size: 24)
+        wordLabel.frame = CGRect(x: 0, y: 0, width: 200, height: 200)
+        wordLabel.center = modalViewController.view.center
+        modalViewController.view.addSubview(wordLabel)
+        
+        present(modalViewController, animated: true, completion: {
+            let textToReveal = Database.shared.currentLevel?.solutionsArr.first?.hint ?? ""
+            var currentIndex = 0
+            self.gameScene?.run(rewardSound)
+            Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { timer in
+                let currentText = String(textToReveal.prefix(currentIndex))
+                wordLabel.text = currentText
+                currentIndex += 1
+                
+                if currentIndex > textToReveal.count {
+                    timer.invalidate()
+                }
+            }
+        })
+    }
+    
+    
+    @objc func dismissModal() {
+        dismiss(animated: true, completion: nil)
     }
     
     

@@ -46,5 +46,9 @@ struct C {
     static let APP_FEEDBACK_URL = "https://apps.apple.com/app/id6444929937?action=write-review" // TODO: Change id to hah
     static let APP_URL = "https://apps.apple.com/app/penalty-2d/id6444929937" // TODO: Change it
     
+    
+    // Intervals
+    static let HINT_INTERVAL = "hint_interval"
+    
 }
 
