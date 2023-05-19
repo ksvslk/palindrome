@@ -70,6 +70,7 @@
 		B1FC27572A17C61C00117C55 /* hint_revealed.wav in Resources */ = {isa = PBXBuildFile; fileRef = B1FC27562A17C61C00117C55 /* hint_revealed.wav */; };
 		B1FC275B2A17D9DA00117C55 /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1FC275A2A17D9DA00117C55 /* Toast.swift */; };
 		B1FC275D2A17E2A100117C55 /* hint_notification.wav in Resources */ = {isa = PBXBuildFile; fileRef = B1FC275C2A17E2A000117C55 /* hint_notification.wav */; };
+		B1FC275F2A180A9200117C55 /* HintViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1FC275E2A180A9200117C55 /* HintViewController.swift */; };
 		B1FE7A4D29F80E82007D7954 /* CellDirector.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1FE7A4C29F80E82007D7954 /* CellDirector.swift */; };
 /* End PBXBuildFile section */
 
@@ -152,6 +153,7 @@
 		B1FC27562A17C61C00117C55 /* hint_revealed.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = hint_revealed.wav; sourceTree = "<group>"; };
 		B1FC275A2A17D9DA00117C55 /* Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
 		B1FC275C2A17E2A000117C55 /* hint_notification.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = hint_notification.wav; sourceTree = "<group>"; };
+		B1FC275E2A180A9200117C55 /* HintViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HintViewController.swift; sourceTree = "<group>"; };
 		B1FE7A4C29F80E82007D7954 /* CellDirector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellDirector.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -286,6 +288,7 @@
 				B1313BB12A0AD12C005830AB /* LevelSelectCell.swift */,
 				B1313BBD2A0E66E9005830AB /* NumberLabel.swift */,
 				B1313BB52A0E200B005830AB /* MenuSheetExtensions.swift */,
+				B1FC275E2A180A9200117C55 /* HintViewController.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -479,6 +482,7 @@
 				B1B33A8A29FDB66D00DFA59F /* Solution+CoreDataClass.swift in Sources */,
 				B1313BD42A135FAD005830AB /* StateManager.swift in Sources */,
 				B1313BB22A0AD12C005830AB /* LevelSelectCell.swift in Sources */,
+				B1FC275F2A180A9200117C55 /* HintViewController.swift in Sources */,
 				B1B33A8829FDB66D00DFA59F /* LetterData+CoreDataClass.swift in Sources */,
 				B163AA4829F7FA2F006C8BE6 /* CellState.swift in Sources */,
 				B1B33A8429FDB66D00DFA59F /* Interval+CoreDataClass.swift in Sources */,

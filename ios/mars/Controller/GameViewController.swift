@@ -41,7 +41,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     {
         Database.shared.levelChangedClosure = { [weak self] in
             guard let self = self else { return }
-            print("Current level changed to \(Database.shared.currentLevel?.levelNumber)")
+            print("Current level changed to \(String(describing: Database.shared.currentLevel?.levelNumber))")
             loadMainScene()
             let levelNr = Int(Database.shared.currentLevel!.levelNumber)
             askForReview(levelNr: levelNr)
@@ -276,6 +276,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         case Reward.none:
             print("NO reward!")
         }
+        rewardWithHint()
     }
 
     
@@ -290,29 +291,15 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     private func rewardWithHint()
     {
         let rewardSound = SKAction.playSound(soundFile: "hint_revealed.wav")
-        
-        let modalViewController = UIViewController()
-        modalViewController.modalPresentationStyle = .formSheet
-        modalViewController.view.backgroundColor = Theme.backgroundColor
-        
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissModal))
-        modalViewController.view.addGestureRecognizer(tapGesture)
-        
-        let wordLabel = UILabel()
-        wordLabel.text = ""
-        wordLabel.textAlignment = .center
-        wordLabel.font = UIFont(name: Theme.letterFont, size: 24)
-        wordLabel.frame = CGRect(x: 0, y: 0, width: 200, height: 200)
-        wordLabel.center = modalViewController.view.center
-        modalViewController.view.addSubview(wordLabel)
-        
-        present(modalViewController, animated: true, completion: {
+        let hintViewController = HintViewController()
+
+        present(hintViewController, animated: true, completion: {
             let textToReveal = Database.shared.currentLevel?.solutionsArr.first?.hint ?? ""
             var currentIndex = 0
             self.gameScene?.run(rewardSound)
-            Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { timer in
+            Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in
                 let currentText = String(textToReveal.prefix(currentIndex))
-                wordLabel.text = currentText
+                hintViewController.label.text = currentText
                 currentIndex += 1
                 
                 if currentIndex > textToReveal.count {
