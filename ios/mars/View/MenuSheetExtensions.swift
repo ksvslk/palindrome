@@ -64,10 +64,10 @@ extension UIAlertController {
         onUnlimitedHintsPurchaseTap: @escaping () -> Void,
         onRemoveIntermediateAdsPurchaseTap: @escaping () -> Void,
         onAllInPackPurchaseTap: @escaping () -> Void
-    ) -> AdAwareAlertController {
+    ) -> ReactiveAlertController {
 
         let alertController =
-        AdAwareAlertController(title:"hints_title"~, message: "hints_subtitle"~, preferredStyle: .actionSheet)
+        ReactiveAlertController(title:"hints_title"~, message: "hints_subtitle"~, preferredStyle: .actionSheet)
         alertController.view.tintColor = Theme.colorOnBackground
         
         let videoCircleImage = UIImage(systemName: "video.circle")?.withTintColor(
@@ -193,31 +193,34 @@ extension UIAlertController {
         let vibrationOn = userDefaults.bool(forKey: C.VIBRATION_ON)
         let soundOn = userDefaults.bool(forKey: C.SOUND_ON)
         
-        
+        // Vibration button
         let vibrationAction = UIAlertAction(title: vibrationOn ? "Vibration On" : "Vibration Off", style: .default) { (action:UIAlertAction) in
             userDefaults.set(!vibrationOn, forKey: C.VIBRATION_ON)
         }
         vibrationAction.setValue(UIImage(systemName: vibrationOn ? "waveform" : "minus.circle"), forKey: "image")
         
-        
+        // Sound button
         let soundAction = UIAlertAction(title: soundOn ? "Sound On" : "Sound Off", style: .default) { (action:UIAlertAction) in
             userDefaults.set(!soundOn, forKey: C.SOUND_ON)
         }
         soundAction.setValue(UIImage(systemName: soundOn ? "speaker.3" : "minus.circle"), forKey: "image")
         
+        
+        // Tutorial button
         let tutorialAction = UIAlertAction(title: "Tutorial", style: .default) { (action:UIAlertAction) in
             onTutorialTap()
         }
-        
-       
-        
         tutorialAction.setValue(UIImage(systemName: "questionmark.app"), forKey: "image")
         
+        
+        // Give feedback button
         let feedbackAction = UIAlertAction(title: "Give Feedback", style: .default) { (action:UIAlertAction) in
             onFeedbackTap()
         }
         feedbackAction.setValue(UIImage(systemName: "square.and.pencil"), forKey: "image")
         
+        
+        // Share button
         let shareAction = UIAlertAction(title: "Share", style: .default) { (action:UIAlertAction) in
             onShareTap()
         }

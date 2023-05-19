@@ -10,7 +10,7 @@ import SpriteKit
 import GameplayKit
 import GameKit
 import GoogleMobileAds
-
+import StoreKit
 
 class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     
@@ -133,10 +133,15 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
             print("onTutorialTap")
         } onFeedbackTap: {
             print("onFeedbackTap")
+            guard let writeReviewURL = URL(string: C.APP_FEEDBACK_URL)
+                else { fatalError("Expected a valid URL") }
+            UIApplication.shared.open(writeReviewURL, options: [:], completionHandler: nil)
         } onShareTap: {
             print("onShareTap")
         }
-        
+        if let popoverController = sheet.popoverPresentationController {
+            popoverController.barButtonItem = sender as? UIBarButtonItem
+        }
         present(sheet, animated: true, completion: nil)
     }
     
@@ -150,6 +155,9 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         } onGameLevelsTap: {
             print("onGameLevelsTap")
             self.present(GameLevelSelectController(), animated: true, completion: nil)
+        }
+        if let popoverController = sheet.popoverPresentationController {
+            popoverController.barButtonItem = sender as? UIBarButtonItem
         }
         present(sheet, animated: true, completion: nil)
     }
@@ -207,7 +215,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     // MARK: TAP Hints
     @IBAction func onHintsButtonTap(_ sender: Any) {
         
-        let sheet = AdAwareAlertController.hintsSheet {
+        let sheet = ReactiveAlertController.hintsSheet {
             if (StateManager.shared.currentState == GameState.play)
             {
                 print("onLetterRewardedAdsTap")
@@ -231,7 +239,9 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         }
         sheet.updateAdsActions(adAvailable: adManager!.adAvailable)
         adManager?.delegate = sheet
-        
+        if let popoverController = sheet.popoverPresentationController {
+            popoverController.barButtonItem = sender as? UIBarButtonItem
+        }
         present(sheet, animated: true, completion: nil)
     }
     
@@ -260,6 +270,9 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
             let viewController = GKGameCenterViewController(state: .achievements)
             viewController.gameCenterDelegate = self
             self.present(viewController, animated: true, completion: nil)
+        }
+        if let popoverController = sheet.popoverPresentationController {
+            popoverController.barButtonItem = sender as? UIBarButtonItem
         }
         present(sheet, animated: true, completion: nil)
     }

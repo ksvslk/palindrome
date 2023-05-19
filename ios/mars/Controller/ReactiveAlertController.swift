@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class AdAwareAlertController: UIAlertController, AdAvailabilityDelegate, PurchasesDelegate {
+class ReactiveAlertController: UIAlertController, AdAvailabilityDelegate, PurchasesDelegate {
     
     func purchasesChanged(ownedProducts: [String]) {
         print("purchasesChanged: \(ownedProducts)")
@@ -19,6 +19,7 @@ class AdAwareAlertController: UIAlertController, AdAvailabilityDelegate, Purchas
         // Update the actions of the UIAlertController here
         updateAdsActions(adAvailable: isAvailable)
     }
+    
     
     func updateAdsActions(adAvailable: Bool) {
         // Implement your logic to update the actions based on ad availability

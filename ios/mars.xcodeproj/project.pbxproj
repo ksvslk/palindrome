@@ -44,7 +44,7 @@
 		B16F207029FBBAFC00E8DFCE /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = B16F206F29FBBAFC00E8DFCE /* GameScene.sks */; };
 		B16F207229FBBB2400E8DFCE /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = B16F207129FBBB2400E8DFCE /* Actions.sks */; };
 		B18EA83C2A1637CB00514E47 /* AdAvailabilityDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B18EA83B2A1637CB00514E47 /* AdAvailabilityDelegate.swift */; };
-		B18EA83E2A16398200514E47 /* AdAwareAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B18EA83D2A16398200514E47 /* AdAwareAlertController.swift */; };
+		B18EA83E2A16398200514E47 /* ReactiveAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B18EA83D2A16398200514E47 /* ReactiveAlertController.swift */; };
 		B18EA8422A16759800514E47 /* PurchasesDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B18EA8412A16759800514E47 /* PurchasesDelegate.swift */; };
 		B1B33A8429FDB66D00DFA59F /* Interval+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B33A7C29FDB66D00DFA59F /* Interval+CoreDataClass.swift */; };
 		B1B33A8529FDB66D00DFA59F /* Interval+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B33A7D29FDB66D00DFA59F /* Interval+CoreDataProperties.swift */; };
@@ -121,7 +121,7 @@
 		B16F206F29FBBAFC00E8DFCE /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
 		B16F207129FBBB2400E8DFCE /* Actions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Actions.sks; sourceTree = "<group>"; };
 		B18EA83B2A1637CB00514E47 /* AdAvailabilityDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdAvailabilityDelegate.swift; sourceTree = "<group>"; };
-		B18EA83D2A16398200514E47 /* AdAwareAlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdAwareAlertController.swift; sourceTree = "<group>"; };
+		B18EA83D2A16398200514E47 /* ReactiveAlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactiveAlertController.swift; sourceTree = "<group>"; };
 		B18EA8412A16759800514E47 /* PurchasesDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchasesDelegate.swift; sourceTree = "<group>"; };
 		B1B33A7C29FDB66D00DFA59F /* Interval+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Interval+CoreDataClass.swift"; sourceTree = "<group>"; };
 		B1B33A7D29FDB66D00DFA59F /* Interval+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Interval+CoreDataProperties.swift"; sourceTree = "<group>"; };
@@ -319,7 +319,7 @@
 				B1E8975529EC5001001B942F /* GameViewController.swift */,
 				B1FE7A4C29F80E82007D7954 /* CellDirector.swift */,
 				B1313BA92A0ABEB1005830AB /* GameLevelSelectController.swift */,
-				B18EA83D2A16398200514E47 /* AdAwareAlertController.swift */,
+				B18EA83D2A16398200514E47 /* ReactiveAlertController.swift */,
 				B18EA83B2A1637CB00514E47 /* AdAvailabilityDelegate.swift */,
 				B1313BD32A135FAD005830AB /* StateManager.swift */,
 				B1313C512A1620EB005830AB /* AdManager.swift */,
@@ -460,7 +460,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B18EA83E2A16398200514E47 /* AdAwareAlertController.swift in Sources */,
+				B18EA83E2A16398200514E47 /* ReactiveAlertController.swift in Sources */,
 				B1B33A8529FDB66D00DFA59F /* Interval+CoreDataProperties.swift in Sources */,
 				B1E8975429EC5001001B942F /* GameScene.swift in Sources */,
 				B1313BC22A0F8386005830AB /* SolutionChecker.swift in Sources */,
