@@ -67,6 +67,7 @@
 		B1E8978C29ED42EE001B942F /* Slot.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1E8978B29ED42EE001B942F /* Slot.swift */; };
 		B1EF06DE29F8477600DD78A6 /* C.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1EF06DD29F8477600DD78A6 /* C.swift */; };
 		B1F6B12D29F8208300EEEC17 /* CellType.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1F6B12C29F8208300EEEC17 /* CellType.swift */; };
+		B1FC27572A17C61C00117C55 /* hint_revealed.wav in Resources */ = {isa = PBXBuildFile; fileRef = B1FC27562A17C61C00117C55 /* hint_revealed.wav */; };
 		B1FE7A4D29F80E82007D7954 /* CellDirector.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1FE7A4C29F80E82007D7954 /* CellDirector.swift */; };
 /* End PBXBuildFile section */
 
@@ -146,6 +147,7 @@
 		B1E8978B29ED42EE001B942F /* Slot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Slot.swift; sourceTree = "<group>"; };
 		B1EF06DD29F8477600DD78A6 /* C.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = C.swift; sourceTree = "<group>"; };
 		B1F6B12C29F8208300EEEC17 /* CellType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellType.swift; sourceTree = "<group>"; };
+		B1FC27562A17C61C00117C55 /* hint_revealed.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = hint_revealed.wav; sourceTree = "<group>"; };
 		B1FE7A4C29F80E82007D7954 /* CellDirector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellDirector.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -179,6 +181,7 @@
 		B13966B42A082D0B00EF75A0 /* Sounds */ = {
 			isa = PBXGroup;
 			children = (
+				B1FC27562A17C61C00117C55 /* hint_revealed.wav */,
 				B1313C2E2A1502C5005830AB /* c3_outer.wav */,
 				B1313C302A1502C5005830AB /* c4_outer.wav */,
 				B1313C292A1502C4005830AB /* c5_outer.wav */,
@@ -429,6 +432,7 @@
 				B16F207229FBBB2400E8DFCE /* Actions.sks in Resources */,
 				B1313C3A2A1502C5005830AB /* correct.wav in Resources */,
 				B1313C352A1502C5005830AB /* level_transition.wav in Resources */,
+				B1FC27572A17C61C00117C55 /* hint_revealed.wav in Resources */,
 				B1313C142A14FEA9005830AB /* score_tick.wav in Resources */,
 				B1313C342A1502C5005830AB /* g3_outer.wav in Resources */,
 				B1313BB42A0B6F33005830AB /* game_levels.json in Resources */,

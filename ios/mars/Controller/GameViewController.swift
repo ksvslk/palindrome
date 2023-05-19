@@ -30,6 +30,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         subscribeToLevelChange()
         subscribeToSolutionCheckResult()
         Database.shared.changeGameLevel(nr: 1)
+    
     }
     
     
@@ -205,6 +206,8 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     // MARK: Reward with hint
     private func rewardWithHint()
     {
+        let rewardSound = SKAction.playSound(soundFile: "hint_revealed.wav")
+        
         let modalViewController = UIViewController()
         modalViewController.modalPresentationStyle = .formSheet
         modalViewController.view.backgroundColor = Theme.backgroundColor
@@ -213,14 +216,27 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         modalViewController.view.addGestureRecognizer(tapGesture)
         
         let wordLabel = UILabel()
-        wordLabel.text = Database.shared.currentLevel!.solutionsArr.first?.hint
+        wordLabel.text = ""
         wordLabel.textAlignment = .center
         wordLabel.font = UIFont(name: Theme.letterFont, size: 24)
         wordLabel.frame = CGRect(x: 0, y: 0, width: 200, height: 200)
         wordLabel.center = modalViewController.view.center
         modalViewController.view.addSubview(wordLabel)
         
-        present(modalViewController, animated: true, completion: nil)
+        present(modalViewController, animated: true, completion: {
+            let textToReveal = Database.shared.currentLevel?.solutionsArr.first?.hint ?? ""
+            var currentIndex = 0
+            self.gameScene?.run(rewardSound)
+            Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { timer in
+                let currentText = String(textToReveal.prefix(currentIndex))
+                wordLabel.text = currentText
+                currentIndex += 1
+                
+                if currentIndex > textToReveal.count {
+                    timer.invalidate()
+                }
+            }
+        })
     }
     
     
