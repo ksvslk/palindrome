@@ -56,7 +56,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
             SKStoreReviewController.requestReview(in: windowScene)
         }
     }
-    
+
     
     // MARK: Listen solution changes
     private func subscribeToSolutionCheckResult()
@@ -149,6 +149,12 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
             UIApplication.shared.open(writeReviewURL, options: [:], completionHandler: nil)
         } onShareTap: {
             print("onShareTap")
+            let items: [Any] = ["share_description"~, URL(string: C.APP_URL)!]
+            let share = UIActivityViewController(activityItems: items, applicationActivities: nil)
+            if let popoverController = share.popoverPresentationController {
+                popoverController.barButtonItem = sender as? UIBarButtonItem
+            }
+            self.present(share, animated: true)
         }
         if let popoverController = sheet.popoverPresentationController {
             popoverController.barButtonItem = sender as? UIBarButtonItem

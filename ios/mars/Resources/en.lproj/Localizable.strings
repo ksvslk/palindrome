@@ -29,3 +29,6 @@
 "purchase_no_ads" = "Remove Intermediate Ads";
 "purchase_all" = "All-In Pack";
 
+
+//MARK: Share button
+"share_description" = "Can you guess the solution for: EELLV? It is a palindrome!";
