@@ -40,9 +40,20 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
             guard let self = self else { return }
             print("Current level changed to \(Database.shared.currentLevel?.levelNumber)")
             loadMainScene()
-            let levelNr = Database.shared.currentLevel!.levelNumber
+            let levelNr = Int(Database.shared.currentLevel!.levelNumber)
+            askForReview(levelNr: levelNr)
             levelNumberLabel.text = String(levelNr)
-            changeProgressBarUI(levelNr: Int(levelNr))
+            changeProgressBarUI(levelNr: levelNr)
+        }
+    }
+    
+    
+    private func askForReview(levelNr:Int)
+    {
+        if (levelNr == 15)
+        {
+            guard let windowScene = self.view.window?.windowScene else { return }
+            SKStoreReviewController.requestReview(in: windowScene)
         }
     }
     
