@@ -20,7 +20,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     @IBOutlet weak var progressBar: UIProgressView!
     @IBOutlet weak var levelNumberLabel: UILabel!
     @IBOutlet weak var infoLabelButton: UIButton!
-
+    
     
     private var adManager: AdManager?
     
@@ -32,9 +32,9 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         subscribeToSolutionCheckResult()
         subscribeToHintsSuggestion()
         Database.shared.changeGameLevel(nr: 1)
-    
+        
     }
-
+    
     
     // MARK: Listen level changes
     private func subscribeToLevelChange()
@@ -157,7 +157,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         infoLabelButton.titleLabel?.text = String()
         infoLabelButton.isEnabled = false
     }
-
+    
     
     // MARK: TAP Settings
     @IBAction func onSettingsButtonTap(_ sender: Any) {
@@ -201,34 +201,44 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         present(sheet, animated: true, completion: nil)
     }
     
-   
+    
     
     // MARK: TAP Hints
     @IBAction func onHintsButtonTap(_ sender: Any) {
         hintToolbarItem.removeBadge()
-        let sheet = ReactiveAlertController.hintsSheet {
-            if (StateManager.shared.currentState == GameState.play)
-            {
-                print("onLetterRewardedAdsTap")
-                self.adManager?.show(viewController: self, rewardType: Reward.letter)
-            }
-            
-        } onHintRewardedAdsTap: {
-            if (StateManager.shared.currentState == GameState.play)
-            {
-                print("onHintRewardedAdsTap")
-                self.adManager?.show(viewController: self, rewardType: Reward.hint)
-            }
-        } onUnlimitedLettersPurchaseTap: {
-            print("onUnlimitedLettersPurchaseTap")
-        } onUnlimitedHintsPurchaseTap: {
-            print("onUnlimitedHintsPurchaseTap")
-        } onRemoveIntermediateAdsPurchaseTap: {
-            print("onRemoveIntermediateAdsPurchaseTap")
-        } onAllInPackPurchaseTap: {
-            print("onAllInPackPurchaseTap!")
-        }
+        let sheet = ReactiveAlertController.hintsSheet(
+            isHintsPremium: Database.shared.isCategoryRewarded(),
+            isLettersPremium: false,
+            onLetterRewardedAdsTap: {
+                if (StateManager.shared.currentState == GameState.play)
+                {
+                    print("onLetterRewardedAdsTap")
+                    self.adManager?.show(viewController: self, rewardType: Reward.letter)
+                }
+                
+            }, onHintRewardedAdsTap: {
+                if (Database.shared.isCategoryRewarded())
+                {
+                    self.rewardWithHint()
+                }
+                else {
+                    if (StateManager.shared.currentState == GameState.play)
+                    {
+                        print("onHintRewardedAdsTap")
+                        self.adManager?.show(viewController: self, rewardType: Reward.hint)
+                    }
+                }
+            },
+            onUnlimitedLettersPurchaseTap: {
+                
+            }, onUnlimitedHintsPurchaseTap: {
+                
+            }, onRemoveIntermediateAdsPurchaseTap: {
+                
+            }, onAllInPackPurchaseTap: {
+        })
         sheet.updateAdsActions(adAvailable: adManager!.adAvailable)
+        
         adManager?.delegate = sheet
         if let popoverController = sheet.popoverPresentationController {
             popoverController.barButtonItem = sender as? UIBarButtonItem
@@ -278,11 +288,12 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
             rewardWithLetter()
         case Reward.hint:
             rewardWithHint()
+            Database.shared.setCategoryAsRewarded()
         case Reward.none:
             print("NO reward!")
         }
     }
-
+    
     
     // MARK: Reward with letter
     private func rewardWithLetter()
@@ -296,7 +307,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     {
         let rewardSound = SKAction.playSound(soundFile: "hint_revealed.wav")
         let hintViewController = HintViewController()
-
+        
         present(hintViewController, animated: true, completion: {
             let textToReveal = Database.shared.currentLevel?.solutionsArr.first?.hint ?? ""
             var currentIndex = 0

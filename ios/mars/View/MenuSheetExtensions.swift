@@ -58,6 +58,8 @@ extension UIAlertController {
     
     // MARK: Hints menu
     static func hintsSheet(
+        isHintsPremium: Bool,
+        isLettersPremium: Bool,
         onLetterRewardedAdsTap: @escaping () -> Void,
         onHintRewardedAdsTap: @escaping () -> Void,
         onUnlimitedLettersPurchaseTap: @escaping () -> Void,
@@ -69,9 +71,16 @@ extension UIAlertController {
         let alertController =
         ReactiveAlertController(title:"hints_title"~, message: "hints_subtitle"~, preferredStyle: .actionSheet)
         alertController.view.tintColor = Theme.colorOnBackground
+        alertController.premiumHint = isHintsPremium
+        alertController.premiumLetter = isLettersPremium
         
         let videoCircleImage = UIImage(systemName: "video.circle")?.withTintColor(
             Theme.hintsNotificationColor,
+            renderingMode: UIImage.RenderingMode.alwaysOriginal
+        )
+        
+        let premiumIcon = UIImage(systemName: "cursorarrow.rays")?.withTintColor(
+            Theme.successTextColor,
             renderingMode: UIImage.RenderingMode.alwaysOriginal
         )
         
@@ -80,7 +89,7 @@ extension UIAlertController {
             onLetterRewardedAdsTap()
         }
         letterRewardedAdsAction.accessibilityIdentifier = "watch_letter_ad"
-        letterRewardedAdsAction.setValue(videoCircleImage, forKey: "image")
+        letterRewardedAdsAction.setValue(isLettersPremium ? premiumIcon : videoCircleImage, forKey: "image")
         
         
         // Ads Hints button
@@ -88,7 +97,8 @@ extension UIAlertController {
             onHintRewardedAdsTap()
         }
         hintRewardedAdsAction.accessibilityIdentifier = "watch_hint_ad"
-        hintRewardedAdsAction.setValue(videoCircleImage, forKey: "image")
+        hintRewardedAdsAction.setValue(isHintsPremium ? premiumIcon : videoCircleImage, forKey: "image")
+    
         
         
         // Purchase letters button

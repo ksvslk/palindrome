@@ -341,7 +341,7 @@ class Database {
         } catch {
             print("Error changing friend index: \(error)")
         }
-        refreshCurrentLevel()
+        //refreshCurrentLevel()
         checkSolutionCorrectness()
 #if DEBUG
         assertFriendIndexesAreUniqueForEachLetter()
@@ -364,7 +364,7 @@ class Database {
         } catch {
             print("Error switching friend indexes: \(error)")
         }
-        refreshCurrentLevel()
+        //refreshCurrentLevel()
         checkSolutionCorrectness()
 #if DEBUG
         assertFriendIndexesAreUniqueForEachLetter()
@@ -431,9 +431,30 @@ class Database {
         } catch {
             print("Error changing columnd count: \(error)")
         }
-        refreshCurrentLevel()
+        //refreshCurrentLevel()
         
     }
+    
+    
+    // MARK: Update hint status
+    func setCategoryAsRewarded()
+    {
+        currentLevel?.categoryRewarded = true
+        
+        do {
+            try context.save()
+        } catch {
+            print("Error changing category rewarded: \(error)")
+        }
+    }
+    
+    
+    // MARK: Is category rewarded
+    func isCategoryRewarded() -> Bool
+    {
+        return currentLevel!.categoryRewarded
+    }
+    
     
     
 #if DEBUG
