@@ -38,6 +38,7 @@ class Letter: Cell {
         letterLabel.fontColor = Theme.colorOnPrimary
         isUserInteractionEnabled = true
         addChild(letterLabel)
+        
     }
     
     
@@ -48,10 +49,7 @@ class Letter: Cell {
     
     // MARK: Touches began
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard StateManager.shared.currentState == .play else { return }
-        print("Touching and state is \(StateManager.shared.currentState) (Letter)")
-     
-        guard state == CellState.home else { return }
+        guard StateManager.shared.currentState == .play && state == CellState.home && data.locked == false else { return }
         guard let touch = touches.first else { return }
         
         let location = touch.location(in: self.parent!)
@@ -95,9 +93,9 @@ class Letter: Cell {
         playSound(collisionResult: collisionResult)
         playHapticFeedback(collisionResult: collisionResult)
         print("Collision result: \(collisionResult)")
-        moveLetter(enableSceneTouch: collisionResult == CollisionResult.nothing)
+        moveLetter()
     }
-    
+ 
     
     // touch event is interrupted or canceled (system events like phone call)
     // maybe abrupt end would be better here?
@@ -112,14 +110,19 @@ class Letter: Cell {
     
     
     // MARK: Move action
-    func moveLetter(enableSceneTouch:Bool = true)
+    func moveLetter(endColor:UIColor = Theme.colorSecondary, durationMultiplier:CGFloat = 1.0, zLayer:CGFloat? = nil)
     {
-
+        if let zLayer = zLayer {
+            self.color = Theme.colorSecondary
+            self.zPosition = zLayer
+        }
+     
         // Get some value that represents how much was moved ignoring the actual physical
         // distance. Log applied to Euclidean distance to make it very small.
         let distance = log2((abs(position.distance(point: currentPosition))))
-        let duration = distance.isFinite ? abs(distance * C.HOME_ANIMATION_MULTIPLIER * C.ANIMATION_MODIFIER) : C.ON_RELEASE_COLOR_CHANGE_ANIMATION
-        let endColor = friend != nil ? Theme.colorSecondary : Theme.colorPrimary
+        let duration = distance.isFinite ? abs(distance * C.HOME_ANIMATION_MULTIPLIER * C.ANIMATION_MODIFIER)*durationMultiplier : C.ON_RELEASE_COLOR_CHANGE_ANIMATION * durationMultiplier
+        
+        let endColor = friend != nil ? endColor : Theme.colorPrimary
         state = CellState.resolving
         let moveAction = SKAction.move(to: currentPosition, duration: duration)
         moveAction.timingMode = .easeInEaseOut

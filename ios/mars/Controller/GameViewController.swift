@@ -93,7 +93,6 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
                         isLastMessageTapToContinue: true
                     )
                 }
-                //TODO: animation with messages
             case .wrong:
                 print("Wrong solution. (GameViewController)")
                 feedbackGenerator.notificationOccuredCustom(notificationType: .error)
@@ -102,7 +101,6 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
                     messages: ["Wrong solution!"],
                     isLastMessageTapToContinue: false
                 )
-                //TODO: animation with messages
             case .bogus_palindrome:
                 print("Bogus solution. (GameViewController)")
                 feedbackGenerator.notificationOccuredCustom(notificationType: .warning)
@@ -111,7 +109,6 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
                     messages: ["Bogus solution!"],
                     isLastMessageTapToContinue: false
                 )
-                //TODO: animation with messages
             case .invalid_guess:
                 print("Not enough letters. (GameViewController)")
                 StateManager.shared.currentState = .play
@@ -208,14 +205,22 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         hintToolbarItem.removeBadge()
         let sheet = ReactiveAlertController.hintsSheet(
             isHintsPremium: Database.shared.isCategoryRewarded(),
-            isLettersPremium: false,
+            isLettersPremium: Database.shared.isPremiumLetters(),
             onLetterRewardedAdsTap: {
-                if (StateManager.shared.currentState == GameState.play)
+                if (Database.shared.isPremiumLetters())
                 {
-                    print("onLetterRewardedAdsTap")
-                    self.adManager?.show(viewController: self, rewardType: Reward.letter)
+                    if (StateManager.shared.currentState == GameState.play)
+                    {
+                        self.rewardWithLetter()
+                    }
                 }
-                
+                else {
+                    if (StateManager.shared.currentState == GameState.play)
+                    {
+                        print("onLetterRewardedAdsTap")
+                        self.adManager?.show(viewController: self, rewardType: Reward.letter)
+                    }
+                }
             }, onHintRewardedAdsTap: {
                 if (Database.shared.isCategoryRewarded())
                 {
@@ -236,7 +241,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
             }, onRemoveIntermediateAdsPurchaseTap: {
                 
             }, onAllInPackPurchaseTap: {
-        })
+            })
         sheet.updateAdsActions(adAvailable: adManager!.adAvailable)
         
         adManager?.delegate = sheet
@@ -298,7 +303,10 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     // MARK: Reward with letter
     private func rewardWithLetter()
     {
-        print("REWARD GIVEN: Moving letter 'A' to first position")
+        StateManager.shared.currentState = .animating
+        gameScene?.cellDirector.rewardWithRandomLetter()
+        let rewardSound = SKAction.playSound(soundFile: "hint_revealed.wav")
+        self.gameScene?.run(rewardSound)
     }
     
     

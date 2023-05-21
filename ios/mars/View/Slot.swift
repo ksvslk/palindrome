@@ -10,12 +10,15 @@ import SpriteKit
 
 class Slot: Cell {
     
+    let actualChar: String
+    
     override var cellType : CellType {
         get { return CellType.slot }
         set {}
     }
     
-    init(homeIndex:Int64, size: CGSize, homePosition: CGPoint) {
+    init(homeIndex:Int64, size: CGSize, homePosition: CGPoint, actualChar:String) {
+        self.actualChar = actualChar
         super.init(homeIndex: homeIndex, texture: nil, color: Theme.colorSecondaryVariant, size: size, homePosition: homePosition)
         self.zPosition = C.BOTTOM_LAYER
     }

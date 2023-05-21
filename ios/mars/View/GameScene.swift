@@ -6,7 +6,7 @@ class GameScene: SKScene {
     
     private var gridNode:SKNode = SKNode()
     private var startingPosition:CGPoint = CGPoint.zero
-    private var cellDirector: CellDirector = CellDirector(cells: [Cell]())
+    var cellDirector: CellDirector = CellDirector(cells: [Cell]())
     
     
     // MARK: Initialize level
@@ -237,7 +237,6 @@ class GameScene: SKScene {
                 
                 let index = Int64(rowIndex * gameField.columns + colIndex + 1)
                 
-                
                 switch (rowIndex < gameField.letterRows.count, char) {
                 case (true, " "), (false, " "):
                     let space = getBlankNode(gameField: gameField, rowIndex: rowIndex, colIndex: colIndex)
@@ -269,7 +268,8 @@ class GameScene: SKScene {
                         currentIndex: index,
                         gameField: gameField,
                         rowIndex: rowIndex,
-                        colIndex: colIndex
+                        colIndex: colIndex,
+                        actualChar: String(char)
                     )
                     
                     gridNode.addChild(slot)
@@ -359,12 +359,12 @@ class GameScene: SKScene {
     
     
     // MARK: Get Slot node
-    private func getSlotNode(currentIndex: Int64, gameField: GameField, rowIndex: Int, colIndex: Int) -> Slot
+    private func getSlotNode(currentIndex: Int64, gameField: GameField, rowIndex: Int, colIndex: Int, actualChar:String) -> Slot
     {
         return Slot(
             homeIndex: currentIndex,
             size: CGSize(width: gameField.boxSize.width, height: gameField.boxSize.height),
-            homePosition: CGPoint(x: CGFloat(colIndex) * (gameField.boxSize.width + GameFieldCreator.spacing), y: -CGFloat(rowIndex) * (gameField.boxSize.height + GameFieldCreator.spacing))
+            homePosition: CGPoint(x: CGFloat(colIndex) * (gameField.boxSize.width + GameFieldCreator.spacing), y: -CGFloat(rowIndex) * (gameField.boxSize.height + GameFieldCreator.spacing)), actualChar: actualChar
         )
     }
     

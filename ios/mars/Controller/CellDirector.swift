@@ -10,11 +10,20 @@ import SpriteKit
 
 class CellDirector {
     
-    var cells: [Cell]
+    var cells: [Cell] = [] {
+        didSet {
+            for cell in self.cells {
+                guard let l = (cell as? Letter) else { continue }
+                if (l.data.locked)
+                {
+                    l.color = Theme.letterRewardedColor
+                }
+            }
+        }
+    }
     
     init(cells: [Cell]) {
         self.cells = cells
-        
     }
     
     // MARK: Main handle
@@ -32,7 +41,6 @@ class CellDirector {
     // MARK: Check collisions for action
     private func checkCollisionsForAction(letter: Letter) -> CollisionResult
     {
-        
         guard let candidateCells = getCandidateCells(letter: letter), !candidateCells.isEmpty else {
             print("CellDirector: no candidate cells - send letter home")
             sendLetterHome(letter: letter)
@@ -44,6 +52,12 @@ class CellDirector {
             return CollisionResult.nothing
         }
         
+        return getMoveResult(letter: letter, closestCell: closestCell)
+    }
+    
+    
+    private func getMoveResult(letter:Letter, closestCell:Cell) -> CollisionResult
+    {
         switch closestCell.cellType {
         case CellType.letter:
             if (closestCell.state == CellState.home)
@@ -124,8 +138,18 @@ class CellDirector {
         
         for droppedTo in cells {
             if letter.intersects(droppedTo) && letter != droppedTo {
-                guard (droppedTo.cellType == CellType.letter && droppedTo.state == CellState.home) || (droppedTo.cellType == CellType.slot && droppedTo.friend == nil) else {
+                guard (
+                    droppedTo.cellType == CellType.letter &&
+                    droppedTo.state == CellState.home) ||
+                    (droppedTo.cellType == CellType.slot &&
+                    droppedTo.friend == nil) else {
                     continue
+                }
+                if let l = (droppedTo as? Letter) {
+                    if (l.data.locked == true)
+                    {
+                        continue
+                    }
                 }
                 candidateCells.append(droppedTo)
             }
@@ -225,5 +249,43 @@ class CellDirector {
         }
     }
     
+    
+    // MARK: Reward with letter
+    func rewardWithRandomLetter() -> CollisionResult
+    {
+        var result: CollisionResult = CollisionResult.nothing
+        
+        // Filter candidate Letter and Slot instances
+        let candidateLetters = cells.compactMap { $0 as? Letter }.filter { letter in
+            letter.friend == nil
+        }
+        let candidateSlots = cells.compactMap { $0 as? Slot }
+
+        // Pick a random Letter and first corresponding Slot, if nothing found
+        guard let randomLetter = candidateLetters.randomElement() else { return result }
+        
+        for slot in candidateSlots {
+            let slotFriend:Letter? = slot.friend as? Letter
+            
+            if (slot.actualChar == randomLetter.data.letter && slotFriend == nil)
+            {
+                // We found empty Slot for our random Letter, break
+                result = getMoveResult(letter: randomLetter, closestCell: slot)
+                break
+            }
+            else if (slot.actualChar == randomLetter.data.letter &&
+                     slotFriend?.data.letter != randomLetter.data.letter
+            )
+            {
+                // We found NON-empty Slot, which has wrong Letter in it
+                result = getMoveResult(letter: randomLetter, closestCell: slotFriend!)
+                break
+            }
+        }
+        Database.shared.lockLetter(letter: randomLetter.data)
+        randomLetter.moveLetter(endColor: Theme.letterRewardedColor, durationMultiplier: 3.0, zLayer: C.TOP_LAYER)
+        return result
+        
+    }
     
 }

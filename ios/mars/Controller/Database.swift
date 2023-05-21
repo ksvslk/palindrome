@@ -435,6 +435,10 @@ class Database {
         
     }
     
+    func isPremiumLetters() -> Bool {
+        return false
+    }
+    
     
     // MARK: Update hint status
     func setCategoryAsRewarded()
@@ -446,6 +450,20 @@ class Database {
         } catch {
             print("Error changing category rewarded: \(error)")
         }
+    }
+    
+    
+    // MARK: Update letter locked status
+    func lockLetter(letter:LetterData)
+    {
+        letter.locked = true
+        
+        do {
+            try context.save()
+        } catch {
+            print("Error locking letter: \(error)")
+        }
+        
     }
     
     

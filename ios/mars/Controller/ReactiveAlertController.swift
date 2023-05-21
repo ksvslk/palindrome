@@ -46,6 +46,10 @@ class ReactiveAlertController: UIAlertController, AdAvailabilityDelegate, Purcha
         if premiumHint {
             updateHintsToPremium()
         }
+        
+        if premiumLetter {
+            updateLettersToPremium()
+        }
     }
     
     
@@ -55,6 +59,17 @@ class ReactiveAlertController: UIAlertController, AdAvailabilityDelegate, Purcha
             hintAdsAction.setValue("reveal_hint"~, forKey: "title")
             hintAdsAction.setValue(nil, forKey: "image")
             hintAdsAction.isEnabled = true
+        }
+    }
+    
+    
+    
+    func updateLettersToPremium()
+    {
+        if let letterAdsAction = actions.first(where: { $0.accessibilityIdentifier == "watch_letter_ad" }) {
+            letterAdsAction.setValue("place_letter"~, forKey: "title")
+            letterAdsAction.setValue(nil, forKey: "image")
+            letterAdsAction.isEnabled = true
         }
     }
  

@@ -100,7 +100,6 @@ extension UIAlertController {
         hintRewardedAdsAction.setValue(isHintsPremium ? premiumIcon : videoCircleImage, forKey: "image")
     
         
-        
         // Purchase letters button
         let unlimitedLettersPurchaseAction = UIAlertAction(title: "purchase_letters"~, style: .default) { (action:UIAlertAction) in
             onUnlimitedLettersPurchaseTap()
