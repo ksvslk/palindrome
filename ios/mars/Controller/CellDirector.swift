@@ -29,6 +29,13 @@ class CellDirector {
     // MARK: Main handle
     func handleCollisions(letter: Letter) -> CollisionResult
     {
+        cells.sort(by: { c1, c2 in
+            c1.homeIndex < c2.homeIndex
+        })
+        cells.forEach { cell in
+            print("Cell (letter?: \(cell as? Letter != nil), state: \(cell.state) with homeIndex \(cell.homeIndex) has friend \(cell.friend?.homeIndex)")
+        }
+        
         let result = checkCollisionsForAction(letter: letter)
 #if DEBUG
         assertThatLettersHaveUniqueFriends()
@@ -204,6 +211,7 @@ class CellDirector {
             letter.currentPosition = letter.homePosition
         }
     }
+   
     
     
     // MARK: Switch positions
@@ -257,11 +265,11 @@ class CellDirector {
         
         // Filter candidate Letter and Slot instances
         let candidateLetters = cells.compactMap { $0 as? Letter }.filter { letter in
-            letter.friend == nil
+            letter.data.locked == false
         }
         let candidateSlots = cells.compactMap { $0 as? Slot }
 
-        // Pick a random Letter and first corresponding Slot, if nothing found
+        // Pick a random Letter and first corresponding Slot, if nothing found return
         guard let randomLetter = candidateLetters.randomElement() else { return result }
         
         for slot in candidateSlots {
@@ -284,6 +292,10 @@ class CellDirector {
         }
         Database.shared.lockLetter(letter: randomLetter.data)
         randomLetter.moveLetter(endColor: Theme.letterRewardedColor, durationMultiplier: 3.0, zLayer: C.TOP_LAYER)
+#if DEBUG
+        assertThatLettersHaveUniqueFriends()
+        assertThatMaximumOfTwoCellsHaveSameCoordinates()
+#endif
         return result
         
     }

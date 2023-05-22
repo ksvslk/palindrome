@@ -197,7 +197,7 @@ class Database {
     }
     
     
-    // MARK: Increase interal -> result
+    // MARK: Increase interval -> result
     private func updateCurrentCount(forName name: String) -> Bool {
         var result = false
         
@@ -342,7 +342,7 @@ class Database {
             print("Error changing friend index: \(error)")
         }
         //refreshCurrentLevel()
-        checkSolutionCorrectness()
+        checkSolutionCorrectness(letter: letter)
 #if DEBUG
         assertFriendIndexesAreUniqueForEachLetter()
 #endif
@@ -372,8 +372,8 @@ class Database {
     }
     
     
-    // MARK: Check player guess
-    func checkSolutionCorrectness()
+    // MARK: Check solution correctness
+    func checkSolutionCorrectness(letter: LetterData? = nil)
     {
         var letters: [LetterData] = []
         let request: NSFetchRequest<LetterData> = LetterData.fetchRequest()
@@ -388,6 +388,7 @@ class Database {
         }
         
         let result = SolutionChecker.getGuessResult(guess: letters, solutions: currentLevel!.solutionsArr)
+      
         if (result == SolutionCheckResult.correct)
         {
             //TODO: setCurrentLevelCompleted and other stuff that needs to be done when complete

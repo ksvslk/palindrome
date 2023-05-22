@@ -17,8 +17,8 @@ class Letter: Cell {
     // MARK: Property references
     private var cellDirector: CellDirector
     var data: LetterData
+    
     // Sounds
-
     let PLACE_LETTER_SOUND_ACTION = SKAction.playSound(soundFile: "place_letter.wav")
     let SWITCH_LETTER_SOUND_ACTION = SKAction.playSound(soundFile: "switch_letters.wav")
     
@@ -112,6 +112,7 @@ class Letter: Cell {
     // MARK: Move action
     func moveLetter(endColor:UIColor = Theme.colorSecondary, durationMultiplier:CGFloat = 1.0, zLayer:CGFloat? = nil)
     {
+
         if let zLayer = zLayer {
             self.color = Theme.colorSecondary
             self.zPosition = zLayer
