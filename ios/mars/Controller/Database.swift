@@ -468,6 +468,20 @@ class Database {
     }
     
     
+    // MARK: Set level as completed
+    func setLevelCompleted()
+    {
+        currentLevel!.progress = Int64(Level.Progress.completed.rawValue)
+        
+        do {
+            try context.save()
+        } catch {
+            print("Error setting level completed: \(error)")
+        }
+        
+    }
+    
+    
     // MARK: Is category rewarded
     func isCategoryRewarded() -> Bool
     {

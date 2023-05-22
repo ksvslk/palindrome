@@ -31,7 +31,6 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         subscribeToSolutionCheckResult()
         subscribeToHintsSuggestion()
         Database.shared.changeGameLevel(nr: 1)
-   
     }
     
     
@@ -40,13 +39,37 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     {
         Database.shared.levelChangedClosure = { [weak self] in
             guard let self = self else { return }
+       
             print("Current level changed to \(String(describing: Database.shared.currentLevel?.levelNumber))")
             loadMainScene()
             let levelNr = Int(Database.shared.currentLevel!.levelNumber)
             askForReview(levelNr: levelNr)
             levelNumberLabel.text = String(levelNr)
             changeProgressBarUI(levelNr: levelNr)
+            if (Database.shared.currentLevel!.progress == Level.Progress.completed.rawValue)
+            {
+                infoLabelButton.alpha = 1.0
+                infoLabelButton.setTitle("tap_to_continue"~, for: .normal)
+                infoLabelButton.isEnabled = true
+                gameScene?.cellDirector.cells.forEach({ cell in
+                    if let letter = cell as? Letter {
+                        letter.color = Theme.successBoxColor
+                    }
+                })
+            }
+            else {
+                StateManager.shared.currentState = .reset
+                hideInfoButton()
+            }
         }
+    }
+    
+    
+    private func hideInfoButton()
+    {
+        infoLabelButton.alpha = 0.0
+        infoLabelButton.titleLabel?.text = String()
+        infoLabelButton.isEnabled = false
     }
     
     
@@ -82,16 +105,20 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
             switch result {
             case .correct:
                 print("Correct solution! (GameViewController)")
-                feedbackGenerator.notificationOccuredCustom(notificationType: .success)
-                StateManager.shared.currentState = .completed
-                gameScene?.winningAnimation {
-                    print("Show now messages of a great win in GameViewController!")
-                    let messages = ["Tap to continue", C.SCORE_TAG, "Great job!"]
-                    self.animateMessageSequence(
-                        messages: messages,
-                        isLastMessageTapToContinue: true
-                    )
+                if (Database.shared.currentLevel!.progress != Level.Progress.completed.rawValue)
+                {
+                    feedbackGenerator.notificationOccuredCustom(notificationType: .success)
+                    gameScene?.winningAnimation {
+                        print("Show now messages of a great win in GameViewController!")
+                        let messages = ["Tap to continue", C.SCORE_TAG, "Great job!"]
+                        self.animateMessageSequence(
+                            messages: messages,
+                            isLastMessageTapToContinue: true
+                        )
+                    }
+                    Database.shared.setLevelCompleted()
                 }
+                StateManager.shared.currentState = .completed
             case .wrong:
                 print("Wrong solution. (GameViewController)")
                 feedbackGenerator.notificationOccuredCustom(notificationType: .error)
@@ -145,13 +172,9 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     
     @IBAction func infoButtonTouch(_ sender: Any) {
         print("infoLabelToucheDown")
-        StateManager.shared.currentState = .reset
         Database.shared.changeToNextLevel()
         let nextLevelSoundAction = SKAction.playSound(soundFile: "level_transition.wav")
         self.gameScene?.run(nextLevelSoundAction)
-        infoLabelButton.alpha = 0.0
-        infoLabelButton.titleLabel?.text = String()
-        infoLabelButton.isEnabled = false
     }
     
     
@@ -346,16 +369,14 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         infoLabelButton.setTitle(nextMessage, for: .normal)
         
         // Define your animation parameters here
-        var duration = 1.0
+        let duration = 1.0
         let appearanceDelay = 0.0
         let disappearanceDelay = 0.4
         if (nextMessage == C.SCORE_TAG)
         {
             //TODO: Ask scores straight from database?
-            var currentNumber = 30
+            let currentNumber = 30
             let targetNumber = 100
-            let animationDuration = duration * 2 // Animation duration in seconds
-            let animationInterval = animationDuration / Double(targetNumber)  // Time interval between number updates
             let tickingSoundAction = SKAction.playSound(soundFile: "score_tick.wav")
             self.gameScene?.run(tickingSoundAction)
             self.infoLabelButton.setTitle("\(currentNumber) of \(targetNumber) points", for: .normal)
@@ -364,14 +385,25 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         UIView.animate(withDuration: duration, delay: appearanceDelay, animations: {
             self.infoLabelButton.alpha = 1.0
         }, completion: { [self] _ in
+            if (StateManager.shared.currentState != GameState.completed)
+            {
+                self.hideInfoButton()
+                return
+            }
             if (isLastMessageTapToContinue && messages.count == 1)
             {
                 infoLabelButton.isEnabled = true
             }
             else {
+                
                 UIView.animate(withDuration: duration, delay: disappearanceDelay, animations: {
                     self.infoLabelButton.alpha = 0.0
                 }, completion: { _ in
+                    if (StateManager.shared.currentState != GameState.completed)
+                    {
+                        self.hideInfoButton()
+                        return
+                    }
                     self.animateMessageSequence(
                         messages: localMessages,
                         isLastMessageTapToContinue: isLastMessageTapToContinue
