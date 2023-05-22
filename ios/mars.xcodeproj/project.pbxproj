@@ -71,7 +71,6 @@
 		B1FC275B2A17D9DA00117C55 /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1FC275A2A17D9DA00117C55 /* Toast.swift */; };
 		B1FC275D2A17E2A100117C55 /* hint_notification.wav in Resources */ = {isa = PBXBuildFile; fileRef = B1FC275C2A17E2A000117C55 /* hint_notification.wav */; };
 		B1FC275F2A180A9200117C55 /* HintViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1FC275E2A180A9200117C55 /* HintViewController.swift */; };
-		B1FC27642A1B523700117C55 /* Confetti.sks in Resources */ = {isa = PBXBuildFile; fileRef = B1FC27622A1B523700117C55 /* Confetti.sks */; };
 		B1FC27652A1B523700117C55 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B1FC27632A1B523700117C55 /* Assets.xcassets */; };
 		B1FC27702A1B6E1800117C55 /* ConfettiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1FC276F2A1B6E1800117C55 /* ConfettiView.swift */; };
 		B1FC27722A1B6E2A00117C55 /* ConfettiType.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1FC27712A1B6E2A00117C55 /* ConfettiType.swift */; };
@@ -158,7 +157,6 @@
 		B1FC275A2A17D9DA00117C55 /* Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
 		B1FC275C2A17E2A000117C55 /* hint_notification.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = hint_notification.wav; sourceTree = "<group>"; };
 		B1FC275E2A180A9200117C55 /* HintViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HintViewController.swift; sourceTree = "<group>"; };
-		B1FC27622A1B523700117C55 /* Confetti.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Confetti.sks; sourceTree = "<group>"; };
 		B1FC27632A1B523700117C55 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B1FC276F2A1B6E1800117C55 /* ConfettiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiView.swift; sourceTree = "<group>"; };
 		B1FC27712A1B6E2A00117C55 /* ConfettiType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiType.swift; sourceTree = "<group>"; };
@@ -298,7 +296,6 @@
 				B1313BBD2A0E66E9005830AB /* NumberLabel.swift */,
 				B1313BB52A0E200B005830AB /* MenuSheetExtensions.swift */,
 				B1FC275E2A180A9200117C55 /* HintViewController.swift */,
-				B1FC27622A1B523700117C55 /* Confetti.sks */,
 				B1FC27632A1B523700117C55 /* Assets.xcassets */,
 			);
 			path = View;
@@ -463,7 +460,6 @@
 				B1313C352A1502C5005830AB /* level_transition.wav in Resources */,
 				B1FC27572A17C61C00117C55 /* hint_revealed.wav in Resources */,
 				B1313C142A14FEA9005830AB /* score_tick.wav in Resources */,
-				B1FC27642A1B523700117C55 /* Confetti.sks in Resources */,
 				B1313C342A1502C5005830AB /* g3_outer.wav in Resources */,
 				B1313BB42A0B6F33005830AB /* game_levels.json in Resources */,
 				B1313C332A1502C5005830AB /* g5_outer.wav in Resources */,
