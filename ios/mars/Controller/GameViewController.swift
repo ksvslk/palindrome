@@ -21,7 +21,6 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     @IBOutlet weak var levelNumberLabel: UILabel!
     @IBOutlet weak var infoLabelButton: UIButton!
     
-    
     private var adManager: AdManager?
     
     // MARK: View did load
@@ -32,7 +31,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         subscribeToSolutionCheckResult()
         subscribeToHintsSuggestion()
         Database.shared.changeGameLevel(nr: 1)
-        
+   
     }
     
     
@@ -160,6 +159,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     @IBAction func onSettingsButtonTap(_ sender: Any) {
         let sheet = UIAlertController.settingsSheet {
             print("onTutorialTap")
+            self.confettiBurst(duration: 2.0, birthRate: 5, yAcceleration: 90)
         } onFeedbackTap: {
             print("onFeedbackTap")
             guard let writeReviewURL = URL(string: C.APP_FEEDBACK_URL)
