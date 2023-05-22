@@ -25,8 +25,8 @@ class Database {
     var currentLevel: Level?
     
     // MARK: Closures for UI layer
-    var levelChangedClosure: (() -> Void)?
-    var solutionCheckResultClosure: ((_ solutionCheckResult:SolutionCheckResult) -> Void)?
+    var levelChangedClosure: ((_ intervals:[Interval]) -> Void)?
+    var solutionCheckResultClosure: ((_ solutionCheckResult:SolutionCheckResult, _ scoreAndBest:(Int,Int)) -> Void)?
     var hintsSuggestionClosure: (() -> Void)?
     
     
@@ -50,7 +50,6 @@ class Database {
     // MARK: Add game levels (1 time)
     func initializeDatabaseWithGameLevels()
     {
-        
         if (maxLevelNumber() >= 100) { return }
         
         let start = CFAbsoluteTimeGetCurrent()
@@ -84,6 +83,8 @@ class Database {
             )
         }
         addInterval(name: C.HINT_INTERVAL, limitCount: 5)
+        addInterval(name: C.SCORES_INTERVAL, limitCount: 6)
+        addInterval(name: C.ADS_INTERVAL, limitCount: 7)
         
         let diff = CFAbsoluteTimeGetCurrent() - start
         print("Inserting all levels to database took \(diff) seconds")
@@ -147,6 +148,7 @@ class Database {
         )
         level.author = author
         level.categoryRewarded = false
+        level.score = Int64(level.shuffledPuzzle.count * C.SCORE_LETTER_MULTIPLIER)
         level.bestScore = Int64(level.shuffledPuzzle.count * C.SCORE_LETTER_MULTIPLIER)
         level.letters = NSSet(array: level.shuffledPuzzle.enumerated().map { (index, char) in
             let letter = LetterData(context: context)
@@ -171,34 +173,23 @@ class Database {
     }
     
     
-    func resetLevel()
-    {
-        currentLevel!.progress = Int64(Level.Progress.in_progress.rawValue)
-        currentLevel!.letters = NSSet(array: currentLevel!.shuffledPuzzle.enumerated().map { (index, char) in
-            let letter = LetterData(context: context)
-            letter.letter = String(char)
-            letter.homeIndex = Int64(index) + 1
-            return letter
-        })
-        
-        do {
-            try context.save()
-        } catch {
-            print("Error saving item: \(error)")
-        }
-    }
-    
-    
+    // MARK: Change to next level
     func changeToNextLevel()
     {
-        resetLevel()
-        let nextLevel = currentLevel!.levelNumber + 1
-        changeGameLevel(nr: Int(nextLevel))
+        let nextLevel = Int(currentLevel!.levelNumber + 1)
+        if (nextLevel <= getAllGameLevels().count)
+        {
+            changeLevel(to: Int(nextLevel), withProgressReset: true)
+        }
+        else {
+            print("You finished the game!")
+        }
+        
     }
     
     
     // MARK: Increase interval -> result
-    private func updateCurrentCount(forName name: String) -> Bool {
+    private func updateCurrentCount(forName name: String, by addition: Int64 = 1) -> Bool {
         var result = false
         
         // Get the managed object context
@@ -216,7 +207,7 @@ class Database {
                 
                 if let object = objects.first {
                     // Increase the currentCount
-                    object.currentCount += 1
+                    object.currentCount += addition
                     
                     // Compare with the limitCount
                     if object.currentCount == object.limitCount {
@@ -241,34 +232,103 @@ class Database {
     
     
     // MARK: Change level
-    func changeGameLevel(nr: Int)
+    func changeLevel(to nextLevel:Int = -1, toLatest loadLatestLevel:Bool = false, withProgressReset reset:Bool = false)
     {
-        let request: NSFetchRequest<Level> = Level.fetchRequest()
-        request.predicate = NSPredicate(format: "levelNumber = %@", String(nr))
-        print("CHANGE LEVEL TO: \(nr)")
-        var fetchedLevels: [Level] = []
-        do {
-            fetchedLevels = try context.fetch(request)
-        } catch {
-            print("Error fetching level")
-        }
+        var intervals:[Interval] = []
         
-        if !fetchedLevels.isEmpty {
-            currentLevel = fetchedLevels.first
-            switch currentLevel!.levelProgress {
-            case .in_progress:
-                StateManager.shared.currentState = .play
-            case .completed:
-                StateManager.shared.currentState = .completed
-            case .locked:
-                fatalError("Level progress should not be .locked here.")
+        context.performAndWait {
+            let intervalsRequest: NSFetchRequest<Interval> = Interval.fetchRequest()
+            intervalsRequest.fetchLimit = 0
+            
+            do {
+                
+                // reset hint intervals, and add +1 for other intervals
+                intervals = try context.fetch(intervalsRequest)
+                for interval in intervals {
+                    if (interval.name == C.HINT_INTERVAL) {
+                        interval.currentCount = 0
+                    }
+                    else {
+                        if (interval.currentCount >= interval.limitCount)
+                        {
+                            interval.currentCount = 0
+                        }
+                        else {
+                            interval.currentCount += 1
+                        }
+                    }
+                }
+                
+                
+                // reset letters info and set progress to .in_progress
+                if (reset)
+                {
+                    currentLevel!.progress = Int64(Level.Progress.in_progress.rawValue)
+                    currentLevel!.letters = NSSet(array: currentLevel!.shuffledPuzzle.enumerated().map { (index, char) in
+                        let letter = LetterData(context: context)
+                        letter.letter = String(char)
+                        letter.homeIndex = Int64(index) + 1
+                        return letter
+                    })
+                }
+                
+                // load latest level or the level specified in the parameter nextLevel
+                if (loadLatestLevel)
+                {
+                    let latestLevelRequest: NSFetchRequest<Level> = Level.fetchRequest()
+                    latestLevelRequest.predicate = NSPredicate(format: "timeModified == max(timeModified)")
+                    let results = try context.fetch(latestLevelRequest)
+                    if let latestLevel = results.first {
+                        currentLevel = latestLevel
+                    } else {
+                        latestLevelRequest.predicate = NSPredicate(format: "levelNumber = %@", String(1))
+                        latestLevelRequest.fetchLimit = 1
+                        let firstLevelResults = try context.fetch(latestLevelRequest)
+                        if let firstLevel = firstLevelResults.first {
+                            currentLevel = firstLevel
+                        }
+                        else {
+                            fatalError("Failing to fetch even first level.")
+                        }
+                    }
+                }
+                else {
+                    let nextLevelRequest: NSFetchRequest<Level> = Level.fetchRequest()
+                    nextLevelRequest.predicate = NSPredicate(format: "levelNumber = %@", String(nextLevel))
+                    nextLevelRequest.fetchLimit = 1
+                    let results = try context.fetch(nextLevelRequest)
+                    if let chosenLevel = results.first {
+                        currentLevel = chosenLevel
+                        currentLevel?.score = Int64(currentLevel!.shuffledPuzzle.count * C.SCORE_LETTER_MULTIPLIER)
+                    } else {
+                        fatalError("Could not set next level nr \(nextLevel)")
+                    }
+                }
+                
+                // change the max time to the current level
+                currentLevel?.timeModified = Date.init(timeIntervalSinceNow: .zero)
+                
+                // set game state based on progress
+                switch currentLevel!.levelProgress {
+                case .in_progress:
+                    StateManager.shared.currentState = .play
+                case .completed:
+                    StateManager.shared.currentState = .completed
+                case .locked:
+                    fatalError("Level progress should not be .locked here.")
+                }
+                
+                try context.save()
+                
+                // execute closures
+                levelChangedClosure?(intervals)
+                checkSolutionCorrectness()
+                
+            } catch {
+                // Handle the error
+                print("Error: \(error)")
             }
-            levelChangedClosure?()
-            checkSolutionCorrectness()
         }
-        
-        // TODO: When level has -1 columns (brand new level), we should also set the columns in the same transaction.
-        
     }
     
     
@@ -336,6 +396,7 @@ class Database {
     func changeFriendIndex(letter: LetterData, newFriendIndex: Int64)
     {
         letter.friendIndex = newFriendIndex
+        currentLevel?.timeModified = Date.init(timeIntervalSinceNow: .zero)
         do {
             try context.save()
         } catch {
@@ -358,6 +419,7 @@ class Database {
         bottom.friendIndex = tempTopFriendIndex
         top.homeIndex = bottom.homeIndex
         bottom.homeIndex = tempTopHomeIndex
+        currentLevel?.timeModified = Date.init(timeIntervalSinceNow: .zero)
         
         do {
             try context.save()
@@ -388,25 +450,33 @@ class Database {
         }
         
         let result = SolutionChecker.getGuessResult(guess: letters, solutions: currentLevel!.solutionsArr)
-      
-        if (result == SolutionCheckResult.correct)
-        {
-            //TODO: setCurrentLevelCompleted and other stuff that needs to be done when complete
-        }
-       
-        solutionCheckResultClosure?(result)
+        solutionCheckResultClosure?(result, (Int(currentLevel!.score), Int(currentLevel!.bestScore)))
+        
         if (result == SolutionCheckResult.bogus_palindrome || result == SolutionCheckResult.wrong)
         {
             let hintsIntervalReached = updateCurrentCount(forName: C.HINT_INTERVAL)
-            if (hintsIntervalReached) { hintsSuggestionClosure?() }
+            if (hintsIntervalReached) {
+                hintsSuggestionClosure?()
+            }
         }
         
     }
     
     
-    private func setCurrentLevelCompleted()
+    func decreaseScore()
     {
-        //TODO: Object change and save context or query like save?
+        let currentScore = Int(currentLevel!.score)
+        let pointsToSubtract = (currentLevel!.levelNumber <= 100) ?
+            (Int(currentLevel!.levelNumber) * 100 / 20) :
+            (currentLevel!.shuffledPuzzle.count * 100 / 20)
+        let newScore = (currentScore - pointsToSubtract < 0) ? 0 : currentScore - pointsToSubtract
+        currentLevel!.score = Int64(newScore)
+        
+        do {
+            try context.save()
+        } catch {
+            print("Error changing score: \(error)")
+        }
     }
     
     
@@ -472,7 +542,6 @@ class Database {
     func setLevelCompleted()
     {
         currentLevel!.progress = Int64(Level.Progress.completed.rawValue)
-        
         do {
             try context.save()
         } catch {

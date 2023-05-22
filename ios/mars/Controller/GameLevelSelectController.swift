@@ -59,7 +59,7 @@ extension GameLevelSelectController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         print("Collection view at row \(collectionView.tag) selected level nr \(indexPath.item + 1)")
         dismiss(animated: true)
-        Database.shared.changeGameLevel(nr: indexPath.item + 1)
+        Database.shared.changeLevel(to: indexPath.item + 1)
     }
 }
 

@@ -20,5 +20,9 @@ extension Interval {
     @NSManaged public var limitCount: Int64
     @NSManaged public var name: String
     @NSManaged public var timeStamp: Date?
+    
+    public override var debugDescription: String {
+        return "\(name) - \(currentCount) of \(limitCount)"
+    }
 
 }

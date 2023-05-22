@@ -49,6 +49,8 @@ struct C {
     
     // Intervals
     static let HINT_INTERVAL = "hint_interval"
+    static let ADS_INTERVAL = "ads_interval"
+    static let SCORES_INTERVAL = "scores_interval"
     
 }
 

@@ -23,6 +23,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     
     private var adManager: AdManager?
     
+    
     // MARK: View did load
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,16 +31,16 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         subscribeToLevelChange()
         subscribeToSolutionCheckResult()
         subscribeToHintsSuggestion()
-        Database.shared.changeGameLevel(nr: 1)
+        Database.shared.changeLevel(toLatest: true)
     }
     
     
     // MARK: Listen level changes
     private func subscribeToLevelChange()
     {
-        Database.shared.levelChangedClosure = { [weak self] in
+        Database.shared.levelChangedClosure = { [weak self] intervals in
             guard let self = self else { return }
-       
+            print("Intervals: \(intervals)")
             print("Current level changed to \(String(describing: Database.shared.currentLevel?.levelNumber))")
             loadMainScene()
             let levelNr = Int(Database.shared.currentLevel!.levelNumber)
@@ -100,8 +101,9 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     {
         let feedbackGenerator = UINotificationFeedbackGenerator()
         
-        Database.shared.solutionCheckResultClosure = { [weak self] result in
+        Database.shared.solutionCheckResultClosure = { [weak self] result, scores in
             guard let self = self else { return }
+           
             switch result {
             case .correct:
                 print("Correct solution! (GameViewController)")
@@ -112,6 +114,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
                         print("Show now messages of a great win in GameViewController!")
                         let messages = ["Tap to continue", C.SCORE_TAG, "Great job!"]
                         self.animateMessageSequence(
+                            scores: scores,
                             messages: messages,
                             isLastMessageTapToContinue: true
                         )
@@ -119,6 +122,10 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
                     Database.shared.setLevelCompleted()
                 }
                 StateManager.shared.currentState = .completed
+                if (scores.0 == scores.1)
+                {
+                    confettiBurst()
+                }
             case .wrong:
                 print("Wrong solution. (GameViewController)")
                 feedbackGenerator.notificationOccuredCustom(notificationType: .error)
@@ -362,7 +369,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     
     
     // MARK: Animate messages
-    private func animateMessageSequence(messages: [String], isLastMessageTapToContinue:Bool = false) {
+    private func animateMessageSequence(scores: (Int, Int) = (-1,-1), messages: [String], isLastMessageTapToContinue:Bool = false) {
         var localMessages = messages
         guard let nextMessage = localMessages.popLast() else { return }
         infoLabelButton.alpha = 0.0
@@ -374,9 +381,8 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         let disappearanceDelay = 0.4
         if (nextMessage == C.SCORE_TAG)
         {
-            //TODO: Ask scores straight from database?
-            let currentNumber = 30
-            let targetNumber = 100
+            let currentNumber = scores.0
+            let targetNumber = scores.1
             let tickingSoundAction = SKAction.playSound(soundFile: "score_tick.wav")
             self.gameScene?.run(tickingSoundAction)
             self.infoLabelButton.setTitle("\(currentNumber) of \(targetNumber) points", for: .normal)
@@ -405,6 +411,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
                         return
                     }
                     self.animateMessageSequence(
+                        scores: scores,
                         messages: localMessages,
                         isLastMessageTapToContinue: isLastMessageTapToContinue
                     )
