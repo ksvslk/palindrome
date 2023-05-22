@@ -22,6 +22,10 @@ class AdManager: NSObject, GADFullScreenContentDelegate {
         }
     }
     
+    private let retryInterval: TimeInterval = 5 // Retry interval in seconds
+    private let maxRetryInterval: TimeInterval = 300 // Maximum retry interval in seconds
+    private var currentRetryInterval: TimeInterval = 0
+    private var retryTimer: Timer?
     
     override init() {
         super.init()
@@ -36,15 +40,35 @@ class AdManager: NSObject, GADFullScreenContentDelegate {
     
     func loadRewardedAd() {
         let request = GADRequest()
-        GADRewardedAd.load(withAdUnitID: "ca-app-pub-3940256099942544/1712485313", request: request, completionHandler: { [self] ad, error in
+        
+        GADRewardedAd.load(withAdUnitID: "ca-app-pub-3940256099942544/1712485313", request: request) { [weak self] ad, error in
+            guard let self = self else { return }
+            
             if let error = error {
                 print("Failed to load rewarded ad with error: \(error.localizedDescription)")
+                
+                // Retry loading the ad with exponential backoff until the maximum retry interval is reached
+                if self.currentRetryInterval < self.maxRetryInterval {
+                    // Schedule the next retry attempt
+                    self.retryTimer = Timer.scheduledTimer(withTimeInterval: self.retryInterval, repeats: false) { [weak self] _ in
+                        self?.loadRewardedAd()
+                        // Update the current retry interval
+                        self?.currentRetryInterval += self?.retryInterval ?? 0
+                    }
+                }
+                
                 return
             }
-            rewardedAd = ad
-            adAvailable = true
+            
+            // Ad loaded successfully, reset the retry interval and cancel any pending retry timer
+            self.currentRetryInterval = 0
+            self.retryTimer?.invalidate()
+            
+            self.rewardedAd = ad
+            self.adAvailable = true
+            
             print("Rewarded ad loaded.")
-        })
+        }
     }
     
     
