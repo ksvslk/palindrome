@@ -37,6 +37,7 @@ extension UIViewController {
                 cell.contents = confettiType.image.cgImage
                 cell.emissionRange = CGFloat(Double.pi)
                 cell.lifetime = 10
+                cell.scale = 0.75
                 cell.spin = 4
                 cell.spinRange = 8
                 cell.velocityRange = 100

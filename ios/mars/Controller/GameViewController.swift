@@ -119,7 +119,8 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
                             isLastMessageTapToContinue: true
                         )
                     }
-                    Database.shared.setLevelCompleted()
+                    Database.shared.setLevelCompletedImmediately()
+                    
                 }
                 StateManager.shared.currentState = .completed
                 if (scores.0 == scores.1)

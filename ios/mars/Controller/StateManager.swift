@@ -18,7 +18,7 @@ class StateManager {
          }
          set(newState) {
              guard isTransitionAllowed(from: _currentState, to: newState) else {
-                 print("Transition not allowed from \(currentState) to \(newState)")
+                // print("Transition not allowed from \(currentState) to \(newState)")
                  return // transition not allowed, do nothing
              }
              print("Transitioning from \(_currentState) to \(newState) (StateManager)")

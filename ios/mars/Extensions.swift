@@ -42,6 +42,12 @@ extension String {
         return testString.count >= 3 && testString == String(testString.reversed())
     }
     
+    
+    // MARK: Get score
+    func maxScore() -> Int64 {
+        return Int64(self.count * C.SCORE_LETTER_MULTIPLIER)
+    }
+    
 }
 
 
@@ -96,7 +102,7 @@ extension UIBarButtonItem {
     
     func addBadge(number: Int, withOffset offset: CGPoint = CGPoint.zero, andColor color: UIColor = UIColor.red, andFilled filled: Bool = true) {
         guard let view = self.value(forKey: "view") as? UIView else { return }
-      
+        
         badgeLayer?.removeFromSuperlayer()
         
         // Initialize Badge
@@ -152,4 +158,5 @@ extension UIViewController {
         }, completion: {(isCompleted) in
             toastLabel.removeFromSuperview()
         })
-    } }
+    }
+}

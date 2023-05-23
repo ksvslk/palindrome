@@ -276,7 +276,6 @@
 				B1E8975A29EC5002001B942F /* Assets.xcassets */,
 				B1313BB32A0B6F33005830AB /* game_levels.json */,
 				B144A88229FA66B40067A080 /* Model.xcdatamodeld */,
-				B1FC275A2A17D9DA00117C55 /* Toast.swift */,
 			);
 			path = mars;
 			sourceTree = "<group>";
@@ -296,6 +295,7 @@
 				B1313BBD2A0E66E9005830AB /* NumberLabel.swift */,
 				B1313BB52A0E200B005830AB /* MenuSheetExtensions.swift */,
 				B1FC275E2A180A9200117C55 /* HintViewController.swift */,
+				B1FC275A2A17D9DA00117C55 /* Toast.swift */,
 				B1FC27632A1B523700117C55 /* Assets.xcassets */,
 			);
 			path = View;

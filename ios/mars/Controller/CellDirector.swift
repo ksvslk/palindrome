@@ -57,18 +57,6 @@ class CellDirector {
     }
     
     
-    private func increaseMistakesIfNeeded(letter:Letter, slot:Slot?)
-    {
-        if (slot != nil)
-        {
-            if (letter.data.letter != slot?.actualChar)
-            {
-                Database.shared.decreaseScore()
-            }
-        }
-       
-    }
-    
     private func getMoveResult(letter:Letter, closestCell:Cell) -> CollisionResult
     {
         switch closestCell.cellType {
@@ -78,7 +66,6 @@ class CellDirector {
                 print("CellDirector: switchLetterPositions(letter, closestCell)")
                 let bottomLetter = closestCell as! Letter
                 switchLetterPositions(top: letter, bottom: bottomLetter)
-                increaseMistakesIfNeeded(letter: letter, slot: bottomLetter.friend as? Slot)
                 return CollisionResult.switching
             }
         case CellType.slot:
@@ -86,7 +73,6 @@ class CellDirector {
             {
                 print("CellDirector: placeLetterInEmptyBox(letter, closestCell)")
                 placeLetterInEmptyBox(letter: letter, slot: closestCell as! Slot)
-                increaseMistakesIfNeeded(letter: letter, slot: closestCell as? Slot)
                 return CollisionResult.landing
             }
             else if (closestCell.friend == letter) {
@@ -197,7 +183,7 @@ class CellDirector {
         )
         
         letter.friend?.friend = nil
-        slot.friend = letter
+        slot.setFriendWithoutDidSet(letter: letter)
         letter.friend = slot
         letter.currentPosition = slot.homePosition
     }

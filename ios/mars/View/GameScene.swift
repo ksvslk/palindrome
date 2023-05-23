@@ -285,7 +285,7 @@ class GameScene: SKScene {
                             rowIndex: rowIndex,
                             colIndex: colIndex
                         )
-                        slot.friend = letter
+                        slot.setFriendWithoutDidSet(letter: letter, ignoreScoreChange: true)
                         letter.friend = slot
                         letter.color = Theme.colorSecondary
                         

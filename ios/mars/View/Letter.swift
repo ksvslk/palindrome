@@ -14,7 +14,7 @@ class Letter: Cell {
         get { return CellType.letter }
         set {}
     }
-    // MARK: Property references
+
     private var cellDirector: CellDirector
     var data: LetterData
     
@@ -38,7 +38,6 @@ class Letter: Cell {
         letterLabel.fontColor = Theme.colorOnPrimary
         isUserInteractionEnabled = true
         addChild(letterLabel)
-        
     }
     
     
@@ -147,7 +146,8 @@ class Letter: Cell {
         self.run(colorAction)
     }
 
-    
+
+    // MARK: Play sound effect
     private func playSound(collisionResult: CollisionResult)
     {
         if (UserDefaults.standard.bool(forKey: C.SOUND_ON))
@@ -164,6 +164,7 @@ class Letter: Cell {
     }
     
     
+    // MARK: Trigger haptic fb.
     private func playHapticFeedback(collisionResult: CollisionResult)
     {
         switch collisionResult {

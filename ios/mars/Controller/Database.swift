@@ -143,13 +143,14 @@ class Database {
         guard !palindrome.isEmpty || !solutionsToHints.isEmpty else { return }
         let level = Level(context: context)
         level.levelNumber = Int64(levelNr)
+     
         level.shuffledPuzzle = Shuffler.getShuffledSolution(
             solutionsWithWhiteSpace: Array(solutionsToHints.keys)
         )
         level.author = author
         level.categoryRewarded = false
-        level.score = Int64(level.shuffledPuzzle.count * C.SCORE_LETTER_MULTIPLIER)
-        level.bestScore = Int64(level.shuffledPuzzle.count * C.SCORE_LETTER_MULTIPLIER)
+        level.score = level.shuffledPuzzle.maxScore()
+        level.bestScore = 0
         level.letters = NSSet(array: level.shuffledPuzzle.enumerated().map { (index, char) in
             let letter = LetterData(context: context)
             letter.letter = String(char)
@@ -263,7 +264,13 @@ class Database {
                 // reset letters info and set progress to .in_progress
                 if (reset)
                 {
+                    currentLevel!.score = currentLevel!.shuffledPuzzle.maxScore()
                     currentLevel!.progress = Int64(Level.Progress.in_progress.rawValue)
+                    currentLevel!.shuffledPuzzle = Shuffler.getShuffledSolution(
+                        solutionsWithWhiteSpace: currentLevel!.solutionsArr.map({ solution in
+                            solution.palindrome
+                        })
+                    )
                     currentLevel!.letters = NSSet(array: currentLevel!.shuffledPuzzle.enumerated().map { (index, char) in
                         let letter = LetterData(context: context)
                         letter.letter = String(char)
@@ -299,7 +306,6 @@ class Database {
                     let results = try context.fetch(nextLevelRequest)
                     if let chosenLevel = results.first {
                         currentLevel = chosenLevel
-                        currentLevel?.score = Int64(currentLevel!.shuffledPuzzle.count * C.SCORE_LETTER_MULTIPLIER)
                     } else {
                         fatalError("Could not set next level nr \(nextLevel)")
                     }
@@ -330,7 +336,7 @@ class Database {
             }
         }
     }
-    
+ 
     
     // MARK: Get max level number
     func maxLevelNumber() -> Int {
@@ -450,7 +456,7 @@ class Database {
         }
         
         let result = SolutionChecker.getGuessResult(guess: letters, solutions: currentLevel!.solutionsArr)
-        solutionCheckResultClosure?(result, (Int(currentLevel!.score), Int(currentLevel!.bestScore)))
+        solutionCheckResultClosure?(result, (Int(currentLevel!.score), Int(currentLevel!.shuffledPuzzle.maxScore())))
         
         if (result == SolutionCheckResult.bogus_palindrome || result == SolutionCheckResult.wrong)
         {
@@ -463,14 +469,13 @@ class Database {
     }
     
     
+    // MARK: Decrease score
     func decreaseScore()
     {
-        let currentScore = Int(currentLevel!.score)
-        let pointsToSubtract = (currentLevel!.levelNumber <= 100) ?
-            (Int(currentLevel!.levelNumber) * 100 / 20) :
-            (currentLevel!.shuffledPuzzle.count * 100 / 20)
-        let newScore = (currentScore - pointsToSubtract < 0) ? 0 : currentScore - pointsToSubtract
-        currentLevel!.score = Int64(newScore)
+        let currentScore = currentLevel!.score
+        let pointsToSubtract = currentLevel!.shuffledPuzzle.maxScore() / 10
+        let newScore = (currentScore - pointsToSubtract < 0) ? 0 : currentScore - Int64(pointsToSubtract)
+        currentLevel!.score = newScore
         
         do {
             try context.save()
@@ -539,8 +544,11 @@ class Database {
     
     
     // MARK: Set level as completed
-    func setLevelCompleted()
+    func setLevelCompletedImmediately()
     {
+        currentLevel!.bestScore = max(currentLevel!.score, currentLevel!.bestScore)
+        print("Best score: \(currentLevel!.bestScore)")
+        //TODO: Submit score to leaderboard?
         currentLevel!.progress = Int64(Level.Progress.completed.rawValue)
         do {
             try context.save()
