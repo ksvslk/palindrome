@@ -65,7 +65,8 @@ extension UIAlertController {
         onUnlimitedLettersPurchaseTap: @escaping () -> Void,
         onUnlimitedHintsPurchaseTap: @escaping () -> Void,
         onRemoveIntermediateAdsPurchaseTap: @escaping () -> Void,
-        onAllInPackPurchaseTap: @escaping () -> Void
+        onAllInPackPurchaseTap: @escaping () -> Void,
+        products:[String:ProductInfo]
     ) -> ReactiveAlertController {
 
         let alertController =
@@ -98,10 +99,11 @@ extension UIAlertController {
         }
         hintRewardedAdsAction.accessibilityIdentifier = "watch_hint_ad"
         hintRewardedAdsAction.setValue(isHintsPremium ? premiumIcon : videoCircleImage, forKey: "image")
-    
+
         
         // Purchase letters button
-        let unlimitedLettersPurchaseAction = UIAlertAction(title: "purchase_letters"~, style: .default) { (action:UIAlertAction) in
+        let purchaseLettersTitle = products[C.PURCHASE_LETTERS_ID]?.localizedTitleWithPrice ?? "-"
+        let unlimitedLettersPurchaseAction = UIAlertAction(title: purchaseLettersTitle, style: .default) { (action:UIAlertAction) in
             onUnlimitedLettersPurchaseTap()
         }
         
@@ -113,21 +115,24 @@ extension UIAlertController {
         
         
         // Purchase hints button
-        let unlimitedHintsPurchaseAction = UIAlertAction(title: "purchase_hints"~, style: .default) { (action:UIAlertAction) in
+        let purchaseHintsTitle = products[C.PURCHASE_HINTS_ID]?.localizedTitleWithPrice ?? "-"
+        let unlimitedHintsPurchaseAction = UIAlertAction(title: purchaseHintsTitle, style: .default) { (action:UIAlertAction) in
             onUnlimitedHintsPurchaseTap()
         }
         unlimitedHintsPurchaseAction.setValue(dollarSignImage, forKey: "image")
         
         
         // Purchase no ads button
-        let removeIntermediateAdsPurchaseAction = UIAlertAction(title: "purchase_no_ads"~, style: .default) { (action:UIAlertAction) in
+        let purchaseNoAdsTitle = products[C.PURCHASE_NO_ADS_ID]?.localizedTitleWithPrice ?? "-"
+        let removeIntermediateAdsPurchaseAction = UIAlertAction(title: purchaseNoAdsTitle, style: .default) { (action:UIAlertAction) in
             onRemoveIntermediateAdsPurchaseTap()
         }
         removeIntermediateAdsPurchaseAction.setValue(dollarSignImage, forKey: "image")
         
         
         // Purchase all-in button
-        let allInPackPurchaseAction = UIAlertAction(title: "purchase_all"~, style: .default) { (action:UIAlertAction) in
+        let purchaseAllTitle = products[C.PURCHASE_ALL_ID]?.localizedTitleWithPrice ?? "-"
+        let allInPackPurchaseAction = UIAlertAction(title: purchaseAllTitle, style: .default) { (action:UIAlertAction) in
             onAllInPackPurchaseTap()
         }
         allInPackPurchaseAction.setValue(dollarSignImage, forKey: "image")

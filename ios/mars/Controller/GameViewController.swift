@@ -23,7 +23,6 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     
     private var adManager: AdManager?
     
-    
     // MARK: View did load
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,6 +33,15 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         Database.shared.changeLevel(toLatest: true)
     }
     
+    // MARK: Show intermediate ads
+    private func showIntermediateAds(adsInterval:Interval)
+    {
+        if (adsInterval.currentCount == adsInterval.limitCount)
+        {
+            adManager?.show(viewController: self, rewardType: Reward.none)
+        }
+    }
+    
     
     // MARK: Listen level changes
     private func subscribeToLevelChange()
@@ -41,6 +49,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         Database.shared.levelChangedClosure = { [weak self] intervals in
             guard let self = self else { return }
             print("Intervals: \(intervals)")
+          
             print("Current level changed to \(String(describing: Database.shared.currentLevel?.levelNumber))")
             loadMainScene()
             let levelNr = Int(Database.shared.currentLevel!.levelNumber)
@@ -233,6 +242,10 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     
     // MARK: TAP Hints
     @IBAction func onHintsButtonTap(_ sender: Any) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+            return
+        }
+        
         hintToolbarItem.removeBadge()
         let sheet = ReactiveAlertController.hintsSheet(
             isHintsPremium: Database.shared.isCategoryRewarded(),
@@ -266,13 +279,15 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
                 }
             },
             onUnlimitedLettersPurchaseTap: {
-                
+                appDelegate.purchaseManager.purchaseProduct(C.PURCHASE_LETTERS_ID)
             }, onUnlimitedHintsPurchaseTap: {
-                
+                appDelegate.purchaseManager.purchaseProduct(C.PURCHASE_HINTS_ID)
             }, onRemoveIntermediateAdsPurchaseTap: {
-                
+                appDelegate.purchaseManager.purchaseProduct(C.PURCHASE_NO_ADS_ID)
             }, onAllInPackPurchaseTap: {
-            })
+                appDelegate.purchaseManager.purchaseProduct(C.PURCHASE_ALL_ID)
+            },
+            products: appDelegate.purchaseManager.getProductInfo())
         sheet.updateAdsActions(adAvailable: adManager!.adAvailable)
         
         adManager?.delegate = sheet

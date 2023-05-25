@@ -13,13 +13,17 @@ import GoogleMobileAds
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
-    
+    var purchaseManager: PurchaseManager!
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         print("application")
         print("Application directory: \(NSHomeDirectory())")
         GADMobileAds.sharedInstance().start(completionHandler: nil)
+        
+        // Initialize the PurchaseManager
+        purchaseManager = PurchaseManager()
+        purchaseManager.requestProducts(completion: nil)
         
         let userDefaults = UserDefaults.standard
         userDefaults.register(
@@ -31,6 +35,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         logInToGameCenter()
         Database.shared.initializeDatabaseWithGameLevels()
+        
+        
         return true
     }
     

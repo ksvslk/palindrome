@@ -7,17 +7,13 @@
 
 import Foundation
 import UIKit
+import StoreKit
 
-class ReactiveAlertController: UIAlertController, AdAvailabilityDelegate, PurchasesDelegate {
-    
+class ReactiveAlertController: UIAlertController, AdAvailabilityDelegate {
+
     var premiumHint: Bool = false
     var premiumLetter: Bool = false
-    
 
-    func purchasesChanged(ownedProducts: [String]) {
-        print("purchasesChanged: \(ownedProducts)")
-    }
-    
     
     func adAvailabilityDidChange(isAvailable: Bool) {
         // Update the actions of the UIAlertController here
@@ -61,7 +57,6 @@ class ReactiveAlertController: UIAlertController, AdAvailabilityDelegate, Purcha
             hintAdsAction.isEnabled = true
         }
     }
-    
     
     
     func updateLettersToPremium()

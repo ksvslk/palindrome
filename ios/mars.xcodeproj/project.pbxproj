@@ -45,7 +45,6 @@
 		B16F207229FBBB2400E8DFCE /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = B16F207129FBBB2400E8DFCE /* Actions.sks */; };
 		B18EA83C2A1637CB00514E47 /* AdAvailabilityDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B18EA83B2A1637CB00514E47 /* AdAvailabilityDelegate.swift */; };
 		B18EA83E2A16398200514E47 /* ReactiveAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B18EA83D2A16398200514E47 /* ReactiveAlertController.swift */; };
-		B18EA8422A16759800514E47 /* PurchasesDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B18EA8412A16759800514E47 /* PurchasesDelegate.swift */; };
 		B1B33A8429FDB66D00DFA59F /* Interval+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B33A7C29FDB66D00DFA59F /* Interval+CoreDataClass.swift */; };
 		B1B33A8529FDB66D00DFA59F /* Interval+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B33A7D29FDB66D00DFA59F /* Interval+CoreDataProperties.swift */; };
 		B1B33A8629FDB66D00DFA59F /* Level+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B33A7E29FDB66D00DFA59F /* Level+CoreDataClass.swift */; };
@@ -74,6 +73,7 @@
 		B1FC27652A1B523700117C55 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B1FC27632A1B523700117C55 /* Assets.xcassets */; };
 		B1FC27702A1B6E1800117C55 /* ConfettiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1FC276F2A1B6E1800117C55 /* ConfettiView.swift */; };
 		B1FC27722A1B6E2A00117C55 /* ConfettiType.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1FC27712A1B6E2A00117C55 /* ConfettiType.swift */; };
+		B1FC277F2A1DF3D700117C55 /* PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1FC277E2A1DF3D700117C55 /* PurchaseManager.swift */; };
 		B1FE7A4D29F80E82007D7954 /* CellDirector.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1FE7A4C29F80E82007D7954 /* CellDirector.swift */; };
 /* End PBXBuildFile section */
 
@@ -129,7 +129,6 @@
 		B16F207129FBBB2400E8DFCE /* Actions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Actions.sks; sourceTree = "<group>"; };
 		B18EA83B2A1637CB00514E47 /* AdAvailabilityDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdAvailabilityDelegate.swift; sourceTree = "<group>"; };
 		B18EA83D2A16398200514E47 /* ReactiveAlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactiveAlertController.swift; sourceTree = "<group>"; };
-		B18EA8412A16759800514E47 /* PurchasesDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchasesDelegate.swift; sourceTree = "<group>"; };
 		B1B33A7C29FDB66D00DFA59F /* Interval+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Interval+CoreDataClass.swift"; sourceTree = "<group>"; };
 		B1B33A7D29FDB66D00DFA59F /* Interval+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Interval+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		B1B33A7E29FDB66D00DFA59F /* Level+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Level+CoreDataClass.swift"; sourceTree = "<group>"; };
@@ -160,6 +159,7 @@
 		B1FC27632A1B523700117C55 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B1FC276F2A1B6E1800117C55 /* ConfettiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiView.swift; sourceTree = "<group>"; };
 		B1FC27712A1B6E2A00117C55 /* ConfettiType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiType.swift; sourceTree = "<group>"; };
+		B1FC277E2A1DF3D700117C55 /* PurchaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseManager.swift; sourceTree = "<group>"; };
 		B1FE7A4C29F80E82007D7954 /* CellDirector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellDirector.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -261,7 +261,6 @@
 				B1313C3B2A155395005830AB /* Resources */,
 				B13966B42A082D0B00EF75A0 /* Sounds */,
 				B1F5CA2029FAED5E0061FA65 /* Controller */,
-				B1F5CA1F29FAED470061FA65 /* DTO */,
 				B1F5CA1D29FAECB70061FA65 /* Other */,
 				B1F5CA1C29FAEC830061FA65 /* Enum */,
 				B141D53D29F6817700FE9B39 /* Fonts */,
@@ -325,13 +324,6 @@
 			path = Other;
 			sourceTree = "<group>";
 		};
-		B1F5CA1F29FAED470061FA65 /* DTO */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = DTO;
-			sourceTree = "<group>";
-		};
 		B1F5CA2029FAED5E0061FA65 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
@@ -343,7 +335,7 @@
 				B18EA83B2A1637CB00514E47 /* AdAvailabilityDelegate.swift */,
 				B1313BD32A135FAD005830AB /* StateManager.swift */,
 				B1313C512A1620EB005830AB /* AdManager.swift */,
-				B18EA8412A16759800514E47 /* PurchasesDelegate.swift */,
+				B1FC277E2A1DF3D700117C55 /* PurchaseManager.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -515,12 +507,12 @@
 				B1B33A8729FDB66D00DFA59F /* Level+CoreDataProperties.swift in Sources */,
 				B144A88429FA66B40067A080 /* Model.xcdatamodeld in Sources */,
 				B1B33A8B29FDB66D00DFA59F /* Solution+CoreDataProperties.swift in Sources */,
+				B1FC277F2A1DF3D700117C55 /* PurchaseManager.swift in Sources */,
 				B1313BB62A0E200B005830AB /* MenuSheetExtensions.swift in Sources */,
 				B1F6B12D29F8208300EEEC17 /* CellType.swift in Sources */,
 				B1313BAA2A0ABEB1005830AB /* GameLevelSelectController.swift in Sources */,
 				B1B33A8629FDB66D00DFA59F /* Level+CoreDataClass.swift in Sources */,
 				B1313BD22A135D6F005830AB /* GameState.swift in Sources */,
-				B18EA8422A16759800514E47 /* PurchasesDelegate.swift in Sources */,
 				B1D2710229EDB24500E01AC8 /* GameField.swift in Sources */,
 				B13966BA2A08300800EF75A0 /* CollisionResult.swift in Sources */,
 				B1313BBE2A0E66E9005830AB /* NumberLabel.swift in Sources */,

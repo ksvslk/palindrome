@@ -42,9 +42,12 @@ struct C {
     static let PURCHASE_NO_ADS_ID = "purchase_no_ads" // 1.99
     static let PURCHASE_ALL_ID = "purchase_all" // 4.99
     
+    static let PURCHASED_PRODUCTS_KEY = "user_defaults_purchases"
+    
     // URLs
     static let APP_FEEDBACK_URL = "https://apps.apple.com/app/id6444929937?action=write-review" // TODO: Change id to hah
     static let APP_URL = "https://apps.apple.com/app/penalty-2d/id6444929937" // TODO: Change it
+    static let SS = "005ee9f1fdd24a50b712ea8734f109f2"
     
     
     // Intervals
