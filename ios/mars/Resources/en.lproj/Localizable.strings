@@ -33,3 +33,12 @@
 
 //MARK: Share button
 "share_description" = "Can you guess the solution for: EELLV? It is a palindrome!";
+
+//MARK: Settings menu
+"sound" = "Sound";
+"vibration" = "Vibration";
+"tutorial" = "Tutorial";
+"feedback" = "Give feedback";
+"share" = "Share";
+"restore" = "Restore purchases";
+

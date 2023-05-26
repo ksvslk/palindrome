@@ -23,7 +23,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Initialize the PurchaseManager
         purchaseManager = PurchaseManager()
-        purchaseManager.requestProducts(completion: nil)
         
         let userDefaults = UserDefaults.standard
         userDefaults.register(
@@ -35,7 +34,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         logInToGameCenter()
         Database.shared.initializeDatabaseWithGameLevels()
-        
         
         return true
     }

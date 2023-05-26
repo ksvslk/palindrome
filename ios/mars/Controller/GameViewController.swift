@@ -31,6 +31,15 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         subscribeToSolutionCheckResult()
         subscribeToHintsSuggestion()
         Database.shared.changeLevel(toLatest: true)
+
+    }
+    
+    
+    private func presentBottomSheet(sourceView: UIView)
+    {
+        let bottomSheetMenuVC = UserGroupViewController()
+     
+        presentPanModal(bottomSheetMenuVC,sourceView: sourceView, sourceRect: sourceView.bounds)
     }
     
     // MARK: Show intermediate ads
@@ -197,6 +206,19 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     
     // MARK: TAP Settings
     @IBAction func onSettingsButtonTap(_ sender: Any) {
+        if let buttonView = (sender as! UIBarButtonItem).value(forKey: "view") as? UIView {
+            let modifiedBounds = CGRect(
+                x: buttonView.bounds.origin.x,
+                y: buttonView.bounds.origin.y,
+                width: buttonView.bounds.width,
+                height: buttonView.bounds.height
+            )
+            let buttonFrameInWindow = buttonView.convert(modifiedBounds, to: nil)
+            presentBottomSheet(sourceView: buttonView)
+        }
+      
+        
+        return
         let sheet = UIAlertController.settingsSheet {
             print("onTutorialTap")
             self.confettiBurst(duration: 2.0, birthRate: 5, yAcceleration: 90)
@@ -286,8 +308,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
                 appDelegate.purchaseManager.purchaseProduct(C.PURCHASE_NO_ADS_ID)
             }, onAllInPackPurchaseTap: {
                 appDelegate.purchaseManager.purchaseProduct(C.PURCHASE_ALL_ID)
-            },
-            products: appDelegate.purchaseManager.getProductInfo())
+            })
         sheet.updateAdsActions(adAvailable: adManager!.adAvailable)
         
         adManager?.delegate = sheet
@@ -409,7 +430,9 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
         }, completion: { [self] _ in
             if (StateManager.shared.currentState != GameState.completed)
             {
-                self.hideInfoButton()
+                UIView.animate(withDuration: duration, delay: disappearanceDelay, animations: {
+                    self.infoLabelButton.alpha = 0.0
+                }, completion: nil)
                 return
             }
             if (isLastMessageTapToContinue && messages.count == 1)

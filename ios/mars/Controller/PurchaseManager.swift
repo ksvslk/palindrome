@@ -40,9 +40,9 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
         C.PURCHASE_ALL_ID
     ]
     private var completionHandlers: [SKRequest: (Bool) -> Void] = [:]
-    private var completionProductRequest: (([String:ProductInfo]?) -> Void)?
     private var purchasedProductIdentifiers: Set<String> = []
     private var availableProducts: [SKProduct] = []
+    weak var delegate: ProductsUpdateDelegate?
     
     
     override init() {
@@ -50,19 +50,18 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
         SKPaymentQueue.default().add(self)
         loadPurchaseStatusFromUserDefaults()
         print("init PurchaseManager")
-        if purchasedProductIdentifiers.isEmpty {
-            restorePurchases(completion: nil)
-        }
+        requestProducts()
     }
     
+    
     // Request products with identifiers
-    func requestProducts(completion: (([String:ProductInfo]?) -> Void)?) {
+    func requestProducts() {
         print("requestProducts")
         productsRequest = SKProductsRequest(productIdentifiers: productIdentifiers)
         productsRequest?.delegate = self
         productsRequest?.start()
-        completionProductRequest = completion
     }
+    
     
     // Start the purchase flow for a product
     func purchaseProduct(_ productId: String) {
@@ -72,10 +71,10 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
         SKPaymentQueue.default().add(payment)
     }
     
+    
     // Restore purchases
-    func restorePurchases(completion: (([String:ProductInfo]?) -> Void)?) {
+    func restorePurchases() {
         print("restorePurchases")
-        completionProductRequest = completion
         let refreshRequest = SKReceiptRefreshRequest()
         refreshRequest.delegate = self
         refreshRequest.start()
@@ -84,15 +83,12 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
     
     func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
         availableProducts = response.products
+        
         print("productsRequest completed with \(availableProducts)")
-        if let completion = completionProductRequest {
-            completion(getProductInfo())
-            completionProductRequest = nil
-        }
     }
     
     
-    func getProductInfo() -> [String:ProductInfo] {
+    func getProducts() -> [String:ProductInfo] {
         print("getProductInfo")
         var productInfoMap: [String:ProductInfo] = [:]
         
@@ -164,6 +160,7 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
         }
     }
     
+    
     private func verifyReceipt(completion: @escaping (Bool) -> Void) {
         print("verifyReceipt")
         guard let appStoreReceiptURL = Bundle.main.appStoreReceiptURL else {
@@ -213,12 +210,14 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
         }
     }
     
+    
     private func completeTransaction(_ transaction: SKPaymentTransaction) {
         // Process the completed transaction
         // TODO: For example, provide the purchased content to the user
         print("completeTransaction: \(transaction.debugDescription)")
         SKPaymentQueue.default().finishTransaction(transaction)
     }
+    
     
     private func failTransaction(_ transaction: SKPaymentTransaction) {
         // Handle the failed transaction
@@ -227,6 +226,7 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
         SKPaymentQueue.default().finishTransaction(transaction)
     }
     
+    
     private func restoreTransaction(_ transaction: SKPaymentTransaction) {
         // Handle the restored transaction
         // TODO: For example, provide access to the previously purchased content
@@ -234,13 +234,16 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
         SKPaymentQueue.default().finishTransaction(transaction)
     }
     
+    
     func requestDidFinish(_ request: SKRequest) {
         print("requestDidFinish: \(request.description)")
         if let completion = completionHandlers[request] {
             completion(true)
             completionHandlers.removeValue(forKey: request)
         }
+        
     }
+    
     
     func request(_ request: SKRequest, didFailWithError error: Error) {
         print("request failed: \(error.localizedDescription)")
@@ -250,13 +253,18 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
         }
     }
     
+    
     private func loadPurchaseStatusFromUserDefaults() {
         print("loadPurchaseStatusFromUserDefaults")
         let defaults = UserDefaults.standard
         if let savedPurchasedProductIdentifiers = defaults.object(forKey: C.PURCHASED_PRODUCTS_KEY) as? [String] {
             purchasedProductIdentifiers = Set(savedPurchasedProductIdentifiers)
         }
+        if purchasedProductIdentifiers.isEmpty {
+            restorePurchases()
+        }
     }
+    
     
     private func savePurchaseStatusToUserDefaults() {
         print("savePurchaseStatusToUserDefaults")
@@ -274,6 +282,7 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
             purchasedProductIdentifiers.remove(productIdentifier)
         }
         savePurchaseStatusToUserDefaults()
+        delegate?.didUpdateProducts(withProducts: getProducts())
     }
     
 }

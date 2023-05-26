@@ -25,6 +25,7 @@ class Cell: SKSpriteNode {
         self.position = self.homePosition
         self.zPosition = C.NEUTRAL_LAYER
         self.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        
     }
     
     required init?(coder aDecoder: NSCoder) {

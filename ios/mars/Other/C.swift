@@ -55,5 +55,13 @@ struct C {
     static let ADS_INTERVAL = "ads_interval"
     static let SCORES_INTERVAL = "scores_interval"
     
+    
+    // Settings menu
+    static let tutorialButton = ("tutorial"~, UIImage(systemName: "questionmark.app")!)
+    static let feedbackButton = ("feedback"~, UIImage(systemName: "square.and.pencil")!)
+    static let shareButton = ("share"~, UIImage(systemName: "square.and.arrow.up")!)
+    static let restoreButton = ("restore"~, UIImage(systemName: "repeat")!)
+
+    
 }
 

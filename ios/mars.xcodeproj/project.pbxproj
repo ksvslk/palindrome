@@ -35,6 +35,11 @@
 		B1313C4F2A160E02005830AB /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = B1313C4E2A160E02005830AB /* GoogleMobileAds */; };
 		B1313C522A1620EB005830AB /* AdManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1313C512A1620EB005830AB /* AdManager.swift */; };
 		B1313C542A1625CD005830AB /* Reward.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1313C532A1625CD005830AB /* Reward.swift */; };
+		B13149D02A1F8E3F004B06E8 /* ProductsUpdateDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13149CF2A1F8E3F004B06E8 /* ProductsUpdateDelegate.swift */; };
+		B13149D72A209FA3004B06E8 /* PanModal in Frameworks */ = {isa = PBXBuildFile; productRef = B13149D62A209FA3004B06E8 /* PanModal */; };
+		B13149DF2A20A59D004B06E8 /* UserGroupMemberCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13149DD2A20A59D004B06E8 /* UserGroupMemberCell.swift */; };
+		B13149E12A20A5A7004B06E8 /* UserGroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13149E02A20A5A7004B06E8 /* UserGroupViewController.swift */; };
+		B13149E52A20A5B1004B06E8 /* UserGroupMemberPresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13149E32A20A5B1004B06E8 /* UserGroupMemberPresentable.swift */; };
 		B13966BA2A08300800EF75A0 /* CollisionResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13966B92A08300800EF75A0 /* CollisionResult.swift */; };
 		B141D53C29F6816200FE9B39 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B141D53B29F6816200FE9B39 /* Theme.swift */; };
 		B141D54329F6B44500FE9B39 /* yantramanav_bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B141D54029F681B300FE9B39 /* yantramanav_bold.ttf */; };
@@ -70,7 +75,6 @@
 		B1FC275B2A17D9DA00117C55 /* Toast.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1FC275A2A17D9DA00117C55 /* Toast.swift */; };
 		B1FC275D2A17E2A100117C55 /* hint_notification.wav in Resources */ = {isa = PBXBuildFile; fileRef = B1FC275C2A17E2A000117C55 /* hint_notification.wav */; };
 		B1FC275F2A180A9200117C55 /* HintViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1FC275E2A180A9200117C55 /* HintViewController.swift */; };
-		B1FC27652A1B523700117C55 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B1FC27632A1B523700117C55 /* Assets.xcassets */; };
 		B1FC27702A1B6E1800117C55 /* ConfettiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1FC276F2A1B6E1800117C55 /* ConfettiView.swift */; };
 		B1FC27722A1B6E2A00117C55 /* ConfettiType.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1FC27712A1B6E2A00117C55 /* ConfettiType.swift */; };
 		B1FC277F2A1DF3D700117C55 /* PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1FC277E2A1DF3D700117C55 /* PurchaseManager.swift */; };
@@ -115,6 +119,10 @@
 		B1313C4B2A155B49005830AB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B1313C512A1620EB005830AB /* AdManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdManager.swift; sourceTree = "<group>"; };
 		B1313C532A1625CD005830AB /* Reward.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reward.swift; sourceTree = "<group>"; };
+		B13149CF2A1F8E3F004B06E8 /* ProductsUpdateDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductsUpdateDelegate.swift; sourceTree = "<group>"; };
+		B13149DD2A20A59D004B06E8 /* UserGroupMemberCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserGroupMemberCell.swift; sourceTree = "<group>"; };
+		B13149E02A20A5A7004B06E8 /* UserGroupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserGroupViewController.swift; sourceTree = "<group>"; };
+		B13149E32A20A5B1004B06E8 /* UserGroupMemberPresentable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserGroupMemberPresentable.swift; sourceTree = "<group>"; };
 		B13966AE2A069DD400EF75A0 /* mars.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = mars.entitlements; sourceTree = "<group>"; };
 		B13966B92A08300800EF75A0 /* CollisionResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollisionResult.swift; sourceTree = "<group>"; };
 		B13A246729F6DCDA0045DF3D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -156,7 +164,6 @@
 		B1FC275A2A17D9DA00117C55 /* Toast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toast.swift; sourceTree = "<group>"; };
 		B1FC275C2A17E2A000117C55 /* hint_notification.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = hint_notification.wav; sourceTree = "<group>"; };
 		B1FC275E2A180A9200117C55 /* HintViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HintViewController.swift; sourceTree = "<group>"; };
-		B1FC27632A1B523700117C55 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B1FC276F2A1B6E1800117C55 /* ConfettiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiView.swift; sourceTree = "<group>"; };
 		B1FC27712A1B6E2A00117C55 /* ConfettiType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiType.swift; sourceTree = "<group>"; };
 		B1FC277E2A1DF3D700117C55 /* PurchaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseManager.swift; sourceTree = "<group>"; };
@@ -175,6 +182,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B13149D72A209FA3004B06E8 /* PanModal in Frameworks */,
 				B1313C4F2A160E02005830AB /* GoogleMobileAds in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -282,6 +290,8 @@
 		B1F5CA1A29FAEB160061FA65 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				B13149E32A20A5B1004B06E8 /* UserGroupMemberPresentable.swift */,
+				B13149DD2A20A59D004B06E8 /* UserGroupMemberCell.swift */,
 				B16F207129FBBB2400E8DFCE /* Actions.sks */,
 				B16F206F29FBBAFC00E8DFCE /* GameScene.sks */,
 				B1E8975329EC5001001B942F /* GameScene.swift */,
@@ -295,7 +305,6 @@
 				B1313BB52A0E200B005830AB /* MenuSheetExtensions.swift */,
 				B1FC275E2A180A9200117C55 /* HintViewController.swift */,
 				B1FC275A2A17D9DA00117C55 /* Toast.swift */,
-				B1FC27632A1B523700117C55 /* Assets.xcassets */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -327,6 +336,7 @@
 		B1F5CA2029FAED5E0061FA65 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				B13149E02A20A5A7004B06E8 /* UserGroupViewController.swift */,
 				B1299D6F29F962F4007B2668 /* Database.swift */,
 				B1E8975529EC5001001B942F /* GameViewController.swift */,
 				B1FE7A4C29F80E82007D7954 /* CellDirector.swift */,
@@ -336,6 +346,7 @@
 				B1313BD32A135FAD005830AB /* StateManager.swift */,
 				B1313C512A1620EB005830AB /* AdManager.swift */,
 				B1FC277E2A1DF3D700117C55 /* PurchaseManager.swift */,
+				B13149CF2A1F8E3F004B06E8 /* ProductsUpdateDelegate.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -385,6 +396,7 @@
 			name = mars;
 			packageProductDependencies = (
 				B1313C4E2A160E02005830AB /* GoogleMobileAds */,
+				B13149D62A209FA3004B06E8 /* PanModal */,
 			);
 			productName = test;
 			productReference = B1B33ABE29FFA88000DFA59F /* mars.app */;
@@ -420,6 +432,7 @@
 			mainGroup = B1E8974129EC5001001B942F;
 			packageReferences = (
 				B1313C4D2A160E02005830AB /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
+				B13149D52A209FA3004B06E8 /* XCRemoteSwiftPackageReference "PanModal" */,
 			);
 			productRefGroup = B1E8974129EC5001001B942F;
 			projectDirPath = "";
@@ -464,7 +477,6 @@
 				B141D54329F6B44500FE9B39 /* yantramanav_bold.ttf in Resources */,
 				B1313C362A1502C5005830AB /* g4_outer.wav in Resources */,
 				B1FC275D2A17E2A100117C55 /* hint_notification.wav in Resources */,
-				B1FC27652A1B523700117C55 /* Assets.xcassets in Resources */,
 				B1E8975B29EC5002001B942F /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -503,6 +515,7 @@
 				B1E8975629EC5001001B942F /* GameViewController.swift in Sources */,
 				B1299D7029F962F4007B2668 /* Database.swift in Sources */,
 				B1313BC02A0F7E72005830AB /* SolutionCheckResult.swift in Sources */,
+				B13149E12A20A5A7004B06E8 /* UserGroupViewController.swift in Sources */,
 				B1FC275B2A17D9DA00117C55 /* Toast.swift in Sources */,
 				B1B33A8729FDB66D00DFA59F /* Level+CoreDataProperties.swift in Sources */,
 				B144A88429FA66B40067A080 /* Model.xcdatamodeld in Sources */,
@@ -513,11 +526,13 @@
 				B1313BAA2A0ABEB1005830AB /* GameLevelSelectController.swift in Sources */,
 				B1B33A8629FDB66D00DFA59F /* Level+CoreDataClass.swift in Sources */,
 				B1313BD22A135D6F005830AB /* GameState.swift in Sources */,
+				B13149D02A1F8E3F004B06E8 /* ProductsUpdateDelegate.swift in Sources */,
 				B1D2710229EDB24500E01AC8 /* GameField.swift in Sources */,
 				B13966BA2A08300800EF75A0 /* CollisionResult.swift in Sources */,
 				B1313BBE2A0E66E9005830AB /* NumberLabel.swift in Sources */,
 				B128451029F82ACE00C8F13D /* Extensions.swift in Sources */,
 				B1313C542A1625CD005830AB /* Reward.swift in Sources */,
+				B13149E52A20A5B1004B06E8 /* UserGroupMemberPresentable.swift in Sources */,
 				B18EA83C2A1637CB00514E47 /* AdAvailabilityDelegate.swift in Sources */,
 				B1FE7A4D29F80E82007D7954 /* CellDirector.swift in Sources */,
 				B1B33A8929FDB66D00DFA59F /* LetterData+CoreDataProperties.swift in Sources */,
@@ -526,6 +541,7 @@
 				B1FC27722A1B6E2A00117C55 /* ConfettiType.swift in Sources */,
 				B1E8974E29EC5001001B942F /* AppDelegate.swift in Sources */,
 				B1E8978C29ED42EE001B942F /* Slot.swift in Sources */,
+				B13149DF2A20A59D004B06E8 /* UserGroupMemberCell.swift in Sources */,
 				B1E8978A29ED41EA001B942F /* Letter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -831,6 +847,14 @@
 				minimumVersion = 10.0.0;
 			};
 		};
+		B13149D52A209FA3004B06E8 /* XCRemoteSwiftPackageReference "PanModal" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/slackhq/PanModal.git";
+			requirement = {
+				kind = exactVersion;
+				version = 1.2.7;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -838,6 +862,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B1313C4D2A160E02005830AB /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
 			productName = GoogleMobileAds;
+		};
+		B13149D62A209FA3004B06E8 /* PanModal */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B13149D52A209FA3004B06E8 /* XCRemoteSwiftPackageReference "PanModal" */;
+			productName = PanModal;
 		};
 /* End XCSwiftPackageProductDependency section */
 
