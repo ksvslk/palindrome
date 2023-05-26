@@ -181,4 +181,11 @@ extension UIColor {
     }
 }
 
+postfix operator ~
+
+postfix func ~ (string: String) -> String {
+    let localizedString = NSLocalizedString(string, comment: "")
+    assert(localizedString != string, "Localized string not found for key: \(string)")
+    return localizedString
+}
 

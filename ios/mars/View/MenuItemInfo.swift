@@ -8,8 +8,14 @@
 
 import UIKit
 
-struct UserGroupMemberPresentable: Equatable {
+struct MenuItemInfo: Equatable {
+ 
     let name: String
-    let role: String
+    let comment: String
     let systemImage: UIImage
+    let closure: (_ view: UIView) -> Void
+    
+    static func == (lhs: MenuItemInfo, rhs: MenuItemInfo) -> Bool {
+        return lhs.name == rhs.name
+    }
 }

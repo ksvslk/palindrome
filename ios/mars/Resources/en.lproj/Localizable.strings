@@ -34,6 +34,7 @@
 //MARK: Share button
 "share_description" = "Can you guess the solution for: EELLV? It is a palindrome!";
 
+
 //MARK: Settings menu
 "sound" = "Sound";
 "vibration" = "Vibration";
@@ -42,3 +43,14 @@
 "share" = "Share";
 "restore" = "Restore purchases";
 
+
+//MARK: Game Center menu
+"game_leader" = "Game Leaderboard";
+"player_leader" = "Player Leaderboard";
+"achievements" = "Achievements";
+
+
+//MARK: Level select menu
+"submit_level" = "Submit Your Level";
+"player_levels" = "Player Levels";
+"game_levels" = "Game Levels";

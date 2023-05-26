@@ -12,7 +12,7 @@ import GameKit
 import GoogleMobileAds
 import StoreKit
 
-class GameViewController: UIViewController, GKGameCenterControllerDelegate {
+class GameViewController: UIViewController {
     
     private var gameScene: GameScene?
     
@@ -37,10 +37,10 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     
     private func presentBottomSheet(sourceView: UIView)
     {
-        let bottomSheetMenuVC = UserGroupViewController()
-     
+        let bottomSheetMenuVC = GameCenterController()
         presentPanModal(bottomSheetMenuVC,sourceView: sourceView, sourceRect: sourceView.bounds)
     }
+    
     
     // MARK: Show intermediate ads
     private func showIntermediateAds(adsInterval:Interval)
@@ -207,18 +207,12 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     // MARK: TAP Settings
     @IBAction func onSettingsButtonTap(_ sender: Any) {
         if let buttonView = (sender as! UIBarButtonItem).value(forKey: "view") as? UIView {
-            let modifiedBounds = CGRect(
-                x: buttonView.bounds.origin.x,
-                y: buttonView.bounds.origin.y,
-                width: buttonView.bounds.width,
-                height: buttonView.bounds.height
-            )
-            let buttonFrameInWindow = buttonView.convert(modifiedBounds, to: nil)
-            presentBottomSheet(sourceView: buttonView)
+            let settingsSheetMenu = SettingsViewController()
+            presentPanModal(settingsSheetMenu, sourceView: buttonView, sourceRect: buttonView.bounds)
         }
       
         
-        return
+        /*
         let sheet = UIAlertController.settingsSheet {
             print("onTutorialTap")
             self.confettiBurst(duration: 2.0, birthRate: 5, yAcceleration: 90)
@@ -240,12 +234,18 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
             popoverController.barButtonItem = sender as? UIBarButtonItem
         }
         present(sheet, animated: true, completion: nil)
+         */
     }
     
     
     // MARK: TAP Levels
     @IBAction func onLevelsButtonTap(_ sender: Any) {
         
+        if let buttonView = (sender as! UIBarButtonItem).value(forKey: "view") as? UIView {
+            let gameCenterSheetMenu = LevelSelectController()
+            presentPanModal(gameCenterSheetMenu, sourceView: buttonView, sourceRect: buttonView.bounds)
+        }
+        /*
         let sheet = UIAlertController.levelSelectSheet {
             print("onSubmitLevelTap")
         } onPlayerLevelsTap: {
@@ -258,6 +258,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
             popoverController.barButtonItem = sender as? UIBarButtonItem
         }
         present(sheet, animated: true, completion: nil)
+         */
     }
     
     
@@ -322,32 +323,10 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     // MARK: TAP GameCenter
     @IBAction func onGameCenterButtonTap(_ sender: Any)
     {
-        let sheet = UIAlertController.gameCenterSheet {
-            print("onGameLeaderBoardTap")
-            let viewController = GKGameCenterViewController(
-                leaderboardID: C.GAME_LEADERBOARD,
-                playerScope: .global,
-                timeScope: .allTime)
-            viewController.gameCenterDelegate = self
-            self.present(viewController, animated: true, completion: nil)
-        } onPlayerLeaderBoardTap: {
-            print("onPlayerLeaderBoardTap")
-            let viewController = GKGameCenterViewController(
-                leaderboardID: C.PLAYER_LEADERBOARD,
-                playerScope: .global,
-                timeScope: .allTime)
-            viewController.gameCenterDelegate = self
-            self.present(viewController, animated: true, completion: nil)
-        } onAchievementsTap: {
-            print("onAchievementsTap")
-            let viewController = GKGameCenterViewController(state: .achievements)
-            viewController.gameCenterDelegate = self
-            self.present(viewController, animated: true, completion: nil)
+        if let buttonView = (sender as! UIBarButtonItem).value(forKey: "view") as? UIView {
+            let gameCenterSheetMenu = GameCenterController()
+            presentPanModal(gameCenterSheetMenu, sourceView: buttonView, sourceRect: buttonView.bounds)
         }
-        if let popoverController = sheet.popoverPresentationController {
-            popoverController.barButtonItem = sender as? UIBarButtonItem
-        }
-        present(sheet, animated: true, completion: nil)
     }
     
     
@@ -488,12 +467,6 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate {
     override var prefersStatusBarHidden: Bool {
         return true
     }
-    
-    
-    //MARK: Dismiss GameCenter
-    func gameCenterViewControllerDidFinish(_ gameCenterViewController: GKGameCenterViewController) {
-        // Dismiss the view controller.
-        gameCenterViewController.dismiss(animated:true)
-    }
+ 
     
 }

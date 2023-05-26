@@ -62,6 +62,15 @@ struct C {
     static let shareButton = ("share"~, UIImage(systemName: "square.and.arrow.up")!)
     static let restoreButton = ("restore"~, UIImage(systemName: "repeat")!)
 
-    
-}
+    // Game Center menu
+    static let playerLeaderButton = ("player_leader"~, UIImage(systemName: "increase.indent")!)
+    static let gameLeaderButton = ("game_leader"~, UIImage(systemName: "decrease.indent")!)
+    static let achievementsButton = ("achievements"~, UIImage(systemName: "rosette")!)
 
+    
+    // Level select menu
+    static let submitLevelButton = ("submit_level"~, UIImage(systemName: "paperplane")!)
+    static let playerLevelsButton = ("player_levels"~, UIImage(systemName: "person.2")!)
+    static let gameLevelsButton = ("game_levels"~, UIImage(systemName: "square.stack.3d.up")!)
+
+}

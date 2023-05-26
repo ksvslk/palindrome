@@ -6,8 +6,22 @@
 //
 
 import UIKit
+import PanModal
 
 class GameLevelSelectController: UIViewController {
+    
+    let dismissLevelSelectMenu: () -> Void
+    
+    init(dismissLevelSelectMenu: @escaping () -> Void) {
+        self.dismissLevelSelectMenu = dismissLevelSelectMenu
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+ 
+    
     var data:[Level.Progress] = Database.shared.getAllGameLevels()
     
     // a property to hold the collectionView
@@ -21,11 +35,14 @@ class GameLevelSelectController: UIViewController {
         self.collectionView.alwaysBounceVertical = true
         self.collectionView.isPrefetchingEnabled = true
         // Add blur effect
-        self.collectionView.backgroundColor = UIColor.clear
-        let blurEffect = UIBlurEffect(style: .prominent)
-        let blurEffectView = UIVisualEffectView(effect: blurEffect)
-        blurEffectView.frame = self.collectionView.bounds
-        self.collectionView.backgroundView = blurEffectView
+        self.collectionView.backgroundColor = Theme.backgroundColor
+        /*
+         self.collectionView.backgroundColor = UIColor.clear
+         let blurEffect = UIBlurEffect(style: .prominent)
+         let blurEffectView = UIVisualEffectView(effect: blurEffect)
+         blurEffectView.frame = self.collectionView.bounds
+         self.collectionView.backgroundView = blurEffectView
+         */
         DispatchQueue.main.async {
             let currentLevel = Database.shared.currentLevel!.levelNumber
             let indexPath = IndexPath(item: Int(currentLevel-1), section: 0)
@@ -41,7 +58,7 @@ class GameLevelSelectController: UIViewController {
         // create a layout to be used
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         // make sure that there is a slightly larger gap at the top of each row
-        layout.sectionInset = UIEdgeInsets(top: 20, left: 10, bottom: 10, right: 10)
+        layout.sectionInset = UIEdgeInsets(top: 20, left: 40, bottom: 20, right: 40)
         // set a standard item size
         layout.itemSize = CGSize(width: 80, height: 80)
         // the layout scrolls horizontally
@@ -58,7 +75,9 @@ extension GameLevelSelectController: UICollectionViewDelegate {
     // if the user clicks on a cell, display a message
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         print("Collection view at row \(collectionView.tag) selected level nr \(indexPath.item + 1)")
-        dismiss(animated: true)
+        dismiss(animated: true, completion: {
+            self.dismissLevelSelectMenu()
+        })
         Database.shared.changeLevel(to: indexPath.item + 1)
     }
 }

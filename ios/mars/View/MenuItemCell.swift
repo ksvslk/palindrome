@@ -8,7 +8,7 @@
 
 import UIKit
 
-class UserGroupMemberCell: UITableViewCell {
+class MenuItemCell: UITableViewCell {
     
     struct Constants {
         static let contentInsets = UIEdgeInsets(top: 8.0, left: 24.0, bottom: 8.0, right: 24.0)
@@ -17,7 +17,7 @@ class UserGroupMemberCell: UITableViewCell {
     
     // MARK: - Properties
     
-    var presentable = UserGroupMemberPresentable(name: "", role: "", systemImage: UIImage())
+    var presentable = MenuItemInfo(name: "", comment: "", systemImage: UIImage(), closure: {view in })
     
     // MARK: - Views
     
@@ -115,10 +115,10 @@ class UserGroupMemberCell: UITableViewCell {
     
     // MARK: - View Configuration
     
-    func configure(with presentable: UserGroupMemberPresentable) {
+    func configure(with presentable: MenuItemInfo) {
         self.presentable = presentable
         nameLabel.text = presentable.name
-        roleLabel.text = presentable.role
+        roleLabel.text = presentable.comment
         nameLabel.textColor = Theme.colorOnPrimary.oppositeLightMode(traitCollection: traitCollection)
         roleLabel.textColor = Theme.colorSecondaryVariant.oppositeLightMode(traitCollection: traitCollection).withAlphaComponent(0.8)
         avatarView.backgroundColor = Theme.colorSecondary.oppositeLightMode(traitCollection: traitCollection)

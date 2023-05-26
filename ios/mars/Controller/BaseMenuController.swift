@@ -9,51 +9,41 @@
 import UIKit
 import PanModal
 
-class UserGroupViewController: UITableViewController, PanModalPresentable {
+class BaseMenuController: UITableViewController, PanModalPresentable {
     
     let padding = 16.0
-
-    let members: [UserGroupMemberPresentable] = [
-        UserGroupMemberPresentable(name: C.tutorialButton.0, role: "", systemImage: C.tutorialButton.1),
-        UserGroupMemberPresentable(name: C.feedbackButton.0, role: "", systemImage: C.feedbackButton.1),
-        UserGroupMemberPresentable(name: C.shareButton.0, role: "", systemImage: C.shareButton.1),
-        UserGroupMemberPresentable(name: C.restoreButton.0, role: "", systemImage: C.restoreButton.1),
-  
-    ]
-
     var isShortFormEnabled = false
+ 
+    var members: [MenuItemInfo] {
+           return []  // Default empty array, override in subclasses
+    }
 
+    
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .default
     }
 
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTableView()
-        
         preferredContentSize = CGSize(width: self.view.bounds.width, height: getTotalHeight() + padding)
         popoverPresentationController?.containerView?.setNeedsLayout()
-     
-        
     }
 
+    
     // MARK: - View Configurations
-
     func setupTableView() {
         tableView.separatorStyle = .singleLine
-    
         tableView.backgroundColor = Theme.backgroundColor.oppositeLightMode(traitCollection: traitCollection)
-        tableView.register(UserGroupMemberCell.self, forCellReuseIdentifier: "cell")
-     
-        
+        tableView.register(MenuItemCell.self, forCellReuseIdentifier: "cell")
         // Add an empty header view with desired height
         let headerView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.bounds.width, height: padding))
         tableView.tableHeaderView = headerView
-        
     }
 
+    
     // MARK: - UITableViewDataSource
-
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         let lastRowIndex = tableView.numberOfRows(inSection: indexPath.section) - 1
 
@@ -66,22 +56,25 @@ class UserGroupViewController: UITableViewController, PanModalPresentable {
         }
     }
     
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return members.count
     }
 
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as? UserGroupMemberCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as? MenuItemCell
             else { return UITableViewCell() }
 
         cell.configure(with: members[indexPath.row])
         return cell
     }
 
+    
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 60.0
     }
+    
     
     var longFormHeight: PanModalHeight {
         return .contentHeight(getTotalHeight())
@@ -102,18 +95,21 @@ class UserGroupViewController: UITableViewController, PanModalPresentable {
         return totalHeight
     }
 
+    
     // MARK: - UITableViewDelegate
-
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        let actionButtonInfo = members[indexPath.item]
+        actionButtonInfo.closure(tableView)
     }
 
+    
     // MARK: - Pan Modal Presentable
-
     var panScrollable: UIScrollView? {
         return tableView
     }
 
+    
     var shortFormHeight: PanModalHeight {
         return isShortFormEnabled ? .contentHeight(300.0) : longFormHeight
     }
@@ -123,6 +119,7 @@ class UserGroupViewController: UITableViewController, PanModalPresentable {
         return true
     }
 
+    
     func willTransition(to state: PanModalPresentationController.PresentationState) {
         guard isShortFormEnabled, case .longForm = state
             else { return }
