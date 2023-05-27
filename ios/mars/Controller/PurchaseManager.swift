@@ -52,6 +52,12 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
     }
     
     
+    func sendLatestInfo()
+    {
+        delegate?.didUpdateProducts(withProducts: getProducts())
+    }
+    
+    
     // Request products with identifiers
     func requestProducts() {
         print("requestProducts")
@@ -81,7 +87,7 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
     
     func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
         availableProducts = response.products
-        
+        delegate?.didUpdateProducts(withProducts: getProducts())
         print("productsRequest completed with \(availableProducts)")
     }
     

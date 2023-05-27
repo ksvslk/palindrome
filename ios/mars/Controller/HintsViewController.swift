@@ -16,7 +16,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     weak var gameViewController: GameViewController?
     
     // helper for members array to get location of some button in table. Manually matched to the members array!
-    private enum Button: Int {
+    private enum Button: Int, CaseIterable {
         case reveal_clue_btn = 0
         case place_letter_btn = 1
         case purchase_clues_btn = 2
@@ -34,9 +34,12 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     }
     
     
+    //MARK: View did appear
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
+        self.purchaseManager?.delegate = self
+        self.purchaseManager?.sendLatestInfo()
         self.adManager?.delegate = self
         self.adManager?.sendLatestInfo()
         
@@ -47,6 +50,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     }
     
     
+    //MARK: Hints ads -> premium
     private func updateHintsToPremium()
     {
         updateCell(
@@ -54,9 +58,8 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
             withName: C.revealClueButton.0,
             withComment: "instantly_comment"~,
             withCommentColors: (Theme.successBoxColor,Theme.successTextColor),
-            withTouchEnabled: true) { _ in
-                
-            }
+            withTouchEnabled: true)
+        
         self.revealClueClosure = { view in
             if UIDevice.current.userInterfaceIdiom == .pad {
                 self.dismiss(animated: true) { [self] in
@@ -71,6 +74,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     }
     
     
+    //MARK: Letters ads -> premium
     private func updateLettersToPremium()
     {
         updateCell(
@@ -78,9 +82,8 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
             withName: C.placeLetterButton.0,
             withComment: "instantly_comment"~,
             withCommentColors: (Theme.successBoxColor,Theme.successTextColor),
-            withTouchEnabled: true) { _ in
-                
-            }
+            withTouchEnabled: true)
+        
         self.placeLetterClosure = { view in
             if UIDevice.current.userInterfaceIdiom == .pad {
                 self.dismiss(animated: true) { [self] in
@@ -100,6 +103,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     }
     
 
+    //MARK: Ad availability callback
     func adAvailabilityDidChange(isAvailable: Bool) {
         print("Latest info for ads or just updated: \(isAvailable)")
         if (isAvailable)
@@ -159,21 +163,159 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     }
     
     
+    //MARK: Update products callback
     func didUpdateProducts(withProducts products: [String : ProductInfo]) {
-        //TODO: Ads buttons + purchase buttons UI needs to be updated
+        updatePurchasesUiInfo(purchases: products)
+    }
+    
+
+    private func allInPurchasedUiUpdate()
+    {
+        // give hints and letters
+        updateHintsToPremium()
+        updateLettersToPremium()
+        
+        // hide all purchases
+        Button.allCases.forEach { buttonCase in
+            updateCell(
+                of: buttonCase,
+                withTouchEnabled: false,
+                toHidden: true
+            )
+        }
+        
     }
     
     
+    //MARK: Update buttons Ui
+    private func updatePurchasesUiInfo(purchases products:[String : ProductInfo])
+    {
+        guard let allInPurchased = products[C.PURCHASE_ALL_ID]?.isPurchased else {
+            allInPurchasedUiUpdate()
+            return
+        }
+      
+        products.forEach { (productId: String, info: ProductInfo) in
+            if (productId == C.PURCHASE_HINTS_ID)
+            {
+                // give hints
+                updateHintsToPremium()
+                
+                // update button
+                updateCell(
+                    of: Button.purchase_clues_btn,
+                    withName: info.product.localizedTitle,
+                    withComment: info.localizedPrice,
+                    withCommentColors: (Theme.letterRewardedColor, Theme.colorOnPrimary),
+                    withTouchEnabled: !info.isPurchased,
+                    toHidden: info.isPurchased
+                )
+                
+                // add tap closure
+                purchaseCluesClosure = { view in
+                    if (!info.isPurchased) {
+                        self.purchaseManager?.purchaseProduct(productId)
+                    }
+                }
+            }
+            else if (productId == C.PURCHASE_LETTERS_ID)
+            {
+                // give letters
+                updateLettersToPremium()
+                
+                // update button
+                updateCell(
+                    of: Button.purchase_letters_btn,
+                    withName: info.product.localizedTitle,
+                    withComment: info.localizedPrice,
+                    withCommentColors: (Theme.letterRewardedColor, Theme.colorOnPrimary),
+                    withTouchEnabled: !info.isPurchased,
+                    toHidden: info.isPurchased
+                )
+                
+                // add tap closure
+                purchaseLettersClosure = { view in
+                    if (!info.isPurchased) {
+                        self.purchaseManager?.purchaseProduct(productId)
+                    }
+                }
+            }
+            else if (productId == C.PURCHASE_NO_ADS_ID)
+            {
+                // no content given, read from PurchaseManager / UserDefaults on demand
+                updateCell(
+                    of: Button.purchase_no_ads_btn,
+                    withName: info.product.localizedTitle,
+                    withComment: info.localizedPrice,
+                    withCommentColors: (Theme.letterRewardedColor, Theme.colorOnPrimary),
+                    withTouchEnabled: !info.isPurchased,
+                    toHidden: info.isPurchased
+                )
+                
+                // add tap closure
+                purchaseNoAdsClosure = { view in
+                    if (!info.isPurchased) {
+                        self.purchaseManager?.purchaseProduct(productId)
+                    }
+                }
+            }
+            else if (productId == C.PURCHASE_ALL_ID)
+            {
+                updateCell(
+                    of: Button.purchase_all_btn,
+                    withName: info.product.localizedTitle,
+                    withComment: info.localizedPrice,
+                    withCommentColors: (Theme.letterRewardedColor, Theme.colorOnPrimary),
+                    withTouchEnabled: !info.isPurchased,
+                    toHidden: info.isPurchased
+                )
+                
+                // add tap closure
+                purchaseAllClosure = { view in
+                    if (!info.isPurchased) {
+                        self.purchaseManager?.purchaseProduct(productId)
+                    }
+                }
+            }
+        }
+        
+        let allInPrice = products[C.PURCHASE_ALL_ID]?.product.price ?? 0
+        let sumWithoutAllIn = products.reduce(NSDecimalNumber.zero) { (result, element) -> NSDecimalNumber in
+            guard element.key != C.PURCHASE_ALL_ID && !element.value.isPurchased else {
+                return result
+            }
+            
+            let price = element.value.product.price
+            return result.adding(price)
+        }
+        
+        if (allInPrice.compare(sumWithoutAllIn) == ComparisonResult.orderedDescending)
+        {
+            updateCell(
+                of: Button.purchase_all_btn,
+                withTouchEnabled: false,
+                toHidden: true
+            )
+        }
+    }
+    
+    
+    //MARK: Update cell
     private func updateCell(
         of button:Button,
         withName name:String = "",
         withComment comment:String = "",
         withCommentColors commentLabelColors:(UIColor, UIColor) = (UIColor.clear, UIColor.clear),
         withTouchEnabled enabled:Bool = true,
+        toHidden hidden:Bool = false,
         withTouchAction closure:@escaping (UIView) -> Void = { view in }
     ) {
         let indexPath = IndexPath(row: button.rawValue, section: 0)
         if let cell = tableView.cellForRow(at: indexPath) as? MenuItemCell {
+            if (hidden) {
+                cell.isHidden = true
+                return
+            }
             cell.presentable.closure = closure
             cell.nameLabel.text = name
             cell.commentLabel.text = comment
@@ -191,7 +333,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
         }
     }
     
-    
+    //MARK: Closures
     var revealClueClosure: ((UIView) -> Void) = { view in
         print("Tapped \(C.revealClueButton.0)")
     }
@@ -216,6 +358,8 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
         print("Tapped \(C.purchaseAllButton.0)")
     }
     
+    
+    //MARK: Menu items
     override var members: [MenuItemInfo] {
         return [
             MenuItemInfo(name: C.revealClueButton.0, comment: "no_ad_comment"~, systemImage: C.revealClueButton.1, closure: revealClueClosure),
