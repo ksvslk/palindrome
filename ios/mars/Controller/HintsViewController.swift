@@ -13,6 +13,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     
     weak var adManager: AdManager?
     weak var purchaseManager: PurchaseManager?
+    weak var gameViewController: GameViewController?
     
     // helper for members array to get location of some button in table. Manually matched to the members array!
     private enum Button: Int {
@@ -24,8 +25,9 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
         case purchase_all_btn = 5
     }
     
-    init(adManager:AdManager?, purchaseManager:PurchaseManager?) {
+    init(adManager:AdManager?, purchaseManager:PurchaseManager?, gameViewController:GameViewController?) {
         print("init hints")
+        self.gameViewController = gameViewController
         self.adManager = adManager
         self.purchaseManager = purchaseManager
         super.init(nibName: nil, bundle: nil)
@@ -56,8 +58,15 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
                 
             }
         self.revealClueClosure = { view in
-            self.adManager?.rewardToBeGiven = Reward.hint
-            self.dismiss(animated: true)
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                self.dismiss(animated: true) { [self] in
+                    gameViewController?.rewardWithHint()
+                }
+            }
+            else {
+                self.adManager?.rewardToBeGiven = Reward.hint
+                self.dismiss(animated: true)
+            }
         }
     }
     
@@ -73,8 +82,15 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
                 
             }
         self.placeLetterClosure = { view in
-            self.adManager?.rewardToBeGiven = Reward.letter
-            self.dismiss(animated: true)
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                self.dismiss(animated: true) { [self] in
+                    gameViewController?.rewardWithLetter()
+                }
+            }
+            else {
+                self.adManager?.rewardToBeGiven = Reward.letter
+                self.dismiss(animated: true)
+            }
         }
     }
   

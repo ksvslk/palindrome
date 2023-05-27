@@ -12,7 +12,7 @@ import GameKit
 import GoogleMobileAds
 import StoreKit
 
-class GameViewController: UIViewController {
+class GameViewController: UIViewController, UIPopoverPresentationControllerDelegate {
     
     private var gameScene: GameScene?
     
@@ -249,7 +249,7 @@ class GameViewController: UIViewController {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
      
         if let buttonView = (sender as! UIBarButtonItem).value(forKey: "view") as? UIView {
-            let hintsMenu = HintsViewController(adManager: adManager, purchaseManager: appDelegate.purchaseManager)
+            let hintsMenu = HintsViewController(adManager: adManager, purchaseManager: appDelegate.purchaseManager, gameViewController: self)
             presentPanModal(hintsMenu, sourceView: buttonView, sourceRect: buttonView.bounds)
         }
         hintToolbarItem.removeBadge()
@@ -265,9 +265,9 @@ class GameViewController: UIViewController {
         }
     }
     
-    
-    // MARK: View did appear
-    override func viewDidAppear(_ animated: Bool) {
+
+    private func handleRewards()
+    {
         print("viewDidAppear")
         guard let adManagerChecked = adManager else { return }
         switch adManagerChecked.rewardToBeGiven {
@@ -283,8 +283,14 @@ class GameViewController: UIViewController {
     }
     
     
+    // MARK: View did appear
+    override func viewDidAppear(_ animated: Bool) {
+        handleRewards()
+    }
+    
+    
     // MARK: Reward with letter
-    private func rewardWithLetter()
+    func rewardWithLetter()
     {
         StateManager.shared.currentState = .animating
         gameScene?.cellDirector.rewardWithRandomLetter()
@@ -294,7 +300,7 @@ class GameViewController: UIViewController {
     
     
     // MARK: Reward with hint
-    private func rewardWithHint()
+    func rewardWithHint()
     {
         let rewardSound = SKAction.playSound(soundFile: "hint_revealed.wav")
         let hintViewController = HintViewController()
