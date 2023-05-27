@@ -21,7 +21,7 @@ class MenuItemCell: UITableViewCell {
     
     // MARK: - Views
     
-    let avatarView: UIView = {
+    let iconView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 8.0
         return view
@@ -35,16 +35,16 @@ class MenuItemCell: UITableViewCell {
         return label
     }()
     
-    let roleLabel: UILabel = {
-        let label = UILabel()
+    let commentLabel: UILabel = {
+        let label = PaddedLabel()
         label.textColor = #colorLiteral(red: 0.7019607843, green: 0.7058823529, blue: 0.7137254902, alpha: 1)
         label.backgroundColor = .clear
         label.font = UIFont(name: Theme.letterFont, size: 13.0)
         return label
     }()
     
-    lazy var memberDetailsStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [nameLabel, roleLabel])
+    lazy var buttonDetails: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [nameLabel, commentLabel])
         stackView.axis = .vertical
         stackView.alignment = .leading
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -52,7 +52,7 @@ class MenuItemCell: UITableViewCell {
     }()
     
     lazy var stackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [avatarView, memberDetailsStackView])
+        let stackView = UIStackView(arrangedSubviews: [iconView, buttonDetails])
         stackView.alignment = .center
         stackView.spacing = 16.0
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -89,8 +89,8 @@ class MenuItemCell: UITableViewCell {
         stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -Constants.contentInsets.right).isActive = true
         stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -Constants.contentInsets.bottom).isActive = true
         
-        let avatarWidthConstriant = avatarView.widthAnchor.constraint(equalToConstant: Constants.avatarSize.width)
-        let avatarHeightConstraint = avatarView.heightAnchor.constraint(equalToConstant: Constants.avatarSize.height)
+        let avatarWidthConstriant = iconView.widthAnchor.constraint(equalToConstant: Constants.avatarSize.width)
+        let avatarHeightConstraint = iconView.heightAnchor.constraint(equalToConstant: Constants.avatarSize.height)
         
         [avatarWidthConstriant, avatarHeightConstraint].forEach {
             $0.priority = UILayoutPriority(UILayoutPriority.required.rawValue - 1)
@@ -118,11 +118,11 @@ class MenuItemCell: UITableViewCell {
     func configure(with presentable: MenuItemInfo) {
         self.presentable = presentable
         nameLabel.text = presentable.name
-        roleLabel.text = presentable.comment
+        commentLabel.text = presentable.comment
         nameLabel.textColor = Theme.colorOnPrimary.oppositeLightMode(traitCollection: traitCollection)
-        roleLabel.textColor = Theme.colorSecondaryVariant.oppositeLightMode(traitCollection: traitCollection).withAlphaComponent(0.8)
-        avatarView.backgroundColor = Theme.colorSecondary.oppositeLightMode(traitCollection: traitCollection)
-        addImageToAvatar(avatarView: avatarView, image: presentable.systemImage)
+        commentLabel.textColor = Theme.colorSecondaryVariant.oppositeLightMode(traitCollection: traitCollection).withAlphaComponent(0.8)
+        iconView.backgroundColor = Theme.colorSecondary.oppositeLightMode(traitCollection: traitCollection)
+        addImageToAvatar(avatarView: iconView, image: presentable.systemImage)
     }
     
     

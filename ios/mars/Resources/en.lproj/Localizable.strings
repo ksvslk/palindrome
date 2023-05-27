@@ -10,26 +10,6 @@
 "cancel" = "Cancel";
 "tap_to_continue" = "Tap to continue";
 
-//MARK: Hints menu
-// Title
-"hints_title" = "Hints";
-"hints_subtitle" = "Sometimes lose, always win!";
-
-
-// Ads buttons
-"watch_letter_ad" = "Watch ad for letter"; // Free
-"watch_hint_ad" = "Watch ad for hint"; // Free
-"ad_not_available" = "Ad not available";
-"place_letter" = "Place letter"; // Premium
-"reveal_hint" = "Reveal clue"; // Premium
-
-
-// Purchase buttons
-"purchase_letters" = "Unlimited Letters";
-"purchase_hints" = "Unlimited Hints";
-"purchase_no_ads" = "Remove Intermediate Ads";
-"purchase_all" = "All-In Pack";
-
 
 //MARK: Share button
 "share_description" = "Can you guess the solution for: EELLV? It is a palindrome!";
@@ -39,9 +19,9 @@
 "sound" = "Sound";
 "vibration" = "Vibration";
 "tutorial" = "Tutorial";
-"feedback" = "Give feedback";
+"feedback" = "Give Feedback";
 "share" = "Share";
-"restore" = "Restore purchases";
+"restore" = "Restore Purchases";
 
 
 //MARK: Game Center menu
@@ -50,7 +30,18 @@
 "achievements" = "Achievements";
 
 
+//MARK: Hints menu
+"watch_ad_comment" = "Watch Rewarded Video";
+"no_ad_comment" = "Ad not Available";
+"instantly_comment" = "Instantly";
+"place_letter" = "Place Letter";
+"reveal_clue" = "Reveal Clue";
+
+
 //MARK: Level select menu
 "submit_level" = "Submit Your Level";
 "player_levels" = "Player Levels";
 "game_levels" = "Game Levels";
+
+
+

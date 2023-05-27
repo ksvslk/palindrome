@@ -38,6 +38,12 @@ class AdManager: NSObject, GADFullScreenContentDelegate {
     }
     
     
+    func sendLatestInfo()
+    {
+        delegate?.adAvailabilityDidChange(isAvailable: adAvailable)
+    }
+    
+    
     func loadRewardedAd() {
         let request = GADRequest()
         

@@ -14,11 +14,8 @@ class BaseMenuController: UITableViewController, PanModalPresentable {
     let padding = 16.0
     var isShortFormEnabled = false
  
-    var members: [MenuItemInfo] {
-           return []  // Default empty array, override in subclasses
-    }
+    var members: [MenuItemInfo] { return [] }
 
-    
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .default
     }

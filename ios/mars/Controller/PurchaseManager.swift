@@ -14,13 +14,12 @@ struct ProductInfo {
     let product: SKProduct
     let isPurchased: Bool
     
-    var localizedTitleWithPrice: String {
+    var localizedPrice: String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
         formatter.locale = product.priceLocale
         let formattedPrice = formatter.string(from: product.price) ?? ""
-        let localizedTitle = product.localizedTitle
-        return "\(localizedTitle) - \(formattedPrice)"
+        return "\(formattedPrice)"
     }
     
     init(product: SKProduct, isPurchased: Bool) {
@@ -43,7 +42,6 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
     private var purchasedProductIdentifiers: Set<String> = []
     private var availableProducts: [SKProduct] = []
     weak var delegate: ProductsUpdateDelegate?
-    
     
     override init() {
         super.init()
@@ -259,9 +257,6 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
         let defaults = UserDefaults.standard
         if let savedPurchasedProductIdentifiers = defaults.object(forKey: C.PURCHASED_PRODUCTS_KEY) as? [String] {
             purchasedProductIdentifiers = Set(savedPurchasedProductIdentifiers)
-        }
-        if purchasedProductIdentifiers.isEmpty {
-            restorePurchases()
         }
     }
     

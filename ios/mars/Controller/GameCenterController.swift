@@ -10,9 +10,7 @@ import GameKit
 import PanModal
 
 class GameCenterController: BaseMenuController, GKGameCenterControllerDelegate {
-    
-    private let screenRect: CGRect = UIScreen.main.bounds
-    
+
     override var members: [MenuItemInfo] {
         return [MenuItemInfo(name: C.gameLeaderButton.0, comment: "", systemImage: C.gameLeaderButton.1, closure: {view in
             print("Tapped \(C.gameLeaderButton.0)")

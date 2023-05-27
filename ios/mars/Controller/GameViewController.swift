@@ -31,7 +31,6 @@ class GameViewController: UIViewController {
         subscribeToSolutionCheckResult()
         subscribeToHintsSuggestion()
         Database.shared.changeLevel(toLatest: true)
-
     }
     
     
@@ -210,8 +209,6 @@ class GameViewController: UIViewController {
             let settingsSheetMenu = SettingsViewController()
             presentPanModal(settingsSheetMenu, sourceView: buttonView, sourceRect: buttonView.bounds)
         }
-      
-        
         /*
         let sheet = UIAlertController.settingsSheet {
             print("onTutorialTap")
@@ -240,83 +237,22 @@ class GameViewController: UIViewController {
     
     // MARK: TAP Levels
     @IBAction func onLevelsButtonTap(_ sender: Any) {
-        
         if let buttonView = (sender as! UIBarButtonItem).value(forKey: "view") as? UIView {
             let gameCenterSheetMenu = LevelSelectController()
             presentPanModal(gameCenterSheetMenu, sourceView: buttonView, sourceRect: buttonView.bounds)
         }
-        /*
-        let sheet = UIAlertController.levelSelectSheet {
-            print("onSubmitLevelTap")
-        } onPlayerLevelsTap: {
-            print("onPlayerLevelsTap")
-        } onGameLevelsTap: {
-            print("onGameLevelsTap")
-            self.present(GameLevelSelectController(), animated: true, completion: nil)
-        }
-        if let popoverController = sheet.popoverPresentationController {
-            popoverController.barButtonItem = sender as? UIBarButtonItem
-        }
-        present(sheet, animated: true, completion: nil)
-         */
     }
-    
     
     
     // MARK: TAP Hints
     @IBAction func onHintsButtonTap(_ sender: Any) {
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
-            return
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+     
+        if let buttonView = (sender as! UIBarButtonItem).value(forKey: "view") as? UIView {
+            let hintsMenu = HintsViewController(adManager: adManager, purchaseManager: appDelegate.purchaseManager)
+            presentPanModal(hintsMenu, sourceView: buttonView, sourceRect: buttonView.bounds)
         }
-        
         hintToolbarItem.removeBadge()
-        let sheet = ReactiveAlertController.hintsSheet(
-            isHintsPremium: Database.shared.isCategoryRewarded(),
-            isLettersPremium: Database.shared.isPremiumLetters(),
-            onLetterRewardedAdsTap: {
-                if (Database.shared.isPremiumLetters())
-                {
-                    if (StateManager.shared.currentState == GameState.play)
-                    {
-                        self.rewardWithLetter()
-                    }
-                }
-                else {
-                    if (StateManager.shared.currentState == GameState.play)
-                    {
-                        print("onLetterRewardedAdsTap")
-                        self.adManager?.show(viewController: self, rewardType: Reward.letter)
-                    }
-                }
-            }, onHintRewardedAdsTap: {
-                if (Database.shared.isCategoryRewarded())
-                {
-                    self.rewardWithHint()
-                }
-                else {
-                    if (StateManager.shared.currentState == GameState.play)
-                    {
-                        print("onHintRewardedAdsTap")
-                        self.adManager?.show(viewController: self, rewardType: Reward.hint)
-                    }
-                }
-            },
-            onUnlimitedLettersPurchaseTap: {
-                appDelegate.purchaseManager.purchaseProduct(C.PURCHASE_LETTERS_ID)
-            }, onUnlimitedHintsPurchaseTap: {
-                appDelegate.purchaseManager.purchaseProduct(C.PURCHASE_HINTS_ID)
-            }, onRemoveIntermediateAdsPurchaseTap: {
-                appDelegate.purchaseManager.purchaseProduct(C.PURCHASE_NO_ADS_ID)
-            }, onAllInPackPurchaseTap: {
-                appDelegate.purchaseManager.purchaseProduct(C.PURCHASE_ALL_ID)
-            })
-        sheet.updateAdsActions(adAvailable: adManager!.adAvailable)
-        
-        adManager?.delegate = sheet
-        if let popoverController = sheet.popoverPresentationController {
-            popoverController.barButtonItem = sender as? UIBarButtonItem
-        }
-        present(sheet, animated: true, completion: nil)
     }
     
     
@@ -333,16 +269,17 @@ class GameViewController: UIViewController {
     // MARK: View did appear
     override func viewDidAppear(_ animated: Bool) {
         print("viewDidAppear")
-        guard adManager != nil else { return }
-        switch adManager!.rewardToBeGiven {
+        guard let adManagerChecked = adManager else { return }
+        switch adManagerChecked.rewardToBeGiven {
         case Reward.letter:
-            rewardWithLetter()
+            if (StateManager.shared.currentState != .completed) { rewardWithLetter() }
         case Reward.hint:
             rewardWithHint()
             Database.shared.setCategoryAsRewarded()
         case Reward.none:
             print("NO reward!")
         }
+        adManagerChecked.rewardToBeGiven = .none
     }
     
     

@@ -72,5 +72,13 @@ struct C {
     static let submitLevelButton = ("submit_level"~, UIImage(systemName: "paperplane")!)
     static let playerLevelsButton = ("player_levels"~, UIImage(systemName: "person.2")!)
     static let gameLevelsButton = ("game_levels"~, UIImage(systemName: "square.stack.3d.up")!)
-
+    
+    
+    // Hints menu
+    static let revealClueButton = ("reveal_clue"~, UIImage(systemName: "eye")!)
+    static let placeLetterButton = ("place_letter"~, UIImage(systemName: "bolt.badge.a")!)
+    static let purchaseCluesButton = ("...", UIImage(systemName: "dollarsign.square.fill")!)
+    static let purchaseLettersButton = ("...", UIImage(systemName: "dollarsign.square.fill")!)
+    static let purchaseNoAdsButton = ("...", UIImage(systemName: "dollarsign.square.fill")!)
+    static let purchaseAllButton = ("...", UIImage(systemName: "dollarsign.square.fill")!)
 }
