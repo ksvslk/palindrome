@@ -57,6 +57,8 @@ struct C {
     
     
     // Settings menu
+    static let soundButton = ("sound"~, UIImage(systemName: "music.note")!)
+    static let vibrationButton = ("vibration"~, UIImage(systemName: "waveform")!)
     static let tutorialButton = ("tutorial"~, UIImage(systemName: "questionmark.app")!)
     static let feedbackButton = ("feedback"~, UIImage(systemName: "square.and.pencil")!)
     static let shareButton = ("share"~, UIImage(systemName: "square.and.arrow.up")!)

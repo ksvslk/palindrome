@@ -360,7 +360,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     
     
     //MARK: Menu items
-    override var members: [MenuItemInfo] {
+    override var menuItem: [MenuItemInfo] {
         return [
             MenuItemInfo(name: C.revealClueButton.0, comment: "no_ad_comment"~, systemImage: C.revealClueButton.1, closure: revealClueClosure),
             MenuItemInfo(name: C.placeLetterButton.0, comment: "no_ad_comment"~, systemImage: C.placeLetterButton.1, closure: placeLetterClosure),

@@ -11,7 +11,7 @@ import PanModal
 
 class GameCenterController: BaseMenuController, GKGameCenterControllerDelegate {
 
-    override var members: [MenuItemInfo] {
+    override var menuItem: [MenuItemInfo] {
         return [MenuItemInfo(name: C.gameLeaderButton.0, comment: "", systemImage: C.gameLeaderButton.1, closure: {view in
             print("Tapped \(C.gameLeaderButton.0)")
             var viewController = GKGameCenterViewController(

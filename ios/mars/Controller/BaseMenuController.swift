@@ -14,7 +14,7 @@ class BaseMenuController: UITableViewController, PanModalPresentable {
     let padding = 16.0
     var isShortFormEnabled = false
  
-    var members: [MenuItemInfo] { return [] }
+    var menuItem: [MenuItemInfo] { return [] }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .default
@@ -55,7 +55,7 @@ class BaseMenuController: UITableViewController, PanModalPresentable {
     
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return members.count
+        return menuItem.count
     }
 
     
@@ -63,7 +63,8 @@ class BaseMenuController: UITableViewController, PanModalPresentable {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as? MenuItemCell
             else { return UITableViewCell() }
 
-        cell.configure(with: members[indexPath.row])
+        cell.configure(with: menuItem[indexPath.row])
+        
         return cell
     }
 
@@ -96,7 +97,7 @@ class BaseMenuController: UITableViewController, PanModalPresentable {
     // MARK: - UITableViewDelegate
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let actionButtonInfo = members[indexPath.item]
+        let actionButtonInfo = menuItem[indexPath.item]
         actionButtonInfo.closure(tableView)
     }
 

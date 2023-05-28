@@ -9,7 +9,7 @@ import Foundation
 
 class LevelSelectController: BaseMenuController {
     
-    override var members: [MenuItemInfo] {
+    override var menuItem: [MenuItemInfo] {
         return [MenuItemInfo(name: C.submitLevelButton.0, comment: "", systemImage: C.submitLevelButton.1, closure: {view in
             print("Tapped \(C.submitLevelButton.0)")
         }),
