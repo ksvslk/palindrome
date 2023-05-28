@@ -141,5 +141,6 @@ class MenuItemCell: UITableViewCell {
         imageView.centerYAnchor.constraint(equalTo: avatarView.centerYAnchor).isActive = true
      
     }
+
     
 }

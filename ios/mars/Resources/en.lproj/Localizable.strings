@@ -22,6 +22,8 @@
 "feedback" = "Give Feedback";
 "share" = "Share";
 "restore" = "Restore Purchases";
+"successfully_restored" = "Restored purchase: ";
+"nothing_to_restore" = "Could not restore purchases.";
 
 
 //MARK: Game Center menu

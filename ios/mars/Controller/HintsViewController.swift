@@ -106,9 +106,12 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     //MARK: Ad availability callback
     func adAvailabilityDidChange(isAvailable: Bool) {
         print("Latest info for ads or just updated: \(isAvailable)")
-        if (isAvailable)
-        {
-            if (Database.shared.currentLevel?.categoryRewarded == false) {
+        
+        let hintsPurchased = purchaseManager?.isHintsPurchasedInAnyWay() ?? false
+        let lettersPurchased = purchaseManager?.isLettersPurchasedInAnyWay() ?? false
+        
+        if isAvailable {
+            if Database.shared.currentLevel?.categoryRewarded == false && !hintsPurchased {
                 updateCell(
                     of: .reveal_clue_btn,
                     withName: C.revealClueButton.0,
@@ -126,40 +129,44 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
                 }
             }
             
-            updateCell(
-                of: .place_letter_btn,
-                withName: C.placeLetterButton.0,
-                withComment: "watch_ad_comment"~,
-                withCommentColors: (Theme.colorSecondary, Theme.colorOnPrimary),
-                withTouchEnabled: true
-            )
-            placeLetterClosure = { _ in
-                self.dismiss(animated: false) {
-                    let appDelegate = UIApplication.shared.delegate as! AppDelegate
-                    guard let gvc = appDelegate.window?.rootViewController else { return }
-                    self.adManager?.show(viewController: gvc, rewardType: Reward.letter)
+            if !lettersPurchased {
+                updateCell(
+                    of: .place_letter_btn,
+                    withName: C.placeLetterButton.0,
+                    withComment: "watch_ad_comment"~,
+                    withCommentColors: (Theme.colorSecondary, Theme.colorOnPrimary),
+                    withTouchEnabled: true
+                )
+                
+                placeLetterClosure = { _ in
+                    self.dismiss(animated: false) {
+                        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+                        guard let gvc = appDelegate.window?.rootViewController else { return }
+                        self.adManager?.show(viewController: gvc, rewardType: Reward.letter)
+                    }
                 }
             }
+        } else {
+            if !hintsPurchased {
+                updateCell(
+                    of: .reveal_clue_btn,
+                    withName: C.revealClueButton.0,
+                    withComment: "no_ad_comment"~,
+                    withCommentColors: (Theme.hintsNotificationColor, UIColor.white),
+                    withTouchEnabled: false
+                )
+            }
             
+            if !lettersPurchased {
+                updateCell(
+                    of: .place_letter_btn,
+                    withName: C.placeLetterButton.0,
+                    withComment: "no_ad_comment"~,
+                    withCommentColors: (Theme.hintsNotificationColor, UIColor.white),
+                    withTouchEnabled: false
+                )
+            }
         }
-        else {
-            updateCell(
-                of: .reveal_clue_btn,
-                withName: C.revealClueButton.0,
-                withComment: "no_ad_comment"~,
-                withCommentColors: (Theme.hintsNotificationColor, UIColor.white),
-                withTouchEnabled: false
-            )
-            
-            updateCell(
-                of: .place_letter_btn,
-                withName: C.placeLetterButton.0,
-                withComment: "no_ad_comment"~,
-                withCommentColors: (Theme.hintsNotificationColor, UIColor.white),
-                withTouchEnabled: false
-            )
-        }
-        
     }
     
     
@@ -314,6 +321,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
         if let cell = tableView.cellForRow(at: indexPath) as? MenuItemCell {
             if (hidden) {
                 cell.isHidden = true
+                cell.invalidateIntrinsicContentSize()
                 return
             }
             cell.presentable.closure = closure

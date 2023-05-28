@@ -13,36 +13,59 @@ class SettingsViewController: BaseMenuController {
     private let soundSwitch:UISwitch = UISwitch()
     private let vibrationSwitch:UISwitch = UISwitch()
     
+    weak var purchaseManager: PurchaseManager?
+    
+    init(purchaseManager:PurchaseManager?) {
+        self.purchaseManager = purchaseManager
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    
     override var menuItem: [MenuItemInfo] {
         return [
             MenuItemInfo(name: C.soundButton.0, comment: "", systemImage: C.soundButton.1, closure: {view in
-            print("Tapped \(C.soundButton.0)")
+                print("Tapped \(C.soundButton.0)")
                 self.soundSwitch.setOn(!self.soundSwitch.isOn, animated: true)
                 self.soundSwitchStateChanged(self.soundSwitch)
-        }),
+            }),
             MenuItemInfo(name: C.vibrationButton.0, comment: "", systemImage: C.vibrationButton.1, closure: {view in
-            print("Tapped \(C.vibrationButton.0)")
+                print("Tapped \(C.vibrationButton.0)")
                 self.vibrationSwitch.setOn(!self.vibrationSwitch.isOn, animated: true)
                 self.vibrationSwitchStateChanged(self.vibrationSwitch)
-        }),
+            }),
             MenuItemInfo(name: C.tutorialButton.0, comment: "", systemImage: C.tutorialButton.1, closure: {view in
-            print("Tapped \(C.tutorialButton.0)")
-        }),
-                MenuItemInfo(name: C.feedbackButton.0, comment: "", systemImage: C.feedbackButton.1, closure: {view in 
-            print("Tapped \(C.feedbackButton.0)")
-        }),
-                MenuItemInfo(name: C.shareButton.0, comment: "", systemImage: C.shareButton.1, closure: {view in 
-            print("Tapped \(C.shareButton.0)")
-        }),
-                MenuItemInfo(name: C.restoreButton.0, comment: "", systemImage: C.restoreButton.1, closure: {view in 
-            print("Tapped \(C.restoreButton.0)")
-        })]
+                print("Tapped \(C.tutorialButton.0)")
+            }),
+            MenuItemInfo(name: C.feedbackButton.0, comment: "", systemImage: C.feedbackButton.1, closure: {view in
+                print("Tapped \(C.feedbackButton.0)")
+                guard let writeReviewURL = URL(string: C.APP_FEEDBACK_URL)
+                else { fatalError("Expected a valid URL") }
+                UIApplication.shared.open(writeReviewURL, options: [:], completionHandler: nil)
+            }),
+            MenuItemInfo(name: C.shareButton.0, comment: "", systemImage: C.shareButton.1, closure: {view in
+                print("Tapped \(C.shareButton.0)")
+                let items: [Any] = ["share_description"~, URL(string: C.APP_URL)!]
+                let share = UIActivityViewController(activityItems: items, applicationActivities: nil)
+                if let popoverController = share.popoverPresentationController {
+                    popoverController.sourceView = view
+                    popoverController.sourceRect = view.bounds
+                }
+                self.present(share, animated: true)
+            }),
+            MenuItemInfo(name: C.restoreButton.0, comment: "", systemImage: C.restoreButton.1, closure: {view in
+                print("Tapped \(C.restoreButton.0)")
+                self.purchaseManager?.restorePurchases()
+            })]
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as? MenuItemCell
-            else { return UITableViewCell() }
-
+        else { return UITableViewCell() }
+        
         let item = menuItem[indexPath.row]
         cell.configure(with: item)
         
@@ -95,5 +118,5 @@ class SettingsViewController: BaseMenuController {
     @objc private func vibrationSwitchStateChanged(_ sender: UISwitch) {
         toggleSettingInUserDefaults(isOn: sender.isOn, setting: C.VIBRATION_ON)
     }
-   
+    
 }

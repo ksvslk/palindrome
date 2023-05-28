@@ -89,19 +89,40 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
         availableProducts = response.products
         delegate?.didUpdateProducts(withProducts: getProducts())
         print("productsRequest completed with \(availableProducts)")
+        let defaults = UserDefaults.standard
+        print("Current items: \(defaults.array(forKey: C.PURCHASED_PRODUCTS_KEY))")
+
+    }
+    
+    
+    func isHintsPurchasedInAnyWay() -> Bool
+    {
+        return purchasedProductIdentifiers.contains { productId in
+            productId == C.PURCHASE_HINTS_ID || productId == C.PURCHASE_ALL_ID
+        }
+    }
+    
+    
+    func isLettersPurchasedInAnyWay() -> Bool
+    {
+        return purchasedProductIdentifiers.contains { productId in
+            productId == C.PURCHASE_LETTERS_ID || productId == C.PURCHASE_ALL_ID
+        }
     }
     
     
     func getProducts() -> [String:ProductInfo] {
         print("getProductInfo")
         var productInfoMap: [String:ProductInfo] = [:]
+        let defaults = UserDefaults.standard
+        let purchasedProducts = defaults.array(forKey: C.PURCHASED_PRODUCTS_KEY) as? [String] ?? []
         
         for productIdentifier in productIdentifiers {
             guard let product = availableProducts.first(where: { $0.productIdentifier == productIdentifier }) else {
                 continue
             }
             
-            let isPurchased = UserDefaults.standard.bool(forKey: productIdentifier)
+            let isPurchased = purchasedProducts.contains(productIdentifier)
             let productInfo = ProductInfo(product: product, isPurchased: isPurchased)
             productInfoMap[product.productIdentifier] = productInfo
         }

@@ -178,7 +178,6 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         }
         
         gameScene.backgroundColor = Theme.backgroundColor
-        
         view.presentScene(gameScene, transition: SKTransition.push(with: SKTransitionDirection.left, duration: 1.0))
         view.ignoresSiblingOrder = true
         view.showsFPS = true
@@ -212,32 +211,10 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     // MARK: TAP Settings
     @IBAction func onSettingsButtonTap(_ sender: Any) {
         if let buttonView = (sender as! UIBarButtonItem).value(forKey: "view") as? UIView {
-            let settingsSheetMenu = SettingsViewController()
+            let appDelegate = UIApplication.shared.delegate as! AppDelegate
+            let settingsSheetMenu = SettingsViewController(purchaseManager: appDelegate.purchaseManager)
             presentPanModal(settingsSheetMenu, sourceView: buttonView, sourceRect: buttonView.bounds)
         }
-        /*
-        let sheet = UIAlertController.settingsSheet {
-            print("onTutorialTap")
-            self.confettiBurst(duration: 2.0, birthRate: 5, yAcceleration: 90)
-        } onFeedbackTap: {
-            print("onFeedbackTap")
-            guard let writeReviewURL = URL(string: C.APP_FEEDBACK_URL)
-            else { fatalError("Expected a valid URL") }
-            UIApplication.shared.open(writeReviewURL, options: [:], completionHandler: nil)
-        } onShareTap: {
-            print("onShareTap")
-            let items: [Any] = ["share_description"~, URL(string: C.APP_URL)!]
-            let share = UIActivityViewController(activityItems: items, applicationActivities: nil)
-            if let popoverController = share.popoverPresentationController {
-                popoverController.barButtonItem = sender as? UIBarButtonItem
-            }
-            self.present(share, animated: true)
-        }
-        if let popoverController = sheet.popoverPresentationController {
-            popoverController.barButtonItem = sender as? UIBarButtonItem
-        }
-        present(sheet, animated: true, completion: nil)
-         */
     }
     
     
