@@ -72,9 +72,6 @@
                                 <state key="normal">
                                     <color key="titleColor" name="colorOnPrimary"/>
                                 </state>
-                                <connections>
-                                    <action selector="infoButtonTouch:" destination="BV1-FR-VrT" eventType="touchDown" id="ZTa-c8-Rpf"/>
-                                </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="50" lineBreakMode="middleTruncation" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yiR-FG-tXg">
                                 <rect key="frame" x="32" y="10" width="39" height="22.5"/>

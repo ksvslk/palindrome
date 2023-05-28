@@ -68,7 +68,8 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             {
                 infoLabelButton.alpha = 1.0
                 infoLabelButton.setTitle("tap_to_continue"~, for: .normal)
-                infoLabelButton.isEnabled = true
+                let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tapToContinueTouched))
+                view.addGestureRecognizer(tapGesture)
                 gameScene?.cellDirector.cells.forEach({ cell in
                     if let letter = cell as? Letter {
                         letter.color = Theme.successBoxColor
@@ -87,7 +88,6 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     {
         infoLabelButton.alpha = 0.0
         infoLabelButton.titleLabel?.text = String()
-        infoLabelButton.isEnabled = false
     }
     
     
@@ -194,13 +194,19 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         loadMainScene()
     }
+
     
-    @IBAction func infoButtonTouch(_ sender: Any) {
-        print("infoLabelToucheDown")
+    // MARK: Tap to continue touch
+    @objc func tapToContinueTouched() {
+        print("Screen tapped!")
+        if let gr = view.gestureRecognizers?.first {
+            print("removing gesture recgonizer \(gr)")
+            view.removeGestureRecognizer(gr)
+        }
         Database.shared.changeToNextLevel()
         let nextLevelSoundAction = SKAction.playSound(soundFile: "level_transition.wav")
         self.gameScene?.run(nextLevelSoundAction)
-    }
+     }
     
     
     // MARK: TAP Settings
@@ -360,6 +366,8 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             if (isLastMessageTapToContinue && messages.count == 1)
             {
                 infoLabelButton.isEnabled = true
+                let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tapToContinueTouched))
+                view.addGestureRecognizer(tapGesture)
             }
             else {
                 
