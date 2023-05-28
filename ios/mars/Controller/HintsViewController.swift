@@ -322,11 +322,9 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
             cell.commentLabel.backgroundColor = commentLabelColors.0
             cell.commentLabel.textColor = commentLabelColors.1
             if (enabled){
-                cell.alpha = 1.0
                 cell.isUserInteractionEnabled = true
                 cell.backgroundView?.backgroundColor = #colorLiteral(red: 0.8196078431, green: 0.8235294118, blue: 0.8274509804, alpha: 1).withAlphaComponent(0.11)
             } else {
-                cell.alpha = 0.8
                 cell.isUserInteractionEnabled = false
                 cell.backgroundView?.backgroundColor = UIColor.clear
             }
