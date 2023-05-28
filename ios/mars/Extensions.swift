@@ -161,25 +161,6 @@ extension UIViewController {
     }
 }
 
-extension UIColor {
-    
-    /**
-     When using displaying the bottom sheet menu the colors need to be reversed from one light mode to another
-     to provide some contrast. Seemed to be an idea..
-     */
-    func oppositeLightMode(traitCollection:UITraitCollection) -> UIColor
-    {
-        return self
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            if traitCollection.userInterfaceStyle == .dark {
-                return self.resolvedColor(with: UITraitCollection(userInterfaceStyle: .light))
-            } else {
-                return self.resolvedColor(with: UITraitCollection(userInterfaceStyle: .dark))
-            }
-        }
-        return self
-    }
-}
 
 postfix operator ~
 

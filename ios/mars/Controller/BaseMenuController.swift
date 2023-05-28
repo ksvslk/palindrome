@@ -32,7 +32,7 @@ class BaseMenuController: UITableViewController, PanModalPresentable {
     // MARK: - View Configurations
     func setupTableView() {
         tableView.separatorStyle = .singleLine
-        tableView.backgroundColor = Theme.backgroundColor.oppositeLightMode(traitCollection: traitCollection)
+        tableView.backgroundColor = Theme.backgroundColor
         tableView.register(MenuItemCell.self, forCellReuseIdentifier: "cell")
         // Add an empty header view with desired height
         let headerView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.bounds.width, height: padding))

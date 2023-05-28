@@ -130,7 +130,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
                 of: .place_letter_btn,
                 withName: C.placeLetterButton.0,
                 withComment: "watch_ad_comment"~,
-                withCommentColors: (Theme.colorPrimary, Theme.colorOnPrimary),
+                withCommentColors: (Theme.colorSecondary, Theme.colorOnPrimary),
                 withTouchEnabled: true
             )
             placeLetterClosure = { _ in

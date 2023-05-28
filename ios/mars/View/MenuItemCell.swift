@@ -64,7 +64,7 @@ class MenuItemCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
        
-        backgroundColor = Theme.backgroundColor.oppositeLightMode(traitCollection: traitCollection)
+        backgroundColor = Theme.backgroundColor
         isAccessibilityElement = true
         
         let backgroundView = UIView()
@@ -119,9 +119,9 @@ class MenuItemCell: UITableViewCell {
         self.presentable = presentable
         nameLabel.text = presentable.name
         commentLabel.text = presentable.comment
-        nameLabel.textColor = Theme.colorOnPrimary.oppositeLightMode(traitCollection: traitCollection)
-        commentLabel.textColor = Theme.colorSecondaryVariant.oppositeLightMode(traitCollection: traitCollection).withAlphaComponent(0.8)
-        iconView.backgroundColor = Theme.colorSecondary.oppositeLightMode(traitCollection: traitCollection)
+        nameLabel.textColor = Theme.colorOnPrimary
+        commentLabel.textColor = Theme.colorSecondaryVariant
+        iconView.backgroundColor = Theme.colorSecondary
         addImageToAvatar(avatarView: iconView, image: presentable.systemImage)
     }
     
@@ -129,7 +129,7 @@ class MenuItemCell: UITableViewCell {
     private func addImageToAvatar(avatarView:UIView, image:UIImage)
     {
         let imageView = UIImageView(image: image)
-        imageView.tintColor = Theme.colorOnSecondary.oppositeLightMode(traitCollection: traitCollection)
+        imageView.tintColor = Theme.colorOnSecondary
         
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
