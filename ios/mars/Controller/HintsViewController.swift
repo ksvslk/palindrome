@@ -37,7 +37,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     //MARK: View did appear
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
+        print("viewDidAppear")
         self.purchaseManager?.delegate = self
         self.purchaseManager?.sendLatestInfo()
         self.adManager?.delegate = self
@@ -46,6 +46,43 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
         if (Database.shared.currentLevel?.categoryRewarded == true)
         {
             updateHintsToPremium()
+        }
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        print("viewDidDisappear")
+        self.purchaseManager?.delegate = nil
+        self.adManager?.delegate = nil
+    }
+    
+    
+    private func setShowHintClosure()
+    {
+        self.revealClueClosure = { view in
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                self.dismiss(animated: true) { [self] in
+                    gameViewController?.rewardWithHint()
+                }
+            }
+            else {
+                self.adManager?.rewardToBeGiven = Reward.hint
+                self.dismiss(animated: true)
+            }
+        }
+    }
+    
+    private func setGiveLetterClosure()
+    {
+        self.placeLetterClosure = { view in
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                self.dismiss(animated: true) { [self] in
+                    gameViewController?.rewardWithLetter()
+                }
+            }
+            else {
+                self.adManager?.rewardToBeGiven = Reward.letter
+                self.dismiss(animated: true)
+            }
         }
     }
     
@@ -60,17 +97,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
             withCommentColors: (Theme.successBoxColor,Theme.successTextColor),
             withTouchEnabled: true)
         
-        self.revealClueClosure = { view in
-            if UIDevice.current.userInterfaceIdiom == .pad {
-                self.dismiss(animated: true) { [self] in
-                    gameViewController?.rewardWithHint()
-                }
-            }
-            else {
-                self.adManager?.rewardToBeGiven = Reward.hint
-                self.dismiss(animated: true)
-            }
-        }
+        setShowHintClosure()
     }
     
     
@@ -84,31 +111,24 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
             withCommentColors: (Theme.successBoxColor,Theme.successTextColor),
             withTouchEnabled: true)
         
-        self.placeLetterClosure = { view in
-            if UIDevice.current.userInterfaceIdiom == .pad {
-                self.dismiss(animated: true) { [self] in
-                    gameViewController?.rewardWithLetter()
-                }
-            }
-            else {
-                self.adManager?.rewardToBeGiven = Reward.letter
-                self.dismiss(animated: true)
-            }
-        }
+        setGiveLetterClosure()
     }
-  
+    
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-
+    
     //MARK: Ad availability callback
     func adAvailabilityDidChange(isAvailable: Bool) {
         print("Latest info for ads or just updated: \(isAvailable)")
         
         let hintsPurchased = purchaseManager?.isHintsPurchasedInAnyWay() ?? false
         let lettersPurchased = purchaseManager?.isLettersPurchasedInAnyWay() ?? false
+        
+        print("hintsPurchased: \(hintsPurchased) ")
+        print("lettersPurchased: \(lettersPurchased) ")
         
         if isAvailable {
             if Database.shared.currentLevel?.categoryRewarded == false && !hintsPurchased {
@@ -119,14 +139,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
                     withCommentColors: (Theme.colorPrimary, Theme.colorOnPrimary),
                     withTouchEnabled: true
                 )
-                
-                revealClueClosure = { _ in
-                    self.dismiss(animated: false) {
-                        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-                        guard let gvc = appDelegate.window?.rootViewController else { return }
-                        self.adManager?.show(viewController: gvc, rewardType: Reward.hint)
-                    }
-                }
+                setAdShowClosure(for: .reveal_clue_btn)
             }
             
             if !lettersPurchased {
@@ -137,14 +150,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
                     withCommentColors: (Theme.colorSecondary, Theme.colorOnPrimary),
                     withTouchEnabled: true
                 )
-                
-                placeLetterClosure = { _ in
-                    self.dismiss(animated: false) {
-                        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-                        guard let gvc = appDelegate.window?.rootViewController else { return }
-                        self.adManager?.show(viewController: gvc, rewardType: Reward.letter)
-                    }
-                }
+                setAdShowClosure(for: .place_letter_btn)
             }
         } else {
             if !hintsPurchased {
@@ -170,12 +176,38 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     }
     
     
-    //MARK: Update products callback
-    func didUpdateProducts(withProducts products: [String : ProductInfo]) {
-        updatePurchasesUiInfo(purchases: products)
+    private func setAdShowClosure(for button:Button)
+    {
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        guard let gvc = appDelegate.window?.rootViewController else { return }
+        
+        if (button == .place_letter_btn)
+        {
+            placeLetterClosure = { _ in
+                self.dismiss(animated: false) {
+                    self.adManager?.show(viewController: gvc, rewardType: Reward.letter)
+                }
+            }
+        }
+        else if (button == .reveal_clue_btn)
+        {
+            revealClueClosure = { _ in
+                self.dismiss(animated: false) {
+                    self.adManager?.show(viewController: gvc, rewardType: Reward.hint)
+                }
+            }
+        }
     }
     
-
+    
+    //MARK: Update products callback
+    func didUpdateProducts(withProducts products: [String : ProductInfo]) {
+        DispatchQueue.main.async {
+            self.updatePurchasesUiInfo(purchases: products)
+        }
+    }
+    
+    
     private func allInPurchasedUiUpdate()
     {
         // give hints and letters
@@ -187,7 +219,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
             updateCell(
                 of: buttonCase,
                 withTouchEnabled: false,
-                toHidden: true
+                toOwned: true
             )
         }
         
@@ -197,16 +229,18 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     //MARK: Update buttons Ui
     private func updatePurchasesUiInfo(purchases products:[String : ProductInfo])
     {
+        print("updatePurchasesUiInfo")
+        
         guard let allInPurchased = products[C.PURCHASE_ALL_ID]?.isPurchased else {
             allInPurchasedUiUpdate()
             return
         }
-      
+        
         products.forEach { (productId: String, info: ProductInfo) in
             if (productId == C.PURCHASE_HINTS_ID)
             {
-                // give hints
-                updateHintsToPremium()
+                // give hints if purchased
+                if (info.isPurchased) { updateHintsToPremium() }
                 
                 // update button
                 updateCell(
@@ -215,7 +249,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
                     withComment: info.localizedPrice,
                     withCommentColors: (Theme.letterRewardedColor, Theme.colorOnPrimary),
                     withTouchEnabled: !info.isPurchased,
-                    toHidden: info.isPurchased
+                    toOwned: info.isPurchased
                 )
                 
                 // add tap closure
@@ -227,8 +261,8 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
             }
             else if (productId == C.PURCHASE_LETTERS_ID)
             {
-                // give letters
-                updateLettersToPremium()
+                // give letters if purchased
+                if (info.isPurchased) { updateLettersToPremium() }
                 
                 // update button
                 updateCell(
@@ -237,7 +271,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
                     withComment: info.localizedPrice,
                     withCommentColors: (Theme.letterRewardedColor, Theme.colorOnPrimary),
                     withTouchEnabled: !info.isPurchased,
-                    toHidden: info.isPurchased
+                    toOwned: info.isPurchased
                 )
                 
                 // add tap closure
@@ -256,7 +290,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
                     withComment: info.localizedPrice,
                     withCommentColors: (Theme.letterRewardedColor, Theme.colorOnPrimary),
                     withTouchEnabled: !info.isPurchased,
-                    toHidden: info.isPurchased
+                    toOwned: info.isPurchased
                 )
                 
                 // add tap closure
@@ -274,7 +308,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
                     withComment: info.localizedPrice,
                     withCommentColors: (Theme.letterRewardedColor, Theme.colorOnPrimary),
                     withTouchEnabled: !info.isPurchased,
-                    toHidden: info.isPurchased
+                    toOwned: info.isPurchased
                 )
                 
                 // add tap closure
@@ -286,6 +320,19 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
             }
         }
         
+        if (isAllInPriceHigherThatOthersCombined(products:products))
+        {
+            updateCell(
+                of: Button.purchase_all_btn,
+                toThanks: true
+            )
+        }
+        
+    }
+    
+    
+    private func isAllInPriceHigherThatOthersCombined(products:[String : ProductInfo]) -> Bool
+    {
         let allInPrice = products[C.PURCHASE_ALL_ID]?.product.price ?? 0
         let sumWithoutAllIn = products.reduce(NSDecimalNumber.zero) { (result, element) -> NSDecimalNumber in
             guard element.key != C.PURCHASE_ALL_ID && !element.value.isPurchased else {
@@ -295,16 +342,11 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
             let price = element.value.product.price
             return result.adding(price)
         }
-        
-        if (allInPrice.compare(sumWithoutAllIn) == ComparisonResult.orderedDescending)
-        {
-            updateCell(
-                of: Button.purchase_all_btn,
-                withTouchEnabled: false,
-                toHidden: true
-            )
-        }
+        print("sumWithoutAllIn: \(sumWithoutAllIn)")
+        print("allinprice: \(allInPrice)")
+        return allInPrice.compare(sumWithoutAllIn) == ComparisonResult.orderedDescending
     }
+
     
     
     //MARK: Update cell
@@ -314,14 +356,34 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
         withComment comment:String = "",
         withCommentColors commentLabelColors:(UIColor, UIColor) = (UIColor.clear, UIColor.clear),
         withTouchEnabled enabled:Bool = true,
-        toHidden hidden:Bool = false,
+        toOwned purchased:Bool = false,
+        toThanks thankYou:Bool = false,
         withTouchAction closure:@escaping (UIView) -> Void = { view in }
     ) {
         let indexPath = IndexPath(row: button.rawValue, section: 0)
+        
         if let cell = tableView.cellForRow(at: indexPath) as? MenuItemCell {
-            if (hidden) {
-                cell.isHidden = true
-                cell.invalidateIntrinsicContentSize()
+            if (purchased) {
+                let checkMark = UIImage(systemName: "checkmark.shield.fill")!
+                cell.removeImageFromIconView()
+                cell.addImageToIconView(image: checkMark)
+                cell.iconView.backgroundColor = Theme.successBoxColor
+                cell.nameLabel.text = "You own \(name)"
+                cell.commentLabel.text = ""
+                cell.commentLabel.backgroundColor = .clear
+                cell.isUserInteractionEnabled = false
+                return
+            }
+            if (thankYou)
+            {
+                let checkMark = UIImage(systemName: "heart")!
+                cell.removeImageFromIconView()
+                cell.addImageToIconView(image: checkMark)
+                cell.iconView.backgroundColor = UIColor.systemYellow
+                cell.nameLabel.text = "Thank you!"
+                cell.commentLabel.text = ""
+                cell.commentLabel.backgroundColor = .clear
+                cell.isUserInteractionEnabled = false
                 return
             }
             cell.presentable.closure = closure
@@ -337,6 +399,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
                 cell.backgroundView?.backgroundColor = UIColor.clear
             }
         }
+        
     }
     
     //MARK: Closures
@@ -363,7 +426,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     var purchaseAllClosure: ((UIView) -> Void) = { view in
         print("Tapped \(C.purchaseAllButton.0)")
     }
-    
+
     
     //MARK: Menu items
     override var menuItem: [MenuItemInfo] {
@@ -374,7 +437,6 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
             MenuItemInfo(name: C.purchaseLettersButton.0, comment: "", systemImage: C.purchaseLettersButton.1, closure: purchaseLettersClosure),
             MenuItemInfo(name: C.purchaseNoAdsButton.0, comment: "", systemImage: C.purchaseNoAdsButton.1, closure: purchaseNoAdsClosure),
             MenuItemInfo(name: C.purchaseAllButton.0, comment: "", systemImage: C.purchaseAllButton.1, closure: purchaseAllClosure)
-        ]
-    }
+        ]}
     
 }

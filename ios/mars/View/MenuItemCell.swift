@@ -27,6 +27,9 @@ class MenuItemCell: UITableViewCell {
         return view
     }()
     
+    
+    let activityIndicatorView = UIActivityIndicatorView()
+    
     let nameLabel: UILabel = {
         let label = UILabel()
         label.textColor = #colorLiteral(red: 0.8196078431, green: 0.8235294118, blue: 0.8274509804, alpha: 1)
@@ -52,7 +55,7 @@ class MenuItemCell: UITableViewCell {
     }()
     
     lazy var stackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [iconView, buttonDetails])
+        let stackView = UIStackView(arrangedSubviews: [iconView, buttonDetails, activityIndicatorView])
         stackView.alignment = .center
         stackView.spacing = 16.0
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -122,24 +125,34 @@ class MenuItemCell: UITableViewCell {
         nameLabel.textColor = Theme.colorOnPrimary
         commentLabel.textColor = Theme.colorSecondaryVariant
         iconView.backgroundColor = Theme.colorSecondary
-        addImageToAvatar(avatarView: iconView, image: presentable.systemImage)
+        addImageToIconView(image: presentable.systemImage)
     }
     
     
-    private func addImageToAvatar(avatarView:UIView, image:UIImage)
+    func addImageToIconView(image:UIImage)
     {
-        let imageView = UIImageView(image: image)
-        imageView.tintColor = Theme.colorOnSecondary
+        let uiImageView = UIImageView(image: image)
+        uiImageView.tintColor = Theme.colorOnSecondary
         
-        imageView.translatesAutoresizingMaskIntoConstraints = false
+        uiImageView.translatesAutoresizingMaskIntoConstraints = false
         
         // Add the image view as a subview to the container view
-        avatarView.addSubview(imageView)
+        iconView.addSubview(uiImageView)
         
         // Configure Auto Layout constraints to center the image view
-        imageView.centerXAnchor.constraint(equalTo: avatarView.centerXAnchor).isActive = true
-        imageView.centerYAnchor.constraint(equalTo: avatarView.centerYAnchor).isActive = true
+        uiImageView.centerXAnchor.constraint(equalTo: iconView.centerXAnchor).isActive = true
+        uiImageView.centerYAnchor.constraint(equalTo: iconView.centerYAnchor).isActive = true
      
+    }
+    
+    
+    func removeImageFromIconView()
+    {
+        if let icon = iconView.subviews.first(where: { view in
+            view is UIImageView
+        }) {
+            icon.removeFromSuperview()
+        }
     }
 
     
