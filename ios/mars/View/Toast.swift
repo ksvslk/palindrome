@@ -20,7 +20,7 @@ class Toast {
         let toastLabel = UILabel(frame: CGRect())
         toastLabel.textColor = UIColor.white
         toastLabel.textAlignment = .center;
-        toastLabel.font = UIFont(name: Theme.letterFont, size: 18)
+        toastLabel.font = UIFont(name: Theme.yantraBold, size: 18)
         toastLabel.text = message
         toastLabel.clipsToBounds  =  true
         toastLabel.numberOfLines = 0

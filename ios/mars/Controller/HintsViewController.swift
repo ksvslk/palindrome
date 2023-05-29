@@ -58,7 +58,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     
     private func setShowHintClosure()
     {
-        self.revealClueClosure = { view in
+        self.revealClueClosure = { _ in
             if UIDevice.current.userInterfaceIdiom == .pad {
                 self.dismiss(animated: true) { [self] in
                     gameViewController?.rewardWithHint()
@@ -73,7 +73,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     
     private func setGiveLetterClosure()
     {
-        self.placeLetterClosure = { view in
+        self.placeLetterClosure = { _ in
             if UIDevice.current.userInterfaceIdiom == .pad {
                 self.dismiss(animated: true) { [self] in
                     gameViewController?.rewardWithLetter()
@@ -253,9 +253,11 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
                 )
                 
                 // add tap closure
-                purchaseCluesClosure = { view in
+                purchaseCluesClosure = { menuItem in
                     if (!info.isPurchased) {
                         self.purchaseManager?.purchaseProduct(productId)
+                        
+                        // TODO: Start loading
                     }
                 }
             }
@@ -275,7 +277,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
                 )
                 
                 // add tap closure
-                purchaseLettersClosure = { view in
+                purchaseLettersClosure = { _ in
                     if (!info.isPurchased) {
                         self.purchaseManager?.purchaseProduct(productId)
                     }
@@ -294,7 +296,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
                 )
                 
                 // add tap closure
-                purchaseNoAdsClosure = { view in
+                purchaseNoAdsClosure = { _ in
                     if (!info.isPurchased) {
                         self.purchaseManager?.purchaseProduct(productId)
                     }
@@ -312,7 +314,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
                 )
                 
                 // add tap closure
-                purchaseAllClosure = { view in
+                purchaseAllClosure = { _ in
                     if (!info.isPurchased) {
                         self.purchaseManager?.purchaseProduct(productId)
                     }
@@ -346,7 +348,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
         print("allinprice: \(allInPrice)")
         return allInPrice.compare(sumWithoutAllIn) == ComparisonResult.orderedDescending
     }
-
+    
     
     
     //MARK: Update cell
@@ -358,7 +360,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
         withTouchEnabled enabled:Bool = true,
         toOwned purchased:Bool = false,
         toThanks thankYou:Bool = false,
-        withTouchAction closure:@escaping (UIView) -> Void = { view in }
+        withTouchAction closure:@escaping (UIView) -> Void = { _ in }
     ) {
         let indexPath = IndexPath(row: button.rawValue, section: 0)
         
@@ -403,30 +405,30 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     }
     
     //MARK: Closures
-    var revealClueClosure: ((UIView) -> Void) = { view in
+    var revealClueClosure: ((MenuItemCell) -> Void) = { menuItem in
         print("Tapped \(C.revealClueButton.0)")
     }
     
-    var placeLetterClosure: ((UIView) -> Void) = { view in
+    var placeLetterClosure: ((MenuItemCell) -> Void) = { menuItem in
         print("Tapped \(C.placeLetterButton.0)")
     }
     
-    var purchaseCluesClosure: ((UIView) -> Void) = { view in
+    var purchaseCluesClosure: ((MenuItemCell) -> Void) = { menuItem in
         print("Tapped \(C.purchaseCluesButton.0)")
     }
     
-    var purchaseLettersClosure: ((UIView) -> Void) = { view in
+    var purchaseLettersClosure: ((MenuItemCell) -> Void) = { menuItem in
         print("Tapped \(C.purchaseLettersButton.0)")
     }
     
-    var purchaseNoAdsClosure: ((UIView) -> Void) = { view in
+    var purchaseNoAdsClosure: ((MenuItemCell) -> Void) = { menuItem in
         print("Tapped \(C.purchaseNoAdsButton.0)")
     }
     
-    var purchaseAllClosure: ((UIView) -> Void) = { view in
+    var purchaseAllClosure: ((MenuItemCell) -> Void) = { menuItem in
         print("Tapped \(C.purchaseAllButton.0)")
     }
-
+    
     
     //MARK: Menu items
     override var menuItem: [MenuItemInfo] {

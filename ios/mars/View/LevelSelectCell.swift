@@ -18,7 +18,7 @@ class LevelSelectCell: UICollectionViewCell {
         // Customize the label as desired
         label.textAlignment = .center
         label.textColor = Theme.colorOnPrimary
-        label.font = UIFont(name: Theme.letterFont, size: 20)
+        label.font = UIFont(name: Theme.yantraBold, size: 20)
         
         // Add the label to the cell's contentView and center it
         contentView.addSubview(label)

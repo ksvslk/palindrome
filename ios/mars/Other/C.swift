@@ -79,10 +79,10 @@ struct C {
     // Hints menu
     static let revealClueButton = ("reveal_clue"~, UIImage(systemName: "eye")!)
     static let placeLetterButton = ("place_letter"~, UIImage(systemName: "bolt.badge.a")!)
-    static let purchaseCluesButton = ("...", UIImage(systemName: "dollarsign.circle.fill")!)
-    static let purchaseLettersButton = ("...", UIImage(systemName: "dollarsign.circle.fill")!)
-    static let purchaseNoAdsButton = ("...", UIImage(systemName: "dollarsign.circle.fill")!)
-    static let purchaseAllButton = ("...", UIImage(systemName: "dollarsign.circle.fill")!)
+    static let purchaseCluesButton = ("loading"~, UIImage(systemName: "dollarsign.circle.fill")!)
+    static let purchaseLettersButton = ("loading"~, UIImage(systemName: "dollarsign.circle.fill")!)
+    static let purchaseNoAdsButton = ("loading"~, UIImage(systemName: "dollarsign.circle.fill")!)
+    static let purchaseAllButton = ("loading"~, UIImage(systemName: "dollarsign.circle.fill")!)
     
     
 }

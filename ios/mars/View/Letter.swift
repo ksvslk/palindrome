@@ -31,7 +31,7 @@ class Letter: Cell {
         self.data = data
         super.init(homeIndex: data.homeIndex, texture: nil, color: Theme.colorPrimary, size: size, homePosition: homePosition)
         let letterLabel = SKLabelNode(text: data.letter)
-        letterLabel.fontName = Theme.letterFont
+        letterLabel.fontName = Theme.yantraBold
         letterLabel.fontSize = size.width / 1.5
         letterLabel.verticalAlignmentMode = .center
         letterLabel.horizontalAlignmentMode = .center

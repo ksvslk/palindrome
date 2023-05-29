@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		B128451029F82ACE00C8F13D /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B128450F29F82ACE00C8F13D /* Extensions.swift */; };
+		B128D9932A24D225002B13D1 /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = B128D9922A24D225002B13D1 /* Toast */; };
+		B128D9942A24D5CB002B13D1 /* roboto_medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B141D53F29F681B300FE9B39 /* roboto_medium.ttf */; };
+		B128D9952A24D5D0002B13D1 /* yantramanav_medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B141D53E29F681B300FE9B39 /* yantramanav_medium.ttf */; };
 		B1299D7029F962F4007B2668 /* Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1299D6F29F962F4007B2668 /* Database.swift */; };
 		B12EE56B2A21DEAA00056603 /* PaddedLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B12EE56A2A21DEAA00056603 /* PaddedLabel.swift */; };
 		B12EE56D2A21E86C00056603 /* HintsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B12EE56C2A21E86C00056603 /* HintsViewController.swift */; };
@@ -188,6 +191,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B128D9932A24D225002B13D1 /* Toast in Frameworks */,
 				B13149D72A209FA3004B06E8 /* PanModal in Frameworks */,
 				B1313C4F2A160E02005830AB /* GoogleMobileAds in Frameworks */,
 			);
@@ -406,6 +410,7 @@
 			packageProductDependencies = (
 				B1313C4E2A160E02005830AB /* GoogleMobileAds */,
 				B13149D62A209FA3004B06E8 /* PanModal */,
+				B128D9922A24D225002B13D1 /* Toast */,
 			);
 			productName = test;
 			productReference = B1B33ABE29FFA88000DFA59F /* mars.app */;
@@ -442,6 +447,7 @@
 			packageReferences = (
 				B1313C4D2A160E02005830AB /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
 				B13149D52A209FA3004B06E8 /* XCRemoteSwiftPackageReference "PanModal" */,
+				B128D9912A24D225002B13D1 /* XCRemoteSwiftPackageReference "Toast-Swift" */,
 			);
 			productRefGroup = B1E8974129EC5001001B942F;
 			projectDirPath = "";
@@ -483,7 +489,9 @@
 				B16F207029FBBAFC00E8DFCE /* GameScene.sks in Resources */,
 				B1313C322A1502C5005830AB /* c5_outer.wav in Resources */,
 				B1313C372A1502C5005830AB /* c3_outer.wav in Resources */,
+				B128D9942A24D5CB002B13D1 /* roboto_medium.ttf in Resources */,
 				B141D54329F6B44500FE9B39 /* yantramanav_bold.ttf in Resources */,
+				B128D9952A24D5D0002B13D1 /* yantramanav_medium.ttf in Resources */,
 				B1313C362A1502C5005830AB /* g4_outer.wav in Resources */,
 				B1FC275D2A17E2A100117C55 /* hint_notification.wav in Resources */,
 				B1E8975B29EC5002001B942F /* Assets.xcassets in Resources */,
@@ -851,6 +859,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		B128D9912A24D225002B13D1 /* XCRemoteSwiftPackageReference "Toast-Swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/scalessec/Toast-Swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
 		B1313C4D2A160E02005830AB /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads.git";
@@ -870,6 +886,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		B128D9922A24D225002B13D1 /* Toast */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B128D9912A24D225002B13D1 /* XCRemoteSwiftPackageReference "Toast-Swift" */;
+			productName = Toast;
+		};
 		B1313C4E2A160E02005830AB /* GoogleMobileAds */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B1313C4D2A160E02005830AB /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;

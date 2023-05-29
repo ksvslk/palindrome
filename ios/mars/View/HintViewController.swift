@@ -18,7 +18,7 @@ class HintViewController: UIViewController {
         // Customize the label
         label.text = ""
         label.textAlignment = .center
-        label.font = UIFont(name: Theme.letterFont, size: 24)
+        label.font = UIFont(name: Theme.yantraBold, size: 24)
         label.textColor = Theme.colorOnBackground
 
         // Add the label to the view controller's view

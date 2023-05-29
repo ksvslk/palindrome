@@ -8,6 +8,7 @@
 import UIKit
 import GameKit
 import GoogleMobileAds
+import Toast
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -31,6 +32,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 C.VIBRATION_ON: true
             ]
         )
+        
+        var style = ToastStyle()
+        style.backgroundColor = Theme.darkBlue
+        style.activityBackgroundColor = Theme.darkBlue
+        style.messageColor = UIColor.white
+        style.messageFont = UIFont(name: Theme.robotoMedium, size: 15)!
+        ToastManager.shared.style = style
         
         logInToGameCenter()
         Database.shared.initializeDatabaseWithGameLevels()

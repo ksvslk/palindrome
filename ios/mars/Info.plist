@@ -209,6 +209,8 @@
 	</array>
 	<key>UIAppFonts</key>
 	<array>
+		<string>roboto_medium.ttf</string>
+		<string>yantramanav_medium.ttf</string>
 		<string>yantramanav_bold.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>

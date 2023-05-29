@@ -31,6 +31,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         subscribeToSolutionCheckResult()
         subscribeToHintsSuggestion()
         Database.shared.changeLevel(toLatest: true)
+        self.view.makeToast("This is a piece of toast", position: .center) // now uses the shared style
     }
     
     

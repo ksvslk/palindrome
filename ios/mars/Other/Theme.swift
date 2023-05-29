@@ -44,7 +44,9 @@ struct Theme {
     static var transparentColor = UIColor(named: "transparentColor")!
     
  
-    static var letterFont = "Yantramanav-Bold"
-    
+    static var yantraBold = "Yantramanav-Bold"
+    static var robotoMedium = "Roboto-Medium"
+    static var yantraMedium = "Yantramanav-Medium"
+
     
 }

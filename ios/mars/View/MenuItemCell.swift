@@ -26,14 +26,12 @@ class MenuItemCell: UITableViewCell {
         view.layer.cornerRadius = 8.0
         return view
     }()
-    
-    
-    let activityIndicatorView = UIActivityIndicatorView()
+
     
     let nameLabel: UILabel = {
         let label = UILabel()
         label.textColor = #colorLiteral(red: 0.8196078431, green: 0.8235294118, blue: 0.8274509804, alpha: 1)
-        label.font = UIFont(name: Theme.letterFont, size: 17.0)
+        label.font = UIFont(name: Theme.yantraBold, size: 17.0)
         label.backgroundColor = .clear
         return label
     }()
@@ -42,7 +40,7 @@ class MenuItemCell: UITableViewCell {
         let label = PaddedLabel()
         label.textColor = #colorLiteral(red: 0.7019607843, green: 0.7058823529, blue: 0.7137254902, alpha: 1)
         label.backgroundColor = .clear
-        label.font = UIFont(name: Theme.letterFont, size: 13.0)
+        label.font = UIFont(name: Theme.yantraBold, size: 13.0)
         return label
     }()
     
@@ -55,7 +53,7 @@ class MenuItemCell: UITableViewCell {
     }()
     
     lazy var stackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [iconView, buttonDetails, activityIndicatorView])
+        let stackView = UIStackView(arrangedSubviews: [iconView, buttonDetails])
         stackView.alignment = .center
         stackView.spacing = 16.0
         stackView.translatesAutoresizingMaskIntoConstraints = false

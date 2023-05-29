@@ -62,9 +62,7 @@ class BaseMenuController: UITableViewController, PanModalPresentable {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as? MenuItemCell
             else { return UITableViewCell() }
-
         cell.configure(with: menuItem[indexPath.row])
-        
         return cell
     }
 
@@ -98,7 +96,9 @@ class BaseMenuController: UITableViewController, PanModalPresentable {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let actionButtonInfo = menuItem[indexPath.item]
-        actionButtonInfo.closure(tableView)
+        guard let cell = tableView.cellForRow(at: indexPath) as? MenuItemCell
+            else { return  }
+        actionButtonInfo.closure(cell)
     }
 
     

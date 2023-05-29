@@ -13,7 +13,7 @@ struct MenuItemInfo: Equatable {
     let name: String
     let comment: String
     let systemImage: UIImage
-    var closure: (_ view: UIView) -> Void
+    var closure: (_ view: MenuItemCell) -> Void
     
     static func == (lhs: MenuItemInfo, rhs: MenuItemInfo) -> Bool {
         return lhs.name == rhs.name
