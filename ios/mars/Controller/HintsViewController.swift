@@ -11,7 +11,6 @@ import SpriteKit
 
 class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsUpdateDelegate, TransactionProcessDelegate {
  
-   
     weak var adManager: AdManager?
     weak var purchaseManager: PurchaseManager?
     weak var gameViewController: GameViewController?

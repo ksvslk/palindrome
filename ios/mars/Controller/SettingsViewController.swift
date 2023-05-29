@@ -15,6 +15,10 @@ class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
         DispatchQueue.main.async {
             self.view.hideToastActivity()
             self.view.isUserInteractionEnabled = true
+            if (result)
+            {
+                self.view.makeToast("Successfully restored!", position: .center)
+            }
         }
 
     }

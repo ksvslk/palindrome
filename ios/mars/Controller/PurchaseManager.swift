@@ -85,9 +85,7 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
     // Restore purchases
     func restorePurchases() {
         print("restorePurchases")
-        let refreshRequest = SKReceiptRefreshRequest()
-        refreshRequest.delegate = self
-        refreshRequest.start()
+        SKPaymentQueue.default().restoreCompletedTransactions()
         processDelegate?.didStartProcessing()
         loading = true
     }
@@ -193,6 +191,9 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
                 loading = false
             case .deferred:
                 print("paymentQueue state: deferred")
+                //TODO: needs some special message
+                processDelegate?.didFinishProcessing(result: true)
+                loading = false
                 // Handle the "Deferred" state
                 // For example, inform the user that the transaction is pending
                 break
@@ -205,6 +206,13 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
     
     private func verifyReceipt(completion: @escaping (Bool) -> Void) {
         print("verifyReceipt")
+        
+        /*
+        let refreshRequest = SKReceiptRefreshRequest()
+        refreshRequest.delegate = self
+        refreshRequest.start()
+        */
+        
         guard let appStoreReceiptURL = Bundle.main.appStoreReceiptURL else {
             completion(false)
             return
