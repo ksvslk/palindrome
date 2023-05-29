@@ -9,7 +9,23 @@ import Foundation
 import UIKit
 import Toast
 
-class SettingsViewController: BaseMenuController {
+class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
+    
+    func didFinishProcessing(result: Bool) {
+        DispatchQueue.main.async {
+            self.view.hideToastActivity()
+            self.view.isUserInteractionEnabled = true
+        }
+
+    }
+    
+    func didStartProcessing() {
+        DispatchQueue.main.async {
+            self.view.makeToastActivity(.center)
+            self.view.isUserInteractionEnabled = false
+        }
+    }
+    
     
     private let soundSwitch:UISwitch = UISwitch()
     private let vibrationSwitch:UISwitch = UISwitch()
@@ -19,6 +35,20 @@ class SettingsViewController: BaseMenuController {
     init(purchaseManager:PurchaseManager?) {
         self.purchaseManager = purchaseManager
         super.init(nibName: nil, bundle: nil)
+  
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        self.purchaseManager?.processDelegate = self
+        if (self.purchaseManager?.loading == true)
+        {
+            view.makeToastActivity(.center)
+            view.isUserInteractionEnabled = false
+        }
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        self.purchaseManager?.processDelegate = nil
     }
     
     required init?(coder: NSCoder) {
@@ -63,6 +93,8 @@ class SettingsViewController: BaseMenuController {
                 print("Tapped \(C.restoreButton.0)")
       
                 self.purchaseManager?.restorePurchases()
+                self.view.makeToastActivity(.center)
+                self.view.isUserInteractionEnabled = false
              
             })]
     }

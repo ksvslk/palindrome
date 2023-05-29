@@ -11,6 +11,7 @@
 		B128D9932A24D225002B13D1 /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = B128D9922A24D225002B13D1 /* Toast */; };
 		B128D9942A24D5CB002B13D1 /* roboto_medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B141D53F29F681B300FE9B39 /* roboto_medium.ttf */; };
 		B128D9952A24D5D0002B13D1 /* yantramanav_medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B141D53E29F681B300FE9B39 /* yantramanav_medium.ttf */; };
+		B128D9972A24D7DA002B13D1 /* TransactionProcessDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B128D9962A24D7DA002B13D1 /* TransactionProcessDelegate.swift */; };
 		B1299D7029F962F4007B2668 /* Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1299D6F29F962F4007B2668 /* Database.swift */; };
 		B12EE56B2A21DEAA00056603 /* PaddedLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B12EE56A2A21DEAA00056603 /* PaddedLabel.swift */; };
 		B12EE56D2A21E86C00056603 /* HintsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B12EE56C2A21E86C00056603 /* HintsViewController.swift */; };
@@ -99,6 +100,7 @@
 
 /* Begin PBXFileReference section */
 		B128450F29F82ACE00C8F13D /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		B128D9962A24D7DA002B13D1 /* TransactionProcessDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionProcessDelegate.swift; sourceTree = "<group>"; };
 		B1299D6F29F962F4007B2668 /* Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Database.swift; sourceTree = "<group>"; };
 		B12EE56A2A21DEAA00056603 /* PaddedLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaddedLabel.swift; sourceTree = "<group>"; };
 		B12EE56C2A21E86C00056603 /* HintsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HintsViewController.swift; sourceTree = "<group>"; };
@@ -360,6 +362,7 @@
 				B1313C512A1620EB005830AB /* AdManager.swift */,
 				B1FC277E2A1DF3D700117C55 /* PurchaseManager.swift */,
 				B13149CF2A1F8E3F004B06E8 /* ProductsUpdateDelegate.swift */,
+				B128D9962A24D7DA002B13D1 /* TransactionProcessDelegate.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -533,6 +536,7 @@
 				B1E8975629EC5001001B942F /* GameViewController.swift in Sources */,
 				B1299D7029F962F4007B2668 /* Database.swift in Sources */,
 				B1313BC02A0F7E72005830AB /* SolutionCheckResult.swift in Sources */,
+				B128D9972A24D7DA002B13D1 /* TransactionProcessDelegate.swift in Sources */,
 				B13149E12A20A5A7004B06E8 /* BaseMenuController.swift in Sources */,
 				B1FC275B2A17D9DA00117C55 /* Toast.swift in Sources */,
 				B1B33A8729FDB66D00DFA59F /* Level+CoreDataProperties.swift in Sources */,

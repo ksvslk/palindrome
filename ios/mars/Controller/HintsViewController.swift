@@ -9,8 +9,9 @@ import Foundation
 import UIKit
 import SpriteKit
 
-class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsUpdateDelegate {
-    
+class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsUpdateDelegate, TransactionProcessDelegate {
+ 
+   
     weak var adManager: AdManager?
     weak var purchaseManager: PurchaseManager?
     weak var gameViewController: GameViewController?
@@ -25,12 +26,14 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
         case purchase_all_btn = 5
     }
     
+    
     init(adManager:AdManager?, purchaseManager:PurchaseManager?, gameViewController:GameViewController?) {
         print("init hints")
         self.gameViewController = gameViewController
         self.adManager = adManager
         self.purchaseManager = purchaseManager
         super.init(nibName: nil, bundle: nil)
+    
     }
     
     
@@ -39,6 +42,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
         super.viewDidAppear(animated)
         print("viewDidAppear")
         self.purchaseManager?.delegate = self
+        self.purchaseManager?.processDelegate = self
         self.purchaseManager?.sendLatestInfo()
         self.adManager?.delegate = self
         self.adManager?.sendLatestInfo()
@@ -47,15 +51,39 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
         {
             updateHintsToPremium()
         }
+
+        if (self.purchaseManager?.loading == true)
+        {
+            view.makeToastActivity(.center)
+            view.isUserInteractionEnabled = false
+        }
     }
     
+    // MARK: View did disappear
     override func viewDidDisappear(_ animated: Bool) {
         print("viewDidDisappear")
         self.purchaseManager?.delegate = nil
+        self.purchaseManager?.processDelegate = nil
         self.adManager?.delegate = nil
     }
     
     
+    func didFinishProcessing(result: Bool) {
+        DispatchQueue.main.async {
+            self.view.hideToastActivity()
+            self.view.isUserInteractionEnabled = true
+        }
+    }
+    
+    func didStartProcessing() {
+        DispatchQueue.main.async {
+            self.view.makeToastActivity(.center)
+            self.view.isUserInteractionEnabled = false
+        }
+    }
+    
+    
+    // MARK: Set show hint closure
     private func setShowHintClosure()
     {
         self.revealClueClosure = { _ in
@@ -71,6 +99,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
         }
     }
     
+    // MARK: Set give letter closure
     private func setGiveLetterClosure()
     {
         self.placeLetterClosure = { _ in
@@ -127,6 +156,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
         let hintsPurchased = purchaseManager?.isHintsPurchasedInAnyWay() ?? false
         let lettersPurchased = purchaseManager?.isLettersPurchasedInAnyWay() ?? false
         
+        
         print("hintsPurchased: \(hintsPurchased) ")
         print("lettersPurchased: \(lettersPurchased) ")
         
@@ -176,6 +206,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     }
     
     
+    // MARK: Set ad show closure
     private func setAdShowClosure(for button:Button)
     {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -208,16 +239,41 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     }
     
     
-    private func allInPurchasedUiUpdate()
+    // MARK: Update all in case
+    private func allInPurchasedUiUpdate(products:[String : ProductInfo])
     {
         // give hints and letters
         updateHintsToPremium()
         updateLettersToPremium()
         
+       
         // hide all purchases
-        Button.allCases.forEach { buttonCase in
+        [Button.purchase_all_btn, Button.purchase_clues_btn, Button.purchase_letters_btn, Button.purchase_no_ads_btn].forEach { buttonCase in
+            
+            var name = ""
+            
+            if (buttonCase == Button.purchase_all_btn)
+            {
+                name = products[C.PURCHASE_ALL_ID]?.product.localizedTitle ?? name
+            }
+            else if (buttonCase == Button.purchase_clues_btn)
+            {
+                name = products[C.PURCHASE_HINTS_ID]?.product.localizedTitle  ?? name
+            }
+
+            else if (buttonCase == Button.purchase_letters_btn)
+            {
+                name = products[C.PURCHASE_LETTERS_ID]?.product.localizedTitle ?? name
+            }
+
+            else if (buttonCase == Button.purchase_no_ads_btn)
+            {
+                name = products[C.PURCHASE_NO_ADS_ID]?.product.localizedTitle ?? name
+            }
+
             updateCell(
                 of: buttonCase,
+                withName: name,
                 withTouchEnabled: false,
                 toOwned: true
             )
@@ -230,11 +286,12 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     private func updatePurchasesUiInfo(purchases products:[String : ProductInfo])
     {
         print("updatePurchasesUiInfo")
-        
-        guard let allInPurchased = products[C.PURCHASE_ALL_ID]?.isPurchased else {
-            allInPurchasedUiUpdate()
+       
+        guard products[C.PURCHASE_ALL_ID]?.isPurchased == false else {
+            allInPurchasedUiUpdate(products: products)
             return
         }
+        
         
         products.forEach { (productId: String, info: ProductInfo) in
             if (productId == C.PURCHASE_HINTS_ID)
@@ -370,7 +427,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
                 cell.removeImageFromIconView()
                 cell.addImageToIconView(image: checkMark)
                 cell.iconView.backgroundColor = Theme.successBoxColor
-                cell.nameLabel.text = "You own \(name)"
+                cell.nameLabel.text = "\(name) ✦"
                 cell.commentLabel.text = ""
                 cell.commentLabel.backgroundColor = .clear
                 cell.isUserInteractionEnabled = false

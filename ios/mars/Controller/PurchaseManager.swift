@@ -42,6 +42,8 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
     private var purchasedProductIdentifiers: Set<String> = []
     private var availableProducts: [SKProduct] = []
     weak var delegate: ProductsUpdateDelegate?
+    weak var processDelegate: TransactionProcessDelegate?
+    var loading:Bool = false
     
     override init() {
         super.init()
@@ -64,6 +66,8 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
         productsRequest = SKProductsRequest(productIdentifiers: productIdentifiers)
         productsRequest?.delegate = self
         productsRequest?.start()
+        processDelegate?.didStartProcessing()
+        loading = true
     }
     
     
@@ -73,6 +77,8 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
         guard let product = availableProducts.first(where: { $0.productIdentifier == productId }) else { return }
         let payment = SKPayment(product: product)
         SKPaymentQueue.default().add(payment)
+        processDelegate?.didStartProcessing()
+        loading = true
     }
     
     
@@ -82,6 +88,8 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
         let refreshRequest = SKReceiptRefreshRequest()
         refreshRequest.delegate = self
         refreshRequest.start()
+        processDelegate?.didStartProcessing()
+        loading = true
     }
     
     
@@ -89,9 +97,6 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
         availableProducts = response.products
         delegate?.didUpdateProducts(withProducts: getProducts())
         print("productsRequest completed with \(availableProducts)")
-        let defaults = UserDefaults.standard
-        print("Current items: \(defaults.array(forKey: C.PURCHASED_PRODUCTS_KEY))")
-
     }
     
     
@@ -137,6 +142,8 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
             case .purchasing:
                 // Handle the "Purchasing" state
                 // For example, show a loading indicator
+                processDelegate?.didStartProcessing()
+                loading = true
                 print("paymentQueue state: purchasing")
                 break
             case .purchased:
@@ -148,7 +155,11 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
                         // Receipt verification successful
                         // Provide access to the purchased content
                         self?.updatePurchaseStatus(transaction.payment.productIdentifier, isPurchased: true)
+                        self?.processDelegate?.didFinishProcessing(result: true)
+                        self?.loading = false
                     } else {
+                        self?.processDelegate?.didFinishProcessing(result: false)
+                        self?.loading = false
                         // Receipt verification failed
                         // Handle the failure case
                     }
@@ -163,7 +174,11 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
                         // Receipt verification successful
                         // Provide access to the restored content
                         self?.updatePurchaseStatus(transaction.payment.productIdentifier, isPurchased: true)
+                        self?.processDelegate?.didFinishProcessing(result: true)
+                        self?.loading = false
                     } else {
+                        self?.processDelegate?.didFinishProcessing(result: false)
+                        self?.loading = false
                         // Receipt verification failed
                         // Handle the failure case
                     }
@@ -174,6 +189,8 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
                 // Handle the "Failed" state
                 // For example, display an error message
                 SKPaymentQueue.default().finishTransaction(transaction)
+                processDelegate?.didFinishProcessing(result: true)
+                loading = false
             case .deferred:
                 print("paymentQueue state: deferred")
                 // Handle the "Deferred" state
@@ -236,46 +253,27 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
     }
     
     
-    private func completeTransaction(_ transaction: SKPaymentTransaction) {
-        // Process the completed transaction
-        // TODO: For example, provide the purchased content to the user
-        print("completeTransaction: \(transaction.debugDescription)")
-        SKPaymentQueue.default().finishTransaction(transaction)
-    }
-    
-    
-    private func failTransaction(_ transaction: SKPaymentTransaction) {
-        // Handle the failed transaction
-        // TODO: For example, display an error message to the user
-        print("failTransaction: \(transaction.debugDescription)")
-        SKPaymentQueue.default().finishTransaction(transaction)
-    }
-    
-    
-    private func restoreTransaction(_ transaction: SKPaymentTransaction) {
-        // Handle the restored transaction
-        // TODO: For example, provide access to the previously purchased content
-        print("restoreTransaction: \(transaction.debugDescription)")
-        SKPaymentQueue.default().finishTransaction(transaction)
-    }
-    
-    
+    // MARK: Request completed successfully
     func requestDidFinish(_ request: SKRequest) {
         print("requestDidFinish: \(request.description)")
         if let completion = completionHandlers[request] {
             completion(true)
             completionHandlers.removeValue(forKey: request)
         }
-        
+        processDelegate?.didFinishProcessing(result: false)
+        loading = false
     }
     
     
+    // MARK: Request failed
     func request(_ request: SKRequest, didFailWithError error: Error) {
         print("request failed: \(error.localizedDescription)")
         if let completion = completionHandlers[request] {
             completion(false)
             completionHandlers.removeValue(forKey: request)
         }
+        processDelegate?.didFinishProcessing(result: false)
+        loading = false
     }
     
     
