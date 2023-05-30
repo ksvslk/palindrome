@@ -86,6 +86,5 @@ struct C {
     static let purchaseLettersButton = ("loading"~, UIImage(systemName: "dollarsign.circle.fill")!)
     static let purchaseNoAdsButton = ("loading"~, UIImage(systemName: "dollarsign.circle.fill")!)
     static let purchaseAllButton = ("loading"~, UIImage(systemName: "dollarsign.circle.fill")!)
-    
-    
+ 
 }

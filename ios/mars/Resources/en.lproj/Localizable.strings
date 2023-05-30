@@ -46,5 +46,29 @@
 "player_levels" = "Player Levels";
 "game_levels" = "Level Select";
 
+//MARK: Good texts
+"GM_correct" = "Correct!";
+"GM_good" = "Good!";
+"GM_keep_going" = "Keep going!";
+"GM_yes" = "Yes!";
+"GM_hurray" = "Hurray!";
 
+//MARK: Very good texts
+"VGM_awesome" = "Awesome!";
+"VGM_superb" = "Superb!";
+"VGM_excellent" = "Excellent!";
+"VGM_perfect" = "Perfect!";
+"VGM_outstanding" = "Outstanding!";
 
+//MARK: Solution wrong texts
+"WM_try_again" = "Try again.";
+"WM_not_a_palindrome" = "Not a palindrome.";
+"WM_keep_trying" = "Keep trying.";
+"WM_take_another_stab" = "Take another stab.";
+"WM_palindrome_required" = "Palindrome required.";
+"WM_look_it_over" = "Look it over.";
+
+//MARK: Palindrome wrong texts
+"BM_wrong_palindrome" = "Wrong palindrome.";
+"BM_forbidden_palindrome" = "Forbidden palindrome.";
+"BM_bogus_palindrome" = "Bogus palindrome.";

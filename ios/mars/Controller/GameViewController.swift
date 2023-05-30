@@ -20,6 +20,12 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     @IBOutlet weak var progressBar: UIProgressView!
     @IBOutlet weak var levelNumberLabel: UILabel!
     @IBOutlet weak var infoLabelButton: UIButton!
+
+    
+    let goodMessages = ["GM_correct"~,"GM_good"~,"GM_keep_going"~,"GM_yes"~,"GM_hurray"~]
+    let veryGoodMessages = ["VGM_awesome"~,"VGM_superb"~,"VGM_excellent"~,"VGM_perfect"~,"VGM_outstanding"~]
+    let bogusMessages = ["BM_wrong_palindrome"~, "BM_forbidden_palindrome"~, "BM_bogus_palindrome"~]
+    let wrongMessages = ["WM_try_again"~,"WM_not_a_palindrome"~, "WM_keep_trying"~, "WM_take_another_stab"~,"WM_palindrome_required"~,"WM_look_it_over"~]
     
     private var adManager: AdManager?
     
@@ -31,7 +37,6 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         subscribeToSolutionCheckResult()
         subscribeToHintsSuggestion()
         Database.shared.changeLevel(toLatest: true)
-        
     }
 
     
@@ -125,12 +130,14 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             switch result {
             case .correct:
                 print("Correct solution! (GameViewController)")
+                let isMaxScore = scores.0 == scores.1
                 if (Database.shared.currentLevel!.progress != Level.Progress.completed.rawValue)
                 {
                     feedbackGenerator.notificationOccuredCustom(notificationType: .success)
+                    let message = isMaxScore ? veryGoodMessages.randomElement()! : goodMessages.randomElement()!
                     gameScene?.winningAnimation {
                         print("Show now messages of a great win in GameViewController!")
-                        let messages = ["Tap to continue", C.SCORE_TAG, "Great job!"]
+                        let messages = ["tap_to_continue"~, C.SCORE_TAG, message]
                         self.animateMessageSequence(
                             scores: scores,
                             messages: messages,
@@ -141,7 +148,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                     
                 }
                 StateManager.shared.currentState = .completed
-                if (scores.0 == scores.1)
+                if (isMaxScore)
                 {
                     confettiBurst()
                 }
@@ -149,16 +156,18 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                 print("Wrong solution. (GameViewController)")
                 feedbackGenerator.notificationOccuredCustom(notificationType: .error)
                 gameScene?.shakeAnimation()
+                let randomWrongMessage = wrongMessages.randomElement()!
                 self.animateMessageSequence(
-                    messages: ["Wrong solution!"],
+                    messages: [randomWrongMessage],
                     isLastMessageTapToContinue: false
                 )
             case .bogus_palindrome:
                 print("Bogus solution. (GameViewController)")
+                let bogusWrongMessage = bogusMessages.randomElement()!
                 feedbackGenerator.notificationOccuredCustom(notificationType: .warning)
                 gameScene?.shakeAnimation()
                 self.animateMessageSequence(
-                    messages: ["Bogus solution!"],
+                    messages: [bogusWrongMessage],
                     isLastMessageTapToContinue: false
                 )
             case .invalid_guess:
