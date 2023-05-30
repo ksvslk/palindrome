@@ -17,15 +17,17 @@ class EndingScreen: UIViewController {
         super.viewDidLoad()
         
         // Customize the image view
-        imageView.image = UIImage(named: "AppIcon")
+        imageView.image = UIImage(named: "wrath")
         imageView.contentMode = .scaleAspectFit
         
         // Customize the label
         label.text = "end_screen_text"~
-        label.textAlignment = .left
+        label.textAlignment = .justified
+        
         label.font = UIFont(name: Theme.yantraMedium, size: 18)
         label.textColor = Theme.colorOnBackground
         label.numberOfLines = 0
+
         
         // Create a vertical stack view
         let stackView = UIStackView(arrangedSubviews: [imageView, label])
@@ -39,11 +41,12 @@ class EndingScreen: UIViewController {
         // Set the background color of the view controller's view
         view.backgroundColor = Theme.backgroundColor
         
+    
         // Add layout constraints for the stack view
         stackView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
-            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32),
+            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 64),
+            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -64),
             stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
         
@@ -62,7 +65,7 @@ class EndingScreen: UIViewController {
     private func paintWords()
     {
         let originalString = label.text!
-        let wordsToPaint = ["WOW", "LEVEL", "KAYAK", "RACECAR", "RADAR"]
+        let wordsToPaint = ["GIG", "LEVEL", "KAYAK", "RACECAR", "RADAR"]
 
         let attributedString = NSMutableAttributedString(string: originalString)
 
