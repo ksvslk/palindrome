@@ -24,6 +24,7 @@ class GameCenterController: BaseMenuController, GKGameCenterControllerDelegate {
             MenuItemInfo(name: C.achievementsButton.0, comment: "", systemImage: C.achievementsButton.1, closure: {menuItem in
             print("Tapped \(C.achievementsButton.0)")
             var viewController = GKGameCenterViewController(state: .achievements)
+          
             self.setDefaultSettings(for: &viewController)
             self.presentPanModal(viewController)
         })]

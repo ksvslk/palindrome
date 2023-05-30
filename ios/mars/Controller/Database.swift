@@ -8,6 +8,7 @@
 import Foundation
 import CoreData
 import CloudKit
+import GameKit
 
 class Database {
     
@@ -39,7 +40,7 @@ class Database {
         }
         context = persistentContainer.viewContext
     }
-
+    
     
     
     // MARK: Add game levels (1 time)
@@ -138,7 +139,7 @@ class Database {
         guard !palindrome.isEmpty || !solutionsToHints.isEmpty else { return }
         let level = Level(context: context)
         level.levelNumber = Int64(levelNr)
-     
+        
         level.shuffledPuzzle = Shuffler.getShuffledSolution(
             solutionsWithWhiteSpace: Array(solutionsToHints.keys)
         )
@@ -207,13 +208,13 @@ class Database {
         
         
     }
-   
+    
     
     // MARK: Increase interval -> result
     private func updateCurrentCount(forName name: String, by addition: Int64 = 1) -> Bool {
         var result = false
         
-
+        
         // Perform the transaction in a block
         context.performAndWait {
             // Create a fetch request to retrieve the object with the specified name
@@ -295,9 +296,10 @@ class Database {
                         letter.homeIndex = Int64(index) + 1
                         return letter
                     })
+        
                 }
                 
-                // load latest level or the level specified in the parameter nextLevel
+                // load latest level OR the level specified
                 if (loadLatestLevel)
                 {
                     let latestLevelRequest: NSFetchRequest<Level> = Level.fetchRequest()
@@ -356,12 +358,46 @@ class Database {
     }
     
     
+    //MARK: Get total score
+    private func getTotalScore() -> Int {
+        var score = 0
+        
+        let request: NSFetchRequest<Level> = Level.fetchRequest()
+        request.predicate = NSPredicate(format: "levelNumber <= %@", argumentArray: [100])
+
+        do {
+            let results = try context.fetch(request) as [Level]
+            results.forEach { level in
+                score += Int(level.bestScore)
+            }
+        } catch {
+            print("Error fetching results: \(error.localizedDescription)")
+        }
+        return score
+    }
     
- 
+
+    //MARK: Submit score
+    private func submitScoreToLeaderboard(score: Int) async throws {
+   
+        if GKLocalPlayer.local.isAuthenticated {
+            GKLeaderboard.submitScore(
+                score,
+                context: 0,
+                player: GKLocalPlayer.local,
+                leaderboardIDs: [C.GAME_LEADERBOARD],
+                completionHandler: { error in
+                    print("Could not submit score: \(String(describing: error))")
+                }
+            )
+        } else {
+            print("Player not authenticated to submit score.")
+        }
+    }
+    
     
     // MARK: Get max level number
     func maxLevelNumber() -> Int {
-        
         let request: NSFetchRequest<Level> = Level.fetchRequest()
         request.resultType = .dictionaryResultType
         request.propertiesToFetch = ["levelNumber"]
@@ -548,13 +584,20 @@ class Database {
     func setLevelCompletedImmediately()
     {
         currentLevel!.bestScore = max(currentLevel!.score, currentLevel!.bestScore)
-        print("Best score: \(currentLevel!.bestScore)")
-        //TODO: Submit score to leaderboard?
         currentLevel!.progress = Int64(Level.Progress.completed.rawValue)
         do {
             try context.save()
         } catch {
             print("Error setting level completed: \(error)")
+        }
+        
+        Task {
+            let totalScore = getTotalScore()
+            do {
+                try await submitScoreToLeaderboard(score: totalScore)
+            } catch {
+                print("Error:", error.localizedDescription)
+            }
         }
         
     }
