@@ -33,7 +33,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         Database.shared.changeLevel(toLatest: true)
         
     }
-    
+
     
     private func presentBottomSheet(sourceView: UIView)
     {
@@ -203,9 +203,14 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             print("removing gesture recgonizer \(gr)")
             view.removeGestureRecognizer(gr)
         }
+        if (Database.shared.currentLevel?.levelNumber == 100)
+        {
+            showEndingScreen()
+        }
         Database.shared.changeToNextLevel()
         let nextLevelSoundAction = SKAction.playSound(soundFile: "level_transition.wav")
         self.gameScene?.run(nextLevelSoundAction)
+      
      }
     
     
@@ -270,6 +275,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     // MARK: View did appear
     override func viewDidAppear(_ animated: Bool) {
         handleRewards()
+        showEndingScreen()
     }
     
     
@@ -303,6 +309,14 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                 }
             }
         })
+    }
+    
+    //MARK: Show ending screen
+    private func showEndingScreen()
+    {
+        print("showEndingScreen")
+        let hintViewController = EndingScreen()
+        present(hintViewController, animated: true)
     }
     
     

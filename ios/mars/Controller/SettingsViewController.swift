@@ -72,11 +72,6 @@ class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
                 self.vibrationSwitch.setOn(!self.vibrationSwitch.isOn, animated: true)
                 self.vibrationSwitchStateChanged(self.vibrationSwitch)
             }),
-            MenuItemInfo(name: C.tutorialButton.0, comment: "", systemImage: C.tutorialButton.1, closure: {menuItem in
-                print("Tapped \(C.tutorialButton.0)")
-                self.view?.makeToastActivity(.center)
-                self.view?.isUserInteractionEnabled = false
-            }),
             MenuItemInfo(name: C.feedbackButton.0, comment: "", systemImage: C.feedbackButton.1, closure: {menuItem in
                 print("Tapped \(C.feedbackButton.0)")
                 guard let writeReviewURL = URL(string: C.APP_FEEDBACK_URL)

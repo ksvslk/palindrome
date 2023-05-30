@@ -12,6 +12,7 @@
 		B128D9942A24D5CB002B13D1 /* roboto_medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B141D53F29F681B300FE9B39 /* roboto_medium.ttf */; };
 		B128D9952A24D5D0002B13D1 /* yantramanav_medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B141D53E29F681B300FE9B39 /* yantramanav_medium.ttf */; };
 		B128D9972A24D7DA002B13D1 /* TransactionProcessDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B128D9962A24D7DA002B13D1 /* TransactionProcessDelegate.swift */; };
+		B128D99D2A260772002B13D1 /* EndingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = B128D99C2A260772002B13D1 /* EndingScreen.swift */; };
 		B1299D7029F962F4007B2668 /* Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1299D6F29F962F4007B2668 /* Database.swift */; };
 		B12EE56B2A21DEAA00056603 /* PaddedLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B12EE56A2A21DEAA00056603 /* PaddedLabel.swift */; };
 		B12EE56D2A21E86C00056603 /* HintsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B12EE56C2A21E86C00056603 /* HintsViewController.swift */; };
@@ -101,6 +102,7 @@
 /* Begin PBXFileReference section */
 		B128450F29F82ACE00C8F13D /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		B128D9962A24D7DA002B13D1 /* TransactionProcessDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionProcessDelegate.swift; sourceTree = "<group>"; };
+		B128D99C2A260772002B13D1 /* EndingScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndingScreen.swift; sourceTree = "<group>"; };
 		B1299D6F29F962F4007B2668 /* Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Database.swift; sourceTree = "<group>"; };
 		B12EE56A2A21DEAA00056603 /* PaddedLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaddedLabel.swift; sourceTree = "<group>"; };
 		B12EE56C2A21E86C00056603 /* HintsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HintsViewController.swift; sourceTree = "<group>"; };
@@ -317,6 +319,7 @@
 				B1FC275E2A180A9200117C55 /* HintViewController.swift */,
 				B1FC275A2A17D9DA00117C55 /* Toast.swift */,
 				B12EE56A2A21DEAA00056603 /* PaddedLabel.swift */,
+				B128D99C2A260772002B13D1 /* EndingScreen.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -562,6 +565,7 @@
 				B1B33A8929FDB66D00DFA59F /* LetterData+CoreDataProperties.swift in Sources */,
 				B1B33AC629FFD91F00DFA59F /* GameFieldCreator.swift in Sources */,
 				B163AA4429F7ED18006C8BE6 /* Cell.swift in Sources */,
+				B128D99D2A260772002B13D1 /* EndingScreen.swift in Sources */,
 				B1FC27722A1B6E2A00117C55 /* ConfettiType.swift in Sources */,
 				B1E8974E29EC5001001B942F /* AppDelegate.swift in Sources */,
 				B1E8978C29ED42EE001B942F /* Slot.swift in Sources */,

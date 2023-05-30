@@ -31,6 +31,9 @@ struct C {
     static let VIBRATION_ON = "VIBRATION_ON"
     static let SOUND_ON = "SOUND_ON"
     static let LOGGED_IN = "LOGGED_IN"
+    static let MAX_UNLOCKED_LEVEL = "MAX_UNLOCKED_LEVEL"
+    static let LATEST_PLAYED_LEVEL = "LATEST_PLAYED_LEVEL"
+    static let PLAYER_SCORES = "PLAYER_SCORES"
         
     // IDs
     static let GAME_LEADERBOARD = "game_leaderboard"

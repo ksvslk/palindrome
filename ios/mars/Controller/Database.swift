@@ -7,7 +7,7 @@
 
 import Foundation
 import CoreData
-
+import CloudKit
 
 class Database {
     
@@ -31,20 +31,15 @@ class Database {
     
     
     private init() {
-        if #available(iOS 13.0, *) {
-            persistentContainer = NSPersistentContainer(name: "Model") // TODO: Change to CloudContainer..
-        } else {
-            persistentContainer = NSPersistentContainer(name: "Model")
-        }
+        persistentContainer = NSPersistentContainer(name: "Model")
         persistentContainer.loadPersistentStores { _, error in
             if let error = error {
                 fatalError("Failed to load Core Data stack: \(error)")
             }
         }
-        
         context = persistentContainer.viewContext
-        
     }
+
     
     
     // MARK: Add game levels (1 time)
@@ -183,19 +178,42 @@ class Database {
             changeLevel(to: Int(nextLevel), withProgressReset: true)
         }
         else {
-            print("You finished the game!")
+            changeLevel(to: 1, withProgressReset: true)
         }
         
     }
     
+    // MARK: Sync UserDefaults info
+    private func updateBasedOnCloudKitUserDefaults()
+    {
+        let defaults = UserDefaults.standard
+        let maximumUnlockedLevel = defaults.integer(forKey: C.MAX_UNLOCKED_LEVEL)
+        let latestPlayedLevel = defaults.integer(forKey: C.LATEST_PLAYED_LEVEL)
+        let scores = defaults.integer(forKey: C.PLAYER_SCORES)
+        
+        // Should do it in a transaction style
+        
+        // Perform the transaction in a block
+        context.performAndWait {
+            
+        }
+        
+        //TODO: Check if maximum unlocked level is bigger than local database maximum level and unlock until that level if YES
+        
+        //TODO: If maximum was change then change also latest played, otherwise skip
+        
+        //TODO: Check if local total score is smaller than scores combined. If YES then loop and update levels array 0 is level 1 and so on.
+        
+        
+        
+    }
+   
     
     // MARK: Increase interval -> result
     private func updateCurrentCount(forName name: String, by addition: Int64 = 1) -> Bool {
         var result = false
         
-        // Get the managed object context
-        let context = persistentContainer.viewContext
-        
+
         // Perform the transaction in a block
         context.performAndWait {
             // Create a fetch request to retrieve the object with the specified name
@@ -336,10 +354,14 @@ class Database {
             }
         }
     }
+    
+    
+    
  
     
     // MARK: Get max level number
     func maxLevelNumber() -> Int {
+        
         let request: NSFetchRequest<Level> = Level.fetchRequest()
         request.resultType = .dictionaryResultType
         request.propertiesToFetch = ["levelNumber"]
@@ -355,24 +377,6 @@ class Database {
             print("Error getting maximum level from database.")
         }
         return -1
-    }
-    
-    
-    // MARK: Refresh current level
-    func refreshCurrentLevel()
-    {
-        let request: NSFetchRequest<Level> = Level.fetchRequest()
-        request.predicate = NSPredicate(format: "levelNumber = %@", String(currentLevel!.levelNumber))
-        var fetchedLevels: [Level] = []
-        do {
-            fetchedLevels = try context.fetch(request)
-        } catch {
-            print("Error fetching level")
-        }
-        
-        if !fetchedLevels.isEmpty {
-            currentLevel = fetchedLevels.first
-        }
     }
     
     
@@ -408,7 +412,6 @@ class Database {
         } catch {
             print("Error changing friend index: \(error)")
         }
-        //refreshCurrentLevel()
         checkSolutionCorrectness(letter: letter)
 #if DEBUG
         assertFriendIndexesAreUniqueForEachLetter()
@@ -432,7 +435,6 @@ class Database {
         } catch {
             print("Error switching friend indexes: \(error)")
         }
-        //refreshCurrentLevel()
         checkSolutionCorrectness()
 #if DEBUG
         assertFriendIndexesAreUniqueForEachLetter()
@@ -507,7 +509,6 @@ class Database {
         } catch {
             print("Error changing columnd count: \(error)")
         }
-        //refreshCurrentLevel()
         
     }
     
@@ -596,3 +597,6 @@ class Database {
 #endif
     
 }
+
+
+
