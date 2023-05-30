@@ -47,6 +47,19 @@ struct C {
     
     static let PURCHASED_PRODUCTS_KEY = "user_defaults_purchases"
     
+    
+    // Achievements
+    static let greenhorn = "achievement_greenhorn"
+    static let proficient = "achievement_proficient"
+    static let crackerjack = "achievement_crackerjack"
+    static let chief = "achievement_chief"
+    static let authority = "achievement_authority"
+    static let zeroMistakes = "achievement_zero_mistakes"
+    static let completeLevel = "achievement_complete_level"
+    static let wrongPalindrome = "achievement_wrong_palindrome"
+    static let flawless5 = "achievement_flawless_5"
+    static let flawless15 = "achievement_flawless_15"
+    
     // URLs
     static let APP_FEEDBACK_URL = "https://apps.apple.com/app/id6444929937?action=write-review" // TODO: Change id to hah
     static let APP_URL = "https://apps.apple.com/app/penalty-2d/id6444929937" // TODO: Change it
@@ -57,7 +70,8 @@ struct C {
     static let HINT_INTERVAL = "hint_interval"
     static let ADS_INTERVAL = "ads_interval"
     static let SCORES_INTERVAL = "scores_interval"
-    
+    static let FLAWLESS_5_INTERVAL = "flawless_5_interval"
+    static let FLAWLESS_15_INTERVAL = "flawless_15_interval"
     
     // Settings menu
     static let soundButton = ("sound"~, UIImage(systemName: "music.note")!)

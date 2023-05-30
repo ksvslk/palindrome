@@ -261,6 +261,19 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
     }
     
     
+    func paymentQueueRestoreCompletedTransactionsFinished(_ queue: SKPaymentQueue) {
+        print("paymentQueueRestoreCompletedTransactionsFinished")
+        processDelegate?.didFinishProcessing(result: true)
+        loading = false
+    }
+
+    func paymentQueue(_ queue: SKPaymentQueue, restoreCompletedTransactionsFailedWithError error: Error) {
+        print("Error restoring completed transactions \(error)")
+        processDelegate?.didFinishProcessing(result: false)
+        loading = false
+    }
+    
+    
     // MARK: Request completed successfully
     func requestDidFinish(_ request: SKRequest) {
         print("requestDidFinish: \(request.description)")
