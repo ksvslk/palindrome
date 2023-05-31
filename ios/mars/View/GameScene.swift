@@ -234,7 +234,7 @@ class GameScene: SKScene {
         let trainYPosition = -viewSize.height/2 - trainNode.size.height + bottomSafe - 8.0
         let trainStartPositionX = -viewSize.width/2 - trainNode.size.width
         trainNode.position = CGPoint(x: trainStartPositionX, y: trainYPosition)
-        let trainEndPositionX = viewSize.width / 2 + trainNode.calculatedWidth
+        let trainEndPositionX = viewSize.width / 2 + trainNode.calculatedWidth + 16.0
         let moveRightAction = SKAction.move(to: CGPoint(x: trainEndPositionX, y: trainYPosition), duration: TimeInterval(duration))
         trainNode.run(moveRightAction) {
             print("DONE")

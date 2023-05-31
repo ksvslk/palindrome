@@ -16,6 +16,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     
     private var gameScene: GameScene?
     
+    @IBOutlet weak var gameCenterButtonRef: UIBarButtonItem!
     @IBOutlet weak var hintToolbarItem: UIBarButtonItem!
     @IBOutlet weak var progressBar: UIProgressView!
     @IBOutlet weak var levelNumberLabel: UILabel!
@@ -307,10 +308,19 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     // MARK: View did appear
     override func viewDidAppear(_ animated: Bool) {
         handleRewards()
-        for level in 1...100 {
-            let shouldPlayAnimation = VaryingProbability.isAnimationPlayed(level: level)
-            print("Level \(level): Animation played? \(shouldPlayAnimation)")
+        
+        let scores = [
+            ScoreItemInfo(displayName: "Tema", photo: UIImage(named: "GameCenterIcon")!, score: 100, rank: 1, isCurrentPlayer: false),
+            ScoreItemInfo(displayName: "Mina", photo: UIImage(named: "GameCenterIcon")!, score: 23, rank: 2, isCurrentPlayer: true),
+            ScoreItemInfo(displayName: "Sina", photo: UIImage(named: "GameCenterIcon")!, score: 10, rank: 3, isCurrentPlayer: false)
+        ]
+        
+        let bottomSheetMenuVC = PlayerScoresController(scoreItems: scores)
+     
+        if let buttonView = gameCenterButtonRef.value(forKey: "view") as? UIView {
+            presentPanModal(bottomSheetMenuVC,sourceView: buttonView, sourceRect: buttonView.bounds)
         }
+        
     }
     
     

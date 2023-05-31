@@ -53,6 +53,9 @@
 		B13BBA652A2751BD00137679 /* triumph.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = B13BBA642A2751BD00137679 /* triumph.mp3 */; };
 		B13BBA672A27737800137679 /* TrainNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13BBA662A27737800137679 /* TrainNode.swift */; };
 		B13BBA692A2797D500137679 /* VaryingProbability.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13BBA682A2797D500137679 /* VaryingProbability.swift */; };
+		B13BBA6B2A27C46600137679 /* PlayerScoresController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13BBA6A2A27C46600137679 /* PlayerScoresController.swift */; };
+		B13BBA6D2A27C50C00137679 /* ScoreItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13BBA6C2A27C50C00137679 /* ScoreItemCell.swift */; };
+		B13BBA6F2A27C58400137679 /* ScoreItemInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13BBA6E2A27C58400137679 /* ScoreItemInfo.swift */; };
 		B141D53C29F6816200FE9B39 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B141D53B29F6816200FE9B39 /* Theme.swift */; };
 		B141D54329F6B44500FE9B39 /* yantramanav_bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B141D54029F681B300FE9B39 /* yantramanav_bold.ttf */; };
 		B144A88429FA66B40067A080 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B144A88229FA66B40067A080 /* Model.xcdatamodeld */; };
@@ -146,6 +149,9 @@
 		B13BBA642A2751BD00137679 /* triumph.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = triumph.mp3; sourceTree = "<group>"; };
 		B13BBA662A27737800137679 /* TrainNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainNode.swift; sourceTree = "<group>"; };
 		B13BBA682A2797D500137679 /* VaryingProbability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VaryingProbability.swift; sourceTree = "<group>"; };
+		B13BBA6A2A27C46600137679 /* PlayerScoresController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerScoresController.swift; sourceTree = "<group>"; };
+		B13BBA6C2A27C50C00137679 /* ScoreItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreItemCell.swift; sourceTree = "<group>"; };
+		B13BBA6E2A27C58400137679 /* ScoreItemInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreItemInfo.swift; sourceTree = "<group>"; };
 		B141D53B29F6816200FE9B39 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		B141D53E29F681B300FE9B39 /* yantramanav_medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = yantramanav_medium.ttf; sourceTree = "<group>"; };
 		B141D53F29F681B300FE9B39 /* roboto_medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = roboto_medium.ttf; sourceTree = "<group>"; };
@@ -312,7 +318,9 @@
 			isa = PBXGroup;
 			children = (
 				B13149E32A20A5B1004B06E8 /* MenuItemInfo.swift */,
+				B13BBA6E2A27C58400137679 /* ScoreItemInfo.swift */,
 				B13149DD2A20A59D004B06E8 /* MenuItemCell.swift */,
+				B13BBA6C2A27C50C00137679 /* ScoreItemCell.swift */,
 				B16F207129FBBB2400E8DFCE /* Actions.sks */,
 				B16F206F29FBBAFC00E8DFCE /* GameScene.sks */,
 				B1E8975329EC5001001B942F /* GameScene.swift */,
@@ -362,6 +370,7 @@
 			children = (
 				B13149E02A20A5A7004B06E8 /* BaseMenuController.swift */,
 				B13149E62A2127EB004B06E8 /* GameCenterController.swift */,
+				B13BBA6A2A27C46600137679 /* PlayerScoresController.swift */,
 				B12EE56C2A21E86C00056603 /* HintsViewController.swift */,
 				B13149E82A212E59004B06E8 /* SettingsViewController.swift */,
 				B13149EA2A214555004B06E8 /* LevelSelectController.swift */,
@@ -530,6 +539,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B13149EB2A214555004B06E8 /* LevelSelectController.swift in Sources */,
+				B13BBA6D2A27C50C00137679 /* ScoreItemCell.swift in Sources */,
 				B1FC27702A1B6E1800117C55 /* ConfettiView.swift in Sources */,
 				B1B33A8529FDB66D00DFA59F /* Interval+CoreDataProperties.swift in Sources */,
 				B1E8975429EC5001001B942F /* GameScene.swift in Sources */,
@@ -564,6 +574,7 @@
 				B12EE56B2A21DEAA00056603 /* PaddedLabel.swift in Sources */,
 				B1B33A8629FDB66D00DFA59F /* Level+CoreDataClass.swift in Sources */,
 				B13149E92A212E59004B06E8 /* SettingsViewController.swift in Sources */,
+				B13BBA6B2A27C46600137679 /* PlayerScoresController.swift in Sources */,
 				B1313BD22A135D6F005830AB /* GameState.swift in Sources */,
 				B13149D02A1F8E3F004B06E8 /* ProductsUpdateDelegate.swift in Sources */,
 				B1D2710229EDB24500E01AC8 /* GameField.swift in Sources */,
@@ -579,6 +590,7 @@
 				B163AA4429F7ED18006C8BE6 /* Cell.swift in Sources */,
 				B128D99D2A260772002B13D1 /* EndingScreen.swift in Sources */,
 				B1FC27722A1B6E2A00117C55 /* ConfettiType.swift in Sources */,
+				B13BBA6F2A27C58400137679 /* ScoreItemInfo.swift in Sources */,
 				B1E8974E29EC5001001B942F /* AppDelegate.swift in Sources */,
 				B1E8978C29ED42EE001B942F /* Slot.swift in Sources */,
 				B13149DF2A20A59D004B06E8 /* MenuItemCell.swift in Sources */,

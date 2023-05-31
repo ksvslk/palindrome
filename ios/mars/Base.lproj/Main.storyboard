@@ -90,6 +90,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="gameCenterButtonRef" destination="Uhd-in-DYt" id="dYq-qv-rME"/>
                         <outlet property="hintToolbarItem" destination="yyp-jo-Kfh" id="zCt-Ez-vEX"/>
                         <outlet property="infoLabelButton" destination="lY4-YA-Xyy" id="xjj-M8-RXU"/>
                         <outlet property="levelNumberLabel" destination="yiR-FG-tXg" id="gUN-BU-g5V"/>
