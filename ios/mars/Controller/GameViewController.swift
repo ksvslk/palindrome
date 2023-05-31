@@ -21,7 +21,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     @IBOutlet weak var progressBar: UIProgressView!
     @IBOutlet weak var levelNumberLabel: UILabel!
     @IBOutlet weak var infoLabelButton: UIButton!
-
+    
     
     let goodMessages = ["GM_correct"~,"GM_good"~,"GM_keep_going"~,"GM_yes"~,"GM_hurray"~]
     let veryGoodMessages = ["VGM_awesome"~,"VGM_superb"~,"VGM_excellent"~,"VGM_perfect"~,"VGM_outstanding"~]
@@ -39,7 +39,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         subscribeToHintsSuggestion()
         Database.shared.changeLevel(toLatest: true)
     }
-
+    
     
     private func presentBottomSheet(sourceView: UIView)
     {
@@ -64,7 +64,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         Database.shared.levelChangedClosure = { [weak self] intervals in
             guard let self = self else { return }
             print("Intervals: \(intervals)")
-          
+            
             print("Current level changed to \(String(describing: Database.shared.currentLevel?.levelNumber))")
             loadMainScene()
             let levelNr = Int(Database.shared.currentLevel!.levelNumber)
@@ -87,6 +87,14 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                 StateManager.shared.currentState = .reset
                 hideInfoButton()
             }
+          
+            
+            if let playerScoresIntervalReached = intervals.first(where: { i in
+                i.name == C.SCORES_INTERVAL && i.currentCount == i.limitCount
+            }) {
+                loadScores()
+            }
+            
             let adsInterval = intervals.first { i in
                 i.name == C.ADS_INTERVAL
             }!
@@ -132,7 +140,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         
         Database.shared.solutionCheckResultClosure = { [weak self] result, scores in
             guard let self = self else { return }
-           
+            
             switch result {
             case .correct:
                 print("Correct solution! (GameViewController)")
@@ -152,6 +160,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                         )
                     }
                     Database.shared.setLevelCompletedImmediately()
+                    
                     if (isMaxScore)
                     {
                         let shouldAnimationPlay = VaryingProbability.isAnimationPlayed(level: Int(currentLevel.levelNumber))
@@ -214,7 +223,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         loadMainScene()
     }
-
+    
     
     // MARK: Tap to continue touch
     @objc func tapToContinueTouched() {
@@ -231,7 +240,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         let nextLevelSoundAction = SKAction.playSound(soundFile: "level_transition.wav")
         self.gameScene?.run(nextLevelSoundAction)
         
-     }
+    }
     
     
     private func showIntermediateAds(level:Int, interval:Interval)
@@ -269,7 +278,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     // MARK: TAP Hints
     @IBAction func onHintsButtonTap(_ sender: Any) {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
-     
+        
         if let buttonView = (sender as! UIBarButtonItem).value(forKey: "view") as? UIView {
             let hintsMenu = HintsViewController(adManager: adManager, purchaseManager: appDelegate.purchaseManager, gameViewController: self)
             presentPanModal(hintsMenu, sourceView: buttonView, sourceRect: buttonView.bounds)
@@ -287,7 +296,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         }
     }
     
-
+    
     private func handleRewards()
     {
         print("viewDidAppear")
@@ -308,19 +317,59 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     // MARK: View did appear
     override func viewDidAppear(_ animated: Bool) {
         handleRewards()
-        
-        let scores = [
-            ScoreItemInfo(displayName: "Tema", photo: UIImage(named: "GameCenterIcon")!, score: 100, rank: 1, isCurrentPlayer: false),
-            ScoreItemInfo(displayName: "Mina", photo: UIImage(named: "GameCenterIcon")!, score: 23, rank: 2, isCurrentPlayer: true),
-            ScoreItemInfo(displayName: "Sina", photo: UIImage(named: "GameCenterIcon")!, score: 10, rank: 3, isCurrentPlayer: false)
-        ]
-        
-        let bottomSheetMenuVC = PlayerScoresController(scoreItems: scores)
-     
-        if let buttonView = gameCenterButtonRef.value(forKey: "view") as? UIView {
-            presentPanModal(bottomSheetMenuVC,sourceView: buttonView, sourceRect: buttonView.bounds)
+    }
+    
+    //MARK: Display scores
+    private func showScores(scores:[ScoreItemInfo]) {
+        print("Count of scores: \(scores.count)")
+        if !scores.isEmpty {
+            print("Display scores")
+            let bottomSheetMenuVC = PlayerScoresController(scoreItems: scores)
+            if let buttonView = gameCenterButtonRef.value(forKey: "view") as? UIView {
+                presentPanModal(bottomSheetMenuVC,sourceView: buttonView, sourceRect: buttonView.bounds)
+            }
         }
+    }
+    
+    //MARK: Load scores
+    private func loadScores()
+    {
+        var scoreItems:[ScoreItemInfo] = []
         
+        GKLeaderboard.loadLeaderboards(IDs: [C.GAME_LEADERBOARD]) { [weak self] (boards, error) in
+            if (error == nil)
+            {
+                guard let leaderboard = boards?.first else { return }
+                
+                // get rank for player first
+                leaderboard.loadEntries(for: [GKLocalPlayer.local], timeScope: GKLeaderboard.TimeScope.allTime) {
+                    entry, entries, error in
+                    print("Player rank is: \(String(describing: entry?.rank))")
+                    print("Total entries count: \(String(describing: entries?.count))")
+                    // get the other 3 scores based on players rank
+                    guard let entry = entry else { return }
+                    
+                    // range for 3 scores that will leave the player score in center
+                    // happy path range (player is not last and not first)
+                    
+                    let range = entry.rank == 1 ? NSRange(location: 1, length: 3) : NSRange(location: entry.rank - 1, length: 3)
+                    
+                    leaderboard.loadEntries(for: GKLeaderboard.PlayerScope.global, timeScope: GKLeaderboard.TimeScope.allTime, range: range) { entry, entries, integer, error in
+                        if let entries = entries {
+                            print("Fetched \(entries.count) entries.")
+                            for entry in entries {
+                                let image = UIImage(systemName: "person.circle.fill")!
+                                scoreItems.append(ScoreItemInfo(displayName: entry.player.displayName, photo: image, score: entry.score, rank: entry.rank, isCurrentPlayer: entry.player.gamePlayerID == GKLocalPlayer.local.gamePlayerID))
+                            }
+                            self?.showScores(scores: scoreItems)
+                        }
+                    }
+                }
+            }
+            else {
+                print(error?.localizedDescription ?? "")
+            }
+        }
     }
     
     
@@ -457,6 +506,6 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     override var prefersStatusBarHidden: Bool {
         return true
     }
- 
+    
     
 }
