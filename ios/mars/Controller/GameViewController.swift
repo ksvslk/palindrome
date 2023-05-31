@@ -136,7 +136,8 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             case .correct:
                 print("Correct solution! (GameViewController)")
                 let isMaxScore = scores.0 == scores.1
-                if (Database.shared.currentLevel!.progress != Level.Progress.completed.rawValue)
+                let currentLevel = Database.shared.currentLevel!
+                if (currentLevel.progress != Level.Progress.completed.rawValue)
                 {
                     feedbackGenerator.notificationOccuredCustom(notificationType: .success)
                     let message = isMaxScore ? veryGoodMessages.randomElement()! : goodMessages.randomElement()!
@@ -150,7 +151,11 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                         )
                     }
                     Database.shared.setLevelCompletedImmediately()
-                    
+                    if (isMaxScore)
+                    {
+                        let shouldAnimationPlay = VaryingProbability.isAnimationPlayed(level: Int(currentLevel.levelNumber))
+                        if (shouldAnimationPlay) { gameScene?.moveTrainFromLeftToRight() }
+                    }
                 }
                 StateManager.shared.currentState = .completed
                 if (isMaxScore)
@@ -302,7 +307,10 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     // MARK: View did appear
     override func viewDidAppear(_ animated: Bool) {
         handleRewards()
-        
+        for level in 1...100 {
+            let shouldPlayAnimation = VaryingProbability.isAnimationPlayed(level: level)
+            print("Level \(level): Animation played? \(shouldPlayAnimation)")
+        }
     }
     
     

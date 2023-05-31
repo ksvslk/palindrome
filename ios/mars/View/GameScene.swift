@@ -212,7 +212,6 @@ class GameScene: SKScene {
         gridNode.position.y -= topSafe
         gridNode.position.y += bottomSafe
         startingPosition = gridNode.position
-        moveTrainFromLeftToRight()
 #if DEBUG
         assertThatEachLetterHasSlot(grid: gridNode, level: currentLevel)
         assertDatabaseAndActualLettersCount(grid: gridNode, level: currentLevel)
@@ -221,10 +220,11 @@ class GameScene: SKScene {
     }
     
     
-    private func moveTrainFromLeftToRight(duration:CGFloat = 8.0)
+    func moveTrainFromLeftToRight()
     {
         guard let rootView = scene?.view else { return }
-        let randomCarriageCount = Int(arc4random_uniform(15)) + 1
+        let randomCarriageCount = Int(arc4random_uniform(6)) + 1
+        let duration = 12 - (7 - randomCarriageCount)
         let viewSize = CGSize(
             width: rootView.bounds.width - horizontalSafe,
             height: rootView.bounds.height - bottomSafe - topSafe)
@@ -235,7 +235,7 @@ class GameScene: SKScene {
         let trainStartPositionX = -viewSize.width/2 - trainNode.size.width
         trainNode.position = CGPoint(x: trainStartPositionX, y: trainYPosition)
         let trainEndPositionX = viewSize.width / 2 + trainNode.calculatedWidth
-        let moveRightAction = SKAction.move(to: CGPoint(x: trainEndPositionX, y: trainYPosition), duration: duration)
+        let moveRightAction = SKAction.move(to: CGPoint(x: trainEndPositionX, y: trainYPosition), duration: TimeInterval(duration))
         trainNode.run(moveRightAction) {
             print("DONE")
         }
