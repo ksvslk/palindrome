@@ -49,16 +49,16 @@ struct C {
     
     
     // Achievements
-    static let greenhorn = "achievement_greenhorn"
-    static let proficient = "achievement_proficient"
-    static let crackerjack = "achievement_crackerjack"
-    static let chief = "achievement_chief"
-    static let authority = "achievement_authority"
-    static let zeroMistakes = "achievement_zero_mistakes"
-    static let completeLevel = "achievement_complete_level"
-    static let wrongPalindrome = "achievement_wrong_palindrome"
-    static let flawless5 = "achievement_flawless_5"
-    static let flawless15 = "achievement_flawless_15"
+    static let achievement_greenhorn = "greenhorn"
+    static let achievement_proficient = "proficient"
+    static let achievement_crackerjack = "crackerjack"
+    static let achievement_chief = "chief"
+    static let achievement_authority = "authority"
+    static let achievement_zero_mistakes = "zero_mistakes"
+    static let achievement_complete_level = "complete_level"
+    static let achievement_wrong_palindrome = "wrong_palindrome"
+    static let achievement_flawless_5 = "flawless_5"
+    static let achievement_flawless_15 = "flawless_15"
     
     // URLs
     static let APP_FEEDBACK_URL = "https://apps.apple.com/app/id6444929937?action=write-review" // TODO: Change id to hah

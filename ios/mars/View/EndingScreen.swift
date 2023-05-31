@@ -72,7 +72,7 @@ class EndingScreen: UIViewController {
         for word in wordsToPaint {
             // Find the range of each word to underline
             if let range = originalString.range(of: word) {
-                attributedString.addAttribute(.foregroundColor, value: Theme.levelInProgressColor, range: NSRange(range, in: originalString))
+                attributedString.addAttribute(.foregroundColor, value: Theme.colorOnPrimary, range: NSRange(range, in: originalString))
             }
         }
 

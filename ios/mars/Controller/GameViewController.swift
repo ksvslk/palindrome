@@ -323,6 +323,8 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     private func showEndingScreen()
     {
         print("showEndingScreen")
+        let triumphSound = SKAction.playSound(soundFile: "triumph.mp3")
+        self.gameScene?.run(triumphSound)
         let hintViewController = EndingScreen()
         present(hintViewController, animated: true)
     }

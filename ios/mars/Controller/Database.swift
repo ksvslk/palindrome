@@ -253,7 +253,6 @@ class Database {
                 print("Error: \(error)")
             }
         }
-        
         return result
     }
     
@@ -275,7 +274,7 @@ class Database {
                     if (interval.name == C.HINT_INTERVAL) {
                         interval.currentCount = 0
                     }
-                    else {
+                    else if (interval.name != C.FLAWLESS_5_INTERVAL && interval.name != C.FLAWLESS_15_INTERVAL) {
                         if (interval.currentCount >= interval.limitCount)
                         {
                             interval.currentCount = 0
@@ -303,7 +302,7 @@ class Database {
                         letter.homeIndex = Int64(index) + 1
                         return letter
                     })
-        
+                    
                 }
                 
                 // load latest level OR the level specified
@@ -371,7 +370,7 @@ class Database {
         
         let request: NSFetchRequest<Level> = Level.fetchRequest()
         request.predicate = NSPredicate(format: "levelNumber <= %@", argumentArray: [100])
-
+        
         do {
             let results = try context.fetch(request) as [Level]
             results.forEach { level in
@@ -383,10 +382,10 @@ class Database {
         return score
     }
     
-
+    
     //MARK: Submit score
     private func submitScoreToLeaderboard(score: Int) async throws {
-   
+        
         if GKLocalPlayer.local.isAuthenticated {
             GKLeaderboard.submitScore(
                 score,
@@ -505,83 +504,82 @@ class Database {
         let result = SolutionChecker.getGuessResult(guess: letters, solutions: currentLevel!.solutionsArr)
         solutionCheckResultClosure?(result, (Int(currentLevel!.score), Int(currentLevel!.shuffledPuzzle.maxScore())))
         
-        handleAchievements(solution: result,
-                           isMaxScore: currentLevel!.score == currentLevel!.shuffledPuzzle.maxScore(),
-                           levelNr: Int(currentLevel!.levelNumber)
-        )
-    
         if (result == SolutionCheckResult.bogus_palindrome || result == SolutionCheckResult.wrong)
         {
+            handleWrongSolutionAchievementProgress(solution: result)
             let hintsIntervalReached = updateCurrentCount(forName: C.HINT_INTERVAL)
             if (hintsIntervalReached) {
                 hintsSuggestionClosure?()
             }
+            print("WRONG RESULT!")
         }
+      
     }
     
     
     func getPlayerCenteredScores() {
-        //TODO: 
+        //TODO:
     }
-
     
     
-    //MARK: Handle achievement cases
-    private func handleAchievements(solution: SolutionCheckResult, isMaxScore:Bool, levelNr:Int)
+    //MARK: Handle achievments (wrong)
+    private func handleWrongSolutionAchievementProgress(solution: SolutionCheckResult)
     {
-        if (solution == SolutionCheckResult.bogus_palindrome || solution == SolutionCheckResult.wrong)
+        print("handleWrongSolutionAchievementProgress")
+        updateCurrentCount(forName: C.FLAWLESS_5_INTERVAL, reset: true)
+        updateCurrentCount(forName: C.FLAWLESS_15_INTERVAL, reset: true)
+        if (solution == SolutionCheckResult.bogus_palindrome)
         {
-            updateCurrentCount(forName: C.FLAWLESS_5_INTERVAL, reset: true)
-            updateCurrentCount(forName: C.FLAWLESS_15_INTERVAL, reset: true)
-            if (solution == SolutionCheckResult.bogus_palindrome)
-            {
-                unlockAchievement(identifier: C.wrongPalindrome)
-            }
-        }
-        if (solution == SolutionCheckResult.correct)
-        {
-            if (isMaxScore)
-            {
-                unlockAchievement(identifier: C.zeroMistakes)
-                let reachedInterval5 = updateCurrentCount(forName: C.FLAWLESS_5_INTERVAL)
-                let reachedInterval15 = updateCurrentCount(forName: C.FLAWLESS_15_INTERVAL)
-                if reachedInterval5 {
-                    unlockAchievement(identifier: C.flawless5)
-                }
-                if reachedInterval15 {
-                    unlockAchievement(identifier: C.flawless15)
-                }
-            }
-            
-            if (levelNr == 9)
-            {
-                unlockAchievement(identifier: C.completeLevel)
-            }
-            else if (levelNr == 20)
-            {
-                unlockAchievement(identifier: C.greenhorn)
-            }
-            else if (levelNr == 40)
-            {
-                unlockAchievement(identifier: C.proficient)
-            }
-            else if (levelNr == 60)
-            {
-                unlockAchievement(identifier: C.crackerjack)
-            }
-            else if (levelNr == 80)
-            {
-                unlockAchievement(identifier: C.chief)
-            }
-            else if (levelNr == 100)
-            {
-                unlockAchievement(identifier: C.authority)
-            }
+            unlockAchievement(identifier: C.achievement_wrong_palindrome)
         }
     }
     
     
-    //TODO:Unlock achievement
+    //MARK: Handle achievments (correct)
+    private func handleLevelCompleteAchievements(isMaxScore:Bool, levelNr:Int)
+    {
+        print("handleLevelCompleteAchievements")
+        if (isMaxScore)
+        {
+            unlockAchievement(identifier: C.achievement_zero_mistakes)
+            let reachedInterval5 = updateCurrentCount(forName: C.FLAWLESS_5_INTERVAL)
+            let reachedInterval15 = updateCurrentCount(forName: C.FLAWLESS_15_INTERVAL)
+            if reachedInterval5 {
+                unlockAchievement(identifier: C.achievement_flawless_5)
+            }
+            if reachedInterval15 {
+                unlockAchievement(identifier: C.achievement_flawless_15)
+            }
+        }
+        
+        if (levelNr == 9)
+        {
+            unlockAchievement(identifier: C.achievement_complete_level)
+        }
+        else if (levelNr == 20)
+        {
+            unlockAchievement(identifier: C.achievement_greenhorn)
+        }
+        else if (levelNr == 40)
+        {
+            unlockAchievement(identifier: C.achievement_proficient)
+        }
+        else if (levelNr == 60)
+        {
+            unlockAchievement(identifier: C.achievement_crackerjack)
+        }
+        else if (levelNr == 80)
+        {
+            unlockAchievement(identifier: C.achievement_chief)
+        }
+        else if (levelNr == 100)
+        {
+            unlockAchievement(identifier: C.achievement_authority)
+        }
+    }
+    
+    
+    //MARK: Unlock achievement
     private func unlockAchievement(identifier: String, percentComplete: Double = 100.0) {
         let achievement = GKAchievement(identifier: identifier)
         achievement.percentComplete = percentComplete
@@ -677,6 +675,12 @@ class Database {
     {
         currentLevel!.bestScore = max(currentLevel!.score, currentLevel!.bestScore)
         currentLevel!.progress = Int64(Level.Progress.completed.rawValue)
+     
+        handleLevelCompleteAchievements(
+                isMaxScore: currentLevel!.score == currentLevel!.shuffledPuzzle.maxScore(),
+                levelNr:Int(currentLevel!.levelNumber)
+            )
+        
         do {
             try context.save()
         } catch {
