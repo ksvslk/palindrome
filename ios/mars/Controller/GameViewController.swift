@@ -302,6 +302,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     // MARK: View did appear
     override func viewDidAppear(_ animated: Bool) {
         handleRewards()
+        
     }
     
     

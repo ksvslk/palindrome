@@ -199,11 +199,8 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
                 loading = false
             case .deferred:
                 print("paymentQueue state: deferred")
-                //TODO: needs some special message
                 processDelegate?.didFinishProcessing(result: true)
                 loading = false
-                // Handle the "Deferred" state
-                // For example, inform the user that the transaction is pending
                 break
             @unknown default:
                 break

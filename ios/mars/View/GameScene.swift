@@ -7,12 +7,16 @@ class GameScene: SKScene {
     private var gridNode:SKNode = SKNode()
     private var startingPosition:CGPoint = CGPoint.zero
     var cellDirector: CellDirector = CellDirector(cells: [Cell]())
-    
+    let horizontalSafe = 16.0
+    let bottomSafe = 34.0 + 44.0 + 8.0
+    let topSafe = 59.0 + 4.0 + 8.0
     
     // MARK: Initialize level
     override func didMove(to view: SKView) {
         layoutScene(view: view)
         handleGameState()
+   
+
     }
     
     
@@ -156,11 +160,7 @@ class GameScene: SKScene {
         
         // Get current level
         let currentLevel = Database.shared.currentLevel!
-        
-        let horizontalSafe = 16.0
-        let bottomSafe = 34.0 + 44.0 + 8.0
-        let topSafe = 59.0 + 4.0 + 8.0
-        
+
         // Get and set view size
         let viewSize = CGSize(
             width: view.bounds.width - horizontalSafe,
@@ -212,12 +212,33 @@ class GameScene: SKScene {
         gridNode.position.y -= topSafe
         gridNode.position.y += bottomSafe
         startingPosition = gridNode.position
-        
+        moveTrainFromLeftToRight()
 #if DEBUG
         assertThatEachLetterHasSlot(grid: gridNode, level: currentLevel)
         assertDatabaseAndActualLettersCount(grid: gridNode, level: currentLevel)
         assertTotalGridNodesCount(grid: gridNode, level: currentLevel, cells: allCells)
 #endif
+    }
+    
+    
+    private func moveTrainFromLeftToRight(duration:CGFloat = 8.0)
+    {
+        guard let rootView = scene?.view else { return }
+        let randomCarriageCount = Int(arc4random_uniform(15)) + 1
+        let viewSize = CGSize(
+            width: rootView.bounds.width - horizontalSafe,
+            height: rootView.bounds.height - bottomSafe - topSafe)
+        let trainNode = TrainNode(numberOfCarriages: randomCarriageCount)
+        trainNode.setScale(0.5)
+        addChild(trainNode)
+        let trainYPosition = -viewSize.height/2 - trainNode.size.height + bottomSafe - 8.0
+        let trainStartPositionX = -viewSize.width/2 - trainNode.size.width
+        trainNode.position = CGPoint(x: trainStartPositionX, y: trainYPosition)
+        let trainEndPositionX = viewSize.width / 2 + trainNode.calculatedWidth
+        let moveRightAction = SKAction.move(to: CGPoint(x: trainEndPositionX, y: trainYPosition), duration: duration)
+        trainNode.run(moveRightAction) {
+            print("DONE")
+        }
     }
     
     
