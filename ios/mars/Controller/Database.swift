@@ -80,7 +80,7 @@ class Database {
         }
         addInterval(name: C.HINT_INTERVAL, limitCount: 5)
         addInterval(name: C.SCORES_INTERVAL, limitCount: 6)
-        addInterval(name: C.ADS_INTERVAL, limitCount: 7)
+        addInterval(name: C.ADS_INTERVAL, limitCount: 5)
         addInterval(name: C.FLAWLESS_5_INTERVAL, limitCount: 5)
         addInterval(name: C.FLAWLESS_15_INTERVAL, limitCount: 15)
         

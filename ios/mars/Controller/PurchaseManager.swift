@@ -98,6 +98,14 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
     }
     
     
+    func isNoAdsPurchasedInAnyWay() -> Bool
+    {
+        return purchasedProductIdentifiers.contains { productId in
+            productId == C.PURCHASE_NO_ADS_ID || productId == C.PURCHASE_ALL_ID
+        }
+    }
+    
+    
     func isHintsPurchasedInAnyWay() -> Bool
     {
         return purchasedProductIdentifiers.contains { productId in

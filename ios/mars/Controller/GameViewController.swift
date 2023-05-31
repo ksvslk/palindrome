@@ -86,6 +86,11 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                 StateManager.shared.currentState = .reset
                 hideInfoButton()
             }
+            let adsInterval = intervals.first { i in
+                i.name == C.ADS_INTERVAL
+            }!
+            
+            showIntermediateAds(level: levelNr, interval: adsInterval)
         }
     }
     
@@ -219,8 +224,21 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         Database.shared.changeToNextLevel()
         let nextLevelSoundAction = SKAction.playSound(soundFile: "level_transition.wav")
         self.gameScene?.run(nextLevelSoundAction)
-      
+        
      }
+    
+    
+    private func showIntermediateAds(level:Int, interval:Interval)
+    {
+        if (level >= 15 && interval.currentCount == interval.limitCount)
+        {
+            let appDelegate = UIApplication.shared.delegate as! AppDelegate
+            if (!appDelegate.purchaseManager.isNoAdsPurchasedInAnyWay())
+            {
+                adManager?.show(viewController: self, rewardType: Reward.none)
+            }
+        }
+    }
     
     
     // MARK: TAP Settings
