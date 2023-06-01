@@ -20,8 +20,8 @@ class LevelSelectController: BaseMenuController {
         }),
           MenuItemInfo(name: C.tutorialButton.0, comment: "", systemImage: C.tutorialButton.1, closure: {menuItem in
               print("Tapped \(C.tutorialButton.0)")
-              self.view?.makeToastActivity(.center)
-              self.view?.isUserInteractionEnabled = false
+              let tutorialView = TutorialViewController()
+              self.present(tutorialView, animated: true)
           })
         ]
     }

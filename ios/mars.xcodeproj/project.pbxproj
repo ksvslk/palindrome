@@ -49,6 +49,7 @@
 		B13149E72A2127EB004B06E8 /* GameCenterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13149E62A2127EB004B06E8 /* GameCenterController.swift */; };
 		B13149E92A212E59004B06E8 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13149E82A212E59004B06E8 /* SettingsViewController.swift */; };
 		B13149EB2A214555004B06E8 /* LevelSelectController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13149EA2A214555004B06E8 /* LevelSelectController.swift */; };
+		B1339BCB2A288090008E7102 /* TutorialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1339BCA2A288090008E7102 /* TutorialViewController.swift */; };
 		B13966BA2A08300800EF75A0 /* CollisionResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13966B92A08300800EF75A0 /* CollisionResult.swift */; };
 		B13BBA652A2751BD00137679 /* triumph.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = B13BBA642A2751BD00137679 /* triumph.mp3 */; };
 		B13BBA672A27737800137679 /* TrainNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13BBA662A27737800137679 /* TrainNode.swift */; };
@@ -143,6 +144,7 @@
 		B13149E62A2127EB004B06E8 /* GameCenterController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterController.swift; sourceTree = "<group>"; };
 		B13149E82A212E59004B06E8 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		B13149EA2A214555004B06E8 /* LevelSelectController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelSelectController.swift; sourceTree = "<group>"; };
+		B1339BCA2A288090008E7102 /* TutorialViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorialViewController.swift; sourceTree = "<group>"; };
 		B13966AE2A069DD400EF75A0 /* mars.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = mars.entitlements; sourceTree = "<group>"; };
 		B13966B92A08300800EF75A0 /* CollisionResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollisionResult.swift; sourceTree = "<group>"; };
 		B13A246729F6DCDA0045DF3D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -332,6 +334,7 @@
 				B1313BB12A0AD12C005830AB /* LevelSelectCell.swift */,
 				B1313BBD2A0E66E9005830AB /* NumberLabel.swift */,
 				B1FC275E2A180A9200117C55 /* HintViewController.swift */,
+				B1339BCA2A288090008E7102 /* TutorialViewController.swift */,
 				B1FC275A2A17D9DA00117C55 /* Toast.swift */,
 				B12EE56A2A21DEAA00056603 /* PaddedLabel.swift */,
 				B128D99C2A260772002B13D1 /* EndingScreen.swift */,
@@ -554,6 +557,7 @@
 				B163AA4829F7FA2F006C8BE6 /* CellState.swift in Sources */,
 				B1B33A8429FDB66D00DFA59F /* Interval+CoreDataClass.swift in Sources */,
 				B141D53C29F6816200FE9B39 /* Theme.swift in Sources */,
+				B1339BCB2A288090008E7102 /* TutorialViewController.swift in Sources */,
 				B1313C522A1620EB005830AB /* AdManager.swift in Sources */,
 				B1B33A8D29FDBC0300DFA59F /* Shuffler.swift in Sources */,
 				B1E8975629EC5001001B942F /* GameViewController.swift in Sources */,

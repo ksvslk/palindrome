@@ -319,7 +319,16 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     // MARK: View did appear
     override func viewDidAppear(_ animated: Bool) {
         handleRewards()
+        let tutorialShown = UserDefaults.standard.bool(forKey: C.TUTORIAL_SHOWN)
+        
+        if (!tutorialShown)
+        {
+            let tutorialView = TutorialViewController()
+            present(tutorialView, animated: true)
+            UserDefaults.standard.set(true, forKey: C.TUTORIAL_SHOWN)
+        }
     }
+    
     
     //MARK: Display scores
     private func showScores(scores:[ScoreItemInfo]) {
@@ -406,6 +415,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             }
         })
     }
+    
     
     //MARK: Show ending screen
     private func showEndingScreen()

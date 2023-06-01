@@ -35,6 +35,7 @@ struct C {
     static let MAX_UNLOCKED_LEVEL = "MAX_UNLOCKED_LEVEL"
     static let LATEST_PLAYED_LEVEL = "LATEST_PLAYED_LEVEL"
     static let PLAYER_SCORES = "PLAYER_SCORES"
+    static let TUTORIAL_SHOWN = "TUTORIAL_SHOWN"
         
     // IDs
     static let GAME_LEADERBOARD = "game_leaderboard"

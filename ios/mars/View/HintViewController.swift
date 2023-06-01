@@ -36,5 +36,4 @@ class HintViewController: UIViewController {
   
     }
     
-
 }
