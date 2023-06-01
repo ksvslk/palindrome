@@ -141,6 +141,13 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
         return productInfoMap
     }
     
+
+    func paymentQueue(_ queue: SKPaymentQueue, didRevokeEntitlementsForProductIdentifiers productIdentifiers: [String]) {
+        for productId in productIdentifiers {
+            updatePurchaseStatus(productId, isPurchased: false)
+        }
+    }
+
     
     func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
         for transaction in transactions {
@@ -194,9 +201,9 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
                 print("paymentQueue state: failed")
                 // Handle the "Failed" state
                 // For example, display an error message
-                SKPaymentQueue.default().finishTransaction(transaction)
                 processDelegate?.didFinishProcessing(result: true)
                 loading = false
+                SKPaymentQueue.default().finishTransaction(transaction)
             case .deferred:
                 print("paymentQueue state: deferred")
                 processDelegate?.didFinishProcessing(result: true)

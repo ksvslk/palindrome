@@ -29,7 +29,7 @@ class TutorialViewController: UIViewController {
         let symbolConfig = UIImage.SymbolConfiguration(scale: .large)
 
         if let symbolImage = UIImage(systemName: symbolName, withConfiguration: symbolConfig) {
-            let coloredImage = symbolImage.withTintColor(Theme.colorSecondary, renderingMode: .alwaysOriginal)
+            let coloredImage = symbolImage.withTintColor(Theme.colorOnSecondary, renderingMode: .alwaysOriginal)
             let targetSize = CGSize(width: 100, height: 100)
             let renderer = UIGraphicsImageRenderer(size: targetSize)
             let scaledImage = renderer.image { _ in
@@ -61,11 +61,7 @@ class TutorialViewController: UIViewController {
         slotsStackView.alignment = .fill
         slotsStackView.distribution = .equalSpacing
         slotsStackView.translatesAutoresizingMaskIntoConstraints = false
-        
-        
-        let bottomArrow = UIImageView(image: UIImage(named: "arrowleft"))
-        let tintedImage2 = bottomArrow.image?.withRenderingMode(.alwaysOriginal).withTintColor(Theme.colorSecondary)
-        bottomArrow.image = tintedImage2
+   
         
         for char in "HHA"
         {
@@ -112,7 +108,7 @@ class TutorialViewController: UIViewController {
          dismiss(animated: true)
      }
     
-    
+   
     private func getLetter(char:String) -> UIView
     {
         let containerView = UIView()

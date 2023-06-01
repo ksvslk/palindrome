@@ -327,6 +327,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             present(tutorialView, animated: true)
             UserDefaults.standard.set(true, forKey: C.TUTORIAL_SHOWN)
         }
+ 
     }
     
     
