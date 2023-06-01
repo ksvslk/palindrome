@@ -12,7 +12,7 @@ import GameKit
 import GoogleMobileAds
 import StoreKit
 
-class GameViewController: UIViewController, UIPopoverPresentationControllerDelegate {
+class GameViewController: UIViewController, UIPopoverPresentationControllerDelegate, SKSceneDelegate {
     
     private var gameScene: GameScene?
     
@@ -49,12 +49,9 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     
     
     // MARK: Show intermediate ads
-    private func showIntermediateAds(adsInterval:Interval)
+    private func showIntermediateAds()
     {
-        if (adsInterval.currentCount == adsInterval.limitCount)
-        {
-            adManager?.show(viewController: self, rewardType: Reward.none)
-        }
+        adManager?.show(viewController: self, rewardType: Reward.none)
     }
     
     
@@ -95,11 +92,13 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                 loadScores()
             }
             
-            let adsInterval = intervals.first { i in
-                i.name == C.ADS_INTERVAL
-            }!
+            if let adsIntervalReached = intervals.first(where: { i in
+                i.name == C.ADS_INTERVAL && i.currentCount == i.limitCount
+            }) {
+                showIntermediateAds()
+            }
             
-            showIntermediateAds(level: levelNr, interval: adsInterval)
+            
         }
     }
     
@@ -111,6 +110,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     }
     
     
+    //MARK: Ask for review
     private func askForReview(levelNr:Int)
     {
         if (levelNr == 15)
@@ -170,7 +170,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                 StateManager.shared.currentState = .completed
                 if (isMaxScore)
                 {
-                    confettiBurst()
+                    confettiBurst(yAcceleration: 75)
                 }
             case .wrong:
                 print("Wrong solution. (GameViewController)")
@@ -213,11 +213,12 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         view.showsFPS = true
         view.showsNodeCount = true
         view.isMultipleTouchEnabled = false
+
         
         self.gameScene = gameScene // Set the global variable to the gameScene instance
         hintToolbarItem.removeBadge()
     }
-    
+
     
     // MARK: UI mode change
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -243,6 +244,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     }
     
     
+    //MARK: Show intermediate ads
     private func showIntermediateAds(level:Int, interval:Interval)
     {
         if (level >= 15 && interval.currentCount == interval.limitCount)

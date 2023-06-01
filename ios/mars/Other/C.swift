@@ -23,6 +23,7 @@ struct C {
     static let ON_RELEASE_COLOR_CHANGE_ANIMATION = CGFloat(0.2)
     static let HOME_ANIMATION_MULTIPLIER = CGFloat(0.05)
     
+    
     // Score
     static let SCORE_LETTER_MULTIPLIER = 100 // Each letter in level will give 100 points
     static let SCORE_TAG = "SCORE_TAG"

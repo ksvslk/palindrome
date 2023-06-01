@@ -7,7 +7,6 @@
 
 import Foundation
 import UIKit
-import GameKit
 
 class ScoreItemCell: UITableViewCell {
     

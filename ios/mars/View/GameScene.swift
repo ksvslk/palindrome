@@ -1,4 +1,3 @@
-import SpriteKit
 import AVFAudio
 import GameplayKit
 
@@ -11,12 +10,11 @@ class GameScene: SKScene {
     let bottomSafe = 34.0 + 44.0 + 8.0
     let topSafe = 59.0 + 4.0 + 8.0
     
+    
     // MARK: Initialize level
     override func didMove(to view: SKView) {
         layoutScene(view: view)
         handleGameState()
-   
-
     }
     
     
