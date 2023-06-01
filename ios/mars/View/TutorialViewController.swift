@@ -25,7 +25,7 @@ class TutorialViewController: UIViewController {
         mainStackView.distribution = .equalSpacing
         
         let leftRightArrow = UIImageView()
-        let symbolName = "arrow.left.and.right.circle"
+        let symbolName = "arrow.right.circle"
         let symbolConfig = UIImage.SymbolConfiguration(scale: .large)
 
         if let symbolImage = UIImage(systemName: symbolName, withConfiguration: symbolConfig) {
@@ -80,10 +80,12 @@ class TutorialViewController: UIViewController {
         let howToPlay = getTextLabel(text: "Drag and drop letters so the..")
         let sameWord = getTextLabel(text: "..word will read same from either side!")
         
+        
         mainStackView.addArrangedSubview(howToPlay)
         mainStackView.addArrangedSubview(fakeGameView)
         mainStackView.addArrangedSubview(sameWord)
         mainStackView.addArrangedSubview(leftRightArrow)
+      
         
         // Add the label to the view controller's view
         view.addSubview(mainStackView)
