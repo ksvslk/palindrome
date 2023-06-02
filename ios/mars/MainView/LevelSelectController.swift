@@ -12,14 +12,14 @@ class LevelSelectController: BaseMenuController {
     override var menuItem: [MenuItemInfo] {
         return [
           MenuItemInfo(name: C.gameLevelsButton.0, comment: "", systemImage: C.gameLevelsButton.1, closure: {menuItem in
-            print("Tapped \(C.gameLevelsButton.0)")
+            Swift.debugPrint("Tapped \(C.gameLevelsButton.0)")
             self.present(GameLevelSelectController(dismissLevelSelectMenu: {
                 self.dismiss(animated: true)
             }), animated: true, completion: nil)
            
         }),
           MenuItemInfo(name: C.tutorialButton.0, comment: "", systemImage: C.tutorialButton.1, closure: {menuItem in
-              print("Tapped \(C.tutorialButton.0)")
+              Swift.debugPrint("Tapped \(C.tutorialButton.0)")
               let tutorialView = TutorialViewController()
               self.present(tutorialView, animated: true)
           })

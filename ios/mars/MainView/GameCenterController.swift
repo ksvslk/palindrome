@@ -13,7 +13,7 @@ class GameCenterController: BaseMenuController, GKGameCenterControllerDelegate {
 
     override var menuItem: [MenuItemInfo] {
         return [MenuItemInfo(name: C.gameLeaderButton.0, comment: "", systemImage: C.gameLeaderButton.1, closure: {menuItem in
-            print("Tapped \(C.gameLeaderButton.0)")
+            Swift.debugPrint("Tapped \(C.gameLeaderButton.0)")
             var viewController = GKGameCenterViewController(
                 leaderboardID: C.GAME_LEADERBOARD,
                 playerScope: .global,
@@ -22,7 +22,7 @@ class GameCenterController: BaseMenuController, GKGameCenterControllerDelegate {
             self.presentPanModal(viewController)
         }),
             MenuItemInfo(name: C.achievementsButton.0, comment: "", systemImage: C.achievementsButton.1, closure: {menuItem in
-            print("Tapped \(C.achievementsButton.0)")
+            Swift.debugPrint("Tapped \(C.achievementsButton.0)")
             var viewController = GKGameCenterViewController(state: .achievements)
           
             self.setDefaultSettings(for: &viewController)

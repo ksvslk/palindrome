@@ -27,7 +27,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     
     
     init(adManager:AdManager?, purchaseManager:PurchaseManager?, gameViewController:GameViewController?) {
-        print("init hints")
+        Swift.debugPrint("init hints")
         self.gameViewController = gameViewController
         self.adManager = adManager
         self.purchaseManager = purchaseManager
@@ -39,7 +39,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     //MARK: View did appear
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        print("viewDidAppear")
+        Swift.debugPrint("viewDidAppear")
         self.purchaseManager?.delegate = self
         self.purchaseManager?.processDelegate = self
         self.purchaseManager?.sendLatestInfo()
@@ -60,7 +60,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     
     // MARK: View did disappear
     override func viewDidDisappear(_ animated: Bool) {
-        print("viewDidDisappear")
+        Swift.debugPrint("viewDidDisappear")
         self.purchaseManager?.delegate = nil
         self.purchaseManager?.processDelegate = nil
         self.adManager?.delegate = nil
@@ -150,14 +150,14 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     
     //MARK: Ad availability callback
     func adAvailabilityDidChange(isAvailable: Bool) {
-        print("Latest info for ads or just updated: \(isAvailable)")
+        Swift.debugPrint("Latest info for ads or just updated: \(isAvailable)")
         
         let hintsPurchased = purchaseManager?.isHintsPurchasedInAnyWay() ?? false
         let lettersPurchased = purchaseManager?.isLettersPurchasedInAnyWay() ?? false
         
         
-        print("hintsPurchased: \(hintsPurchased) ")
-        print("lettersPurchased: \(lettersPurchased) ")
+        Swift.debugPrint("hintsPurchased: \(hintsPurchased) ")
+        Swift.debugPrint("lettersPurchased: \(lettersPurchased) ")
         
         if isAvailable {
             if Database.shared.currentLevel?.categoryRewarded == false && !hintsPurchased {
@@ -284,7 +284,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     //MARK: Update buttons Ui
     private func updatePurchasesUiInfo(purchases products:[String : ProductInfo])
     {
-        print("updatePurchasesUiInfo")
+        Swift.debugPrint("updatePurchasesUiInfo")
        
         guard products[C.PURCHASE_ALL_ID]?.isPurchased == false else {
             allInPurchasedUiUpdate(products: products)
@@ -400,8 +400,8 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
             let price = element.value.product.price
             return result.adding(price)
         }
-        print("sumWithoutAllIn: \(sumWithoutAllIn)")
-        print("allinprice: \(allInPrice)")
+        Swift.debugPrint("sumWithoutAllIn: \(sumWithoutAllIn)")
+        Swift.debugPrint("allinprice: \(allInPrice)")
         return allInPrice.compare(sumWithoutAllIn) == ComparisonResult.orderedDescending
     }
     
@@ -462,27 +462,27 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     
     //MARK: Closures
     var revealClueClosure: ((MenuItemCell) -> Void) = { menuItem in
-        print("Tapped \(C.revealClueButton.0)")
+        Swift.debugPrint("Tapped \(C.revealClueButton.0)")
     }
     
     var placeLetterClosure: ((MenuItemCell) -> Void) = { menuItem in
-        print("Tapped \(C.placeLetterButton.0)")
+        Swift.debugPrint("Tapped \(C.placeLetterButton.0)")
     }
     
     var purchaseCluesClosure: ((MenuItemCell) -> Void) = { menuItem in
-        print("Tapped \(C.purchaseCluesButton.0)")
+        Swift.debugPrint("Tapped \(C.purchaseCluesButton.0)")
     }
     
     var purchaseLettersClosure: ((MenuItemCell) -> Void) = { menuItem in
-        print("Tapped \(C.purchaseLettersButton.0)")
+        Swift.debugPrint("Tapped \(C.purchaseLettersButton.0)")
     }
     
     var purchaseNoAdsClosure: ((MenuItemCell) -> Void) = { menuItem in
-        print("Tapped \(C.purchaseNoAdsButton.0)")
+        Swift.debugPrint("Tapped \(C.purchaseNoAdsButton.0)")
     }
     
     var purchaseAllClosure: ((MenuItemCell) -> Void) = { menuItem in
-        print("Tapped \(C.purchaseAllButton.0)")
+        Swift.debugPrint("Tapped \(C.purchaseAllButton.0)")
     }
     
     

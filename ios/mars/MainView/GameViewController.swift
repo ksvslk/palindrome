@@ -61,9 +61,9 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     {
         Database.shared.levelChangedClosure = { [weak self] intervals in
             guard let self = self else { return }
-            print("Intervals: \(intervals)")
+            Swift.debugPrint("Intervals: \(intervals)")
             
-            print("Current level changed to \(String(describing: Database.shared.currentLevel?.levelNumber))")
+            Swift.debugPrint("Current level changed to \(String(describing: Database.shared.currentLevel?.levelNumber))")
             loadMainScene()
             let levelNr = Int(Database.shared.currentLevel!.levelNumber)
             askForReview(levelNr: levelNr)
@@ -82,7 +82,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                 })
             }
             else {
-                print("Setting state to .reset")
+                Swift.debugPrint("Setting state to .reset")
                 StateManager.shared.currentState = .reset
                 hideInfoButton()
             }
@@ -145,7 +145,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             
             switch result {
             case .correct:
-                print("Correct solution! (GameViewController)")
+                Swift.debugPrint("Correct solution! (GameViewController)")
                 let isMaxScore = scores.0 == scores.1
                 let currentLevel = Database.shared.currentLevel!
                 if (currentLevel.progress != Level.Progress.completed.rawValue)
@@ -153,7 +153,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                     feedbackGenerator.notificationOccuredCustom(notificationType: .success)
                     let message = isMaxScore ? veryGoodMessages.randomElement()! : goodMessages.randomElement()!
                     gameScene?.winningAnimation {
-                        print("Show now messages of a great win in GameViewController!")
+                        Swift.debugPrint("Show now messages of a great win in GameViewController!")
                         let messages = ["tap_to_continue"~, C.SCORE_TAG, message]
                         self.animateMessageSequence(
                             scores: scores,
@@ -175,7 +175,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                     confettiBurst(yAcceleration: 75)
                 }
             case .wrong:
-                print("Wrong solution. (GameViewController)")
+                Swift.debugPrint("Wrong solution. (GameViewController)")
                 if UIApplication.shared.applicationState == .active {
                     feedbackGenerator.notificationOccuredCustom(notificationType: .error)
                     gameScene?.shakeAnimation()
@@ -187,7 +187,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                 }
             case .bogus_palindrome:
                 if UIApplication.shared.applicationState == .active {
-                    print("Bogus solution. (GameViewController)")
+                    Swift.debugPrint("Bogus solution. (GameViewController)")
                     let bogusWrongMessage = bogusMessages.randomElement()!
                     feedbackGenerator.notificationOccuredCustom(notificationType: .warning)
                     gameScene?.shakeAnimation()
@@ -197,7 +197,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                     )
                 }
             case .invalid_guess:
-                print("Not enough letters. (GameViewController)")
+                Swift.debugPrint("Not enough letters. (GameViewController)")
                 StateManager.shared.currentState = .play
             }
         }
@@ -234,9 +234,9 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     
     // MARK: Tap to continue touch
     @objc func tapToContinueTouched() {
-        print("Screen tapped!")
+        Swift.debugPrint("Screen tapped!")
         if let gr = view.gestureRecognizers?.first {
-            print("removing gesture recgonizer \(gr)")
+            Swift.debugPrint("removing gesture recgonizer \(gr)")
             view.removeGestureRecognizer(gr)
         }
         if (Database.shared.currentLevel?.levelNumber == 100)
@@ -307,7 +307,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     
     private func handleRewards()
     {
-        print("handleRewards")
+        Swift.debugPrint("handleRewards")
         guard let adManagerChecked = adManager else { return }
         switch adManagerChecked.rewardToBeGiven {
         case Reward.letter:
@@ -316,7 +316,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             rewardWithHint()
             Database.shared.setCategoryAsRewarded()
         case Reward.none:
-            print("NO reward!")
+            Swift.debugPrint("NO reward!")
         }
         adManagerChecked.rewardToBeGiven = .none
     }
@@ -339,9 +339,9 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     
     //MARK: Display scores
     private func showScores(scores:[ScoreItemInfo]) {
-        print("Count of scores: \(scores.count)")
+        Swift.debugPrint("Count of scores: \(scores.count)")
         if !scores.isEmpty {
-            print("Display scores")
+            Swift.debugPrint("Display scores")
             let bottomSheetMenuVC = PlayerScoresController(scoreItems: scores)
             if let buttonView = gameCenterButtonRef.value(forKey: "view") as? UIView {
                 presentPanModal(bottomSheetMenuVC,sourceView: buttonView, sourceRect: buttonView.bounds)
@@ -362,8 +362,8 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                 // get rank for player first
                 leaderboard.loadEntries(for: [GKLocalPlayer.local], timeScope: GKLeaderboard.TimeScope.allTime) {
                     entry, entries, error in
-                    print("Player rank is: \(String(describing: entry?.rank))")
-                    print("Total entries count: \(String(describing: entries?.count))")
+                    Swift.debugPrint("Player rank is: \(String(describing: entry?.rank))")
+                    Swift.debugPrint("Total entries count: \(String(describing: entries?.count))")
                     // get the other 3 scores based on players rank
                     guard let entry = entry else { return }
                     
@@ -374,7 +374,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                     
                     leaderboard.loadEntries(for: GKLeaderboard.PlayerScope.global, timeScope: GKLeaderboard.TimeScope.allTime, range: range) { entry, entries, integer, error in
                         if let entries = entries {
-                            print("Fetched \(entries.count) entries.")
+                            Swift.debugPrint("Fetched \(entries.count) entries.")
                             for entry in entries {
                                 let image = UIImage(systemName: "person.circle.fill")!
                                 scoreItems.append(ScoreItemInfo(displayName: entry.player.displayName, photo: image, score: entry.score, rank: entry.rank, isCurrentPlayer: entry.player.gamePlayerID == GKLocalPlayer.local.gamePlayerID))
@@ -385,7 +385,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                 }
             }
             else {
-                print(error?.localizedDescription ?? "")
+                Swift.debugPrint(error?.localizedDescription ?? "")
             }
         }
     }
@@ -427,7 +427,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     //MARK: Show ending screen
     private func showEndingScreen()
     {
-        print("showEndingScreen")
+        Swift.debugPrint("showEndingScreen")
         let triumphSound = SKAction.playSound(soundFile: "triumph.mp3")
         self.gameScene?.run(triumphSound)
         let hintViewController = EndingScreen()

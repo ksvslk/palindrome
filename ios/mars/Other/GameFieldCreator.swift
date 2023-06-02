@@ -129,8 +129,8 @@ struct GameFieldCreator {
             let firstIndexForOldColumnsCount =
                 puzzleOnlyLetters.chunked(into: Int(info.columnCount)).count * Int(info.columnCount) + 1
             
-            print("firstIndexForOldColumnsCount: \(firstIndexForOldColumnsCount), cols: \(info.columnCount)")
-            print("firstIndexForNewColumnsCount: \(firstIndexForNewColumnsCount), cols: \(newColumnCount)")
+            Swift.debugPrint("firstIndexForOldColumnsCount: \(firstIndexForOldColumnsCount), cols: \(info.columnCount)")
+            Swift.debugPrint("firstIndexForNewColumnsCount: \(firstIndexForNewColumnsCount), cols: \(newColumnCount)")
 
             let oldList = getSolutionRows(puzzle: palindrome, cols: Int(info.columnCount))
             let newList = getSolutionRows(puzzle: palindrome, cols: newColumnCount)
@@ -146,8 +146,8 @@ struct GameFieldCreator {
                 .filter { $0.element != " " }
                 .map { firstIndexForOldColumnsCount + $0.offset  }
             
-            print("oldIndexes: ", oldIndexes)
-            print("newIndexes: ", newIndexes)
+            Swift.debugPrint("oldIndexes: ", oldIndexes)
+            Swift.debugPrint("newIndexes: ", newIndexes)
             
             let oldFriendToNewFriendIndex = Dictionary(uniqueKeysWithValues: zip(oldIndexes, newIndexes))
           

@@ -24,13 +24,13 @@ class GameScene: SKScene {
         StateManager.shared.stateDidChange = { [self] state in
             switch state {
             case .play:
-                print("Now in .play (GameScene)")
+                Swift.debugPrint("Now in .play (GameScene)")
             case .animating:
-                print("Now in .animating (GameScene)")
+                Swift.debugPrint("Now in .animating (GameScene)")
             case .completed:
-                print("Now in .completed (GameScene)")
+                Swift.debugPrint("Now in .completed (GameScene)")
             case .reset:
-                print("Now in .reset (GameScene)")
+                Swift.debugPrint("Now in .reset (GameScene)")
             }
         }
     }
@@ -50,7 +50,6 @@ class GameScene: SKScene {
     // MARK: Shake animation
     func shakeAnimation()
     {
-        print("SHAKE ANIMATION!")
         StateManager.shared.currentState = .animating
         let amplitudeX: CGFloat = 12
         let frequency: CGFloat = 5
@@ -66,7 +65,6 @@ class GameScene: SKScene {
         }
         
         let resetAction = SKAction.run {
-            print("DONE with shake!")
             self.gridNode.position = self.startingPosition
             StateManager.shared.currentState = .play
             assert(self.gridNode.position == self.startingPosition, "Node position is \(self.gridNode.position), but should be \(self.startingPosition)")
@@ -204,7 +202,7 @@ class GameScene: SKScene {
         do {
             try addGameNodes(letters: currentLevel.lettersArr, allCells: allCells, gameField: gameField, gridNode: &gridNode)
         } catch {
-            print("GameScene: Could not add nodes to grid.")
+            Swift.debugPrint("GameScene: Could not add nodes to grid.")
         }
         
         // Change the position of the grid
@@ -239,7 +237,7 @@ class GameScene: SKScene {
         let trainEndPositionX = viewSize.width / 2 + trainNode.calculatedWidth + 16.0
         let moveRightAction = SKAction.move(to: CGPoint(x: trainEndPositionX, y: trainYPosition), duration: TimeInterval(duration))
         trainNode.run(moveRightAction) {
-            print("DONE")
+            Swift.debugPrint("DONE")
         }
     }
     

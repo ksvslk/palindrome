@@ -43,12 +43,12 @@ class CellDirector {
     private func checkCollisionsForAction(letter: Letter) -> CollisionResult
     {
         guard let candidateCells = getCandidateCells(letter: letter), !candidateCells.isEmpty else {
-            print("CellDirector: no candidate cells - send letter home")
+            Swift.debugPrint("CellDirector: no candidate cells - send letter home")
             sendLetterHome(letter: letter)
             return CollisionResult.nothing
         }
         guard let closestCell = getClosestCell(to: letter, from: candidateCells) else {
-            print("CellDirector: no collisions - send letter home")
+            Swift.debugPrint("CellDirector: no collisions - send letter home")
             sendLetterHome(letter: letter)
             return CollisionResult.nothing
         }
@@ -63,7 +63,7 @@ class CellDirector {
         case CellType.letter:
             if (closestCell.state == CellState.home)
             {
-                print("CellDirector: switchLetterPositions(letter, closestCell)")
+                Swift.debugPrint("CellDirector: switchLetterPositions(letter, closestCell)")
                 let bottomLetter = closestCell as! Letter
                 switchLetterPositions(top: letter, bottom: bottomLetter)
                 return CollisionResult.switching
@@ -71,12 +71,12 @@ class CellDirector {
         case CellType.slot:
             if (closestCell.friend == nil)
             {
-                print("CellDirector: placeLetterInEmptyBox(letter, closestCell)")
+                Swift.debugPrint("CellDirector: placeLetterInEmptyBox(letter, closestCell)")
                 placeLetterInEmptyBox(letter: letter, slot: closestCell as! Slot)
                 return CollisionResult.landing
             }
             else if (closestCell.friend == letter) {
-                print("CellDirector: landLetterInSameSlotItWasDraggedFrom")
+                Swift.debugPrint("CellDirector: landLetterInSameSlotItWasDraggedFrom")
                 return CollisionResult.landing
             }
         case .none:

@@ -75,7 +75,7 @@ class GameLevelSelectController: UIViewController {
 extension GameLevelSelectController: UICollectionViewDelegate {
     // if the user clicks on a cell, display a message
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print("Collection view at row \(collectionView.tag) selected level nr \(indexPath.item + 1)")
+        Swift.debugPrint("Collection view at row \(collectionView.tag) selected level nr \(indexPath.item + 1)")
         dismiss(animated: true, completion: {
             self.dismissLevelSelectMenu()
             Database.shared.changeLevel(to: indexPath.item + 1)

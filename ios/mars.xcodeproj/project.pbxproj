@@ -230,6 +230,38 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		B13330202A2A539800E70982 /* Dto */ = {
+			isa = PBXGroup;
+			children = (
+				B13BBA6E2A27C58400137679 /* ScoreItemInfo.swift */,
+				B13149E32A20A5B1004B06E8 /* MenuItemInfo.swift */,
+				B1D2710129EDB24500E01AC8 /* GameField.swift */,
+			);
+			path = Dto;
+			sourceTree = "<group>";
+		};
+		B13330212A2A53FF00E70982 /* Protocol */ = {
+			isa = PBXGroup;
+			children = (
+				B13149CF2A1F8E3F004B06E8 /* ProductsUpdateDelegate.swift */,
+				B18EA83B2A1637CB00514E47 /* AdAvailabilityDelegate.swift */,
+				B128D9962A24D7DA002B13D1 /* TransactionProcessDelegate.swift */,
+			);
+			path = Protocol;
+			sourceTree = "<group>";
+		};
+		B13330222A2A545300E70982 /* Manager */ = {
+			isa = PBXGroup;
+			children = (
+				B1299D6F29F962F4007B2668 /* Database.swift */,
+				B1FE7A4C29F80E82007D7954 /* CellDirector.swift */,
+				B1313BD32A135FAD005830AB /* StateManager.swift */,
+				B1313C512A1620EB005830AB /* AdManager.swift */,
+				B1FC277E2A1DF3D700117C55 /* PurchaseManager.swift */,
+			);
+			path = Manager;
+			sourceTree = "<group>";
+		};
 		B13966B42A082D0B00EF75A0 /* Sounds */ = {
 			isa = PBXGroup;
 			children = (
@@ -298,17 +330,19 @@
 		B1E8974C29EC5001001B942F /* mars */ = {
 			isa = PBXGroup;
 			children = (
-				B1FC27662A1B54A200117C55 /* Confetti */,
-				B1313C3B2A155395005830AB /* Resources */,
-				B13966B42A082D0B00EF75A0 /* Sounds */,
-				B1F5CA2029FAED5E0061FA65 /* Controller */,
-				B1F5CA1D29FAECB70061FA65 /* Other */,
-				B1F5CA1C29FAEC830061FA65 /* Enum */,
-				B141D53D29F6817700FE9B39 /* Fonts */,
-				B1F5CA1A29FAEB160061FA65 /* View */,
+				B13330222A2A545300E70982 /* Manager */,
 				B1C1065329FAAB2E006026A2 /* Model */,
+				B13330212A2A53FF00E70982 /* Protocol */,
+				B1F5CA1C29FAEC830061FA65 /* Enum */,
+				B13330202A2A539800E70982 /* Dto */,
+				B1F5CA2029FAED5E0061FA65 /* MainView */,
+				B1F5CA1A29FAEB160061FA65 /* SubView */,
+				B1FC27662A1B54A200117C55 /* Confetti */,
+				B13966B42A082D0B00EF75A0 /* Sounds */,
+				B1313C3B2A155395005830AB /* Resources */,
+				B141D53D29F6817700FE9B39 /* Fonts */,
+				B1F5CA1D29FAECB70061FA65 /* Other */,
 				B1E8974D29EC5001001B942F /* AppDelegate.swift */,
-				B128450F29F82ACE00C8F13D /* Extensions.swift */,
 				B13A246729F6DCDA0045DF3D /* Info.plist */,
 				B13966AE2A069DD400EF75A0 /* mars.entitlements */,
 				B1E8975729EC5001001B942F /* Main.storyboard */,
@@ -320,31 +354,23 @@
 			path = mars;
 			sourceTree = "<group>";
 		};
-		B1F5CA1A29FAEB160061FA65 /* View */ = {
+		B1F5CA1A29FAEB160061FA65 /* SubView */ = {
 			isa = PBXGroup;
 			children = (
-				B13149E32A20A5B1004B06E8 /* MenuItemInfo.swift */,
-				B13BBA6E2A27C58400137679 /* ScoreItemInfo.swift */,
-				B13149DD2A20A59D004B06E8 /* MenuItemCell.swift */,
-				B13BBA6C2A27C50C00137679 /* ScoreItemCell.swift */,
-				B16F207129FBBB2400E8DFCE /* Actions.sks */,
-				B16F206F29FBBAFC00E8DFCE /* GameScene.sks */,
 				B1E8975329EC5001001B942F /* GameScene.swift */,
-				B1B33AC529FFD91F00DFA59F /* GameFieldCreator.swift */,
-				B1D2710129EDB24500E01AC8 /* GameField.swift */,
 				B163AA4329F7ED18006C8BE6 /* Cell.swift */,
 				B1E8978929ED41EA001B942F /* Letter.swift */,
 				B1E8978B29ED42EE001B942F /* Slot.swift */,
+				B13149DD2A20A59D004B06E8 /* MenuItemCell.swift */,
+				B13BBA6C2A27C50C00137679 /* ScoreItemCell.swift */,
 				B1313BB12A0AD12C005830AB /* LevelSelectCell.swift */,
 				B1313BBD2A0E66E9005830AB /* NumberLabel.swift */,
-				B1FC275E2A180A9200117C55 /* HintViewController.swift */,
-				B1339BCA2A288090008E7102 /* TutorialViewController.swift */,
-				B1FC275A2A17D9DA00117C55 /* Toast.swift */,
 				B12EE56A2A21DEAA00056603 /* PaddedLabel.swift */,
-				B128D99C2A260772002B13D1 /* EndingScreen.swift */,
 				B13BBA662A27737800137679 /* TrainNode.swift */,
+				B16F207129FBBB2400E8DFCE /* Actions.sks */,
+				B16F206F29FBBAFC00E8DFCE /* GameScene.sks */,
 			);
-			path = View;
+			path = SubView;
 			sourceTree = "<group>";
 		};
 		B1F5CA1C29FAEC830061FA65 /* Enum */ = {
@@ -363,36 +389,34 @@
 		B1F5CA1D29FAECB70061FA65 /* Other */ = {
 			isa = PBXGroup;
 			children = (
+				B128450F29F82ACE00C8F13D /* Extensions.swift */,
 				B1EF06DD29F8477600DD78A6 /* C.swift */,
 				B141D53B29F6816200FE9B39 /* Theme.swift */,
 				B1B33A8C29FDBC0300DFA59F /* Shuffler.swift */,
 				B1313BC12A0F8386005830AB /* SolutionChecker.swift */,
 				B13BBA682A2797D500137679 /* VaryingProbability.swift */,
+				B1B33AC529FFD91F00DFA59F /* GameFieldCreator.swift */,
+				B1FC275A2A17D9DA00117C55 /* Toast.swift */,
 			);
 			path = Other;
 			sourceTree = "<group>";
 		};
-		B1F5CA2029FAED5E0061FA65 /* Controller */ = {
+		B1F5CA2029FAED5E0061FA65 /* MainView */ = {
 			isa = PBXGroup;
 			children = (
-				B13149E02A20A5A7004B06E8 /* BaseMenuController.swift */,
+				B1E8975529EC5001001B942F /* GameViewController.swift */,
 				B13149E62A2127EB004B06E8 /* GameCenterController.swift */,
 				B13BBA6A2A27C46600137679 /* PlayerScoresController.swift */,
 				B12EE56C2A21E86C00056603 /* HintsViewController.swift */,
 				B13149E82A212E59004B06E8 /* SettingsViewController.swift */,
 				B13149EA2A214555004B06E8 /* LevelSelectController.swift */,
-				B1299D6F29F962F4007B2668 /* Database.swift */,
-				B1E8975529EC5001001B942F /* GameViewController.swift */,
-				B1FE7A4C29F80E82007D7954 /* CellDirector.swift */,
 				B1313BA92A0ABEB1005830AB /* GameLevelSelectController.swift */,
-				B18EA83B2A1637CB00514E47 /* AdAvailabilityDelegate.swift */,
-				B1313BD32A135FAD005830AB /* StateManager.swift */,
-				B1313C512A1620EB005830AB /* AdManager.swift */,
-				B1FC277E2A1DF3D700117C55 /* PurchaseManager.swift */,
-				B13149CF2A1F8E3F004B06E8 /* ProductsUpdateDelegate.swift */,
-				B128D9962A24D7DA002B13D1 /* TransactionProcessDelegate.swift */,
+				B1FC275E2A180A9200117C55 /* HintViewController.swift */,
+				B1339BCA2A288090008E7102 /* TutorialViewController.swift */,
+				B128D99C2A260772002B13D1 /* EndingScreen.swift */,
+				B13149E02A20A5A7004B06E8 /* BaseMenuController.swift */,
 			);
-			path = Controller;
+			path = MainView;
 			sourceTree = "<group>";
 		};
 		B1FC27662A1B54A200117C55 /* Confetti */ = {

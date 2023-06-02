@@ -51,7 +51,7 @@ class AdManager: NSObject, GADFullScreenContentDelegate {
             guard let self = self else { return }
             
             if let error = error {
-                print("Failed to load rewarded ad with error: \(error.localizedDescription)")
+                Swift.debugPrint("Failed to load rewarded ad with error: \(error.localizedDescription)")
                 
                 // Retry loading the ad with exponential backoff until the maximum retry interval is reached
                 if self.currentRetryInterval < self.maxRetryInterval {
@@ -73,7 +73,7 @@ class AdManager: NSObject, GADFullScreenContentDelegate {
             self.rewardedAd = ad
             self.adAvailable = true
             
-            print("Rewarded ad loaded.")
+            Swift.debugPrint("Rewarded ad loaded.")
         }
     }
     
@@ -87,26 +87,26 @@ class AdManager: NSObject, GADFullScreenContentDelegate {
                 self.loadRewardedAd()
             }
         } else {
-            print("Ad wasn't ready")
+            Swift.debugPrint("Ad wasn't ready")
         }
     }
     
     
     /// Tells the delegate that the ad failed to present full screen content.
     func ad(_ ad: GADFullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
-        print("Ad did fail to present full screen content.")
+        Swift.debugPrint("Ad did fail to present full screen content.")
     }
     
     
     /// Tells the delegate that the ad will present full screen content.
     func adWillPresentFullScreenContent(_ ad: GADFullScreenPresentingAd) {
-        print("Ad will present full screen content.")
+        Swift.debugPrint("Ad will present full screen content.")
     }
     
     
     /// Tells the delegate that the ad dismissed full screen content.
     func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
-        print("Ad did dismiss full screen content.")
+        Swift.debugPrint("Ad did dismiss full screen content.")
     }
     
     

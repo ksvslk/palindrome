@@ -85,7 +85,7 @@ class Database {
         addInterval(name: C.FLAWLESS_15_INTERVAL, limitCount: 15)
         
         let diff = CFAbsoluteTimeGetCurrent() - start
-        print("Inserting all levels to database took \(diff) seconds")
+        Swift.debugPrint("Inserting all levels to database took \(diff) seconds")
         
     }
     
@@ -110,10 +110,10 @@ class Database {
                 try context.save()
             } else {
                 // A matching interval already exists, handle the duplicate case
-                print("Interval with name '\(name)' already exists.")
+                Swift.debugPrint("Interval with name '\(name)' already exists.")
             }
         } catch {
-            print("Error fetching intervals: \(error)")
+            Swift.debugPrint("Error fetching intervals: \(error)")
         }
     }
     
@@ -134,7 +134,7 @@ class Database {
         do {
             fetchedLevels = try context.fetch(request)
         } catch {
-            print("Error fetching level")
+            Swift.debugPrint("Error fetching level")
         }
         if !fetchedLevels.isEmpty { return }
         
@@ -166,7 +166,7 @@ class Database {
         do {
             try context.save()
         } catch {
-            print("Error saving item: \(error)")
+            Swift.debugPrint("Error saving item: \(error)")
         }
         
     }
@@ -250,7 +250,7 @@ class Database {
                 try context.save()
             } catch {
                 // Handle the error
-                print("Error: \(error)")
+                Swift.debugPrint("Error: \(error)")
             }
         }
         return result
@@ -358,7 +358,7 @@ class Database {
                 
             } catch {
                 // Handle the error
-                print("Error: \(error)")
+                Swift.debugPrint("Error: \(error)")
             }
         }
     }
@@ -377,7 +377,7 @@ class Database {
                 score += Int(level.bestScore)
             }
         } catch {
-            print("Error fetching results: \(error.localizedDescription)")
+            Swift.debugPrint("Error fetching results: \(error.localizedDescription)")
         }
         return score
     }
@@ -394,12 +394,12 @@ class Database {
                 leaderboardIDs: [C.GAME_LEADERBOARD],
                 completionHandler: { error in
                     if (error != nil) {
-                        print("Could not submit score: \(String(describing: error))")
+                        Swift.debugPrint("Could not submit score: \(String(describing: error))")
                     }
                 }
             )
         } else {
-            print("Player not authenticated to submit score.")
+            Swift.debugPrint("Player not authenticated to submit score.")
         }
     }
     
@@ -418,7 +418,7 @@ class Database {
                 return maxLevelNumber
             }
         } catch {
-            print("Error getting maximum level from database.")
+            Swift.debugPrint("Error getting maximum level from database.")
         }
         return -1
     }
@@ -440,7 +440,7 @@ class Database {
                 levels.append(level.levelProgress)
             }
         } catch {
-            print("Error fetching results: \(error.localizedDescription)")
+            Swift.debugPrint("Error fetching results: \(error.localizedDescription)")
         }
         return levels
     }
@@ -454,7 +454,7 @@ class Database {
         do {
             try context.save()
         } catch {
-            print("Error changing friend index: \(error)")
+            Swift.debugPrint("Error changing friend index: \(error)")
         }
         checkSolutionCorrectness(letter: letter)
 #if DEBUG
@@ -477,7 +477,7 @@ class Database {
         do {
             try context.save()
         } catch {
-            print("Error switching friend indexes: \(error)")
+            Swift.debugPrint("Error switching friend indexes: \(error)")
         }
         checkSolutionCorrectness()
 #if DEBUG
@@ -498,7 +498,7 @@ class Database {
         do {
             letters = try context.fetch(request)
         } catch let error as NSError {
-            print("Could not fetch. \(error), \(error.userInfo)")
+            Swift.debugPrint("Could not fetch. \(error), \(error.userInfo)")
         }
         
         let result = SolutionChecker.getGuessResult(guess: letters, solutions: currentLevel!.solutionsArr)
@@ -511,21 +511,15 @@ class Database {
             if (hintsIntervalReached) {
                 hintsSuggestionClosure?()
             }
-            print("WRONG RESULT!")
         }
       
     }
-    
-    
-    func getPlayerCenteredScores() {
-        //TODO:
-    }
-    
+ 
     
     //MARK: Handle achievments (wrong)
     private func handleWrongSolutionAchievementProgress(solution: SolutionCheckResult)
     {
-        print("handleWrongSolutionAchievementProgress")
+        Swift.debugPrint("handleWrongSolutionAchievementProgress")
         updateCurrentCount(forName: C.FLAWLESS_5_INTERVAL, reset: true)
         updateCurrentCount(forName: C.FLAWLESS_15_INTERVAL, reset: true)
         if (solution == SolutionCheckResult.bogus_palindrome)
@@ -538,7 +532,7 @@ class Database {
     //MARK: Handle achievments (correct)
     private func handleLevelCompleteAchievements(isMaxScore:Bool, levelNr:Int)
     {
-        print("handleLevelCompleteAchievements")
+        Swift.debugPrint("handleLevelCompleteAchievements")
         if (isMaxScore)
         {
             unlockAchievement(identifier: C.achievement_zero_mistakes)
@@ -588,10 +582,10 @@ class Database {
         GKAchievement.report([achievement]) { (error) in
             if let error = error {
                 // Handle the error
-                print("Achievement unlock error: \(error.localizedDescription)")
+                Swift.debugPrint("Achievement unlock error: \(error.localizedDescription)")
             } else {
                 // Achievement unlocked successfully
-                print("Achievement unlocked: \(identifier)")
+                Swift.debugPrint("Achievement unlocked: \(identifier)")
             }
         }
     }
@@ -608,7 +602,7 @@ class Database {
         do {
             try context.save()
         } catch {
-            print("Error changing score: \(error)")
+            Swift.debugPrint("Error changing score: \(error)")
         }
     }
     
@@ -633,7 +627,7 @@ class Database {
         do {
             try context.save()
         } catch {
-            print("Error changing columnd count: \(error)")
+            Swift.debugPrint("Error changing columnd count: \(error)")
         }
         
     }
@@ -651,7 +645,7 @@ class Database {
         do {
             try context.save()
         } catch {
-            print("Error changing category rewarded: \(error)")
+            Swift.debugPrint("Error changing category rewarded: \(error)")
         }
     }
     
@@ -664,7 +658,7 @@ class Database {
         do {
             try context.save()
         } catch {
-            print("Error locking letter: \(error)")
+            Swift.debugPrint("Error locking letter: \(error)")
         }
         
     }
@@ -684,7 +678,7 @@ class Database {
         do {
             try context.save()
         } catch {
-            print("Error setting level completed: \(error)")
+            Swift.debugPrint("Error setting level completed: \(error)")
         }
         
         Task {
@@ -692,7 +686,7 @@ class Database {
             do {
                 try await submitScoreToLeaderboard(score: totalScore)
             } catch {
-                print("Error:", error.localizedDescription)
+                Swift.debugPrint("Error:", error.localizedDescription)
             }
         }
         
@@ -718,7 +712,7 @@ class Database {
         do {
             fetchedLetters = try context.fetch(request)
         } catch {
-            print("Error while trying to count friendIndexes")
+            Swift.debugPrint("Error while trying to count friendIndexes")
         }
         let uniqueValues = Set(fetchedLetters.compactMap({
             let friendIndex = $0.value(forKey: attributeName) as? Int64
