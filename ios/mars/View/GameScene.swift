@@ -50,6 +50,7 @@ class GameScene: SKScene {
     // MARK: Shake animation
     func shakeAnimation()
     {
+        print("SHAKE ANIMATION!")
         StateManager.shared.currentState = .animating
         let amplitudeX: CGFloat = 12
         let frequency: CGFloat = 5
@@ -65,6 +66,7 @@ class GameScene: SKScene {
         }
         
         let resetAction = SKAction.run {
+            print("DONE with shake!")
             self.gridNode.position = self.startingPosition
             StateManager.shared.currentState = .play
             assert(self.gridNode.position == self.startingPosition, "Node position is \(self.gridNode.position), but should be \(self.startingPosition)")
@@ -74,6 +76,8 @@ class GameScene: SKScene {
         let repeatAction = SKAction.repeat(sequenceAction, count: numberOfShakes)
         
         gridNode.run(repeatAction)
+    
+       
     }
 
     

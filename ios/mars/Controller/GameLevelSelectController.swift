@@ -60,9 +60,10 @@ class GameLevelSelectController: UIViewController {
         // make sure that there is a slightly larger gap at the top of each row
         layout.sectionInset = UIEdgeInsets(top: 20, left: 40, bottom: 20, right: 40)
         // set a standard item size
-        layout.itemSize = CGSize(width: 80, height: 80)
+        layout.itemSize = CGSize(width: 60, height: 60)
         // the layout scrolls horizontally
         layout.scrollDirection = .vertical
+      
         // set the frame and layout
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         // set the view to be this UICollectionView
@@ -80,6 +81,8 @@ extension GameLevelSelectController: UICollectionViewDelegate {
             Database.shared.changeLevel(to: indexPath.item + 1)
         })
     }
+    
+ 
 }
 
 extension GameLevelSelectController: UICollectionViewDataSource {

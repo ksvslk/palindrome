@@ -17,7 +17,7 @@ class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
             self.view.isUserInteractionEnabled = true
             if (result)
             {
-                self.view.makeToast("Successfully restored!", position: .center)
+                self.view.makeToast("restore_completed"~, position: .center)
             }
         }
 

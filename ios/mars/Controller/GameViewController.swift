@@ -12,6 +12,7 @@ import GameKit
 import GoogleMobileAds
 import StoreKit
 
+
 class GameViewController: UIViewController, UIPopoverPresentationControllerDelegate, SKSceneDelegate {
     
     private var gameScene: GameScene?
@@ -37,21 +38,21 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         subscribeToLevelChange()
         subscribeToSolutionCheckResult()
         subscribeToHintsSuggestion()
+        moveInfoButtonVerticallyToTopCenter()
         Database.shared.changeLevel(toLatest: true)
     }
     
+    
+    private func moveInfoButtonVerticallyToTopCenter()
+    {
+        
+        infoLabelButton.transform = CGAffineTransform(translationX: 0, y: -view.bounds.height / 4)
+    }
     
     private func presentBottomSheet(sourceView: UIView)
     {
         let bottomSheetMenuVC = GameCenterController()
         presentPanModal(bottomSheetMenuVC,sourceView: sourceView, sourceRect: sourceView.bounds)
-    }
-    
-    
-    // MARK: Show intermediate ads
-    private func showIntermediateAds()
-    {
-        adManager?.show(viewController: self, rewardType: Reward.none)
     }
     
     
@@ -81,21 +82,22 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                 })
             }
             else {
+                print("Setting state to .reset")
                 StateManager.shared.currentState = .reset
                 hideInfoButton()
             }
-          
             
-            if let playerScoresIntervalReached = intervals.first(where: { i in
+            
+            if intervals.first(where: { i in
                 i.name == C.SCORES_INTERVAL && i.currentCount == i.limitCount
-            }) {
+            }) != nil {
                 loadScores()
             }
             
-            if let adsIntervalReached = intervals.first(where: { i in
+            if intervals.first(where: { i in
                 i.name == C.ADS_INTERVAL && i.currentCount == i.limitCount
-            }) {
-                showIntermediateAds()
+            }) != nil {
+                showIntermediateAds(level: levelNr)
             }
             
             
@@ -174,22 +176,26 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                 }
             case .wrong:
                 print("Wrong solution. (GameViewController)")
-                feedbackGenerator.notificationOccuredCustom(notificationType: .error)
-                gameScene?.shakeAnimation()
-                let randomWrongMessage = wrongMessages.randomElement()!
-                self.animateMessageSequence(
-                    messages: [randomWrongMessage],
-                    isLastMessageTapToContinue: false
-                )
+                if UIApplication.shared.applicationState == .active {
+                    feedbackGenerator.notificationOccuredCustom(notificationType: .error)
+                    gameScene?.shakeAnimation()
+                    let randomWrongMessage = wrongMessages.randomElement()!
+                    self.animateMessageSequence(
+                        messages: [randomWrongMessage],
+                        isLastMessageTapToContinue: false
+                    )
+                }
             case .bogus_palindrome:
-                print("Bogus solution. (GameViewController)")
-                let bogusWrongMessage = bogusMessages.randomElement()!
-                feedbackGenerator.notificationOccuredCustom(notificationType: .warning)
-                gameScene?.shakeAnimation()
-                self.animateMessageSequence(
-                    messages: [bogusWrongMessage],
-                    isLastMessageTapToContinue: false
-                )
+                if UIApplication.shared.applicationState == .active {
+                    print("Bogus solution. (GameViewController)")
+                    let bogusWrongMessage = bogusMessages.randomElement()!
+                    feedbackGenerator.notificationOccuredCustom(notificationType: .warning)
+                    gameScene?.shakeAnimation()
+                    self.animateMessageSequence(
+                        messages: [bogusWrongMessage],
+                        isLastMessageTapToContinue: false
+                    )
+                }
             case .invalid_guess:
                 print("Not enough letters. (GameViewController)")
                 StateManager.shared.currentState = .play
@@ -213,12 +219,12 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         view.showsFPS = true
         view.showsNodeCount = true
         view.isMultipleTouchEnabled = false
-
+        
         
         self.gameScene = gameScene // Set the global variable to the gameScene instance
         hintToolbarItem.removeBadge()
     }
-
+    
     
     // MARK: UI mode change
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -245,9 +251,9 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     
     
     //MARK: Show intermediate ads
-    private func showIntermediateAds(level:Int, interval:Interval)
+    private func showIntermediateAds(level:Int)
     {
-        if (level >= 15 && interval.currentCount == interval.limitCount)
+        if (level >= 15)
         {
             let appDelegate = UIApplication.shared.delegate as! AppDelegate
             if (!appDelegate.purchaseManager.isNoAdsPurchasedInAnyWay())
@@ -301,7 +307,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     
     private func handleRewards()
     {
-        print("viewDidAppear")
+        print("handleRewards")
         guard let adManagerChecked = adManager else { return }
         switch adManagerChecked.rewardToBeGiven {
         case Reward.letter:
@@ -327,7 +333,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             present(tutorialView, animated: true)
             UserDefaults.standard.set(true, forKey: C.TUTORIAL_SHOWN)
         }
- 
+        
     }
     
     

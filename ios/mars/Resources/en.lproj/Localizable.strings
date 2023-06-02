@@ -25,6 +25,7 @@
 "restore" = "Restore Purchases";
 "successfully_restored" = "Restored purchase: ";
 "nothing_to_restore" = "Could not restore purchases.";
+"restore_completed" = "Restore completed.";
 
 
 //MARK: Game Center menu

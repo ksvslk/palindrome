@@ -50,6 +50,8 @@
 		B13149E92A212E59004B06E8 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13149E82A212E59004B06E8 /* SettingsViewController.swift */; };
 		B13149EB2A214555004B06E8 /* LevelSelectController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13149EA2A214555004B06E8 /* LevelSelectController.swift */; };
 		B1339BCB2A288090008E7102 /* TutorialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1339BCA2A288090008E7102 /* TutorialViewController.swift */; };
+		B1339BCE2A29F83D008E7102 /* TPInAppReceipt in Frameworks */ = {isa = PBXBuildFile; productRef = B1339BCD2A29F83D008E7102 /* TPInAppReceipt */; };
+		B1339BD02A29F83D008E7102 /* TPInAppReceipt-Objc in Frameworks */ = {isa = PBXBuildFile; productRef = B1339BCF2A29F83D008E7102 /* TPInAppReceipt-Objc */; };
 		B13966BA2A08300800EF75A0 /* CollisionResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13966B92A08300800EF75A0 /* CollisionResult.swift */; };
 		B13BBA652A2751BD00137679 /* triumph.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = B13BBA642A2751BD00137679 /* triumph.mp3 */; };
 		B13BBA672A27737800137679 /* TrainNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13BBA662A27737800137679 /* TrainNode.swift */; };
@@ -211,7 +213,9 @@
 			files = (
 				B128D9932A24D225002B13D1 /* Toast in Frameworks */,
 				B13149D72A209FA3004B06E8 /* PanModal in Frameworks */,
+				B1339BCE2A29F83D008E7102 /* TPInAppReceipt in Frameworks */,
 				B1313C4F2A160E02005830AB /* GoogleMobileAds in Frameworks */,
+				B1339BD02A29F83D008E7102 /* TPInAppReceipt-Objc in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -438,6 +442,8 @@
 				B1313C4E2A160E02005830AB /* GoogleMobileAds */,
 				B13149D62A209FA3004B06E8 /* PanModal */,
 				B128D9922A24D225002B13D1 /* Toast */,
+				B1339BCD2A29F83D008E7102 /* TPInAppReceipt */,
+				B1339BCF2A29F83D008E7102 /* TPInAppReceipt-Objc */,
 			);
 			productName = test;
 			productReference = B1B33ABE29FFA88000DFA59F /* mars.app */;
@@ -475,6 +481,7 @@
 				B1313C4D2A160E02005830AB /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
 				B13149D52A209FA3004B06E8 /* XCRemoteSwiftPackageReference "PanModal" */,
 				B128D9912A24D225002B13D1 /* XCRemoteSwiftPackageReference "Toast-Swift" */,
+				B1339BCC2A29F83D008E7102 /* XCRemoteSwiftPackageReference "TPInAppReceipt" */,
 			);
 			productRefGroup = B1E8974129EC5001001B942F;
 			projectDirPath = "";
@@ -921,6 +928,14 @@
 				version = 1.2.7;
 			};
 		};
+		B1339BCC2A29F83D008E7102 /* XCRemoteSwiftPackageReference "TPInAppReceipt" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/tikhop/TPInAppReceipt";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -938,6 +953,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B13149D52A209FA3004B06E8 /* XCRemoteSwiftPackageReference "PanModal" */;
 			productName = PanModal;
+		};
+		B1339BCD2A29F83D008E7102 /* TPInAppReceipt */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B1339BCC2A29F83D008E7102 /* XCRemoteSwiftPackageReference "TPInAppReceipt" */;
+			productName = TPInAppReceipt;
+		};
+		B1339BCF2A29F83D008E7102 /* TPInAppReceipt-Objc */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B1339BCC2A29F83D008E7102 /* XCRemoteSwiftPackageReference "TPInAppReceipt" */;
+			productName = "TPInAppReceipt-Objc";
 		};
 /* End XCSwiftPackageProductDependency section */
 

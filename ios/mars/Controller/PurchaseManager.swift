@@ -7,7 +7,7 @@
 
 import Foundation
 import StoreKit
-
+import TPInAppReceipt
 
 struct ProductInfo {
     
@@ -45,13 +45,30 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
     weak var processDelegate: TransactionProcessDelegate?
     var loading:Bool = false
     
+    
     override init() {
+        print("init PurchaseManager")
         super.init()
         SKPaymentQueue.default().add(self)
-        loadPurchaseStatusFromUserDefaults()
-        print("init PurchaseManager")
+ 
         requestProducts()
+        
+        if let receipt = try? InAppReceipt.localReceipt() {
+            // reset purchases
+            self.productIdentifiers.forEach { pid in
+                self.updatePurchaseStatus(pid, isPurchased: false, updateUi: false)
+            }
+            // info based on fresh receipt
+            receipt.purchases.forEach { iap in
+                print("Receipt purchase: \(iap.productIdentifier)")
+                self.updatePurchaseStatus(iap.productIdentifier, isPurchased: true)
+            }
+        }
+        
+        // save info
+        self.loadPurchaseStatusFromUserDefaults()
     }
+    
     
     
     func sendLatestInfo()
@@ -141,15 +158,18 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
         return productInfoMap
     }
     
-
+    
     func paymentQueue(_ queue: SKPaymentQueue, didRevokeEntitlementsForProductIdentifiers productIdentifiers: [String]) {
         for productId in productIdentifiers {
             updatePurchaseStatus(productId, isPurchased: false)
         }
     }
-
+    
     
     func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
+        
+        // Note: new receipt is available here
+        
         for transaction in transactions {
             switch transaction.transactionState {
             case .purchasing:
@@ -163,7 +183,7 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
                 print("paymentQueue state: purchased")
                 // Handle the "Purchased" state
                 // For example, provide the purchased content
-                verifyReceipt { [weak self] success in
+                verifyReceipt(productId: transaction.payment.productIdentifier) { [weak self] success in
                     if success {
                         // Receipt verification successful
                         // Provide access to the purchased content
@@ -176,13 +196,13 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
                         // Receipt verification failed
                         // Handle the failure case
                     }
+                    SKPaymentQueue.default().finishTransaction(transaction)
                 }
-                SKPaymentQueue.default().finishTransaction(transaction)
             case .restored:
                 print("paymentQueue state: restored")
                 // Handle the "Restored" state
                 // For example, provide access to the previously purchased content
-                verifyReceipt { [weak self] success in
+                verifyReceipt(productId: transaction.payment.productIdentifier) { [weak self] success in
                     if success {
                         // Receipt verification successful
                         // Provide access to the restored content
@@ -195,8 +215,8 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
                         // Receipt verification failed
                         // Handle the failure case
                     }
+                    SKPaymentQueue.default().finishTransaction(transaction)
                 }
-                SKPaymentQueue.default().finishTransaction(transaction)
             case .failed:
                 print("paymentQueue state: failed")
                 // Handle the "Failed" state
@@ -216,60 +236,32 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
     }
     
     
-    private func verifyReceipt(completion: @escaping (Bool) -> Void) {
-        print("verifyReceipt")
-        
-        /*
-        let refreshRequest = SKReceiptRefreshRequest()
-        refreshRequest.delegate = self
-        refreshRequest.start()
-        */
-        
-        guard let appStoreReceiptURL = Bundle.main.appStoreReceiptURL else {
-            completion(false)
-            return
-        }
-        
-        do {
-            let receiptData = try Data(contentsOf: appStoreReceiptURL)
-            let receiptString = receiptData.base64EncodedString(options: [])
-            let receiptDictionary = ["receipt-data": receiptString,
-                                     "password": C.SS] // Replace with your shared secret
-            
-            let requestData = try JSONSerialization.data(withJSONObject: receiptDictionary, options: [])
-            let validationURL = URL(string: "https://sandbox.itunes.apple.com/verifyReceipt")! // Use production URL for live app
-            var request = URLRequest(url: validationURL)
-            request.httpMethod = "POST"
-            request.httpBody = requestData
-            
-            let session = URLSession.shared
-            let task = session.dataTask(with: request) { (data, response, error) in
-                if let error = error {
-                    print("Receipt validation failed with error: \(error.localizedDescription)")
+    private func verifyReceipt(productId:String, completion: @escaping (Bool) -> Void) {
+        if let receipt = try? InAppReceipt.localReceipt() {
+            if receipt.containsPurchase(ofProductIdentifier: productId){
+                completion(true)
+            }
+        } else {
+            InAppReceipt.refresh { error in
+                if let err = error
+                {
+                    print(err)
                     completion(false)
-                    return
-                }
-                
-                guard let data = data else {
-                    print("Receipt validation data not found")
-                    completion(false)
-                    return
-                }
-                
-                do {
-                    let jsonResponse = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
-                    let status = jsonResponse?["status"] as? Int
-                    completion(status == 0)
-                } catch {
-                    print("Receipt validation response parsing error: \(error.localizedDescription)")
-                    completion(false)
+                } else {
+                    if let receipt = try? InAppReceipt.localReceipt() {
+                        if receipt.containsPurchase(ofProductIdentifier: productId){
+                            completion(true)
+                        }
+                    }
                 }
             }
-            task.resume()
-        } catch {
-            print("App Store receipt data error: \(error.localizedDescription)")
-            completion(false)
+            print("Receipt not found")
         }
+    }
+    
+    
+    func paymentQueue(_ queue: SKPaymentQueue, removedTransactions transactions: [SKPaymentTransaction]) {
+        print("Removed transactions: \(transactions.debugDescription)")
     }
     
     
@@ -278,7 +270,8 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
         processDelegate?.didFinishProcessing(result: true)
         loading = false
     }
-
+    
+    
     func paymentQueue(_ queue: SKPaymentQueue, restoreCompletedTransactionsFailedWithError error: Error) {
         print("Error restoring completed transactions \(error)")
         processDelegate?.didFinishProcessing(result: false)
@@ -327,7 +320,7 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
     }
     
     
-    private func updatePurchaseStatus(_ productIdentifier: String, isPurchased: Bool) {
+    private func updatePurchaseStatus(_ productIdentifier: String, isPurchased: Bool, updateUi:Bool = true) {
         print("updatePurchaseStatus")
         if isPurchased {
             purchasedProductIdentifiers.insert(productIdentifier)
@@ -335,7 +328,7 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
             purchasedProductIdentifiers.remove(productIdentifier)
         }
         savePurchaseStatusToUserDefaults()
-        delegate?.didUpdateProducts(withProducts: getProducts())
+        if (updateUi) { delegate?.didUpdateProducts(withProducts: getProducts()) }
     }
     
 }

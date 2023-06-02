@@ -36,6 +36,7 @@ class Letter: Cell {
         letterLabel.verticalAlignmentMode = .center
         letterLabel.horizontalAlignmentMode = .center
         letterLabel.fontColor = Theme.colorOnPrimary
+      
         isUserInteractionEnabled = true
         addChild(letterLabel)
     }
@@ -44,7 +45,7 @@ class Letter: Cell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     
     // MARK: Touches began
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {

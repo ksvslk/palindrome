@@ -21,7 +21,7 @@ class TutorialViewController: UIViewController {
         // Create the main stack view
         mainStackView.axis = .vertical
         mainStackView.spacing = 5
-        mainStackView.alignment = .center
+        mainStackView.alignment = .fill
         mainStackView.distribution = .equalSpacing
         
         let leftRightArrow = UIImageView()
@@ -45,7 +45,7 @@ class TutorialViewController: UIViewController {
         fakeGameView.axis = .vertical
         fakeGameView.spacing = 3
         fakeGameView.alignment = .center
-        fakeGameView.distribution = .fillEqually
+        fakeGameView.distribution = .equalSpacing
         
         // Create the letters stack view - HORIZONTAL
         lettersStackView.axis = .horizontal
@@ -90,10 +90,10 @@ class TutorialViewController: UIViewController {
         mainStackView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            mainStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 100),
-            mainStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 100),
-            mainStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -100),
-            mainStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -100)
+            mainStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50),
+            mainStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 75),
+            mainStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -75),
+            mainStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -25)
         ])
         
         // Set the background color of the view controller's view
@@ -122,6 +122,8 @@ class TutorialViewController: UIViewController {
         label.font = UIFont(name: Theme.yantraBold, size: 35)
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.layer.borderWidth = 0.25
+        label.layer.borderColor = Theme.colorOnSecondary.cgColor
         
         containerView.addSubview(label)
         NSLayoutConstraint.activate([
@@ -191,21 +193,23 @@ class TutorialViewController: UIViewController {
               
               if (index == 0) {
                   slotView = slotsStackView.arrangedSubviews[2]
+                  letterView.layer.zPosition = 2
               }
               else if (index == 1) {
                   slotView = slotsStackView.arrangedSubviews[0]
+                  letterView.layer.zPosition = 0
               }
               else if (index == 2)
               {
+                  letterView.layer.zPosition = 2
                   slotView = slotsStackView.arrangedSubviews[1]
               }
 
               // Calculate the center position of the slot
              let slotCenter = slotsStackView.convert(slotView.center, to: lettersStackView.coordinateSpace)
-         
+              
               // Animate the letter view to the slot position
               UIView.animate(withDuration: 3, delay: TimeInterval(index) * 1, options: .curveEaseOut, animations: {
-                  letterView.layer.zPosition = 2
                   letterView.center = CGPoint(x: slotCenter.x, y: slotCenter.y)
               }, completion: nil)
           

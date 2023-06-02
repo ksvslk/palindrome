@@ -64,7 +64,10 @@ extension UIImpactFeedbackGenerator {
 
 extension UINotificationFeedbackGenerator {
     func notificationOccuredCustom(notificationType: FeedbackType){
-        self.notificationOccurred(notificationType)
+        if (UserDefaults.standard.bool(forKey: C.VIBRATION_ON))
+        {
+            self.notificationOccurred(notificationType)
+        }
     }
 }
 
