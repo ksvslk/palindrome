@@ -49,6 +49,8 @@
 		B13149E72A2127EB004B06E8 /* GameCenterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13149E62A2127EB004B06E8 /* GameCenterController.swift */; };
 		B13149E92A212E59004B06E8 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13149E82A212E59004B06E8 /* SettingsViewController.swift */; };
 		B13149EB2A214555004B06E8 /* LevelSelectController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13149EA2A214555004B06E8 /* LevelSelectController.swift */; };
+		B13330242A2A588B00E70982 /* Release.plist in Resources */ = {isa = PBXBuildFile; fileRef = B13330232A2A588B00E70982 /* Release.plist */; };
+		B13330252A2A58DF00E70982 /* Debug.plist in Resources */ = {isa = PBXBuildFile; fileRef = B13A246729F6DCDA0045DF3D /* Debug.plist */; };
 		B1339BCB2A288090008E7102 /* TutorialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1339BCA2A288090008E7102 /* TutorialViewController.swift */; };
 		B1339BCE2A29F83D008E7102 /* TPInAppReceipt in Frameworks */ = {isa = PBXBuildFile; productRef = B1339BCD2A29F83D008E7102 /* TPInAppReceipt */; };
 		B1339BD02A29F83D008E7102 /* TPInAppReceipt-Objc in Frameworks */ = {isa = PBXBuildFile; productRef = B1339BCF2A29F83D008E7102 /* TPInAppReceipt-Objc */; };
@@ -146,10 +148,11 @@
 		B13149E62A2127EB004B06E8 /* GameCenterController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterController.swift; sourceTree = "<group>"; };
 		B13149E82A212E59004B06E8 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		B13149EA2A214555004B06E8 /* LevelSelectController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelSelectController.swift; sourceTree = "<group>"; };
+		B13330232A2A588B00E70982 /* Release.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Release.plist; sourceTree = "<group>"; };
 		B1339BCA2A288090008E7102 /* TutorialViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorialViewController.swift; sourceTree = "<group>"; };
 		B13966AE2A069DD400EF75A0 /* mars.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = mars.entitlements; sourceTree = "<group>"; };
 		B13966B92A08300800EF75A0 /* CollisionResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollisionResult.swift; sourceTree = "<group>"; };
-		B13A246729F6DCDA0045DF3D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B13A246729F6DCDA0045DF3D /* Debug.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Debug.plist; sourceTree = "<group>"; };
 		B13BBA642A2751BD00137679 /* triumph.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = triumph.mp3; sourceTree = "<group>"; };
 		B13BBA662A27737800137679 /* TrainNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainNode.swift; sourceTree = "<group>"; };
 		B13BBA682A2797D500137679 /* VaryingProbability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VaryingProbability.swift; sourceTree = "<group>"; };
@@ -343,7 +346,8 @@
 				B141D53D29F6817700FE9B39 /* Fonts */,
 				B1F5CA1D29FAECB70061FA65 /* Other */,
 				B1E8974D29EC5001001B942F /* AppDelegate.swift */,
-				B13A246729F6DCDA0045DF3D /* Info.plist */,
+				B13A246729F6DCDA0045DF3D /* Debug.plist */,
+				B13330232A2A588B00E70982 /* Release.plist */,
 				B13966AE2A069DD400EF75A0 /* mars.entitlements */,
 				B1E8975729EC5001001B942F /* Main.storyboard */,
 				B1313BAD2A0ACCCF005830AB /* LaunchScreen.storyboard */,
@@ -389,8 +393,8 @@
 		B1F5CA1D29FAECB70061FA65 /* Other */ = {
 			isa = PBXGroup;
 			children = (
-				B128450F29F82ACE00C8F13D /* Extensions.swift */,
 				B1EF06DD29F8477600DD78A6 /* C.swift */,
+				B128450F29F82ACE00C8F13D /* Extensions.swift */,
 				B141D53B29F6816200FE9B39 /* Theme.swift */,
 				B1B33A8C29FDBC0300DFA59F /* Shuffler.swift */,
 				B1313BC12A0F8386005830AB /* SolutionChecker.swift */,
@@ -530,6 +534,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1313C272A150196005830AB /* switch_letters.wav in Resources */,
+				B13330252A2A58DF00E70982 /* Debug.plist in Resources */,
 				B1313C392A1502C5005830AB /* c4_outer.wav in Resources */,
 				B1313BAE2A0ACCCF005830AB /* LaunchScreen.storyboard in Resources */,
 				B1E8975929EC5001001B942F /* Main.storyboard in Resources */,
@@ -551,6 +556,7 @@
 				B141D54329F6B44500FE9B39 /* yantramanav_bold.ttf in Resources */,
 				B13BBA652A2751BD00137679 /* triumph.mp3 in Resources */,
 				B128D9952A24D5D0002B13D1 /* yantramanav_medium.ttf in Resources */,
+				B13330242A2A588B00E70982 /* Release.plist in Resources */,
 				B1313C362A1502C5005830AB /* g4_outer.wav in Resources */,
 				B1FC275D2A17E2A100117C55 /* hint_notification.wav in Resources */,
 				B1E8975B29EC5002001B942F /* Assets.xcassets in Resources */,
@@ -837,7 +843,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = PGTN5QKRGG;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = mars/Info.plist;
+				INFOPLIST_FILE = mars/Debug.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = hah;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.word-games";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -871,7 +877,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = PGTN5QKRGG;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = mars/Info.plist;
+				INFOPLIST_FILE = mars/Release.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = hah;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.word-games";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

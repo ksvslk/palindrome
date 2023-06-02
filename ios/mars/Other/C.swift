@@ -50,6 +50,11 @@ struct C {
     static let PURCHASED_PRODUCTS_KEY = "user_defaults_purchases"
     
     
+    // Ads
+    static let DEBUG_REWARDED_AD_UNIT = "ca-app-pub-3940256099942544/1712485313"
+    static let RELEASE_REWARDED_AD_UNIT = "ca-app-pub-5386053272091445/5924268495"
+
+    
     // Achievements
     static let achievement_greenhorn = "greenhorn"
     static let achievement_proficient = "proficient"
@@ -63,9 +68,8 @@ struct C {
     static let achievement_flawless_15 = "flawless_15"
     
     // URLs
-    static let APP_FEEDBACK_URL = "https://apps.apple.com/app/id6444929937?action=write-review" // TODO: Change id to hah
-    static let APP_URL = "https://apps.apple.com/app/penalty-2d/id6444929937" // TODO: Change it
-    static let SS = "005ee9f1fdd24a50b712ea8734f109f2"
+    static let APP_FEEDBACK_URL = "https://apps.apple.com/app/id1673006365?action=write-review" // TODO: Change id to hah
+    static let APP_URL = "https://apps.apple.com/app/hah-palindrome-puzzles/id1673006365" // TODO: Change it
     
     
     // Intervals

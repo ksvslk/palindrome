@@ -44,10 +44,18 @@ class AdManager: NSObject, GADFullScreenContentDelegate {
     }
     
     
+    let rewardedAdUnit: String = {
+        #if DEBUG
+        return C.DEBUG_REWARDED_AD_UNIT
+        #else
+        return C.RELEASE_REWARDED_AD_UNIT
+        #endif
+    }()
+    
+    
     func loadRewardedAd() {
         let request = GADRequest()
-        
-        GADRewardedAd.load(withAdUnitID: "ca-app-pub-3940256099942544/1712485313", request: request) { [weak self] ad, error in
+        GADRewardedAd.load(withAdUnitID: rewardedAdUnit, request: request) { [weak self] ad, error in
             guard let self = self else { return }
             
             if let error = error {
