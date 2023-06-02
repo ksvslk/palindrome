@@ -18,52 +18,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        Swift.debugPrint("application")
         Swift.debugPrint("Application directory: \(NSHomeDirectory())")
         GADMobileAds.sharedInstance().start(completionHandler: nil)
-        
-        // Initialize the PurchaseManager
-        purchaseManager = PurchaseManager()
-        
-        let userDefaults = UserDefaults.standard
-        userDefaults.register(
-            defaults: [
-                C.SOUND_ON: true,
-                C.VIBRATION_ON: true
-            ]
-        )
-        
-        var style = ToastStyle()
-        style.backgroundColor = Theme.darkBlue
-        style.activityBackgroundColor = Theme.darkBlue
-        style.messageColor = UIColor.white
-        style.messageFont = UIFont(name: Theme.robotoMedium, size: 15)!
-        ToastManager.shared.style = style
-        
         logInToGameCenter()
+        purchaseManager = PurchaseManager()
+        registerUserDefaults()
+        setToastStyle()
         Database.shared.initializeDatabaseWithGameLevels()
-        
         return true
-    }
-    
-    
-    private func logInToGameCenter()
-    {
-        GKLocalPlayer.local.authenticateHandler = { viewController, error in
-            
-            if let _ = viewController {
-                // Present the view controller so the player can sign in.
-                return
-            }
-            
-            if error != nil {
-                // Player could not be authenticated.
-                // Disable Game Center in the game.
-                return
-            }
-            
-            // Player was successfully authenticated.
-        }
     }
     
     
@@ -88,6 +50,47 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Swift.debugPrint("applicationDidBecomeActive")
     }
     
+    
+    private func registerUserDefaults()
+    {
+        let userDefaults = UserDefaults.standard
+        userDefaults.register(
+            defaults: [
+                C.SOUND_ON: true,
+                C.VIBRATION_ON: true
+            ]
+        )
+    }
+    
+    
+    private func setToastStyle()
+    {
+        var style = ToastStyle()
+        style.backgroundColor = Theme.darkBlue
+        style.activityBackgroundColor = Theme.darkBlue
+        style.messageColor = UIColor.white
+        style.messageFont = UIFont(name: Theme.robotoMedium, size: 15)!
+        ToastManager.shared.style = style
+    }
+    
+    
+    private func logInToGameCenter()
+    {
+        GKLocalPlayer.local.authenticateHandler = { viewController, error in
+            
+            if let _ = viewController {
+                // Present the view controller so the player can sign in.
+                return
+            }
+            
+            if error != nil {
+                // Player could not be authenticated.
+                // Disable Game Center in the game.
+                return
+            }
+            // Player was successfully authenticated.
+        }
+    }
     
 }
 

@@ -130,8 +130,15 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             let popSoundAction = SKAction.playSound(soundFile: "hint_notification.wav")
             self.gameScene?.run(popSoundAction)
             self.hintToolbarItem.addBadge(number: 1, andColor: Theme.hintsNotificationColor)
-            Toast.show(message: "You can find hints below ↙️", controller: self, timeShown: 4.0)
+            self.showToastAboveToolbar(message: "find_hints_below"~)
         }
+    }
+    
+    
+    private func showToastAboveToolbar(message:String)
+    {
+        let toastPosition = CGPoint(x: self.view.center.x, y: self.view.bounds.height - 115)
+        self.view.makeToast(message, point: toastPosition, title: nil, image: nil, completion: nil)
     }
     
     

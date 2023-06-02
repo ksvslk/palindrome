@@ -28,18 +28,20 @@ struct C {
     static let SCORE_LETTER_MULTIPLIER = 100 // Each letter in level will give 100 points
     static let SCORE_TAG = "SCORE_TAG"
     
+    
     // User defaults
     static let VIBRATION_ON = "VIBRATION_ON"
     static let SOUND_ON = "SOUND_ON"
-    static let LOGGED_IN = "LOGGED_IN"
     static let MAX_UNLOCKED_LEVEL = "MAX_UNLOCKED_LEVEL"
     static let LATEST_PLAYED_LEVEL = "LATEST_PLAYED_LEVEL"
     static let PLAYER_SCORES = "PLAYER_SCORES"
     static let TUTORIAL_SHOWN = "TUTORIAL_SHOWN"
         
+    
     // IDs
     static let GAME_LEADERBOARD = "game_leaderboard"
     static let PLAYER_LEADERBOARD = "player_leaderboard"
+    
     
     // Product IDs
     static let PURCHASE_LETTERS_ID = "purchase_letters" // 2.99
