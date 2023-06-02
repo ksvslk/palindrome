@@ -29,6 +29,7 @@ class Database {
     var levelChangedClosure: ((_ intervals:[Interval]) -> Void)?
     var solutionCheckResultClosure: ((_ solutionCheckResult:SolutionCheckResult, _ scoreAndBest:(Int,Int)) -> Void)?
     var hintsSuggestionClosure: (() -> Void)?
+    var cloudChangesClosure:((_ info:String, _ resultOfQuestion : @escaping (Bool) -> Void) -> Void)?
     
     
     private init() {
@@ -38,10 +39,17 @@ class Database {
                 fatalError("Failed to load Core Data stack: \(error)")
             }
         }
+        
         context = persistentContainer.viewContext
+        observeKeyValueChangesInCloud()
     }
     
-    
+    func pp()
+    {
+        cloudChangesClosure?("Do you want to load from cloud?") { result in
+            print("Player chose: \(result)")
+        }
+    }
     
     // MARK: Add game levels (1 time)
     func initializeDatabaseWithGameLevels()
@@ -74,8 +82,7 @@ class Database {
                 levelNr: jsonLevel.nr,
                 palindrome: jsonLevel.solutionToCategory.first!.key,
                 solutionsToHints: jsonLevel.solutionToCategory,
-                //progress: jsonLevel.nr == 1 ? Level.Progress.in_progress : Level.Progress.locked
-                progress: Level.Progress.in_progress
+                progress: jsonLevel.nr == 1 ? Level.Progress.in_progress : Level.Progress.locked
             )
         }
         addInterval(name: C.HINT_INTERVAL, limitCount: 5)
@@ -185,6 +192,52 @@ class Database {
         }
         
     }
+    
+    
+    //MARK: Observe key-value changes
+    func observeKeyValueChangesInCloud() {
+        
+        NotificationCenter.default.addObserver(self,
+            selector: #selector(ubiquitousKeyValueStoreDidChange(_:)),
+            name: NSUbiquitousKeyValueStore.didChangeExternallyNotification,
+            object: NSUbiquitousKeyValueStore.default)
+   
+        if NSUbiquitousKeyValueStore.default.synchronize() == false {
+            fatalError("This app was not built with the proper entitlement requests.")
+        }
+    }
+    
+    /** This notification is sent only upon a change received from iCloud; it is not sent when your app
+        sets a value. So this is called when the key-value store in the cloud has changed externally.
+    */
+    @objc
+    func ubiquitousKeyValueStoreDidChange(_ notification: Notification) {
+        print("ubiquitousKeyValueStoreDidChange: \(notification.debugDescription)")
+        guard let userInfo = notification.userInfo else { return }
+        
+        // Get the reason for the notification (initial download, external change or quota violation change).
+        guard let reasonForChange = userInfo[NSUbiquitousKeyValueStoreChangeReasonKey] as? Int else { return }
+
+        // Check if any of the keys we care about were updated, and if so use the new value stored under that key.
+        guard let keys =
+            userInfo[NSUbiquitousKeyValueStoreChangedKeysKey] as? [String] else { return }
+        
+        print(keys.debugDescription)
+        
+        switch reasonForChange {
+        case NSUbiquitousKeyValueStoreServerChange: // Value(s) were changed externally from other users/devices.
+            print("Initiate the change.")
+        case NSUbiquitousKeyValueStoreInitialSyncChange: // Inital download and when user switches primary iCloud account
+            print("Add default values")
+        case NSUbiquitousKeyValueStoreAccountChange: // User changed primary iCloud account
+            print("Add default values")
+        case NSUbiquitousKeyValueStoreQuotaViolationChange: // Quota exceeded
+            fatalError("Key-value quota exceeded. This should not happen.")
+        default:
+            print(":)")
+        }
+    }
+    
     
     // MARK: Sync UserDefaults info
     private func updateBasedOnCloudKitUserDefaults()
@@ -332,10 +385,12 @@ class Database {
                     let results = try context.fetch(nextLevelRequest)
                     if let chosenLevel = results.first {
                         currentLevel = chosenLevel
+                        currentLevel?.progress = Int64(Level.Progress.in_progress.rawValue)
                     } else {
                         fatalError("Could not set next level nr \(nextLevel)")
                     }
                 }
+                
                 
                 // change the max time to the current level
                 currentLevel?.timeModified = Date.init(timeIntervalSinceNow: .zero)

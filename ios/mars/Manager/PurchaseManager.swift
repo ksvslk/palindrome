@@ -43,6 +43,7 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
     private var availableProducts: [SKProduct] = []
     weak var delegate: ProductsUpdateDelegate?
     weak var processDelegate: TransactionProcessDelegate?
+    weak var messageDelegate: MessageDelegate?
     var loading:Bool = false
     
     
@@ -223,18 +224,26 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
                 // For example, display an error message
                 processDelegate?.didFinishProcessing(result: true)
                 loading = false
+                if (transaction.error as? SKError)?.code != .paymentCancelled {
+                    DispatchQueue.main.async {
+                        self.messageDelegate?.didSendNewMessage(withMessage: "purchase_failed_not_cancelled"~)
+                    }
+                }
                 SKPaymentQueue.default().finishTransaction(transaction)
             case .deferred:
                 Swift.debugPrint("paymentQueue state: deferred")
                 processDelegate?.didFinishProcessing(result: true)
                 loading = false
+                DispatchQueue.main.async {
+                    self.messageDelegate?.didSendNewMessage(withMessage: "purchase_deferred"~)
+                }
                 break
             @unknown default:
                 break
             }
         }
     }
-    
+ 
     
     private func verifyReceipt(productId:String, completion: @escaping (Bool) -> Void) {
         if let receipt = try? InAppReceipt.localReceipt() {
@@ -269,6 +278,7 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
         Swift.debugPrint("paymentQueueRestoreCompletedTransactionsFinished")
         processDelegate?.didFinishProcessing(result: true)
         loading = false
+        messageDelegate?.didSendNewMessage(withMessage: "restore_completed"~)
     }
     
     

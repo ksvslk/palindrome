@@ -12,7 +12,8 @@
 "loading" = "Loading..";
 "end_screen_text" = "Completing this game is not an easy GIG! From the very first LEVEL, You embarked on a remarkable journey. With the grace of KAYAK and the finesse of a RACECAR, You surpassed expectations, always keeping the game on Your RADAR.\n\nThank You for playing!";
 "find_hints_below" = "⬇︎ You can find hints below";
-
+"purchase_deferred" = "Your purchase was deferred - it can take a while.";
+"purchase_failed_not_cancelled" = "It just didn't work for some reason.";
 
 
 //MARK: Share button

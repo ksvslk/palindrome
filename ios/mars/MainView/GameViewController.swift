@@ -13,7 +13,9 @@ import GoogleMobileAds
 import StoreKit
 
 
-class GameViewController: UIViewController, UIPopoverPresentationControllerDelegate, SKSceneDelegate {
+class GameViewController: UIViewController, UIPopoverPresentationControllerDelegate, SKSceneDelegate, MessageDelegate {
+  
+    
     
     private var gameScene: GameScene?
     
@@ -39,7 +41,24 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         subscribeToSolutionCheckResult()
         subscribeToHintsSuggestion()
         moveInfoButtonVerticallyToTopCenter()
+        subscribeToCloudChanges()
+        subscribeToPurchaseMessage()
+        
         Database.shared.changeLevel(toLatest: true)
+        
+    }
+    
+    
+    func didSendNewMessage(withMessage message: String) {
+        dismissModal()
+        self.showToastAboveToolbar(message: message)
+    }
+    
+    
+    private func subscribeToPurchaseMessage()
+    {
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        appDelegate.purchaseManager.messageDelegate = self
     }
     
     
@@ -53,6 +72,27 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     {
         let bottomSheetMenuVC = GameCenterController()
         presentPanModal(bottomSheetMenuVC,sourceView: sourceView, sourceRect: sourceView.bounds)
+    }
+    
+    
+    private func subscribeToCloudChanges()
+    {
+        Database.shared.cloudChangesClosure = { info, answer in
+            let alertController = UIAlertController(title: "Load latest?", message:  info, preferredStyle: .alert)
+            
+            // Add action buttons
+            let yesAction = UIAlertAction(title: "Yes", style: .default) { _ in
+                answer(true)
+            }
+            let noAction = UIAlertAction(title: "No", style: .default) { _ in
+                answer(false)
+            }
+            alertController.addAction(yesAction)
+            alertController.addAction(noAction)
+            
+            // Present the UIAlertController
+            self.present(alertController, animated: true, completion: nil)
+        }
     }
     
     
@@ -340,7 +380,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             present(tutorialView, animated: true)
             UserDefaults.standard.set(true, forKey: C.TUTORIAL_SHOWN)
         }
-        
+        Database.shared.pp()
     }
     
     

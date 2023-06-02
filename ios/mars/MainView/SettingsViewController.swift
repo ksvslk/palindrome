@@ -15,12 +15,7 @@ class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
         DispatchQueue.main.async {
             self.view.hideToastActivity()
             self.view.isUserInteractionEnabled = true
-            if (result)
-            {
-                self.view.makeToast("restore_completed"~, position: .center)
-            }
         }
-
     }
     
     func didStartProcessing() {
@@ -141,8 +136,10 @@ class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
         let userDefaults = UserDefaults.standard
         if isOn {
             userDefaults.set(true, forKey: setting)
+            NSUbiquitousKeyValueStore.default.set(true, forKey: setting)
         } else {
             userDefaults.set(false, forKey: setting)
+            NSUbiquitousKeyValueStore.default.set(false, forKey: setting)
         }
     }
     
