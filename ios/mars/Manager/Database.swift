@@ -44,12 +44,6 @@ class Database {
         observeKeyValueChangesInCloud()
     }
     
-    func pp()
-    {
-        cloudChangesClosure?("Do you want to load from cloud?") { result in
-            print("Player chose: \(result)")
-        }
-    }
     
     // MARK: Add game levels (1 time)
     func initializeDatabaseWithGameLevels()
@@ -213,7 +207,7 @@ class Database {
     */
     @objc
     func ubiquitousKeyValueStoreDidChange(_ notification: Notification) {
-        print("ubiquitousKeyValueStoreDidChange: \(notification.debugDescription)")
+        print("ubiquitousKeyValueStoreDidChange: \(notification.name)")
         guard let userInfo = notification.userInfo else { return }
         
         // Get the reason for the notification (initial download, external change or quota violation change).
@@ -225,15 +219,19 @@ class Database {
         
         print(keys.debugDescription)
         
+        cloudChangesClosure?("Do you want to load from cloud?") { result in
+            print("Player chose: \(result)")
+        }
+        
         switch reasonForChange {
         case NSUbiquitousKeyValueStoreServerChange: // Value(s) were changed externally from other users/devices.
-            print("Initiate the change.")
+            print("NSUbiquitousKeyValueStoreServerChange - Initiate the change.")
         case NSUbiquitousKeyValueStoreInitialSyncChange: // Inital download and when user switches primary iCloud account
-            print("Add default values")
+            print("NSUbiquitousKeyValueStoreInitialSyncChange - Add default values")
         case NSUbiquitousKeyValueStoreAccountChange: // User changed primary iCloud account
-            print("Add default values")
+            print("NSUbiquitousKeyValueStoreAccountChange - Add default values")
         case NSUbiquitousKeyValueStoreQuotaViolationChange: // Quota exceeded
-            fatalError("Key-value quota exceeded. This should not happen.")
+            fatalError("NSUbiquitousKeyValueStoreQuotaViolationChange - Key-value quota exceeded. This should not happen.")
         default:
             print(":)")
         }

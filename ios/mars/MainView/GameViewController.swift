@@ -15,8 +15,6 @@ import StoreKit
 
 class GameViewController: UIViewController, UIPopoverPresentationControllerDelegate, SKSceneDelegate, MessageDelegate {
   
-    
-    
     private var gameScene: GameScene?
     
     @IBOutlet weak var gameCenterButtonRef: UIBarButtonItem!
@@ -380,7 +378,6 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             present(tutorialView, animated: true)
             UserDefaults.standard.set(true, forKey: C.TUTORIAL_SHOWN)
         }
-        Database.shared.pp()
     }
     
     

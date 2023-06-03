@@ -28,7 +28,7 @@
 "share" = "Share";
 "restore" = "Restore Purchases";
 "successfully_restored" = "Restored purchase: ";
-"nothing_to_restore" = "Could not restore purchases.";
+"restore_failed" = "Could not restore purchases.";
 "restore_completed" = "Restore completed.";
 
 

@@ -286,6 +286,11 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
         Swift.debugPrint("Error restoring completed transactions \(error)")
         processDelegate?.didFinishProcessing(result: false)
         loading = false
+        if let skError = error as? SKError {
+            if skError.code != .paymentCancelled {
+                messageDelegate?.didSendNewMessage(withMessage: "restore_failed"~)
+            }
+        }
     }
     
     
