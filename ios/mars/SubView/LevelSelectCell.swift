@@ -22,7 +22,6 @@ class LevelSelectCell: UICollectionViewCell {
         
         // Add the label to the cell's contentView and center it
         contentView.addSubview(label)
-        addSubview(disabledEffectView)
         label.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             label.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
@@ -44,17 +43,9 @@ class LevelSelectCell: UICollectionViewCell {
     }
     
     private func updateAppearance() {
-        contentView.alpha = isCellEnabled ? 1.0 : 0.5
-        disabledEffectView.isHidden = isCellEnabled
+        contentView.alpha = isCellEnabled ? 1.0 : 0.3
+        label.font = isCellEnabled ? UIFont(name: Theme.yantraBold, size: 25) : UIFont(name: Theme.yantraMedium, size: 20)
     }
-    
-    private let disabledEffectView: UIVisualEffectView = {
-        let blurEffect = UIBlurEffect(style: .regular)
-        let effectView = UIVisualEffectView(effect: blurEffect)
-        effectView.translatesAutoresizingMaskIntoConstraints = false
-        effectView.alpha = 0.8
-        effectView.layer.cornerRadius = 8
-        effectView.layer.masksToBounds = true
-        return effectView
-    }()
+
+
 }

@@ -294,6 +294,11 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
     }
     
     
+    func paymentQueue(_ queue: SKPaymentQueue, shouldAddStorePayment payment: SKPayment, for product: SKProduct) -> Bool {
+        return true
+    }
+    
+    
     // MARK: Request completed successfully
     func requestDidFinish(_ request: SKRequest) {
         Swift.debugPrint("requestDidFinish: \(request.description)")

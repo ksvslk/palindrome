@@ -59,8 +59,11 @@ class GameLevelSelectController: UIViewController {
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         // make sure that there is a slightly larger gap at the top of each row
         layout.sectionInset = UIEdgeInsets(top: 20, left: 40, bottom: 20, right: 40)
+        
+        let value:CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 120 : 75
+        
         // set a standard item size
-        layout.itemSize = CGSize(width: 60, height: 60)
+        layout.itemSize = CGSize(width: value, height: value)
         // the layout scrolls horizontally
         layout.scrollDirection = .vertical
       
