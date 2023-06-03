@@ -205,6 +205,7 @@ class Database {
         if NSUbiquitousKeyValueStore.default.synchronize() == false {
             fatalError("This app was not built with the proper entitlement requests.")
         }
+        
     }
     
     /** This notification is sent only upon a change received from iCloud; it is not sent when your app

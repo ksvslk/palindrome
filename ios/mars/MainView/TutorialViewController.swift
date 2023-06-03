@@ -23,6 +23,7 @@ class TutorialViewController: UIViewController {
         mainStackView.spacing = 5
         mainStackView.alignment = .fill
         mainStackView.distribution = .equalSpacing
+
         
         let leftRightArrow = UIImageView()
         let symbolName = "arrow.right.circle"
@@ -89,11 +90,12 @@ class TutorialViewController: UIViewController {
         // Set label's layout constraints (e.g., centered in the view)
         mainStackView.translatesAutoresizingMaskIntoConstraints = false
         
+        let value:CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 175 : 75
         NSLayoutConstraint.activate([
-            mainStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50),
-            mainStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 75),
-            mainStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -75),
-            mainStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -25)
+            mainStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: value),
+            mainStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: value),
+            mainStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -value),
+            mainStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -value),
         ])
         
         // Set the background color of the view controller's view
