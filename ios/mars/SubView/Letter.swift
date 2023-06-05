@@ -23,22 +23,40 @@ class Letter: Cell {
     let SWITCH_LETTER_SOUND_ACTION = SKAction.playSoundFileNamed("switch_letters.wav", waitForCompletion: false)
     
     private var feedbackGenerator : UIImpactFeedbackGenerator? = nil
-    
+    private let letterLabel = SKLabelNode()
     
     // MARK: Initialize
     init(data: LetterData, size: CGSize, homePosition: CGPoint, cellDirector: CellDirector) {
         self.cellDirector = cellDirector
         self.data = data
         super.init(homeIndex: data.homeIndex, texture: nil, color: Theme.colorPrimary, size: size, homePosition: homePosition)
-        let letterLabel = SKLabelNode(text: data.letter)
+        letterLabel.text = data.letter
         letterLabel.fontName = Theme.yantraBold
         letterLabel.fontSize = size.width / 1.5
         letterLabel.verticalAlignmentMode = .center
         letterLabel.horizontalAlignmentMode = .center
         letterLabel.fontColor = Theme.colorOnPrimary
-      
         isUserInteractionEnabled = true
         addChild(letterLabel)
+    }
+    
+    
+    override func switchColor()
+    {
+        color = Theme.colorPrimary
+        letterLabel.fontColor = Theme.colorOnPrimary
+        if (data.friendIndex != -1)
+        {
+            color = Theme.colorSecondary
+        }
+        if (data.locked)
+        {
+            color = Theme.letterRewardedColor
+        }
+        if (data.level.progress == Level.Progress.completed.rawValue)
+        {
+            color = Theme.successBoxColor
+        }
     }
     
     
@@ -163,7 +181,7 @@ class Letter: Cell {
             }
         }
     }
-    
+   
     
     // MARK: Trigger haptic fb.
     private func playHapticFeedback(collisionResult: CollisionResult)
@@ -177,5 +195,6 @@ class Letter: Cell {
             feedbackGenerator?.impactOccuredCustom(intensity: 0.3)
         }
     }
+
     
 }

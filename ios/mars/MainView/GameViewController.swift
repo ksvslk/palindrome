@@ -14,7 +14,7 @@ import StoreKit
 
 
 class GameViewController: UIViewController, UIPopoverPresentationControllerDelegate, SKSceneDelegate, MessageDelegate {
-  
+    
     private var gameScene: GameScene?
     
     @IBOutlet weak var gameCenterButtonRef: UIBarButtonItem!
@@ -33,17 +33,42 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     
     // MARK: View did load
     override func viewDidLoad() {
+        Swift.debugPrint("viewDidLoad")
         super.viewDidLoad()
+        self.view.makeToastActivity(.center)
+        self.view.isUserInteractionEnabled = false
         adManager = AdManager()
         subscribeToLevelChange()
         subscribeToSolutionCheckResult()
         subscribeToHintsSuggestion()
         moveInfoButtonVerticallyToTopCenter()
-        subscribeToCloudChanges()
         subscribeToPurchaseMessage()
-        
-        Database.shared.changeLevel(toLatest: true)
-        
+        logInToGameCenter()
+    }
+    
+    
+    private func logInToGameCenter()
+    {
+        GKLocalPlayer.local.authenticateHandler = { viewController, error in
+            
+            if let _ = viewController {
+                // Present the view controller so the player can sign in.
+                return
+            }
+            
+            self.view.hideToastActivity()
+            self.view.isUserInteractionEnabled = true
+            Database.shared.changeLevel(toLatest: true)
+            Swift.debugPrint("Change level after Game Center resolved.")
+            
+            if error != nil {
+                // Player could not be authenticated.
+                // Disable Game Center in the game.
+                return
+            }
+            // Player was successfully authenticated.
+            
+        }
     }
     
     
@@ -62,7 +87,6 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     
     private func moveInfoButtonVerticallyToTopCenter()
     {
-        
         infoLabelButton.transform = CGAffineTransform(translationX: 0, y: -view.bounds.height / 4)
     }
     
@@ -73,73 +97,58 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     }
     
     
-    private func subscribeToCloudChanges()
-    {
-        Database.shared.cloudChangesClosure = { info, answer in
-            let alertController = UIAlertController(title: "Load latest?", message:  info, preferredStyle: .alert)
-            
-            // Add action buttons
-            let yesAction = UIAlertAction(title: "Yes", style: .default) { _ in
-                answer(true)
-            }
-            let noAction = UIAlertAction(title: "No", style: .default) { _ in
-                answer(false)
-            }
-            alertController.addAction(yesAction)
-            alertController.addAction(noAction)
-            
-            // Present the UIAlertController
-            self.present(alertController, animated: true, completion: nil)
-        }
-    }
-    
-    
     // MARK: Listen level changes
     private func subscribeToLevelChange()
     {
         Database.shared.levelChangedClosure = { [weak self] intervals in
             guard let self = self else { return }
+            
             Swift.debugPrint("Intervals: \(intervals)")
-            
             Swift.debugPrint("Current level changed to \(String(describing: Database.shared.currentLevel?.levelNumber))")
-            loadMainScene()
-            let levelNr = Int(Database.shared.currentLevel!.levelNumber)
-            askForReview(levelNr: levelNr)
-            levelNumberLabel.text = String(levelNr)
-            changeProgressBarUI(levelNr: levelNr)
-            if (Database.shared.currentLevel!.progress == Level.Progress.completed.rawValue)
-            {
-                infoLabelButton.alpha = 1.0
-                infoLabelButton.setTitle("tap_to_continue"~, for: .normal)
-                let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tapToContinueTouched))
-                view.addGestureRecognizer(tapGesture)
-                gameScene?.cellDirector.cells.forEach({ cell in
-                    if let letter = cell as? Letter {
-                        letter.color = Theme.successBoxColor
-                    }
-                })
-            }
-            else {
-                Swift.debugPrint("Setting state to .reset")
-                StateManager.shared.currentState = .reset
-                hideInfoButton()
-            }
             
-            
-            if intervals.first(where: { i in
-                i.name == C.SCORES_INTERVAL && i.currentCount == i.limitCount
-            }) != nil {
-                loadScores()
-            }
-            
+            let appDelegate = UIApplication.shared.delegate as! AppDelegate
+            let levelNr = Database.shared.currentLevel!.levelNumber
             if intervals.first(where: { i in
                 i.name == C.ADS_INTERVAL && i.currentCount == i.limitCount
-            }) != nil {
-                showIntermediateAds(level: levelNr)
+            }) != nil && levelNr >= 15 && !appDelegate.purchaseManager.isNoAdsPurchasedInAnyWay() {
+                adManager?.showRewardedInterstitialAd(viewController: self)
             }
-            
-            
+            else {
+                executeLevelLoadActions(intervals: intervals)
+            }
         }
+    }
+   
+    
+    //MARK: Execute level load actions
+    private func executeLevelLoadActions(intervals:[Interval] = [])
+    {
+        loadMainScene()
+        let levelNr = Int(Database.shared.currentLevel!.levelNumber)
+        askForReview(levelNr: levelNr)
+        levelNumberLabel.text = String(levelNr)
+        changeProgressBarUI(levelNr: levelNr)
+        if (Database.shared.currentLevel!.progress == Level.Progress.completed.rawValue)
+        {
+            infoLabelButton.alpha = 1.0
+            infoLabelButton.setTitle("tap_to_continue"~, for: .normal)
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tapToContinueTouched))
+            view.addGestureRecognizer(tapGesture)
+            gameScene?.changeTheme()
+        }
+        else {
+            Swift.debugPrint("Setting state to .reset")
+            StateManager.shared.currentState = .reset
+            hideInfoButton()
+        }
+        
+        
+        if intervals.first(where: { i in
+            i.name == C.SCORES_INTERVAL && i.currentCount == i.limitCount
+        }) != nil {
+            loadScores()
+        }
+        
     }
     
     
@@ -187,6 +196,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         
         Database.shared.solutionCheckResultClosure = { [weak self] result, scores in
             guard let self = self else { return }
+            print("solutionCheckResultClosure: \(result)")
             
             switch result {
             case .correct:
@@ -206,6 +216,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                             isLastMessageTapToContinue: true
                         )
                     }
+                    
                     Database.shared.setLevelCompletedImmediately()
                     
                     if (isMaxScore)
@@ -260,6 +271,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         
         gameScene.backgroundColor = Theme.backgroundColor
         view.presentScene(gameScene, transition: SKTransition.push(with: SKTransitionDirection.left, duration: 1.0))
+        
         view.ignoresSiblingOrder = true
         view.showsFPS = true
         view.showsNodeCount = true
@@ -273,7 +285,8 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     
     // MARK: UI mode change
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        loadMainScene()
+        Swift.debugPrint("traitCollectionDidChange")
+        gameScene?.changeTheme()
     }
     
     
@@ -292,20 +305,6 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         let nextLevelSoundAction = SKAction.playSound(soundFile: "level_transition.wav")
         self.gameScene?.run(nextLevelSoundAction)
         
-    }
-    
-    
-    //MARK: Show intermediate ads
-    private func showIntermediateAds(level:Int)
-    {
-        if (level >= 15)
-        {
-            let appDelegate = UIApplication.shared.delegate as! AppDelegate
-            if (!appDelegate.purchaseManager.isNoAdsPurchasedInAnyWay())
-            {
-                adManager?.show(viewController: self, rewardType: Reward.none)
-            }
-        }
     }
     
     
@@ -360,6 +359,12 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         case Reward.hint:
             rewardWithHint()
             Database.shared.setCategoryAsRewarded()
+        case Reward.continue_playing:
+            executeLevelLoadActions()
+            if (Database.shared.currentLevel!.progress == Level.Progress.in_progress.rawValue)
+            {
+                StateManager.shared.currentState = GameState.play
+            }
         case Reward.none:
             Swift.debugPrint("NO reward!")
         }
@@ -550,7 +555,6 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             let progressValue = Float(progressPercentage) / 100.0
             progressBar.setProgress(progressValue, animated: true)
         }
-        // TODO: Handle player levels
         
     }
     

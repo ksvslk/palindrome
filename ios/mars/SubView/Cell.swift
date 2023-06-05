@@ -32,4 +32,9 @@ class Cell: SKSpriteNode {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func switchColor()
+    {
+        
+    }
+    
 }

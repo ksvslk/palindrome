@@ -16,11 +16,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     var purchaseManager: PurchaseManager!
     
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         Swift.debugPrint("Application directory: \(NSHomeDirectory())")
         GADMobileAds.sharedInstance().start(completionHandler: nil)
-        logInToGameCenter()
         purchaseManager = PurchaseManager()
         registerUserDefaults()
         setToastStyle()
@@ -73,24 +73,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         ToastManager.shared.style = style
     }
     
-    
-    private func logInToGameCenter()
-    {
-        GKLocalPlayer.local.authenticateHandler = { viewController, error in
-            
-            if let _ = viewController {
-                // Present the view controller so the player can sign in.
-                return
-            }
-            
-            if error != nil {
-                // Player could not be authenticated.
-                // Disable Game Center in the game.
-                return
-            }
-            // Player was successfully authenticated.
-        }
-    }
-    
+
 }
 

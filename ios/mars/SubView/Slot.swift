@@ -29,6 +29,12 @@ class Slot: Cell {
         }
     }
     
+    override func switchColor()
+    {
+        color = Theme.colorSecondaryVariant
+    }
+    
+    
     init(homeIndex:Int64, size: CGSize, homePosition: CGPoint, actualChar:String) {
         self.actualChar = actualChar
         super.init(homeIndex: homeIndex, texture: nil, color: Theme.colorSecondaryVariant, size: size, homePosition: homePosition)

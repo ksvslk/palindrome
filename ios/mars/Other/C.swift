@@ -56,6 +56,8 @@ struct C {
     static let DEBUG_REWARDED_AD_UNIT = "ca-app-pub-3940256099942544/1712485313"
     static let RELEASE_REWARDED_AD_UNIT = "ca-app-pub-5386053272091445/5924268495"
 
+    static let DEBUG_REWARDED_INTERSTITIAL_AD_UNIT = "ca-app-pub-3940256099942544/6978759866"
+    static let RELEASE_REWARDED_INTERSTITIAL_AD_UNIT = "ca-app-pub-5386053272091445/1715070914"
     
     // Achievements
     static let achievement_greenhorn = "greenhorn"

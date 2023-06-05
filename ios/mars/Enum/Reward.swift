@@ -10,5 +10,6 @@ import Foundation
 enum Reward {
     case letter
     case hint
+    case continue_playing
     case none
 }

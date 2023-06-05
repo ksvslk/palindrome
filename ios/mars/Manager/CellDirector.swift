@@ -257,7 +257,7 @@ class CellDirector {
     func rewardWithRandomLetter() -> CollisionResult
     {
         var result: CollisionResult = CollisionResult.nothing
-        
+      
         // Filter candidate Letter and Slot instances
         let candidateLetters = cells.compactMap { $0 as? Letter }.filter { letter in
             letter.data.locked == false
@@ -265,7 +265,17 @@ class CellDirector {
         let candidateSlots = cells.compactMap { $0 as? Slot }
 
         // Pick a random Letter and first corresponding Slot, if nothing found return
-        guard let randomLetter = candidateLetters.randomElement() else { return result }
+        var randomLetter:Letter? = nil
+        
+        for letter in candidateLetters {
+            if (letter.data.letter != (letter.friend as? Slot)?.actualChar)
+            {
+                randomLetter = letter
+                break
+            }
+        }
+
+        guard let randomLetter = randomLetter else { return CollisionResult.nothing }
         
         for slot in candidateSlots {
             let slotFriend:Letter? = slot.friend as? Letter

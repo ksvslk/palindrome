@@ -29,7 +29,6 @@ class Database {
     var levelChangedClosure: ((_ intervals:[Interval]) -> Void)?
     var solutionCheckResultClosure: ((_ solutionCheckResult:SolutionCheckResult, _ scoreAndBest:(Int,Int)) -> Void)?
     var hintsSuggestionClosure: (() -> Void)?
-    var cloudChangesClosure:((_ info:String, _ resultOfQuestion : @escaping (Bool) -> Void) -> Void)?
     
     
     private init() {
@@ -41,7 +40,6 @@ class Database {
         }
         
         context = persistentContainer.viewContext
-        observeKeyValueChangesInCloud()
     }
     
     
@@ -186,83 +184,7 @@ class Database {
         }
         
     }
-    
-    
-    //MARK: Observe key-value changes
-    func observeKeyValueChangesInCloud() {
-        
-        NotificationCenter.default.addObserver(self,
-            selector: #selector(ubiquitousKeyValueStoreDidChange(_:)),
-            name: NSUbiquitousKeyValueStore.didChangeExternallyNotification,
-            object: NSUbiquitousKeyValueStore.default)
-   
-        if NSUbiquitousKeyValueStore.default.synchronize() == false {
-            fatalError("This app was not built with the proper entitlement requests.")
-        }
-        
-    }
-    
-    /** This notification is sent only upon a change received from iCloud; it is not sent when your app
-        sets a value. So this is called when the key-value store in the cloud has changed externally.
-    */
-    @objc
-    func ubiquitousKeyValueStoreDidChange(_ notification: Notification) {
-        print("ubiquitousKeyValueStoreDidChange: \(notification.name)")
-        guard let userInfo = notification.userInfo else { return }
-        
-        // Get the reason for the notification (initial download, external change or quota violation change).
-        guard let reasonForChange = userInfo[NSUbiquitousKeyValueStoreChangeReasonKey] as? Int else { return }
 
-        // Check if any of the keys we care about were updated, and if so use the new value stored under that key.
-        guard let keys =
-            userInfo[NSUbiquitousKeyValueStoreChangedKeysKey] as? [String] else { return }
-        
-        print(keys.debugDescription)
-        
-        cloudChangesClosure?("Do you want to load from cloud?") { result in
-            print("Player chose: \(result)")
-        }
-        
-        switch reasonForChange {
-        case NSUbiquitousKeyValueStoreServerChange: // Value(s) were changed externally from other users/devices.
-            print("NSUbiquitousKeyValueStoreServerChange - Initiate the change.")
-        case NSUbiquitousKeyValueStoreInitialSyncChange: // Inital download and when user switches primary iCloud account
-            print("NSUbiquitousKeyValueStoreInitialSyncChange - Add default values")
-        case NSUbiquitousKeyValueStoreAccountChange: // User changed primary iCloud account
-            print("NSUbiquitousKeyValueStoreAccountChange - Add default values")
-        case NSUbiquitousKeyValueStoreQuotaViolationChange: // Quota exceeded
-            fatalError("NSUbiquitousKeyValueStoreQuotaViolationChange - Key-value quota exceeded. This should not happen.")
-        default:
-            print(":)")
-        }
-    }
-    
-    
-    // MARK: Sync UserDefaults info
-    private func updateBasedOnCloudKitUserDefaults()
-    {
-        let defaults = UserDefaults.standard
-        let maximumUnlockedLevel = defaults.integer(forKey: C.MAX_UNLOCKED_LEVEL)
-        let latestPlayedLevel = defaults.integer(forKey: C.LATEST_PLAYED_LEVEL)
-        let scores = defaults.integer(forKey: C.PLAYER_SCORES)
-        
-        // Should do it in a transaction style
-        
-        // Perform the transaction in a block
-        context.performAndWait {
-            
-        }
-        
-        //TODO: Check if maximum unlocked level is bigger than local database maximum level and unlock until that level if YES
-        
-        //TODO: If maximum was change then change also latest played, otherwise skip
-        
-        //TODO: Check if local total score is smaller than scores combined. If YES then loop and update levels array 0 is level 1 and so on.
-        
-        
-        
-    }
-    
     
     // MARK: Increase interval -> result
     private func updateCurrentCount(forName name: String, by addition: Int64 = 1, reset: Bool = false) -> Bool {
@@ -312,8 +234,9 @@ class Database {
     // MARK: Change level
     func changeLevel(to nextLevel:Int = -1, toLatest loadLatestLevel:Bool = false, withProgressReset reset:Bool = false)
     {
+        print("Change level!!!!")
         var intervals:[Interval] = []
-        
+        var previousLevel = Database.shared.currentLevel?.levelNumber
         context.performAndWait {
             let intervalsRequest: NSFetchRequest<Interval> = Interval.fetchRequest()
             intervalsRequest.fetchLimit = 0
@@ -407,7 +330,11 @@ class Database {
                 try context.save()
                 
                 // execute closures
-                levelChangedClosure?(intervals)
+                if (previousLevel != currentLevel?.levelNumber)
+                {
+                    levelChangedClosure?(intervals)
+                }
+                
                 checkSolutionCorrectness()
                 
             } catch {

@@ -1,5 +1,8 @@
+import Foundation
 import AVFAudio
+import SpriteKit
 import GameplayKit
+
 
 class GameScene: SKScene {
     
@@ -15,8 +18,20 @@ class GameScene: SKScene {
     override func didMove(to view: SKView) {
         layoutScene(view: view)
         handleGameState()
+        Swift.debugPrint("didMove in GameScene")
     }
     
+    
+    func changeTheme()
+    {
+        backgroundColor = Theme.backgroundColor
+        cellDirector.cells.forEach { element in
+            if let cell = element as? Cell {
+                cell.switchColor()
+            }
+        }
+    }
+
     
     // MARK: Handle ongoing game state
     private func handleGameState()
@@ -35,7 +50,8 @@ class GameScene: SKScene {
         }
     }
     
-    
+
+ 
     private func debugRect(width:CGFloat, height:CGFloat, color:SKColor, topErr:CGFloat = 0.0, bottomErr:CGFloat = 0.0)
     {
         let rectangle = SKShapeNode(rectOf: CGSize(width: width, height: height))
@@ -115,8 +131,7 @@ class GameScene: SKScene {
         }
         
         let soundCount = soundActions.count
-        
-        //TODO: Copy as much from Kotlin as possible
+      
         let spriteNodes = cellDirector.cells.compactMap { $0 as? Letter }.sorted { l1, l2 in
             l1.data.friendIndex < l2.data.friendIndex
         }
