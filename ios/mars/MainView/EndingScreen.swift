@@ -41,7 +41,6 @@ class EndingScreen: UIViewController {
         // Set the background color of the view controller's view
         view.backgroundColor = Theme.backgroundColor
         
-    
         // Add layout constraints for the stack view
         stackView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
