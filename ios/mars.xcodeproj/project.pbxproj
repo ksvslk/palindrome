@@ -26,7 +26,6 @@
 		B1313BD22A135D6F005830AB /* GameState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1313BD12A135D6F005830AB /* GameState.swift */; };
 		B1313BD42A135FAD005830AB /* StateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1313BD32A135FAD005830AB /* StateManager.swift */; };
 		B1313C4A2A155B49005830AB /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B1313C4C2A155B49005830AB /* Localizable.strings */; };
-		B1313C4F2A160E02005830AB /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = B1313C4E2A160E02005830AB /* GoogleMobileAds */; };
 		B1313C522A1620EB005830AB /* AdManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1313C512A1620EB005830AB /* AdManager.swift */; };
 		B1313C542A1625CD005830AB /* Reward.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1313C532A1625CD005830AB /* Reward.swift */; };
 		B13149D02A1F8E3F004B06E8 /* ProductsUpdateDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13149CF2A1F8E3F004B06E8 /* ProductsUpdateDelegate.swift */; };
@@ -55,6 +54,7 @@
 		B13363772A2DF724008E2C74 /* c4_outer.wav in Resources */ = {isa = PBXBuildFile; fileRef = B133636F2A2DF724008E2C74 /* c4_outer.wav */; };
 		B13363782A2DF724008E2C74 /* correct.wav in Resources */ = {isa = PBXBuildFile; fileRef = B13363702A2DF724008E2C74 /* correct.wav */; };
 		B13363792A2DF724008E2C74 /* c5_outer.wav in Resources */ = {isa = PBXBuildFile; fileRef = B13363712A2DF724008E2C74 /* c5_outer.wav */; };
+		B133637C2A2E7684008E2C74 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = B133637B2A2E7684008E2C74 /* GoogleMobileAds */; };
 		B1339BCB2A288090008E7102 /* TutorialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1339BCA2A288090008E7102 /* TutorialViewController.swift */; };
 		B1339BCE2A29F83D008E7102 /* TPInAppReceipt in Frameworks */ = {isa = PBXBuildFile; productRef = B1339BCD2A29F83D008E7102 /* TPInAppReceipt */; };
 		B1339BD02A29F83D008E7102 /* TPInAppReceipt-Objc in Frameworks */ = {isa = PBXBuildFile; productRef = B1339BCF2A29F83D008E7102 /* TPInAppReceipt-Objc */; };
@@ -216,8 +216,8 @@
 			files = (
 				B128D9932A24D225002B13D1 /* Toast in Frameworks */,
 				B13149D72A209FA3004B06E8 /* PanModal in Frameworks */,
+				B133637C2A2E7684008E2C74 /* GoogleMobileAds in Frameworks */,
 				B1339BCE2A29F83D008E7102 /* TPInAppReceipt in Frameworks */,
-				B1313C4F2A160E02005830AB /* GoogleMobileAds in Frameworks */,
 				B1339BD02A29F83D008E7102 /* TPInAppReceipt-Objc in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -467,11 +467,11 @@
 			);
 			name = mars;
 			packageProductDependencies = (
-				B1313C4E2A160E02005830AB /* GoogleMobileAds */,
 				B13149D62A209FA3004B06E8 /* PanModal */,
 				B128D9922A24D225002B13D1 /* Toast */,
 				B1339BCD2A29F83D008E7102 /* TPInAppReceipt */,
 				B1339BCF2A29F83D008E7102 /* TPInAppReceipt-Objc */,
+				B133637B2A2E7684008E2C74 /* GoogleMobileAds */,
 			);
 			productName = test;
 			productReference = B1B33ABE29FFA88000DFA59F /* mars.app */;
@@ -506,10 +506,10 @@
 			);
 			mainGroup = B1E8974129EC5001001B942F;
 			packageReferences = (
-				B1313C4D2A160E02005830AB /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
 				B13149D52A209FA3004B06E8 /* XCRemoteSwiftPackageReference "PanModal" */,
 				B128D9912A24D225002B13D1 /* XCRemoteSwiftPackageReference "Toast-Swift" */,
 				B1339BCC2A29F83D008E7102 /* XCRemoteSwiftPackageReference "TPInAppReceipt" */,
+				B133637A2A2E7684008E2C74 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
 			);
 			productRefGroup = B1E8974129EC5001001B942F;
 			projectDirPath = "";
@@ -942,20 +942,20 @@
 				minimumVersion = 5.0.0;
 			};
 		};
-		B1313C4D2A160E02005830AB /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
+		B13149D52A209FA3004B06E8 /* XCRemoteSwiftPackageReference "PanModal" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/slackhq/PanModal.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.7;
+			};
+		};
+		B133637A2A2E7684008E2C74 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads.git";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 10.0.0;
-			};
-		};
-		B13149D52A209FA3004B06E8 /* XCRemoteSwiftPackageReference "PanModal" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/slackhq/PanModal.git";
-			requirement = {
-				kind = exactVersion;
-				version = 1.2.7;
 			};
 		};
 		B1339BCC2A29F83D008E7102 /* XCRemoteSwiftPackageReference "TPInAppReceipt" */ = {
@@ -974,15 +974,15 @@
 			package = B128D9912A24D225002B13D1 /* XCRemoteSwiftPackageReference "Toast-Swift" */;
 			productName = Toast;
 		};
-		B1313C4E2A160E02005830AB /* GoogleMobileAds */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B1313C4D2A160E02005830AB /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
-			productName = GoogleMobileAds;
-		};
 		B13149D62A209FA3004B06E8 /* PanModal */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B13149D52A209FA3004B06E8 /* XCRemoteSwiftPackageReference "PanModal" */;
 			productName = PanModal;
+		};
+		B133637B2A2E7684008E2C74 /* GoogleMobileAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B133637A2A2E7684008E2C74 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
+			productName = GoogleMobileAds;
 		};
 		B1339BCD2A29F83D008E7102 /* TPInAppReceipt */ = {
 			isa = XCSwiftPackageProductDependency;

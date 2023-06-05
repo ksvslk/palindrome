@@ -1,6 +1,5 @@
 import Foundation
 import AVFAudio
-import SpriteKit
 import GameplayKit
 
 
@@ -25,10 +24,8 @@ class GameScene: SKScene {
     func changeTheme()
     {
         backgroundColor = Theme.backgroundColor
-        cellDirector.cells.forEach { element in
-            if let cell = element as? Cell {
-                cell.switchColor()
-            }
+        cellDirector.cells.forEach { cell in
+            cell.switchColor()
         }
     }
 
