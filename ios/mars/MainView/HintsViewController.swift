@@ -32,7 +32,6 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
         self.adManager = adManager
         self.purchaseManager = purchaseManager
         super.init(nibName: nil, bundle: nil)
-    
     }
     
     
@@ -208,14 +207,12 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     // MARK: Set ad show closure
     private func setAdShowClosure(for button:Button)
     {
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        guard let gvc = appDelegate.window?.rootViewController else { return }
-        
         if (button == .place_letter_btn)
         {
             placeLetterClosure = { _ in
                 self.dismiss(animated: false) {
-                    self.adManager?.show(viewController: gvc, rewardType: Reward.letter)
+                    print("SHOW place_letter_btn ad NOW!")
+                    self.adManager?.show(viewController: self.gameViewController!, rewardType: Reward.letter)
                 }
             }
         }
@@ -223,7 +220,8 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
         {
             revealClueClosure = { _ in
                 self.dismiss(animated: false) {
-                    self.adManager?.show(viewController: gvc, rewardType: Reward.hint)
+                    print("SHOW reveal_clue_btn ad NOW!")
+                    self.adManager?.show(viewController: self.gameViewController!, rewardType: Reward.hint)
                 }
             }
         }

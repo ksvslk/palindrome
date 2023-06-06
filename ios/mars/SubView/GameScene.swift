@@ -19,7 +19,7 @@ class GameScene: SKScene {
         handleGameState()
         Swift.debugPrint("didMove in GameScene")
     }
-    
+   
     
     func changeTheme()
     {

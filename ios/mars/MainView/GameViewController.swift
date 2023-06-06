@@ -13,7 +13,11 @@ import GoogleMobileAds
 import StoreKit
 
 
-class GameViewController: UIViewController, UIPopoverPresentationControllerDelegate, SKSceneDelegate, MessageDelegate {
+class GameViewController:
+    UIViewController,
+    UIPopoverPresentationControllerDelegate,
+    SKSceneDelegate,
+    MessageDelegate {
     
     private var gameScene: GameScene?
     
@@ -108,9 +112,10 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             
             let appDelegate = UIApplication.shared.delegate as! AppDelegate
             let levelNr = Database.shared.currentLevel!.levelNumber
+        
             if intervals.first(where: { i in
                 i.name == C.ADS_INTERVAL && i.currentCount == i.limitCount
-            }) != nil && levelNr >= 15 && !appDelegate.purchaseManager.isNoAdsPurchasedInAnyWay() {
+            }) != nil && levelNr >= 15 && !appDelegate.purchaseManager.isNoAdsPurchasedInAnyWay() && adManager?.isInterstitialRewardedAdAvailable() {
                 adManager?.showRewardedInterstitialAd(viewController: self)
             }
             else {
@@ -123,6 +128,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     //MARK: Execute level load actions
     private func executeLevelLoadActions(intervals:[Interval] = [])
     {
+        print("LOAD MAIN SCENE IN executeLevelLoadActions")
         loadMainScene()
         let levelNr = Int(Database.shared.currentLevel!.levelNumber)
         askForReview(levelNr: levelNr)
@@ -130,6 +136,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         changeProgressBarUI(levelNr: levelNr)
         if (Database.shared.currentLevel!.progress == Level.Progress.completed.rawValue)
         {
+            self.infoLabelButton.isUserInteractionEnabled = false
             infoLabelButton.alpha = 1.0
             infoLabelButton.setTitle("tap_to_continue"~, for: .normal)
             let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tapToContinueTouched))
@@ -150,7 +157,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         }
         
     }
-    
+ 
     
     private func hideInfoButton()
     {
@@ -283,12 +290,45 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     }
     
     
-    // MARK: UI mode change
+    // MARK: Trait collection change
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         Swift.debugPrint("traitCollectionDidChange")
         gameScene?.changeTheme()
     }
     
+    
+    // MARK: Split screen changes
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        print("viewWillTransition")
+        coordinator.animate(alongsideTransition: { _ in
+            // Update your UI based on the new size
+        }, completion: { _ in
+      
+            self.adManager?.reloadRewardedAd()
+            self.adManager?.reloadRewardedInterstitialAd()
+            print("LOAD MAIN SCENE IN viewWillTransition")
+            self.loadMainScene()
+            let levelNr = Int(Database.shared.currentLevel!.levelNumber)
+            self.levelNumberLabel.text = String(levelNr)
+            self.changeProgressBarUI(levelNr: levelNr)
+            if (Database.shared.currentLevel!.progress == Level.Progress.completed.rawValue)
+            {
+                self.infoLabelButton.isUserInteractionEnabled = false
+                self.infoLabelButton.alpha = 1.0
+                self.infoLabelButton.setTitle("tap_to_continue"~, for: .normal)
+                let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.tapToContinueTouched))
+                self.view.addGestureRecognizer(tapGesture)
+                self.gameScene?.changeTheme()
+            }
+            else {
+                Swift.debugPrint("Setting state to .reset")
+                StateManager.shared.currentState = .reset
+                self.hideInfoButton()
+            }
+        })
+    }
+  
     
     // MARK: Tap to continue touch
     @objc func tapToContinueTouched() {

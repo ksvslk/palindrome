@@ -24,6 +24,8 @@ class AdManager: NSObject, GADFullScreenContentDelegate {
         }
     }
     
+  
+    
     private let retryIntervalConstant: TimeInterval = 5 // Retry interval in seconds
     private let maxRetryIntervalConstant: TimeInterval = 300 // Maximum retry interval in seconds
     private var currentRetryInterval: TimeInterval = 0
@@ -41,6 +43,25 @@ class AdManager: NSObject, GADFullScreenContentDelegate {
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func isInterstitialRewardedAdAvailable() -> Bool
+    {
+        return rewardedInterstitialAd != nil
+    }
+    
+    func reloadRewardedAd()
+    {
+        rewardedAd = nil
+        self.adAvailable = false
+        loadRewardedAd()
+    }
+    
+    
+    func reloadRewardedInterstitialAd()
+    {
+        rewardedInterstitialAd = nil
+        loadRewardedInterstitialAd()
     }
     
     
@@ -132,6 +153,7 @@ class AdManager: NSObject, GADFullScreenContentDelegate {
     
     func showRewardedInterstitialAd(viewController: UIViewController) {
         if let ad = rewardedInterstitialAd {
+         
             ad.present(fromRootViewController: viewController) {
                 self.rewardToBeGiven = Reward.continue_playing
                 self.rewardedInterstitialAd = nil
@@ -145,6 +167,8 @@ class AdManager: NSObject, GADFullScreenContentDelegate {
     
     func show(viewController: UIViewController, rewardType:Reward) {
         if let ad = rewardedAd {
+            print("WE HAVE AD, SHOW IT!")
+            print("VIEW CONTROLLER: \(viewController)")
             ad.present(fromRootViewController: viewController) {
                 self.rewardToBeGiven = rewardType
                 self.rewardedAd = nil

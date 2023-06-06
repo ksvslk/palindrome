@@ -90,12 +90,13 @@ class TutorialViewController: UIViewController {
         // Set label's layout constraints (e.g., centered in the view)
         mainStackView.translatesAutoresizingMaskIntoConstraints = false
         
-        let value:CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 175 : 75
+        let verticalValue:CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 175 : 75
+        let horizontalValue:CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 25 : 16
         NSLayoutConstraint.activate([
-            mainStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: value),
-            mainStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: value),
-            mainStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -value),
-            mainStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -value),
+            mainStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: verticalValue),
+            mainStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: horizontalValue),
+            mainStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -horizontalValue),
+            mainStackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -verticalValue),
         ])
         
         // Set the background color of the view controller's view
