@@ -20,6 +20,7 @@ class GameViewController:
     MessageDelegate {
     
     private var gameScene: GameScene?
+    var tapGesture:UITapGestureRecognizer? = nil
     
     @IBOutlet weak var gameCenterButtonRef: UIBarButtonItem!
     @IBOutlet weak var hintToolbarItem: UIBarButtonItem!
@@ -139,8 +140,7 @@ class GameViewController:
             self.infoLabelButton.isUserInteractionEnabled = false
             infoLabelButton.alpha = 1.0
             infoLabelButton.setTitle("tap_to_continue"~, for: .normal)
-            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tapToContinueTouched))
-            view.addGestureRecognizer(tapGesture)
+            addNextLevelGestureTap()
             gameScene?.changeTheme()
         }
         else {
@@ -317,8 +317,9 @@ class GameViewController:
                 self.infoLabelButton.isUserInteractionEnabled = false
                 self.infoLabelButton.alpha = 1.0
                 self.infoLabelButton.setTitle("tap_to_continue"~, for: .normal)
-                let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.tapToContinueTouched))
-                self.view.addGestureRecognizer(tapGesture)
+                
+                self.addNextLevelGestureTap()
+                
                 self.gameScene?.changeTheme()
             }
             else {
@@ -344,7 +345,6 @@ class GameViewController:
         Database.shared.changeToNextLevel()
         let nextLevelSoundAction = SKAction.playSound(soundFile: "level_transition.wav")
         self.gameScene?.run(nextLevelSoundAction)
-        
     }
     
     
@@ -529,6 +529,19 @@ class GameViewController:
     }
     
     
+    private func addNextLevelGestureTap()
+    {
+        if let tapGesture = tapGesture, ((self.view.gestureRecognizers?.contains(tapGesture)) != nil) {
+            self.view.removeGestureRecognizer(tapGesture)
+        }
+        else {
+            tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.tapToContinueTouched))
+        }
+     
+        self.view.addGestureRecognizer(tapGesture!)
+    }
+    
+    
     // MARK: Animate messages
     private func animateMessageSequence(scores: (Int, Int) = (-1,-1), messages: [String], isLastMessageTapToContinue:Bool = false) {
         var localMessages = messages
@@ -562,8 +575,7 @@ class GameViewController:
             if (isLastMessageTapToContinue && messages.count == 1)
             {
                 infoLabelButton.isEnabled = true
-                let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tapToContinueTouched))
-                view.addGestureRecognizer(tapGesture)
+                addNextLevelGestureTap()
             }
             else {
                 
