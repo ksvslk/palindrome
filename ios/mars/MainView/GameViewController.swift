@@ -36,6 +36,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     override func viewDidLoad() {
         Swift.debugPrint("viewDidLoad")
         super.viewDidLoad()
+        
         self.view.makeToastActivity(.center)
         self.view.isUserInteractionEnabled = false
         UserPrivacy().requestConsentInformation(viewController: self) { _ in
@@ -47,6 +48,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             self.subscribeToPurchaseMessage()
             self.logInToGameCenter()
         }
+      
     }
     
     
@@ -413,7 +415,6 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     // MARK: View did appear
     override func viewDidAppear(_ animated: Bool) {
         handleRewards()
-       
     }
     
     

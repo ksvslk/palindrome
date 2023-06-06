@@ -106,8 +106,8 @@ extension GameLevelSelectController: UICollectionViewDataSource {
                 cell.isCellEnabled = true
                 cell.isUserInteractionEnabled = true
             case .locked:
-                cell.isCellEnabled = true
-                cell.isUserInteractionEnabled = true
+                cell.isCellEnabled = false
+                cell.isUserInteractionEnabled = false
             }
             return cell
         }
