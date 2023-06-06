@@ -115,7 +115,7 @@ class GameViewController:
         
             if intervals.first(where: { i in
                 i.name == C.ADS_INTERVAL && i.currentCount == i.limitCount
-            }) != nil && levelNr >= 15 && !appDelegate.purchaseManager.isNoAdsPurchasedInAnyWay() && adManager?.isInterstitialRewardedAdAvailable() {
+            }) != nil && levelNr >= 15 && !appDelegate.purchaseManager.isNoAdsPurchasedInAnyWay() && adManager?.isInterstitialRewardedAdAvailable() == true {
                 adManager?.showRewardedInterstitialAd(viewController: self)
             }
             else {
