@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-5386053272091445~2926608056</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>SKAdNetworkItems</key>
 	<array>
 		<dict>
