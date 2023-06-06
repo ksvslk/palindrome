@@ -255,7 +255,6 @@ class GameScene: SKScene {
     
     
     // MARK: Add nodes to the grid
-    // TODO: WARNING! Does not check if the GameFieldCreator and database version of level match (different columns)
     private func addGameNodes(
         letters: [LetterData],
         allCells: [String],

@@ -13,11 +13,7 @@ import GoogleMobileAds
 import StoreKit
 
 
-class GameViewController:
-    UIViewController,
-    UIPopoverPresentationControllerDelegate,
-    SKSceneDelegate,
-    MessageDelegate {
+class GameViewController: UIViewController, UIPopoverPresentationControllerDelegate, SKSceneDelegate, MessageDelegate {
     
     private var gameScene: GameScene?
     var tapGesture:UITapGestureRecognizer? = nil
@@ -42,13 +38,15 @@ class GameViewController:
         super.viewDidLoad()
         self.view.makeToastActivity(.center)
         self.view.isUserInteractionEnabled = false
-        adManager = AdManager()
-        subscribeToLevelChange()
-        subscribeToSolutionCheckResult()
-        subscribeToHintsSuggestion()
-        moveInfoButtonVerticallyToTopCenter()
-        subscribeToPurchaseMessage()
-        logInToGameCenter()
+        UserPrivacy().requestConsentInformation(viewController: self) { _ in
+            self.adManager = AdManager()
+            self.subscribeToLevelChange()
+            self.subscribeToSolutionCheckResult()
+            self.subscribeToHintsSuggestion()
+            self.moveInfoButtonVerticallyToTopCenter()
+            self.subscribeToPurchaseMessage()
+            self.logInToGameCenter()
+        }
     }
     
     
@@ -65,7 +63,7 @@ class GameViewController:
             self.view.isUserInteractionEnabled = true
             Database.shared.changeLevel(toLatest: true)
             Swift.debugPrint("Change level after Game Center resolved.")
-            
+            self.showTutorial()
             if error != nil {
                 // Player could not be authenticated.
                 // Disable Game Center in the game.
@@ -415,6 +413,13 @@ class GameViewController:
     // MARK: View did appear
     override func viewDidAppear(_ animated: Bool) {
         handleRewards()
+       
+    }
+    
+    
+    //MARK: Show tutorial
+    private func showTutorial()
+    {
         let tutorialShown = UserDefaults.standard.bool(forKey: C.TUTORIAL_SHOWN)
         
         if (!tutorialShown)
@@ -517,7 +522,7 @@ class GameViewController:
     private func showEndingScreen()
     {
         Swift.debugPrint("showEndingScreen")
-        let triumphSound = SKAction.playSound(soundFile: "triumph.mp3")
+        let triumphSound = SKAction.playSound(soundFile: "triumph.wav")
         self.gameScene?.run(triumphSound)
         let hintViewController = EndingScreen()
         present(hintViewController, animated: true)

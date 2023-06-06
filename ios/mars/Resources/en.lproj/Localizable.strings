@@ -77,3 +77,10 @@
 "BM_wrong_palindrome" = "Wrong palindrome.";
 "BM_forbidden_palindrome" = "Forbidden palindrome.";
 "BM_bogus_palindrome" = "Bogus palindrome.";
+
+
+//MARK: Purchases
+"unlimited_clues" = "Unlimited Clues";
+"unlimited_letters" = "Unlimited Letters";
+"no_level_ads" = "No Level Ads";
+"all_in_pack" = "All-In Pack";

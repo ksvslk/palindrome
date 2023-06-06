@@ -215,7 +215,6 @@ class CellDirector {
         bottom: Letter,
         isRewarded: Bool = false
     ) {
-        //TODO: stuff missing
         Database.shared.switchFriendIndexes(top: top.data, bottom: bottom.data)
         
         let tempBottomCurrent = bottom.currentPosition

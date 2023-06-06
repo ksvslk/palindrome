@@ -55,6 +55,7 @@
 		B13363782A2DF724008E2C74 /* correct.wav in Resources */ = {isa = PBXBuildFile; fileRef = B13363702A2DF724008E2C74 /* correct.wav */; };
 		B13363792A2DF724008E2C74 /* c5_outer.wav in Resources */ = {isa = PBXBuildFile; fileRef = B13363712A2DF724008E2C74 /* c5_outer.wav */; };
 		B133637C2A2E7684008E2C74 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = B133637B2A2E7684008E2C74 /* GoogleMobileAds */; };
+		B133637E2A2FA478008E2C74 /* UserPrivacy.swift in Sources */ = {isa = PBXBuildFile; fileRef = B133637D2A2FA478008E2C74 /* UserPrivacy.swift */; };
 		B1339BCB2A288090008E7102 /* TutorialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1339BCA2A288090008E7102 /* TutorialViewController.swift */; };
 		B1339BCE2A29F83D008E7102 /* TPInAppReceipt in Frameworks */ = {isa = PBXBuildFile; productRef = B1339BCD2A29F83D008E7102 /* TPInAppReceipt */; };
 		B1339BD02A29F83D008E7102 /* TPInAppReceipt-Objc in Frameworks */ = {isa = PBXBuildFile; productRef = B1339BCF2A29F83D008E7102 /* TPInAppReceipt-Objc */; };
@@ -153,6 +154,7 @@
 		B133636F2A2DF724008E2C74 /* c4_outer.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = c4_outer.wav; sourceTree = "<group>"; };
 		B13363702A2DF724008E2C74 /* correct.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = correct.wav; sourceTree = "<group>"; };
 		B13363712A2DF724008E2C74 /* c5_outer.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = c5_outer.wav; sourceTree = "<group>"; };
+		B133637D2A2FA478008E2C74 /* UserPrivacy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPrivacy.swift; sourceTree = "<group>"; };
 		B1339BCA2A288090008E7102 /* TutorialViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorialViewController.swift; sourceTree = "<group>"; };
 		B13966AE2A069DD400EF75A0 /* mars.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = mars.entitlements; sourceTree = "<group>"; };
 		B13966B92A08300800EF75A0 /* CollisionResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollisionResult.swift; sourceTree = "<group>"; };
@@ -262,6 +264,7 @@
 				B1313BD32A135FAD005830AB /* StateManager.swift */,
 				B1313C512A1620EB005830AB /* AdManager.swift */,
 				B1FC277E2A1DF3D700117C55 /* PurchaseManager.swift */,
+				B133637D2A2FA478008E2C74 /* UserPrivacy.swift */,
 			);
 			path = Manager;
 			sourceTree = "<group>";
@@ -587,6 +590,7 @@
 				B13149E72A2127EB004B06E8 /* GameCenterController.swift in Sources */,
 				B1313BC22A0F8386005830AB /* SolutionChecker.swift in Sources */,
 				B1EF06DE29F8477600DD78A6 /* C.swift in Sources */,
+				B133637E2A2FA478008E2C74 /* UserPrivacy.swift in Sources */,
 				B1B33A8A29FDB66D00DFA59F /* Solution+CoreDataClass.swift in Sources */,
 				B1313BD42A135FAD005830AB /* StateManager.swift in Sources */,
 				B1313BB22A0AD12C005830AB /* LevelSelectCell.swift in Sources */,
@@ -847,6 +851,7 @@
 				INFOPLIST_FILE = mars/Debug.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = hah;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.word-games";
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "This identifier will be used to deliver personalized ads to you.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = NO;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -884,6 +889,7 @@
 				INFOPLIST_FILE = mars/Release.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = hah;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.word-games";
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "This identifier will be used to deliver personalized ads to you.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = NO;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;

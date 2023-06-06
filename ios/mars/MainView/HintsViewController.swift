@@ -310,8 +310,6 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
                 purchaseCluesClosure = { menuItem in
                     if (!info.isPurchased) {
                         self.purchaseManager?.purchaseProduct(productId)
-                        
-                        // TODO: Start loading
                     }
                 }
             }
@@ -496,3 +494,4 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
         ]}
     
 }
+

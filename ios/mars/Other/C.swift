@@ -72,8 +72,8 @@ struct C {
     static let achievement_flawless_15 = "flawless_15"
     
     // URLs
-    static let APP_FEEDBACK_URL = "https://apps.apple.com/app/id1673006365?action=write-review" // TODO: Change id to hah
-    static let APP_URL = "https://apps.apple.com/app/hah-palindrome-puzzles/id1673006365" // TODO: Change it
+    static let APP_FEEDBACK_URL = "https://apps.apple.com/app/id1673006365?action=write-review"
+    static let APP_URL = "https://apps.apple.com/app/hah-palindrome-puzzles/id1673006365"
     
     
     // Intervals
@@ -106,9 +106,9 @@ struct C {
     // Hints menu
     static let revealClueButton = ("reveal_clue"~, UIImage(systemName: "eye")!)
     static let placeLetterButton = ("place_letter"~, UIImage(systemName: "bolt.badge.a")!)
-    static let purchaseCluesButton = ("loading"~, UIImage(systemName: "dollarsign.circle.fill")!)
-    static let purchaseLettersButton = ("loading"~, UIImage(systemName: "dollarsign.circle.fill")!)
-    static let purchaseNoAdsButton = ("loading"~, UIImage(systemName: "dollarsign.circle.fill")!)
-    static let purchaseAllButton = ("loading"~, UIImage(systemName: "dollarsign.circle.fill")!)
+    static let purchaseCluesButton = ("unlimited_clues"~, UIImage(systemName: "dollarsign.circle.fill")!)
+    static let purchaseLettersButton = ("unlimited_letters"~, UIImage(systemName: "dollarsign.circle.fill")!)
+    static let purchaseNoAdsButton = ("no_level_ads"~, UIImage(systemName: "dollarsign.circle.fill")!)
+    static let purchaseAllButton = ("all_in_pack"~, UIImage(systemName: "dollarsign.circle.fill")!)
  
 }

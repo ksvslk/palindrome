@@ -31,6 +31,11 @@ class Letter: Cell {
         self.data = data
         super.init(homeIndex: data.homeIndex, texture: nil, color: Theme.colorPrimary, size: size, homePosition: homePosition)
         letterLabel.text = data.letter
+        if (data.letter == "." || data.letter == ",") {
+            letterLabel.numberOfLines = 2
+        }
+       
+        
         letterLabel.fontName = Theme.yantraBold
         letterLabel.fontSize = size.width / 1.5
         letterLabel.verticalAlignmentMode = .center

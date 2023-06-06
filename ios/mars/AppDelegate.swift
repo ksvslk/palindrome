@@ -7,8 +7,8 @@
 
 import UIKit
 import GameKit
-import GoogleMobileAds
 import Toast
+
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -16,11 +16,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     var purchaseManager: PurchaseManager!
     
-    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         Swift.debugPrint("Application directory: \(NSHomeDirectory())")
-        GADMobileAds.sharedInstance().start(completionHandler: nil)
         purchaseManager = PurchaseManager()
         registerUserDefaults()
         setToastStyle()
@@ -72,7 +70,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         style.messageFont = UIFont(name: Theme.robotoMedium, size: 15)!
         ToastManager.shared.style = style
     }
-    
-
 }
 
