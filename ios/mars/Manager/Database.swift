@@ -272,7 +272,7 @@ class Database {
                         })
                     )
                     currentLevel!.letters = NSSet(array: currentLevel!.shuffledPuzzle.enumerated().map { (index, char) in
-                        let letter = LetterData(context: context)
+                        let letter = LetterData(context: self.context)
                         letter.letter = String(char)
                         letter.homeIndex = Int64(index) + 1
                         return letter
@@ -307,7 +307,10 @@ class Database {
                     let results = try context.fetch(nextLevelRequest)
                     if let chosenLevel = results.first {
                         currentLevel = chosenLevel
-                        currentLevel?.progress = Int64(Level.Progress.in_progress.rawValue)
+                        if (currentLevel?.progress == Int64(Level.Progress.locked.rawValue))
+                        {
+                           currentLevel?.progress = Int64(Level.Progress.in_progress.rawValue)
+                        }
                     } else {
                         fatalError("Could not set next level nr \(nextLevel)")
                     }
@@ -318,13 +321,15 @@ class Database {
                 currentLevel?.timeModified = Date.init(timeIntervalSinceNow: .zero)
                 
                 // set game state based on progress
-                switch currentLevel!.levelProgress {
+                switch Level.Progress(rawValue: Int(currentLevel!.progress)) {
                 case .in_progress:
                     StateManager.shared.currentState = .play
                 case .completed:
                     StateManager.shared.currentState = .completed
                 case .locked:
                     fatalError("Level progress should not be .locked here.")
+                case .none:
+                    Swift.debugPrint("None progress?")
                 }
                 
                 try context.save()
@@ -650,6 +655,7 @@ class Database {
     {
         currentLevel!.bestScore = max(currentLevel!.score, currentLevel!.bestScore)
         currentLevel!.progress = Int64(Level.Progress.completed.rawValue)
+       
      
         handleLevelCompleteAchievements(
                 isMaxScore: currentLevel!.score == currentLevel!.shuffledPuzzle.maxScore(),
@@ -660,6 +666,10 @@ class Database {
             try context.save()
         } catch {
             Swift.debugPrint("Error setting level completed: \(error)")
+        }
+        let all:[Level.Progress] = getAllGameLevels()
+        for (index, element) in all.enumerated() {
+            Swift.debugPrint("Level \(index + 1) progress is \(element)")
         }
         
         Task {
@@ -672,6 +682,24 @@ class Database {
         }
         
     }
+    
+    // MARK: Refresh current level
+    func refreshCurrentLevel()
+    {
+        let request: NSFetchRequest<Level> = Level.fetchRequest()
+        request.predicate = NSPredicate(format: "levelNumber = %@", String(currentLevel!.levelNumber))
+        var fetchedLevels: [Level] = []
+        do {
+            fetchedLevels = try context.fetch(request)
+        } catch {
+            print("Error fetching level")
+        }
+        
+        if !fetchedLevels.isEmpty {
+            currentLevel = fetchedLevels.first
+        }
+    }
+    
     
     
     // MARK: Is category rewarded

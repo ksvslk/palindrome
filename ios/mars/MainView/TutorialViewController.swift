@@ -26,11 +26,11 @@ class TutorialViewController: UIViewController {
 
         
         let leftRightArrow = UIImageView()
-        let symbolName = "arrow.right.circle"
+        let symbolName = "play.circle"
         let symbolConfig = UIImage.SymbolConfiguration(scale: .large)
 
         if let symbolImage = UIImage(systemName: symbolName, withConfiguration: symbolConfig) {
-            let coloredImage = symbolImage.withTintColor(Theme.colorOnSecondary, renderingMode: .alwaysOriginal)
+            let coloredImage = symbolImage.withTintColor(UIColor.gray, renderingMode: .alwaysOriginal)
             let targetSize = CGSize(width: 100, height: 100)
             let renderer = UIGraphicsImageRenderer(size: targetSize)
             let scaledImage = renderer.image { _ in
