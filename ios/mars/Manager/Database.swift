@@ -671,9 +671,9 @@ class Database {
         for (index, element) in all.enumerated() {
             Swift.debugPrint("Level \(index + 1) progress is \(element)")
         }
+        let totalScore = getTotalScore()
         
         Task {
-            let totalScore = getTotalScore()
             do {
                 try await submitScoreToLeaderboard(score: totalScore)
             } catch {
