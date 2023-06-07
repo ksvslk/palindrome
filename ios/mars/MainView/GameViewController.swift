@@ -134,8 +134,8 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         
             if intervals.first(where: { i in
                 i.name == C.ADS_INTERVAL && i.currentCount == i.limitCount
-            }) != nil && levelNr >= 15 && !appDelegate.purchaseManager.isNoAdsPurchasedInAnyWay() && adManager?.isInterstitialRewardedAdAvailable() == true {
-                adManager?.showRewardedInterstitialAd(viewController: self)
+            }) != nil && levelNr >= 15 && !appDelegate.purchaseManager.isNoAdsPurchasedInAnyWay() && adManager?.isInterstitialAdAvailable() == true {
+                adManager?.showInterstitialAd(viewController: self)
             }
             else {
                 executeLevelLoadActions(intervals: intervals)
@@ -177,7 +177,6 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
  
     private func enableInfoButton()
     {
-        self.infoLabelButton.isUserInteractionEnabled = true
         infoLabelButton.alpha = 1.0
     }
     
@@ -185,7 +184,6 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     {
        
         if let tapGesture = tapGesture { view.removeGestureRecognizer(tapGesture) }
-        self.infoLabelButton.isUserInteractionEnabled = false
         infoLabelButton.alpha = 0.0
         infoLabelButton.titleLabel?.text = String()
     }
@@ -326,8 +324,13 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     // MARK: Trait collection change
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         Swift.debugPrint("traitCollectionDidChange")
-        addBackgroundColorLayer()
-        gameScene?.changeTheme()
+        if let gameScene = gameScene {
+            gameScene.changeTheme()
+        }
+        else {
+            addBackgroundColorLayer()
+        }
+       
     }
     
     
@@ -341,7 +344,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         }, completion: { _ in
             
             self.adManager?.reloadRewardedAd()
-            self.adManager?.reloadRewardedInterstitialAd()
+            self.adManager?.reloadInterstitialAd()
             print("LOAD MAIN SCENE IN viewWillTransition")
             guard let level = Database.shared.currentLevel else { return }
             self.loadMainScene()
@@ -440,6 +443,11 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                 StateManager.shared.currentState = GameState.play
             }
         case Reward.none:
+            if (Database.shared.currentLevel!.levelProgress == Level.Progress.completed)
+            {
+                enableInfoButton()
+                addNextLevelGestureTap()
+            }
             Swift.debugPrint("NO reward!")
         }
         adManagerChecked.rewardToBeGiven = .none

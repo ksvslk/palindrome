@@ -12,7 +12,7 @@ import GoogleMobileAds
 class AdManager: NSObject, GADFullScreenContentDelegate {
     
     private var rewardedAd: GADRewardedAd?
-    var rewardedInterstitialAd: GADRewardedInterstitialAd?
+    var interstitialAd: GADInterstitialAd?
 
     var rewardToBeGiven:Reward = Reward.none
     weak var delegate: AdAvailabilityDelegate?
@@ -25,19 +25,18 @@ class AdManager: NSObject, GADFullScreenContentDelegate {
     }
     
   
-    
     private let retryIntervalConstant: TimeInterval = 5 // Retry interval in seconds
     private let maxRetryIntervalConstant: TimeInterval = 300 // Maximum retry interval in seconds
     private var currentRetryInterval: TimeInterval = 0
     private var retryTimer: Timer?
 
-    private var currentRewardedInterstitialRetryInterval: TimeInterval = 0
-    private var retryRewardedInterstitialTimer: Timer?
+    private var currentInterstitialRetryInterval: TimeInterval = 0
+    private var retryInterstitialTimer: Timer?
     
     override init() {
         super.init()
         self.loadRewardedAd()
-        self.loadRewardedInterstitialAd()
+        self.loadInterstitialAd()
     }
     
     
@@ -45,9 +44,9 @@ class AdManager: NSObject, GADFullScreenContentDelegate {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func isInterstitialRewardedAdAvailable() -> Bool
+    func isInterstitialAdAvailable() -> Bool
     {
-        return rewardedInterstitialAd != nil
+        return interstitialAd != nil
     }
     
     func reloadRewardedAd()
@@ -58,10 +57,10 @@ class AdManager: NSObject, GADFullScreenContentDelegate {
     }
     
     
-    func reloadRewardedInterstitialAd()
+    func reloadInterstitialAd()
     {
-        rewardedInterstitialAd = nil
-        loadRewardedInterstitialAd()
+        interstitialAd = nil
+        loadInterstitialAd()
     }
     
     
@@ -79,11 +78,11 @@ class AdManager: NSObject, GADFullScreenContentDelegate {
         #endif
     }()
     
-    let rewardedInterstitialAdUnit: String = {
+    let interstitialAdUnit: String = {
         #if DEBUG
-        return C.DEBUG_REWARDED_INTERSTITIAL_AD_UNIT
+        return C.DEBUG_INTERSTITIAL_AD_UNIT
         #else
-        return C.RELEASE_REWARDED_INTERSTITIAL_AD_UNIT
+        return C.RELEASE_INTERSTITIAL_AD_UNIT
         #endif
     }()
     
@@ -121,20 +120,20 @@ class AdManager: NSObject, GADFullScreenContentDelegate {
     }
     
     
-    func loadRewardedInterstitialAd() {
-        GADRewardedInterstitialAd.load(withAdUnitID: rewardedInterstitialAdUnit, request: GADRequest()) { [weak self] ad, error in
+    func loadInterstitialAd() {
+        GADInterstitialAd.load(withAdUnitID: interstitialAdUnit, request: GADRequest()) { [weak self] ad, error in
             guard let self = self else { return }
             
             if let error = error {
-                Swift.debugPrint("Failed to load rewarded interstitial ad with error: \(error.localizedDescription)")
+                Swift.debugPrint("Failed to load interstitial ad with error: \(error.localizedDescription)")
                 
                 // Retry loading the ad with exponential backoff until the maximum retry interval is reached
-                if self.currentRewardedInterstitialRetryInterval < self.maxRetryIntervalConstant {
+                if self.currentInterstitialRetryInterval < self.maxRetryIntervalConstant {
                     // Schedule the next retry attempt
-                    self.retryRewardedInterstitialTimer = Timer.scheduledTimer(withTimeInterval: self.retryIntervalConstant, repeats: false) { [weak self] _ in
-                        self?.loadRewardedInterstitialAd()
+                    self.retryInterstitialTimer = Timer.scheduledTimer(withTimeInterval: self.retryIntervalConstant, repeats: false) { [weak self] _ in
+                        self?.loadInterstitialAd()
                         // Update the current retry interval
-                        self?.currentRewardedInterstitialRetryInterval += self?.retryIntervalConstant ?? 0
+                        self?.currentInterstitialRetryInterval += self?.retryIntervalConstant ?? 0
                     }
                 }
                 
@@ -142,23 +141,22 @@ class AdManager: NSObject, GADFullScreenContentDelegate {
             }
             
             // Ad loaded successfully, reset the retry interval and cancel any pending retry timer
-            self.currentRewardedInterstitialRetryInterval = 0
-            self.retryRewardedInterstitialTimer?.invalidate()
-            self.rewardedInterstitialAd = ad
+            self.currentInterstitialRetryInterval = 0
+            self.retryInterstitialTimer?.invalidate()
+            self.interstitialAd = ad
+            self.interstitialAd?.fullScreenContentDelegate = self
             
-            Swift.debugPrint("Rewarded interstitial ad loaded.")
+            Swift.debugPrint("Interstitial ad loaded.")
         }
     }
     
     
-    func showRewardedInterstitialAd(viewController: UIViewController) {
-        if let ad = rewardedInterstitialAd {
-         
-            ad.present(fromRootViewController: viewController) {
-                self.rewardToBeGiven = Reward.continue_playing
-                self.rewardedInterstitialAd = nil
-                self.loadRewardedInterstitialAd()
-            }
+    func showInterstitialAd(viewController: UIViewController) {
+        if let ad = interstitialAd {
+            ad.present(fromRootViewController: viewController)
+            self.rewardToBeGiven = Reward.continue_playing
+            self.interstitialAd = nil
+            self.loadInterstitialAd()
         } else {
             Swift.debugPrint("Ad wasn't ready")
         }
@@ -167,8 +165,6 @@ class AdManager: NSObject, GADFullScreenContentDelegate {
     
     func show(viewController: UIViewController, rewardType:Reward) {
         if let ad = rewardedAd {
-            print("WE HAVE AD, SHOW IT!")
-            print("VIEW CONTROLLER: \(viewController)")
             ad.present(fromRootViewController: viewController) {
                 self.rewardToBeGiven = rewardType
                 self.rewardedAd = nil
@@ -197,6 +193,6 @@ class AdManager: NSObject, GADFullScreenContentDelegate {
     func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
         Swift.debugPrint("Ad did dismiss full screen content.")
     }
-    
+
     
 }

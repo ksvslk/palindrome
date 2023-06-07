@@ -3,7 +3,6 @@ import SpriteKit
 import AVFAudio
 
 
-
 class GameScene: SKScene {
     
     private var gridNode:SKNode = SKNode()
