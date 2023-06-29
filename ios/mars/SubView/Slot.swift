@@ -22,10 +22,10 @@ class Slot: Cell {
         guard let letter = (friend as? Letter) else { return }
         if (!ignoreScoreChange && letter.data.letter != actualChar)
         {
-            Swift.debugPrint("New friend is \(letter.data.letter) but should be \(actualChar)")
-            Swift.debugPrint("Current score: \(Database.shared.currentLevel?.score)")
+            //Swift.debugPrint("New friend is \(letter.data.letter) but should be \(actualChar)")
+            //Swift.debugPrint("Current score: \(Database.shared.currentLevel?.score)")
             Database.shared.decreaseScore()
-            Swift.debugPrint("Decreased score: \(Database.shared.currentLevel?.score)")
+            //Swift.debugPrint("Decreased score: \(Database.shared.currentLevel?.score)")
         }
     }
     

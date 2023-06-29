@@ -115,7 +115,7 @@ class Letter: Cell {
         let collisionResult = cellDirector.handleCollisions(letter: self)
         playSound(collisionResult: collisionResult)
         playHapticFeedback(collisionResult: collisionResult)
-        Swift.debugPrint("Collision result: \(collisionResult)")
+        //Swift.debugPrint("Collision result: \(collisionResult)")
         moveLetter()
     }
  

@@ -27,7 +27,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     
     
     init(adManager:AdManager?, purchaseManager:PurchaseManager?, gameViewController:GameViewController?) {
-        Swift.debugPrint("init hints")
+        //Swift.debugPrint("init hints")
         self.gameViewController = gameViewController
         self.adManager = adManager
         self.purchaseManager = purchaseManager
@@ -38,7 +38,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     //MARK: View did appear
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        Swift.debugPrint("viewDidAppear")
+        //Swift.debugPrint("viewDidAppear")
         self.purchaseManager?.delegate = self
         self.purchaseManager?.processDelegate = self
         self.purchaseManager?.sendLatestInfo()
@@ -59,7 +59,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     
     // MARK: View did disappear
     override func viewDidDisappear(_ animated: Bool) {
-        Swift.debugPrint("viewDidDisappear")
+        //Swift.debugPrint("viewDidDisappear")
         self.purchaseManager?.delegate = nil
         self.purchaseManager?.processDelegate = nil
         self.adManager?.delegate = nil
@@ -117,6 +117,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     //MARK: Hints ads -> premium
     private func updateHintsToPremium()
     {
+        Swift.debugPrint(self, "updateHintsToPremium")
         updateCell(
             of: .reveal_clue_btn,
             withName: C.revealClueButton.0,
@@ -131,6 +132,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     //MARK: Letters ads -> premium
     private func updateLettersToPremium()
     {
+        Swift.debugPrint(self, "updateLettersToPremium")
         updateCell(
             of: .place_letter_btn,
             withName: C.placeLetterButton.0,
@@ -149,14 +151,11 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     
     //MARK: Ad availability callback
     func adAvailabilityDidChange(isAvailable: Bool) {
-        Swift.debugPrint("Latest info for ads or just updated: \(isAvailable)")
+        //Swift.debugPrint("Latest info for ads or just updated: \(isAvailable)")
         
         let hintsPurchased = purchaseManager?.isHintsPurchasedInAnyWay() ?? false
         let lettersPurchased = purchaseManager?.isLettersPurchasedInAnyWay() ?? false
         
-        
-        Swift.debugPrint("hintsPurchased: \(hintsPurchased) ")
-        Swift.debugPrint("lettersPurchased: \(lettersPurchased) ")
         
         if isAvailable {
             if Database.shared.currentLevel?.categoryRewarded == false && !hintsPurchased {
@@ -211,7 +210,6 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
         {
             placeLetterClosure = { _ in
                 self.dismiss(animated: false) {
-                    print("SHOW place_letter_btn ad NOW!")
                     self.adManager?.show(viewController: self.gameViewController!, rewardType: Reward.letter)
                 }
             }
@@ -220,7 +218,6 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
         {
             revealClueClosure = { _ in
                 self.dismiss(animated: false) {
-                    print("SHOW reveal_clue_btn ad NOW!")
                     self.adManager?.show(viewController: self.gameViewController!, rewardType: Reward.hint)
                 }
             }
@@ -282,9 +279,9 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     //MARK: Update buttons Ui
     private func updatePurchasesUiInfo(purchases products:[String : ProductInfo])
     {
-        Swift.debugPrint("updatePurchasesUiInfo")
+        //Swift.debugPrint("updatePurchasesUiInfo")
        
-        guard products[C.PURCHASE_ALL_ID]?.isPurchased == false else {
+        if products[C.PURCHASE_ALL_ID]?.isPurchased == true {
             allInPurchasedUiUpdate(products: products)
             return
         }
@@ -396,8 +393,8 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
             let price = element.value.product.price
             return result.adding(price)
         }
-        Swift.debugPrint("sumWithoutAllIn: \(sumWithoutAllIn)")
-        Swift.debugPrint("allinprice: \(allInPrice)")
+        //Swift.debugPrint("sumWithoutAllIn: \(sumWithoutAllIn)")
+        //Swift.debugPrint("allinprice: \(allInPrice)")
         return allInPrice.compare(sumWithoutAllIn) == ComparisonResult.orderedDescending
     }
     
@@ -458,27 +455,27 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     
     //MARK: Closures
     var revealClueClosure: ((MenuItemCell) -> Void) = { menuItem in
-        Swift.debugPrint("Tapped \(C.revealClueButton.0)")
+        //Swift.debugPrint("Tapped \(C.revealClueButton.0)")
     }
     
     var placeLetterClosure: ((MenuItemCell) -> Void) = { menuItem in
-        Swift.debugPrint("Tapped \(C.placeLetterButton.0)")
+        //Swift.debugPrint("Tapped \(C.placeLetterButton.0)")
     }
     
     var purchaseCluesClosure: ((MenuItemCell) -> Void) = { menuItem in
-        Swift.debugPrint("Tapped \(C.purchaseCluesButton.0)")
+        //Swift.debugPrint("Tapped \(C.purchaseCluesButton.0)")
     }
     
     var purchaseLettersClosure: ((MenuItemCell) -> Void) = { menuItem in
-        Swift.debugPrint("Tapped \(C.purchaseLettersButton.0)")
+        //Swift.debugPrint("Tapped \(C.purchaseLettersButton.0)")
     }
     
     var purchaseNoAdsClosure: ((MenuItemCell) -> Void) = { menuItem in
-        Swift.debugPrint("Tapped \(C.purchaseNoAdsButton.0)")
+        //Swift.debugPrint("Tapped \(C.purchaseNoAdsButton.0)")
     }
     
     var purchaseAllClosure: ((MenuItemCell) -> Void) = { menuItem in
-        Swift.debugPrint("Tapped \(C.purchaseAllButton.0)")
+        //Swift.debugPrint("Tapped \(C.purchaseAllButton.0)")
     }
     
     

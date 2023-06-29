@@ -17,7 +17,7 @@ class GameScene: SKScene {
     override func didMove(to view: SKView) {
         layoutScene(view: view)
         handleGameState()
-        Swift.debugPrint("didMove in GameScene")
+        //Swift.debugPrint("didMove in GameScene")
     }
    
     
@@ -34,16 +34,19 @@ class GameScene: SKScene {
     private func handleGameState()
     {
         StateManager.shared.stateDidChange = { [self] state in
-            switch state {
-            case .play:
-                Swift.debugPrint("Now in .play (GameScene)")
-            case .animating:
-                Swift.debugPrint("Now in .animating (GameScene)")
-            case .completed:
-                Swift.debugPrint("Now in .completed (GameScene)")
-            case .reset:
-                Swift.debugPrint("Now in .reset (GameScene)")
-            }
+            /*
+             switch state {
+             case .play:
+                 //Swift.debugPrint("Now in .play (GameScene)")
+             case .animating:
+                 //Swift.debugPrint("Now in .animating (GameScene)")
+             case .completed:
+                 //Swift.debugPrint("Now in .completed (GameScene)")
+             case .reset:
+                 //Swift.debugPrint("Now in .reset (GameScene)")
+             }
+             */
+         
         }
     }
     
@@ -214,7 +217,7 @@ class GameScene: SKScene {
         do {
             try addGameNodes(letters: currentLevel.lettersArr, allCells: allCells, gameField: gameField, gridNode: &gridNode)
         } catch {
-            Swift.debugPrint("GameScene: Could not add nodes to grid.")
+            //Swift.debugPrint("GameScene: Could not add nodes to grid.")
         }
         
         // Change the position of the grid
@@ -249,7 +252,7 @@ class GameScene: SKScene {
         let trainEndPositionX = viewSize.width / 2 + trainNode.calculatedWidth + 16.0
         let moveRightAction = SKAction.move(to: CGPoint(x: trainEndPositionX, y: trainYPosition), duration: TimeInterval(duration))
         trainNode.run(moveRightAction) {
-            Swift.debugPrint("DONE")
+            //Swift.debugPrint("DONE")
         }
     }
     

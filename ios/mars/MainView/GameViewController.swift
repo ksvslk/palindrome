@@ -13,7 +13,7 @@ import GoogleMobileAds
 import StoreKit
 
 
-class GameViewController: UIViewController, UIPopoverPresentationControllerDelegate, SKSceneDelegate, MessageDelegate {
+class GameViewController: UIViewController, UIPopoverPresentationControllerDelegate, SKSceneDelegate, MessageDelegate, GKGameCenterControllerDelegate {
     
     private var gameScene: GameScene?
     var tapGesture:UITapGestureRecognizer? = nil
@@ -37,23 +37,34 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     // MARK: View did load
     override func viewDidLoad() {
      
-        Swift.debugPrint("viewDidLoad")
+        //Swift.debugPrint("viewDidLoad")
         super.viewDidLoad()
         addBackgroundColorLayer()
         self.view.makeToastActivity(.center)
         self.view.isUserInteractionEnabled = false
-        UserPrivacy().requestConsentInformation(viewController: self) { _ in
-            self.adManager = AdManager()
-            self.subscribeToLevelChange()
-            self.subscribeToSolutionCheckResult()
-            self.subscribeToHintsSuggestion()
-            self.moveInfoButtonVerticallyToTopCenter()
-            self.subscribeToPurchaseMessage()
-            self.logInToGameCenter()
-        }
       
+        UserPrivacy().requestConsentInformation(viewController: self) { _ in
+            DispatchQueue.main.async {
+                GADMobileAds.sharedInstance().start { _ in
+                    self.adManager = AdManager()
+                    self.subscribeToLevelChange()
+                    self.subscribeToSolutionCheckResult()
+                    self.subscribeToHintsSuggestion()
+                    self.moveInfoButtonVerticallyToTopCenter()
+                    self.subscribeToPurchaseMessage()
+                    self.logInToGameCenter()
+                    Database.shared.loadFromCloudKeyValueStore()
+                    self.enableGame()
+                }
+            }
+        }
+        
     }
+
     
+    func gameCenterViewControllerDidFinish(_ gameCenterViewController: GKGameCenterViewController) {
+        gameCenterViewController.dismiss(animated: true, completion: nil)
+    }
     
     private func addBackgroundColorLayer()
     {
@@ -73,25 +84,29 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     private func logInToGameCenter()
     {
         GKLocalPlayer.local.authenticateHandler = { viewController, error in
-            
+            //Swift.debugPrint("Game Center auth: \(error)")
             if let _ = viewController {
                 // Present the view controller so the player can sign in.
+                //Swift.debugPrint("Game Center auth: show view controller because viewCOntroller is not nil")
                 return
             }
             
-            self.view.hideToastActivity()
-            self.view.isUserInteractionEnabled = true
-            Database.shared.changeLevel(toLatest: true)
-            Swift.debugPrint("Change level after Game Center resolved.")
-            self.showTutorial()
             if error != nil {
                 // Player could not be authenticated.
                 // Disable Game Center in the game.
                 return
             }
             // Player was successfully authenticated.
-            
         }
+    }
+    
+    
+    private func enableGame()
+    {
+        self.view.hideToastActivity()
+        self.view.isUserInteractionEnabled = true
+        Database.shared.changeLevel(toLatest: true)
+        self.showTutorial()
     }
     
     
@@ -126,8 +141,8 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         Database.shared.levelChangedClosure = { [weak self] intervals in
             guard let self = self else { return }
             
-            Swift.debugPrint("Intervals: \(intervals)")
-            Swift.debugPrint("Current level changed to \(String(describing: Database.shared.currentLevel?.levelNumber))")
+            //Swift.debugPrint("Intervals: \(intervals)")
+            //Swift.debugPrint("Current level changed to \(String(describing: Database.shared.currentLevel?.levelNumber))")
             
             let appDelegate = UIApplication.shared.delegate as! AppDelegate
             let levelNr = Database.shared.currentLevel!.levelNumber
@@ -161,7 +176,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             gameScene?.changeTheme()
         }
         else {
-            Swift.debugPrint("Setting state to .reset")
+            //Swift.debugPrint("Setting state to .reset")
             StateManager.shared.currentState = .reset
             disableInfoButton()
         }
@@ -230,17 +245,17 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             
             switch result {
             case .correct:
-                Swift.debugPrint("Correct solution! (GameViewController)")
+                //Swift.debugPrint("Correct solution! (GameViewController)")
                 let isMaxScore = scores.0 == scores.1
                 let currentLevel = Database.shared.currentLevel!
-                Swift.debugPrint("Correct solution! (GameViewController). \(currentLevel.levelNumber) progress is \(currentLevel.levelProgress)")
+                //Swift.debugPrint("Correct solution! (GameViewController). \(currentLevel.levelNumber) progress is \(currentLevel.levelProgress)")
                 if (currentLevel.levelProgress != Level.Progress.completed)
                 {
-                    Swift.debugPrint("Level was not set to .completed in progress value in db.")
+                    //Swift.debugPrint("Level was not set to .completed in progress value in db.")
                     feedbackGenerator.notificationOccuredCustom(notificationType: .success)
                     let message = isMaxScore ? veryGoodMessages.randomElement()! : goodMessages.randomElement()!
                     gameScene?.winningAnimation {
-                        Swift.debugPrint("Show now messages of a great win in GameViewController!")
+                        //Swift.debugPrint("Show now messages of a great win in GameViewController!")
                         let messages = ["tap_to_continue"~, C.SCORE_TAG, message]
                         self.animateMessageSequence(
                             scores: scores,
@@ -263,7 +278,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                     }
                 }
             case .wrong:
-                Swift.debugPrint("Wrong solution. (GameViewController)")
+                //Swift.debugPrint("Wrong solution. (GameViewController)")
                 if UIApplication.shared.applicationState == .active {
                     feedbackGenerator.notificationOccuredCustom(notificationType: .error)
                     gameScene?.shakeAnimation()
@@ -275,7 +290,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                 }
             case .bogus_palindrome:
                 if UIApplication.shared.applicationState == .active {
-                    Swift.debugPrint("Bogus solution. (GameViewController)")
+                    //Swift.debugPrint("Bogus solution. (GameViewController)")
                     let bogusWrongMessage = bogusMessages.randomElement()!
                     feedbackGenerator.notificationOccuredCustom(notificationType: .warning)
                     gameScene?.shakeAnimation()
@@ -285,7 +300,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                     )
                 }
             case .invalid_guess:
-                Swift.debugPrint("Not enough letters. (GameViewController)")
+                //Swift.debugPrint("Not enough letters. (GameViewController)")
                 StateManager.shared.currentState = .play
             }
         }
@@ -323,7 +338,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     
     // MARK: Trait collection change
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        Swift.debugPrint("traitCollectionDidChange")
+        //Swift.debugPrint("traitCollectionDidChange")
         if let gameScene = gameScene {
             gameScene.changeTheme()
         }
@@ -360,7 +375,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                 self.gameScene?.changeTheme()
             }
             else {
-                Swift.debugPrint("Setting state to .reset")
+                //Swift.debugPrint("Setting state to .reset")
                 StateManager.shared.currentState = .reset
                 self.disableInfoButton()
             }
@@ -370,9 +385,9 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     
     // MARK: Tap to continue touch
     @objc func tapToContinueTouched() {
-        Swift.debugPrint("Screen tapped!")
+        //Swift.debugPrint("Screen tapped!")
         if let gr = view.gestureRecognizers?.first {
-            Swift.debugPrint("removing gesture recgonizer \(gr)")
+            //Swift.debugPrint("removing gesture recgonizer \(gr)")
             view.removeGestureRecognizer(gr)
         }
         if (Database.shared.currentLevel?.levelNumber == 100)
@@ -428,7 +443,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     
     private func handleRewards()
     {
-        Swift.debugPrint("handleRewards")
+        //Swift.debugPrint("handleRewards")
         guard let adManagerChecked = adManager else { return }
         switch adManagerChecked.rewardToBeGiven {
         case Reward.letter:
@@ -448,7 +463,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                 enableInfoButton()
                 addNextLevelGestureTap()
             }
-            Swift.debugPrint("NO reward!")
+            //Swift.debugPrint("NO reward!")
         }
         adManagerChecked.rewardToBeGiven = .none
     }
@@ -476,9 +491,9 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     
     //MARK: Display scores
     private func showScores(scores:[ScoreItemInfo]) {
-        Swift.debugPrint("Count of scores: \(scores.count)")
+        //Swift.debugPrint("Count of scores: \(scores.count)")
         if !scores.isEmpty {
-            Swift.debugPrint("Display scores")
+            //Swift.debugPrint("Display scores")
             let bottomSheetMenuVC = PlayerScoresController(scoreItems: scores)
             if let buttonView = gameCenterButtonRef.value(forKey: "view") as? UIView {
                 presentPanModal(bottomSheetMenuVC,sourceView: buttonView, sourceRect: buttonView.bounds)
@@ -499,8 +514,8 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                 // get rank for player first
                 leaderboard.loadEntries(for: [GKLocalPlayer.local], timeScope: GKLeaderboard.TimeScope.allTime) {
                     entry, entries, error in
-                    Swift.debugPrint("Player rank is: \(String(describing: entry?.rank))")
-                    Swift.debugPrint("Total entries count: \(String(describing: entries?.count))")
+                    //Swift.debugPrint("Player rank is: \(String(describing: entry?.rank))")
+                    //Swift.debugPrint("Total entries count: \(String(describing: entries?.count))")
                     // get the other 3 scores based on players rank
                     guard let entry = entry else { return }
                     
@@ -511,7 +526,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                     
                     leaderboard.loadEntries(for: GKLeaderboard.PlayerScope.global, timeScope: GKLeaderboard.TimeScope.allTime, range: range) { entry, entries, integer, error in
                         if let entries = entries {
-                            Swift.debugPrint("Fetched \(entries.count) entries.")
+                            //Swift.debugPrint("Fetched \(entries.count) entries.")
                             for entry in entries {
                                 let image = UIImage(systemName: "person.circle.fill")!
                                 scoreItems.append(ScoreItemInfo(displayName: entry.player.displayName, photo: image, score: entry.score, rank: entry.rank, isCurrentPlayer: entry.player.gamePlayerID == GKLocalPlayer.local.gamePlayerID))
@@ -522,11 +537,11 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                 }
             }
             else {
-                Swift.debugPrint(error?.localizedDescription ?? "")
+                //Swift.debugPrint(error?.localizedDescription ?? "")
             }
         }
     }
-    
+   
     
     // MARK: Reward with letter
     func rewardWithLetter()
@@ -564,7 +579,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     //MARK: Show ending screen
     private func showEndingScreen()
     {
-        Swift.debugPrint("showEndingScreen")
+        //Swift.debugPrint("showEndingScreen")
         let triumphSound = SKAction.playSound(soundFile: "triumph.wav")
         self.gameScene?.run(triumphSound)
         let hintViewController = EndingScreen()

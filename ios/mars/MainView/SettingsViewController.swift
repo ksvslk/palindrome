@@ -58,23 +58,23 @@ class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
     override var menuItem: [MenuItemInfo] {
         return [
             MenuItemInfo(name: C.soundButton.0, comment: "", systemImage: C.soundButton.1, closure: {menuItem in
-                Swift.debugPrint("Tapped \(C.soundButton.0)")
+                //Swift.debugPrint("Tapped \(C.soundButton.0)")
                 self.soundSwitch.setOn(!self.soundSwitch.isOn, animated: true)
                 self.soundSwitchStateChanged(self.soundSwitch)
             }),
             MenuItemInfo(name: C.vibrationButton.0, comment: "", systemImage: C.vibrationButton.1, closure: {menuItem in
-                Swift.debugPrint("Tapped \(C.vibrationButton.0)")
+                //Swift.debugPrint("Tapped \(C.vibrationButton.0)")
                 self.vibrationSwitch.setOn(!self.vibrationSwitch.isOn, animated: true)
                 self.vibrationSwitchStateChanged(self.vibrationSwitch)
             }),
             MenuItemInfo(name: C.feedbackButton.0, comment: "", systemImage: C.feedbackButton.1, closure: {menuItem in
-                Swift.debugPrint("Tapped \(C.feedbackButton.0)")
+                //Swift.debugPrint("Tapped \(C.feedbackButton.0)")
                 guard let writeReviewURL = URL(string: C.APP_FEEDBACK_URL)
                 else { fatalError("Expected a valid URL") }
                 UIApplication.shared.open(writeReviewURL, options: [:], completionHandler: nil)
             }),
             MenuItemInfo(name: C.shareButton.0, comment: "", systemImage: C.shareButton.1, closure: {menuItem in
-                Swift.debugPrint("Tapped \(C.shareButton.0)")
+                //Swift.debugPrint("Tapped \(C.shareButton.0)")
                 let items: [Any] = ["share_description"~, URL(string: C.APP_URL)!]
                 let share = UIActivityViewController(activityItems: items, applicationActivities: nil)
                 if let popoverController = share.popoverPresentationController {
@@ -84,7 +84,7 @@ class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
                 self.present(share, animated: true)
             }),
             MenuItemInfo(name: C.restoreButton.0, comment: "", systemImage: C.restoreButton.1, closure: {menuItem in
-                Swift.debugPrint("Tapped \(C.restoreButton.0)")
+                //Swift.debugPrint("Tapped \(C.restoreButton.0)")
       
                 self.purchaseManager?.restorePurchases()
                 self.view.makeToastActivity(.center)
@@ -132,7 +132,7 @@ class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
     
     private func toggleSettingInUserDefaults(isOn:Bool, setting:String)
     {
-        Swift.debugPrint("toggleSettingInUserDefaults")
+        //Swift.debugPrint("toggleSettingInUserDefaults")
         let userDefaults = UserDefaults.standard
         if isOn {
             userDefaults.set(true, forKey: setting)

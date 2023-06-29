@@ -48,7 +48,7 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
     
     
     override init() {
-        Swift.debugPrint("init PurchaseManager")
+        //Swift.debugPrint("init PurchaseManager")
         super.init()
         SKPaymentQueue.default().add(self)
  
@@ -61,7 +61,7 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
             }
             // info based on fresh receipt
             receipt.purchases.forEach { iap in
-                Swift.debugPrint("Receipt purchase: \(iap.productIdentifier)")
+                //Swift.debugPrint("Receipt purchase: \(iap.productIdentifier)")
                 self.updatePurchaseStatus(iap.productIdentifier, isPurchased: true)
             }
         }
@@ -80,7 +80,7 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
     
     // Request products with identifiers
     func requestProducts() {
-        Swift.debugPrint("requestProducts")
+        //Swift.debugPrint("requestProducts")
         productsRequest = SKProductsRequest(productIdentifiers: productIdentifiers)
         productsRequest?.delegate = self
         productsRequest?.start()
@@ -91,7 +91,7 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
     
     // Start the purchase flow for a product
     func purchaseProduct(_ productId: String) {
-        Swift.debugPrint("purchaseProduct")
+        //Swift.debugPrint("purchaseProduct")
         guard let product = availableProducts.first(where: { $0.productIdentifier == productId }) else { return }
         let payment = SKPayment(product: product)
         SKPaymentQueue.default().add(payment)
@@ -102,7 +102,7 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
     
     // Restore purchases
     func restorePurchases() {
-        Swift.debugPrint("restorePurchases")
+        //Swift.debugPrint("restorePurchases")
         SKPaymentQueue.default().restoreCompletedTransactions()
         processDelegate?.didStartProcessing()
         loading = true
@@ -112,7 +112,7 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
     func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
         availableProducts = response.products
         delegate?.didUpdateProducts(withProducts: getProducts())
-        Swift.debugPrint("productsRequest completed with \(availableProducts)")
+        //Swift.debugPrint("productsRequest completed with \(availableProducts)")
     }
     
     
@@ -141,7 +141,7 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
     
     
     func getProducts() -> [String:ProductInfo] {
-        Swift.debugPrint("getProductInfo")
+        //Swift.debugPrint("getProductInfo")
         var productInfoMap: [String:ProductInfo] = [:]
         let defaults = UserDefaults.standard
         let purchasedProducts = defaults.array(forKey: C.PURCHASED_PRODUCTS_KEY) as? [String] ?? []
@@ -178,10 +178,10 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
                 // For example, show a loading indicator
                 processDelegate?.didStartProcessing()
                 loading = true
-                Swift.debugPrint("paymentQueue state: purchasing")
+                //Swift.debugPrint("paymentQueue state: purchasing")
                 break
             case .purchased:
-                Swift.debugPrint("paymentQueue state: purchased")
+                //Swift.debugPrint("paymentQueue state: purchased")
                 // Handle the "Purchased" state
                 // For example, provide the purchased content
                 verifyReceipt(productId: transaction.payment.productIdentifier) { [weak self] success in
@@ -200,7 +200,7 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
                     SKPaymentQueue.default().finishTransaction(transaction)
                 }
             case .restored:
-                Swift.debugPrint("paymentQueue state: restored")
+                //Swift.debugPrint("paymentQueue state: restored")
                 // Handle the "Restored" state
                 // For example, provide access to the previously purchased content
                 verifyReceipt(productId: transaction.payment.productIdentifier) { [weak self] success in
@@ -219,7 +219,7 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
                     SKPaymentQueue.default().finishTransaction(transaction)
                 }
             case .failed:
-                Swift.debugPrint("paymentQueue state: failed")
+                //Swift.debugPrint("paymentQueue state: failed")
                 // Handle the "Failed" state
                 // For example, display an error message
                 processDelegate?.didFinishProcessing(result: true)
@@ -231,7 +231,7 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
                 }
                 SKPaymentQueue.default().finishTransaction(transaction)
             case .deferred:
-                Swift.debugPrint("paymentQueue state: deferred")
+                //Swift.debugPrint("paymentQueue state: deferred")
                 processDelegate?.didFinishProcessing(result: true)
                 loading = false
                 DispatchQueue.main.async {
@@ -254,7 +254,7 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
             InAppReceipt.refresh { error in
                 if let err = error
                 {
-                    Swift.debugPrint(err)
+                    //Swift.debugPrint(err)
                     completion(false)
                 } else {
                     if let receipt = try? InAppReceipt.localReceipt() {
@@ -264,18 +264,18 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
                     }
                 }
             }
-            Swift.debugPrint("Receipt not found")
+            //Swift.debugPrint("Receipt not found")
         }
     }
     
     
     func paymentQueue(_ queue: SKPaymentQueue, removedTransactions transactions: [SKPaymentTransaction]) {
-        Swift.debugPrint("Removed transactions: \(transactions.debugDescription)")
+        //Swift.debugPrint("Removed transactions: \(transactions.debugDescription)")
     }
     
     
     func paymentQueueRestoreCompletedTransactionsFinished(_ queue: SKPaymentQueue) {
-        Swift.debugPrint("paymentQueueRestoreCompletedTransactionsFinished")
+        //Swift.debugPrint("paymentQueueRestoreCompletedTransactionsFinished")
         processDelegate?.didFinishProcessing(result: true)
         loading = false
         messageDelegate?.didSendNewMessage(withMessage: "restore_completed"~)
@@ -283,7 +283,7 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
     
     
     func paymentQueue(_ queue: SKPaymentQueue, restoreCompletedTransactionsFailedWithError error: Error) {
-        Swift.debugPrint("Error restoring completed transactions \(error)")
+        //Swift.debugPrint("Error restoring completed transactions \(error)")
         processDelegate?.didFinishProcessing(result: false)
         loading = false
         if let skError = error as? SKError {
@@ -301,7 +301,7 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
     
     // MARK: Request completed successfully
     func requestDidFinish(_ request: SKRequest) {
-        Swift.debugPrint("requestDidFinish: \(request.description)")
+        //Swift.debugPrint("requestDidFinish: \(request.description)")
         if let completion = completionHandlers[request] {
             completion(true)
             completionHandlers.removeValue(forKey: request)
@@ -313,7 +313,7 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
     
     // MARK: Request failed
     func request(_ request: SKRequest, didFailWithError error: Error) {
-        Swift.debugPrint("request failed: \(error.localizedDescription)")
+        //Swift.debugPrint("request failed: \(error.localizedDescription)")
         if let completion = completionHandlers[request] {
             completion(false)
             completionHandlers.removeValue(forKey: request)
@@ -324,7 +324,7 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
     
     
     private func loadPurchaseStatusFromUserDefaults() {
-        Swift.debugPrint("loadPurchaseStatusFromUserDefaults")
+        //Swift.debugPrint("loadPurchaseStatusFromUserDefaults")
         let defaults = UserDefaults.standard
         if let savedPurchasedProductIdentifiers = defaults.object(forKey: C.PURCHASED_PRODUCTS_KEY) as? [String] {
             purchasedProductIdentifiers = Set(savedPurchasedProductIdentifiers)
@@ -333,7 +333,7 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
     
     
     private func savePurchaseStatusToUserDefaults() {
-        Swift.debugPrint("savePurchaseStatusToUserDefaults")
+        //Swift.debugPrint("savePurchaseStatusToUserDefaults")
         let defaults = UserDefaults.standard
         let purchasedProducts = Array(purchasedProductIdentifiers)
         defaults.set(purchasedProducts, forKey: C.PURCHASED_PRODUCTS_KEY)
@@ -341,7 +341,7 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
     
     
     private func updatePurchaseStatus(_ productIdentifier: String, isPurchased: Bool, updateUi:Bool = true) {
-        Swift.debugPrint("updatePurchaseStatus")
+        //Swift.debugPrint("updatePurchaseStatus")
         if isPurchased {
             purchasedProductIdentifiers.insert(productIdentifier)
         } else {

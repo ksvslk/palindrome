@@ -46,7 +46,9 @@ class Database {
     // MARK: Add game levels (1 time)
     func initializeDatabaseWithGameLevels()
     {
-        if (maxLevelNumber() >= 100) { return }
+        if (maxLevelNumber() >= 100) {
+            return
+        }
         
         let start = CFAbsoluteTimeGetCurrent()
         
@@ -84,7 +86,7 @@ class Database {
         addInterval(name: C.FLAWLESS_15_INTERVAL, limitCount: 15)
         
         let diff = CFAbsoluteTimeGetCurrent() - start
-        Swift.debugPrint("Inserting all levels to database took \(diff) seconds")
+        ////Swift.debugPrint("Inserting all levels to database took \(diff) seconds")
         
     }
     
@@ -109,10 +111,10 @@ class Database {
                 try context.save()
             } else {
                 // A matching interval already exists, handle the duplicate case
-                Swift.debugPrint("Interval with name '\(name)' already exists.")
+                ////Swift.debugPrint("Interval with name '\(name)' already exists.")
             }
         } catch {
-            Swift.debugPrint("Error fetching intervals: \(error)")
+            ////Swift.debugPrint("Error fetching intervals: \(error)")
         }
     }
     
@@ -133,7 +135,7 @@ class Database {
         do {
             fetchedLevels = try context.fetch(request)
         } catch {
-            Swift.debugPrint("Error fetching level")
+            ////Swift.debugPrint("Error fetching level")
         }
         if !fetchedLevels.isEmpty { return }
         
@@ -165,7 +167,7 @@ class Database {
         do {
             try context.save()
         } catch {
-            Swift.debugPrint("Error saving item: \(error)")
+            ////Swift.debugPrint("Error saving item: \(error)")
         }
         
     }
@@ -224,10 +226,132 @@ class Database {
                 try context.save()
             } catch {
                 // Handle the error
-                Swift.debugPrint("Error: \(error)")
+                ////Swift.debugPrint("Error: \(error)")
             }
         }
         return result
+    }
+    
+    
+    private func isLocalProgressBetter(localLevels:[Level], cloudProgresses:[Int64], cloudScores:[Int64]) -> Bool
+    {
+        let localMaxUnlockedLevel = localLevels.last { level in
+            level.progress != Level.Progress.locked.rawValue
+        }
+      
+        let cloudMaxUnlockedLevel = Int64((cloudProgresses.lastIndex { progress in
+            progress != Level.Progress.locked.rawValue
+        } ?? 99) + 1)
+        
+        ////Swift.debugPrint("isLocalProgressBetter: \(cloudProgresses)")
+        ////Swift.debugPrint("isLocalProgressBetter: \(cloudMaxUnlockedLevel)")
+        ////Swift.debugPrint("isLocalProgressBetter: \(localMaxUnlockedLevel?.levelNumber)!")
+        
+        if let maxLocalUnlockedLevel = localMaxUnlockedLevel?.levelNumber {
+            if (maxLocalUnlockedLevel > cloudMaxUnlockedLevel)
+            {
+                ////Swift.debugPrint("isLocalProgressBetter: Local is better!")
+                return true
+            }
+            else if (localMaxUnlockedLevel?.levelNumber == cloudMaxUnlockedLevel)
+            {
+                // check if local score is higher, return if so
+                let localScore = localLevels.map { level in
+                    level.bestScore
+                }.reduce(0, +)
+                let cloudScore = cloudScores.reduce(0, +)
+                if localScore >= cloudScore {
+                    ////Swift.debugPrint("isLocalProgressBetter: Local is better!")
+                    return true
+                }
+            }
+        }
+        ////Swift.debugPrint("isLocalProgressBetter: Local is WORSE!")
+        return false
+    }
+    
+    
+    func loadFromCloudKeyValueStore() {
+        let store = NSUbiquitousKeyValueStore.default
+        let scores:[Int64] = store.array(forKey: C.CLOUD_BEST_SCORES_KEY) as? [Int64] ?? []
+        let progresses:[Int64] = store.array(forKey: C.CLOUD_PROGRESS_KEY) as? [Int64] ?? []
+        let currentLevelNumber:Int64 = store.longLong(forKey: C.CLOUD_CURRENT_LEVEL_KEY)
+        
+        ////Swift.debugPrint("loadFromCloudKeyValueStore: \(scores)")
+        ////Swift.debugPrint("loadFromCloudKeyValueStore: \(progresses)")
+        ////Swift.debugPrint("loadFromCloudKeyValueStore: \(currentLevelNumber)")
+        
+        let localLevels = getAllLevels()
+        guard !isLocalProgressBetter(
+            localLevels: localLevels, cloudProgresses: progresses, cloudScores: scores) else { return }
+      
+        if !scores.isEmpty && !progresses.isEmpty {
+            let levels:[Level] = getAllLevels()
+            let areCountsEqual = (levels.count == scores.count) && (scores.count == progresses.count)
+            if (areCountsEqual) {
+                for (index, level) in levels.enumerated() {
+                    level.bestScore = scores[index]
+                    level.progress = progresses[index]
+                    if (progresses[index] == Level.Progress.completed.rawValue)
+                    {
+                        level.progress = Int64(Level.Progress.in_progress.rawValue)
+                    }
+                    if (level.levelNumber == currentLevelNumber)
+                    {
+                        level.timeModified = Date.init(timeIntervalSinceNow: .zero)
+                    }
+                    else {
+                        level.timeModified = nil
+                    }
+                }
+              
+                ////Swift.debugPrint("Progresses from cloud: \(progresses)")
+                ////Swift.debugPrint("Scores from cloud: \(scores)")
+                do {
+                    try context.save()
+                } catch {
+                    ////Swift.debugPrint("Error saving items from cloud: \(error)")
+                }
+            }
+        }
+    }
+    
+    
+    func saveToCloudKeyValueStore() {
+  
+        let levels:[Level] = getAllLevels()
+        
+        let store = NSUbiquitousKeyValueStore.default
+        var scores:[Int64] = store.array(forKey: C.CLOUD_BEST_SCORES_KEY) as? [Int64] ?? []
+        var progresses:[Int64] = store.array(forKey: C.CLOUD_PROGRESS_KEY) as? [Int64] ?? []
+        
+        ////Swift.debugPrint("saveToCloudKeyValueStore: \(scores)")
+        ////Swift.debugPrint("saveToCloudKeyValueStore: \(progresses)")
+        
+        // local progress should be better to save to cloud
+        guard isLocalProgressBetter(
+            localLevels: levels, cloudProgresses: progresses, cloudScores: scores) else { return }
+        
+        scores.removeAll()
+        progresses.removeAll()
+        
+        if (!levels.isEmpty) {
+            levels.forEach { level in
+                scores.append(level.bestScore)
+                progresses.append(level.progress)
+            }
+            
+            let store = NSUbiquitousKeyValueStore.default
+            store.set(progresses, forKey: C.CLOUD_PROGRESS_KEY)
+            store.set(scores, forKey: C.CLOUD_BEST_SCORES_KEY)
+            if let currentLevel {
+                store.set(currentLevel.levelNumber, forKey: C.CLOUD_CURRENT_LEVEL_KEY)
+            }
+            
+            ////Swift.debugPrint("Saving progresses: \(progresses)")
+            ////Swift.debugPrint("Saving scores: \(scores)")
+        }
+        
     }
     
     
@@ -235,6 +359,7 @@ class Database {
     func changeLevel(to nextLevel:Int = -1, toLatest loadLatestLevel:Bool = false, withProgressReset reset:Bool = false)
     {
         print("Change level!!!!")
+        
         var intervals:[Interval] = []
         var previousLevel = Database.shared.currentLevel?.levelNumber
         context.performAndWait {
@@ -340,11 +465,16 @@ class Database {
                     levelChangedClosure?(intervals)
                 }
                 
+                if (!loadLatestLevel)
+                {
+                    saveToCloudKeyValueStore()
+                }
+                
                 checkSolutionCorrectness()
                 
             } catch {
                 // Handle the error
-                Swift.debugPrint("Error: \(error)")
+                ////Swift.debugPrint("Error: \(error)")
             }
         }
     }
@@ -363,7 +493,7 @@ class Database {
                 score += Int(level.bestScore)
             }
         } catch {
-            Swift.debugPrint("Error fetching results: \(error.localizedDescription)")
+            ////Swift.debugPrint("Error fetching results: \(error.localizedDescription)")
         }
         return score
     }
@@ -380,12 +510,12 @@ class Database {
                 leaderboardIDs: [C.GAME_LEADERBOARD],
                 completionHandler: { error in
                     if (error != nil) {
-                        Swift.debugPrint("Could not submit score: \(String(describing: error))")
+                        ////Swift.debugPrint("Could not submit score: \(String(describing: error))")
                     }
                 }
             )
         } else {
-            Swift.debugPrint("Player not authenticated to submit score.")
+            ////Swift.debugPrint("Player not authenticated to submit score.")
         }
     }
     
@@ -404,7 +534,7 @@ class Database {
                 return maxLevelNumber
             }
         } catch {
-            Swift.debugPrint("Error getting maximum level from database.")
+            ////Swift.debugPrint("Error getting maximum level from database.")
         }
         return -1
     }
@@ -426,7 +556,29 @@ class Database {
                 levels.append(level.levelProgress)
             }
         } catch {
-            Swift.debugPrint("Error fetching results: \(error.localizedDescription)")
+            ////Swift.debugPrint("Error fetching results: \(error.localizedDescription)")
+        }
+        return levels
+    }
+    
+    
+    // MARK: Get all levels
+    func getAllLevels() -> [Level]
+    {
+        let request: NSFetchRequest<Level> = Level.fetchRequest()
+        request.predicate = NSPredicate(format: "levelNumber <= %@", argumentArray: [100])
+        let sortDescriptor = NSSortDescriptor(key: "levelNumber", ascending: true)
+        request.sortDescriptors = [sortDescriptor]
+        
+        var levels:[Level] = []
+        
+        do {
+            let results = try context.fetch(request) as [Level]
+            results.forEach { level in
+                levels.append(level)
+            }
+        } catch {
+            ////Swift.debugPrint("Error fetching results: \(error.localizedDescription)")
         }
         return levels
     }
@@ -440,7 +592,7 @@ class Database {
         do {
             try context.save()
         } catch {
-            Swift.debugPrint("Error changing friend index: \(error)")
+            ////Swift.debugPrint("Error changing friend index: \(error)")
         }
         checkSolutionCorrectness(letter: letter)
 #if DEBUG
@@ -463,7 +615,7 @@ class Database {
         do {
             try context.save()
         } catch {
-            Swift.debugPrint("Error switching friend indexes: \(error)")
+            ////Swift.debugPrint("Error switching friend indexes: \(error)")
         }
         checkSolutionCorrectness()
 #if DEBUG
@@ -484,7 +636,7 @@ class Database {
         do {
             letters = try context.fetch(request)
         } catch let error as NSError {
-            Swift.debugPrint("Could not fetch. \(error), \(error.userInfo)")
+            ////Swift.debugPrint("Could not fetch. \(error), \(error.userInfo)")
         }
         
         let result = SolutionChecker.getGuessResult(guess: letters, solutions: currentLevel!.solutionsArr)
@@ -505,7 +657,7 @@ class Database {
     //MARK: Handle achievments (wrong)
     private func handleWrongSolutionAchievementProgress(solution: SolutionCheckResult)
     {
-        Swift.debugPrint("handleWrongSolutionAchievementProgress")
+        ////Swift.debugPrint("handleWrongSolutionAchievementProgress")
         updateCurrentCount(forName: C.FLAWLESS_5_INTERVAL, reset: true)
         updateCurrentCount(forName: C.FLAWLESS_15_INTERVAL, reset: true)
         if (solution == SolutionCheckResult.bogus_palindrome)
@@ -518,7 +670,7 @@ class Database {
     //MARK: Handle achievments (correct)
     private func handleLevelCompleteAchievements(isMaxScore:Bool, levelNr:Int)
     {
-        Swift.debugPrint("handleLevelCompleteAchievements")
+        ////Swift.debugPrint("handleLevelCompleteAchievements")
         if (isMaxScore)
         {
             unlockAchievement(identifier: C.achievement_zero_mistakes)
@@ -568,10 +720,10 @@ class Database {
         GKAchievement.report([achievement]) { (error) in
             if let error = error {
                 // Handle the error
-                Swift.debugPrint("Achievement unlock error: \(error.localizedDescription)")
+                ////Swift.debugPrint("Achievement unlock error: \(error.localizedDescription)")
             } else {
                 // Achievement unlocked successfully
-                Swift.debugPrint("Achievement unlocked: \(identifier)")
+                ////Swift.debugPrint("Achievement unlocked: \(identifier)")
             }
         }
     }
@@ -588,7 +740,7 @@ class Database {
         do {
             try context.save()
         } catch {
-            Swift.debugPrint("Error changing score: \(error)")
+            ////Swift.debugPrint("Error changing score: \(error)")
         }
     }
     
@@ -613,7 +765,7 @@ class Database {
         do {
             try context.save()
         } catch {
-            Swift.debugPrint("Error changing columnd count: \(error)")
+            ////Swift.debugPrint("Error changing columnd count: \(error)")
         }
         
     }
@@ -631,7 +783,7 @@ class Database {
         do {
             try context.save()
         } catch {
-            Swift.debugPrint("Error changing category rewarded: \(error)")
+            ////Swift.debugPrint("Error changing category rewarded: \(error)")
         }
     }
     
@@ -644,7 +796,7 @@ class Database {
         do {
             try context.save()
         } catch {
-            Swift.debugPrint("Error locking letter: \(error)")
+            ////Swift.debugPrint("Error locking letter: \(error)")
         }
         
     }
@@ -665,11 +817,11 @@ class Database {
         do {
             try context.save()
         } catch {
-            Swift.debugPrint("Error setting level completed: \(error)")
+            ////Swift.debugPrint("Error setting level completed: \(error)")
         }
         let all:[Level.Progress] = getAllGameLevels()
         for (index, element) in all.enumerated() {
-            Swift.debugPrint("Level \(index + 1) progress is \(element)")
+            ////Swift.debugPrint("Level \(index + 1) progress is \(element)")
         }
         let totalScore = getTotalScore()
         
@@ -677,7 +829,7 @@ class Database {
             do {
                 try await submitScoreToLeaderboard(score: totalScore)
             } catch {
-                Swift.debugPrint("Error:", error.localizedDescription)
+                ////Swift.debugPrint("Error:", error.localizedDescription)
             }
         }
         
@@ -721,7 +873,7 @@ class Database {
         do {
             fetchedLetters = try context.fetch(request)
         } catch {
-            Swift.debugPrint("Error while trying to count friendIndexes")
+            ////Swift.debugPrint("Error while trying to count friendIndexes")
         }
         let uniqueValues = Set(fetchedLetters.compactMap({
             let friendIndex = $0.value(forKey: attributeName) as? Int64

@@ -14,6 +14,7 @@
 "find_hints_below" = "⬇︎ You can find hints below";
 "purchase_deferred" = "Your purchase was deferred - it can take a while.";
 "purchase_failed_not_cancelled" = "It just didn't work for some reason.";
+"log_in_to_gamecenter" = "Log in to GameCenter";
 
 
 //MARK: Share button

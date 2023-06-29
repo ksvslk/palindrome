@@ -36,7 +36,10 @@ struct C {
     static let LATEST_PLAYED_LEVEL = "LATEST_PLAYED_LEVEL"
     static let PLAYER_SCORES = "PLAYER_SCORES"
     static let TUTORIAL_SHOWN = "TUTORIAL_SHOWN"
-        
+    
+    static let CLOUD_PROGRESS_KEY = "CLOUD_PROGRESS"
+    static let CLOUD_BEST_SCORES_KEY = "CLOUD_BEST_SCORES"
+    static let CLOUD_CURRENT_LEVEL_KEY = "CLOUD_CURRENT_LEVEL"
     
     // IDs
     static let GAME_LEADERBOARD = "game_leaderboard"
