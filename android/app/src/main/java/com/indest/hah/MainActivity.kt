@@ -238,8 +238,7 @@ class MainActivity : AppCompatActivity() {
         params.gravity = Gravity.TOP
         params.topMargin = resources.getDimension(com.intuit.sdp.R.dimen._16sdp).toInt()
         snack.view.layoutParams = params
-        snack.view.background =
-            ContextCompat.getDrawable(applicationContext, R.drawable.new_level_message_rectangle)
+        /*snack.view.background = ContextCompat.getDrawable(applicationContext, R.drawable.new_level_message_rectangle)*/
         snack.show()
     }
 

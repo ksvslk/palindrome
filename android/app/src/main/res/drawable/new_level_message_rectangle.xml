@@ -9,5 +9,5 @@
         android:right="@dimen/_16sdp">
     </padding>
     <solid
-        android:color="#F8F8F8"/>
+        android:color="?colorPrimaryContainer"/>
 </shape>

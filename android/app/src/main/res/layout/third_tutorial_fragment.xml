@@ -9,58 +9,41 @@
     android:layout_marginHorizontal="@dimen/default_large_margin"
     android:gravity="center"
     android:orientation="vertical"
-    app:divider="@drawable/divider"
-    app:dividerPadding="@dimen/simple_dialog_header_left_margin"
-    app:showDividers="middle"
     tools:context=".fragments.ThirdTutorialFragment">
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:saveEnabled="false"
-
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/default_large_margin"
-        android:padding="@dimen/default_large_margin"
         android:gravity="center"
         android:orientation="vertical">
 
         <Button
             android:saveEnabled="false"
-
+            style="@style/Widget.Material3.Button.TonalButton"
             android:id="@+id/startButton"
-            style="@style/OC.OutlinedButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/yantramanav_bold"
             android:drawableEnd="@drawable/ic_baseline_arrow_right_24"
-            android:paddingVertical="@dimen/default_gap"
             android:text="@string/next"
             android:textAppearance="@style/TextAppearance.OC.Headline5"
             android:textSize="@dimen/tutorial_primary_button_text_size" />
-
-        <com.google.android.material.progressindicator.LinearProgressIndicator
-            android:saveEnabled="false"
-
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:progress="66" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:saveEnabled="false"
-        
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/default_large_margin"
-        android:padding="@dimen/default_large_margin"
         android:gravity="start"
         android:text="@string/tutorial3_second_text"
         android:textSize="@dimen/tutorial_text_size" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:saveEnabled="false"
-        
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
