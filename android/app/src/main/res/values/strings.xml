@@ -147,7 +147,7 @@
     <!-- TUTORIAL -->
     <string name="tutorial_text">Create a palindrome with the given chars. Solution will be same when reading from either side.</string>
     <string name="tutorial3_text">Sentences require regular punctuation.</string>
-    <string name="tutorial3_second_text">• Multiple solutions are marked with \"*\" \n• Fewer mistakes = better score</string>
+    <string name="tutorial3_second_text">• Sentences require regular punctuation \n• Multiple solutions have \"*\" mark \n• Fewer mistakes = better score</string>
     <string name="tutorial_25_level_promo">One more thing… Reach level 25 and get \"Instant Clues\" as a reward.</string>
     <string name="tutorial_complete_text">Done! Enjoy the game 🚀</string>
     <string name="next">Next</string>

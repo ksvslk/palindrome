@@ -1,10 +1,12 @@
 package com.indest.hah.game.director
 
 import android.content.Context
+import android.graphics.Color
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import androidx.core.content.ContextCompat
+import com.google.android.material.color.MaterialColors
 import com.indest.hah.R
 import com.indest.hah.fx.SoundPlayer
 import com.indest.hah.game.director.data.AnimationColor
@@ -28,31 +30,31 @@ class Effects @Inject constructor(
 
     // Colors
     private val actionDownNoFriend = AnimationColor(
-        viewStart = ContextCompat.getColor(context, R.color.colorPrimary),
-        viewEnd = ContextCompat.getColor(context, R.color.colorSecondary),
-        textStart = ContextCompat.getColor(context, R.color.colorOnPrimary),
-        textEnd = ContextCompat.getColor(context, R.color.colorOnPrimary)
+        viewStart = MaterialColors.getColor(context, com.google.android.material.R.attr.colorSurfaceVariant, Color.RED),
+        viewEnd = MaterialColors.getColor(context, com.google.android.material.R.attr.colorSecondaryContainer, Color.RED),
+        textStart = MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSurfaceVariant, Color.RED),
+        textEnd = MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSecondaryContainer, Color.RED)
     )
 
     private val actionDownFriend = AnimationColor(
-        viewStart = ContextCompat.getColor(context, R.color.colorSecondary),
-        viewEnd = ContextCompat.getColor(context, R.color.colorSecondary),
-        textStart = ContextCompat.getColor(context, R.color.colorOnPrimary),
-        textEnd = ContextCompat.getColor(context, R.color.colorOnPrimary)
+        viewStart = MaterialColors.getColor(context, com.google.android.material.R.attr.colorSecondaryContainer, Color.RED),
+        viewEnd = MaterialColors.getColor(context, com.google.android.material.R.attr.colorSecondaryContainer, Color.RED),
+        textStart = MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSecondaryContainer, Color.RED),
+        textEnd = MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSecondaryContainer, Color.RED)
     )
 
     private val actionUpNoFriend = AnimationColor(
-        viewStart = ContextCompat.getColor(context, R.color.colorSecondary),
-        viewEnd = ContextCompat.getColor(context, R.color.colorPrimary),
-        textStart = ContextCompat.getColor(context, R.color.colorOnPrimary),
-        textEnd = ContextCompat.getColor(context, R.color.colorOnPrimary)
+        viewStart = MaterialColors.getColor(context, com.google.android.material.R.attr.colorSecondaryContainer, Color.RED),
+        viewEnd = MaterialColors.getColor(context, com.google.android.material.R.attr.colorSurfaceVariant, Color.RED),
+        textStart = MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSecondaryContainer, Color.RED),
+        textEnd = MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSurfaceVariant, Color.RED)
     )
 
     private val actionUpFriend = AnimationColor(
-        viewStart = ContextCompat.getColor(context, R.color.colorSecondary),
-        viewEnd = ContextCompat.getColor(context, R.color.colorSecondary),
-        textStart = ContextCompat.getColor(context, R.color.colorOnPrimary),
-        textEnd = ContextCompat.getColor(context, R.color.colorOnPrimary)
+        viewStart = MaterialColors.getColor(context, com.google.android.material.R.attr.colorPrimaryContainer, Color.RED),
+        viewEnd = MaterialColors.getColor(context, com.google.android.material.R.attr.colorPrimaryContainer, Color.RED),
+        textStart = MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnPrimaryContainer, Color.RED),
+        textEnd = MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnPrimaryContainer, Color.RED)
     )
 
     fun playSound(soundSelector: SoundSelector) {
@@ -89,15 +91,15 @@ class Effects @Inject constructor(
     }
 
     fun getSuccessBoxColor(): Int {
-        return ContextCompat.getColor(context, R.color.successBoxColor)
+        return MaterialColors.getColor(context, com.google.android.material.R.attr.colorTertiaryContainer, Color.RED)
     }
 
     fun getLockedColor(): Int {
-        return ContextCompat.getColor(context, R.color.letterRewardedColor)
+        return MaterialColors.getColor(context, com.google.android.material.R.attr.colorPrimary, Color.RED)
     }
 
     fun getLockedTextColor(): Int {
-        return ContextCompat.getColor(context, R.color.textOnRewardedColor)
+        return MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnPrimary, Color.RED)
     }
 
 }

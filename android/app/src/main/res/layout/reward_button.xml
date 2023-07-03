@@ -9,6 +9,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/simple_dialog_item_left_margin"
             android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
+            android:tint="?colorOnPrimaryContainer"
             android:clickable="false"
             tools:ignore="RtlSymmetry" />
 
@@ -47,11 +48,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:background="@color/colorPrimary"
+                    android:background="?colorPrimary"
                     android:paddingHorizontal="@dimen/_3sdp"
                     android:text="@string/placeholder"
                     android:textAppearance="@style/TextAppearance.OC.Caption"
-                    android:textColor="@color/colorOnPrimary" />
+                    android:textColor="?colorOnPrimary" />
             </androidx.appcompat.widget.LinearLayoutCompat>
 
             <androidx.appcompat.widget.LinearLayoutCompat
@@ -69,11 +70,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:background="@color/letterRewardedColor"
+                    android:background="?colorTertiaryContainer"
                     android:padding="@dimen/_3sdp"
                     android:text="@string/placeholder"
                     android:textAppearance="@style/TextAppearance.OC.Body1"
-                    android:textColor="@color/textOnRewardedColor" />
+                    android:textColor="?colorOnTertiaryContainer" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
         </ViewFlipper>

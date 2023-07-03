@@ -14,7 +14,6 @@
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:saveEnabled="false"
-        
         android:id="@+id/games_dialog_title"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_header_height"
@@ -22,7 +21,6 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:saveEnabled="false"
-            
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -33,7 +31,6 @@
 
     <com.indest.hah.views.AnyButton
         android:saveEnabled="false"
-        
         android:id="@+id/leaderboards_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
@@ -47,7 +44,6 @@
 
     <com.indest.hah.views.AnyButton
         android:saveEnabled="false"
-        
         android:id="@+id/player_levels_leaderboard_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
@@ -61,7 +57,6 @@
 
     <com.indest.hah.views.AnyButton
         android:saveEnabled="false"
-        
         android:id="@+id/achievements_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
@@ -75,7 +70,6 @@
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:saveEnabled="false"
-        
         android:id="@+id/alternative_screen"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/simple_dialog_item_height"
@@ -85,7 +79,6 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:saveEnabled="false"
-            
             android:id="@+id/alternative_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

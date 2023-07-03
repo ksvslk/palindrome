@@ -2,6 +2,7 @@ package com.indest.hah.views
 
 import android.content.Context
 import android.content.res.TypedArray
+import android.graphics.Color
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.ViewFlipper
@@ -10,6 +11,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
+import com.google.android.material.color.MaterialColors
 import com.indest.hah.R
 import com.indest.hah.general.GeneralViewModel
 import com.indest.hah.views.ButtonState.*
@@ -69,10 +71,6 @@ class RewardButton : LinearLayoutCompat {
         findViewById<AppCompatTextView>(R.id.reward_button_flipper_revealed_title).text = mainTitle
         findViewById<AppCompatImageView>(R.id.reward_button_icon).apply {
             this.setImageDrawable(AppCompatResources.getDrawable(context, customIcon))
-            this.setColorFilter(
-                ContextCompat.getColor(context, R.color.colorOnPrimary),
-                android.graphics.PorterDuff.Mode.SRC_IN
-            )
         }
     }
 
@@ -101,8 +99,8 @@ class RewardButton : LinearLayoutCompat {
                 buttonState = AD
                 findViewById<AppCompatTextView>(R.id.reward_button_flipper_revealed_subtitle).apply {
                     this.text = subtitleAdAvailable
-                    setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary))
-                    setTextColor(ContextCompat.getColor(context, R.color.colorOnPrimary))
+                    setBackgroundColor(MaterialColors.getColor(context, com.google.android.material.R.attr.colorPrimary, Color.RED))
+                    setTextColor(MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnPrimary, Color.RED))
                 }
             }
             NO_AD -> {
@@ -113,12 +111,9 @@ class RewardButton : LinearLayoutCompat {
                     else this.text = context.getString(R.string.no_internet)
 
                     setBackgroundColor(
-                        ContextCompat.getColor(
-                            context,
-                            R.color.hintsNotificationColor
-                        )
+                        MaterialColors.getColor(context, com.google.android.material.R.attr.colorSecondaryContainer, Color.RED)
                     )
-                    setTextColor(ContextCompat.getColor(context, R.color.colorOnError))
+                    setTextColor(MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSecondary, Color.RED))
                 }
             }
             PREMIUM -> {
@@ -126,8 +121,8 @@ class RewardButton : LinearLayoutCompat {
                 buttonState = PREMIUM
                 findViewById<AppCompatTextView>(R.id.reward_button_flipper_revealed_subtitle).apply {
                     this.text = subtitleRewardUnlocked
-                    setBackgroundColor(ContextCompat.getColor(context, R.color.successBoxColor))
-                    setTextColor(ContextCompat.getColor(context, R.color.successTextColor))
+                    setBackgroundColor(MaterialColors.getColor(context, com.google.android.material.R.attr.colorPrimaryContainer, Color.RED))
+                    setTextColor(MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnPrimaryContainer, Color.RED))
                 }
             }
         }

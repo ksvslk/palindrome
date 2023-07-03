@@ -16,7 +16,7 @@
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:saveEnabled="false"
-        
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/default_large_margin"
@@ -26,13 +26,12 @@
 
         <Button
             android:saveEnabled="false"
-            
+
             android:id="@+id/startButton"
             style="@style/OC.OutlinedButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/yantramanav_bold"
-            android:backgroundTint="@color/colorPrimary"
             android:drawableEnd="@drawable/ic_baseline_arrow_right_24"
             android:paddingVertical="@dimen/default_gap"
             android:text="@string/next"
@@ -41,155 +40,10 @@
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:saveEnabled="false"
-            
+
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:progress="66"
-            app:indicatorColor="@color/colorOnBackground" />
-
-    </androidx.appcompat.widget.LinearLayoutCompat>
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:saveEnabled="false"
-        
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/default_large_margin"
-        android:padding="@dimen/default_large_margin"
-        android:textAlignment="center"
-        android:text="@string/tutorial3_text"
-        android:textColor="@color/colorOnPrimary"
-        android:textSize="@dimen/tutorial_text_size" />
-
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:saveEnabled="false"
-        
-        android:id="@+id/tutorialGameplay"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/default_large_margin"
-        android:padding="@dimen/default_large_margin"
-        android:animateLayoutChanges="true"
-        android:clipChildren="false"
-        android:gravity="center"
-        android:orientation="vertical">
-
-        <androidx.gridlayout.widget.GridLayout
-            android:saveEnabled="false"
-            
-            android:id="@+id/tutorial_letters_grid1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:animateLayoutChanges="true"
-            android:clipChildren="false"
-
-            android:splitMotionEvents="false"
-            android:visibility="visible"
-            app:columnCount="2"
-            app:useDefaultMargins="true">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:saveEnabled="false"
-                
-                android:id="@+id/letter1_1"
-                android:layout_width="@dimen/tutorial_box_size"
-                android:layout_height="@dimen/tutorial_box_size"
-                android:background="@color/colorPrimary"
-                android:elevation="1dp"
-                android:fontFamily="@font/yantramanav_bold"
-                android:gravity="center"
-                android:text="H"
-                android:textColor="@color/colorOnPrimary"
-                android:textSize="@dimen/tutorial_box_text_size" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:saveEnabled="false"
-                
-                android:id="@+id/letter2_1"
-                android:layout_width="@dimen/tutorial_box_size"
-                android:layout_height="@dimen/tutorial_box_size"
-                android:background="@color/colorPrimary"
-                android:elevation="1dp"
-                android:fontFamily="@font/yantramanav_bold"
-                android:gravity="center"
-                android:text="A"
-                android:textColor="@color/colorOnPrimary"
-                android:textSize="@dimen/tutorial_box_text_size" />
-
-        </androidx.gridlayout.widget.GridLayout>
-
-        <androidx.gridlayout.widget.GridLayout
-            android:saveEnabled="false"
-            
-            android:id="@+id/tutorial_letters_grid"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:animateLayoutChanges="true"
-            android:clipChildren="false"
-            android:splitMotionEvents="false"
-            android:visibility="visible"
-            app:columnCount="4"
-            app:useDefaultMargins="true">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:saveEnabled="false"
-                
-                android:id="@+id/letter1"
-                android:layout_width="@dimen/tutorial_box_size"
-                android:layout_height="@dimen/tutorial_box_size"
-                android:background="@color/colorPrimary"
-                android:elevation="1dp"
-                android:fontFamily="@font/yantramanav_bold"
-                android:gravity="center"
-                android:text="H"
-                android:textColor="@color/colorOnPrimary"
-                android:textSize="@dimen/tutorial_box_text_size" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:saveEnabled="false"
-                
-                android:id="@+id/letter2"
-                android:layout_width="@dimen/tutorial_box_size"
-                android:layout_height="@dimen/tutorial_box_size"
-                android:background="@color/colorPrimary"
-                android:elevation="1dp"
-                android:fontFamily="@font/yantramanav_bold"
-                android:gravity="center"
-                android:text="A"
-                android:textColor="@color/colorOnPrimary"
-                android:textSize="@dimen/tutorial_box_text_size" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:saveEnabled="false"
-                
-                android:id="@+id/letter3"
-                android:layout_width="@dimen/tutorial_box_size"
-                android:layout_height="@dimen/tutorial_box_size"
-                android:background="@color/colorPrimary"
-                android:elevation="1dp"
-                android:fontFamily="@font/yantramanav_bold"
-                android:gravity="center"
-                android:text="H"
-                android:textColor="@color/colorOnPrimary"
-                android:textSize="@dimen/tutorial_box_text_size" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:saveEnabled="false"
-                
-                android:id="@+id/letter4"
-                android:layout_width="@dimen/tutorial_box_size"
-                android:layout_height="@dimen/tutorial_box_size"
-                android:background="@color/colorPrimary"
-                android:backgroundTint="@color/hintsNotificationColor"
-                android:elevation="1dp"
-                android:fontFamily="@font/yantramanav_bold"
-                android:gravity="center"
-                android:text="!"
-                android:textColor="@color/colorOnPrimary"
-                android:textSize="@dimen/tutorial_box_text_size" />
-        </androidx.gridlayout.widget.GridLayout>
+            android:progress="66" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -202,7 +56,6 @@
         android:padding="@dimen/default_large_margin"
         android:gravity="start"
         android:text="@string/tutorial3_second_text"
-        android:textColor="@color/colorOnPrimary"
         android:textSize="@dimen/tutorial_text_size" />
 
     <androidx.appcompat.widget.LinearLayoutCompat

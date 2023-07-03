@@ -24,8 +24,6 @@
         android:layout_height="@dimen/_10sdp"
         android:layout_width="match_parent"
         android:translationZ="3dp"
-        app:indicatorColor="@color/successBoxColor"
-        app:trackColor="@color/progressBackgroundColor"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
@@ -40,10 +38,9 @@
         android:gravity="center"
         android:visibility="gone"
         android:padding="@dimen/default_gap"
-        android:background="@color/colorSecondary"
+        android:background="?colorSecondary"
         android:text="@string/watch_ad_top_notice"
-        android:translationZ="2dp"
-        android:textColor="@color/colorOnPrimary"/>
+        android:translationZ="2dp"/>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:saveEnabled="false"
@@ -54,8 +51,8 @@
         android:fontFamily="@font/yantramanav_bold"
         app:layout_constraintTop_toBottomOf="@+id/gameProgress"
         app:layout_constraintRight_toRightOf="@+id/container"
-        android:background="@color/letterRewardedColor"
-        android:textColor="@color/colorOnPrimary"
+        android:background="?colorTertiary"
+        android:textColor="?colorOnTertiary"
         android:paddingHorizontal="@dimen/default_gap"
         android:text="@string/watch_ad_top_notice">
     </androidx.appcompat.widget.AppCompatTextView>
@@ -91,9 +88,6 @@
         android:layout_marginStart="0dp"
         android:layout_marginEnd="0dp"
         android:paddingBottom="16dp"
-        android:background="@color/colorBackground"
-        app:itemIconTint="@color/colorOnBackground"
-        app:itemTextColor="@color/colorOnBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

@@ -2,6 +2,7 @@ package com.indest.hah.views
 
 import android.content.Context
 import android.content.res.TypedArray
+import android.graphics.Color
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
+import com.google.android.material.color.MaterialColors
 import com.indest.hah.R
 import com.indest.hah.general.GeneralViewModel
 
@@ -71,10 +73,7 @@ class PurchaseButton : LinearLayoutCompat {
                     R.drawable.baseline_lock_black_36
                 )
             )
-            this.setColorFilter(
-                ContextCompat.getColor(context, R.color.colorOnPrimary),
-                android.graphics.PorterDuff.Mode.SRC_IN
-            )
+
         }
         showLabelIfApplicable()
         this.visibility = View.GONE

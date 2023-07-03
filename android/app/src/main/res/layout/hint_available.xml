@@ -26,7 +26,5 @@
         android:layout_gravity="center_vertical"
         android:text="@string/watch_rewarded_video"
         android:paddingHorizontal="@dimen/_3sdp"
-        android:background="@color/colorPrimary"
-        android:textColor="@color/colorOnPrimary"
         android:textAppearance="@style/TextAppearance.OC.Caption" />
 </androidx.appcompat.widget.LinearLayoutCompat>

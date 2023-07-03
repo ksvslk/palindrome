@@ -37,9 +37,6 @@ android {
         }
     }
 
-    aaptOptions {
-        noCompress 'wav'
-    }
 
     buildTypes {
         release {
@@ -138,6 +135,9 @@ android {
     }
     buildToolsVersion '33.0.0'
     namespace 'com.indest.hah'
+    androidResources {
+        noCompress 'wav'
+    }
 
 }
 

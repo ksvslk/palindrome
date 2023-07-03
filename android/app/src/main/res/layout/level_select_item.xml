@@ -9,12 +9,10 @@
     android:gravity="center">
     <TextView
         android:saveEnabled="false"
-        
         android:id="@+id/levelSelectView"
         android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:textColor="@drawable/level_select_textview_color_selector"
         android:textAppearance="@style/TextAppearance.OC.LevelSelectNumber"
         android:text="@string/placeholder_text"/>
 </FrameLayout>

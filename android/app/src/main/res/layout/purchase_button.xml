@@ -10,12 +10,12 @@
         android:layout_marginStart="@dimen/simple_dialog_item_left_margin"
         android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
         android:clickable="false"
+        android:tint="?colorOnPrimaryContainer"
         android:contentDescription="@string/remove_letter_ads_text"
         tools:ignore="RtlSymmetry" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:saveEnabled="false"
-        
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clickable="false"
@@ -26,7 +26,6 @@
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:saveEnabled="false"
-            
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -36,7 +35,6 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:saveEnabled="false"
-                
                 android:id="@+id/purchase_button_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -46,21 +44,19 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:saveEnabled="false"
-                
                 android:id="@+id/purchase_button_subtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:background="@color/colorSecondary"
+                android:background="?colorSecondary"
                 android:paddingHorizontal="@dimen/_3sdp"
                 android:text="@string/placeholder"
                 android:textAppearance="@style/TextAppearance.OC.Caption"
-                android:textColor="@color/colorOnPrimary" />
+                android:textColor="?colorOnPrimary" />
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:saveEnabled="false"
-            
             android:id="@+id/purchase_button_label_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -70,20 +66,18 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:saveEnabled="false"
-                
                 android:id="@+id/purchase_button_label_first"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:background="@color/colorSecondary"
+                android:background="?colorSecondary"
                 android:padding="@dimen/_3sdp"
                 android:text="@string/placeholder"
                 android:textAppearance="@style/TextAppearance.OC.Caption"
-                android:textColor="@color/colorOnPrimary" />
+                android:textColor="?colorOnSecondary" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:saveEnabled="false"
-                
                 android:id="@+id/purchase_button_label_space"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -98,11 +92,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:background="@color/colorOnPrimary"
+                android:background="?colorPrimaryContainer"
                 android:padding="@dimen/_3sdp"
                 android:text="@string/placeholder"
                 android:textAppearance="@style/TextAppearance.OC.Caption"
-                android:textColor="@color/colorPrimary" />
+                android:textColor="?colorOnPrimaryContainer" />
         </androidx.appcompat.widget.LinearLayoutCompat>
 
     </androidx.appcompat.widget.LinearLayoutCompat>

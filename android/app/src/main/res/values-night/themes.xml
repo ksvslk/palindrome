@@ -1,28 +1,7 @@
 <resources>
     <style name="Theme.OC" parent="Base.Theme.OC">
-        <item name="colorPrimary">@color/colorSecondary</item>
-        <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>
-        <item name="colorOnPrimary">@color/colorOnPrimary</item>
 
-        <item name="colorSecondary">@color/colorSecondary</item>
-        <item name="colorSecondaryVariant">@color/colorSecondaryVariant</item>
-        <item name="colorOnSecondary">@color/colorOnSecondary</item>
-
-        <item name="android:colorBackground">@color/colorBackground</item>
-        <item name="colorOnBackground">@color/colorOnBackground</item>
-        <item name="colorSurface">@color/colorBackground</item>
-        <item name="colorOnSurface">@color/colorOnSurface</item>
-        <item name="colorError">@color/colorError</item>
-        <item name="colorOnError">@color/colorOnError</item>
-
-        <item name="android:navigationBarColor">@color/navigationBarColor</item>
     </style>
 
-    <style name="ThemeOverlay.App.MaterialAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
-        <item name="colorPrimary">@color/colorOnPrimary</item>
-        <item name="colorSecondary">@color/colorSecondary</item>
-        <item name="colorSurface">@color/colorSurface</item>
-        <item name="colorOnSurface">@color/colorOnPrimary</item>
-        <item name="backgroundTint">@color/darkBlue</item>
-    </style>
+
 </resources>

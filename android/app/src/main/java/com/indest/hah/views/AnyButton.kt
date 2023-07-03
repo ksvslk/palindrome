@@ -2,6 +2,7 @@ package com.indest.hah.views
 
 import android.content.Context
 import android.content.res.TypedArray
+import android.graphics.Color
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.appcompat.content.res.AppCompatResources
@@ -9,6 +10,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
+import com.google.android.material.color.MaterialColors
 import com.indest.hah.R
 
 class AnyButton : LinearLayoutCompat {
@@ -52,10 +54,6 @@ class AnyButton : LinearLayoutCompat {
         findViewById<AppCompatTextView>(R.id.any_button_title).text = title
         findViewById<AppCompatImageView>(R.id.any_button_icon).apply {
             this.setImageDrawable(AppCompatResources.getDrawable(context, icon))
-            this.setColorFilter(
-                ContextCompat.getColor(context, R.color.colorOnPrimary),
-                android.graphics.PorterDuff.Mode.SRC_IN
-            )
         }
     }
 }

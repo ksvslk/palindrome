@@ -16,14 +16,12 @@
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:saveEnabled="false"
-        
         android:id="@+id/hints_dialog_title"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_header_height"
         android:orientation="horizontal">
         <androidx.appcompat.widget.AppCompatTextView
             android:saveEnabled="false"
-            
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -35,7 +33,6 @@
     <com.indest.hah.views.RewardButton
         android:id="@+id/reward_category_button"
         android:saveEnabled="false"
-        
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
         android:layout_margin="@dimen/_2sdp"
@@ -52,7 +49,6 @@
 
     <com.indest.hah.views.RewardButton
         android:saveEnabled="false"
-        
         android:id="@+id/reward_place_letter"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
@@ -70,7 +66,6 @@
 
     <com.indest.hah.views.PurchaseButton
         android:saveEnabled="false"
-        
         android:id="@+id/purchase_button_clues"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
@@ -84,7 +79,6 @@
 
     <com.indest.hah.views.PurchaseButton
         android:saveEnabled="false"
-        
         android:id="@+id/purchase_button_letters"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
@@ -99,7 +93,6 @@
 
     <com.indest.hah.views.PurchaseButton
         android:saveEnabled="false"
-        
         android:id="@+id/purchase_no_sad_mode"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
@@ -113,7 +106,6 @@
 
     <com.indest.hah.views.PurchaseButton
         android:saveEnabled="false"
-        
         android:id="@+id/purchase_all_inclusive_pack"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"

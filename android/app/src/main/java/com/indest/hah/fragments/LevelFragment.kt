@@ -3,8 +3,10 @@ package com.indest.hah.fragments
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +24,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.color.MaterialColors
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.indest.hah.MainActivity
@@ -495,11 +498,11 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
     private fun showHintsBadge() {
         if (isVisible) {
+
             activity?.let {
                 val hintBadge = it.findViewById<BottomNavigationView>(R.id.bottomNavView)
                     .getOrCreateBadge(R.id.navigation_goods)
-                hintBadge.backgroundColor =
-                    ContextCompat.getColor(it.applicationContext, R.color.hintsNotificationColor)
+                hintBadge.backgroundColor =  MaterialColors.getColor(it.applicationContext, com.google.android.material.R.attr.colorTertiary, Color.RED)
                 hintBadge.badgeGravity = BadgeDrawable.TOP_END
                 val text = getString(R.string.hints_are_available)
                 val duration = Toast.LENGTH_LONG
@@ -522,8 +525,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                     activity?.let {
                         val stagesBadge = it.findViewById<BottomNavigationView>(R.id.bottomNavView)
                             .getOrCreateBadge(R.id.navigation_stages)
-                        stagesBadge.backgroundColor =
-                            ContextCompat.getColor(it.applicationContext, R.color.hintsNotificationColor)
+                        stagesBadge.backgroundColor = MaterialColors.getColor(it.applicationContext, com.google.android.material.R.attr.colorTertiary, Color.RED)
                         stagesBadge.badgeGravity = BadgeDrawable.TOP_END
                         val text = getString(R.string.send_a_cool_palindrome)
                         val duration = Toast.LENGTH_LONG

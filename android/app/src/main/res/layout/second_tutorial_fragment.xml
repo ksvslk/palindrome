@@ -34,7 +34,6 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/yantramanav_bold"
             android:paddingVertical="@dimen/default_gap"
-            android:backgroundTint="@color/colorPrimary"
             android:text="@string/play"
             android:textAppearance="@style/TextAppearance.OC.Headline5"
             android:textSize="@dimen/tutorial_primary_button_text_size" />
@@ -44,8 +43,7 @@
             
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:progress="100"
-            app:indicatorColor="@color/colorOnBackground" />
+            android:progress="100" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -67,7 +65,6 @@
             android:paddingHorizontal="@dimen/default_large_margin"
             android:gravity="start"
             android:text="@string/tutorial_25_level_promo"
-            android:textColor="@color/colorOnPrimary"
             android:textSize="@dimen/tutorial_text_size" />
         <androidx.appcompat.widget.AppCompatTextView
             android:saveEnabled="false"
@@ -79,7 +76,6 @@
             android:paddingHorizontal="@dimen/default_large_margin"
             android:gravity="start"
             android:layout_gravity="center"
-            android:textColor="@color/colorError"
             android:textSize="@dimen/tutorial_text_size" />
         <androidx.appcompat.widget.AppCompatImageView
             android:saveEnabled="false"
@@ -101,7 +97,6 @@
         android:padding="@dimen/default_large_margin"
         android:gravity="center_horizontal"
         android:layout_gravity="center"
-        android:textColor="@color/colorOnPrimary"
         android:text="@string/tutorial_complete_text"
         android:textSize="@dimen/tutorial_text_size" />
 

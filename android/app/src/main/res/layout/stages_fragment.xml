@@ -14,7 +14,6 @@
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:saveEnabled="false"
-        
         android:id="@+id/stages_dialog_title"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_header_height"
@@ -23,7 +22,6 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:saveEnabled="false"
-            
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -32,7 +30,6 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:saveEnabled="false"
-            
             android:id="@+id/version_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -42,13 +39,11 @@
             android:textAlignment="viewEnd"
             android:gravity="end"
             android:textAppearance="@style/TextAppearance.OC.Caption"
-            android:textColor="@color/colorOnPrimaryDisabled"
             android:visibility="invisible" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <com.indest.hah.views.AnyButton
         android:saveEnabled="false"
-        
         android:id="@+id/submit_your_level_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
@@ -62,7 +57,6 @@
 
     <com.indest.hah.views.AnyButton
         android:saveEnabled="false"
-        
         android:id="@+id/player_levels_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
@@ -73,9 +67,9 @@
         android:orientation="horizontal"
         anybutton:any_button_icon="@drawable/ic_baseline_groups_24"
         anybutton:any_button_title="@string/player_levels" />
+
     <com.indest.hah.views.AnyButton
         android:saveEnabled="false"
-        
         android:id="@+id/game_levels_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"

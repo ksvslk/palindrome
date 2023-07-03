@@ -20,7 +20,6 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/def"
         android:layout_marginHorizontal="@dimen/default_large_margin"
-        android:textColorHint="@color/textOnRewardedColor"
         app:counterEnabled="true"
         app:counterMaxLength="@integer/maxUserPalindromeLength"
         app:endIconMode="custom"
@@ -55,8 +54,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/simple_dialog_item_height"
             android:layout_marginHorizontal="@dimen/simple_dialog_item_left_margin"
-            android:text="@string/send"
-            android:textColor="@color/colorOnPrimary" />
+            android:text="@string/send"/>
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:saveEnabled="false"
@@ -92,8 +90,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginHorizontal="@dimen/default_gap"
-                    android:background="@drawable/baseline_check_box_black_36"
-                    android:backgroundTint="@color/successBoxColor" />
+                    android:background="@drawable/baseline_check_box_black_36" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:saveEnabled="false"
@@ -139,8 +136,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/simple_dialog_item_height"
                     android:paddingHorizontal="@dimen/default_gap"
-                    android:text="@string/try_again"
-                    android:textColor="@color/colorOnPrimary" />
+                    android:text="@string/try_again"/>
             </androidx.appcompat.widget.LinearLayoutCompat>
         </RelativeLayout>
     </ViewFlipper>

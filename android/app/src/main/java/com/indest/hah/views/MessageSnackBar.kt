@@ -22,6 +22,7 @@ class MessageSnackBar(
 ) : BaseTransientBottomBar<MessageSnackBar>(parent, content, content) {
 
     init {
+
         getView().setBackgroundColor(
             ContextCompat.getColor(
                 view.context,

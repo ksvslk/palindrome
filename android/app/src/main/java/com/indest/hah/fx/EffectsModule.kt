@@ -1,9 +1,11 @@
 package com.indest.hah.fx
 
 import android.content.Context
+import android.graphics.Color
 import android.media.AudioManager
 import android.media.SoundPool
 import androidx.core.content.res.ResourcesCompat
+import com.google.android.material.color.MaterialColors
 import com.indest.hah.R
 import dagger.Module
 import dagger.Provides
@@ -63,22 +65,10 @@ object EffectsModule {
     @Provides
     @ActivityScoped
     fun provideColors(@ActivityContext context: Context): Colors {
-        val successTextColor =
-            ResourcesCompat.getColor(
-                context.resources,
-                R.color.successTextColor,
-                context.theme
-            )
-        val currentBoxColor =
-            ResourcesCompat.getColor(context.resources, R.color.colorSecondary, context.theme)
-        val boxSuccessColor =
-            ResourcesCompat.getColor(context.resources, R.color.successBoxColor, context.theme)
-        val lockedColor =
-            ResourcesCompat.getColor(
-                context.resources,
-                R.color.letterRewardedColor,
-                context.theme
-            )
+        val successTextColor = MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnTertiaryContainer, Color.RED)
+        val currentBoxColor = MaterialColors.getColor(context, com.google.android.material.R.attr.colorSurfaceVariant, Color.RED)
+        val boxSuccessColor = MaterialColors.getColor(context, com.google.android.material.R.attr.colorTertiaryContainer, Color.RED)
+        val lockedColor = MaterialColors.getColor(context, com.google.android.material.R.attr.colorPrimary, Color.RED)
         return Colors(
             successTextColor = successTextColor,
             currentBoxColor = currentBoxColor,

@@ -4,8 +4,8 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:saveEnabled="false"
-        
         android:id="@+id/any_button_icon"
+        android:tint="?colorOnPrimaryContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
@@ -16,7 +16,6 @@
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:saveEnabled="false"
-        
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginRight="@dimen/simple_dialog_header_left_margin"

@@ -1,10 +1,12 @@
 package com.indest.hah
 
+import android.graphics.Color
 import android.graphics.Rect
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
@@ -31,6 +33,8 @@ import com.google.android.gms.games.PlayGames
 import com.google.android.gms.games.Player
 import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.color.DynamicColors
+import com.google.android.material.color.MaterialColors
 import com.google.android.material.snackbar.BaseTransientBottomBar.ANIMATION_MODE_SLIDE
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.ump.ConsentForm
@@ -199,6 +203,7 @@ class MainActivity : AppCompatActivity() {
     ) {
         val snackMessage =
             if (multipleLevels == -1) "New level by $player!" else "$multipleLevels levels added!"
+
         val snack =
             Snackbar.make(findViewById(android.R.id.content), snackMessage, 15000)
                 .setAction("Play") {
@@ -224,18 +229,10 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 }
-                .setTextColor(
-                    ContextCompat.getColor(
-                        applicationContext,
-                        R.color.playNewLevelTextColor
-                    )
-                )
+                .setTextColor(MaterialColors.getColor(applicationContext, com.google.android.material.R.attr.colorOnPrimary, Color.RED))
                 .setAnimationMode(ANIMATION_MODE_SLIDE)
                 .setActionTextColor(
-                    ContextCompat.getColor(
-                        applicationContext,
-                        R.color.playNewLevelColor
-                    )
+                    MaterialColors.getColor(applicationContext, com.google.android.material.R.attr.colorOnPrimary, Color.RED)
                 )
         val params = snack.view.layoutParams as FrameLayout.LayoutParams
         params.gravity = Gravity.TOP

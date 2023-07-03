@@ -8,12 +8,10 @@
     tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
     <androidx.appcompat.widget.AppCompatTextView
         android:saveEnabled="false"
-        
         android:id="@+id/message"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/message_round_rectangle"
         android:gravity="center"
-        android:paddingHorizontal="@dimen/default_large_margin"
-        android:textColor="@color/colorOnPrimary" />
+        android:paddingHorizontal="@dimen/default_large_margin"/>
 </merge>

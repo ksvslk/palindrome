@@ -30,7 +30,7 @@
             android:contentDescription="@string/rewarded_place_letter"
             android:layout_marginHorizontal="@dimen/default_gap"
             app:srcCompat="@drawable/letter_icon"
-            app:tint="@color/colorOnPrimary"
+            app:tint="?colorOnPrimaryContainer"
             android:layout_weight="1"
             tools:ignore="RtlSymmetry" />
 

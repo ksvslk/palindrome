@@ -1,6 +1,7 @@
 package com.indest.hah.game.director
 
 import android.animation.ObjectAnimator
+import android.graphics.Color
 import android.util.Log
 import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
@@ -8,6 +9,7 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.findFragment
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import com.google.android.material.color.MaterialColors
 import com.indest.hah.R
 import com.indest.hah.fragments.LevelFragment
 import com.indest.hah.game.director.enums.ColorSelector
@@ -133,13 +135,13 @@ enum class LetterState : ILetterState {
             val endColor = if (durationModifier == 1) {
                 color.viewEnd
             } else {
-                ContextCompat.getColor(letter.context, R.color.letterRewardedColor)
+                MaterialColors.getColor(letter.context, com.google.android.material.R.attr.colorPrimary, Color.RED)
             }
 
             val endTextColor = if (durationModifier == 1) {
                 color.textEnd
             } else {
-                ContextCompat.getColor(letter.context, R.color.textOnRewardedColor)
+                MaterialColors.getColor(letter.context, com.google.android.material.R.attr.colorOnPrimary, Color.RED)
             }
 
             val onReleaseDuration = if (durationModifier == 1) {

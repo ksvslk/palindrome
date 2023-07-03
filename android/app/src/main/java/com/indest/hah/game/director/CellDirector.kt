@@ -90,7 +90,7 @@ class CellDirector constructor(
                         letter.currentPos = slot.pos
                         letter.isLocked = letterProperties.locked
                         letter.translationZ = NEUTRAL_LAYER
-                        val colors = letter.effects.getColors(ColorSelector.ACTION_DOWN_FRIEND)
+                        val colors = letter.effects.getColors(ColorSelector.ACTION_UP_FRIEND)
 
                         when {
                             info.levelInfo.progress == LevelProgress.INTERMEDIATE -> {

@@ -1,25 +1,11 @@
 <resources>
     <style name="Theme.OC" parent="Base.Theme.OC">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>
-        <item name="colorOnPrimary">@color/colorOnPrimary</item>
 
-        <item name="colorSecondary">@color/colorSecondary</item>
-        <item name="colorSecondaryVariant">@color/colorSecondaryVariant</item>
-        <item name="colorOnSecondary">@color/colorOnSecondary</item>
 
-        <item name="android:colorBackground">@color/colorBackground</item>
-        <item name="colorOnBackground">@color/colorOnBackground</item>
-        <item name="colorSurface">@color/colorSurface</item>
-        <item name="colorOnSurface">@color/colorOnSurface</item>
-        <item name="colorError">@color/colorError</item>
-        <item name="colorOnError">@color/colorOnError</item>
-
-        <item name="android:navigationBarColor">@color/navigationBarColor</item>
     </style>
 
     <!-- Base application theme. -->
-    <style name="Base.Theme.OC" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Base.Theme.OC" parent="Theme.Material3.DynamicColors.DayNight">
        <item name="windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
@@ -29,16 +15,16 @@
         <item name="fontFamily">@font/yantramanav_bold</item>
         <item name="android:transitionName">@transition/level_number_transition</item>
         <item name="android:statusBarColor" >?attr/colorPrimaryVariant</item>
-        <item name="materialAlertDialogTheme">@style/ThemeOverlay.App.MaterialAlertDialog</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.Material3.MaterialAlertDialog</item>
         <item name="bottomSheetDialogTheme">@style/HehBottomSheetDialogTheme</item>
-        <item name="bottomNavigationStyle">@style/Widget.MaterialComponents.BottomNavigationView</item>
+        <item name="bottomNavigationStyle">@style/Widget.Material3.BottomNavigationView</item>
     </style>
 
-    <style name="HehBottomSheetDialogTheme" parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
+    <style name="HehBottomSheetDialogTheme" parent="@style/ThemeOverlay.Material3.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/HehCustomBottomSheet</item>
     </style>
 
-    <style name="HehCustomBottomSheet" parent="Widget.MaterialComponents.BottomSheet">
+    <style name="HehCustomBottomSheet" parent="Widget.Material3.BottomSheet">
         <item name="shapeAppearanceOverlay">@style/CustomShapeAppearanceBottomSheetDialog</item>
     </style>
 
@@ -51,13 +37,5 @@
         <item name="cornerSizeBottomLeft">0dp</item>
     </style>
 
-    <style name="ThemeOverlay.App.MaterialAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
-        <item name="colorPrimary">@color/colorOnPrimary</item>
-        <item name="colorSecondary">@color/colorSecondary</item>
-        <item name="colorSurface">@color/colorSurface</item>
-        <item name="colorOnSurface">@color/colorOnPrimary</item>
-        <item name="backgroundTint">@color/colorSurface</item>
-        <item name="titleTextColor">@color/colorSurface</item>
-    </style>
 
 </resources>
