@@ -2,13 +2,13 @@ package com.indest.hah.game.creation
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Space
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.gridlayout.widget.GridLayout
 import com.google.android.material.color.MaterialColors
@@ -320,9 +320,11 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                         gravity = Gravity.CENTER
 
                         setBackgroundColor(
-                            MaterialColors.getColor(context, com.google.android.material.R.attr.colorSurfaceVariant, Color.RED)
+                            //MaterialColors.getColor(context, com.google.android.material.R.attr.colorSurfaceVariant, Color.RED)
+                            MaterialColors.getColor(context, com.google.android.material.R.attr.colorSecondaryContainer, Color.RED)
                         )
-                        setTextColor(MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSurfaceVariant, Color.RED))
+                        //setTextColor(MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSurfaceVariant, Color.RED))
+                        setTextColor(MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSecondaryContainer, Color.RED))
 
                     })
         }
@@ -351,8 +353,14 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                         contentDescription = "Slot nr ${this.homeIndex}"
                         width = ds.boxSize
                         height = ds.boxSize
-                        background =
-                            ResourcesCompat.getDrawable(resources, R.drawable.slot_edge_fade, null)
+
+                        // set slot color and border
+                        val drawable = GradientDrawable()
+                        drawable.shape = GradientDrawable.RECTANGLE
+                        drawable.setStroke(2, Color.TRANSPARENT)
+                        drawable.setColor(MaterialColors.getColor(context, com.google.android.material.R.attr.colorOutline, Color.DKGRAY))
+                        background = drawable
+
                         typeface = ResourcesCompat.getFont(context, R.font.yantramanav_bold)
                         gravity = Gravity.CENTER
                         setTextColor(MaterialColors.getColor(context, com.google.android.material.R.attr.colorSecondaryContainer, Color.RED))

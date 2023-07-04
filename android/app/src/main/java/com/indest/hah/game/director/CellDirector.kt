@@ -95,6 +95,7 @@ class CellDirector constructor(
                         when {
                             info.levelInfo.progress == LevelProgress.INTERMEDIATE -> {
                                 letter.setBackgroundColor(letter.effects.getSuccessBoxColor())
+                                letter.setTextColor(letter.effects.getSuccessTextColor())
                             }
                             letterProperties.locked -> {
                                 letter.setBackgroundColor(letter.effects.getLockedColor())
@@ -102,6 +103,7 @@ class CellDirector constructor(
                             }
                             else -> {
                                 letter.setBackgroundColor(colors.viewEnd)
+                                letter.setTextColor(colors.textEnd)
                             }
                         }
 

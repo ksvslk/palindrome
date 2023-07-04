@@ -15,7 +15,6 @@
 
         <ViewFlipper
             android:saveEnabled="false"
-            
             android:id="@+id/reward_button_flipper"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -25,7 +24,6 @@
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:saveEnabled="false"
-                
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
@@ -33,7 +31,6 @@
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:saveEnabled="false"
-                    
                     android:id="@+id/reward_button_flipper_revealed_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -43,7 +40,6 @@
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:saveEnabled="false"
-                    
                     android:id="@+id/reward_button_flipper_revealed_subtitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -57,7 +53,6 @@
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:saveEnabled="false"
-                
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
@@ -65,16 +60,15 @@
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:saveEnabled="false"
-                    
                     android:id="@+id/reward_button_flipper_hidden_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:background="?colorTertiaryContainer"
+                    android:background="?colorPrimaryContainer"
                     android:padding="@dimen/_3sdp"
                     android:text="@string/placeholder"
                     android:textAppearance="@style/TextAppearance.OC.Body1"
-                    android:textColor="?colorOnTertiaryContainer" />
+                    android:textColor="?colorOnPrimaryContainer" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
         </ViewFlipper>
