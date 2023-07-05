@@ -85,8 +85,8 @@
                 android:elevation="1dp"
                 android:fontFamily="@font/yantramanav_bold"
                 android:gravity="center"
-                android:background="?colorPrimary"
-                android:textColor="?colorOnPrimary"
+                android:background="?colorSecondaryContainer"
+                android:textColor="?colorOnSecondaryContainer"
                 android:text="A"
                 android:textSize="@dimen/tutorial_box_text_size" />
 
@@ -98,8 +98,8 @@
                 android:elevation="1dp"
                 android:fontFamily="@font/yantramanav_bold"
                 android:gravity="center"
-                android:background="?colorPrimary"
-                android:textColor="?colorOnPrimary"
+                android:background="?colorSecondaryContainer"
+                android:textColor="?colorOnSecondaryContainer"
                 android:text="H"
                 android:textSize="@dimen/tutorial_box_text_size" />
 
@@ -112,8 +112,8 @@
                 android:elevation="1dp"
                 android:fontFamily="@font/yantramanav_bold"
                 android:gravity="center"
-                android:background="?colorPrimary"
-                android:textColor="?colorOnPrimary"
+                android:background="?colorSecondaryContainer"
+                android:textColor="?colorOnSecondaryContainer"
                 android:text="H"
                 android:textSize="@dimen/tutorial_box_text_size" />
 

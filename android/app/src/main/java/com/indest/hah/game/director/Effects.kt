@@ -36,30 +36,30 @@ class Effects @Inject constructor(
         textStart = MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSurfaceVariant, Color.RED),
         textEnd = MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSecondaryContainer, Color.RED)
          */
-        viewStart = MaterialColors.getColor(context, com.google.android.material.R.attr.colorSecondaryContainer, Color.RED),
-        viewEnd = MaterialColors.getColor(context, com.google.android.material.R.attr.colorSurfaceVariant, Color.RED),
-        textStart = MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSecondaryContainer, Color.RED),
-        textEnd = MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSurfaceVariant, Color.RED)
-    )
-
-    private val actionDownFriend = AnimationColor(
-        viewStart = MaterialColors.getColor(context, com.google.android.material.R.attr.colorSecondaryContainer, Color.RED),
-        viewEnd = MaterialColors.getColor(context, com.google.android.material.R.attr.colorSecondaryContainer, Color.RED),
-        textStart = MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSecondaryContainer, Color.RED),
-        textEnd = MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSecondaryContainer, Color.RED)
-    )
-
-    private val actionUpNoFriend = AnimationColor(
         viewStart = MaterialColors.getColor(context, com.google.android.material.R.attr.colorSurfaceVariant, Color.RED),
         viewEnd = MaterialColors.getColor(context, com.google.android.material.R.attr.colorSecondaryContainer, Color.RED),
         textStart = MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSurfaceVariant, Color.RED),
         textEnd = MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSecondaryContainer, Color.RED)
     )
 
-    private val actionUpFriend = AnimationColor(
+    private val actionDownFriend = AnimationColor(
         viewStart = MaterialColors.getColor(context, com.google.android.material.R.attr.colorPrimaryContainer, Color.RED),
-        viewEnd = MaterialColors.getColor(context, com.google.android.material.R.attr.colorPrimaryContainer, Color.RED),
+        viewEnd = MaterialColors.getColor(context, com.google.android.material.R.attr.colorSecondaryContainer, Color.RED),
         textStart = MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnPrimaryContainer, Color.RED),
+        textEnd = MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSecondaryContainer, Color.RED)
+    )
+
+    private val actionUpNoFriend = AnimationColor(
+        viewStart = MaterialColors.getColor(context, com.google.android.material.R.attr.colorSecondaryContainer, Color.RED),
+        viewEnd = MaterialColors.getColor(context, com.google.android.material.R.attr.colorSurfaceVariant, Color.RED),
+        textStart = MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSecondaryContainer, Color.RED),
+        textEnd = MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSurfaceVariant, Color.RED)
+    )
+
+    private val actionUpFriend = AnimationColor(
+        viewStart = MaterialColors.getColor(context, com.google.android.material.R.attr.colorSecondaryContainer, Color.RED),
+        viewEnd = MaterialColors.getColor(context, com.google.android.material.R.attr.colorPrimaryContainer, Color.RED),
+        textStart = MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSecondaryContainer, Color.RED),
         textEnd = MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnPrimaryContainer, Color.RED)
     )
 

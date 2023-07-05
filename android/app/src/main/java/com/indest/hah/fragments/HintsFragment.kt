@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.LayoutTransition
 import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -53,8 +54,11 @@ class HintsFragment : BottomSheetDialogFragment() {
             {
                 launch {
                     viewModel.buttonState.collect {
+                        Log.d(TAG, "SKUS: " + it.skus.values.toString())
+                        binding.rewardPictureButton.updateButtonUi(it)
                         binding.rewardCategoryButton.updateButtonUi(it)
                         binding.rewardPlaceLetter.updateButtonUi(it)
+                        binding.purchaseButtonPictures.updateButtonUi(it)
                         binding.purchaseButtonClues.updateButtonUi(it)
                         binding.purchaseButtonLetters.updateButtonUi(it)
                         binding.purchaseNoSadMode.updateButtonUi(it)
@@ -79,10 +83,34 @@ class HintsFragment : BottomSheetDialogFragment() {
             binding.rewardCategoryButton.showClue()
         }
 
+        addBillingFlowOnClickToPurchaseButton(binding.purchaseButtonPictures)
         addBillingFlowOnClickToPurchaseButton(binding.purchaseButtonClues)
         addBillingFlowOnClickToPurchaseButton(binding.purchaseButtonLetters)
         addBillingFlowOnClickToPurchaseButton(binding.purchaseNoSadMode)
         addBillingFlowOnClickToPurchaseButton(binding.purchaseAllInclusivePack)
+
+        binding.rewardPictureButton.setOnClickListener {
+            if (levelViewModel.currentLevel.value.levelInfo.progress == LevelProgress.INTERMEDIATE)
+            {
+                levelIsCompletedToast()
+                return@setOnClickListener
+            }
+
+                when (binding.rewardCategoryButton.buttonState) {
+                    AD -> {
+                        (activity as? AppCompatActivity)?.let {
+                            viewModel.showRewardedVideo(it, PICTURE)
+                        }
+                    }
+                    PREMIUM -> {
+                        revealPicture()
+                        levelViewModel.logPremiumHintUsage(PICTURE)
+                    }
+                    NO_AD -> {  /* No action. Button should be disabled in this state. */
+                    }
+                }
+
+        }
 
         binding.rewardCategoryButton.setOnClickListener {
             if (levelViewModel.currentLevel.value.levelInfo.progress == LevelProgress.INTERMEDIATE)
@@ -145,6 +173,12 @@ class HintsFragment : BottomSheetDialogFragment() {
         when (rewardType) {
             NONE -> {/*_*/
             }
+            PICTURE -> {
+                revealPicture()
+                levelViewModel.saveGameImmediately()
+                viewModel.updateRewardState(NONE)
+                levelViewModel.logRewardGiven(rewardType)
+            }
             CLUE -> {
                 revealClue()
                 levelViewModel.saveGameImmediately()
@@ -161,12 +195,22 @@ class HintsFragment : BottomSheetDialogFragment() {
             }
             SAD_MODE -> {}
             SAD_AD_FAILED -> {}
+
         }
     }
 
     private fun revealClue() {
         soundPlayer.play(soundPlayer.sounds.letterRewardedSoundId)
         binding.rewardCategoryButton.showClue()
+    }
+
+    private fun revealPicture() {
+        soundPlayer.play(soundPlayer.sounds.letterRewardedSoundId)
+        PictureDialogFragment().show(childFragmentManager, PictureDialogFragment.TAG)
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
     }
 
     override fun onCreateView(

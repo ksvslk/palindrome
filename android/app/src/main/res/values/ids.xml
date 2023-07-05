@@ -24,11 +24,19 @@
     <string name="instant_letters">instant_letters</string>
     <string name="instant_clues">instant_clues</string>
     <string name="sad_mode">sad_mode</string>
+    <string name="instant_pictures">instant_pictures</string>
+
 
     <!-- IAPs that will unlock clues. ANY match will do. -->
     <string-array name="iap_group_that_unlock_clues">
         <item>@string/all_inclusive_pack</item>
         <item>@string/instant_clues</item>
+    </string-array>
+
+    <!-- IAPs that will unlock pictures. ANY match will do. -->
+    <string-array name="iap_group_that_unlock_pictures">
+        <item>@string/all_inclusive_pack</item>
+        <item>@string/instant_pictures</item>
     </string-array>
 
     <!-- IAPs that will unlock letters. ANY match will do. -->
@@ -41,6 +49,12 @@
     <string-array name="letters_case_1">
         <item>@string/all_inclusive_pack</item>
         <item>@string/instant_letters</item>
+    </string-array>
+
+    <!-- IAPs that will hide letters purchase button from menu. ANY match will do -->
+    <string-array name="pictures_case_1">
+        <item>@string/all_inclusive_pack</item>
+        <item>@string/instant_pictures</item>
     </string-array>
 
     <!-- IAPs that will hide clue purchase button from menu. ANY match will do. -->
@@ -66,6 +80,9 @@
     </string-array>
     <string-array name="all_inclusive_pack_case3">
         <item>@string/instant_letters</item>
+    </string-array>
+    <string-array name="all_inclusive_pack_case4">
+        <item>@string/instant_pictures</item>
     </string-array>
 
 </resources>

@@ -53,6 +53,7 @@
     <string name="sign_in_to_submit">To submit levels sign in from "Settings"</string>
     <string name="achievements">Achievements</string>
     <string name="leaderboard">Game Leaderboard</string>
+    <string name="rewarded_reveal_picture">Reveal Picture</string>
     <string name="rewarded_reveal_clue">Reveal Clue</string>
     <string name="rewarded_place_letter">Place Letter</string>
     <string name="remove_clue_ads_text">Instant Clues</string>
@@ -174,5 +175,6 @@
     <string name="analytics_user_prop">app_type</string>
     <string name="status_installed">installed</string>
     <string name="status_instant">instant</string>
+    <string name="picture_hint">Picture hint</string>
 
 </resources>

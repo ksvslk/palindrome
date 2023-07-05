@@ -320,11 +320,9 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                         gravity = Gravity.CENTER
 
                         setBackgroundColor(
-                            //MaterialColors.getColor(context, com.google.android.material.R.attr.colorSurfaceVariant, Color.RED)
-                            MaterialColors.getColor(context, com.google.android.material.R.attr.colorSecondaryContainer, Color.RED)
+                            MaterialColors.getColor(context, com.google.android.material.R.attr.colorSurfaceVariant, Color.RED)
                         )
-                        //setTextColor(MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSurfaceVariant, Color.RED))
-                        setTextColor(MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSecondaryContainer, Color.RED))
+                        setTextColor(MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSurfaceVariant, Color.RED))
 
                     })
         }

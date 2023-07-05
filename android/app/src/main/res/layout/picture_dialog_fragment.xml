@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/picture_dialog_fragment"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/imageView"
+        android:layout_gravity="center"
+        android:padding="@dimen/default_large_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:shapeAppearanceOverlay="@style/roundedCornersImageView"
+        android:scaleType="fitCenter"
+        android:src="@drawable/test"
+        android:contentDescription="@string/picture_hint" />
+</androidx.appcompat.widget.LinearLayoutCompat>

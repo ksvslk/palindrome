@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <style name="Theme.OC" parent="Base.Theme.OC">
         <item name="colorPrimary">@color/md_theme_light_primary</item>
         <item name="colorOnPrimary">@color/md_theme_light_onPrimary</item>
@@ -40,9 +40,16 @@
         <item name="fontFamily">@font/yantramanav_bold</item>
         <item name="android:transitionName">@transition/level_number_transition</item>
         <item name="android:statusBarColor" >?attr/colorPrimaryVariant</item>
-        <item name="materialAlertDialogTheme">@style/ThemeOverlay.Material3.MaterialAlertDialog</item>
         <item name="bottomSheetDialogTheme">@style/HehBottomSheetDialogTheme</item>
         <item name="bottomNavigationStyle">@style/Widget.Material3.BottomNavigationView</item>
+    </style>
+
+    <style name="HehMaterialAlertDialogTheme" parent="@style/ThemeOverlay.Material3.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:background">?colorOutline   </item>
+        <item name="android:windowMinWidthMinor">50%</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.8</item>
     </style>
 
     <style name="HehBottomSheetDialogTheme" parent="@style/ThemeOverlay.Material3.BottomSheetDialog">

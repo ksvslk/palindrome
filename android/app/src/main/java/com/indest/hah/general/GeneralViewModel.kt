@@ -77,7 +77,8 @@ class GeneralViewModel @Inject constructor(
                 application.getString(R.string.all_inclusive_pack),
                 application.getString(R.string.instant_clues),
                 application.getString(R.string.sad_mode),
-                application.getString(R.string.instant_letters)
+                application.getString(R.string.instant_letters),
+                application.getString(R.string.instant_pictures)
             )
             _billingDataSource = BillingDataSource.getInstance(
                 application,
@@ -86,6 +87,9 @@ class GeneralViewModel @Inject constructor(
             )
 
             // Collect and react to purchase button updates from BillingDataSource
+            launch {
+                combineAndUpdateMinSkuDetails(application.getString(R.string.instant_pictures))
+            }
             launch {
                 combineAndUpdateMinSkuDetails(application.getString(R.string.instant_letters))
             }

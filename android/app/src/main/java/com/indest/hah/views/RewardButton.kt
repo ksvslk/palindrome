@@ -113,7 +113,7 @@ class RewardButton : LinearLayoutCompat {
                     setBackgroundColor(
                         MaterialColors.getColor(context, com.google.android.material.R.attr.colorSecondaryContainer, Color.RED)
                     )
-                    setTextColor(MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSecondary, Color.RED))
+                    setTextColor(MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSecondaryContainer, Color.RED))
                 }
             }
             PREMIUM -> {
@@ -121,8 +121,8 @@ class RewardButton : LinearLayoutCompat {
                 buttonState = PREMIUM
                 findViewById<AppCompatTextView>(R.id.reward_button_flipper_revealed_subtitle).apply {
                     this.text = subtitleRewardUnlocked
-                    setBackgroundColor(MaterialColors.getColor(context, com.google.android.material.R.attr.colorPrimaryContainer, Color.RED))
-                    setTextColor(MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnPrimaryContainer, Color.RED))
+                    setBackgroundColor(MaterialColors.getColor(context, com.google.android.material.R.attr.colorTertiaryContainer, Color.RED))
+                    setTextColor(MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnTertiaryContainer, Color.RED))
                 }
             }
         }

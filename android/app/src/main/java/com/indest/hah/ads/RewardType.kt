@@ -1,6 +1,7 @@
 package com.indest.hah.ads
 
 enum class RewardType {
+    PICTURE,
     CLUE,
     LETTER,
     SAD_MODE,
