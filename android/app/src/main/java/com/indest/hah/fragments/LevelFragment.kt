@@ -170,7 +170,13 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                             }
                             else {
                                 displayLevel(event.level)
-                                (requireActivity() as MainActivity).updateProgressBar(event.progress)
+                                (requireActivity() as MainActivity)?.let {
+                                    it.updateProgressBar(
+                                        event.progress,
+                                        event.level.levelInfo.countryCode
+                                    )
+                                    it.downloadHintPictureIfNeeded(event.level.levelInfo.levelId)
+                                }
                             }
                         }
                         is LevelViewModel.GameEvent.SolutionResult -> {

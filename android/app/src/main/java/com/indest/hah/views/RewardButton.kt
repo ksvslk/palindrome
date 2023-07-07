@@ -25,6 +25,7 @@ class RewardButton : LinearLayoutCompat {
     private lateinit var subtitleAdUnavailable: String
     private var customIcon: Int = -1
     var buttonState: ButtonState = NO_AD
+    var loading = false
 
     constructor(context: Context) : super(context) {
         initializeViews(context)
@@ -95,7 +96,7 @@ class RewardButton : LinearLayoutCompat {
 
         when (state) {
             AD -> {
-                this.isClickable = true
+                if (!loading) this.isClickable = true
                 buttonState = AD
                 findViewById<AppCompatTextView>(R.id.reward_button_flipper_revealed_subtitle).apply {
                     this.text = subtitleAdAvailable
@@ -117,14 +118,43 @@ class RewardButton : LinearLayoutCompat {
                 }
             }
             PREMIUM -> {
-                this.isClickable = true
-                buttonState = PREMIUM
-                findViewById<AppCompatTextView>(R.id.reward_button_flipper_revealed_subtitle).apply {
-                    this.text = subtitleRewardUnlocked
-                    setBackgroundColor(MaterialColors.getColor(context, com.google.android.material.R.attr.colorTertiaryContainer, Color.RED))
-                    setTextColor(MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnTertiaryContainer, Color.RED))
-                }
+                updateToPremium()
             }
+        }
+    }
+
+    fun addDownloadingState()
+    {
+        loading = true
+        findViewById<AppCompatImageView>(R.id.reward_button_icon).apply {
+            val loadingIcon = AppCompatResources.getDrawable(context, R.drawable.baseline_downloading_36)
+            this.setImageDrawable(loadingIcon)
+        }
+        this.isClickable = false
+        this.alpha = 0.5f
+    }
+
+    fun removeDownloadingState()
+    {
+        loading = false
+        findViewById<AppCompatImageView>(R.id.reward_button_icon).apply {
+            val customIcon = AppCompatResources.getDrawable(context, customIcon)
+            this.setImageDrawable(customIcon)
+        }
+        if (buttonState != NO_AD) {
+            this.isClickable = true
+            this.alpha = 1f
+        }
+    }
+
+    fun updateToPremium()
+    {
+        if (!loading) this.isClickable = true
+        buttonState = PREMIUM
+        findViewById<AppCompatTextView>(R.id.reward_button_flipper_revealed_subtitle).apply {
+            this.text = subtitleRewardUnlocked
+            setBackgroundColor(MaterialColors.getColor(context, com.google.android.material.R.attr.colorTertiaryContainer, Color.RED))
+            setTextColor(MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnTertiaryContainer, Color.RED))
         }
     }
 }

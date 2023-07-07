@@ -37,6 +37,9 @@ class LevelViewModel @Inject constructor(
     private val _accountStatus = MutableStateFlow(AccountStatus.NOT_SET)
     val accountStatus = _accountStatus.asStateFlow()
 
+    private val _pictureHintDownloaded = MutableStateFlow(false)
+    val pictureHintDownloaded = _pictureHintDownloaded.asStateFlow()
+
     private val _currentLevel = MutableStateFlow(Level())
     val currentLevel = _currentLevel.asStateFlow()
 
@@ -145,6 +148,9 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+    fun setPictureDownloaded(isPresent: Boolean) {
+        _pictureHintDownloaded.value = isPresent
+    }
 
     fun setAccountStatus(accountStatus: AccountStatus) {
         _accountStatus.value = accountStatus
@@ -660,11 +666,13 @@ class LevelViewModel @Inject constructor(
                                         val solutionsToCategories =
                                             levelValues["solutionToCategory"] as Map<String, String>
                                         if (solutionsToCategories.isEmpty()) throw Exception("Solutions were empty")
+                                        val countryCode = levelValues.getOrElse("countryCode") { "gb" }
                                         playerLevels.add(
                                             PlayerLevel(
-                                                levelValues["levelId"] as Long,
-                                                levelValues["player"] as String,
-                                                solutionsToCategories
+                                                levelId = levelValues["levelId"] as Long,
+                                                player = levelValues["player"] as String,
+                                                solutionToCategory = solutionsToCategories,
+                                                countryCode = countryCode as String
                                             )
                                         )
                                     }

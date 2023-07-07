@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.LayoutTransition
 import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
+import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
@@ -17,27 +18,41 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.findNavController
-import com.google.android.gms.ads.MobileAds
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import com.indest.hah.R
 import com.indest.hah.ads.RewardType
-import com.indest.hah.ads.RewardType.*
+import com.indest.hah.ads.RewardType.AD_FAILED
+import com.indest.hah.ads.RewardType.CLUE
+import com.indest.hah.ads.RewardType.LETTER
+import com.indest.hah.ads.RewardType.NONE
+import com.indest.hah.ads.RewardType.PICTURE
+import com.indest.hah.ads.RewardType.SAD_AD_FAILED
+import com.indest.hah.ads.RewardType.SAD_MODE
 import com.indest.hah.databinding.HintsFragmentBinding
 import com.indest.hah.fx.SoundPlayer
 import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.general.GeneralViewModel
 import com.indest.hah.persistance.level.LevelProgress
-import com.indest.hah.views.ButtonState.*
+import com.indest.hah.views.ButtonState.AD
+import com.indest.hah.views.ButtonState.NO_AD
+import com.indest.hah.views.ButtonState.PREMIUM
 import com.indest.hah.views.PurchaseButton
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
+
 @AndroidEntryPoint
-class HintsFragment : BottomSheetDialogFragment() {
+class HintsFragment : FullBottomSheetDialogFragment() {
     private val TAG = "HintsFragment"
     private var _binding: HintsFragmentBinding? = null
     private val binding get() = _binding!!
@@ -54,8 +69,10 @@ class HintsFragment : BottomSheetDialogFragment() {
             {
                 launch {
                     viewModel.buttonState.collect {
-                        Log.d(TAG, "SKUS: " + it.skus.values.toString())
-                        binding.rewardPictureButton.updateButtonUi(it)
+                        if (!viewModel.currentLevel.value.levelInfo.pictureRewarded)
+                        {
+                            binding.rewardPictureButton.updateButtonUi(it)
+                        }
                         binding.rewardCategoryButton.updateButtonUi(it)
                         binding.rewardPlaceLetter.updateButtonUi(it)
                         binding.purchaseButtonPictures.updateButtonUi(it)
@@ -70,6 +87,13 @@ class HintsFragment : BottomSheetDialogFragment() {
                         handleRewards(it)
                     }
                 }
+                launch {
+                    levelViewModel.pictureHintDownloaded.collectLatest {
+                        Log.d(TAG, "pictureHintDownloaded: $it")
+                        if (it) binding.rewardPictureButton.removeDownloadingState()
+                        else binding.rewardPictureButton.addDownloadingState()
+                    }
+                }
             }
         }
 
@@ -81,6 +105,10 @@ class HintsFragment : BottomSheetDialogFragment() {
         }
         if (viewModel.currentLevel.value.levelInfo.categoryRewarded) {
             binding.rewardCategoryButton.showClue()
+        }
+        if (viewModel.currentLevel.value.levelInfo.pictureRewarded)
+        {
+            binding.rewardPictureButton.updateToPremium()
         }
 
         addBillingFlowOnClickToPurchaseButton(binding.purchaseButtonPictures)
@@ -96,7 +124,9 @@ class HintsFragment : BottomSheetDialogFragment() {
                 return@setOnClickListener
             }
 
-                when (binding.rewardCategoryButton.buttonState) {
+            if (!viewModel.currentLevel.value.levelInfo.pictureRewarded) {
+
+                when (binding.rewardPictureButton.buttonState) {
                     AD -> {
                         (activity as? AppCompatActivity)?.let {
                             viewModel.showRewardedVideo(it, PICTURE)
@@ -104,11 +134,16 @@ class HintsFragment : BottomSheetDialogFragment() {
                     }
                     PREMIUM -> {
                         revealPicture()
+                        viewModel.updatePictureRewarded()
                         levelViewModel.logPremiumHintUsage(PICTURE)
                     }
                     NO_AD -> {  /* No action. Button should be disabled in this state. */
                     }
                 }
+            }
+            else {
+                revealPicture()
+            }
 
         }
 
@@ -178,6 +213,9 @@ class HintsFragment : BottomSheetDialogFragment() {
                 levelViewModel.saveGameImmediately()
                 viewModel.updateRewardState(NONE)
                 levelViewModel.logRewardGiven(rewardType)
+                binding.rewardPictureButton.updateToPremium()
+                binding.rewardPictureButton.setOnClickListener(null)
+                binding.rewardPictureButton.setOnClickListener { revealPicture() }
             }
             CLUE -> {
                 revealClue()
@@ -205,12 +243,7 @@ class HintsFragment : BottomSheetDialogFragment() {
     }
 
     private fun revealPicture() {
-        soundPlayer.play(soundPlayer.sounds.letterRewardedSoundId)
-        PictureDialogFragment().show(childFragmentManager, PictureDialogFragment.TAG)
-    }
-
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
+        showPictureHintForCurrentLevel()
     }
 
     override fun onCreateView(
@@ -264,5 +297,11 @@ class HintsFragment : BottomSheetDialogFragment() {
         super.onDestroyView()
     }
 
+    private fun showPictureHintForCurrentLevel() {
+        soundPlayer.play(soundPlayer.sounds.letterRewardedSoundId)
+        val pictureDialogFragment = PictureDialogFragment()
+        pictureDialogFragment.setDrawable(requireContext(), viewModel.currentLevel.value.levelInfo.levelId)
+        pictureDialogFragment.show(childFragmentManager, PictureDialogFragment.TAG)
+    }
 
 }

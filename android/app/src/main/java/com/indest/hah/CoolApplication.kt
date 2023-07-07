@@ -6,11 +6,12 @@ import com.google.android.material.color.DynamicColors
 import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.appcheck.FirebaseAppCheck
+import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import dagger.hilt.android.HiltAndroidApp
 
-/*import leakcanary.LeakCanary
-import leakcanary.ToastEventListener*/
+import leakcanary.LeakCanary
+import leakcanary.ToastEventListener
 
 
 @HiltAndroidApp
@@ -21,8 +22,8 @@ class CoolApplication : Application() {
         FirebaseApp.initializeApp(this)
         val firebaseAppCheck = FirebaseAppCheck.getInstance()
         firebaseAppCheck.installAppCheckProviderFactory(
-            //DebugAppCheckProviderFactory.getInstance()
-            PlayIntegrityAppCheckProviderFactory.getInstance()
+            DebugAppCheckProviderFactory.getInstance()
+            //PlayIntegrityAppCheckProviderFactory.getInstance()
         )
         FirebaseAnalytics.getInstance(applicationContext).setUserProperty(
             getString(R.string.analytics_user_prop),
@@ -31,7 +32,7 @@ class CoolApplication : Application() {
             )
         )
 
-/*       if (BuildConfig.DEBUG)
+      if (BuildConfig.DEBUG)
         {
             LeakCanary.config = LeakCanary.config.run {
                 copy(
@@ -40,7 +41,7 @@ class CoolApplication : Application() {
                     }
                 )
             }
-        }*/
+        }
 
     }
 }

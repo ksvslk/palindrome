@@ -24,7 +24,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 
-class StagesFragment : BottomSheetDialogFragment() {
+class StagesFragment : FullBottomSheetDialogFragment() {
     private val TAG = "StagesFragment"
     private var _binding: StagesFragmentBinding? = null
     private val binding get() = _binding!!

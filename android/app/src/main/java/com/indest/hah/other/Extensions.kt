@@ -10,7 +10,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.NavController
 import com.indest.hah.R
-
+import java.util.Locale
 
 
 fun NavController.safeNavigate(action: Int) {
@@ -76,3 +76,4 @@ internal fun View?.findSuitableParent(): ViewGroup? {
     // If we reach here then we didn't find a CoL or a suitable content view so we'll fallback
     return fallback
 }
+

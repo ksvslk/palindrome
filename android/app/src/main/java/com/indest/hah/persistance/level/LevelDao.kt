@@ -89,6 +89,7 @@ interface LevelDao {
                         levelId = level.levelId.toInt(),
                         puzzle = puzzle,
                         categoryRewarded = false,
+                        pictureRewarded = false,
                         progress = LevelProgress.TODO,
                         score = puzzle.length * 100,
                         best_score = 0,
@@ -206,6 +207,12 @@ interface LevelDao {
 
     @Query("select category_rewarded from level_info_table where level_id=:level")
     suspend fun isCategoryRewarded(level: Int): Boolean
+
+    @Query("update level_info_table set picture_rewarded=:value where level_id=:level")
+    suspend fun updatePictureRewarded(value: Boolean, level: Int)
+
+    @Query("select picture_rewarded from level_info_table where level_id=:level")
+    suspend fun isPictureRewarded(level: Int): Boolean
 
     @Query("update interval set current_count = (select current_count + 1 from interval where name=:name) where name=:name")
     suspend fun increaseCurrentCount(name: String)

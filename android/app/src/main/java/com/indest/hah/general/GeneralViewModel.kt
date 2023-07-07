@@ -127,6 +127,9 @@ class GeneralViewModel @Inject constructor(
                         }
                         RewardType.LETTER -> {
                         }
+                        RewardType.PICTURE -> {
+                            updatePictureRewarded()
+                        }
                         else -> {}
                     }
                     updateRewardState(it.second)
@@ -165,6 +168,12 @@ class GeneralViewModel @Inject constructor(
     fun updateCategoryRewarded() {
         viewModelScope.launch {
             levelRepository.updateCategoryRewarded(true, currentLevel.value.levelInfo.levelId)
+        }
+    }
+
+    fun updatePictureRewarded() {
+        viewModelScope.launch {
+            levelRepository.updatePictureRewarded(true, currentLevel.value.levelInfo.levelId)
         }
     }
 

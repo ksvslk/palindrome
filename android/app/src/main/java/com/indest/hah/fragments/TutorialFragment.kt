@@ -22,7 +22,7 @@ import com.indest.hah.R
 import com.indest.hah.databinding.TutorialFragmentBinding
 import com.indest.hah.other.safeNavigate
 
-class TutorialFragment : BottomSheetDialogFragment() {
+class TutorialFragment : FullBottomSheetDialogFragment() {
 
     private val TAG = "TutorialFragment"
     private var _binding: TutorialFragmentBinding? = null

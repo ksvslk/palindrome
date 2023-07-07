@@ -57,17 +57,42 @@
         android:text="@string/watch_ad_top_notice">
     </androidx.appcompat.widget.AppCompatTextView>
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:saveEnabled="false"
-        android:id="@+id/level_number"
-        android:layout_width="wrap_content"
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/default_large_margin"
-        android:fontFamily="@font/yantramanav_bold"
-        app:layout_constraintTop_toBottomOf="@+id/gameProgress"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/default_gap"
+        android:layout_marginHorizontal="@dimen/default_large_margin"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="@+id/container"
-        android:text="-">
-    </androidx.appcompat.widget.AppCompatTextView>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/watch_ad_top">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/level_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/yantramanav_bold"
+            android:saveEnabled="false"
+            android:layout_gravity="start"
+            android:gravity="start|center_vertical"
+            android:text="-"/>
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/level_flag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:gravity="end"
+            android:saveEnabled="false"
+            app:strokeColor="?colorOutline"
+            app:strokeWidth="1dp"
+            app:srcCompat="@drawable/fr"/>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:saveEnabled="false"

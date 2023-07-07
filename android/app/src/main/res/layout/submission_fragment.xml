@@ -13,7 +13,6 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:saveEnabled="false"
-        
         android:id="@+id/enter_palindrome_TextInputLayout"
         style="@style/Widget.Design.TextInputLayout"
         android:layout_width="match_parent"
@@ -29,7 +28,6 @@
 
         <com.indest.hah.other.TextInputEditTextWithError
             android:saveEnabled="false"
-            
             android:id="@+id/enter_palindrome_TextInputEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -40,7 +38,6 @@
 
     <ViewFlipper
         android:saveEnabled="false"
-        
         android:id="@+id/send_level_flipper"
         android:layout_gravity="center"
         android:layout_width="match_parent"
@@ -48,7 +45,6 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:saveEnabled="false"
-            
             android:id="@+id/send_level_button"
             style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="match_parent"
@@ -58,7 +54,6 @@
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:saveEnabled="false"
-            
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -67,7 +62,6 @@
 
         <RelativeLayout
             android:saveEnabled="false"
-            
             android:layout_width="match_parent"
             android:layout_gravity="center"
             android:gravity="center"
@@ -75,7 +69,6 @@
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:saveEnabled="false"
-                
                 android:id="@+id/send_level_success_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -85,16 +78,14 @@
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:saveEnabled="false"
-                    
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginHorizontal="@dimen/default_gap"
+                    android:backgroundTint="?colorOnPrimaryContainer"
                     android:background="@drawable/baseline_check_box_black_36" />
-
                 <androidx.appcompat.widget.AppCompatTextView
                     android:saveEnabled="false"
-                    
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/palindrome_successfully_sent"
@@ -103,7 +94,6 @@
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:saveEnabled="false"
-                
                 android:id="@+id/send_level_failed_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

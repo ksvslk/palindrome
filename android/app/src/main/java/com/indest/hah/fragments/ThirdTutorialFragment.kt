@@ -14,7 +14,7 @@ import com.indest.hah.R
 import com.indest.hah.databinding.ThirdTutorialFragmentBinding
 import com.indest.hah.other.safeNavigate
 
-class ThirdTutorialFragment : BottomSheetDialogFragment() {
+class ThirdTutorialFragment : FullBottomSheetDialogFragment() {
     private var _binding: ThirdTutorialFragmentBinding? = null
     private val binding get() = _binding!!
 

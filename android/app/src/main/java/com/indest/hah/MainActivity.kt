@@ -1,12 +1,11 @@
 package com.indest.hah
 
-import android.graphics.Color
 import android.graphics.Rect
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
@@ -20,38 +19,36 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.forEach
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.enableSavedStateHandles
+import androidx.lifecycle.ReportFragment.Companion.reportFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.common.wrappers.InstantApps
 import com.google.android.gms.games.AuthenticationResult
 import com.google.android.gms.games.GamesSignInClient
 import com.google.android.gms.games.PlayGames
 import com.google.android.gms.games.Player
 import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.color.DynamicColors
-import com.google.android.material.color.MaterialColors
-import com.google.android.material.snackbar.BaseTransientBottomBar.ANIMATION_MODE_SLIDE
+import com.google.android.material.snackbar.BaseTransientBottomBar.ANIMATION_MODE_FADE
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.ump.ConsentForm
 import com.google.android.ump.ConsentInformation
 import com.google.android.ump.ConsentRequestParameters
 import com.google.android.ump.UserMessagingPlatform
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PlayGamesAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import com.indest.hah.ads.RewardType
 import com.indest.hah.databinding.ActivityMainBinding
 import com.indest.hah.fx.SoundPlayer
 import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.general.AccountStatus
 import com.indest.hah.general.GeneralViewModel
+import com.indest.hah.other.C
 import com.indest.hah.other.hideSystemBars
 import com.indest.hah.other.safeNavigate
 import com.indest.hah.persistance.dto.SaveGame
@@ -61,6 +58,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 import kotlin.math.min
 
@@ -117,8 +115,8 @@ class MainActivity : AppCompatActivity() {
             val exclusions = listOf(Rect(0, 0, it.width, it.height))
             ViewCompat.setSystemGestureExclusionRects(binding.root, exclusions)
         }
-    }
 
+    }
 
     override fun onStop() {
         super.onStop()
@@ -229,11 +227,8 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 }
-                .setTextColor(MaterialColors.getColor(applicationContext, com.google.android.material.R.attr.colorOnPrimary, Color.RED))
-                .setAnimationMode(ANIMATION_MODE_SLIDE)
-                .setActionTextColor(
-                    MaterialColors.getColor(applicationContext, com.google.android.material.R.attr.colorOnPrimary, Color.RED)
-                )
+                .setAnimationMode(ANIMATION_MODE_FADE)
+
         val params = snack.view.layoutParams as FrameLayout.LayoutParams
         params.gravity = Gravity.TOP
         params.topMargin = resources.getDimension(com.intuit.sdp.R.dimen._16sdp).toInt()
@@ -488,14 +483,78 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    fun updateProgressBar(progress: Pair<Int, String>) {
+    fun updateProgressBar(progress: Pair<Int, String>, countryCode:String) {
         binding.levelNumber.text = progress.second
+        val drawableId = mapCountryCodeToDrawable(countryCode)
+        binding.levelFlag.setImageResource(drawableId)
+        binding.levelFlag.invalidate()
         binding.gameProgress.progress = progress.first
     }
 
-
-    override fun onDestroy() {
-        super.onDestroy()
+    private fun mapCountryCodeToDrawable(cc:String):Int
+    {
+        when(cc)
+        {
+            "cn" -> return R.drawable.cn
+            "ee" -> return R.drawable.ee
+            "fi" -> return R.drawable.fi
+            "fr" -> return R.drawable.fr
+            "de" -> return R.drawable.de
+            "in" -> return R.drawable.`in`
+            "id" -> return R.drawable.id
+            "it" -> return R.drawable.it
+            "jp" -> return R.drawable.jp
+            "kr" -> return R.drawable.kr
+            "no" -> return R.drawable.no
+            "br" -> return R.drawable.br
+            "ru" -> return R.drawable.ru
+            "es" -> return R.drawable.es
+            "se" -> return R.drawable.se
+            "th" -> return R.drawable.th
+            "tr" -> return R.drawable.tr
+            "vn" -> return R.drawable.vn
+            "cp" -> return R.drawable.cp
+         }
+        return R.drawable.gb
     }
+
+    fun downloadHintPictureIfNeeded(levelNr: Int)
+    {
+        Log.d(TAG, "downloadHintIfNeeded")
+
+        // let's assume each time we don't have the picture
+        levelViewModel.setPictureDownloaded(isPresent = false)
+
+        if (checkIfHintExistsForLevel(levelNr))
+        {
+            levelViewModel.setPictureDownloaded(isPresent = true)
+        }
+        else {
+            val storage = Firebase.storage
+            val gsReference = storage.getReferenceFromUrl("${C.FIREBASE_PICS_STORAGE_PATH}level${levelNr}.jpg")
+            this.filesDir?.let {
+                val localFile = File(it, "level${levelNr}.jpg")
+                gsReference.getFile(localFile).addOnSuccessListener {
+                    levelViewModel.setPictureDownloaded(isPresent = true)
+                    Log.d(TAG, "Picture hint is ready to show.")
+                }.addOnFailureListener {
+                    levelViewModel.setPictureDownloaded(isPresent = false)
+                    Log.e(TAG, "Failed to create local file from storage.", it)
+                }
+            }
+        }
+    }
+
+    private fun checkIfHintExistsForLevel(levelNr:Int) : Boolean
+    {
+        if (levelNr <= C.LEVEL_HINTS_COVERED_LOCALLY) return true
+        val outputDir = this.filesDir
+        outputDir?.let {
+            val localFile = File(it, "level$levelNr.jpg")
+            return localFile.exists()
+        }
+        return false
+    }
+
 
 }

@@ -17,6 +17,10 @@ data class LevelData(
     var puzzle: String,
     @ColumnInfo(name = "category_rewarded")
     val categoryRewarded: Boolean,
+    @ColumnInfo(name = "picture_rewarded", defaultValue = "0")
+    val pictureRewarded: Boolean = false,
+    @ColumnInfo(name = "country_code", defaultValue = "gb")
+    val countryCode: String = "gb",
     @ColumnInfo(name = "progress")
     val progress: LevelProgress,
     @ColumnInfo(name = "score")

@@ -22,7 +22,7 @@ import com.indest.hah.general.GeneralViewModel
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
-class GoogleGamesFragment : BottomSheetDialogFragment() {
+class GoogleGamesFragment : FullBottomSheetDialogFragment() {
 
     private val TAG = "GoogleGamesFragment"
     private val startActivity =

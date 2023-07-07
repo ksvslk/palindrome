@@ -15,7 +15,7 @@ import com.indest.hah.R
 import com.indest.hah.databinding.SecondTutorialFragmentBinding
 import com.indest.hah.game.viewmodel.LevelViewModel
 
-class SecondTutorialFragment : BottomSheetDialogFragment() {
+class SecondTutorialFragment : FullBottomSheetDialogFragment() {
     private var _binding: SecondTutorialFragmentBinding? = null
     private val binding get() = _binding!!
     private val levelViewModel: LevelViewModel by activityViewModels()

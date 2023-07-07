@@ -4,7 +4,6 @@ import androidx.room.TypeConverter
 import com.indest.hah.persistance.level.LevelProgress
 
 class Converters {
-
     @TypeConverter
     fun toProgress(value: Int) = enumValues<LevelProgress>()[value]
 

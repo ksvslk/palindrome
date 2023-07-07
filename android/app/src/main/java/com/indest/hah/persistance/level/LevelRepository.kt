@@ -137,6 +137,9 @@ class LevelRepository @Inject constructor(
     suspend fun updateCategoryRewarded(value: Boolean, level: Int) =
         levelDao.updateCategoryRewarded(value, level)
 
+    suspend fun updatePictureRewarded(value: Boolean, level: Int) =
+        levelDao.updatePictureRewarded(value, level)
+
     suspend fun getLocalSaveGame(): SaveGame = levelDao.getLocalSaveGame()
 
     suspend fun updateLocalGame(saveGame: SaveGame) = levelDao.updateLocalGame(saveGame)

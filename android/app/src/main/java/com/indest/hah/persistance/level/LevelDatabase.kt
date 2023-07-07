@@ -26,12 +26,16 @@ data class LevelInfo(val nr: Int, val solutionToCategory:Map<String,String>)
 
 @Database(
     entities = [LevelData::class, LetterProperties::class, Interval::class, Solution::class],
-    version = 3,
+    version = 4,
     autoMigrations = [
         AutoMigration (
             from = 1,
             to = 2,
             spec = LevelDatabase.MyAutoMigration::class
+        ),
+        AutoMigration(
+            from = 3,
+            to = 4
         )
     ],
     exportSchema = true

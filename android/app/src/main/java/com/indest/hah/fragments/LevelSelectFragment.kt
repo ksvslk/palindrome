@@ -25,7 +25,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class LevelSelectFragment : BottomSheetDialogFragment() {
+class LevelSelectFragment : FullBottomSheetDialogFragment() {
     private val TAG = "LevelSelectFragment"
     private var _binding: LevelSelectFragmentBinding? = null
     private val binding get() = _binding!!

@@ -11,6 +11,7 @@
     android:paddingVertical="@dimen/default_large_margin"
     android:animateLayoutChanges="true"
     app:divider="@drawable/divider"
+    android:scrollbarAlwaysDrawVerticalTrack="true"
     app:dividerPadding="@dimen/simple_dialog_header_left_margin"
     app:showDividers="middle">
 

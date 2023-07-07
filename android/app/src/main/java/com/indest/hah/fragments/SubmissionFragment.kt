@@ -20,7 +20,7 @@ import com.indest.hah.other.isPalindrome
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 
-class SubmissionFragment : BottomSheetDialogFragment() {
+class SubmissionFragment : FullBottomSheetDialogFragment() {
     private val TAG = "SubmissionFragment"
     private var _binding: SubmissionFragmentBinding? = null
     private val binding get() = _binding!!
