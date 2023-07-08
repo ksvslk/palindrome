@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:anybutton="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:saveEnabled="false"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingVertical="@dimen/default_large_margin"
+    app:divider="@drawable/divider"
+    app:dividerPadding="@dimen/simple_dialog_header_left_margin"
+    app:showDividers="middle">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:saveEnabled="false"
+        android:id="@+id/version_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|end"
+        android:lineSpacingMultiplier="0.7"
+        android:text="@string/placeholder"
+        android:textAlignment="viewEnd"
+        android:gravity="end"
+        android:textAppearance="@style/TextAppearance.OC.Caption"
+        android:visibility="gone" />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="2"
+        android:orientation="horizontal">
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:saveEnabled="false"
+
+            android:id="@+id/vibration_button"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_height="@dimen/simple_dialog_item_height"
+            android:layout_margin="@dimen/_2sdp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal">
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:saveEnabled="false"
+
+                android:id="@+id/vibration_switch"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/simple_dialog_item_left_margin"
+                android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
+                android:clickable="false"
+                android:layoutDirection="rtl"
+                android:text="@string/vibration_text"
+                android:textAppearance="@style/TextAppearance.OC.Body1" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:saveEnabled="false"
+
+            android:id="@+id/sound_button"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_height="@dimen/simple_dialog_item_height"
+            android:layout_margin="@dimen/_2sdp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal">
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:saveEnabled="false"
+
+                android:id="@+id/sound_switch"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/simple_dialog_item_left_margin"
+                android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
+                android:clickable="false"
+                android:layoutDirection="rtl"
+                android:text="@string/sound_text"
+                android:textAppearance="@style/TextAppearance.OC.Body1" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="2"
+        android:orientation="horizontal">
+        <com.indest.hah.views.AnyButton
+            android:saveEnabled="false"
+            android:layout_weight="1"
+            android:id="@+id/tutorial_button"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/simple_dialog_item_height"
+            android:layout_margin="@dimen/_2sdp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
+            anybutton:any_button_icon="@drawable/baseline_help_center_black_36"
+            anybutton:any_button_title="@string/tutorial" />
+        <com.indest.hah.views.AnyButton
+            android:saveEnabled="false"
+            android:layout_weight="1"
+            android:id="@+id/rate_game_button"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/simple_dialog_item_height"
+            android:layout_margin="@dimen/_2sdp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
+            anybutton:any_button_icon="@drawable/baseline_rate_review_black_36"
+            anybutton:any_button_title="@string/rate_game" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="2"
+        android:orientation="horizontal">
+        <com.indest.hah.views.AnyButton
+            android:saveEnabled="false"
+            android:layout_weight="1"
+            android:id="@+id/share_button_settings"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/simple_dialog_item_height"
+            android:layout_margin="@dimen/_2sdp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
+            anybutton:any_button_icon="@drawable/baseline_share_black_36"
+            anybutton:any_button_title="@string/share" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:saveEnabled="false"
+            android:layout_weight="1"
+            android:id="@+id/google_sign_in_out_button"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/simple_dialog_item_height"
+            android:layout_marginTop="@dimen/default_margin"
+            android:gravity="left|center_vertical"
+            android:orientation="vertical">
+
+            <com.google.android.gms.common.SignInButton
+                android:saveEnabled="false"
+
+                android:id="@+id/google_sign_in_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/simple_dialog_header_left_margin"
+                android:paddingHorizontal="@dimen/_8sdp"
+                android:visibility="gone" />
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:saveEnabled="false"
+
+                android:id="@+id/progress_circular"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:indeterminate="true" >
+            </com.google.android.material.progressindicator.CircularProgressIndicator>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:saveEnabled="false"
+
+                android:id="@+id/google_sign_out_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/simple_dialog_header_left_margin"
+                android:text="@string/you_are_signed_in"
+                android:visibility="gone"
+                android:textAppearance="@style/TextAppearance.OC.Body1" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+</androidx.appcompat.widget.LinearLayoutCompat>

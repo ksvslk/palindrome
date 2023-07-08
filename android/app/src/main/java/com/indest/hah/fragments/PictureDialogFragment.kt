@@ -10,7 +10,12 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
+import androidx.appcompat.graphics.drawable.DrawableContainerCompat
+import androidx.appcompat.resources.Compatibility.Api21Impl
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.graphics.drawable.toDrawable
 import androidx.core.graphics.set
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -23,6 +28,7 @@ import java.io.File
 class PictureDialogFragment : DialogFragment() {
 
     private var customDrawable:Drawable? = null
+    private var bitmap:Bitmap? = null
 
     fun setDrawable(localContext: Context, levelNr:Int) {
         if (levelNr <= C.LEVEL_HINTS_COVERED_LOCALLY) {
@@ -33,8 +39,10 @@ class PictureDialogFragment : DialogFragment() {
             try {
                 val directory = localContext.filesDir
                 val fileName = "level$levelNr.jpg"
-                val path = File(directory, fileName)
-                customDrawable = Drawable.createFromPath(path.toString())
+                val bm = BitmapFactory.decodeFile(directory.path.toString()+"/"+fileName)
+                val size = (200f * localContext.resources.displayMetrics.density).toInt()
+                val scaledBitmap = Bitmap.createScaledBitmap(bm, size, size, true)
+                bitmap = scaledBitmap
             } catch (e:Exception)
             {
                 Log.e(TAG, "Was not able to load drawable for level: $levelNr")
@@ -48,6 +56,7 @@ class PictureDialogFragment : DialogFragment() {
         )
         val imageView = layout.findViewById<ImageView>(R.id.imageView)
         if (customDrawable != null) imageView.setImageDrawable(customDrawable)
+        else if (bitmap != null) imageView.setImageBitmap(bitmap)
 
         return MaterialAlertDialogBuilder(requireContext(), R.style.HehMaterialAlertDialogTheme)
             .setView(layout)

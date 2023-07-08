@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:purchasebutton="http://schemas.android.com/apk/res-auto"
+    xmlns:rewardbutton="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:animateLayoutChanges="true"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingVertical="@dimen/default_large_margin"
+    android:saveEnabled="false"
+    app:divider="@drawable/divider"
+    app:dividerPadding="@dimen/simple_dialog_header_left_margin"
+    app:showDividers="middle">
+
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="2"
+        android:orientation="horizontal">
+
+        <com.indest.hah.views.RewardButton
+            android:id="@+id/reward_picture_button"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/simple_dialog_item_height"
+            android:layout_margin="@dimen/_2sdp"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
+            android:saveEnabled="false"
+            rewardbutton:custom_icon="@drawable/baseline_image_36"
+            rewardbutton:main_title="@string/rewarded_reveal_picture"
+            rewardbutton:skus="@array/iap_group_that_unlock_pictures"
+            rewardbutton:subtitle_ad_available="@string/watch_rewarded_video"
+            rewardbutton:subtitle_ad_unavailable="@string/no_ad_available"
+            rewardbutton:subtitle_reward_unlocked="@string/instantly" />
+
+        <com.indest.hah.views.RewardButton
+            android:id="@+id/reward_category_button"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/simple_dialog_item_height"
+            android:layout_margin="@dimen/_2sdp"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
+            android:saveEnabled="false"
+            rewardbutton:custom_icon="@drawable/baseline_category_black_36"
+            rewardbutton:main_title="@string/rewarded_reveal_clue"
+            rewardbutton:skus="@array/iap_group_that_unlock_clues"
+            rewardbutton:subtitle_ad_available="@string/watch_rewarded_video"
+            rewardbutton:subtitle_ad_unavailable="@string/no_ad_available"
+            rewardbutton:subtitle_reward_unlocked="@string/instantly" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="2"
+        android:orientation="horizontal">
+
+        <com.indest.hah.views.RewardButton
+            android:id="@+id/reward_place_letter"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/simple_dialog_item_height"
+            android:layout_margin="@dimen/_2sdp"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
+            android:saveEnabled="false"
+            rewardbutton:custom_icon="@drawable/letter_icon"
+            rewardbutton:main_title="@string/rewarded_place_letter"
+            rewardbutton:skus="@array/iap_group_that_unlock_letters"
+            rewardbutton:subtitle_ad_available="@string/watch_rewarded_video"
+            rewardbutton:subtitle_ad_unavailable="@string/no_ad_available"
+            rewardbutton:subtitle_reward_unlocked="@string/instantly" />
+
+        <com.indest.hah.views.PurchaseButton
+            android:id="@+id/purchase_button_pictures"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/simple_dialog_item_height"
+            android:layout_margin="@dimen/_2sdp"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
+            android:saveEnabled="false"
+            purchasebutton:sku="@string/instant_pictures"
+            purchasebutton:visibility_case_1="@array/pictures_case_1" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="2"
+        android:orientation="horizontal">
+
+        <com.indest.hah.views.PurchaseButton
+            android:id="@+id/purchase_button_clues"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/simple_dialog_item_height"
+            android:layout_margin="@dimen/_2sdp"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
+            android:saveEnabled="false"
+            purchasebutton:sku="@string/instant_clues"
+            purchasebutton:visibility_case_1="@array/clues_case_1" />
+
+        <com.indest.hah.views.PurchaseButton
+            android:id="@+id/purchase_button_letters"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/simple_dialog_item_height"
+            android:layout_margin="@dimen/_2sdp"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
+            android:saveEnabled="false"
+            purchasebutton:sku="@string/instant_letters"
+            purchasebutton:visibility_case_1="@array/letters_case_1" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="2"
+        android:orientation="horizontal">
+
+        <com.indest.hah.views.PurchaseButton
+            android:id="@+id/purchase_no_sad_mode"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/simple_dialog_item_height"
+            android:layout_margin="@dimen/_2sdp"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
+            android:saveEnabled="false"
+            purchasebutton:sku="@string/sad_mode"
+            purchasebutton:visibility_case_1="@array/sad_mode_case_1" />
+
+        <com.indest.hah.views.PurchaseButton
+            android:id="@+id/purchase_all_inclusive_pack"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/simple_dialog_item_height"
+            android:layout_margin="@dimen/_2sdp"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
+            android:saveEnabled="false"
+            purchasebutton:sku="@string/all_inclusive_pack"
+            purchasebutton:visibility_case_1="@array/all_inclusive_pack_case1"
+            purchasebutton:visibility_case_2="@array/all_inclusive_pack_case2"
+            purchasebutton:visibility_case_3="@array/all_inclusive_pack_case3"
+            purchasebutton:visibility_case_4="@array/all_inclusive_pack_case4" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

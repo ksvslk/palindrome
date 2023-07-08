@@ -12,36 +12,6 @@
     app:dividerPadding="@dimen/simple_dialog_header_left_margin"
     app:showDividers="middle">
 
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:saveEnabled="false"
-        android:id="@+id/stages_dialog_title"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/simple_dialog_header_height"
-        android:layout_marginHorizontal="@dimen/simple_dialog_header_left_margin"
-        android:orientation="horizontal">
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:saveEnabled="false"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="@string/levels"
-            android:textAppearance="@style/TextAppearance.OC.Headline5" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:saveEnabled="false"
-            android:id="@+id/version_info"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|end"
-            android:lineSpacingMultiplier="0.7"
-            android:text="@string/placeholder"
-            android:textAlignment="viewEnd"
-            android:gravity="end"
-            android:textAppearance="@style/TextAppearance.OC.Caption"
-            android:visibility="invisible" />
-    </androidx.appcompat.widget.LinearLayoutCompat>
-
     <com.indest.hah.views.AnyButton
         android:saveEnabled="false"
         android:id="@+id/submit_your_level_button"
@@ -54,6 +24,19 @@
         android:orientation="horizontal"
         anybutton:any_button_icon="@drawable/ic_baseline_library_add_36"
         anybutton:any_button_title="@string/submit_level" />
+
+    <com.indest.hah.views.AnyButton
+        android:saveEnabled="false"
+        android:id="@+id/international_levels_button"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/simple_dialog_item_height"
+        android:layout_margin="@dimen/_2sdp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="horizontal"
+        anybutton:any_button_icon="@drawable/baseline_language_36"
+        anybutton:any_button_title="@string/international_levels" />
 
     <com.indest.hah.views.AnyButton
         android:saveEnabled="false"

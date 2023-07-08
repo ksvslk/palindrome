@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:anybutton="http://schemas.android.com/apk/res-auto"
+    android:saveEnabled="false"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:paddingVertical="@dimen/default_large_margin"
+    app:divider="@drawable/divider"
+    app:showDividers="middle"
+    app:dividerPadding="@dimen/simple_dialog_header_left_margin"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="2"
+        android:orientation="horizontal">
+        <com.indest.hah.views.AnyButton
+            android:layout_weight="1"
+            android:saveEnabled="false"
+            android:id="@+id/leaderboards_button"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/simple_dialog_item_height"
+            android:layout_margin="@dimen/_2sdp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
+            anybutton:any_button_icon="@drawable/games_leaderboards"
+            anybutton:any_button_title="@string/leaderboard" />
+
+        <com.indest.hah.views.AnyButton
+            android:layout_weight="1"
+            android:saveEnabled="false"
+            android:id="@+id/player_levels_leaderboard_button"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/simple_dialog_item_height"
+            android:layout_margin="@dimen/_2sdp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
+            anybutton:any_button_icon="@drawable/ic_baseline_leaderboard_24"
+            anybutton:any_button_title="@string/player_leaderboard_text" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="1"
+        android:orientation="horizontal">
+        <com.indest.hah.views.AnyButton
+            android:layout_weight="1"
+            android:saveEnabled="false"
+            android:id="@+id/achievements_button"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/simple_dialog_item_height"
+            android:layout_margin="@dimen/_2sdp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
+            anybutton:any_button_icon="@drawable/games_achievements"
+            anybutton:any_button_title="@string/achievements" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_weight="1"
+            android:saveEnabled="false"
+            android:id="@+id/alternative_screen"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/simple_dialog_item_height"
+            android:layout_margin="@dimen/_2sdp"
+            android:background="?attr/selectableItemBackground"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:saveEnabled="false"
+                android:id="@+id/alternative_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/please_sign_in"
+                android:textAppearance="@style/TextAppearance.OC.Body1"
+                />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

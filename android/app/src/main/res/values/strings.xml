@@ -25,7 +25,8 @@
 
     <string name="game_levels">Game Levels</string>
     <string name="player_levels">Player Levels</string>
-    <string name="submit_level">Submit Your Palindrome</string>
+    <string name="international_levels">International Levels</string>
+    <string name="submit_level">Send Your Palindrome</string>
     <string name="send">Send for Review</string>
     <string name="something_went_wrong">Something went wrong.</string>
     <string name="try_again">Try again</string>

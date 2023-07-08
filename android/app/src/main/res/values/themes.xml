@@ -33,8 +33,6 @@
     <style name="Base.Theme.OC" parent="Theme.Material3.DynamicColors.DayNight">
        <item name="windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="windowActionBarOverlay">true</item>
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowTranslucentNavigation">true</item>
         <item name="fontFamily">@font/yantramanav_bold</item>

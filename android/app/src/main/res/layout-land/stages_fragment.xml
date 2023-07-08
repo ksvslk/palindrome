@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:anybutton="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:saveEnabled="false"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingVertical="@dimen/default_large_margin"
+    app:divider="@drawable/divider"
+    app:dividerPadding="@dimen/simple_dialog_header_left_margin"
+    app:showDividers="middle">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="2"
+        android:orientation="horizontal">
+        <com.indest.hah.views.AnyButton
+            android:layout_weight="1"
+            android:saveEnabled="false"
+            android:id="@+id/submit_your_level_button"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/simple_dialog_item_height"
+            android:layout_margin="@dimen/_2sdp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
+            anybutton:any_button_icon="@drawable/ic_baseline_library_add_36"
+            anybutton:any_button_title="@string/submit_level" />
+
+        <com.indest.hah.views.AnyButton
+            android:layout_weight="1"
+            android:saveEnabled="false"
+            android:id="@+id/international_levels_button"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/simple_dialog_item_height"
+            android:layout_margin="@dimen/_2sdp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
+            anybutton:any_button_icon="@drawable/baseline_language_36"
+            anybutton:any_button_title="@string/international_levels" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="2"
+        android:orientation="horizontal">
+        <com.indest.hah.views.AnyButton
+            android:layout_weight="1"
+            android:saveEnabled="false"
+            android:id="@+id/player_levels_button"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/simple_dialog_item_height"
+            android:layout_margin="@dimen/_2sdp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
+            anybutton:any_button_icon="@drawable/ic_baseline_groups_24"
+            anybutton:any_button_title="@string/player_levels" />
+
+        <com.indest.hah.views.AnyButton
+            android:layout_weight="1"
+            android:saveEnabled="false"
+            android:id="@+id/game_levels_button"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/simple_dialog_item_height"
+            android:layout_margin="@dimen/_2sdp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
+            anybutton:any_button_icon="@drawable/baseline_list_alt_black_36"
+            anybutton:any_button_title="@string/game_levels" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</androidx.appcompat.widget.LinearLayoutCompat>

@@ -11,25 +11,8 @@
     android:paddingVertical="@dimen/default_large_margin"
     android:animateLayoutChanges="true"
     app:divider="@drawable/divider"
-    android:scrollbarAlwaysDrawVerticalTrack="true"
     app:dividerPadding="@dimen/simple_dialog_header_left_margin"
     app:showDividers="middle">
-
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:saveEnabled="false"
-        android:id="@+id/hints_dialog_title"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/simple_dialog_header_height"
-        android:orientation="horizontal">
-        <androidx.appcompat.widget.AppCompatTextView
-            android:saveEnabled="false"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/simple_dialog_header_left_margin"
-            android:text="@string/hints"
-            android:textAppearance="@style/TextAppearance.OC.Headline5" />
-    </androidx.appcompat.widget.LinearLayoutCompat>
 
     <com.indest.hah.views.RewardButton
         android:id="@+id/reward_picture_button"

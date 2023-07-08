@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,8 +16,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.common.SignInButton
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.indest.hah.BuildConfig
 import com.indest.hah.MainActivity
 import com.indest.hah.R
 import com.indest.hah.databinding.SettingsFragmentBinding
@@ -29,6 +26,7 @@ import com.indest.hah.other.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import com.indest.hah.BuildConfig
 
 @AndroidEntryPoint
 class SettingsFragment : FullBottomSheetDialogFragment() {
@@ -143,9 +141,9 @@ class SettingsFragment : FullBottomSheetDialogFragment() {
         }
         binding.versionInfo.text =
             "${BuildConfig.VERSION_CODE}\n${BuildConfig.VERSION_NAME}\n${BuildConfig.GIT_HASH}"
-        binding.settingsDialogTitle.setOnLongClickListener {
-            binding.versionInfo.visibility =
-                if (binding.versionInfo.visibility == View.INVISIBLE) View.VISIBLE else View.INVISIBLE
+        binding.versionInfo.setOnLongClickListener {
+            it.visibility =
+                if (it.visibility == View.INVISIBLE) View.VISIBLE else View.INVISIBLE
             true
         }
 

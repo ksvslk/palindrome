@@ -22,7 +22,6 @@ class MessageSnackBar(
 ) : BaseTransientBottomBar<MessageSnackBar>(parent, content, content) {
 
     init {
-
         getView().setBackgroundColor(
             ContextCompat.getColor(
                 view.context,
@@ -77,7 +76,6 @@ class MessageSnackBar(
             snackBar.view.isEnabled = isViewEnabled
             snackBar.duration = duration
             if (animateText) addBlinkingTextAnimation(snackBar.view)
-            customView.y = 10f
             return snackBar
         }
 
@@ -111,9 +109,12 @@ class MessageSnackBar(
             val textBig = widthDivided / context.resources.displayMetrics.density
             val textSmall = widthDivided / context.resources.displayMetrics.density * 0.8f
 
+            val s = context.resources.getDimension(com.intuit.ssp.R.dimen._8ssp)
+            val b = context.resources.getDimension(com.intuit.ssp.R.dimen._9ssp)
+
             return when (textSize) {
-                SMALL -> textSmall
-                BIG -> textBig
+                SMALL -> s
+                BIG -> b
             }
         }
 
