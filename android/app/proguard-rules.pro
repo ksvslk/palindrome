@@ -69,3 +69,6 @@
 -keepclasseswithmembers class **.R$* {
     public static <fields>;
 }
+
+
+-keepnames class com.indest.hah.other.LevelSelectType

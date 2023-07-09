@@ -25,6 +25,7 @@ import com.indest.hah.fx.Animations
 import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.general.AccountStatus
 import com.indest.hah.general.GeneralViewModel
+import com.indest.hah.other.LevelSelectType
 import com.indest.hah.other.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.combine
@@ -132,11 +133,17 @@ class FinalScreenFragment : BottomSheetDialogFragment() {
                     }
 
                     binding.levelSelectButton.setOnClickListener {
-                        findNavController().safeNavigate(R.id.action_navigation_final_screen_to_navigation_level_select)
+                        findNavController().safeNavigate(
+                            R.id.action_navigation_final_screen_to_navigation_level_select,
+                            LevelSelectType.GAME_LEVELS
+                        )
                     }
 
                     binding.playerLevelSelectButton.setOnClickListener {
-                        findNavController().safeNavigate(R.id.action_navigation_final_screen_to_navigation_player_level_select)
+                        findNavController().safeNavigate(
+                            R.id.action_navigation_final_screen_to_navigation_level_select,
+                            LevelSelectType.PLAYER_LEVELS
+                        )
                     }
                 }
             }

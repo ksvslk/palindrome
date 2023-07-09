@@ -13,6 +13,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -20,12 +21,16 @@ import com.indest.hah.R
 import com.indest.hah.databinding.LevelSelectFragmentBinding
 import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.other.LevelItemAdapter
+import com.indest.hah.other.LevelSelectType
+import com.indest.hah.other.LevelSelectType.*
 import com.indest.hah.other.safeNavigate
+import com.indest.hah.persistance.dto.LevelData
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class LevelSelectFragment : FullBottomSheetDialogFragment() {
+
     private val TAG = "LevelSelectFragment"
     private var _binding: LevelSelectFragmentBinding? = null
     private val binding get() = _binding!!
@@ -43,29 +48,59 @@ class LevelSelectFragment : FullBottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setUpRecyclerView()
+        val levelSelectType = arguments?.getString("levelSelectType")?.let {
+            valueOf(it)
+        } ?: NONE
+        setUpRecyclerView(levelSelectType)
     }
 
-    private fun setUpRecyclerView() {
-        // lifecycleScope.launchWhenCreated {
+    private fun setUpRecyclerView(levelSelectType: LevelSelectType) {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
-                levelViewModel.allGameLevelsFlow().collect { levels ->
-                    val currentLevel =
-                        levelViewModel.currentLevel.replayCache.firstOrNull()?.levelInfo?.levelId
-                    val currentLevelIcon = getCurrentLevelIcon(currentLevel)
-                    binding.levelSelectRecyclerview.adapter =
-                        LevelItemAdapter(currentLevelIcon, currentLevel, levels) {
-                            it?.levelId?.let { nr ->
-                                if (nr != currentLevel) {
-                                    levelViewModel.changeLevel(nr)
-                                    findNavController().safeNavigate(R.id.action_navigation_level_select_to_navigation_level)
-                                }
+                when (levelSelectType) {
+                    GAME_LEVELS -> {
+                        levelViewModel.allGameLevelsFlow().collect { levels ->
+                            handleLevelsCollection(levels)
+                        }
+                    }
+                    PLAYER_LEVELS -> {
+                        levelViewModel.allPlayerLevelsFlow().collect { playerLevels ->
+                                val currentLevel =
+                                    levelViewModel.currentLevel.replayCache.firstOrNull()?.levelInfo?.levelId
+                                val currentLevelIcon = getCurrentLevelIcon(currentLevel)
+                                binding.levelSelectRecyclerview.adapter =
+                                    LevelItemAdapter(currentLevelIcon, currentLevel, playerLevels, true) {
+                                        it?.levelId?.let { nr ->
+                                            if (nr != currentLevel) {
+                                                levelViewModel.changeLevel(nr)
+                                                findNavController().safeNavigate(R.id.action_navigation_level_select_to_navigation_level)
+                                            }
+                                    }
                             }
                         }
+                    }
+                    LANGUAGE_LEVELS -> {
+
+                    }
+                    NONE -> throw NoSuchElementException("Case $levelSelectType should no occur in LevelSelectFragment.")
                 }
             }
         }
+    }
+
+    private fun handleLevelsCollection(levels: List<Pair<Boolean, LevelData>>) {
+        val currentLevel =
+            levelViewModel.currentLevel.replayCache.firstOrNull()?.levelInfo?.levelId
+        val currentLevelIcon = getCurrentLevelIcon(currentLevel)
+        binding.levelSelectRecyclerview.adapter =
+            LevelItemAdapter(currentLevelIcon, currentLevel, levels) {
+                it?.levelId?.let { nr ->
+                    if (nr != currentLevel) {
+                        levelViewModel.changeLevel(nr)
+                        findNavController().safeNavigate(R.id.action_navigation_level_select_to_navigation_level)
+                    }
+                }
+            }
     }
 
     private fun getCurrentLevelIcon(level: Int?): String {

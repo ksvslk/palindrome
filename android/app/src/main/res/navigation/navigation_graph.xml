@@ -75,9 +75,6 @@
             android:id="@+id/action_navigation_final_screen_to_navigation_level_select"
             app:destination="@id/navigation_level_select" />
         <action
-            android:id="@+id/action_navigation_final_screen_to_navigation_player_level_select"
-            app:destination="@id/navigation_player_level_select" />
-        <action
             android:id="@+id/action_navigation_final_screen_to_navigation_submission"
             app:destination="@id/navigation_submission" />
     </fragment>
@@ -121,10 +118,6 @@
             android:id="@+id/action_navigation_stages_to_navigation_submission"
             app:popUpTo="@id/navigation_level"
             app:destination="@id/navigation_submission" />
-        <action
-            android:id="@+id/action_navigation_stages_to_navigation_player_level_select"
-            app:popUpTo="@id/navigation_level"
-            app:destination="@id/navigation_player_level_select" />
     </dialog>
 
     <dialog
@@ -146,18 +139,6 @@
         tools:layout="@layout/level_select_fragment" >
         <action
             android:id="@+id/action_navigation_level_select_to_navigation_level"
-            app:destination="@id/navigation_level"
-            app:popUpTo="@id/navigation_level"
-            app:popUpToInclusive="true" />
-    </dialog>
-
-    <dialog
-        android:id="@+id/navigation_player_level_select"
-        android:name="com.indest.hah.fragments.PlayerLevelSelectFragment"
-        android:label="@string/player_level_select"
-        tools:layout="@layout/player_level_select_fragment" >
-        <action
-            android:id="@+id/action_navigation_player_level_select_to_navigation_level"
             app:destination="@id/navigation_level"
             app:popUpTo="@id/navigation_level"
             app:popUpToInclusive="true" />

@@ -1,11 +1,13 @@
 package com.indest.hah.other
 
 import android.content.Context
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.os.bundleOf
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.NavController
@@ -13,8 +15,12 @@ import com.indest.hah.R
 import java.util.Locale
 
 
-fun NavController.safeNavigate(action: Int) {
-    currentDestination?.getAction(action)?.run { navigate(action) }
+fun NavController.safeNavigate(action: Int, levelSelectType: LevelSelectType = LevelSelectType.NONE) {
+    val bundle = bundleOf("levelSelectType" to levelSelectType.name)
+    Log.d("EXT", "BUNDLE IS SET TO: ${bundle.toString()}")
+    currentDestination?.getAction(action)?.run {
+        navigate(action, bundle)
+    }
 }
 
 
