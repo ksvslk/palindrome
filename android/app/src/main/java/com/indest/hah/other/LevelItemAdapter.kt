@@ -32,6 +32,7 @@ class LevelItemAdapter(
         view: View,
         onItemClicked: (Int) -> Unit
     ) : RecyclerView.ViewHolder(view) {
+
         val textView: TextView = view.findViewById(R.id.levelSelectView)
 
         init {

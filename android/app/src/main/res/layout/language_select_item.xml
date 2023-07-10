@@ -1,0 +1,64 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/_48sdp"
+    android:gravity="center"
+    android:saveEnabled="false"
+    tools:viewBindingIgnore="true">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/language_select_item"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/simple_dialog_item_height"
+        android:background="?attr/selectableItemBackground"
+        android:orientation="horizontal"
+        android:layout_gravity="center_vertical"
+        android:saveEnabled="false"
+        android:weightSum="8">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/language_image"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginHorizontal="@dimen/default_gap"
+            android:layout_weight="1"
+            android:contentDescription="@string/rewarded_place_letter"
+            android:saveEnabled="false"
+            app:srcCompat="@drawable/letter_icon"
+            tools:ignore="RtlSymmetry" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="5"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:saveEnabled="false">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/language_to_select"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:saveEnabled="false"
+                android:text="Name"
+                android:textAppearance="@style/TextAppearance.OC.Body1" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/count_of_levels"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:saveEnabled="false"
+            android:text=""
+            android:textAppearance="@style/TextAppearance.OC.Headline6" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</FrameLayout>

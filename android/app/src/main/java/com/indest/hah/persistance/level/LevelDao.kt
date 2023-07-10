@@ -10,6 +10,12 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface LevelDao {
 
+    @Query("select distinct country_code from level_info_table")
+    suspend fun getUniqueCountries():List<String>
+
+    @Query("select * from level_info_table where country_code = :cc")
+    suspend fun getLevelsForCountry(cc:String):List<Level>
+
     @Query("delete from letter_info_table where owner_id = :levelNr")
     suspend fun deleteLetterInfo(levelNr: Int)
 
@@ -36,6 +42,7 @@ interface LevelDao {
 
     @Query("select sum(best_score) from level_info_table where level_id > 1000")
     suspend fun getTotalPlayerLevelsScore(): Int?
+
 
     @Insert
     suspend fun insertLevelInfo(levels: LevelData)

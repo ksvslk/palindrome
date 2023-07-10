@@ -14,7 +14,6 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:saveEnabled="false"
-        
         android:id="@+id/level_select_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

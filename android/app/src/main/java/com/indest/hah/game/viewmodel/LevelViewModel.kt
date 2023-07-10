@@ -89,6 +89,8 @@ class LevelViewModel @Inject constructor(
     }
 
 
+
+
     private fun isCurrentLevelLegit() =
         _currentLevel.value.levelInfo.levelId > 0 &&
                 _currentLevel.value.solutions.isNotEmpty() &&
@@ -345,6 +347,18 @@ class LevelViewModel @Inject constructor(
     fun allPalindromesFlow(): Flow<MutableSet<String>> {
         return flow {
             emit(levelRepository.getAllPalindromes())
+        }
+    }
+
+    fun allUniqueCountries(): Flow<List<String>> {
+        return flow {
+            emit(levelRepository.getUniqueCountries())
+        }
+    }
+
+    fun getLevelsForCountry(cc:String): Flow<List<LevelData>> {
+        return flow {
+            emit(levelRepository.getLevelsForCountry(cc))
         }
     }
 

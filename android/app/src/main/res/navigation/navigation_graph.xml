@@ -118,6 +118,22 @@
             android:id="@+id/action_navigation_stages_to_navigation_submission"
             app:popUpTo="@id/navigation_level"
             app:destination="@id/navigation_submission" />
+        <action
+            android:id="@+id/action_navigation_stages_to_navigation_international"
+            app:popUpTo="@id/navigation_level"
+            app:destination="@id/navigation_international" />
+    </dialog>
+
+    <dialog
+        android:id="@+id/navigation_international"
+        android:name="com.indest.hah.fragments.InternationalLevelsFragment"
+        android:label="@string/international_levels"
+        tools:layout="@layout/international_levels_fragment" >
+
+        <action
+            android:id="@+id/action_navigation_international_to_navigation_level_select"
+            app:popUpTo="@id/navigation_level"
+            app:destination="@id/navigation_level_select" />
     </dialog>
 
     <dialog

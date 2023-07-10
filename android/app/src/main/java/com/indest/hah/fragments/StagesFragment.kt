@@ -95,6 +95,9 @@ class StagesFragment : FullBottomSheetDialogFragment() {
                 LevelSelectType.PLAYER_LEVELS
             )
         }
+        binding.internationalLevelsButton.setOnClickListener {
+            findNavController().safeNavigate(R.id.action_navigation_stages_to_navigation_international)
+        }
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         return b.root
     }
