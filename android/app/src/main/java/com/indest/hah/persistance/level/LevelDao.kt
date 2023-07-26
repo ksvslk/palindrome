@@ -14,7 +14,7 @@ import kotlinx.serialization.json.decodeFromJsonElement
 @Dao
 interface LevelDao {
 
-    @Query("select distinct country_code from level_info_table")
+    @Query("select distinct country_code from level_info_table where country_code not in('gb')")
     suspend fun getUniqueCountries():List<String>
 
     @Transaction
