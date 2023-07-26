@@ -129,15 +129,19 @@ class SettingsFragment : FullBottomSheetDialogFragment() {
         binding.vibrationSwitch.setOnCheckedChangeListener { _, b2 ->
             changePreference(getString(R.string.vibration_on_pref), b2)
         }
+
         binding.tutorialButton.setOnClickListener {
             findNavController().safeNavigate(R.id.action_navigation_settings_to_navigation_tutorial)
         }
-        binding.versionInfo.text =
-            "${BuildConfig.VERSION_CODE}\n${BuildConfig.VERSION_NAME}\n${BuildConfig.GIT_HASH}"
-        binding.versionInfo.setOnLongClickListener {
-            it.visibility =
-                if (it.visibility == View.INVISIBLE) View.VISIBLE else View.INVISIBLE
-            true
+
+        binding.googleSignInOutButton.setOnLongClickListener {
+            val info = "${BuildConfig.VERSION_CODE}; ${BuildConfig.VERSION_NAME}; ${BuildConfig.GIT_HASH}"
+            Toast.makeText(
+                context,
+                info,
+                Toast.LENGTH_LONG
+            ).show()
+            return@setOnLongClickListener true
         }
 
         setInitialPreference(binding.soundSwitch, getString(R.string.sound_on_pref))
