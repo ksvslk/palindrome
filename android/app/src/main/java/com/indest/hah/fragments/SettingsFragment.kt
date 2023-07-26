@@ -50,29 +50,26 @@ class SettingsFragment : FullBottomSheetDialogFragment() {
                         val shareIntent = generalViewModel.getShareIntent("SettingsFragment")
                         startActivity(shareIntent)
                     }
+                    binding.twitterButton?.setOnClickListener {
+                        context?.let {
+                            when (internet) {
+                                true -> {
+                                    openWebsite(getString(R.string.company_social_url), it)
+                                }
+                                false -> {
+                                    showNoInternetToast(it.applicationContext)
+                                }
+                            }
+                        }
+                    }
                     binding.rateGameButton.setOnClickListener {
                         context?.let {
                             when (internet) {
                                 true -> {
-                                    Intent(Intent.ACTION_VIEW).apply {
-                                        data = Uri.parse(getString(R.string.app_package_url))
-                                        setPackage(getString(R.string.vending_package))
-                                        if (this.resolveActivity(it.packageManager) != null) {
-                                            startActivity(this)
-                                        } else {
-                                            val browserIntent = Intent(Intent.ACTION_VIEW).apply {
-                                                data = Uri.parse(getString(R.string.app_package_url))
-                                            }
-                                            startActivity(browserIntent)
-                                        }
-                                    }
+                                    openWebsite(getString(R.string.app_package_url), it)
                                 }
                                 false -> {
-                                    Toast.makeText(
-                                        it.applicationContext,
-                                        getString(R.string.no_internet),
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                    showNoInternetToast(it.applicationContext)
                                 }
                             }
                         }
@@ -111,11 +108,7 @@ class SettingsFragment : FullBottomSheetDialogFragment() {
                             }
                             false -> {
                                 context?.let {
-                                    Toast.makeText(
-                                        it.applicationContext,
-                                        getString(R.string.no_internet),
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                    showNoInternetToast(it)
                                 }
                             }
                         }
@@ -150,6 +143,31 @@ class SettingsFragment : FullBottomSheetDialogFragment() {
         setInitialPreference(binding.soundSwitch, getString(R.string.sound_on_pref))
         setInitialPreference(binding.vibrationSwitch, getString(R.string.vibration_on_pref))
         binding.googleSignInButton.setSize(SignInButton.SIZE_WIDE)
+    }
+
+    private fun openWebsite(url:String, context: Context)
+    {
+        Intent(Intent.ACTION_VIEW).apply {
+            data = Uri.parse(url)
+            setPackage(getString(R.string.vending_package))
+            if (this.resolveActivity(context.packageManager) != null) {
+                startActivity(this)
+            } else {
+                val browserIntent = Intent(Intent.ACTION_VIEW).apply {
+                    data = Uri.parse(url)
+                }
+                startActivity(browserIntent)
+            }
+        }
+    }
+
+    private fun showNoInternetToast(context: Context)
+    {
+        Toast.makeText(
+            context,
+            getString(R.string.no_internet),
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     override fun onCreateView(
