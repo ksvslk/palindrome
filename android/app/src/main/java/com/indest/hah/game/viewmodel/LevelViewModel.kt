@@ -815,7 +815,6 @@ class LevelViewModel @Inject constructor(
             "nl",
             "pl",
             "pt",
-            "pt",
             "ro",
             "ru",
             "sv",

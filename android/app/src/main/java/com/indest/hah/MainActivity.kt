@@ -527,7 +527,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun checkIfHintExistsForLevel(levelNr:Int) : Boolean
     {
-        if (levelNr <= C.PLAYER_LEVELS_COVERED_LOCALLY) return true
+        if (levelNr <= C.PLAYER_LEVELS_COVERED_LOCALLY || levelNr in C.LANGUAGE_LEVELS_RANGE) return true
         val outputDir = this.filesDir
         outputDir?.let {
             val localFile = File(it, "level$levelNr.jpg")

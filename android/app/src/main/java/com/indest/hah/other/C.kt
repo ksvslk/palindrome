@@ -11,6 +11,6 @@ object C {
 
     const val FIREBASE_PICS_STORAGE_PATH = "gs://hah-35889753.appspot.com/level_hint/"
     const val PLAYER_LEVELS_COVERED_LOCALLY = 1080
-
+    val LANGUAGE_LEVELS_RANGE = 10001..10361
 }
 
