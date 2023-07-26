@@ -29,4 +29,43 @@
 
     <!--leaderboard Player Levels Leaderboard-->
     <string name="leaderboard_player_levels_leaderboard" translatable="false">CgkIj5WSoeMdEAIQEA</string>
+
+    <!--leaderboard Portuguese-->
+    <string name="leaderboard_portuguese" translatable="false">CgkIj5WSoeMdEAIQEQ</string>
+    <!--leaderboard Chinese-->
+    <string name="leaderboard_chinese" translatable="false">CgkIj5WSoeMdEAIQEg</string>
+    <!--leaderboard German-->
+    <string name="leaderboard_german" translatable="false">CgkIj5WSoeMdEAIQEw</string>
+    <!--leaderboard Estonian-->
+    <string name="leaderboard_estonian" translatable="false">CgkIj5WSoeMdEAIQFA</string>
+    <!--leaderboard Spanish-->
+    <string name="leaderboard_spanish" translatable="false">CgkIj5WSoeMdEAIQFQ</string>
+    <!--leaderboard Finnish-->
+    <string name="leaderboard_finnish" translatable="false">CgkIj5WSoeMdEAIQFg</string>
+    <!--leaderboard French-->
+    <string name="leaderboard_french" translatable="false">CgkIj5WSoeMdEAIQFw</string>
+    <!--leaderboard Indonesian-->
+    <string name="leaderboard_indonesian" translatable="false">CgkIj5WSoeMdEAIQGA</string>
+    <!--leaderboard Hindi-->
+    <string name="leaderboard_hindi" translatable="false">CgkIj5WSoeMdEAIQGQ</string>
+    <!--leaderboard Italian-->
+    <string name="leaderboard_italian" translatable="false">CgkIj5WSoeMdEAIQGg</string>
+    <!--leaderboard Japanese-->
+    <string name="leaderboard_japanese" translatable="false">CgkIj5WSoeMdEAIQGw</string>
+    <!--leaderboard Korean-->
+    <string name="leaderboard_korean" translatable="false">CgkIj5WSoeMdEAIQHA</string>
+    <!--leaderboard Dutch-->
+    <string name="leaderboard_dutch" translatable="false">CgkIj5WSoeMdEAIQHQ</string>
+    <!--leaderboard Polish-->
+    <string name="leaderboard_polish" translatable="false">CgkIj5WSoeMdEAIQHg</string>
+    <!--leaderboard Romanian-->
+    <string name="leaderboard_romanian" translatable="false">CgkIj5WSoeMdEAIQHw</string>
+    <!--leaderboard Russian-->
+    <string name="leaderboard_russian" translatable="false">CgkIj5WSoeMdEAIQIA</string>
+    <!--leaderboard Swedish-->
+    <string name="leaderboard_swedish" translatable="false">CgkIj5WSoeMdEAIQIQ</string>
+    <!--leaderboard Turkish-->
+    <string name="leaderboard_turkish" translatable="false">CgkIj5WSoeMdEAIQIg</string>
+    <!--leaderboard Ukrainian-->
+    <string name="leaderboard_ukrainian" translatable="false">CgkIj5WSoeMdEAIQIw</string>
 </resources>

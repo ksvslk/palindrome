@@ -11,6 +11,7 @@ import com.google.firebase.firestore.*
 import com.indest.hah.R
 import com.indest.hah.ads.RewardType
 import com.indest.hah.general.AccountStatus
+import com.indest.hah.persistance.dto.LanguageLevel
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
 import com.indest.hah.persistance.dto.PlayerLevel
@@ -23,6 +24,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.decodeFromJsonElement
 import javax.inject.Inject
 
 @HiltViewModel
@@ -86,9 +91,12 @@ class LevelViewModel @Inject constructor(
                 }
             }
         }
+        viewModelScope.launch {
+            if (levelRepository.getMaxLevelId() < 10000) {
+                addLanguagePack()
+            }
+        }
     }
-
-
 
 
     private fun isCurrentLevelLegit() =
@@ -102,19 +110,33 @@ class LevelViewModel @Inject constructor(
         val author = _currentLevel.value.levelInfo.author
         val solutionsCount = _currentLevel.value.solutions.count()
 
+        var result = Pair(-1, "")
         // Game levels or player levels
-        return if (levelId > 1000) {
+        if (levelId in 1001..9999) {
             val maxLevels = levelRepository.getMaxLevelId() - 1000
             val text =
                 if (solutionsCount > 1) "${levelId - 1000}* - $author" else "${levelId - 1000} - $author"
             val progress = ((levelId - 1000).toFloat() / maxLevels.toFloat() * 100.0).toInt()
-            Pair(progress, text)
+            result = Pair(progress, text)
+        } else if (levelId > 10000) {
+            val language = _currentLevel.value.levelInfo.countryCode
+            val maxLevelId = levelRepository.getMaxLevelIdForCountry(language)
+            val minLevelId = levelRepository.getMinLevelIdForCountry(language)
+            val levelsCount = maxLevelId - minLevelId + 1
+            val levelShownInUi = levelId - minLevelId + 1
+
+            val authorIfExists = if (author.isNotEmpty()) " - $author" else ""
+            val text =
+                if (solutionsCount > 1) "$levelShownInUi*$authorIfExists" else "$levelShownInUi$authorIfExists"
+            val progress = (levelShownInUi.toFloat() / levelsCount.toFloat() * 100.0).toInt()
+            result = Pair(progress, text)
         } else {
             val levelsCount = levelRepository.getMaxGameLevelId()
             val text = if (solutionsCount > 1) "$levelId*" else "$levelId"
             val progress = (levelId / levelsCount.toFloat() * 100.0).toInt()
-            Pair(progress, text)
+            result = Pair(progress, text)
         }
+        return result
     }
 
 
@@ -161,12 +183,14 @@ class LevelViewModel @Inject constructor(
                 AccountStatus.SIGNED_IN -> {
                     variousEventChannel.send(VariousEvent.LoadGame)
                 }
+
                 AccountStatus.SIGNED_OUT -> {
 
-                    if(!isCurrentLevelLegit()) {
+                    if (!isCurrentLevelLegit()) {
                         startCollectingLevelUpdate()
                     }
                 }
+
                 AccountStatus.LOADING -> {
                     if (!isCurrentLevelLegit()) {
                         gameEventChannel.send(GameEvent.ShowLoading)
@@ -175,12 +199,14 @@ class LevelViewModel @Inject constructor(
                         gameEventChannel.send(GameEvent.DisplayLevel(_currentLevel.value, progress))
                     }
                 }
+
                 AccountStatus.SIGNED_IN_WITH_FIREBASE -> {
                     if (_accountStatus.value != AccountStatus.SIGNED_IN) {
                         variousEventChannel.send(VariousEvent.LoadGame)
                     }
                 }
-                AccountStatus.NOT_SET -> { }
+
+                AccountStatus.NOT_SET -> {}
             }
         }
     }
@@ -332,7 +358,7 @@ class LevelViewModel @Inject constructor(
 
     fun allPlayerLevelsFlow(): Flow<List<Pair<Boolean, LevelData>>> {
         return flow {
-            emit(levelRepository.getAllLevels().filter { it.second.levelId >= 1000 })
+            emit(levelRepository.getAllLevels().filter { it.second.levelId in 1000..9999 })
         }
     }
 
@@ -356,7 +382,7 @@ class LevelViewModel @Inject constructor(
         }
     }
 
-    fun getLevelsForCountry(cc:String): Flow<List<LevelData>> {
+    fun getLevelsForCountry(cc: String): Flow<List<LevelData>> {
         return flow {
             emit(levelRepository.getLevelsForCountry(cc))
         }
@@ -535,6 +561,7 @@ class LevelViewModel @Inject constructor(
                         levelRepository.setCountTo(hintsInterval, 0)
                         logLevelEnd()
                     }
+
                     playerGuess.reversed() == playerGuess -> {
                         val showHintsBadge =
                             levelRepository.increaseCountAndGetResult(hintsInterval)
@@ -548,6 +575,7 @@ class LevelViewModel @Inject constructor(
                         // Wrong Palindrome achievement
                         unlockAchievement(getApplication<Application>().getString(R.string.achievement_wrong_palindrome))
                     }
+
                     else -> {
                         val showHintsBadge =
                             levelRepository.increaseCountAndGetResult(hintsInterval)
@@ -680,7 +708,8 @@ class LevelViewModel @Inject constructor(
                                         val solutionsToCategories =
                                             levelValues["solutionToCategory"] as Map<String, String>
                                         if (solutionsToCategories.isEmpty()) throw Exception("Solutions were empty")
-                                        val countryCode = levelValues.getOrElse("countryCode") { "gb" }
+                                        val countryCode =
+                                            levelValues.getOrElse("countryCode") { "gb" }
                                         playerLevels.add(
                                             PlayerLevel(
                                                 levelId = levelValues["levelId"] as Long,
@@ -699,6 +728,7 @@ class LevelViewModel @Inject constructor(
                                     return@EventListener
                                 }
                             }
+
                             DocumentChange.Type.MODIFIED -> {}
                             DocumentChange.Type.REMOVED -> {}
                         }
@@ -769,4 +799,41 @@ class LevelViewModel @Inject constructor(
         return _accountStatus.value == AccountStatus.SIGNED_IN_WITH_FIREBASE
     }
 
+    private suspend fun addLanguagePack() {
+        val languages = arrayListOf(
+            "cn",
+            "de",
+            "es",
+            "et",
+            "fi",
+            "fr",
+            "hi",
+            "id",
+            "it",
+            "ja",
+            "ko",
+            "nl",
+            "pl",
+            "pt",
+            "pt",
+            "ro",
+            "ru",
+            "sv",
+            "tr",
+            "uk"
+        )
+        languages.forEach { cc ->
+            val jsonInstance = Json { isLenient = true }
+            val json =
+                getApplication<Application>().applicationContext.assets.open("language_pack_$cc.json")
+                    .bufferedReader().use {
+                        it.readText()
+                    }
+            val languageLevels = jsonInstance
+                .decodeFromString<List<JsonElement>>(json)
+                .map { jsonInstance.decodeFromJsonElement(it) as LanguageLevel }
+
+            levelRepository.insertLanguageLevelPack(languageLevels, cc)
+        }
+    }
 }

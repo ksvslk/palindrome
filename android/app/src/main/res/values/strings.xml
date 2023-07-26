@@ -26,6 +26,7 @@
     <string name="game_levels">Game Levels</string>
     <string name="player_levels">Player Levels</string>
     <string name="international_levels">International Levels</string>
+    <string name="global_leaderboards">Global Leaderboards</string>
     <string name="submit_level">Send Your Palindrome</string>
     <string name="send">Send for Review</string>
     <string name="something_went_wrong">Something went wrong.</string>
@@ -178,4 +179,27 @@
     <string name="status_instant">instant</string>
     <string name="picture_hint">Picture hint</string>
 
+    <!-- Languages -->
+    <string name="chinese">Chinese</string>
+    <string name="estonian">Estonian</string>
+    <string name="romanian">Romanian</string>
+    <string name="japanese">Japanese</string>
+    <string name="korean">Korean</string>
+    <string name="dutch">Dutch</string>
+    <string name="german">German</string>
+    <string name="french">French</string>
+    <string name="finnish">Finnish</string>
+    <string name="polish">Polish</string>
+    <string name="hindi">Hindi</string>
+    <string name="indonesian">Indonesian</string>
+    <string name="spanish">Spanish</string>
+    <string name="portuguese">Portuguese</string>
+    <string name="ukrainian">Ukrainian</string>
+    <string name="russian">Russian</string>
+    <string name="swedish">Swedish</string>
+    <string name="turkish">Turkish</string>
+    <string name="italian">Italian</string>
+    <string name="english">English</string>
+
 </resources>
+

@@ -12,6 +12,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.games.PlayGames
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
@@ -19,6 +20,7 @@ import com.indest.hah.databinding.GoogleGamesFragmentBinding
 import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.general.AccountStatus
 import com.indest.hah.general.GeneralViewModel
+import com.indest.hah.other.safeNavigate
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
@@ -86,6 +88,9 @@ class GoogleGamesFragment : FullBottomSheetDialogFragment() {
         val b = GoogleGamesFragmentBinding.inflate(layoutInflater, container, false)
         _binding = b
         activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+        binding.globalLeaderboardsButton?.setOnClickListener {
+            findNavController().safeNavigate(R.id.action_navigation_google_games_to_navigation_global_leaderboards)
+        }
         return b.root
     }
 

@@ -29,6 +29,11 @@ class LevelRepository @Inject constructor(
     }
 
     suspend fun getMaxLevelId():Int = levelDao.getMaxLevelId()
+    suspend fun getMinLevelIdForCountry(cc:String):Int
+        = levelDao.getMinLevelIdForCountry(cc)
+
+    suspend fun getMaxLevelIdForCountry(cc:String):Int
+            = levelDao.getMaxLevelIdForCountry(cc)
 
     suspend fun getMaxGameLevelId():Int = levelDao.getMaxGameLevels()
 
@@ -180,5 +185,7 @@ class LevelRepository @Inject constructor(
 
     suspend fun getMaximumTimestamp():Long = levelDao.getMaximumTimestamp() ?: 0
 
+    suspend fun insertLanguageLevelPack(levels:List<LanguageLevel>, language:String)
+        = levelDao.insertLanguagePackLevel(levels, language)
 
 }

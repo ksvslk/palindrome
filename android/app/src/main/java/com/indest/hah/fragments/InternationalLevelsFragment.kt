@@ -6,11 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.core.view.updatePadding
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
 import com.indest.hah.R
 
 import com.indest.hah.databinding.InternationalLevelsFragmentBinding
@@ -34,6 +36,16 @@ class InternationalLevelsFragment : FullBottomSheetDialogFragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED)
             {
                 levelViewModel.allUniqueCountries().collect { countries ->
+                    binding.internationalLevelsRecyclerview.addItemDecoration(
+                        DividerItemDecoration(
+                            context,
+                            DividerItemDecoration.VERTICAL
+                        )
+                    )
+                    binding.internationalLevelsRecyclerview.updatePadding(
+                        left = resources.getDimensionPixelSize(R.dimen.simple_dialog_header_left_margin),
+                        right = resources.getDimensionPixelSize(R.dimen.simple_dialog_header_left_margin)
+                    )
                     binding.internationalLevelsRecyclerview.adapter =
                         LanguageItemAdapter(countries) {
                              it?.let {cc ->

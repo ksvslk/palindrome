@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.os.Build
+import android.view.Gravity
 import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
 import android.view.View.OnTouchListener
@@ -16,6 +17,7 @@ import com.indest.hah.game.director.data.GlobalPosition
 import com.indest.hah.other.C.NEUTRAL_LAYER
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+
 
 @SuppressLint("ViewConstructor", "RestrictedApi")
 @AndroidEntryPoint
@@ -111,5 +113,6 @@ class Letter @Inject constructor(
         translationZ = NEUTRAL_LAYER
         text = letter
         setAutoSizeTextTypeWithDefaults(TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM)
+        gravity = Gravity.CENTER_VERTICAL or Gravity.CENTER_HORIZONTAL
     }
 }

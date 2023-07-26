@@ -5,6 +5,10 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.indest.hah.game.creation.Shuffler
 import com.indest.hah.persistance.dto.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.decodeFromJsonElement
 
 
 @Dao
@@ -13,6 +17,7 @@ interface LevelDao {
     @Query("select distinct country_code from level_info_table")
     suspend fun getUniqueCountries():List<String>
 
+    @Transaction
     @Query("select * from level_info_table where country_code = :cc")
     suspend fun getLevelsForCountry(cc:String):List<Level>
 
@@ -83,6 +88,60 @@ interface LevelDao {
     @Query("select exists (select 1 from level_info_table where level_id = :id)")
     suspend fun isLevelAdded(id: Long): Boolean
 
+
+    @Transaction
+    suspend fun insertLanguagePackLevel(levels:List<LanguageLevel>, countryCode:String)
+    {
+        var maxLevelId = getMaxLevelId()
+        if (maxLevelId < 10000) maxLevelId = 10000
+        var nextLevelId = maxLevelId
+        levels.forEach { level ->
+            nextLevelId += 1
+            if (!isLevelAdded(nextLevelId.toLong())) {
+                val puzzle = level.solutionToCategory.keys.firstOrNull() ?: ""
+                insertLevelInfo(
+                    LevelData(
+                        levelId = nextLevelId,
+                        puzzle = puzzle,
+                        categoryRewarded = false,
+                        pictureRewarded = false,
+                        progress = LevelProgress.TODO,
+                        score = puzzle.length * 100,
+                        best_score = 0,
+                        timeModified = 0,
+                        author = "",
+                        columnCount = -1,
+                        countryCode = countryCode
+                    )
+                )
+                level.solutionToCategory.entries.forEach { solutionToCategory ->
+                    val maxSolutionId = getMaxSolutionId()
+                    insertSolution(
+                        Solution(
+                            solutionId = if (maxSolutionId < 10000) 10001 else maxSolutionId + 1,
+                            parentId = nextLevelId,
+                            palindrome = solutionToCategory.key,
+                            hint = solutionToCategory.value,
+                            solved = false
+                        )
+                    )
+                }
+                val solution = level.solutionToCategory.keys.first()
+                val puzzleShuffled = Shuffler.getShuffledSolution(solution)
+                updatePuzzle(nextLevelId, puzzleShuffled)
+                puzzleShuffled.forEachIndexed { index, char ->
+                    insertLetterData(
+                        ownerId = nextLevelId,
+                        homeIndex = index,
+                        friendIndex = -666,
+                        letter = char,
+                        locked = false,
+                    )
+                }
+            }
+        }
+    }
+
     @Transaction
     suspend fun insertPlayerLevels(playerLevel: List<PlayerLevel>): Pair<LevelData, Int> {
         var newLevelsCount = 0
@@ -102,7 +161,8 @@ interface LevelDao {
                         best_score = 0,
                         timeModified = 0,
                         author = level.player,
-                        columnCount = -1
+                        columnCount = -1,
+                        countryCode = level.countryCode
                     )
                 )
                 level.solutionToCategory.entries.forEach { solutionToCategory ->
@@ -138,6 +198,12 @@ interface LevelDao {
 
     @Query("select max(level_id) from level_info_table")
     suspend fun getMaxLevelId(): Int
+
+    @Query("select min(level_id) from level_info_table where country_code = :cc")
+    suspend fun getMinLevelIdForCountry(cc:String): Int
+
+    @Query("select max(level_id) from level_info_table where country_code = :cc")
+    suspend fun getMaxLevelIdForCountry(cc:String): Int
 
     @Query("select max(level_id) from level_info_table where level_id < 1000")
     suspend fun getMaxGameLevels(): Int

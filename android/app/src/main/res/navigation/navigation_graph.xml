@@ -92,7 +92,11 @@
         android:id="@+id/navigation_google_games"
         android:name="com.indest.hah.fragments.GoogleGamesFragment"
         android:label="@string/play_games"
-        tools:layout="@layout/google_games_fragment" />
+        tools:layout="@layout/google_games_fragment" >
+        <action
+            android:id="@+id/action_navigation_google_games_to_navigation_global_leaderboards"
+            app:destination="@id/navigation_global_leaderboards" />
+    </dialog>
 
     <dialog
         android:id="@+id/navigation_settings"
@@ -134,6 +138,16 @@
             android:id="@+id/action_navigation_international_to_navigation_level_select"
             app:popUpTo="@id/navigation_level"
             app:destination="@id/navigation_level_select" />
+    </dialog>
+
+    <dialog
+        android:id="@+id/navigation_global_leaderboards"
+        android:name="com.indest.hah.fragments.GlobalLeaderboardsFragment"
+        android:label="@string/global_leaderboards"
+        tools:layout="@layout/global_leaderboards_fragment" >
+        <action
+            android:id="@+id/action_navigation_global_leaderboards_to_navigation_level"
+            app:destination="@id/navigation_level" />
     </dialog>
 
     <dialog

@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.DividerItemDecoration
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -95,8 +96,6 @@ class LevelSelectFragment : FullBottomSheetDialogFragment() {
                             binding.levelSelectRecyclerview.adapter =
                                 StandardLevelItemAdapter(languageLevels) {
                                     it?.levelId?.let { nr ->
-
-                                        Log.d(TAG, "LEVEL DATA SELECTED: ${it.toString()}")
                                         if (nr != currentLevel) {
                                             levelViewModel.changeLevel(nr)
                                             findNavController().safeNavigate(R.id.action_navigation_level_select_to_navigation_level)

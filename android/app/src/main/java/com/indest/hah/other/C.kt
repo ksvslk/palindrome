@@ -10,7 +10,7 @@ object C {
     const val REWARDED_ANIM_MUL_DEFAULT = 1
 
     const val FIREBASE_PICS_STORAGE_PATH = "gs://hah-35889753.appspot.com/level_hint/"
-    const val LEVEL_HINTS_COVERED_LOCALLY = 10
+    const val PLAYER_LEVELS_COVERED_LOCALLY = 1080
 
 }
 

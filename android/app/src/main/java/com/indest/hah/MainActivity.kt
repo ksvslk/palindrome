@@ -490,7 +490,7 @@ class MainActivity : AppCompatActivity() {
 
     fun updateProgressBar(progress: Pair<Int, String>, countryCode:String) {
         binding.levelNumber.text = progress.second
-        val drawableId = countryCode.mapCountryCodeToLanguageAndFlag().second
+        val drawableId = countryCode.mapCountryCodeToLanguageAndFlag(applicationContext).second
         binding.levelFlag.setImageResource(drawableId)
         binding.levelFlag.invalidate()
         binding.gameProgress.progress = progress.first
@@ -527,7 +527,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun checkIfHintExistsForLevel(levelNr:Int) : Boolean
     {
-        if (levelNr <= C.LEVEL_HINTS_COVERED_LOCALLY) return true
+        if (levelNr <= C.PLAYER_LEVELS_COVERED_LOCALLY) return true
         val outputDir = this.filesDir
         outputDir?.let {
             val localFile = File(it, "level$levelNr.jpg")
@@ -535,6 +535,5 @@ class MainActivity : AppCompatActivity() {
         }
         return false
     }
-
 
 }
