@@ -19,6 +19,7 @@ import com.indest.hah.other.C
 import com.indest.hah.persistance.dto.LanguageLevel
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
+import com.indest.hah.persistance.dto.NewLevelNotification
 import com.indest.hah.persistance.dto.PlayerLevel
 import com.indest.hah.persistance.dto.SaveGame
 import com.indest.hah.persistance.level.LevelProgress
@@ -68,7 +69,7 @@ class LevelViewModel @Inject constructor(
     private var liveStoreRegistration: ListenerRegistration? = null
 
     private val _newPlayerLevels =
-        MutableStateFlow(Triple(-1, -1, "")) // level nr, multiple levels, who submitted
+        MutableStateFlow(NewLevelNotification(-1,-1,"",""))
     val newPlayerLevels = _newPlayerLevels.asStateFlow()
 
     var currentlySignedInPlayerName = "Unknown"
@@ -715,7 +716,7 @@ class LevelViewModel @Inject constructor(
         val playerLevels = mutableListOf<PlayerLevel>()
         val docRef: DocumentReference = fsDb
             .collection("user_submitted_levels")
-            .document("CGU2376WFmLjpWsD1gVw")
+            .document("Bc4MHj3i0hMNRsgVAMdc")
         docRef.get().addOnSuccessListener {
             Log.d(TAG,"it received!")
             try {
@@ -751,15 +752,27 @@ class LevelViewModel @Inject constructor(
                     // Second element is the level count when there are more than 1 level added.
                     val levelAndCount = insertPlayerLevels(playerLevels)
                     if (levelAndCount.second > 0) {
-                        _newPlayerLevels.value = if (levelAndCount.second > 1) Triple(
-                            -1,
-                            levelAndCount.second,
-                            ""
-                        ) else Triple(
-                            levelAndCount.first.levelId,
-                            1,
-                            levelAndCount.first.author
-                        )
+                        if (levelAndCount.second > 1)
+                        {
+                            _newPlayerLevels.update {
+                                NewLevelNotification(
+                                    -1,
+                                    levelAndCount.second,
+                                    "",
+                                    ""
+                                )
+                            }
+                        }
+                        else {
+                            _newPlayerLevels.update {
+                                NewLevelNotification(
+                                    levelAndCount.first.levelId,
+                                    1,
+                                    levelAndCount.first.author,
+                                    levelAndCount.first.countryCode
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -820,15 +833,23 @@ class LevelViewModel @Inject constructor(
                         // Second element is the level count when there are more than 1 level added.
                         val levelAndCount = insertPlayerLevels(playerLevels)
                         if (levelAndCount.second > 0) {
-                            _newPlayerLevels.value = if (levelAndCount.second > 1) Triple(
-                                -1,
-                                levelAndCount.second,
-                                ""
-                            ) else Triple(
-                                levelAndCount.first.levelId,
-                                1,
-                                levelAndCount.first.author
-                            )
+                            if (levelAndCount.second > 1)
+                            {
+                                _newPlayerLevels.value = NewLevelNotification(
+                                    -1,
+                                    levelAndCount.second,
+                                    "",
+                                    ""
+                                )
+                            }
+                            else {
+                                _newPlayerLevels.value = NewLevelNotification(
+                                    levelAndCount.first.levelId,
+                                    -1,
+                                    levelAndCount.first.author,
+                                    levelAndCount.first.countryCode
+                                )
+                            }
                         }
                     }
                 }
@@ -838,14 +859,13 @@ class LevelViewModel @Inject constructor(
 
 
     fun resetNewPlayersLevels() {
-        _newPlayerLevels.value = Triple(-1, -1, "")
+        _newPlayerLevels.value = NewLevelNotification(-1,-1,"","")
     }
 
 
     private suspend fun insertPlayerLevels(playerLevels: List<PlayerLevel>): Pair<LevelData, Int> {
         return levelRepository.insertPlayerLevels(playerLevels)
     }
-
 
     suspend fun submitUserLevel(playersPalindrome: String) {
         // Create a new user with a first, middle, and last name

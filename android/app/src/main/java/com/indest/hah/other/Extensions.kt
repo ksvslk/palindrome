@@ -15,7 +15,11 @@ import com.indest.hah.R
 import java.util.Locale
 
 
-fun NavController.safeNavigate(action: Int, levelSelectType: LevelSelectType = LevelSelectType.NONE, language:String? = null) {
+fun NavController.safeNavigate(
+    action: Int,
+    levelSelectType: LevelSelectType = LevelSelectType.NONE,
+    language: String? = null
+) {
     val bundle = bundleOf(
         "levelSelectType" to levelSelectType.name,
         "selectedLanguage" to language
@@ -27,7 +31,7 @@ fun NavController.safeNavigate(action: Int, levelSelectType: LevelSelectType = L
 }
 
 
-fun String.isPalindrome():Boolean {
+fun String.isPalindrome(): Boolean {
     val testString = this.lowercase()
         .replace("""[\W+]""".toRegex(), "")
     return testString.length >= 3 && testString == testString.reversed()
@@ -36,7 +40,8 @@ fun String.isPalindrome():Boolean {
 
 fun AppCompatActivity.hideSystemBars(viewGroup: ViewGroup) {
     val insetsController = WindowInsetsControllerCompat(window, viewGroup)
-    insetsController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+    insetsController.systemBarsBehavior =
+        WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
     insetsController.hide(WindowInsetsCompat.Type.systemBars())
 }
 
@@ -86,10 +91,8 @@ internal fun View?.findSuitableParent(): ViewGroup? {
     return fallback
 }
 
-fun String.mapCountryCodeToLanguageAndFlag(context: Context):Pair<String, Int>
-{
-    when(this)
-    {
+fun String.mapCountryCodeToLanguageAndFlag(context: Context): Pair<String, Int> {
+    when (this) {
         "cn" -> return Pair(context.getString(R.string.chinese), R.drawable.cn)
         "et" -> return Pair(context.getString(R.string.estonian), R.drawable.et)
         "fi" -> return Pair(context.getString(R.string.finnish), R.drawable.fi)
@@ -111,4 +114,32 @@ fun String.mapCountryCodeToLanguageAndFlag(context: Context):Pair<String, Int>
         "nl" -> return Pair(context.getString(R.string.dutch), R.drawable.nl)
     }
     return Pair("English", R.drawable.gb)
+}
+
+fun String.countryCodeToEmoji(): String {
+    var allowedCountryCode = "GB"
+    when (this) {
+        "cn" -> allowedCountryCode = "CN"
+        "et" -> allowedCountryCode = "EE"
+        "fi" -> allowedCountryCode = "FI"
+        "fr" -> allowedCountryCode = "FR"
+        "de" -> allowedCountryCode = "DE"
+        "hi" -> allowedCountryCode = "IN"
+        "id" -> allowedCountryCode = "ID"
+        "it" -> allowedCountryCode = "IT"
+        "ja" -> allowedCountryCode = "JP"
+        "ko" -> allowedCountryCode = "KR"
+        "pt" -> allowedCountryCode = "BR"
+        "ru" -> allowedCountryCode = "RU"
+        "es" -> allowedCountryCode = "ES"
+        "sv" -> allowedCountryCode = "SE"
+        "tr" -> allowedCountryCode = "TR"
+        "uk" -> allowedCountryCode = "UA"
+        "pl" -> allowedCountryCode = "PL"
+        "ro" -> allowedCountryCode = "RO"
+        "nl" -> allowedCountryCode = "NL"
+    }
+    val firstLetter = Character.codePointAt(allowedCountryCode, 0) - 0x41 + 0x1F1E6
+    val secondLetter = Character.codePointAt(allowedCountryCode, 1) - 0x41 + 0x1F1E6
+    return String(Character.toChars(firstLetter)) + String(Character.toChars(secondLetter))
 }

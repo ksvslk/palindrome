@@ -51,6 +51,7 @@ import com.indest.hah.general.AccountStatus
 import com.indest.hah.general.GeneralViewModel
 import com.indest.hah.other.C
 import com.indest.hah.other.LevelSelectType
+import com.indest.hah.other.countryCodeToEmoji
 import com.indest.hah.other.hideSystemBars
 import com.indest.hah.other.mapCountryCodeToLanguageAndFlag
 import com.indest.hah.other.safeNavigate
@@ -182,18 +183,20 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {/*
             lifecycleScope.launchWhenCreated { */
             lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
-                levelViewModel.newPlayerLevels.collectLatest { (levelNr, addedLevelsCount, author) ->
-                    if (levelNr == -1 && addedLevelsCount == -1 && author == "") return@collectLatest
-                    if (addedLevelsCount == 1) {
+                levelViewModel.newPlayerLevels.collectLatest { newLevel ->
+                    Log.d(TAG, "new level notification: $newLevel")
+                    if (newLevel.lastAddedLevel == -1 && newLevel.multipleLevels == -1 && newLevel.playerName == "") return@collectLatest
+                    if (newLevel.multipleLevels == 1) {
                         showNewLevelMessage(
-                            author,
-                            levelNr
+                            newLevel.playerName,
+                            newLevel.lastAddedLevel,
+                            countryCode = newLevel.countryCode
                         )
-                    } else if (addedLevelsCount > 1) {
+                    } else if (newLevel.multipleLevels > 1) {
                         showNewLevelMessage(
-                            author,
+                            newLevel.playerName,
                             lastAddedLevel = -1,
-                            multipleLevels = addedLevelsCount
+                            multipleLevels = newLevel.multipleLevels,
                         )
                     }
                     levelViewModel.resetNewPlayersLevels()
@@ -206,10 +209,12 @@ class MainActivity : AppCompatActivity() {
     private fun showNewLevelMessage(
         player: String,
         lastAddedLevel: Int,
-        multipleLevels: Int = -1
+        multipleLevels: Int = -1,
+        countryCode: String = ""
     ) {
+        val flagNew = if (countryCode != "") "${countryCode.countryCodeToEmoji()} New" else "New"
         val snackMessage =
-            if (multipleLevels == -1) "New level by $player!" else "$multipleLevels levels added!"
+            if (multipleLevels == -1) "$flagNew level by $player!" else "$multipleLevels levels added!"
 
         val snack =
             Snackbar.make(findViewById(android.R.id.content), snackMessage, 15000)
@@ -245,7 +250,6 @@ class MainActivity : AppCompatActivity() {
         params.gravity = Gravity.TOP
         params.topMargin = resources.getDimension(com.intuit.sdp.R.dimen._16sdp).toInt()
         snack.view.layoutParams = params
-        /*snack.view.background = ContextCompat.getDrawable(applicationContext, R.drawable.new_level_message_rectangle)*/
         snack.show()
     }
 

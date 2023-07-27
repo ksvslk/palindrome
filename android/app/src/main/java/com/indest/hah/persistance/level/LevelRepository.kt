@@ -188,4 +188,8 @@ class LevelRepository @Inject constructor(
     suspend fun insertLanguageLevelPack(levels:List<LanguageLevel>, language:String)
         = levelDao.insertLanguagePackLevel(levels, language)
 
+    suspend fun removeLevel(levelNr:Int)
+    {
+        levelDao.removeLevel(levelNr)
+    }
 }

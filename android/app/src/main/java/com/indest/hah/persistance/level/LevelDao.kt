@@ -495,4 +495,7 @@ interface LevelDao {
     @Query("select max(time_modified) from level_info_table")
     suspend fun getMaximumTimestamp(): Long?
 
+    @Query("DELETE FROM level_info_table WHERE level_id = :levelNr")
+    suspend fun removeLevel(levelNr: Int)
+
 }
