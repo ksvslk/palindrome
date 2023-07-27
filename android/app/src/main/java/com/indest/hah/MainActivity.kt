@@ -49,7 +49,9 @@ import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.general.AccountStatus
 import com.indest.hah.general.GeneralViewModel
 import com.indest.hah.other.C
+import com.indest.hah.other.LevelSelectType
 import com.indest.hah.other.hideSystemBars
+import com.indest.hah.other.mapCountryCodeToLanguageAndFlag
 import com.indest.hah.other.safeNavigate
 import com.indest.hah.persistance.dto.SaveGame
 import com.indest.hah.savegame.SnapshotHelper
@@ -221,7 +223,10 @@ class MainActivity : AppCompatActivity() {
                         }
                     } else { // If there are multiple new levels
                         if (currentlyActiveFragment == R.id.navigation_final_screen) { // If on the final screen
-                            navController.safeNavigate(R.id.action_navigation_final_screen_to_navigation_player_level_select)
+                            navController.safeNavigate(
+                                R.id.action_navigation_final_screen_to_navigation_level_select,
+                                LevelSelectType.PLAYER_LEVELS
+                            )
                         } else { // If on any other screen
                             navController.safeNavigate(R.id.action_navigation_level_to_navigation_stages)
                         }
@@ -485,38 +490,13 @@ class MainActivity : AppCompatActivity() {
 
     fun updateProgressBar(progress: Pair<Int, String>, countryCode:String) {
         binding.levelNumber.text = progress.second
-        val drawableId = mapCountryCodeToDrawable(countryCode)
+        val drawableId = countryCode.mapCountryCodeToLanguageAndFlag(applicationContext).second
         binding.levelFlag.setImageResource(drawableId)
         binding.levelFlag.invalidate()
         binding.gameProgress.progress = progress.first
     }
 
-    private fun mapCountryCodeToDrawable(cc:String):Int
-    {
-        when(cc)
-        {
-            "cn" -> return R.drawable.cn
-            "ee" -> return R.drawable.ee
-            "fi" -> return R.drawable.fi
-            "fr" -> return R.drawable.fr
-            "de" -> return R.drawable.de
-            "in" -> return R.drawable.`in`
-            "id" -> return R.drawable.id
-            "it" -> return R.drawable.it
-            "jp" -> return R.drawable.jp
-            "kr" -> return R.drawable.kr
-            "no" -> return R.drawable.no
-            "br" -> return R.drawable.br
-            "ru" -> return R.drawable.ru
-            "es" -> return R.drawable.es
-            "se" -> return R.drawable.se
-            "th" -> return R.drawable.th
-            "tr" -> return R.drawable.tr
-            "vn" -> return R.drawable.vn
-            "cp" -> return R.drawable.cp
-         }
-        return R.drawable.gb
-    }
+
 
     fun downloadHintPictureIfNeeded(levelNr: Int)
     {
@@ -547,7 +527,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun checkIfHintExistsForLevel(levelNr:Int) : Boolean
     {
-        if (levelNr <= C.LEVEL_HINTS_COVERED_LOCALLY) return true
+        if (levelNr <= C.PLAYER_LEVELS_COVERED_LOCALLY || levelNr in C.LANGUAGE_LEVELS_RANGE) return true
         val outputDir = this.filesDir
         outputDir?.let {
             val localFile = File(it, "level$levelNr.jpg")
@@ -555,6 +535,5 @@ class MainActivity : AppCompatActivity() {
         }
         return false
     }
-
 
 }

@@ -2,6 +2,7 @@ package com.indest.hah.game.creation
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.util.Log
 import android.view.Gravity
@@ -40,7 +41,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         val level = layoutInflater.inflate(R.layout.grid, container, false) as GridLayout
         level.columnCount = densitySettings.columnCount
         addLetters(level, densitySettings, info, context)
-        addSlots(info.solutions.first().palindrome, level, densitySettings, context)
+        addSlots(info.solutions.first().palindrome, level, densitySettings, context, info.levelInfo.countryCode)
         return Pair(
             level,
             densitySettings.homeIndexNewFriendIndexes
@@ -172,6 +173,10 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
             ) { acc, li -> acc + li.letter }
     }
 
+    private fun isOneWord(palindrome: String) : Boolean
+    {
+        return palindrome.split(" ").count() == 1 && palindrome.length > 7
+    }
 
     fun getDensitySettings(
         container: ViewGroup,
@@ -316,7 +321,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                     .apply {
                         width = ds.boxSize
                         height = ds.boxSize
-                        typeface = ResourcesCompat.getFont(context, R.font.yantramanav_bold)
+                        typeface = ResourcesCompat.getFont(context, R.font.roboto_bold)
                         gravity = Gravity.CENTER
 
                         setBackgroundColor(
@@ -333,6 +338,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         }
     }
 
+
     private fun getEmptySpacesCountForRow(puzzle: String, columnCount: Int): Int {
         val puzzleWithoutWhitespace = puzzle.replace("\\s".toRegex(), "")
         val countOfRowLetters =
@@ -341,7 +347,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
     }
 
 
-    private fun addSlots(puzzle: String, grid: GridLayout, ds: DensitySettings, context: Context) {
+    private fun addSlots(puzzle: String, grid: GridLayout, ds: DensitySettings, context: Context, cc:String) {
         val solutionRows = getSolutionRows(puzzle, ds.columnCount)
         for (row in solutionRows) {
             for (char in row) {
@@ -359,7 +365,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                         drawable.setColor(MaterialColors.getColor(context, com.google.android.material.R.attr.colorOutline, Color.DKGRAY))
                         background = drawable
 
-                        typeface = ResourcesCompat.getFont(context, R.font.yantramanav_bold)
+                        typeface = ResourcesCompat.getFont(context, R.font.roboto_bold)
                         gravity = Gravity.CENTER
                         setTextColor(MaterialColors.getColor(context, com.google.android.material.R.attr.colorSecondaryContainer, Color.RED))
                         text = " "

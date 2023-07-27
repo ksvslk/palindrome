@@ -125,7 +125,6 @@ class HintsFragment : FullBottomSheetDialogFragment() {
             }
 
             if (!viewModel.currentLevel.value.levelInfo.pictureRewarded) {
-
                 when (binding.rewardPictureButton.buttonState) {
                     AD -> {
                         (activity as? AppCompatActivity)?.let {

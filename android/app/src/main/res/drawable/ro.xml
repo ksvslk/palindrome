@@ -4,15 +4,15 @@
     android:width="24dp"
     android:height="24dp">
     <path
-        android:pathData="M0 0h512v512H0z"
+        android:pathData="M0 0h170.7v512H0z"
         android:fillType="evenOdd"
-        android:fillColor="#F4F5F8" />
+        android:fillColor="#00319C" />
     <path
-        android:pathData="M0 173.4h512V344H0z"
+        android:pathData="M170.7 0h170.6v512H170.7z"
         android:fillType="evenOdd"
-        android:fillColor="#2D2A4A" />
+        android:fillColor="#FFDE00" />
     <path
-        android:pathData="M0 0h512v88H0zm0 426.7h512V512H0z"
+        android:pathData="M341.3 0H512v512H341.3z"
         android:fillType="evenOdd"
-        android:fillColor="#A51931" />
+        android:fillColor="#DE2110" />
 </vector>

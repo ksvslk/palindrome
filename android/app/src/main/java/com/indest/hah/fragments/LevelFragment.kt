@@ -175,7 +175,9 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                                         event.progress,
                                         event.level.levelInfo.countryCode
                                     )
-                                    it.downloadHintPictureIfNeeded(event.level.levelInfo.levelId)
+                                    it.downloadHintPictureIfNeeded(
+                                        event.level.levelInfo.levelId
+                                    )
                                 }
                             }
                         }

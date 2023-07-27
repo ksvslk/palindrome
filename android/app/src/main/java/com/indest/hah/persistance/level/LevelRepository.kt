@@ -1,5 +1,6 @@
 package com.indest.hah.persistance.level
 
+import androidx.room.Query
 import com.indest.hah.persistance.dto.*
 import kotlinx.coroutines.flow.Flow
 import java.time.Duration
@@ -28,6 +29,11 @@ class LevelRepository @Inject constructor(
     }
 
     suspend fun getMaxLevelId():Int = levelDao.getMaxLevelId()
+    suspend fun getMinLevelIdForCountry(cc:String):Int
+        = levelDao.getMinLevelIdForCountry(cc)
+
+    suspend fun getMaxLevelIdForCountry(cc:String):Int
+            = levelDao.getMaxLevelIdForCountry(cc)
 
     suspend fun getMaxGameLevelId():Int = levelDao.getMaxGameLevels()
 
@@ -79,6 +85,12 @@ class LevelRepository @Inject constructor(
         }
         return result
     }
+
+    suspend fun getUniqueCountries():List<String>
+        = levelDao.getUniqueCountries()
+
+    suspend fun getLevelsForCountry(cc:String):List<LevelData>
+        = levelDao.getLevelsForCountry(cc).map { it.levelInfo }
 
     suspend fun getAllPalindromes():MutableSet<String> {
         return levelDao.getAllPalindromes().map { it.replace("[!?’,.;:'\\-\"\\s]".toRegex(), "") }.toHashSet()
@@ -173,5 +185,7 @@ class LevelRepository @Inject constructor(
 
     suspend fun getMaximumTimestamp():Long = levelDao.getMaximumTimestamp() ?: 0
 
+    suspend fun insertLanguageLevelPack(levels:List<LanguageLevel>, language:String)
+        = levelDao.insertLanguagePackLevel(levels, language)
 
 }

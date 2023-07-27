@@ -1,11 +1,13 @@
 package com.indest.hah.other
 
 import android.content.Context
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.os.bundleOf
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.NavController
@@ -13,8 +15,15 @@ import com.indest.hah.R
 import java.util.Locale
 
 
-fun NavController.safeNavigate(action: Int) {
-    currentDestination?.getAction(action)?.run { navigate(action) }
+fun NavController.safeNavigate(action: Int, levelSelectType: LevelSelectType = LevelSelectType.NONE, language:String? = null) {
+    val bundle = bundleOf(
+        "levelSelectType" to levelSelectType.name,
+        "selectedLanguage" to language
+    )
+
+    currentDestination?.getAction(action)?.run {
+        navigate(action, bundle)
+    }
 }
 
 
@@ -75,5 +84,32 @@ internal fun View?.findSuitableParent(): ViewGroup? {
 
     // If we reach here then we didn't find a CoL or a suitable content view so we'll fallback
     return fallback
+}
+
+fun String.mapCountryCodeToLanguageAndFlag(context: Context):Pair<String, Int>
+{
+    when(this)
+    {
+        "cn" -> return Pair(context.getString(R.string.chinese), R.drawable.cn)
+        "et" -> return Pair(context.getString(R.string.estonian), R.drawable.et)
+        "fi" -> return Pair(context.getString(R.string.finnish), R.drawable.fi)
+        "fr" -> return Pair(context.getString(R.string.french), R.drawable.fr)
+        "de" -> return Pair(context.getString(R.string.german), R.drawable.de)
+        "hi" -> return Pair(context.getString(R.string.hindi), R.drawable.hi)
+        "id" -> return Pair(context.getString(R.string.indonesian), R.drawable.id)
+        "it" -> return Pair(context.getString(R.string.italian), R.drawable.it)
+        "ja" -> return Pair(context.getString(R.string.japanese), R.drawable.ja)
+        "ko" -> return Pair(context.getString(R.string.korean), R.drawable.ko)
+        "pt" -> return Pair(context.getString(R.string.portuguese), R.drawable.pt)
+        "ru" -> return Pair(context.getString(R.string.russian), R.drawable.ru)
+        "es" -> return Pair(context.getString(R.string.spanish), R.drawable.es)
+        "sv" -> return Pair(context.getString(R.string.swedish), R.drawable.sv)
+        "tr" -> return Pair(context.getString(R.string.turkish), R.drawable.tr)
+        "uk" -> return Pair(context.getString(R.string.ukrainian), R.drawable.uk)
+        "pl" -> return Pair(context.getString(R.string.polish), R.drawable.pl)
+        "ro" -> return Pair(context.getString(R.string.romanian), R.drawable.ro)
+        "nl" -> return Pair(context.getString(R.string.dutch), R.drawable.nl)
+    }
+    return Pair("English", R.drawable.gb)
 }
 

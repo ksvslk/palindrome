@@ -4,15 +4,11 @@
     android:width="24dp"
     android:height="24dp">
     <path
-        android:pathData="M0 0h512v512H0z"
+        android:pathData="M512 512H0V0h512z"
         android:fillType="evenOdd"
         android:fillColor="#FFFFFF" />
     <path
-        android:pathData="M0 0h170.7v512H0z"
+        android:pathData="M512 512H0V256h512z"
         android:fillType="evenOdd"
-        android:fillColor="#002654" />
-    <path
-        android:pathData="M341.3 0H512v512H341.3z"
-        android:fillType="evenOdd"
-        android:fillColor="#CE1126" />
+        android:fillColor="#DC143C" />
 </vector>

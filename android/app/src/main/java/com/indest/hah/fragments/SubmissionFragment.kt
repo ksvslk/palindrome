@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.core.content.ContextCompat
 import androidx.core.text.isDigitsOnly
 import androidx.fragment.app.activityViewModels
@@ -16,11 +18,12 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.databinding.SubmissionFragmentBinding
 import com.indest.hah.game.viewmodel.LevelViewModel
+import com.indest.hah.other.C
 import com.indest.hah.other.isPalindrome
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 
-class SubmissionFragment : FullBottomSheetDialogFragment() {
+class SubmissionFragment : FullBottomSheetDialogFragment(), AdapterView.OnItemSelectedListener {
     private val TAG = "SubmissionFragment"
     private var _binding: SubmissionFragmentBinding? = null
     private val binding get() = _binding!!
@@ -43,6 +46,17 @@ class SubmissionFragment : FullBottomSheetDialogFragment() {
 
         binding.sendLevelButton.isEnabled = false
         binding.sendLevelButton.alpha = 0.5f
+        binding.languagesSpinner.onItemSelectedListener = this
+        ArrayAdapter.createFromResource(
+            requireContext(),
+            R.array.languages_array,
+            android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            // Specify the layout to use when the list of choices appears
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            // Apply the adapter to the spinner
+            binding.languagesSpinner.adapter = adapter
+        }
 
         lifecycleScope.launchWhenCreated {
             levelViewModel.allPalindromesFlow().collect { palindromes ->
@@ -171,6 +185,14 @@ class SubmissionFragment : FullBottomSheetDialogFragment() {
                 levelViewModel.submitUserLevel(binding.enterPalindromeTextInputLayout.editText?.text.toString())
             }
         }
+    }
+
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        Log.d(TAG, "selected position $position with id $id")
+    }
+
+    override fun onNothingSelected(parent: AdapterView<*>?) {
+        Log.d(TAG, "nothing selected")
     }
 
 }

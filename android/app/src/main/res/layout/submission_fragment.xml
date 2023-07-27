@@ -34,7 +34,17 @@
             android:hint="@string/send_level_input_hint"
             android:inputType="textNoSuggestions|textCapCharacters"
             android:textSize="@dimen/_12ssp" />
+
     </com.google.android.material.textfield.TextInputLayout>
+
+    <Spinner
+        android:id="@+id/languages_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:spinnerMode="dialog"
+        android:layout_marginHorizontal="@dimen/default_large_margin"
+        android:layout_marginBottom="@dimen/def"
+        />
 
     <ViewFlipper
         android:saveEnabled="false"
@@ -49,7 +59,7 @@
             style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="match_parent"
             android:layout_height="@dimen/simple_dialog_item_height"
-            android:layout_marginHorizontal="@dimen/simple_dialog_item_left_margin"
+            android:layout_marginHorizontal="@dimen/default_large_margin"
             android:text="@string/send"/>
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
