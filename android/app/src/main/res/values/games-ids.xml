@@ -24,6 +24,46 @@
     <!--achievement Flawless 15-->
     <string name="achievement_flawless_15" translatable="false">CgkIj5WSoeMdEAIQCw</string>
 
+    <!--achievement German Linguist-->
+    <string name="achievement_german_linguist" translatable="false">CgkIj5WSoeMdEAIQJA</string>
+    <!--achievement Portuguese Linguist-->
+    <string name="achievement_portuguese_linguist" translatable="false">CgkIj5WSoeMdEAIQJQ</string>
+    <!--achievement Chinese Linguist-->
+    <string name="achievement_chinese_linguist" translatable="false">CgkIj5WSoeMdEAIQJg</string>
+    <!--achievement Estonian Linguist-->
+    <string name="achievement_estonian_linguist" translatable="false">CgkIj5WSoeMdEAIQJw</string>
+    <!--achievement Finnish Linguist-->
+    <string name="achievement_finnish_linguist" translatable="false">CgkIj5WSoeMdEAIQKA</string>
+    <!--achievement French Linguist-->
+    <string name="achievement_french_linguist" translatable="false">CgkIj5WSoeMdEAIQKQ</string>
+    <!--achievement Hindi Linguist-->
+    <string name="achievement_hindi_linguist" translatable="false">CgkIj5WSoeMdEAIQKg</string>
+    <!--achievement Indonesian Linguist-->
+    <string name="achievement_indonesian_linguist" translatable="false">CgkIj5WSoeMdEAIQKw</string>
+    <!--achievement Italian Linguist-->
+    <string name="achievement_italian_linguist" translatable="false">CgkIj5WSoeMdEAIQLA</string>
+    <!--achievement Japanese Linguist-->
+    <string name="achievement_japanese_linguist" translatable="false">CgkIj5WSoeMdEAIQLQ</string>
+    <!--achievement Korean Linguist-->
+    <string name="achievement_korean_linguist" translatable="false">CgkIj5WSoeMdEAIQLg</string>
+    <!--achievement Spanish Linguist-->
+    <string name="achievement_spanish_linguist" translatable="false">CgkIj5WSoeMdEAIQLw</string>
+    <!--achievement Dutch Linguist-->
+    <string name="achievement_dutch_linguist" translatable="false">CgkIj5WSoeMdEAIQMA</string>
+    <!--achievement Polish Linguist-->
+    <string name="achievement_polish_linguist" translatable="false">CgkIj5WSoeMdEAIQMQ</string>
+    <!--achievement Romanian Linguist-->
+    <string name="achievement_romanian_linguist" translatable="false">CgkIj5WSoeMdEAIQMg</string>
+    <!--achievement Russian Linguist-->
+    <string name="achievement_russian_linguist" translatable="false">CgkIj5WSoeMdEAIQMw</string>
+    <!--achievement Swedish Linguist-->
+    <string name="achievement_swedish_linguist" translatable="false">CgkIj5WSoeMdEAIQNA</string>
+    <!--achievement Turkish Linguist-->
+    <string name="achievement_turkish_linguist" translatable="false">CgkIj5WSoeMdEAIQNQ</string>
+    <!--achievement Ukrainian Linguist-->
+    <string name="achievement_ukrainian_linguist" translatable="false">CgkIj5WSoeMdEAIQNg</string>
+
+
     <!--leaderboard Crème de la Crème-->
     <string name="leaderboard_crme_de_la_crme" translatable="false">CgkIj5WSoeMdEAIQCQ</string>
 

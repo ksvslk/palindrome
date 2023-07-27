@@ -11,6 +11,7 @@ import com.google.firebase.firestore.*
 import com.indest.hah.R
 import com.indest.hah.ads.RewardType
 import com.indest.hah.general.AccountStatus
+import com.indest.hah.other.C
 import com.indest.hah.persistance.dto.LanguageLevel
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
@@ -513,6 +514,25 @@ class LevelViewModel @Inject constructor(
             60 -> unlockAchievement(context.getString(R.string.achievement_crackerjack))
             80 -> unlockAchievement(context.getString(R.string.achievement_chief))
             100 -> unlockAchievement(context.getString(R.string.achievement_authority))
+            10010 -> unlockAchievement(context.getString(R.string.achievement_chinese_linguist))
+            10026 -> unlockAchievement(context.getString(R.string.achievement_german_linguist))
+            10046 -> unlockAchievement(context.getString(R.string.achievement_spanish_linguist))
+            10066 -> unlockAchievement(context.getString(R.string.achievement_estonian_linguist))
+            10086 -> unlockAchievement(context.getString(R.string.achievement_finnish_linguist))
+            10106 -> unlockAchievement(context.getString(R.string.achievement_french_linguist))
+            10126 -> unlockAchievement(context.getString(R.string.achievement_hindi_linguist))
+            10137 -> unlockAchievement(context.getString(R.string.achievement_indonesian_linguist))
+            10155 -> unlockAchievement(context.getString(R.string.achievement_italian_linguist))
+            10175 -> unlockAchievement(context.getString(R.string.achievement_japanese_linguist))
+            10195 -> unlockAchievement(context.getString(R.string.achievement_korean_linguist))
+            10215 -> unlockAchievement(context.getString(R.string.achievement_dutch_linguist))
+            10235 -> unlockAchievement(context.getString(R.string.achievement_polish_linguist))
+            10255 -> unlockAchievement(context.getString(R.string.achievement_portuguese_linguist))
+            10275 -> unlockAchievement(context.getString(R.string.achievement_romanian_linguist))
+            10295 -> unlockAchievement(context.getString(R.string.achievement_russian_linguist))
+            10315 -> unlockAchievement(context.getString(R.string.achievement_swedish_linguist))
+            10335 -> unlockAchievement(context.getString(R.string.achievement_turkish_linguist))
+            10355 -> unlockAchievement(context.getString(R.string.achievement_ukrainian_linguist))
         }
     }
 
@@ -800,28 +820,8 @@ class LevelViewModel @Inject constructor(
     }
 
     private suspend fun addLanguagePack() {
-        val languages = arrayListOf(
-            "cn",
-            "de",
-            "es",
-            "et",
-            "fi",
-            "fr",
-            "hi",
-            "id",
-            "it",
-            "ja",
-            "ko",
-            "nl",
-            "pl",
-            "pt",
-            "ro",
-            "ru",
-            "sv",
-            "tr",
-            "uk"
-        )
-        languages.forEach { cc ->
+        C.languages.entries.forEach { entry ->
+            val cc = entry.key
             val jsonInstance = Json { isLenient = true }
             val json =
                 getApplication<Application>().applicationContext.assets.open("language_pack_$cc.json")
