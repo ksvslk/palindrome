@@ -57,6 +57,7 @@ class SubmissionFragment : FullBottomSheetDialogFragment(), AdapterView.OnItemSe
             // Apply the adapter to the spinner
             binding.languagesSpinner.adapter = adapter
         }
+        binding.languagesSpinner.setSelection(levelViewModel.tempCountrySelected.first)
 
         lifecycleScope.launchWhenCreated {
             levelViewModel.allPalindromesFlow().collect { palindromes ->
@@ -188,7 +189,11 @@ class SubmissionFragment : FullBottomSheetDialogFragment(), AdapterView.OnItemSe
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        Log.d(TAG, "selected position $position with id $id")
+        val selectedLanguage = parent?.getItemAtPosition(position)
+        val languagesReversed = C.languages.entries.associate { it.value to it.key }
+        val countryCode = if (selectedLanguage == "English") "gb" else languagesReversed[selectedLanguage]
+        Log.d(TAG, "Selected ${parent?.getItemAtPosition(position)} with country code $countryCode")
+        levelViewModel.tempCountrySelected = Pair(position, countryCode!!)
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {

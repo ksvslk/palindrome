@@ -2,6 +2,6 @@
 <resources>
     <integer name="defaultColumnsCount">7</integer>
     <integer name="gameCompleteMessageFlipInterval">4000</integer>
-    <integer name="minUserPalindromeLength">3</integer>
+    <integer name="minUserPalindromeLength">5</integer>
     <integer name="maxUserPalindromeLength">100</integer>
 </resources>

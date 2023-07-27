@@ -36,12 +36,13 @@
             android:textSize="@dimen/_12ssp" />
 
     </com.google.android.material.textfield.TextInputLayout>
-
-    <Spinner
+    <androidx.appcompat.widget.AppCompatSpinner
         android:id="@+id/languages_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:spinnerMode="dialog"
+        android:prompt="@string/select_language"
+        android:spinnerMode="dropdown"
+        android:popupTheme="@style/Theme.Material3.DynamicColors.DayNight"
         android:layout_marginHorizontal="@dimen/default_large_margin"
         android:layout_marginBottom="@dimen/def"
         />

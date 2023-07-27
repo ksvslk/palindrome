@@ -3,9 +3,13 @@ package com.indest.hah.game.viewmodel
 import android.app.Application
 import android.os.Bundle
 import android.util.Log
+import androidx.annotation.NonNull
 import androidx.core.os.bundleOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.tasks.Task
+import com.google.android.play.core.assetpacks.db
+import com.google.android.play.core.tasks.OnCompleteListener
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.firestore.*
 import com.indest.hah.R
@@ -30,6 +34,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.decodeFromJsonElement
 import javax.inject.Inject
+
 
 @HiltViewModel
 class LevelViewModel @Inject constructor(
@@ -68,6 +73,7 @@ class LevelViewModel @Inject constructor(
 
     var currentlySignedInPlayerName = "Unknown"
     var tempSubmissionPalindrome = ""
+    var tempCountrySelected = Pair(0, "gb")
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Log.e(
@@ -121,11 +127,9 @@ class LevelViewModel @Inject constructor(
             result = Pair(progress, text)
         } else if (levelId > 10000) {
             val language = _currentLevel.value.levelInfo.countryCode
-            val maxLevelId = levelRepository.getMaxLevelIdForCountry(language)
-            val minLevelId = levelRepository.getMinLevelIdForCountry(language)
-            val levelsCount = maxLevelId - minLevelId + 1
-            val levelShownInUi = levelId - minLevelId + 1
-
+            val levels = levelRepository.getLevelsForCountry(language)
+            val levelsCount = levels.count()
+            val levelShownInUi = levels.indexOfFirst { levelData -> levelData.levelId == levelId } + 1
             val authorIfExists = if (author.isNotEmpty()) " - $author" else ""
             val text =
                 if (solutionsCount > 1) "$levelShownInUi*$authorIfExists" else "$levelShownInUi$authorIfExists"
@@ -217,6 +221,7 @@ class LevelViewModel @Inject constructor(
         viewModelScope.launch {
             levelRepository.init()
         }
+
     }
 
 
@@ -706,6 +711,61 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+    suspend fun simulateNewLevelFetch() {
+        val playerLevels = mutableListOf<PlayerLevel>()
+        val docRef: DocumentReference = fsDb
+            .collection("user_submitted_levels")
+            .document("CGU2376WFmLjpWsD1gVw")
+        docRef.get().addOnSuccessListener {
+            Log.d(TAG,"it received!")
+            try {
+                Log.d(TAG, it.data.toString())
+                it.data.let { levelValues ->
+                    val solutionsToCategories =
+                        levelValues?.get("solutionToCategory") as Map<String, String>
+                    if (solutionsToCategories.isEmpty()) throw Exception("Solutions were empty")
+                    val countryCode =
+                        levelValues.getOrElse("countryCode") { "gb" }
+                    val level = PlayerLevel(
+                        levelId = levelValues["levelId"] as Long,
+                        player = levelValues["player"] as String,
+                        solutionToCategory = solutionsToCategories,
+                        countryCode = countryCode as String
+                    )
+                    Log.d(TAG, "level: $level")
+                    playerLevels.add(level)
+                }
+            } catch (e: Exception) {
+                Log.w(
+                    TAG,
+                    "Something went wrong when parsing the user level from FB.",
+                    e
+                )
+            }
+
+            Log.d(TAG, "levels to insert: ${playerLevels.toString()}")
+
+            viewModelScope.launch {
+                if (playerLevels.size != 0) {
+                    // Get Pair where first element is a level when only 1 level added
+                    // Second element is the level count when there are more than 1 level added.
+                    val levelAndCount = insertPlayerLevels(playerLevels)
+                    if (levelAndCount.second > 0) {
+                        _newPlayerLevels.value = if (levelAndCount.second > 1) Triple(
+                            -1,
+                            levelAndCount.second,
+                            ""
+                        ) else Triple(
+                            levelAndCount.first.levelId,
+                            1,
+                            levelAndCount.first.author
+                        )
+                    }
+                }
+            }
+        }
+
+    }
 
     private suspend fun subscribeToRealTimePlayerLevelUpdates() {
         if (_accountStatus.value == AccountStatus.SIGNED_IN_WITH_FIREBASE) {
@@ -795,6 +855,7 @@ class LevelViewModel @Inject constructor(
             "palindrome" to playersPalindrome,
             "player" to currentlySignedInPlayerName,
             "solutionToCategory" to hashMapOf(Pair(playersPalindrome, "[ADD_CATEGORY]")),
+            "countryCode" to tempCountrySelected.second,
             "timestamp" to FieldValue.serverTimestamp(),
         )
 

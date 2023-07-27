@@ -23,6 +23,7 @@
         <item>\"Many of life’s failures are people who did not realize how close they were to success when they gave up.\" ― Thomas Edison </item>
     </string-array>
 
+    <string name="select_language">Select Language</string>
     <string name="game_levels">Game Levels</string>
     <string name="player_levels">Player Levels</string>
     <string name="international_levels">International Levels</string>
@@ -203,26 +204,26 @@
     <string name="english">English</string>
 
     <string-array name="languages_array">
-        <item>Chinese</item>
-        <item>Estonian</item>
-        <item>Romanian</item>
-        <item>Japanese</item>
-        <item>Korean</item>
-        <item>Dutch</item>
-        <item>German</item>
-        <item>French</item>
-        <item>Finnish</item>
-        <item>Polish</item>
-        <item>Hindi</item>
-        <item>Indonesian</item>
+        <item>English</item>
         <item>Spanish</item>
         <item>Portuguese</item>
+        <item>Chinese</item>
+        <item>Korean</item>
+        <item>Hindi</item>
+        <item>Italian</item>
+        <item>Japanese</item>
+        <item>German</item>
+        <item>Indonesian</item>
+        <item>Turkish</item>
+        <item>French</item>
+        <item>Dutch</item>
+        <item>Finnish</item>
+        <item>Polish</item>
         <item>Ukrainian</item>
         <item>Russian</item>
         <item>Swedish</item>
-        <item>Turkish</item>
-        <item>Italian</item>
-        <item>English</item>
+        <item>Estonian</item>
+        <item>Romanian</item>
     </string-array>
 
 </resources>

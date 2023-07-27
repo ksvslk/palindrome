@@ -146,7 +146,6 @@ interface LevelDao {
     suspend fun insertPlayerLevels(playerLevel: List<PlayerLevel>): Pair<LevelData, Int> {
         var newLevelsCount = 0
         var oneLevelId = 1L
-
         playerLevel.forEach { level ->
             if (!isLevelAdded(level.levelId)) {
                 val puzzle = level.solutionToCategory.keys.firstOrNull() ?: ""

@@ -33,5 +33,6 @@ object C {
         "tr" to "Turkish",
         "uk" to "Ukrainian"
     )
+
 }
 

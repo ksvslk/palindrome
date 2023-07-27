@@ -22,6 +22,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ReportFragment.Companion.reportFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.gms.ads.MobileAds
@@ -118,6 +119,12 @@ class MainActivity : AppCompatActivity() {
             ViewCompat.setSystemGestureExclusionRects(binding.root, exclusions)
         }
 
+        binding.levelFlag.setOnClickListener {
+            levelViewModel.viewModelScope.launch {
+                levelViewModel.simulateNewLevelFetch()
+                Log.d(TAG,"GET STUFF!")
+            }
+        }
     }
 
     override fun onStop() {

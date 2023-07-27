@@ -112,4 +112,3 @@ fun String.mapCountryCodeToLanguageAndFlag(context: Context):Pair<String, Int>
     }
     return Pair("English", R.drawable.gb)
 }
-
