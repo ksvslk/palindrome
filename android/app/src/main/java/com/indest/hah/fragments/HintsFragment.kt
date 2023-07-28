@@ -79,7 +79,7 @@ class HintsFragment : FullBottomSheetDialogFragment() {
                         binding.purchaseButtonClues.updateButtonUi(it)
                         binding.purchaseButtonLetters.updateButtonUi(it)
                         binding.purchaseNoSadMode.updateButtonUi(it)
-                        binding.purchaseAllInclusivePack.updateButtonUi(it)
+                        binding.purchaseAllInclusivePack2?.updateButtonUi(it)
                     }
                 }
                 launch {
@@ -115,7 +115,7 @@ class HintsFragment : FullBottomSheetDialogFragment() {
         addBillingFlowOnClickToPurchaseButton(binding.purchaseButtonClues)
         addBillingFlowOnClickToPurchaseButton(binding.purchaseButtonLetters)
         addBillingFlowOnClickToPurchaseButton(binding.purchaseNoSadMode)
-        addBillingFlowOnClickToPurchaseButton(binding.purchaseAllInclusivePack)
+        addBillingFlowOnClickToPurchaseButton(binding.purchaseAllInclusivePack2)
 
         binding.rewardPictureButton.setOnClickListener {
             if (levelViewModel.currentLevel.value.levelInfo.progress == LevelProgress.INTERMEDIATE)

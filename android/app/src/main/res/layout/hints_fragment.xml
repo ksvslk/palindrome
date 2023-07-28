@@ -120,7 +120,7 @@
 
     <com.indest.hah.views.PurchaseButton
         android:saveEnabled="false"
-        android:id="@+id/purchase_all_inclusive_pack"
+        android:id="@+id/purchase_all_inclusive_pack_2"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
         android:layout_margin="@dimen/_2sdp"
@@ -129,10 +129,12 @@
         android:focusable="true"
         android:orientation="horizontal"
         purchasebutton:labels="@array/save_24_percent_label"
-        purchasebutton:sku="@string/all_inclusive_pack"
+        purchasebutton:sku="@string/all_inclusive_pack_2"
         purchasebutton:visibility_case_1="@array/all_inclusive_pack_case1"
         purchasebutton:visibility_case_2="@array/all_inclusive_pack_case2"
         purchasebutton:visibility_case_3="@array/all_inclusive_pack_case3"
-        purchasebutton:visibility_case_4="@array/all_inclusive_pack_case4"/>
+        purchasebutton:visibility_case_4="@array/all_inclusive_pack_case4"
+        purchasebutton:visibility_case_5="@array/all_inclusive_pack_case5"
+        />
 
 </androidx.appcompat.widget.LinearLayoutCompat>
