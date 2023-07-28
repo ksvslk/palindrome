@@ -29,7 +29,6 @@
             android:hardwareAccelerated="true"
             android:immersive="true"
             android:label="@string/title_activity_main"
-            android:screenOrientation="sensor"
             android:theme="@style/Theme.OC">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

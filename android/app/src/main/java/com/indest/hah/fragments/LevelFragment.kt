@@ -227,50 +227,27 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     private fun displayLevel(level: Level) {
         binding.levelFragment.removeAllViews()
         binding.levelFragment.removeAllViewsInLayout()
-        val densitySettings = levelCreator.getDensitySettings(binding.levelFragment, level)
-        val areColumnsDifferent =
-            level.levelInfo.columnCount != densitySettings.columnCount || level.levelInfo.author == "NewVersion"
         lifecycleScope.launch(Dispatchers.Main)
         {
-            if (areColumnsDifferent) {
-                val newIndexes =
-                    levelCreator.getUpdatedLevelWithPossiblyNewColumnCount(
-                        level,
-                        densitySettings.columnCount
-                    )
-                levelViewModel.changeFriendIndexesBasedOnColumnCount(
-                    densitySettings.columnCount,
-                    newIndexes
-                )
-                return@launch
-            }
             val levelGridLayout = levelCreator.getLevel(
                 level,
                 layoutInflater,
-                binding.levelFragment,
-                densitySettings
+                binding.levelFragment
             )
-            levelGridLayout.first.children.filterIsInstance<Cell<*, *>>().toMutableList().apply {
-                levelGridLayout.first.doOnPreDraw {
+            levelGridLayout.children.filterIsInstance<Cell<*, *>>().toMutableList().apply {
+                levelGridLayout.doOnPreDraw {
                     cellDirector = CellDirector(
                         this,
                         levelViewModel
                     )
                 }
             }
-            binding.levelFragment.addView(levelGridLayout.first)
-        }
-        if (areColumnsDifferent) {
-            return
+            binding.levelFragment.addView(levelGridLayout)
         }
 
         askForReview(level.levelInfo.levelId)
         showSubmitPalindromesBadge(level.levelInfo.levelId)
-
     }
-
-
-
 
     private fun activateBottomNavBar() {
         (activity as? MainActivity)?.let { mainActivity ->

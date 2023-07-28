@@ -31,160 +31,36 @@ import kotlin.math.min
 class LevelCreator @Inject constructor(@ActivityContext private val context: Context) {
 
     private val TAG = "LevelCreator"
+    private val COLUMN_COUNT = 7
 
     fun getLevel(
         info: Level,
         layoutInflater: LayoutInflater,
-        container: ViewGroup,
-        densitySettings: DensitySettings
-    ): Pair<GridLayout, Pair<Boolean, List<Pair<Int, Int>>>> {
+        container: ViewGroup
+    ): GridLayout {
         val level = layoutInflater.inflate(R.layout.grid, container, false) as GridLayout
+        val densitySettings = getDensitySettings(container, info)
         level.columnCount = densitySettings.columnCount
         addLetters(level, densitySettings, info, context)
         addSlots(info.solutions.first().palindrome, level, densitySettings, context, info.levelInfo.countryCode)
-        return Pair(
-            level,
-            densitySettings.homeIndexNewFriendIndexes
-        )
+        return level
     }
-
-    fun getUpdatedLevelWithPossiblyNewColumnCount(
-        info: Level,
-        newColumnCount: Int
-    ): Pair<Boolean, MutableList<Pair<Int, Int>>> {
-
-        val newFriendIndexesForHomes = mutableListOf<Pair<Int, Int>>()
-        try {
-            if (info.levelInfo.author == "NewVersion") {
-                return Pair(true, migrateFromDatabase3to4(info, newColumnCount))
-            }
-            if (info.levelInfo.columnCount != -1 && info.levelInfo.columnCount != newColumnCount) {
-                val palindrome = info.solutions.first().palindrome
-                val puzzleOnlyLetters = getPuzzle(info)
-                val puzzleOnlyCount = puzzleOnlyLetters.count()
-                val emptySlotsInTheEndNew =
-                    newColumnCount - puzzleOnlyLetters.chunked(newColumnCount).last().count()
-                val emptySlotsInTheEndOld =
-                    info.levelInfo.columnCount - puzzleOnlyLetters.chunked(info.levelInfo.columnCount)
-                        .last().count()
-                val firstIndexForNewColumnsCount = puzzleOnlyCount + emptySlotsInTheEndNew
-                val firstIndexForOldColumnsCount = puzzleOnlyCount + emptySlotsInTheEndOld
-                val oldList = getSolutionRows(palindrome, info.levelInfo.columnCount)
-                val newList = getSolutionRows(palindrome, newColumnCount)
-                val newIndexes = newList
-                    .joinToString("")
-                    .withIndex()
-                    .filter { it.value != ' ' }
-                    .map { i -> firstIndexForNewColumnsCount + i.index }
-                val oldIndexes = oldList
-                    .joinToString("")
-                    .withIndex()
-                    .filter { it.value != ' ' }
-                    .map { i -> firstIndexForOldColumnsCount + i.index }
-                info.lettersProperties.filter { it.friendIndex != -666 }.forEach {
-                    val placementInArrayOfMatchingFriend =
-                        oldIndexes.first { nr -> nr == it.friendIndex }
-                    val indexOfMatchingSlot = oldIndexes.indexOf(placementInArrayOfMatchingFriend)
-                    newFriendIndexesForHomes.add(Pair(it.homeIndex, newIndexes[indexOfMatchingSlot]))
-                }
-                return Pair(false, newFriendIndexesForHomes)
-            }
-        }
-        catch (e:java.lang.Exception)
-        {
-            val c = FirebaseCrashlytics.getInstance()
-            c.setCustomKey("ColumnCount", info.levelInfo.columnCount)
-            c.setCustomKey("newColumnCount", newColumnCount)
-            c.setCustomKey("puzzle", info.levelInfo.puzzle)
-            c.setCustomKey("letters", info.lettersProperties.joinToString())
-            c.recordException(e)
-            Toast.makeText(context, "Something went terribly wrong :O. Please restart the app and/or clear caches if problems still exist.", Toast.LENGTH_LONG).show()
-            Log.e(TAG, "Failed to get new friend indexes for homes.", e)
-        }
-
-        return Pair(false, mutableListOf())
-    }
-
-
-    private fun migrateFromDatabase3to4(
-        info: Level,
-        newColumnCount: Int
-    ): MutableList<Pair<Int, Int>> {
-        val newFriendIndexesForHomes = mutableListOf<Pair<Int, Int>>()
-        val palindrome = info.solutions.first().palindrome
-        val puzzleOnlyLetters = getPuzzle(info)
-        val puzzleOnlyCount = puzzleOnlyLetters.count()
-        val emptySlotsInTheEndNew =
-            newColumnCount - puzzleOnlyLetters.chunked(newColumnCount).last().count()
-        val firstIndexForNewColumnsCount = puzzleOnlyCount + emptySlotsInTheEndNew
-        val firstIndexForOldColumnsCount = getFirstIndexForMigration(info.levelInfo.columnCount, info)
-        val oldList = getSolutionRows(palindrome, info.levelInfo.columnCount)
-        val newList = getSolutionRows(palindrome, newColumnCount)
-        val newIndexes = newList
-            .joinToString("")
-            .withIndex()
-            .filter { it.value != ' ' }
-            .map { i -> firstIndexForNewColumnsCount + i.index }
-        val oldIndexes = oldList
-            .joinToString("")
-            .withIndex()
-            .filter { it.value != ' ' }
-            .map { i -> firstIndexForOldColumnsCount + i.index }
-        try {
-            info.lettersProperties.filter { it.friendIndex != -666 }.forEach {
-                val placementInArrayOfMatchingFriend =
-                    oldIndexes.first { nr -> nr == it.friendIndex }
-                val indexOfMatchingSlot = oldIndexes.indexOf(placementInArrayOfMatchingFriend)
-                newFriendIndexesForHomes.add(Pair(it.homeIndex, newIndexes[indexOfMatchingSlot]))
-            }
-        } catch(e:java.util.NoSuchElementException) {
-            Log.e(TAG, "Were not able to generate newFriendIndexesForHomes", e)
-        }
-        return newFriendIndexesForHomes
-    }
-
-
-    private fun getFirstIndexForMigration(newColumnCount: Int, info: Level): Int {
-        val puzzleOnlyLetters = getPuzzle(info)
-        val lastRowLettersCount =
-            puzzleOnlyLetters.chunked(newColumnCount).last().count()
-        val firstIndex = if (puzzleOnlyLetters.length <= newColumnCount) {
-            if (lastRowLettersCount == newColumnCount) {
-                3 * newColumnCount
-            } else {
-                2 * newColumnCount
-            }
-        } else {
-            if (lastRowLettersCount == newColumnCount) {
-                puzzleOnlyLetters.count() + 2 * newColumnCount
-            } else {
-                puzzleOnlyLetters.count() + (newColumnCount - lastRowLettersCount) + newColumnCount
-            }
-        }
-        return firstIndex
-    }
-
 
     private fun getPuzzle(info: Level): String {
         return info.lettersProperties
             .sortedBy { it.homeIndex }
             .fold(
                 ""
-            ) { acc, li -> acc + li.letter }
+            ) { acc, li -> if (li.letter != '-') acc + li.letter else acc }
     }
 
-    private fun isOneWord(palindrome: String) : Boolean
-    {
-        return palindrome.split(" ").count() == 1 && palindrome.length > 7
-    }
-
-    fun getDensitySettings(
+    private fun getDensitySettings(
         container: ViewGroup,
         info: Level
     ): DensitySettings {
         val puzzleOnlyLetters = getPuzzle(info)
+        Log.d(TAG, "puzzleOnlyLetters: $puzzleOnlyLetters")
         val palindrome = info.solutions.first().palindrome
-        val columns = palindrome.split(" ").maxBy { it.length }.length
         val boxDecreaseRate = 1.01f
         val smallGap = context.resources.getDimensionPixelSize(com.intuit.sdp.R.dimen._2sdp)
         val usableWidth = container.width
@@ -192,28 +68,13 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         val widthAndHeight = Pair(usableWidth, usableHeight)
         val maxBoxSize = context.resources.getDimension(R.dimen.max_box_size)
 
-        val totalAreaRatio = (usableWidth.toFloat() / usableHeight.toFloat())
-
-        val columnsEnd = max(7, palindrome.length)
-        var closestColumnsRatio = Pair(columns, Float.MAX_VALUE)
-
-        for (cols in columns..columnsEnd) {
-            val usedAreaRatio = getUsedAreaRatio(cols, puzzleOnlyLetters, palindrome, smallGap)
-            val newDistance = abs(usedAreaRatio - totalAreaRatio)
-            val currentBestDistance = abs(closestColumnsRatio.second - totalAreaRatio)
-            if (newDistance < currentBestDistance) {
-                closestColumnsRatio = Pair(cols, usedAreaRatio)
-            }
-        }
-
         val rowsCount =
-            puzzleOnlyLetters.chunked(closestColumnsRatio.first).count() + getSolutionRows(palindrome, closestColumnsRatio.first).count()
+            puzzleOnlyLetters.chunked(COLUMN_COUNT).count() + getSolutionRows(palindrome, COLUMN_COUNT).count()
 
         var boxSize = maxBoxSize
 
         var exceedingWidth = isWidthLimitExceeded(
             widthAndHeight = widthAndHeight,
-            columns = closestColumnsRatio.first,
             boxSize = boxSize,
             smallGapBetweenLetters = smallGap
         )
@@ -229,7 +90,6 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
             boxSize /= boxDecreaseRate
             exceedingWidth = isWidthLimitExceeded(
                 widthAndHeight = widthAndHeight,
-                columns = closestColumnsRatio.first,
                 boxSize = boxSize,
                 smallGapBetweenLetters = smallGap
             )
@@ -239,45 +99,21 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                 boxSize = boxSize,
                 smallGapBetweenLetters = smallGap
             )
-
         }
 
-
-        val homeIndexNewFriendIndexes = getUpdatedLevelWithPossiblyNewColumnCount(
-            info = info,
-            newColumnCount = closestColumnsRatio.first,
-        )
-
         return DensitySettings(
-            closestColumnsRatio.first,
-            min(boxSize, maxBoxSize).toInt(),
-            homeIndexNewFriendIndexes,
+            COLUMN_COUNT,
+            min(boxSize, maxBoxSize).toInt()
         )
     }
 
-
-    private fun getUsedAreaRatio(
-        columns: Int,
-        puzzleOnlyLetters: String,
-        palindrome: String,
-        smallGap: Int
-    ): Float {
-        val rowsCount = puzzleOnlyLetters.chunked(columns).count() + getSolutionRows(
-            palindrome,
-            columns
-        ).count()
-        val boxSize = 1f
-        val usedHeight = getUsedHeight(rowsCount, boxSize, smallGap)
-        val usedWidth = getUsedWidth(columns, boxSize, smallGap)
-        return usedWidth / usedHeight
-    }
 
     private fun getUsedHeight(rowsCount: Int, boxSize: Float, smallGapBetweenLetters: Int): Float {
         return (rowsCount * (boxSize + smallGapBetweenLetters)) + 2 * (boxSize + smallGapBetweenLetters)
     }
 
-    private fun getUsedWidth(columns: Int, boxSize: Float, smallGapBetweenLetters: Int): Float {
-        return (columns * (boxSize + smallGapBetweenLetters) + 2 * (boxSize + smallGapBetweenLetters))
+    private fun getUsedWidth(boxSize: Float, smallGapBetweenLetters: Int): Float {
+        return (COLUMN_COUNT * (boxSize + smallGapBetweenLetters) + 2 * (boxSize + smallGapBetweenLetters))
     }
 
     private fun isHeightLimitExceeded(
@@ -292,11 +128,10 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
 
     private fun isWidthLimitExceeded(
         widthAndHeight: Pair<Int, Int>,
-        columns: Int,
         boxSize: Float,
         smallGapBetweenLetters: Int
     ): Pair<Boolean, Float> {
-        val usedWidth = getUsedWidth(columns, boxSize, smallGapBetweenLetters)
+        val usedWidth = getUsedWidth(boxSize, smallGapBetweenLetters)
         return Pair((widthAndHeight.first - usedWidth) <= 0, usedWidth)
     }
 
@@ -305,7 +140,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
             .sortedBy { it.homeIndex }
             .fold(
                 ""
-            ) { acc, li -> acc + li.letter }
+            ) { acc, li -> if (li.letter != '-') acc + li.letter else acc }
 
         for ((_, l) in puzzle.withIndex()) {
             if (l.isWhitespace()) {
@@ -343,6 +178,8 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         val puzzleWithoutWhitespace = puzzle.replace("\\s".toRegex(), "")
         val countOfRowLetters =
             puzzleWithoutWhitespace.length - (puzzleWithoutWhitespace.length / columnCount) * columnCount
+        Log.d(TAG, "puzzleWithoutWhitespace: $puzzleWithoutWhitespace")
+        Log.d(TAG, "countOfRowLetters: $countOfRowLetters")
         return if (countOfRowLetters == 0) 0 else columnCount - countOfRowLetters
     }
 
@@ -353,6 +190,22 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
             for (char in row) {
                 when (char) {
                     ' ' -> grid.addView(Space(context))
+                    '-' -> grid.addView(Slot(context, char).apply {
+                        contentDescription = "Slot nr ${this.homeIndex}"
+                        width = ds.boxSize
+                        height = ds.boxSize
+                        // set slot color and border
+                        val drawable = GradientDrawable()
+                        drawable.shape = GradientDrawable.RECTANGLE
+                        drawable.setStroke(2, Color.TRANSPARENT)
+                        drawable.setColor(Color.TRANSPARENT)
+                        background = drawable
+                        typeface = ResourcesCompat.getFont(context, R.font.roboto_bold)
+                        gravity = Gravity.CENTER
+                        setTextColor(com.google.android.material.R.attr.colorOutline)
+                        isHyphen = true
+                        text = "-"
+                    })
                     else -> grid.addView(Slot(context, char).apply {
                         contentDescription = "Slot nr ${this.homeIndex}"
                         width = ds.boxSize
@@ -375,8 +228,35 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         }
     }
 
+    // Takes a word and chunks it to given lengths adding "-"
+    // in the end
+    private fun getChunkedStringWithHyphens(word:String):String
+    {
+        val windowed = word.windowed(6, 6,true).toMutableList()
+        val lastElement = windowed.last()
+        if (lastElement.length == 1) {
+            val newWindowed = windowed.dropLast(1).toMutableList()
+            val newLastElement = newWindowed[newWindowed.size - 1]
+            newWindowed[newWindowed.size - 1] = newLastElement.removeSuffix("-") + lastElement
+            return newWindowed.joinToString("- ")
+        }
+        return windowed.joinToString("- ")
+    }
+
     private fun getSolutionRows(puzzle: String, cols: Int): List<String> {
-        val puzzleWords = puzzle.split(' ')
+        Log.d(TAG, "Original puzzle: $puzzle")
+        val modified = puzzle
+            .split(' ')
+            .fold("") { acc: String, s: String ->
+                if (s.length <= COLUMN_COUNT) {
+                    "$acc$s "
+                } else {
+                    acc + getChunkedStringWithHyphens(s) + " "
+                }
+            }
+        Log.d(TAG, "MODIFIED: $modified")
+        val puzzleWords = modified.split(' ')
+        Log.d(TAG, "PUZZLE: $puzzleWords")
         return puzzleWords.fold(mutableListOf()) { acc: List<String>, s: String ->
             when {
                 acc.isEmpty() -> acc + s

@@ -150,34 +150,6 @@ class LevelViewModel @Inject constructor(
         Log.e(TAG, "Could not write snapshot or save game: ${throwable.message}")
     }
 
-
-    suspend fun changeFriendIndexesBasedOnColumnCount(
-        newColumnCount: Int,
-        homeIndexNewFriendIndexes: Pair<Boolean, List<Pair<Int, Int>>>
-    ) {
-        // All three change column count underneath
-        if (homeIndexNewFriendIndexes.first) {
-            levelRepository.updateAuthorToMigrated(
-                _currentLevel.value.levelInfo.levelId,
-                newColumnCount,
-                _currentLevel.value.lettersProperties,
-                homeIndexNewFriendIndexes.second
-            )
-        } else if (_currentLevel.value.levelInfo.columnCount == -1) {
-            levelRepository.changeColumnCount(
-                _currentLevel.value.levelInfo.levelId,
-                newColumnCount
-            )
-        } else {
-            levelRepository.changeFriendIndexesBasedOnColumnCount(
-                _currentLevel.value.levelInfo.levelId,
-                newColumnCount,
-                _currentLevel.value.lettersProperties,
-                homeIndexNewFriendIndexes.second
-            )
-        }
-    }
-
     fun setPictureDownloaded(isPresent: Boolean) {
         _pictureHintDownloaded.value = isPresent
     }

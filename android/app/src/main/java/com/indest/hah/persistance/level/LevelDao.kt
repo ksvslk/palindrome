@@ -70,21 +70,6 @@ interface LevelDao {
     @Query("update level_info_table set column_count = :newColumnCount where level_id = :level")
     suspend fun changeColumnCount(level: Int, newColumnCount: Int)
 
-    @Transaction
-    suspend fun changeFriendIndexesBasedOnColumnCount(
-        level: Int,
-        columnCount: Int,
-        letters: List<LetterProperties>,
-        homeIndexNewFriendIndexes: List<Pair<Int, Int>>
-    ) {
-        homeIndexNewFriendIndexes.forEach {
-            updateFriendIndexSub(it.first, it.second, level)
-
-        }
-        changeColumnCount(level, columnCount)
-    }
-
-
     @Query("select exists (select 1 from level_info_table where level_id = :id)")
     suspend fun isLevelAdded(id: Long): Boolean
 
@@ -472,25 +457,6 @@ interface LevelDao {
 
     @Query("insert or replace into interval (name,current_count,limit_count,timestamp) VALUES ('last_submission',-1,-1,:time)")
     suspend fun updateSubmissionTimestamp(time: Long)
-
-    @Query("update level_info_table set author='Migrated' where level_id = :level")
-    suspend fun updateToMigrated(level: Int)
-
-    @Transaction
-    suspend fun updateAuthorToMigrated(
-        level: Int, columnCount: Int,
-        letters: List<LetterProperties>,
-        homeIndexNewFriendIndexes: List<Pair<Int, Int>>
-    ) {
-        updateToMigrated(level)
-        changeColumnCount(level, columnCount)
-        changeFriendIndexesBasedOnColumnCount(
-            level,
-            columnCount,
-            letters,
-            homeIndexNewFriendIndexes
-        )
-    }
 
     @Query("select max(time_modified) from level_info_table")
     suspend fun getMaximumTimestamp(): Long?

@@ -121,7 +121,7 @@ class CellDirector constructor(
                 if ((droppedTo is Letter) && droppedTo.state == LetterState.HOME) {
                     candidateCells.add(droppedTo)
                 } else if (droppedTo is Slot) {
-                    candidateCells.add(droppedTo)
+                    if (!droppedTo.isHyphen) candidateCells.add(droppedTo)
                 }
             }
         }

@@ -19,16 +19,8 @@ class LevelRepository @Inject constructor(
         levelDao.init()
     }
 
-    suspend fun changeFriendIndexesBasedOnColumnCount(level: Int, columnCount:Int, letters:List<LetterProperties>, homeIndexNewFriendIndexes:List<Pair<Int,Int>>) {
-        levelDao.changeFriendIndexesBasedOnColumnCount(level, columnCount, letters, homeIndexNewFriendIndexes)
-    }
-
-
-    suspend fun changeColumnCount(level: Int, columnCount: Int){
-        levelDao.changeColumnCount(level, columnCount)
-    }
-
     suspend fun getMaxLevelId():Int = levelDao.getMaxLevelId()
+
     suspend fun getMinLevelIdForCountry(cc:String):Int
         = levelDao.getMinLevelIdForCountry(cc)
 
@@ -173,15 +165,6 @@ class LevelRepository @Inject constructor(
         val millis = Instant.now().toEpochMilli()
         levelDao.updateSubmissionTimestamp(millis)
     }
-
-    suspend fun updateAuthorToMigrated(
-        level:Int,
-        newColumnCount:Int,
-        letters: List<LetterProperties>,
-        homeIndexNewFriendIndexes: List<Pair<Int, Int>>) {
-        levelDao.updateAuthorToMigrated(level, newColumnCount, letters, homeIndexNewFriendIndexes)
-    }
-
 
     suspend fun getMaximumTimestamp():Long = levelDao.getMaximumTimestamp() ?: 0
 
