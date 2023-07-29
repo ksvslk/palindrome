@@ -36,16 +36,34 @@
             android:textSize="@dimen/_12ssp" />
 
     </com.google.android.material.textfield.TextInputLayout>
-    <androidx.appcompat.widget.AppCompatSpinner
-        android:id="@+id/languages_spinner"
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/language_selection_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:prompt="@string/select_language"
-        android:spinnerMode="dropdown"
-        android:popupTheme="@style/Theme.Material3.DynamicColors.DayNight"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:layout_margin="@dimen/def"
         android:layout_marginHorizontal="@dimen/default_large_margin"
-        android:layout_marginBottom="@dimen/def"
-        />
+        android:saveEnabled="false">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/select_language_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:saveEnabled="false"
+            android:text="@string/select_language"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/currently_selected_language"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:saveEnabled="false"
+            android:text="-"
+            android:textAppearance="@style/TextAppearance.OC.Caption" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
     <ViewFlipper
         android:saveEnabled="false"

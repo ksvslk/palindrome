@@ -31,7 +31,6 @@ import kotlin.math.min
 class LevelCreator @Inject constructor(@ActivityContext private val context: Context) {
 
     private val TAG = "LevelCreator"
-    private val COLUMN_COUNT = 7
 
     fun getLevel(
         info: Level,
@@ -42,7 +41,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         val densitySettings = getDensitySettings(container, info)
         level.columnCount = densitySettings.columnCount
         addLetters(level, densitySettings, info, context)
-        addSlots(info.solutions.first().palindrome, level, densitySettings, context, info.levelInfo.countryCode)
+        addSlots(level.columnCount, info.solutions.first().palindrome, level, densitySettings, context, info.levelInfo.countryCode)
         return level
     }
 
@@ -61,6 +60,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         val puzzleOnlyLetters = getPuzzle(info)
         Log.d(TAG, "puzzleOnlyLetters: $puzzleOnlyLetters")
         val palindrome = info.solutions.first().palindrome
+        val columns = min(7, palindrome.split(" ").maxBy { it.length }.length)
         val boxDecreaseRate = 1.01f
         val smallGap = context.resources.getDimensionPixelSize(com.intuit.sdp.R.dimen._2sdp)
         val usableWidth = container.width
@@ -68,15 +68,28 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         val widthAndHeight = Pair(usableWidth, usableHeight)
         val maxBoxSize = context.resources.getDimension(R.dimen.max_box_size)
 
+        val totalAreaRatio = (usableWidth.toFloat() / usableHeight.toFloat())
+        var closestColumnsRatio = Pair(columns, Float.MAX_VALUE)
+
+        for (cols in columns..9) {
+            val usedAreaRatio = getUsedAreaRatio(cols, puzzleOnlyLetters, palindrome, smallGap)
+            val newDistance = abs(usedAreaRatio - totalAreaRatio)
+            val currentBestDistance = abs(closestColumnsRatio.second - totalAreaRatio)
+            if (newDistance < currentBestDistance) {
+                closestColumnsRatio = Pair(cols, usedAreaRatio)
+            }
+        }
+
         val rowsCount =
-            puzzleOnlyLetters.chunked(COLUMN_COUNT).count() + getSolutionRows(palindrome, COLUMN_COUNT).count()
+            puzzleOnlyLetters.chunked(closestColumnsRatio.first).count() + getSolutionRows(palindrome, closestColumnsRatio.first).count()
 
         var boxSize = maxBoxSize
 
         var exceedingWidth = isWidthLimitExceeded(
             widthAndHeight = widthAndHeight,
             boxSize = boxSize,
-            smallGapBetweenLetters = smallGap
+            smallGapBetweenLetters = smallGap,
+            columns = closestColumnsRatio.first
         )
 
         var exceedingHeight = isHeightLimitExceeded(
@@ -91,7 +104,8 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
             exceedingWidth = isWidthLimitExceeded(
                 widthAndHeight = widthAndHeight,
                 boxSize = boxSize,
-                smallGapBetweenLetters = smallGap
+                smallGapBetweenLetters = smallGap,
+                columns = closestColumnsRatio.first
             )
             exceedingHeight = isHeightLimitExceeded(
                 widthAndHeight = widthAndHeight,
@@ -102,18 +116,33 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         }
 
         return DensitySettings(
-            COLUMN_COUNT,
+            closestColumnsRatio.first,
             min(boxSize, maxBoxSize).toInt()
         )
     }
 
+    private fun getUsedAreaRatio(
+        columns: Int,
+        puzzleOnlyLetters: String,
+        palindrome: String,
+        smallGap: Int
+    ): Float {
+        val rowsCount = puzzleOnlyLetters.chunked(columns).count() + getSolutionRows(
+            palindrome,
+            columns
+        ).count()
+        val boxSize = 1f
+        val usedHeight = getUsedHeight(rowsCount, boxSize, smallGap)
+        val usedWidth = getUsedWidth(columns, boxSize, smallGap)
+        return usedWidth / usedHeight
+    }
 
     private fun getUsedHeight(rowsCount: Int, boxSize: Float, smallGapBetweenLetters: Int): Float {
         return (rowsCount * (boxSize + smallGapBetweenLetters)) + 2 * (boxSize + smallGapBetweenLetters)
     }
 
-    private fun getUsedWidth(boxSize: Float, smallGapBetweenLetters: Int): Float {
-        return (COLUMN_COUNT * (boxSize + smallGapBetweenLetters) + 2 * (boxSize + smallGapBetweenLetters))
+    private fun getUsedWidth(columns: Int, boxSize: Float, smallGapBetweenLetters: Int): Float {
+        return (columns * (boxSize + smallGapBetweenLetters) + 2 * (boxSize + smallGapBetweenLetters))
     }
 
     private fun isHeightLimitExceeded(
@@ -128,12 +157,14 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
 
     private fun isWidthLimitExceeded(
         widthAndHeight: Pair<Int, Int>,
+        columns: Int,
         boxSize: Float,
         smallGapBetweenLetters: Int
     ): Pair<Boolean, Float> {
-        val usedWidth = getUsedWidth(boxSize, smallGapBetweenLetters)
+        val usedWidth = getUsedWidth(columns, boxSize, smallGapBetweenLetters)
         return Pair((widthAndHeight.first - usedWidth) <= 0, usedWidth)
     }
+
 
     private fun addLetters(grid: GridLayout, ds: DensitySettings, info: Level, context: Context) {
         val puzzle = info.lettersProperties
@@ -184,7 +215,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
     }
 
 
-    private fun addSlots(puzzle: String, grid: GridLayout, ds: DensitySettings, context: Context, cc:String) {
+    private fun addSlots(columns: Int, puzzle: String, grid: GridLayout, ds: DensitySettings, context: Context, cc:String) {
         val solutionRows = getSolutionRows(puzzle, ds.columnCount)
         for (row in solutionRows) {
             for (char in row) {
@@ -202,9 +233,9 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                         background = drawable
                         typeface = ResourcesCompat.getFont(context, R.font.roboto_bold)
                         gravity = Gravity.CENTER
-                        setTextColor(com.google.android.material.R.attr.colorOutline)
+                        setTextColor(MaterialColors.getColor(context, com.google.android.material.R.attr.colorOutline, Color.DKGRAY))
                         isHyphen = true
-                        text = "-"
+                        text = "–"
                     })
                     else -> grid.addView(Slot(context, char).apply {
                         contentDescription = "Slot nr ${this.homeIndex}"
@@ -248,7 +279,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         val modified = puzzle
             .split(' ')
             .fold("") { acc: String, s: String ->
-                if (s.length <= COLUMN_COUNT) {
+                if (s.length <= cols) {
                     "$acc$s "
                 } else {
                     acc + getChunkedStringWithHyphens(s) + " "

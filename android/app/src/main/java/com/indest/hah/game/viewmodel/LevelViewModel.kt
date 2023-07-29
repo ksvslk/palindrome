@@ -74,7 +74,7 @@ class LevelViewModel @Inject constructor(
 
     var currentlySignedInPlayerName = "Unknown"
     var tempSubmissionPalindrome = ""
-    var tempCountrySelected = Pair(0, "gb")
+    var tempCountrySelected = "gb"
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Log.e(
@@ -847,7 +847,7 @@ class LevelViewModel @Inject constructor(
             "palindrome" to playersPalindrome,
             "player" to currentlySignedInPlayerName,
             "solutionToCategory" to hashMapOf(Pair(playersPalindrome, "[ADD_CATEGORY]")),
-            "countryCode" to tempCountrySelected.second,
+            "countryCode" to tempCountrySelected,
             "timestamp" to FieldValue.serverTimestamp(),
         )
 

@@ -1,5 +1,6 @@
 package com.indest.hah.fragments
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -15,6 +16,8 @@ import androidx.core.text.isDigitsOnly
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.dialog.MaterialDialogs
 import com.indest.hah.R
 import com.indest.hah.databinding.SubmissionFragmentBinding
 import com.indest.hah.game.viewmodel.LevelViewModel
@@ -23,7 +26,7 @@ import com.indest.hah.other.isPalindrome
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 
-class SubmissionFragment : FullBottomSheetDialogFragment(), AdapterView.OnItemSelectedListener {
+class SubmissionFragment : FullBottomSheetDialogFragment() {
     private val TAG = "SubmissionFragment"
     private var _binding: SubmissionFragmentBinding? = null
     private val binding get() = _binding!!
@@ -41,23 +44,43 @@ class SubmissionFragment : FullBottomSheetDialogFragment(), AdapterView.OnItemSe
         return b.root
     }
 
+    private fun showLanguageSelectionDialog()
+    {
+        val languages = resources.getStringArray(R.array.languages_array)
+        val languagesReversed = C.languages.entries.associate { it.value to it.key }
+
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(resources.getString(R.string.select_language))
+            .setItems(languages) { _, index ->
+                // correct index, languages_array has one more English as the first element.
+                // so if index is always -1 and if it is -1 then it is English
+                val selectedLanguage = languages[index]
+                val countryCode = if (selectedLanguage == "English") "gb" else languagesReversed[selectedLanguage]
+                Log.d(TAG, "Selected is $selectedLanguage with country code $countryCode")
+                levelViewModel.tempCountrySelected = countryCode!!
+                refreshSelectedLanguage()
+            }
+            .show()
+    }
+
+    private fun refreshSelectedLanguage()
+    {
+        val language = if (levelViewModel.tempCountrySelected == "gb") "English"
+                       else C.languages[levelViewModel.tempCountrySelected]
+        binding.currentlySelectedLanguage.text = language
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.sendLevelButton.isEnabled = false
         binding.sendLevelButton.alpha = 0.5f
-        binding.languagesSpinner.onItemSelectedListener = this
-        ArrayAdapter.createFromResource(
-            requireContext(),
-            R.array.languages_array,
-            android.R.layout.simple_spinner_item
-        ).also { adapter ->
-            // Specify the layout to use when the list of choices appears
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            // Apply the adapter to the spinner
-            binding.languagesSpinner.adapter = adapter
+
+        binding.languageSelectionButton.setOnClickListener {
+            showLanguageSelectionDialog()
         }
-        binding.languagesSpinner.setSelection(levelViewModel.tempCountrySelected.first)
+
+        refreshSelectedLanguage()
 
         lifecycleScope.launchWhenCreated {
             levelViewModel.allPalindromesFlow().collect { palindromes ->
@@ -188,16 +211,5 @@ class SubmissionFragment : FullBottomSheetDialogFragment(), AdapterView.OnItemSe
         }
     }
 
-    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        val selectedLanguage = parent?.getItemAtPosition(position)
-        val languagesReversed = C.languages.entries.associate { it.value to it.key }
-        val countryCode = if (selectedLanguage == "English") "gb" else languagesReversed[selectedLanguage]
-        Log.d(TAG, "Selected ${parent?.getItemAtPosition(position)} with country code $countryCode")
-        levelViewModel.tempCountrySelected = Pair(position, countryCode!!)
-    }
-
-    override fun onNothingSelected(parent: AdapterView<*>?) {
-        Log.d(TAG, "nothing selected")
-    }
 
 }
