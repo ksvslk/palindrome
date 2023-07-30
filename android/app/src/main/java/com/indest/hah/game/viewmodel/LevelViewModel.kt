@@ -361,6 +361,12 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+    fun allUniqueCountriesWithLevelCount(): Flow<List<Pair<String,Int>>> {
+        return flow {
+            emit(levelRepository.getUniqueCountriesWithLevelCount())
+        }
+    }
+
     fun getLevelsForCountry(cc: String): Flow<List<LevelData>> {
         return flow {
             emit(levelRepository.getLevelsForCountry(cc))

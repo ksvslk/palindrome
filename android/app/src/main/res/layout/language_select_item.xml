@@ -15,7 +15,7 @@
         android:orientation="horizontal"
         android:layout_gravity="center_vertical"
         android:saveEnabled="false"
-        android:weightSum="8">
+        android:weightSum="10">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/language_image"
@@ -32,7 +32,7 @@
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="5"
+            android:layout_weight="8"
             android:gravity="center_vertical"
             android:orientation="vertical"
             android:saveEnabled="false">
@@ -48,16 +48,23 @@
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/count_of_levels"
-            android:layout_width="0dp"
+        <FrameLayout
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_weight="2"
-            android:gravity="center"
-            android:saveEnabled="false"
-            android:text=""
-            android:textAppearance="@style/TextAppearance.OC.Headline6" />
+            android:orientation="vertical" >
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/count_of_levels"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center"
+                android:background="@drawable/circle_badge"
+                android:gravity="center"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+                android:text="4"
+                android:textColor="?attr/colorOnPrimaryContainer" />
+        </FrameLayout>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

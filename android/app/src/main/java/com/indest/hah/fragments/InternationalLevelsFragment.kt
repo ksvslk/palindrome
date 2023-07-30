@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
 
 class InternationalLevelsFragment : FullBottomSheetDialogFragment() {
 
-    private val TAG = "InternationalLevelsFragment"
+    private val TAG = "InterLevelsFragment"
     private var _binding: InternationalLevelsFragmentBinding? = null
     private val binding get() = _binding!!
     private val levelViewModel: LevelViewModel by activityViewModels()
@@ -35,7 +35,7 @@ class InternationalLevelsFragment : FullBottomSheetDialogFragment() {
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED)
             {
-                levelViewModel.allUniqueCountries().collect { countries ->
+                levelViewModel.allUniqueCountriesWithLevelCount().collect { countries ->
                     binding.internationalLevelsRecyclerview.addItemDecoration(
                         DividerItemDecoration(
                             context,
@@ -47,7 +47,7 @@ class InternationalLevelsFragment : FullBottomSheetDialogFragment() {
                         right = resources.getDimensionPixelSize(R.dimen.simple_dialog_header_left_margin)
                     )
                     binding.internationalLevelsRecyclerview.adapter =
-                        LanguageItemAdapter(countries) {
+                        LanguageItemAdapter(false, countries) {
                              it?.let {cc ->
                                  findNavController().safeNavigate(
                                      R.id.action_navigation_international_to_navigation_level_select,
