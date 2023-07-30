@@ -31,10 +31,12 @@ fun NavController.safeNavigate(
 }
 
 
-fun String.isPalindrome(): Boolean {
+fun String.isPalindrome(language: String = "gb"): Boolean {
     val testString = this.lowercase()
         .replace("""[\W+]""".toRegex(), "")
-    return testString.length >= 3 && testString == testString.reversed()
+    // japanese kaibun might not be classic palindrome
+    val isStringPalindrome = if (language == "ja") true else testString == testString.reversed()
+    return testString.length >= 4 && isStringPalindrome
 }
 
 

@@ -41,7 +41,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         val densitySettings = getDensitySettings(container, info)
         level.columnCount = densitySettings.columnCount
         addLetters(level, densitySettings, info, context)
-        addSlots(level.columnCount, info.solutions.first().palindrome, level, densitySettings, context, info.levelInfo.countryCode)
+        addSlots(info.solutions.first().palindrome, level, densitySettings, context, info.levelInfo.countryCode)
         return level
     }
 
@@ -215,7 +215,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
     }
 
 
-    private fun addSlots(columns: Int, puzzle: String, grid: GridLayout, ds: DensitySettings, context: Context, cc:String) {
+    private fun addSlots(puzzle: String, grid: GridLayout, ds: DensitySettings, context: Context, cc:String) {
         val solutionRows = getSolutionRows(puzzle, ds.columnCount)
         for (row in solutionRows) {
             for (char in row) {
@@ -268,26 +268,36 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         if (lastElement.length == 1) {
             val newWindowed = windowed.dropLast(1).toMutableList()
             val newLastElement = newWindowed[newWindowed.size - 1]
-            newWindowed[newWindowed.size - 1] = newLastElement.removeSuffix("-") + lastElement
-            return newWindowed.joinToString("- ")
+            newWindowed[newWindowed.size - 1] = newLastElement.removeSuffix("*") + lastElement
+            return newWindowed.joinToString("* ")
         }
-        return windowed.joinToString("- ")
+        return windowed.joinToString("* ")
     }
 
     private fun getSolutionRows(puzzle: String, cols: Int): List<String> {
         Log.d(TAG, "Original puzzle: $puzzle")
-        val modified = puzzle
+        var modified = puzzle
             .split(' ')
             .fold("") { acc: String, s: String ->
                 if (s.length <= cols) {
-                    "$acc$s "
+                    val testLength = "$s#".length
+                    if (s == "-" && testLength <= cols) {
+                        "${acc.removeSuffix("#")}$s#"
+                    }
+                    else if (s == "-") {
+                        "${acc.removeSuffix("#")}#"
+                    }
+                    else {
+                        "$acc$s#"
+                    }
                 } else {
-                    acc + getChunkedStringWithHyphens(s) + " "
+                    acc + getChunkedStringWithHyphens(s) + "#"
                 }
             }
+        modified = modified.removeSuffix("#")
         Log.d(TAG, "MODIFIED: $modified")
-        val puzzleWords = modified.split(' ')
-        Log.d(TAG, "PUZZLE: $puzzleWords")
+        val puzzleWords = modified.split('#')
+        puzzleWords.forEach { Log.d(TAG, it) }
         return puzzleWords.fold(mutableListOf()) { acc: List<String>, s: String ->
             when {
                 acc.isEmpty() -> acc + s

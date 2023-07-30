@@ -1,6 +1,9 @@
 package com.indest.hah.fragments
 
+import android.app.AlertDialog
 import android.content.DialogInterface
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -12,6 +15,7 @@ import android.view.WindowManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat.ThemeCompat
 import androidx.core.text.isDigitsOnly
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -59,8 +63,8 @@ class SubmissionFragment : FullBottomSheetDialogFragment() {
                 Log.d(TAG, "Selected is $selectedLanguage with country code $countryCode")
                 levelViewModel.tempCountrySelected = countryCode!!
                 refreshSelectedLanguage()
-            }
-            .show()
+            }.show()
+
     }
 
     private fun refreshSelectedLanguage()
@@ -68,6 +72,7 @@ class SubmissionFragment : FullBottomSheetDialogFragment() {
         val language = if (levelViewModel.tempCountrySelected == "gb") "English"
                        else C.languages[levelViewModel.tempCountrySelected]
         binding.currentlySelectedLanguage.text = language
+        binding.enterPalindromeTextInputLayout.editText?.setText(levelViewModel.tempSubmissionPalindrome)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -129,7 +134,7 @@ class SubmissionFragment : FullBottomSheetDialogFragment() {
                                 )
                             )
                             errors.remove(getString(R.string.palindrome_exists))
-                            if (p0.toString().isPalindrome()) {
+                            if (p0.toString().isPalindrome(language = levelViewModel.tempCountrySelected)) {
                                 errors.remove(getString(R.string.not_a_palindrome_error))
                                 binding.enterPalindromeTextInputLayout.error = null
                                 binding.enterPalindromeTextInputLayout.errorIconDrawable = null

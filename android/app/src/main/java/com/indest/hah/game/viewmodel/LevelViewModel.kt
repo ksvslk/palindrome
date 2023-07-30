@@ -516,6 +516,9 @@ class LevelViewModel @Inject constructor(
 
 
     private fun isSolutionCorrect(guess: String): Boolean {
+        Log.d(TAG, "Guess: $guess")
+        val databaseSolutions = _currentLevel.value.solutions.map { it.palindrome.replace(" ", "") }
+        Log.d(TAG, "Database solutions: $databaseSolutions")
         return _currentLevel.value.solutions.any {
             it.palindrome.replace(" ", "") == guess
         }
@@ -527,9 +530,12 @@ class LevelViewModel @Inject constructor(
             val solution = _currentLevel.value.solutions.first().palindrome.replace(" ", "")
             var solutionData = SolutionData()
 
+            Log.d(TAG, "Solution: $solution")
+            Log.d(TAG, "Guess: $guess")
+
             if (guess.length == solution.length) {
                 val playerGuess = guess.map { char ->
-                    if ("^([?!.,’':-])".contains(char)) "" else char
+                    if ("^([?!.,’':-]–)".contains(char)) "" else char
                 }.joinToString("")
 
                 val hintsInterval =
