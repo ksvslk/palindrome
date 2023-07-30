@@ -122,17 +122,14 @@
 
     <string-array name="solution_wrong_texts">
         <item>Try again.</item>
-        <item>Not a palindrome.</item>
         <item>Keep trying.</item>
         <item>Take another stab.</item>
-        <item>Palindrome required.</item>
         <item>Look it over.</item>
     </string-array>
 
     <string-array name="palindrome_wrong_texts">
         <item>Wrong palindrome.</item>
-        <item>Forbidden palindrome.</item>
-        <item>Bogus palindrome.</item>
+        <item>Incorrect palindrome.</item>
     </string-array>
 
     <!-- Interval table -->
