@@ -526,14 +526,14 @@ class LevelViewModel @Inject constructor(
         val databaseSolutions = _currentLevel.value.solutions.map { it.palindrome.replace(" ", "") }
         Log.d(TAG, "Database solutions: $databaseSolutions")
         return _currentLevel.value.solutions.any {
-            it.palindrome.replace(" ", "") == guess
+            it.palindrome.replace(Regex("[\\s-]+"), "") == guess
         }
     }
 
 
     private fun updateSolutionState(index: Int, guess: String) {
         viewModelScope.launch {
-            val solution = _currentLevel.value.solutions.first().palindrome.replace(" ", "")
+            val solution = _currentLevel.value.solutions.first().palindrome.replace(Regex("[\\s-]+"), "")
             var solutionData = SolutionData()
 
             Log.d(TAG, "Solution: $solution")

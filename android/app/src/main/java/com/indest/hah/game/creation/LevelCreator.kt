@@ -38,10 +38,11 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         container: ViewGroup
     ): GridLayout {
         val level = layoutInflater.inflate(R.layout.grid, container, false) as GridLayout
-        val densitySettings = getDensitySettings(container, info)
+        val palindrome = info.solutions.first().palindrome.replace(" - ", "- ")
+        val densitySettings = getDensitySettings(container, info, palindrome)
         level.columnCount = densitySettings.columnCount
         addLetters(level, densitySettings, info, context)
-        addSlots(info.solutions.first().palindrome, level, densitySettings, context, info.levelInfo.countryCode)
+        addSlots(palindrome, level, densitySettings, context, info.levelInfo.countryCode)
         return level
     }
 
@@ -50,16 +51,17 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
             .sortedBy { it.homeIndex }
             .fold(
                 ""
-            ) { acc, li -> if (li.letter != '-') acc + li.letter else acc }
+            ) { acc, li -> acc + li.letter }
     }
+
 
     private fun getDensitySettings(
         container: ViewGroup,
-        info: Level
+        info: Level,
+        palindrome: String
     ): DensitySettings {
         val puzzleOnlyLetters = getPuzzle(info)
         Log.d(TAG, "puzzleOnlyLetters: $puzzleOnlyLetters")
-        val palindrome = info.solutions.first().palindrome
         val columns = min(7, palindrome.split(" ").maxBy { it.length }.length)
         val boxDecreaseRate = 1.01f
         val smallGap = context.resources.getDimensionPixelSize(com.intuit.sdp.R.dimen._2sdp)
@@ -268,36 +270,26 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         if (lastElement.length == 1) {
             val newWindowed = windowed.dropLast(1).toMutableList()
             val newLastElement = newWindowed[newWindowed.size - 1]
-            newWindowed[newWindowed.size - 1] = newLastElement.removeSuffix("*") + lastElement
-            return newWindowed.joinToString("* ")
+            newWindowed[newWindowed.size - 1] = newLastElement.removeSuffix("-") + lastElement
+            return newWindowed.joinToString("- ")
         }
-        return windowed.joinToString("* ")
+        return windowed.joinToString("- ").replace("--", "-")
     }
 
     private fun getSolutionRows(puzzle: String, cols: Int): List<String> {
         Log.d(TAG, "Original puzzle: $puzzle")
-        var modified = puzzle
+        val modified = puzzle
             .split(' ')
             .fold("") { acc: String, s: String ->
                 if (s.length <= cols) {
-                    val testLength = "$s#".length
-                    if (s == "-" && testLength <= cols) {
-                        "${acc.removeSuffix("#")}$s#"
-                    }
-                    else if (s == "-") {
-                        "${acc.removeSuffix("#")}#"
-                    }
-                    else {
-                        "$acc$s#"
-                    }
+                    "$acc$s "
                 } else {
-                    acc + getChunkedStringWithHyphens(s) + "#"
+                    acc + getChunkedStringWithHyphens(s) + " "
                 }
             }
-        modified = modified.removeSuffix("#")
         Log.d(TAG, "MODIFIED: $modified")
-        val puzzleWords = modified.split('#')
-        puzzleWords.forEach { Log.d(TAG, it) }
+        val puzzleWords = modified.split(' ')
+        Log.d(TAG, "PUZZLE: $puzzleWords")
         return puzzleWords.fold(mutableListOf()) { acc: List<String>, s: String ->
             when {
                 acc.isEmpty() -> acc + s
