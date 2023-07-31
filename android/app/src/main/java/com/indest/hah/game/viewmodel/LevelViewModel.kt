@@ -85,6 +85,12 @@ class LevelViewModel @Inject constructor(
         startCollectingLevelUpdate()
     }
 
+    fun updateColumnCount(newCols:Int)
+    {
+        viewModelScope.launch {
+            levelRepository.updateColumnCount(newCols, currentLevel.value.levelInfo.levelId)
+        }
+    }
 
     private fun startCollectingLevelUpdate() {
         viewModelScope.launch {
@@ -93,7 +99,7 @@ class LevelViewModel @Inject constructor(
                     it.levelInfo.columnCount != _currentLevel.value.levelInfo.columnCount
                 val changeInLevelId = it.levelInfo.levelId != _currentLevel.value.levelInfo.levelId
                 _currentLevel.value = it
-                if (isCurrentLevelLegit() && (changeInColumnsCount || changeInLevelId)) {
+                if (isCurrentLevelLegit() && (changeInLevelId)) {
                     val progress = getProgressAndText()
                     gameEventChannel.send(GameEvent.DisplayLevel(_currentLevel.value, progress))
                 }
@@ -285,6 +291,13 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+    fun resetLetterInfo(levelNr:Int)
+    {
+        viewModelScope.launch {
+            Log.d(TAG, "resetLetterInfo")
+            levelRepository.resetLetterInfo(levelNr)
+        }
+    }
 
     fun changeLevel(chosenLevel: Int) {
         if (_currentLevel.value.levelInfo.progress == LevelProgress.INTERMEDIATE) {

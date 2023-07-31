@@ -141,10 +141,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         findNavController().safeNavigate(R.id.action_navigation_level_to_navigation_scores)
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
-
     private fun clearMessages()
     {
         messages.forEach {
@@ -223,7 +219,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         binding.levelFragment.alpha = 1f
     }
 
-
     private fun displayLevel(level: Level) {
         binding.levelFragment.removeAllViews()
         binding.levelFragment.removeAllViewsInLayout()
@@ -234,15 +229,18 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                 layoutInflater,
                 binding.levelFragment
             )
-            levelGridLayout.children.filterIsInstance<Cell<*, *>>().toMutableList().apply {
-                levelGridLayout.doOnPreDraw {
+
+            levelGridLayout.first.children.filterIsInstance<Cell<*, *>>().toMutableList().apply {
+                levelGridLayout.first.doOnPreDraw {
                     cellDirector = CellDirector(
                         this,
-                        levelViewModel
+                        levelViewModel,
+                        levelGridLayout.second,
+                        levelGridLayout.third
                     )
                 }
             }
-            binding.levelFragment.addView(levelGridLayout)
+            binding.levelFragment.addView(levelGridLayout.first)
         }
 
         askForReview(level.levelInfo.levelId)

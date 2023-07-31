@@ -13,22 +13,27 @@ import com.indest.hah.other.C.NEUTRAL_LAYER
 import com.indest.hah.other.C.REWARDED_ANIM_MUL
 import com.indest.hah.other.C.REWARDED_ANIM_MUL_DEFAULT
 import com.indest.hah.other.C.TOP_LAYER
+import com.indest.hah.persistance.dto.LetterProperties
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.level.LevelProgress
 import com.indest.hah.views.Cell
 import com.indest.hah.views.Letter
 import com.indest.hah.views.Slot
+import java.lang.Exception
 import kotlin.math.abs
 
 class CellDirector constructor(
     private val cells: MutableList<Cell<*, *>>,
-    private val viewModel: LevelViewModel
+    private val viewModel: LevelViewModel,
+    private val newCols:Int,
+    private val oldToNew:Map<Int,Int>
+
 ) {
 
     private val TAG = "CellDirector"
 
     init {
-        restoreSlotPlacements(viewModel.currentLevel.value)
+       restoreSlotPlacements(viewModel.currentLevel.value)
     }
 
     fun getCells(): MutableList<Cell<*, *>> = cells
@@ -66,12 +71,44 @@ class CellDirector constructor(
         sendLetterHome(letter)
     }
 
+    private fun getColumnChangedLetterPropertiesList(letters: List<LetterProperties>, levelId:Int) : List<LetterProperties>
+    {
+        return letters.map {
+            if (it.friendIndex != -666)
+            {
+                try {
+                    val newIndex = oldToNew[it.friendIndex]!!
+                    viewModel.updateFriendIndex(it.homeIndex, newIndex)
+                    it.copy(friendIndex = oldToNew[it.friendIndex]!!)
+                }
+                catch (ex:Exception)
+                {
+                    Log.e(TAG, "Could not restore. Just skip it. No restore.", ex)
+                    viewModel.resetLetterInfo(levelId)
+                    return emptyList()
+                }
+            }
+            else {
+                it
+            }
+        }
+    }
+
     private fun restoreSlotPlacements(info: Level) {
+        val isNewColumnsCount = info.levelInfo.columnCount != newCols
+        val newLetterPropertiesInfo = if (info.levelInfo.columnCount != -1 && isNewColumnsCount) {
+            getColumnChangedLetterPropertiesList(info.lettersProperties, info.levelInfo.levelId)
+        }
+        else {
+            info.lettersProperties
+        }
+        if (isNewColumnsCount) viewModel.updateColumnCount(newCols)
+
         when {
-            info.lettersProperties.isNotEmpty() -> {
+            newLetterPropertiesInfo.isNotEmpty() -> {
                 val slots = cells.filterIsInstance<Slot>()
                 val letters = cells.filterIsInstance<Letter>()
-                info.lettersProperties.forEach { letterProperties ->
+                newLetterPropertiesInfo.forEach { letterProperties ->
                     if (letterProperties.friendIndex != -666) {
                         val slot = slots.find { it.homeIndex == letterProperties.friendIndex }
                         val letter = letters.find { it.homeIndex == letterProperties.homeIndex }

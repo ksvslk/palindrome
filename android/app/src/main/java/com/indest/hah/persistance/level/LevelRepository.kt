@@ -2,6 +2,7 @@ package com.indest.hah.persistance.level
 
 import androidx.room.Query
 import com.indest.hah.persistance.dto.*
+import com.indest.hah.views.Letter
 import kotlinx.coroutines.flow.Flow
 import java.time.Duration
 import java.time.Instant
@@ -49,6 +50,11 @@ class LevelRepository @Inject constructor(
         level: Int
     ): String {
         return levelDao.updateLetters(homeIndex1, homeIndex2, letter1, letter2, level)
+    }
+
+    suspend fun resetLetterInfo(levelNr: Int)
+    {
+        levelDao.resetLetterInfo(levelNr)
     }
 
     suspend fun getCurrentSolution(level: Int): String {
@@ -161,6 +167,11 @@ class LevelRepository @Inject constructor(
         val currentTime = Instant.now()
         val duration = Duration.between(lastTime, currentTime)
         return duration.toHours() >= 24
+    }
+
+    suspend fun updateColumnCount(newCols:Int, level: Int)
+    {
+        levelDao.changeColumnCount(level, newColumnCount = newCols)
     }
 
     suspend fun updateSubmissionTimestamp()

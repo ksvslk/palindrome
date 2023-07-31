@@ -4,6 +4,7 @@ import androidx.room.*
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.indest.hah.game.creation.Shuffler
 import com.indest.hah.persistance.dto.*
+import com.indest.hah.views.Letter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -27,6 +28,9 @@ interface LevelDao {
 
     @Query("delete from letter_info_table where owner_id = :levelNr")
     suspend fun deleteLetterInfo(levelNr: Int)
+
+    @Query("update letter_info_table set friend_index = -666, locked = 0 where owner_id = :levelNr")
+    suspend fun resetLetterInfo(levelNr: Int)
 
     @Query("select letter from letter_info_table where owner_id=:levelNr and friend_index!=-666 order by friend_index asc")
     suspend fun getCurrentSolution(levelNr: Int): List<Char>
@@ -306,7 +310,7 @@ interface LevelDao {
     fun getLastLevel(): Flow<Level>
 
     @Query("update or ignore letter_info_table set friend_index = :newFriendIndex where home_index = :homeIndex and owner_id = :level")
-    suspend fun updateFriendIndexSub(homeIndex: Int, newFriendIndex: Int, level: Int)
+    fun updateFriendIndexSub(homeIndex: Int, newFriendIndex: Int, level: Int)
 
     @Transaction
     suspend fun updateFriendIndex(homeIndex: Int, newFriendIndex: Int, level: Int): String {

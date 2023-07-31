@@ -2,18 +2,14 @@ package com.indest.hah.game.creation
 
 import android.content.Context
 import android.graphics.Color
-import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Space
-import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
 import androidx.gridlayout.widget.GridLayout
 import com.google.android.material.color.MaterialColors
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.indest.hah.R
 import com.indest.hah.game.director.LetterState
 import com.indest.hah.persistance.dto.Level
@@ -23,7 +19,6 @@ import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Inject
 import kotlin.math.abs
-import kotlin.math.max
 import kotlin.math.min
 
 
@@ -36,14 +31,14 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         info: Level,
         layoutInflater: LayoutInflater,
         container: ViewGroup
-    ): GridLayout {
+    ): Triple<GridLayout, Int, Map<Int, Int>> {
         val level = layoutInflater.inflate(R.layout.grid, container, false) as GridLayout
         val palindrome = info.solutions.first().palindrome.replace(" - ", "- ")
         val densitySettings = getDensitySettings(container, info, palindrome)
         level.columnCount = densitySettings.columnCount
         addLetters(level, densitySettings, info, context)
         addSlots(palindrome, level, densitySettings, context, info.levelInfo.countryCode)
-        return level
+        return Triple(level, level.columnCount, densitySettings.updatedIndexes)
     }
 
     private fun getPuzzle(info: Level): String {
@@ -54,14 +49,12 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
             ) { acc, li -> acc + li.letter }
     }
 
-
     private fun getDensitySettings(
         container: ViewGroup,
         info: Level,
         palindrome: String
     ): DensitySettings {
         val puzzleOnlyLetters = getPuzzle(info)
-        Log.d(TAG, "puzzleOnlyLetters: $puzzleOnlyLetters")
         val columns = min(7, palindrome.split(" ").maxBy { it.length }.length)
         val boxDecreaseRate = 1.01f
         val smallGap = context.resources.getDimensionPixelSize(com.intuit.sdp.R.dimen._2sdp)
@@ -73,7 +66,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         val totalAreaRatio = (usableWidth.toFloat() / usableHeight.toFloat())
         var closestColumnsRatio = Pair(columns, Float.MAX_VALUE)
 
-        for (cols in columns..9) {
+        for (cols in columns..palindrome.length) {
             val usedAreaRatio = getUsedAreaRatio(cols, puzzleOnlyLetters, palindrome, smallGap)
             val newDistance = abs(usedAreaRatio - totalAreaRatio)
             val currentBestDistance = abs(closestColumnsRatio.second - totalAreaRatio)
@@ -83,7 +76,10 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         }
 
         val rowsCount =
-            puzzleOnlyLetters.chunked(closestColumnsRatio.first).count() + getSolutionRows(palindrome, closestColumnsRatio.first).count()
+            puzzleOnlyLetters.chunked(closestColumnsRatio.first).count() + getSolutionRows(
+                palindrome,
+                closestColumnsRatio.first
+            ).count()
 
         var boxSize = maxBoxSize
 
@@ -117,9 +113,20 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
             )
         }
 
+        var updatedIndexes = mapOf<Int, Int>()
+        if (info.levelInfo.columnCount != -1 && info.levelInfo.columnCount != closestColumnsRatio.first) {
+            updatedIndexes = getUpdatedOldFriendToNewFriendIndexes(
+                palindrome,
+                puzzleOnlyLetters,
+                info,
+                closestColumnsRatio.first
+            )
+        }
+
         return DensitySettings(
             closestColumnsRatio.first,
-            min(boxSize, maxBoxSize).toInt()
+            min(boxSize, maxBoxSize).toInt(),
+            updatedIndexes
         )
     }
 
@@ -193,9 +200,19 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                         gravity = Gravity.CENTER
 
                         setBackgroundColor(
-                            MaterialColors.getColor(context, com.google.android.material.R.attr.colorSurfaceVariant, Color.RED)
+                            MaterialColors.getColor(
+                                context,
+                                com.google.android.material.R.attr.colorSurfaceVariant,
+                                Color.RED
+                            )
                         )
-                        setTextColor(MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSurfaceVariant, Color.RED))
+                        setTextColor(
+                            MaterialColors.getColor(
+                                context,
+                                com.google.android.material.R.attr.colorOnSurfaceVariant,
+                                Color.RED
+                            )
+                        )
 
                     })
         }
@@ -211,13 +228,17 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         val puzzleWithoutWhitespace = puzzle.replace("\\s".toRegex(), "")
         val countOfRowLetters =
             puzzleWithoutWhitespace.length - (puzzleWithoutWhitespace.length / columnCount) * columnCount
-        Log.d(TAG, "puzzleWithoutWhitespace: $puzzleWithoutWhitespace")
-        Log.d(TAG, "countOfRowLetters: $countOfRowLetters")
         return if (countOfRowLetters == 0) 0 else columnCount - countOfRowLetters
     }
 
 
-    private fun addSlots(puzzle: String, grid: GridLayout, ds: DensitySettings, context: Context, cc:String) {
+    private fun addSlots(
+        puzzle: String,
+        grid: GridLayout,
+        ds: DensitySettings,
+        context: Context,
+        cc: String
+    ) {
         val solutionRows = getSolutionRows(puzzle, ds.columnCount)
         for (row in solutionRows) {
             for (char in row) {
@@ -235,10 +256,17 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                         background = drawable
                         typeface = ResourcesCompat.getFont(context, R.font.roboto_bold)
                         gravity = Gravity.CENTER
-                        setTextColor(MaterialColors.getColor(context, com.google.android.material.R.attr.colorOutline, Color.DKGRAY))
+                        setTextColor(
+                            MaterialColors.getColor(
+                                context,
+                                com.google.android.material.R.attr.colorOutline,
+                                Color.DKGRAY
+                            )
+                        )
                         isHyphen = true
                         text = "–"
                     })
+
                     else -> grid.addView(Slot(context, char).apply {
                         contentDescription = "Slot nr ${this.homeIndex}"
                         width = ds.boxSize
@@ -248,12 +276,24 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                         val drawable = GradientDrawable()
                         drawable.shape = GradientDrawable.RECTANGLE
                         drawable.setStroke(2, Color.TRANSPARENT)
-                        drawable.setColor(MaterialColors.getColor(context, com.google.android.material.R.attr.colorOutline, Color.DKGRAY))
+                        drawable.setColor(
+                            MaterialColors.getColor(
+                                context,
+                                com.google.android.material.R.attr.colorOutline,
+                                Color.DKGRAY
+                            )
+                        )
                         background = drawable
 
                         typeface = ResourcesCompat.getFont(context, R.font.roboto_bold)
                         gravity = Gravity.CENTER
-                        setTextColor(MaterialColors.getColor(context, com.google.android.material.R.attr.colorSecondaryContainer, Color.RED))
+                        setTextColor(
+                            MaterialColors.getColor(
+                                context,
+                                com.google.android.material.R.attr.colorSecondaryContainer,
+                                Color.RED
+                            )
+                        )
                         text = " "
                     })
                 }
@@ -263,9 +303,8 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
 
     // Takes a word and chunks it to given lengths adding "-"
     // in the end
-    private fun getChunkedStringWithHyphens(word:String):String
-    {
-        val windowed = word.windowed(6, 6,true).toMutableList()
+    private fun getChunkedStringWithHyphens(word: String, cols:Int): String {
+        val windowed = word.windowed(cols, cols, true).toMutableList()
         val lastElement = windowed.last()
         if (lastElement.length == 1) {
             val newWindowed = windowed.dropLast(1).toMutableList()
@@ -276,20 +315,42 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         return windowed.joinToString("- ").replace("--", "-")
     }
 
+    private fun getUpdatedOldFriendToNewFriendIndexes(
+        palindrome: String,
+        puzzleOnlyLetters: String,
+        info: Level,
+        newColumnCount: Int
+    ): Map<Int, Int> {
+        val firstIndexForNewColumnsCount =
+            puzzleOnlyLetters.chunked(newColumnCount).count() * newColumnCount
+        val firstIndexForOldColumnsCount = puzzleOnlyLetters.chunked(info.levelInfo.columnCount)
+            .count() * info.levelInfo.columnCount
+        val oldList = getSolutionRows(puzzle = palindrome, cols = info.levelInfo.columnCount)
+        val newList = getSolutionRows(puzzle = palindrome, cols = newColumnCount)
+        val newIndexes = newList
+            .joinToString("")
+            .withIndex()
+            .filter { it.value != ' ' && it.value != '-' }
+            .map { firstIndexForNewColumnsCount + it.index }
+        val oldIndexes = oldList
+            .joinToString("")
+            .withIndex()
+            .filter { it.value != ' ' && it.value != '-' }
+            .map { firstIndexForOldColumnsCount + it.index }
+        return oldIndexes.zip(newIndexes).toMap()
+    }
+
     private fun getSolutionRows(puzzle: String, cols: Int): List<String> {
-        Log.d(TAG, "Original puzzle: $puzzle")
         val modified = puzzle
             .split(' ')
             .fold("") { acc: String, s: String ->
                 if (s.length <= cols) {
                     "$acc$s "
                 } else {
-                    acc + getChunkedStringWithHyphens(s) + " "
+                    acc + getChunkedStringWithHyphens(s, cols-1) + " "
                 }
             }
-        Log.d(TAG, "MODIFIED: $modified")
         val puzzleWords = modified.split(' ')
-        Log.d(TAG, "PUZZLE: $puzzleWords")
         return puzzleWords.fold(mutableListOf()) { acc: List<String>, s: String ->
             when {
                 acc.isEmpty() -> acc + s
@@ -297,6 +358,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                     val last = acc.last().plus(' ')
                     acc.subList(0, acc.lastIndex) + last.plus(s)
                 }
+
                 else -> { // New line
                     val blankCount = cols - acc.last().length
                     val last = acc.last().plus(" ".repeat(blankCount))

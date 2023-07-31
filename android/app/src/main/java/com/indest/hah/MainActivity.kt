@@ -466,7 +466,6 @@ class MainActivity : AppCompatActivity() {
                 ).build()
             WindowInsetsCompat.CONSUMED
         }
-        //hideSystemBars(binding.root)
     }
 
 
@@ -474,7 +473,6 @@ class MainActivity : AppCompatActivity() {
         super.onWindowFocusChanged(hasFocus)
         hideSystemBars(binding.container)
     }
-
 
 
     private fun setUpNavController() {
