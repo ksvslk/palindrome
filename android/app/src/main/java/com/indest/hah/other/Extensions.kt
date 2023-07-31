@@ -1,7 +1,9 @@
 package com.indest.hah.other
 
+import android.content.ContentResolver
 import android.content.Context
-import android.util.Log
+import android.os.Build
+import android.provider.Settings
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -12,8 +14,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.NavController
 import com.indest.hah.R
-import java.util.Locale
-
 
 fun NavController.safeNavigate(
     action: Int,
@@ -39,12 +39,16 @@ fun String.isPalindrome(language: String = "gb"): Boolean {
     return testString.length >= 4 && isStringPalindrome
 }
 
-
 fun AppCompatActivity.hideSystemBars(viewGroup: ViewGroup) {
-    val insetsController = WindowInsetsControllerCompat(window, viewGroup)
-    insetsController.systemBarsBehavior =
-        WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-    insetsController.hide(WindowInsetsCompat.Type.systemBars())
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        val buttonNavigation = Settings.Secure.getInt(this.contentResolver, "navigation_mode", 0) == 2
+        if (!buttonNavigation) {
+            val insetsController = WindowInsetsControllerCompat(window, viewGroup)
+            insetsController.systemBarsBehavior =
+                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            insetsController.hide(WindowInsetsCompat.Type.systemBars())
+        }
+    }
 }
 
 

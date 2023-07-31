@@ -15,7 +15,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.forEach
 import androidx.lifecycle.Lifecycle
@@ -90,7 +92,6 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var snapshotHelper: SnapshotHelper
     private lateinit var auth: FirebaseAuth
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -451,6 +452,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun applyCustomWindowInsets() {
+
         ViewCompat.setOnApplyWindowInsetsListener(binding.container) { _, insets ->
             WindowInsetsCompat.Builder()
                 .setInsets(
@@ -464,13 +466,15 @@ class MainActivity : AppCompatActivity() {
                 ).build()
             WindowInsetsCompat.CONSUMED
         }
+        //hideSystemBars(binding.root)
     }
 
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
-        hideSystemBars(binding.root)
+        hideSystemBars(binding.container)
     }
+
 
 
     private fun setUpNavController() {

@@ -31,10 +31,14 @@
 
     <!-- Base application theme. -->
     <style name="Base.Theme.OC" parent="Theme.Material3.DynamicColors.DayNight">
-       <item name="windowNoTitle">true</item>
-        <item name="android:windowFullscreen">true</item>
-        <item name="android:windowTranslucentStatus">true</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowActionModeOverlay">false</item>
+        <item name="android:windowActionBarOverlay">false</item>
         <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowFullscreen">true</item>
+
         <item name="fontFamily">@font/yantramanav_bold</item>
         <item name="android:transitionName">@transition/level_number_transition</item>
         <item name="android:statusBarColor" >?attr/colorPrimaryVariant</item>
