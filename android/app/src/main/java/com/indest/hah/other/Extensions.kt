@@ -149,3 +149,14 @@ fun String.countryCodeToEmoji(): String {
     val secondLetter = Character.codePointAt(allowedCountryCode, 1) - 0x41 + 0x1F1E6
     return String(Character.toChars(firstLetter)) + String(Character.toChars(secondLetter))
 }
+
+
+fun Int.getLevelScore(puzzle:String = ""):Int
+{
+    val multiplier = 100
+    if (this <= 100)
+    {
+       return this*multiplier
+    }
+    return puzzle.replace("-","").replace("\\s".toRegex(), "").length * multiplier
+}

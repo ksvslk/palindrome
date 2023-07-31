@@ -1,16 +1,10 @@
 package com.indest.hah.persistance.level
 
 import androidx.room.*
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.indest.hah.game.creation.Shuffler
+import com.indest.hah.other.getLevelScore
 import com.indest.hah.persistance.dto.*
-import com.indest.hah.views.Letter
 import kotlinx.coroutines.flow.Flow
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.decodeFromJsonElement
-
 
 @Dao
 interface LevelDao {
@@ -53,9 +47,11 @@ interface LevelDao {
     @Query("select sum(best_score) from level_info_table where level_id <= 100")
     suspend fun getTotalScore(): Int
 
-    @Query("select sum(best_score) from level_info_table where level_id > 1000")
+    @Query("select sum(best_score) from level_info_table where level_id > 1000 and level_id < 10000")
     suspend fun getTotalPlayerLevelsScore(): Int?
 
+    @Query("select sum(best_score) from level_info_table where level_id > 10000 and country_code =:countryCode")
+    suspend fun getTotalScoreForCountry(countryCode:String): Int
 
     @Insert
     suspend fun insertLevelInfo(levels: LevelData)
@@ -99,7 +95,7 @@ interface LevelDao {
                         categoryRewarded = false,
                         pictureRewarded = false,
                         progress = LevelProgress.TODO,
-                        score = puzzle.length * 100,
+                        score = nextLevelId.getLevelScore(puzzle = puzzle),
                         best_score = 0,
                         timeModified = 0,
                         author = "",
@@ -149,7 +145,7 @@ interface LevelDao {
                         categoryRewarded = false,
                         pictureRewarded = false,
                         progress = LevelProgress.TODO,
-                        score = puzzle.length * 100,
+                        score = level.levelId.toInt().getLevelScore(puzzle = puzzle),
                         best_score = 0,
                         timeModified = 0,
                         author = level.player,
@@ -428,7 +424,7 @@ interface LevelDao {
                 locked = false,
             )
         }
-        val newScore = if (levelNr <= 100) levelNr * 100 else puzzle.trim().length * 100
+        val newScore = levelNr.getLevelScore(puzzle = puzzle)
         updateScore(newScore, levelNr)
         updateProgress(levelNr, progress)
     }

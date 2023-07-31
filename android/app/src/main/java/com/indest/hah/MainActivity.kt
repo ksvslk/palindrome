@@ -304,12 +304,38 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun submitScore(score: Long, playerLevels: Boolean = false) {
+    private fun submitScore(score: Long, playerLevels: Boolean = false, languageLevels:Boolean = false, countryCode: String) {
         val leaderboardId = if (playerLevels) {
             getString(R.string.leaderboard_player_levels_leaderboard)
+        }
+        else if (languageLevels) {
+            when(countryCode)
+            {
+                "cn" -> getString(R.string.leaderboard_chinese)
+                "de" -> getString(R.string.leaderboard_german)
+                "es" -> getString(R.string.leaderboard_spanish)
+                "et" -> getString(R.string.leaderboard_estonian)
+                "fi" -> getString(R.string.leaderboard_finnish)
+                "fr" -> getString(R.string.leaderboard_french)
+                "hi" -> getString(R.string.leaderboard_hindi)
+                "id" -> getString(R.string.leaderboard_indonesian)
+                "it" -> getString(R.string.leaderboard_italian)
+                "ja" -> getString(R.string.leaderboard_japanese)
+                "ko" -> getString(R.string.leaderboard_korean)
+                "nl" -> getString(R.string.leaderboard_dutch)
+                "pl" -> getString(R.string.leaderboard_polish)
+                "pt" -> getString(R.string.leaderboard_portuguese)
+                "ro" -> getString(R.string.leaderboard_romanian)
+                "ru" -> getString(R.string.leaderboard_russian)
+                "sv" -> getString(R.string.leaderboard_swedish)
+                "tr" -> getString(R.string.leaderboard_turkish)
+                "uk" -> getString(R.string.leaderboard_ukrainian)
+                else -> { ""}
+            }
         } else {
             getString(R.string.leaderboard_crme_de_la_crme)
         }
+        Log.d(TAG, "submitting score for $countryCode with leaderboard ID $leaderboardId")
         PlayGames.getLeaderboardsClient(this)
             .submitScore(
                 leaderboardId,
@@ -382,7 +408,7 @@ class MainActivity : AppCompatActivity() {
                         }
 
                         is LevelViewModel.VariousEvent.SubmitScore -> {
-                            submitScore(event.score, event.playerLevels)
+                            submitScore(event.score, event.playerLevels, event.languageLevels, event.countryCode)
                         }
 
                         is LevelViewModel.VariousEvent.UnlockAchievement -> {

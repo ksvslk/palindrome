@@ -67,12 +67,16 @@ class LevelRepository @Inject constructor(
         levelDao.updateScore(newScore, level)
     }
 
-    suspend fun getTotalUpdatedScore(level: Int): Long {
+    suspend fun getTotalUpdatedScore(level: Int, countryCode:String = ""): Long {
         levelDao.updateBestScoreQuery(level)
-        if (level > 1000)
+        if (level in 1001..9999)
         {
             val playerLevelScore = levelDao.getTotalPlayerLevelsScore()
             return playerLevelScore?.toLong() ?: 0
+        }
+        else if (level > 10000)
+        {
+            return levelDao.getTotalScoreForCountry(countryCode).toLong()
         }
         return levelDao.getTotalScore().toLong()
     }
@@ -185,8 +189,5 @@ class LevelRepository @Inject constructor(
     suspend fun insertLanguageLevelPack(levels:List<LanguageLevel>, language:String)
         = levelDao.insertLanguagePackLevel(levels, language)
 
-    suspend fun removeLevel(levelNr:Int)
-    {
-        levelDao.removeLevel(levelNr)
-    }
+
 }

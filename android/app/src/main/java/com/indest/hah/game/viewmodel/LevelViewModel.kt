@@ -16,6 +16,7 @@ import com.indest.hah.R
 import com.indest.hah.ads.RewardType
 import com.indest.hah.general.AccountStatus
 import com.indest.hah.other.C
+import com.indest.hah.other.getLevelScore
 import com.indest.hah.persistance.dto.LanguageLevel
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
@@ -410,12 +411,15 @@ class LevelViewModel @Inject constructor(
                 )
             ) {
                 val totalScore = levelRepository.getTotalUpdatedScore(
-                    _currentLevel.value.levelInfo.levelId
+                    level = _currentLevel.value.levelInfo.levelId,
+                    countryCode = _currentLevel.value.levelInfo.countryCode
                 )
                 variousEventChannel.send(
                     VariousEvent.SubmitScore(
-                        totalScore,
-                        _currentLevel.value.levelInfo.levelId > 1000
+                        score = totalScore,
+                        playerLevels = _currentLevel.value.levelInfo.levelId in 1001..9999,
+                        languageLevels = _currentLevel.value.levelInfo.levelId > 10000,
+                        countryCode = _currentLevel.value.levelInfo.countryCode
                     )
                 )
             }
@@ -449,7 +453,7 @@ class LevelViewModel @Inject constructor(
 
     sealed class VariousEvent {
         data class UnlockAchievement(val achievement: String) : VariousEvent()
-        data class SubmitScore(val score: Long, val playerLevels: Boolean) : VariousEvent()
+        data class SubmitScore(val score: Long, val playerLevels: Boolean, val languageLevels:Boolean, val countryCode:String) : VariousEvent()
         data class SaveGame(
             val localSaveGame: com.indest.hah.persistance.dto.SaveGame,
             val calculatedGameProgress: Long
@@ -560,11 +564,9 @@ class LevelViewModel @Inject constructor(
                 val hintsInterval =
                     getApplication<Application>().getString(R.string.hint_suggestion)
 
-                val maxScore = if (_currentLevel.value.levelInfo.levelId > 1000) {
-                    _currentLevel.value.levelInfo.puzzle.length * 100
-                } else {
-                    _currentLevel.value.levelInfo.levelId * 100
-                }
+                val maxScore = _currentLevel.value.levelInfo.levelId.getLevelScore(
+                        _currentLevel.value.levelInfo.puzzle
+                    )
 
                 when {
                     isSolutionCorrect(guess) -> {
@@ -638,8 +640,8 @@ class LevelViewModel @Inject constructor(
 
     private fun logLevelEnd() {
         viewModelScope.launch(Dispatchers.Default) {
-            val scoreToMaxRatio =
-                _currentLevel.value.levelInfo.score / (_currentLevel.value.levelInfo.levelId * 100f)
+            val maxScore = _currentLevel.value.levelInfo.levelId.getLevelScore(_currentLevel.value.levelInfo.puzzle)
+            val scoreToMaxRatio = (_currentLevel.value.levelInfo.score / maxScore).toFloat()
             val parameters = Bundle().apply {
                 this.putInt(FirebaseAnalytics.Param.LEVEL, _currentLevel.value.levelInfo.levelId)
                 this.putFloat(FirebaseCustom.Params.SCORE_TO_MAX_RATIO, scoreToMaxRatio)
