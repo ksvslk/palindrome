@@ -5,7 +5,6 @@ import com.indest.hah.game.creation.Shuffler
 import com.indest.hah.other.getLevelScore
 import com.indest.hah.persistance.dto.*
 import kotlinx.coroutines.flow.Flow
-import java.text.Normalizer
 
 @Dao
 interface LevelDao {
@@ -77,11 +76,6 @@ interface LevelDao {
 
     @Query("select exists (select 1 from level_info_table where level_id = :id)")
     suspend fun isLevelAdded(id: Long): Boolean
-
-    fun String.removeDiacritics(): String {
-        val normalizedString = Normalizer.normalize(this, Normalizer.Form.NFD)
-        return normalizedString.filter { char -> char.category !in setOf(CharCategory.NON_SPACING_MARK, CharCategory.COMBINING_SPACING_MARK) }
-    }
 
     @Transaction
     suspend fun insertLanguagePackLevel(levels:List<LanguageLevel>, countryCode:String)
