@@ -3,6 +3,7 @@ package com.indest.hah.game.creation
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
+
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -17,6 +18,7 @@ import com.indest.hah.views.Letter
 import com.indest.hah.views.Slot
 import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.scopes.ActivityScoped
+
 import javax.inject.Inject
 import kotlin.math.abs
 import kotlin.math.min

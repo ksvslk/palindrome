@@ -28,7 +28,6 @@ object C {
         "pl" to "Polish",
         "pt" to "Portuguese",
         "ro" to "Romanian",
-        "ru" to "Russian",
         "sv" to "Swedish",
         "tr" to "Turkish",
         "uk" to "Ukrainian"

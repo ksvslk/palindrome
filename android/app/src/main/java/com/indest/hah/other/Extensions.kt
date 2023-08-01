@@ -14,6 +14,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.NavController
 import com.indest.hah.R
+import java.text.Normalizer
 
 fun NavController.safeNavigate(
     action: Int,
@@ -41,7 +42,8 @@ fun String.isPalindrome(language: String = "gb"): Boolean {
 
 fun AppCompatActivity.hideSystemBars(viewGroup: ViewGroup) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-        val buttonNavigation = Settings.Secure.getInt(this.contentResolver, "navigation_mode", 0) == 2
+        val buttonNavigation =
+            Settings.Secure.getInt(this.contentResolver, "navigation_mode", 0) == 2
         if (!buttonNavigation) {
             val insetsController = WindowInsetsControllerCompat(window, viewGroup)
             insetsController.systemBarsBehavior =
@@ -151,12 +153,13 @@ fun String.countryCodeToEmoji(): String {
 }
 
 
-fun Int.getLevelScore(puzzle:String = ""):Int
-{
+fun Int.getLevelScore(puzzle: String = ""): Int {
     val multiplier = 100
-    if (this <= 100)
-    {
-       return this*multiplier
+    if (this <= 100) {
+        return this * multiplier
     }
-    return puzzle.replace("-","").replace("\\s".toRegex(), "").length * multiplier
+    return puzzle.replace("-", "").replace("\\s".toRegex(), "").length * multiplier
 }
+
+
+
