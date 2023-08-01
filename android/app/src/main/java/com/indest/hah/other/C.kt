@@ -19,7 +19,6 @@ object C {
         "et" to "Estonian",
         "fi" to "Finnish",
         "fr" to "French",
-        "hi" to "Hindi",
         "id" to "Indonesian",
         "it" to "Italian",
         "ja" to "Japanese",

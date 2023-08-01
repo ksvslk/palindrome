@@ -249,7 +249,7 @@ class Animations @Inject constructor(
         animator.addUpdateListener { animation ->
             scoreView.text = StringBuilder()
                 .append(animation.animatedValue.toString().padStart(paddingLength, '0'))
-                .append(" of $maxScore points")
+                .append(" ${context.resources.getString(R.string.of)} $maxScore ${context.resources.getString(R.string.points)}")
         }
         if (score > 0) soundPlayer.play(soundPlayer.sounds.scoreSound, volume = 0.2f)
         return animator

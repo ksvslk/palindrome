@@ -131,7 +131,7 @@
                 android:visibility="gone">
                 <androidx.appcompat.widget.AppCompatImageView
                     android:saveEnabled="false"
-                    
+
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -140,7 +140,7 @@
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:saveEnabled="false"
-                    
+
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/something_went_wrong"
@@ -149,7 +149,7 @@
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:saveEnabled="false"
-                    
+
                     android:id="@+id/send_level_failed_button"
                     style="@style/Widget.AppCompat.Button.Colored"
                     android:layout_width="match_parent"

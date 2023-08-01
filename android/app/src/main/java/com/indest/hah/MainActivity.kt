@@ -121,10 +121,9 @@ class MainActivity : AppCompatActivity() {
             ViewCompat.setSystemGestureExclusionRects(binding.root, exclusions)
         }
 
-        binding.levelFlag.setOnClickListener {
+        binding.levelFlag?.setOnClickListener {
             levelViewModel.viewModelScope.launch {
                 levelViewModel.simulateNewLevelFetch()
-                Log.d(TAG,"GET STUFF!")
             }
         }
     }
@@ -159,7 +158,7 @@ class MainActivity : AppCompatActivity() {
             // login button to ask  players to sign-in. Clicking it should
             // call GamesSignInClient.signIn().
             levelViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
-            levelViewModel.currentlySignedInPlayerName = "Unknown"
+            levelViewModel.currentlySignedInPlayerName = "???"
         }
     }
 
@@ -185,7 +184,6 @@ class MainActivity : AppCompatActivity() {
             lifecycleScope.launchWhenCreated { */
             lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 levelViewModel.newPlayerLevels.collectLatest { newLevel ->
-                    Log.d(TAG, "new level notification: $newLevel")
                     if (newLevel.lastAddedLevel == -1 && newLevel.multipleLevels == -1 && newLevel.playerName == "") return@collectLatest
                     if (newLevel.multipleLevels == 1) {
                         showNewLevelMessage(
@@ -213,13 +211,13 @@ class MainActivity : AppCompatActivity() {
         multipleLevels: Int = -1,
         countryCode: String = ""
     ) {
-        val flagNew = if (countryCode != "") "${countryCode.countryCodeToEmoji()} New" else "New"
+        val flagNew = if (countryCode != "") "${countryCode.countryCodeToEmoji()} ${resources.getString(R.string.new_word)}" else resources.getString(R.string.new_word)
         val snackMessage =
-            if (multipleLevels == -1) "$flagNew level by $player!" else "$multipleLevels levels added!"
+            if (multipleLevels == -1) "$flagNew ${resources.getString(R.string.level_by)} $player!" else "$multipleLevels ${resources.getString(R.string.levels_added)}"
 
         val snack =
             Snackbar.make(findViewById(android.R.id.content), snackMessage, 15000)
-                .setAction("Play") {
+                .setAction(resources.getString(R.string.play)) {
                     val navHostFragment =
                         supportFragmentManager.findFragmentById(R.id.fragments_container) as NavHostFragment
                     val navController = navHostFragment.navController

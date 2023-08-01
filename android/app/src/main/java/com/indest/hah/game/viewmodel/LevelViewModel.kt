@@ -3,13 +3,9 @@ package com.indest.hah.game.viewmodel
 import android.app.Application
 import android.os.Bundle
 import android.util.Log
-import androidx.annotation.NonNull
 import androidx.core.os.bundleOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.tasks.Task
-import com.google.android.play.core.assetpacks.db
-import com.google.android.play.core.tasks.OnCompleteListener
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.firestore.*
 import com.indest.hah.R
@@ -73,9 +69,10 @@ class LevelViewModel @Inject constructor(
         MutableStateFlow(NewLevelNotification(-1,-1,"",""))
     val newPlayerLevels = _newPlayerLevels.asStateFlow()
 
-    var currentlySignedInPlayerName = "Unknown"
+    var currentlySignedInPlayerName = "???"
     var tempSubmissionPalindrome = ""
     var tempCountrySelected = "gb"
+    var currentRelativeLevelNumber = -1
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Log.e(
@@ -133,21 +130,26 @@ class LevelViewModel @Inject constructor(
                 if (solutionsCount > 1) "${levelId - 1000}* - $author" else "${levelId - 1000} - $author"
             val progress = ((levelId - 1000).toFloat() / maxLevels.toFloat() * 100.0).toInt()
             result = Pair(progress, text)
+            currentRelativeLevelNumber = levelId
         } else if (levelId > 10000) {
             val language = _currentLevel.value.levelInfo.countryCode
             val levels = levelRepository.getLevelsForCountry(language)
             val levelsCount = levels.count()
+            Log.d(TAG, "leves for cuntry: $levelsCount")
             val levelShownInUi = levels.indexOfFirst { levelData -> levelData.levelId == levelId } + 1
+            Log.d(TAG, "levelShownInUi: $levelShownInUi")
             val authorIfExists = if (author.isNotEmpty()) " - $author" else ""
             val text =
                 if (solutionsCount > 1) "$levelShownInUi*$authorIfExists" else "$levelShownInUi$authorIfExists"
             val progress = (levelShownInUi.toFloat() / levelsCount.toFloat() * 100.0).toInt()
             result = Pair(progress, text)
+            currentRelativeLevelNumber = levelShownInUi
         } else {
             val levelsCount = levelRepository.getMaxGameLevelId()
             val text = if (solutionsCount > 1) "$levelId*" else "$levelId"
             val progress = (levelId / levelsCount.toFloat() * 100.0).toInt()
             result = Pair(progress, text)
+            currentRelativeLevelNumber = levelId
         }
         return result
     }
@@ -515,33 +517,42 @@ class LevelViewModel @Inject constructor(
             60 -> unlockAchievement(context.getString(R.string.achievement_crackerjack))
             80 -> unlockAchievement(context.getString(R.string.achievement_chief))
             100 -> unlockAchievement(context.getString(R.string.achievement_authority))
-            10010 -> unlockAchievement(context.getString(R.string.achievement_chinese_linguist))
-            10026 -> unlockAchievement(context.getString(R.string.achievement_german_linguist))
-            10046 -> unlockAchievement(context.getString(R.string.achievement_spanish_linguist))
-            10066 -> unlockAchievement(context.getString(R.string.achievement_estonian_linguist))
-            10086 -> unlockAchievement(context.getString(R.string.achievement_finnish_linguist))
-            10106 -> unlockAchievement(context.getString(R.string.achievement_french_linguist))
-            10126 -> unlockAchievement(context.getString(R.string.achievement_hindi_linguist))
-            10137 -> unlockAchievement(context.getString(R.string.achievement_indonesian_linguist))
-            10155 -> unlockAchievement(context.getString(R.string.achievement_italian_linguist))
-            10175 -> unlockAchievement(context.getString(R.string.achievement_japanese_linguist))
-            10195 -> unlockAchievement(context.getString(R.string.achievement_korean_linguist))
-            10215 -> unlockAchievement(context.getString(R.string.achievement_dutch_linguist))
-            10235 -> unlockAchievement(context.getString(R.string.achievement_polish_linguist))
-            10255 -> unlockAchievement(context.getString(R.string.achievement_portuguese_linguist))
-            10275 -> unlockAchievement(context.getString(R.string.achievement_romanian_linguist))
-            10295 -> unlockAchievement(context.getString(R.string.achievement_russian_linguist))
-            10315 -> unlockAchievement(context.getString(R.string.achievement_swedish_linguist))
-            10335 -> unlockAchievement(context.getString(R.string.achievement_turkish_linguist))
-            10355 -> unlockAchievement(context.getString(R.string.achievement_ukrainian_linguist))
         }
+        unlockRelativeLanguageLevelAchievement()
+    }
+
+    private fun unlockRelativeLanguageLevelAchievement()
+    {
+        viewModelScope.launch {
+            val res = getApplication<Application>().applicationContext.resources
+            if (currentRelativeLevelNumber == 10)
+            {
+                when (_currentLevel.value.levelInfo.countryCode) {
+                    "cn" -> unlockAchievement(res.getString(R.string.achievement_chinese_linguist))
+                    "de" -> unlockAchievement(res.getString(R.string.achievement_german_linguist))
+                    "es" -> unlockAchievement(res.getString(R.string.achievement_spanish_linguist))
+                    "et" -> unlockAchievement(res.getString(R.string.achievement_estonian_linguist))
+                    "fi" -> unlockAchievement(res.getString(R.string.achievement_finnish_linguist))
+                    "fr" -> unlockAchievement(res.getString(R.string.achievement_french_linguist))
+                    "id" -> unlockAchievement(res.getString(R.string.achievement_indonesian_linguist))
+                    "it" -> unlockAchievement(res.getString(R.string.achievement_italian_linguist))
+                    "ja" -> unlockAchievement(res.getString(R.string.achievement_japanese_linguist))
+                    "ko" -> unlockAchievement(res.getString(R.string.achievement_korean_linguist))
+                    "nl" -> unlockAchievement(res.getString(R.string.achievement_dutch_linguist))
+                    "pl" -> unlockAchievement(res.getString(R.string.achievement_polish_linguist))
+                    "pt" -> unlockAchievement(res.getString(R.string.achievement_portuguese_linguist))
+                    "ro" -> unlockAchievement(res.getString(R.string.achievement_romanian_linguist))
+                    "sv" -> unlockAchievement(res.getString(R.string.achievement_swedish_linguist))
+                    "tr" -> unlockAchievement(res.getString(R.string.achievement_turkish_linguist))
+                    "uk" -> unlockAchievement(res.getString(R.string.achievement_ukrainian_linguist))
+                }
+            }
+        }
+
     }
 
 
     private fun isSolutionCorrect(guess: String): Boolean {
-        Log.d(TAG, "Guess: $guess")
-        val databaseSolutions = _currentLevel.value.solutions.map { it.palindrome.replace(" ", "") }
-        Log.d(TAG, "Database solutions: $databaseSolutions")
         return _currentLevel.value.solutions.any {
             it.palindrome.replace(Regex("[\\s-]+"), "") == guess
         }
@@ -552,9 +563,6 @@ class LevelViewModel @Inject constructor(
         viewModelScope.launch {
             val solution = _currentLevel.value.solutions.first().palindrome.replace(Regex("[\\s-]+"), "")
             var solutionData = SolutionData()
-
-            Log.d(TAG, "Solution: $solution")
-            Log.d(TAG, "Guess: $guess")
 
             if (guess.length == solution.length) {
                 val playerGuess = guess.map { char ->
@@ -717,7 +725,6 @@ class LevelViewModel @Inject constructor(
             .collection("user_submitted_levels")
             .document("Bc4MHj3i0hMNRsgVAMdc")
         docRef.get().addOnSuccessListener {
-            Log.d(TAG,"it received!")
             try {
                 Log.d(TAG, it.data.toString())
                 it.data.let { levelValues ->
@@ -732,7 +739,6 @@ class LevelViewModel @Inject constructor(
                         solutionToCategory = solutionsToCategories,
                         countryCode = countryCode as String
                     )
-                    Log.d(TAG, "level: $level")
                     playerLevels.add(level)
                 }
             } catch (e: Exception) {
@@ -742,8 +748,6 @@ class LevelViewModel @Inject constructor(
                     e
                 )
             }
-
-            Log.d(TAG, "levels to insert: ${playerLevels.toString()}")
 
             viewModelScope.launch {
                 if (playerLevels.size != 0) {

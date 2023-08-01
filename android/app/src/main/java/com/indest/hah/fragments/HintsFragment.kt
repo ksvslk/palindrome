@@ -197,7 +197,7 @@ class HintsFragment : FullBottomSheetDialogFragment() {
     private fun levelIsCompletedToast() {
         val toast = Toast.makeText(
             requireContext().applicationContext,
-            "Level is already completed.",
+            resources.getString(R.string.level_already_completed),
             Toast.LENGTH_SHORT
         )
         toast.show()
@@ -299,7 +299,13 @@ class HintsFragment : FullBottomSheetDialogFragment() {
     private fun showPictureHintForCurrentLevel() {
         soundPlayer.play(soundPlayer.sounds.letterRewardedSoundId)
         val pictureDialogFragment = PictureDialogFragment()
-        pictureDialogFragment.setDrawable(requireContext(), viewModel.currentLevel.value.levelInfo.levelId)
+        Log.d(TAG, "CURRENT: ${levelViewModel.currentRelativeLevelNumber}")
+        Log.d(TAG, "CC: ${levelViewModel.currentLevel.value.levelInfo.countryCode}")
+        pictureDialogFragment.setDrawable(
+            requireContext(),
+            levelViewModel.currentRelativeLevelNumber,
+            levelViewModel.currentLevel.value.levelInfo.countryCode
+        )
         pictureDialogFragment.show(childFragmentManager, PictureDialogFragment.TAG)
     }
 

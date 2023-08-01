@@ -1,5 +1,3 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="winning_message_size">8sp</dimen>
-    <dimen name="other_message_size">7sp</dimen>
 </resources>

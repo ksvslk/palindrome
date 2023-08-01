@@ -50,11 +50,11 @@ class GoogleGamesFragment : FullBottomSheetDialogFragment() {
                                     getString(R.string.please_sign_in)
                                 binding.achievementsButton.visibility = View.GONE
                                 binding.leaderboardsButton.visibility = View.GONE
-                                binding.globalLeaderboardsButton?.visibility = View.GONE
+                                binding.globalLeaderboardsButton.visibility = View.GONE
                                 binding.playerLevelsLeaderboardButton.visibility = View.GONE
                             } else {
                                 binding.alternativeScreen.visibility = View.GONE
-                                binding.globalLeaderboardsButton?.setOnClickListener {
+                                binding.globalLeaderboardsButton.setOnClickListener {
                                     findNavController().safeNavigate(R.id.action_navigation_google_games_to_navigation_global_leaderboards)
                                 }
                                 binding.achievementsButton.setOnClickListener {
@@ -69,11 +69,11 @@ class GoogleGamesFragment : FullBottomSheetDialogFragment() {
                             }
                         }
                         false -> {
-                            binding.globalLeaderboardsButton?.setOnClickListener(null)
+                            binding.globalLeaderboardsButton.setOnClickListener(null)
                             binding.achievementsButton.setOnClickListener(null)
                             binding.leaderboardsButton.setOnClickListener(null)
                             binding.playerLevelsLeaderboardButton.setOnClickListener(null)
-                            binding.globalLeaderboardsButton?.visibility = View.GONE
+                            binding.globalLeaderboardsButton.visibility = View.GONE
                             binding.achievementsButton.visibility = View.GONE
                             binding.leaderboardsButton.visibility = View.GONE
                             binding.playerLevelsLeaderboardButton.visibility = View.GONE

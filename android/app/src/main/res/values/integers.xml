@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <integer name="defaultColumnsCount">7</integer>
     <integer name="gameCompleteMessageFlipInterval">4000</integer>
     <integer name="minUserPalindromeLength">4</integer>
     <integer name="maxUserPalindromeLength">100</integer>

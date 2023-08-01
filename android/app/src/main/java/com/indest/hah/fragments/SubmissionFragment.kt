@@ -1,9 +1,5 @@
 package com.indest.hah.fragments
 
-import android.app.AlertDialog
-import android.content.DialogInterface
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -12,16 +8,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat.ThemeCompat
 import androidx.core.text.isDigitsOnly
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.dialog.MaterialDialogs
 import com.indest.hah.R
 import com.indest.hah.databinding.SubmissionFragmentBinding
 import com.indest.hah.game.viewmodel.LevelViewModel
@@ -69,7 +60,7 @@ class SubmissionFragment : FullBottomSheetDialogFragment() {
 
     private fun refreshSelectedLanguage()
     {
-        val language = if (levelViewModel.tempCountrySelected == "gb") "English"
+        val language = if (levelViewModel.tempCountrySelected == "gb") resources.getString(R.string.english)
                        else C.languages[levelViewModel.tempCountrySelected]
         binding.currentlySelectedLanguage.text = language
         binding.enterPalindromeTextInputLayout.editText?.setText(levelViewModel.tempSubmissionPalindrome)
@@ -146,7 +137,7 @@ class SubmissionFragment : FullBottomSheetDialogFragment() {
                             } else {
                                 errors.add(getString(R.string.not_a_palindrome_error))
                                 binding.enterPalindromeTextInputLayout.endIconDrawable = null
-                                binding.enterPalindromeTextInputLayout.error = "Not a palindrome"
+                                binding.enterPalindromeTextInputLayout.error = resources.getString(R.string.not_a_palindrome)
                                 binding.enterPalindromeTextInputLayout.errorIconDrawable =
                                     ContextCompat.getDrawable(
                                         requireContext(),
