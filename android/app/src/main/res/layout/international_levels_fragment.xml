@@ -12,6 +12,24 @@
     app:dividerPadding="@dimen/simple_dialog_header_left_margin"
     app:showDividers="middle">
 
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:saveEnabled="false"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/default_large_margin"
+        android:orientation="horizontal">
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/internationals_levels_title"
+            android:saveEnabled="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:fontFamily="@font/roboto_medium"
+            android:layout_gravity="center"
+            android:text="@string/send_levels_country_top"/>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/international_levels_recyclerview"
         android:saveEnabled="false"

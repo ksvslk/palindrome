@@ -82,7 +82,7 @@
     <string name="send_a_cool_palindrome">Send palindromes ↓ </string>
     <string name="not_a_palindrome">Not a palindrome</string>
     <string name="submit_once_per_day_limit">You can submit once per day.</string>
-    <string name="profile_person_symbol">👤</string>
+    <string name="profile_person_symbol">❦</string>
     <string name="score">Score:</string>
     <string name="you_rank_first">You rank first!</string>
     <string name="earn">Earn</string>
@@ -93,6 +93,8 @@
     <string name="level_already_completed">Level is already completed.</string>
     <string name="of">of</string>
     <string name="points">points</string>
+    <string name="send_levels_country_top">Send palindromes and rise your country.</string>
+
 
     <string-array name="save_24_percent_label">
         <item>SAVE</item>
@@ -193,7 +195,6 @@
         <item>Portuguese</item>
         <item>Chinese</item>
         <item>Korean</item>
-        <item>Hindi</item>
         <item>Italian</item>
         <item>Japanese</item>
         <item>German</item>
@@ -204,7 +205,6 @@
         <item>Finnish</item>
         <item>Polish</item>
         <item>Ukrainian</item>
-        <item>Russian</item>
         <item>Swedish</item>
         <item>Estonian</item>
         <item>Romanian</item>
