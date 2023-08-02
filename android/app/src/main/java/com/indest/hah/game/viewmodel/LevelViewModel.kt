@@ -93,23 +93,18 @@ class LevelViewModel @Inject constructor(
     private fun startCollectingLevelUpdate() {
         viewModelScope.launch {
             levelRepository.latestLevelFlow().collect {
+                /*
                 val changeInColumnsCount =
                     it.levelInfo.columnCount != _currentLevel.value.levelInfo.columnCount
+                    */
                 val changeInLevelId = it.levelInfo.levelId != _currentLevel.value.levelInfo.levelId
                 _currentLevel.value = it
-                if (isCurrentLevelLegit() && (changeInColumnsCount || changeInLevelId)) {
+                if (isCurrentLevelLegit() && (changeInLevelId)) {
                     val progress = getProgressAndText()
                     gameEventChannel.send(GameEvent.DisplayLevel(_currentLevel.value, progress))
                 }
             }
         }
-        /*
-        viewModelScope.launch {
-            if (levelRepository.getMaxLevelId() < 10000) {
-                addLanguagePack()
-            }
-        }
-        */
     }
 
 
@@ -904,20 +899,4 @@ class LevelViewModel @Inject constructor(
         return _accountStatus.value == AccountStatus.SIGNED_IN_WITH_FIREBASE
     }
 
-    private suspend fun addLanguagePack() {
-        C.languages.entries.forEach { entry ->
-            val cc = entry.key
-            val jsonInstance = Json { isLenient = true }
-            val json =
-                getApplication<Application>().applicationContext.assets.open("language_pack_$cc.json")
-                    .bufferedReader().use {
-                        it.readText()
-                    }
-            val languageLevels = jsonInstance
-                .decodeFromString<List<JsonElement>>(json)
-                .map { jsonInstance.decodeFromJsonElement(it) as LanguageLevel }
-
-            levelRepository.insertLanguageLevelPack(languageLevels, cc)
-        }
-    }
 }
