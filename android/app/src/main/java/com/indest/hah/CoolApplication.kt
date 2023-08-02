@@ -10,10 +10,6 @@ import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory
 import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import dagger.hilt.android.HiltAndroidApp
 
-import leakcanary.LeakCanary
-import leakcanary.ToastEventListener
-
-
 @HiltAndroidApp
 class CoolApplication : Application() {
     override fun onCreate() {
