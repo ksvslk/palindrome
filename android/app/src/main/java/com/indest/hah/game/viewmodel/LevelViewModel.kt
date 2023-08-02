@@ -97,17 +97,19 @@ class LevelViewModel @Inject constructor(
                     it.levelInfo.columnCount != _currentLevel.value.levelInfo.columnCount
                 val changeInLevelId = it.levelInfo.levelId != _currentLevel.value.levelInfo.levelId
                 _currentLevel.value = it
-                if (isCurrentLevelLegit() && (changeInLevelId)) {
+                if (isCurrentLevelLegit() && (changeInColumnsCount || changeInLevelId)) {
                     val progress = getProgressAndText()
                     gameEventChannel.send(GameEvent.DisplayLevel(_currentLevel.value, progress))
                 }
             }
         }
+        /*
         viewModelScope.launch {
             if (levelRepository.getMaxLevelId() < 10000) {
                 addLanguagePack()
             }
         }
+        */
     }
 
 
