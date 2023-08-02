@@ -5,12 +5,10 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
 import com.google.android.gms.games.PlayGames
-import com.google.android.gms.games.SnapshotsClient.DataOrConflict
 import com.google.android.gms.games.SnapshotsClient.RESOLUTION_POLICY_MOST_RECENTLY_MODIFIED
 import com.google.android.gms.games.snapshot.Snapshot
 import com.google.android.gms.games.snapshot.SnapshotMetadata
 import com.google.android.gms.games.snapshot.SnapshotMetadataChange
-import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.indest.hah.other.C
@@ -50,7 +48,6 @@ class SnapshotHelper @Inject constructor() {
                                     progress = calculatedGameProgress,
                                     activity
                                 )
-                                Log.d(TAG, "Writing save game to snapshot: $saveGame")
                             }
                         }.addOnFailureListener { ex ->
                             Log.e(TAG, "Could not open the snapshot: ${ex.message}")
@@ -70,9 +67,7 @@ class SnapshotHelper @Inject constructor() {
         try {
             val bytes = getSaveGameBytes(activity).await()
             if (bytes != null) {
-                val saveGame = bytesToGame(bytes)
-                Log.d(TAG, "Loaded save game from snapshot: $saveGame")
-                return saveGame
+                return bytesToGame(bytes)
             } else {
                 throw Exception("Could not load game. Bytes return from the task was null.")
             }

@@ -35,7 +35,8 @@ data class LevelInfo(val nr: Int, val solutionToCategory:Map<String,String>)
         ),
         AutoMigration(
             from = 3,
-            to = 4
+            to = 4,
+            spec = LevelDatabase.AutoMigration3to4::class
         )
     ],
     exportSchema = true
@@ -46,6 +47,22 @@ data class LevelInfo(val nr: Int, val solutionToCategory:Map<String,String>)
 abstract class LevelDatabase : RoomDatabase() {
 
     abstract val levelDao: LevelDao
+
+    class AutoMigration3to4 : AutoMigrationSpec {
+        override fun onPostMigrate(db: SupportSQLiteDatabase) {
+            super.onPostMigrate(db)
+            // set all columns count 7
+            db.execSQL("update level_info_table set column_count = 7")
+            // set first level column count 3
+            db.execSQL("update level_info_table set column_count = 3 where level_id = 1")
+            // delete all letters info except level 1
+            db.execSQL("delete from letter_info_table where owner_id > 1")
+            // set solved to false in solution_table for all levels
+            db.execSQL("update solution_table set solved = 0")
+            // set puzzle to empty in level_info_table for all except level 1
+            db.execSQL("update level_info_table set puzzle = ''")
+        }
+    }
 
     @DeleteColumn(tableName = "level_info_table", columnName = "solution")
     @DeleteColumn(tableName = "level_info_table", columnName = "category")
@@ -97,6 +114,7 @@ abstract class LevelDatabase : RoomDatabase() {
             }
         }
 
+
         @Volatile
         private var INSTANCE: LevelDatabase? = null
 
@@ -112,6 +130,8 @@ abstract class LevelDatabase : RoomDatabase() {
                     )
                         .addMigrations(MIGRATION_2_3)
                         .addAutoMigrationSpec(MyAutoMigration(context))
+                        .addAutoMigrationSpec(AutoMigration3to4())
+                        .fallbackToDestructiveMigration()
                         .createFromAsset("dbd.db")
                     /*
                     .addCallback(object : RoomDatabase.Callback() {

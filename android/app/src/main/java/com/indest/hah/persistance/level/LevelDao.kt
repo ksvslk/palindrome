@@ -130,6 +130,7 @@ interface LevelDao {
         }
     }
 
+
     @Transaction
     suspend fun insertPlayerLevels(playerLevel: List<PlayerLevel>): Pair<LevelData, Int> {
         var newLevelsCount = 0
