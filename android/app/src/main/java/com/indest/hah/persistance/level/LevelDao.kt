@@ -9,6 +9,9 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface LevelDao {
 
+    @Query("select current_count from interval where name=:name")
+    suspend fun getDatabaseVersion(name:String):Int?
+
     @Query("select distinct country_code from level_info_table where country_code not in('gb')")
     suspend fun getUniqueCountries():List<String>
 

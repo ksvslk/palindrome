@@ -1,5 +1,6 @@
 package com.indest.hah.persistance.level
 
+import android.util.Log
 import androidx.room.Query
 import com.indest.hah.persistance.dto.*
 import com.indest.hah.views.Letter
@@ -159,7 +160,14 @@ class LevelRepository @Inject constructor(
 
     suspend fun getLocalSaveGame(): SaveGame = levelDao.getLocalSaveGame()
 
-    suspend fun updateLocalGame(saveGame: SaveGame) = levelDao.updateLocalGame(saveGame)
+    suspend fun updateLocalGame(saveGame: SaveGame) {
+        val dbVersion = levelDao.getDatabaseVersion("database_version")
+        if (dbVersion == saveGame.databaseVersion)
+        {
+            levelDao.updateLocalGame(saveGame)
+        }
+        Log.e(TAG, "DB version for save game is: ${saveGame.databaseVersion} and database version is $dbVersion")
+    }
 
     suspend fun isFinalLevel(currentLevel:Int, minLimit:Int, maxLimit:Int) = levelDao.isFinalLevel(currentLevel, minLimit, maxLimit)
 
