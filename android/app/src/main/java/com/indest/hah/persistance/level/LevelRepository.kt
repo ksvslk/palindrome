@@ -1,9 +1,7 @@
 package com.indest.hah.persistance.level
 
 import android.util.Log
-import androidx.room.Query
 import com.indest.hah.persistance.dto.*
-import com.indest.hah.views.Letter
 import kotlinx.coroutines.flow.Flow
 import java.time.Duration
 import java.time.Instant
@@ -161,12 +159,12 @@ class LevelRepository @Inject constructor(
     suspend fun getLocalSaveGame(): SaveGame = levelDao.getLocalSaveGame()
 
     suspend fun updateLocalGame(saveGame: SaveGame) {
-        val dbVersion = levelDao.getDatabaseVersion("database_version")
-        if (dbVersion == saveGame.databaseVersion)
+        val dbIdentityHash = levelDao.getDatabaseIdentityViaQuery()
+        if (dbIdentityHash == saveGame.dbIdentityHash)
         {
             levelDao.updateLocalGame(saveGame)
         }
-        Log.e(TAG, "DB version for save game is: ${saveGame.databaseVersion} and database version is $dbVersion")
+        Log.e(TAG, "DB id for save game is: ${saveGame.dbIdentityHash} and database id is $dbIdentityHash. Does it match? ${dbIdentityHash == saveGame.dbIdentityHash}")
     }
 
     suspend fun isFinalLevel(currentLevel:Int, minLimit:Int, maxLimit:Int) = levelDao.isFinalLevel(currentLevel, minLimit, maxLimit)

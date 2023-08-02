@@ -36,8 +36,7 @@ data class LevelInfo(val nr: Int, val solutionToCategory:Map<String,String>)
         ),
         AutoMigration(
             from = 3,
-            to = 4,
-            spec = LevelDatabase.AutoMigration3to4::class
+            to = 4
         )
     ],
     exportSchema = true
@@ -48,25 +47,6 @@ data class LevelInfo(val nr: Int, val solutionToCategory:Map<String,String>)
 abstract class LevelDatabase : RoomDatabase() {
 
     abstract val levelDao: LevelDao
-
-    @ProvidedAutoMigrationSpec
-    class AutoMigration3to4 : AutoMigrationSpec {
-        override fun onPostMigrate(db: SupportSQLiteDatabase) {
-            super.onPostMigrate(db)
-            // delete all letters info except level 1
-            db.delete("letter_info_table","1",null)
-            val newDatabaseVersion = ContentValues()
-            newDatabaseVersion.put("name", "database_version")
-            newDatabaseVersion.put("current_count", db.version)
-            newDatabaseVersion.put("limit_count", 0)
-            newDatabaseVersion.put("timestamp", -1)
-            db.insert(
-                "interval",
-                OnConflictStrategy.REPLACE,
-                newDatabaseVersion
-            )
-        }
-    }
 
     @DeleteColumn(tableName = "level_info_table", columnName = "solution")
     @DeleteColumn(tableName = "level_info_table", columnName = "category")
@@ -134,10 +114,9 @@ abstract class LevelDatabase : RoomDatabase() {
                     )
                         .addMigrations(MIGRATION_2_3)
                         .addAutoMigrationSpec(MyAutoMigration(context))
-                        .addAutoMigrationSpec(AutoMigration3to4())
                         .fallbackToDestructiveMigration()
                         .createFromAsset("dbd.db")
-                    /*
+                              /*
                     .addCallback(object : RoomDatabase.Callback() {
 
                         private val jsonInstance = Json { isLenient = true }

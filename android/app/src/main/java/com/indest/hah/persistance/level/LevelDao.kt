@@ -1,6 +1,8 @@
 package com.indest.hah.persistance.level
 
 import androidx.room.*
+import androidx.sqlite.db.SimpleSQLiteQuery
+import androidx.sqlite.db.SupportSQLiteQuery
 import com.indest.hah.game.creation.Shuffler
 import com.indest.hah.other.getLevelScore
 import com.indest.hah.persistance.dto.*
@@ -9,8 +11,13 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface LevelDao {
 
-    @Query("select current_count from interval where name=:name")
-    suspend fun getDatabaseVersion(name:String):Int?
+    private val databaseIdentityQuery: SimpleSQLiteQuery
+        get() = SimpleSQLiteQuery(
+            "SELECT identity_hash FROM room_master_table"
+        )
+
+    @RawQuery
+    suspend fun getDatabaseIdentityViaQuery(query: SupportSQLiteQuery = databaseIdentityQuery): String
 
     @Query("select distinct country_code from level_info_table where country_code not in('gb')")
     suspend fun getUniqueCountries():List<String>
@@ -443,7 +450,8 @@ interface LevelDao {
     suspend fun getLocalSaveGame(): SaveGame {
         val levels = getAllLevels()
         val intervals = getAllIntervals()
-        return SaveGame(levels, intervals)
+        val dbIdentityHash = getDatabaseIdentityViaQuery()
+        return SaveGame(levels, intervals, dbIdentityHash)
     }
 
     @Transaction
