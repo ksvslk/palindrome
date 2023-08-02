@@ -241,7 +241,7 @@ dependencies {
     kapt "androidx.hilt:hilt-compiler:$hilt_work_version"
     implementation 'com.google.android.ump:user-messaging-platform:2.0.0'
 
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
+    //debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
     testImplementation 'uk.co.jemos.podam:podam:7.2.5.RELEASE'
     testImplementation "org.mockito.kotlin:mockito-kotlin:4.1.0"
     testImplementation "junit:junit:$junit_version"

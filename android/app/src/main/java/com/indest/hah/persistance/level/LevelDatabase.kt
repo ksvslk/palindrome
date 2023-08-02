@@ -2,6 +2,7 @@ package com.indest.hah.persistance.level
 
 import android.content.ContentValues
 import android.content.Context
+import android.database.sqlite.SQLiteDatabase.CONFLICT_REPLACE
 import android.database.sqlite.SQLiteException
 import android.util.Log
 import androidx.annotation.Keep
@@ -48,19 +49,12 @@ abstract class LevelDatabase : RoomDatabase() {
 
     abstract val levelDao: LevelDao
 
+    @ProvidedAutoMigrationSpec
     class AutoMigration3to4 : AutoMigrationSpec {
         override fun onPostMigrate(db: SupportSQLiteDatabase) {
             super.onPostMigrate(db)
-            // set all columns count 7
-            db.execSQL("update level_info_table set column_count = 7")
-            // set first level column count 3
-            db.execSQL("update level_info_table set column_count = 3 where level_id = 1")
             // delete all letters info except level 1
-            db.execSQL("delete from letter_info_table where owner_id > 1")
-            // set solved to false in solution_table for all levels
-            db.execSQL("update solution_table set solved = 0")
-            // set puzzle to empty in level_info_table for all except level 1
-            db.execSQL("update level_info_table set puzzle = ''")
+            db.delete("letter_info_table", "owner_id > ?", arrayOf(1))
         }
     }
 

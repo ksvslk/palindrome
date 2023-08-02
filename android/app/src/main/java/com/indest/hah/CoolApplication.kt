@@ -21,9 +21,13 @@ class CoolApplication : Application() {
         DynamicColors.applyToActivitiesIfAvailable(this)
         FirebaseApp.initializeApp(this)
         val firebaseAppCheck = FirebaseAppCheck.getInstance()
-        firebaseAppCheck.installAppCheckProviderFactory(
+        val appCheckFactory = if (BuildConfig.DEBUG) {
             DebugAppCheckProviderFactory.getInstance()
-            //PlayIntegrityAppCheckProviderFactory.getInstance()
+        } else {
+            PlayIntegrityAppCheckProviderFactory.getInstance()
+        }
+        firebaseAppCheck.installAppCheckProviderFactory(
+            appCheckFactory
         )
         FirebaseAnalytics.getInstance(applicationContext).setUserProperty(
             getString(R.string.analytics_user_prop),
@@ -31,7 +35,7 @@ class CoolApplication : Application() {
                 R.string.status_installed
             )
         )
-
+    /*
       if (BuildConfig.DEBUG)
         {
             LeakCanary.config = LeakCanary.config.run {
@@ -42,6 +46,7 @@ class CoolApplication : Application() {
                 )
             }
         }
+        */
 
     }
 }
