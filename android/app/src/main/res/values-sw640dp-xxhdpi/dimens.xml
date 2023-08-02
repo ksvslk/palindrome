@@ -5,9 +5,6 @@
     <dimen name="simple_dialog_header_left_margin">@dimen/_12sdp</dimen>
     <dimen name="simple_dialog_item_left_margin">@dimen/_10sdp</dimen>
     <dimen name="simple_dialog_divider_margin">@dimen/_10sdp</dimen>
-    <dimen name="winning_message_size">4sp</dimen>
-    <dimen name="other_message_size">3sp</dimen>
-    <dimen name="cell_container_width">@dimen/_30sdp</dimen>
 
 
     <dimen name="max_box_size">@dimen/_23sdp</dimen>

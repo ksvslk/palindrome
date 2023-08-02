@@ -12,9 +12,11 @@ import com.indest.hah.R
 import com.indest.hah.ads.RewardType
 import com.indest.hah.general.AccountStatus
 import com.indest.hah.other.C
+import com.indest.hah.other.getLevelScore
 import com.indest.hah.persistance.dto.LanguageLevel
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
+import com.indest.hah.persistance.dto.NewLevelNotification
 import com.indest.hah.persistance.dto.PlayerLevel
 import com.indest.hah.persistance.dto.SaveGame
 import com.indest.hah.persistance.level.LevelProgress
@@ -30,6 +32,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.decodeFromJsonElement
 import javax.inject.Inject
+
 
 @HiltViewModel
 class LevelViewModel @Inject constructor(
@@ -63,11 +66,13 @@ class LevelViewModel @Inject constructor(
     private var liveStoreRegistration: ListenerRegistration? = null
 
     private val _newPlayerLevels =
-        MutableStateFlow(Triple(-1, -1, "")) // level nr, multiple levels, who submitted
+        MutableStateFlow(NewLevelNotification(-1,-1,"",""))
     val newPlayerLevels = _newPlayerLevels.asStateFlow()
 
-    var currentlySignedInPlayerName = "Unknown"
+    var currentlySignedInPlayerName = "???"
     var tempSubmissionPalindrome = ""
+    var tempCountrySelected = "gb"
+    var currentRelativeLevelNumber = -1
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Log.e(
@@ -78,6 +83,12 @@ class LevelViewModel @Inject constructor(
         startCollectingLevelUpdate()
     }
 
+    fun updateColumnCount(newCols:Int)
+    {
+        viewModelScope.launch {
+            levelRepository.updateColumnCount(newCols, currentLevel.value.levelInfo.levelId)
+        }
+    }
 
     private fun startCollectingLevelUpdate() {
         viewModelScope.launch {
@@ -86,7 +97,7 @@ class LevelViewModel @Inject constructor(
                     it.levelInfo.columnCount != _currentLevel.value.levelInfo.columnCount
                 val changeInLevelId = it.levelInfo.levelId != _currentLevel.value.levelInfo.levelId
                 _currentLevel.value = it
-                if (isCurrentLevelLegit() && (changeInColumnsCount || changeInLevelId)) {
+                if (isCurrentLevelLegit() && (changeInLevelId)) {
                     val progress = getProgressAndText()
                     gameEventChannel.send(GameEvent.DisplayLevel(_currentLevel.value, progress))
                 }
@@ -119,23 +130,24 @@ class LevelViewModel @Inject constructor(
                 if (solutionsCount > 1) "${levelId - 1000}* - $author" else "${levelId - 1000} - $author"
             val progress = ((levelId - 1000).toFloat() / maxLevels.toFloat() * 100.0).toInt()
             result = Pair(progress, text)
+            currentRelativeLevelNumber = levelId
         } else if (levelId > 10000) {
             val language = _currentLevel.value.levelInfo.countryCode
-            val maxLevelId = levelRepository.getMaxLevelIdForCountry(language)
-            val minLevelId = levelRepository.getMinLevelIdForCountry(language)
-            val levelsCount = maxLevelId - minLevelId + 1
-            val levelShownInUi = levelId - minLevelId + 1
-
+            val levels = levelRepository.getLevelsForCountry(language)
+            val levelsCount = levels.count()
+            val levelShownInUi = levels.indexOfFirst { levelData -> levelData.levelId == levelId } + 1
             val authorIfExists = if (author.isNotEmpty()) " - $author" else ""
             val text =
                 if (solutionsCount > 1) "$levelShownInUi*$authorIfExists" else "$levelShownInUi$authorIfExists"
             val progress = (levelShownInUi.toFloat() / levelsCount.toFloat() * 100.0).toInt()
             result = Pair(progress, text)
+            currentRelativeLevelNumber = levelShownInUi
         } else {
             val levelsCount = levelRepository.getMaxGameLevelId()
             val text = if (solutionsCount > 1) "$levelId*" else "$levelId"
             val progress = (levelId / levelsCount.toFloat() * 100.0).toInt()
             result = Pair(progress, text)
+            currentRelativeLevelNumber = levelId
         }
         return result
     }
@@ -143,34 +155,6 @@ class LevelViewModel @Inject constructor(
 
     private val saveGameExceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Log.e(TAG, "Could not write snapshot or save game: ${throwable.message}")
-    }
-
-
-    suspend fun changeFriendIndexesBasedOnColumnCount(
-        newColumnCount: Int,
-        homeIndexNewFriendIndexes: Pair<Boolean, List<Pair<Int, Int>>>
-    ) {
-        // All three change column count underneath
-        if (homeIndexNewFriendIndexes.first) {
-            levelRepository.updateAuthorToMigrated(
-                _currentLevel.value.levelInfo.levelId,
-                newColumnCount,
-                _currentLevel.value.lettersProperties,
-                homeIndexNewFriendIndexes.second
-            )
-        } else if (_currentLevel.value.levelInfo.columnCount == -1) {
-            levelRepository.changeColumnCount(
-                _currentLevel.value.levelInfo.levelId,
-                newColumnCount
-            )
-        } else {
-            levelRepository.changeFriendIndexesBasedOnColumnCount(
-                _currentLevel.value.levelInfo.levelId,
-                newColumnCount,
-                _currentLevel.value.lettersProperties,
-                homeIndexNewFriendIndexes.second
-            )
-        }
     }
 
     fun setPictureDownloaded(isPresent: Boolean) {
@@ -217,6 +201,7 @@ class LevelViewModel @Inject constructor(
         viewModelScope.launch {
             levelRepository.init()
         }
+
     }
 
 
@@ -307,6 +292,13 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+    fun resetLetterInfo(levelNr:Int)
+    {
+        viewModelScope.launch {
+            Log.d(TAG, "resetLetterInfo")
+            levelRepository.resetLetterInfo(levelNr)
+        }
+    }
 
     fun changeLevel(chosenLevel: Int) {
         if (_currentLevel.value.levelInfo.progress == LevelProgress.INTERMEDIATE) {
@@ -383,6 +375,12 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+    fun allUniqueCountriesWithLevelCount(): Flow<List<Pair<String,Int>>> {
+        return flow {
+            emit(levelRepository.getUniqueCountriesWithLevelCount())
+        }
+    }
+
     fun getLevelsForCountry(cc: String): Flow<List<LevelData>> {
         return flow {
             emit(levelRepository.getLevelsForCountry(cc))
@@ -413,12 +411,15 @@ class LevelViewModel @Inject constructor(
                 )
             ) {
                 val totalScore = levelRepository.getTotalUpdatedScore(
-                    _currentLevel.value.levelInfo.levelId
+                    level = _currentLevel.value.levelInfo.levelId,
+                    countryCode = _currentLevel.value.levelInfo.countryCode
                 )
                 variousEventChannel.send(
                     VariousEvent.SubmitScore(
-                        totalScore,
-                        _currentLevel.value.levelInfo.levelId > 1000
+                        score = totalScore,
+                        playerLevels = _currentLevel.value.levelInfo.levelId in 1001..9999,
+                        languageLevels = _currentLevel.value.levelInfo.levelId > 10000,
+                        countryCode = _currentLevel.value.levelInfo.countryCode
                     )
                 )
             }
@@ -452,7 +453,7 @@ class LevelViewModel @Inject constructor(
 
     sealed class VariousEvent {
         data class UnlockAchievement(val achievement: String) : VariousEvent()
-        data class SubmitScore(val score: Long, val playerLevels: Boolean) : VariousEvent()
+        data class SubmitScore(val score: Long, val playerLevels: Boolean, val languageLevels:Boolean, val countryCode:String) : VariousEvent()
         data class SaveGame(
             val localSaveGame: com.indest.hah.persistance.dto.SaveGame,
             val calculatedGameProgress: Long
@@ -514,54 +515,65 @@ class LevelViewModel @Inject constructor(
             60 -> unlockAchievement(context.getString(R.string.achievement_crackerjack))
             80 -> unlockAchievement(context.getString(R.string.achievement_chief))
             100 -> unlockAchievement(context.getString(R.string.achievement_authority))
-            10010 -> unlockAchievement(context.getString(R.string.achievement_chinese_linguist))
-            10026 -> unlockAchievement(context.getString(R.string.achievement_german_linguist))
-            10046 -> unlockAchievement(context.getString(R.string.achievement_spanish_linguist))
-            10066 -> unlockAchievement(context.getString(R.string.achievement_estonian_linguist))
-            10086 -> unlockAchievement(context.getString(R.string.achievement_finnish_linguist))
-            10106 -> unlockAchievement(context.getString(R.string.achievement_french_linguist))
-            10126 -> unlockAchievement(context.getString(R.string.achievement_hindi_linguist))
-            10137 -> unlockAchievement(context.getString(R.string.achievement_indonesian_linguist))
-            10155 -> unlockAchievement(context.getString(R.string.achievement_italian_linguist))
-            10175 -> unlockAchievement(context.getString(R.string.achievement_japanese_linguist))
-            10195 -> unlockAchievement(context.getString(R.string.achievement_korean_linguist))
-            10215 -> unlockAchievement(context.getString(R.string.achievement_dutch_linguist))
-            10235 -> unlockAchievement(context.getString(R.string.achievement_polish_linguist))
-            10255 -> unlockAchievement(context.getString(R.string.achievement_portuguese_linguist))
-            10275 -> unlockAchievement(context.getString(R.string.achievement_romanian_linguist))
-            10295 -> unlockAchievement(context.getString(R.string.achievement_russian_linguist))
-            10315 -> unlockAchievement(context.getString(R.string.achievement_swedish_linguist))
-            10335 -> unlockAchievement(context.getString(R.string.achievement_turkish_linguist))
-            10355 -> unlockAchievement(context.getString(R.string.achievement_ukrainian_linguist))
         }
+        unlockRelativeLanguageLevelAchievement()
+    }
+
+    private fun unlockRelativeLanguageLevelAchievement()
+    {
+        viewModelScope.launch {
+            val res = getApplication<Application>().applicationContext.resources
+            if (currentRelativeLevelNumber == 10)
+            {
+                when (_currentLevel.value.levelInfo.countryCode) {
+                    "cn" -> unlockAchievement(res.getString(R.string.achievement_chinese_linguist))
+                    "de" -> unlockAchievement(res.getString(R.string.achievement_german_linguist))
+                    "es" -> unlockAchievement(res.getString(R.string.achievement_spanish_linguist))
+                    "et" -> unlockAchievement(res.getString(R.string.achievement_estonian_linguist))
+                    "fi" -> unlockAchievement(res.getString(R.string.achievement_finnish_linguist))
+                    "fr" -> unlockAchievement(res.getString(R.string.achievement_french_linguist))
+                    "id" -> unlockAchievement(res.getString(R.string.achievement_indonesian_linguist))
+                    "it" -> unlockAchievement(res.getString(R.string.achievement_italian_linguist))
+                    "ja" -> unlockAchievement(res.getString(R.string.achievement_japanese_linguist))
+                    "ko" -> unlockAchievement(res.getString(R.string.achievement_korean_linguist))
+                    "nl" -> unlockAchievement(res.getString(R.string.achievement_dutch_linguist))
+                    "pl" -> unlockAchievement(res.getString(R.string.achievement_polish_linguist))
+                    "pt" -> unlockAchievement(res.getString(R.string.achievement_portuguese_linguist))
+                    "ro" -> unlockAchievement(res.getString(R.string.achievement_romanian_linguist))
+                    "sv" -> unlockAchievement(res.getString(R.string.achievement_swedish_linguist))
+                    "tr" -> unlockAchievement(res.getString(R.string.achievement_turkish_linguist))
+                    "uk" -> unlockAchievement(res.getString(R.string.achievement_ukrainian_linguist))
+                }
+            }
+        }
+
     }
 
 
     private fun isSolutionCorrect(guess: String): Boolean {
         return _currentLevel.value.solutions.any {
-            it.palindrome.replace(" ", "") == guess
+            it.palindrome.replace(Regex("[\\s-]+"), "") == guess
         }
     }
 
 
     private fun updateSolutionState(index: Int, guess: String) {
         viewModelScope.launch {
-            val solution = _currentLevel.value.solutions.first().palindrome.replace(" ", "")
+            val solution = _currentLevel.value.solutions.first().palindrome.replace(Regex("[\\s-]+"), "")
             var solutionData = SolutionData()
-
+            Log.d(TAG, "Guess: $guess")
+            Log.d(TAG, "Solution: $solution")
             if (guess.length == solution.length) {
                 val playerGuess = guess.map { char ->
-                    if ("^([?!.,’':-])".contains(char)) "" else char
+                    if ("^([?!.,’':-]–)".contains(char)) "" else char
                 }.joinToString("")
 
                 val hintsInterval =
                     getApplication<Application>().getString(R.string.hint_suggestion)
 
-                val maxScore = if (_currentLevel.value.levelInfo.levelId > 1000) {
-                    _currentLevel.value.levelInfo.puzzle.length * 100
-                } else {
-                    _currentLevel.value.levelInfo.levelId * 100
-                }
+                val maxScore = _currentLevel.value.levelInfo.levelId.getLevelScore(
+                        _currentLevel.value.levelInfo.puzzle
+                    )
 
                 when {
                     isSolutionCorrect(guess) -> {
@@ -635,8 +647,8 @@ class LevelViewModel @Inject constructor(
 
     private fun logLevelEnd() {
         viewModelScope.launch(Dispatchers.Default) {
-            val scoreToMaxRatio =
-                _currentLevel.value.levelInfo.score / (_currentLevel.value.levelInfo.levelId * 100f)
+            val maxScore = _currentLevel.value.levelInfo.levelId.getLevelScore(_currentLevel.value.levelInfo.puzzle)
+            val scoreToMaxRatio = (_currentLevel.value.levelInfo.score / maxScore).toFloat()
             val parameters = Bundle().apply {
                 this.putInt(FirebaseAnalytics.Param.LEVEL, _currentLevel.value.levelInfo.levelId)
                 this.putFloat(FirebaseCustom.Params.SCORE_TO_MAX_RATIO, scoreToMaxRatio)
@@ -706,6 +718,69 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+    suspend fun simulateNewLevelFetch() {
+        val playerLevels = mutableListOf<PlayerLevel>()
+        val docRef: DocumentReference = fsDb
+            .collection("user_submitted_levels")
+            .document("Bc4MHj3i0hMNRsgVAMdc")
+        docRef.get().addOnSuccessListener {
+            try {
+                Log.d(TAG, it.data.toString())
+                it.data.let { levelValues ->
+                    val solutionsToCategories =
+                        levelValues?.get("solutionToCategory") as Map<String, String>
+                    if (solutionsToCategories.isEmpty()) throw Exception("Solutions were empty")
+                    val countryCode =
+                        levelValues.getOrElse("countryCode") { "gb" }
+                    val level = PlayerLevel(
+                        levelId = levelValues["levelId"] as Long,
+                        player = levelValues["player"] as String,
+                        solutionToCategory = solutionsToCategories,
+                        countryCode = countryCode as String
+                    )
+                    playerLevels.add(level)
+                }
+            } catch (e: Exception) {
+                Log.w(
+                    TAG,
+                    "Something went wrong when parsing the user level from FB.",
+                    e
+                )
+            }
+
+            viewModelScope.launch {
+                if (playerLevels.size != 0) {
+                    // Get Pair where first element is a level when only 1 level added
+                    // Second element is the level count when there are more than 1 level added.
+                    val levelAndCount = insertPlayerLevels(playerLevels)
+                    if (levelAndCount.second > 0) {
+                        if (levelAndCount.second > 1)
+                        {
+                            _newPlayerLevels.update {
+                                NewLevelNotification(
+                                    -1,
+                                    levelAndCount.second,
+                                    "",
+                                    ""
+                                )
+                            }
+                        }
+                        else {
+                            _newPlayerLevels.update {
+                                NewLevelNotification(
+                                    levelAndCount.first.levelId,
+                                    1,
+                                    levelAndCount.first.author,
+                                    levelAndCount.first.countryCode
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    }
 
     private suspend fun subscribeToRealTimePlayerLevelUpdates() {
         if (_accountStatus.value == AccountStatus.SIGNED_IN_WITH_FIREBASE) {
@@ -760,15 +835,23 @@ class LevelViewModel @Inject constructor(
                         // Second element is the level count when there are more than 1 level added.
                         val levelAndCount = insertPlayerLevels(playerLevels)
                         if (levelAndCount.second > 0) {
-                            _newPlayerLevels.value = if (levelAndCount.second > 1) Triple(
-                                -1,
-                                levelAndCount.second,
-                                ""
-                            ) else Triple(
-                                levelAndCount.first.levelId,
-                                1,
-                                levelAndCount.first.author
-                            )
+                            if (levelAndCount.second > 1)
+                            {
+                                _newPlayerLevels.value = NewLevelNotification(
+                                    -1,
+                                    levelAndCount.second,
+                                    "",
+                                    ""
+                                )
+                            }
+                            else {
+                                _newPlayerLevels.value = NewLevelNotification(
+                                    levelAndCount.first.levelId,
+                                    -1,
+                                    levelAndCount.first.author,
+                                    levelAndCount.first.countryCode
+                                )
+                            }
                         }
                     }
                 }
@@ -778,14 +861,13 @@ class LevelViewModel @Inject constructor(
 
 
     fun resetNewPlayersLevels() {
-        _newPlayerLevels.value = Triple(-1, -1, "")
+        _newPlayerLevels.value = NewLevelNotification(-1,-1,"","")
     }
 
 
     private suspend fun insertPlayerLevels(playerLevels: List<PlayerLevel>): Pair<LevelData, Int> {
         return levelRepository.insertPlayerLevels(playerLevels)
     }
-
 
     suspend fun submitUserLevel(playersPalindrome: String) {
         // Create a new user with a first, middle, and last name
@@ -795,6 +877,7 @@ class LevelViewModel @Inject constructor(
             "palindrome" to playersPalindrome,
             "player" to currentlySignedInPlayerName,
             "solutionToCategory" to hashMapOf(Pair(playersPalindrome, "[ADD_CATEGORY]")),
+            "countryCode" to tempCountrySelected,
             "timestamp" to FieldValue.serverTimestamp(),
         )
 

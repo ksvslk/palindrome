@@ -79,7 +79,7 @@ class HintsFragment : FullBottomSheetDialogFragment() {
                         binding.purchaseButtonClues.updateButtonUi(it)
                         binding.purchaseButtonLetters.updateButtonUi(it)
                         binding.purchaseNoSadMode.updateButtonUi(it)
-                        binding.purchaseAllInclusivePack.updateButtonUi(it)
+                        binding.purchaseAllInclusivePack2?.updateButtonUi(it)
                     }
                 }
                 launch {
@@ -115,7 +115,7 @@ class HintsFragment : FullBottomSheetDialogFragment() {
         addBillingFlowOnClickToPurchaseButton(binding.purchaseButtonClues)
         addBillingFlowOnClickToPurchaseButton(binding.purchaseButtonLetters)
         addBillingFlowOnClickToPurchaseButton(binding.purchaseNoSadMode)
-        addBillingFlowOnClickToPurchaseButton(binding.purchaseAllInclusivePack)
+        addBillingFlowOnClickToPurchaseButton(binding.purchaseAllInclusivePack2)
 
         binding.rewardPictureButton.setOnClickListener {
             if (levelViewModel.currentLevel.value.levelInfo.progress == LevelProgress.INTERMEDIATE)
@@ -197,7 +197,7 @@ class HintsFragment : FullBottomSheetDialogFragment() {
     private fun levelIsCompletedToast() {
         val toast = Toast.makeText(
             requireContext().applicationContext,
-            "Level is already completed.",
+            resources.getString(R.string.level_already_completed),
             Toast.LENGTH_SHORT
         )
         toast.show()
@@ -299,7 +299,13 @@ class HintsFragment : FullBottomSheetDialogFragment() {
     private fun showPictureHintForCurrentLevel() {
         soundPlayer.play(soundPlayer.sounds.letterRewardedSoundId)
         val pictureDialogFragment = PictureDialogFragment()
-        pictureDialogFragment.setDrawable(requireContext(), viewModel.currentLevel.value.levelInfo.levelId)
+        Log.d(TAG, "CURRENT: ${levelViewModel.currentRelativeLevelNumber}")
+        Log.d(TAG, "CC: ${levelViewModel.currentLevel.value.levelInfo.countryCode}")
+        pictureDialogFragment.setDrawable(
+            requireContext(),
+            levelViewModel.currentRelativeLevelNumber,
+            levelViewModel.currentLevel.value.levelInfo.countryCode
+        )
         pictureDialogFragment.show(childFragmentManager, PictureDialogFragment.TAG)
     }
 

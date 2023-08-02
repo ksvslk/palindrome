@@ -18,19 +18,6 @@
         <item name="fontFamily">@font/yantramanav_medium</item>
     </style>
 
-    <style name="TextAppearance.OC.SmallHintText" parent="TextAppearance.MaterialComponents.Caption">
-        <item name="fontFamily">@font/yantramanav_medium</item>
-
-    </style>
-
-    <style name= "OC.Button" parent="Widget.MaterialComponents.Button">
-
-    </style>
-
-    <style name= "OC.OutlinedButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
-
-    </style>
-
     <style name="roundedCornersImageView" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">16dp</item>

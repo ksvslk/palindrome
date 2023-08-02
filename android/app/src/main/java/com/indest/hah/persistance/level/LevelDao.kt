@@ -1,15 +1,10 @@
 package com.indest.hah.persistance.level
 
 import androidx.room.*
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.indest.hah.game.creation.Shuffler
+import com.indest.hah.other.getLevelScore
 import com.indest.hah.persistance.dto.*
 import kotlinx.coroutines.flow.Flow
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.decodeFromJsonElement
-
 
 @Dao
 interface LevelDao {
@@ -17,12 +12,19 @@ interface LevelDao {
     @Query("select distinct country_code from level_info_table where country_code not in('gb')")
     suspend fun getUniqueCountries():List<String>
 
+    @MapInfo(keyColumn = "language", valueColumn = "count")
+    @Query("select country_code as language, count(*) AS count from level_info_table where country_code not in('gb') group by country_code order by count desc")
+    suspend fun getUniqueCountriesWithLevelCount():Map<String, Int>
+
     @Transaction
     @Query("select * from level_info_table where country_code = :cc")
     suspend fun getLevelsForCountry(cc:String):List<Level>
 
     @Query("delete from letter_info_table where owner_id = :levelNr")
     suspend fun deleteLetterInfo(levelNr: Int)
+
+    @Query("update letter_info_table set friend_index = -666, locked = 0 where owner_id = :levelNr")
+    suspend fun resetLetterInfo(levelNr: Int)
 
     @Query("select letter from letter_info_table where owner_id=:levelNr and friend_index!=-666 order by friend_index asc")
     suspend fun getCurrentSolution(levelNr: Int): List<Char>
@@ -45,9 +47,11 @@ interface LevelDao {
     @Query("select sum(best_score) from level_info_table where level_id <= 100")
     suspend fun getTotalScore(): Int
 
-    @Query("select sum(best_score) from level_info_table where level_id > 1000")
+    @Query("select sum(best_score) from level_info_table where level_id > 1000 and level_id < 10000")
     suspend fun getTotalPlayerLevelsScore(): Int?
 
+    @Query("select sum(best_score) from level_info_table where level_id > 10000 and country_code =:countryCode")
+    suspend fun getTotalScoreForCountry(countryCode:String): Int
 
     @Insert
     suspend fun insertLevelInfo(levels: LevelData)
@@ -70,24 +74,8 @@ interface LevelDao {
     @Query("update level_info_table set column_count = :newColumnCount where level_id = :level")
     suspend fun changeColumnCount(level: Int, newColumnCount: Int)
 
-    @Transaction
-    suspend fun changeFriendIndexesBasedOnColumnCount(
-        level: Int,
-        columnCount: Int,
-        letters: List<LetterProperties>,
-        homeIndexNewFriendIndexes: List<Pair<Int, Int>>
-    ) {
-        homeIndexNewFriendIndexes.forEach {
-            updateFriendIndexSub(it.first, it.second, level)
-
-        }
-        changeColumnCount(level, columnCount)
-    }
-
-
     @Query("select exists (select 1 from level_info_table where level_id = :id)")
     suspend fun isLevelAdded(id: Long): Boolean
-
 
     @Transaction
     suspend fun insertLanguagePackLevel(levels:List<LanguageLevel>, countryCode:String)
@@ -106,7 +94,7 @@ interface LevelDao {
                         categoryRewarded = false,
                         pictureRewarded = false,
                         progress = LevelProgress.TODO,
-                        score = puzzle.length * 100,
+                        score = nextLevelId.getLevelScore(puzzle = puzzle),
                         best_score = 0,
                         timeModified = 0,
                         author = "",
@@ -127,7 +115,7 @@ interface LevelDao {
                     )
                 }
                 val solution = level.solutionToCategory.keys.first()
-                val puzzleShuffled = Shuffler.getShuffledSolution(solution)
+                val puzzleShuffled = Shuffler.getShuffledSolution(solution).replace("-","")
                 updatePuzzle(nextLevelId, puzzleShuffled)
                 puzzleShuffled.forEachIndexed { index, char ->
                     insertLetterData(
@@ -142,11 +130,11 @@ interface LevelDao {
         }
     }
 
+
     @Transaction
     suspend fun insertPlayerLevels(playerLevel: List<PlayerLevel>): Pair<LevelData, Int> {
         var newLevelsCount = 0
         var oneLevelId = 1L
-
         playerLevel.forEach { level ->
             if (!isLevelAdded(level.levelId)) {
                 val puzzle = level.solutionToCategory.keys.firstOrNull() ?: ""
@@ -157,7 +145,7 @@ interface LevelDao {
                         categoryRewarded = false,
                         pictureRewarded = false,
                         progress = LevelProgress.TODO,
-                        score = puzzle.length * 100,
+                        score = level.levelId.toInt().getLevelScore(puzzle = puzzle),
                         best_score = 0,
                         timeModified = 0,
                         author = level.player,
@@ -178,7 +166,7 @@ interface LevelDao {
                     )
                 }
                 val solution = level.solutionToCategory.keys.first()
-                val puzzleShuffled = Shuffler.getShuffledSolution(solution)
+                val puzzleShuffled = Shuffler.getShuffledSolution(solution).replace("-","")
                 updatePuzzle(level.levelId.toInt(), puzzleShuffled)
                 puzzleShuffled.forEachIndexed { index, char ->
                     insertLetterData(
@@ -318,7 +306,7 @@ interface LevelDao {
     fun getLastLevel(): Flow<Level>
 
     @Query("update or ignore letter_info_table set friend_index = :newFriendIndex where home_index = :homeIndex and owner_id = :level")
-    suspend fun updateFriendIndexSub(homeIndex: Int, newFriendIndex: Int, level: Int)
+    fun updateFriendIndexSub(homeIndex: Int, newFriendIndex: Int, level: Int)
 
     @Transaction
     suspend fun updateFriendIndex(homeIndex: Int, newFriendIndex: Int, level: Int): String {
@@ -436,7 +424,7 @@ interface LevelDao {
                 locked = false,
             )
         }
-        val newScore = if (levelNr <= 100) levelNr * 100 else puzzle.trim().length * 100
+        val newScore = levelNr.getLevelScore(puzzle = puzzle)
         updateScore(newScore, levelNr)
         updateProgress(levelNr, progress)
     }
@@ -474,26 +462,10 @@ interface LevelDao {
     @Query("insert or replace into interval (name,current_count,limit_count,timestamp) VALUES ('last_submission',-1,-1,:time)")
     suspend fun updateSubmissionTimestamp(time: Long)
 
-    @Query("update level_info_table set author='Migrated' where level_id = :level")
-    suspend fun updateToMigrated(level: Int)
-
-    @Transaction
-    suspend fun updateAuthorToMigrated(
-        level: Int, columnCount: Int,
-        letters: List<LetterProperties>,
-        homeIndexNewFriendIndexes: List<Pair<Int, Int>>
-    ) {
-        updateToMigrated(level)
-        changeColumnCount(level, columnCount)
-        changeFriendIndexesBasedOnColumnCount(
-            level,
-            columnCount,
-            letters,
-            homeIndexNewFriendIndexes
-        )
-    }
-
     @Query("select max(time_modified) from level_info_table")
     suspend fun getMaximumTimestamp(): Long?
+
+    @Query("DELETE FROM level_info_table WHERE level_id = :levelNr")
+    suspend fun removeLevel(levelNr: Int)
 
 }

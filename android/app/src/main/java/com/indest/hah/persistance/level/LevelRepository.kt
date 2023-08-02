@@ -2,6 +2,7 @@ package com.indest.hah.persistance.level
 
 import androidx.room.Query
 import com.indest.hah.persistance.dto.*
+import com.indest.hah.views.Letter
 import kotlinx.coroutines.flow.Flow
 import java.time.Duration
 import java.time.Instant
@@ -19,16 +20,8 @@ class LevelRepository @Inject constructor(
         levelDao.init()
     }
 
-    suspend fun changeFriendIndexesBasedOnColumnCount(level: Int, columnCount:Int, letters:List<LetterProperties>, homeIndexNewFriendIndexes:List<Pair<Int,Int>>) {
-        levelDao.changeFriendIndexesBasedOnColumnCount(level, columnCount, letters, homeIndexNewFriendIndexes)
-    }
-
-
-    suspend fun changeColumnCount(level: Int, columnCount: Int){
-        levelDao.changeColumnCount(level, columnCount)
-    }
-
     suspend fun getMaxLevelId():Int = levelDao.getMaxLevelId()
+
     suspend fun getMinLevelIdForCountry(cc:String):Int
         = levelDao.getMinLevelIdForCountry(cc)
 
@@ -59,6 +52,11 @@ class LevelRepository @Inject constructor(
         return levelDao.updateLetters(homeIndex1, homeIndex2, letter1, letter2, level)
     }
 
+    suspend fun resetLetterInfo(levelNr: Int)
+    {
+        levelDao.resetLetterInfo(levelNr)
+    }
+
     suspend fun getCurrentSolution(level: Int): String {
         val guess = levelDao.getCurrentSolution(level).joinToString("")
         return guess.map<Any> { char -> if ("^([?!.,’])".contains(char)) "" else char }
@@ -69,12 +67,16 @@ class LevelRepository @Inject constructor(
         levelDao.updateScore(newScore, level)
     }
 
-    suspend fun getTotalUpdatedScore(level: Int): Long {
+    suspend fun getTotalUpdatedScore(level: Int, countryCode:String = ""): Long {
         levelDao.updateBestScoreQuery(level)
-        if (level > 1000)
+        if (level in 1001..9999)
         {
             val playerLevelScore = levelDao.getTotalPlayerLevelsScore()
             return playerLevelScore?.toLong() ?: 0
+        }
+        else if (level > 10000)
+        {
+            return levelDao.getTotalScoreForCountry(countryCode).toLong()
         }
         return levelDao.getTotalScore().toLong()
     }
@@ -88,6 +90,9 @@ class LevelRepository @Inject constructor(
 
     suspend fun getUniqueCountries():List<String>
         = levelDao.getUniqueCountries()
+
+    suspend fun getUniqueCountriesWithLevelCount():List<Pair<String,Int>>
+        = levelDao.getUniqueCountriesWithLevelCount().map { Pair(it.key, it.value) }
 
     suspend fun getLevelsForCountry(cc:String):List<LevelData>
         = levelDao.getLevelsForCountry(cc).map { it.levelInfo }
@@ -168,24 +173,21 @@ class LevelRepository @Inject constructor(
         return duration.toHours() >= 24
     }
 
+    suspend fun updateColumnCount(newCols:Int, level: Int)
+    {
+        levelDao.changeColumnCount(level, newColumnCount = newCols)
+    }
+
     suspend fun updateSubmissionTimestamp()
     {
         val millis = Instant.now().toEpochMilli()
         levelDao.updateSubmissionTimestamp(millis)
     }
 
-    suspend fun updateAuthorToMigrated(
-        level:Int,
-        newColumnCount:Int,
-        letters: List<LetterProperties>,
-        homeIndexNewFriendIndexes: List<Pair<Int, Int>>) {
-        levelDao.updateAuthorToMigrated(level, newColumnCount, letters, homeIndexNewFriendIndexes)
-    }
-
-
     suspend fun getMaximumTimestamp():Long = levelDao.getMaximumTimestamp() ?: 0
 
     suspend fun insertLanguageLevelPack(levels:List<LanguageLevel>, language:String)
         = levelDao.insertLanguagePackLevel(levels, language)
+
 
 }

@@ -105,7 +105,7 @@ class StagesFragment : FullBottomSheetDialogFragment() {
     private fun showLimitedSubmissionsToast() {
         val toast = Toast.makeText(
             requireContext().applicationContext,
-            "You can submit once per day.",
+            resources.getString(R.string.submit_once_per_day_limit),
             Toast.LENGTH_LONG
         )
         toast.show()

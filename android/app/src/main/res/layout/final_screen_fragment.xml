@@ -21,8 +21,7 @@
 
         <ViewFlipper
             android:saveEnabled="false"
-            
-            android:id="@+id/reward_button_flipper_player"
+
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:autoStart="true"
@@ -98,8 +97,7 @@
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:saveEnabled="false"
-            
-            android:id="@+id/final_screen_menu_player"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -109,7 +107,6 @@
 
             <com.indest.hah.views.AnyButton
                 android:saveEnabled="false"
-                
                 android:id="@+id/submit_your_own"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/simple_dialog_item_height"
@@ -123,7 +120,6 @@
 
             <com.indest.hah.views.AnyButton
                 android:saveEnabled="false"
-                
                 android:id="@+id/share_button_player"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/simple_dialog_item_height"
@@ -137,7 +133,6 @@
 
             <com.indest.hah.views.AnyButton
                 android:saveEnabled="false"
-                
                 android:id="@+id/feedback_button_player"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/simple_dialog_item_height"
@@ -151,7 +146,6 @@
 
             <com.indest.hah.views.AnyButton
                 android:saveEnabled="false"
-                
                 android:id="@+id/level_select_button"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/simple_dialog_item_height"
@@ -165,7 +159,6 @@
 
             <com.indest.hah.views.AnyButton
                 android:saveEnabled="false"
-                
                 android:id="@+id/player_level_select_button"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/simple_dialog_item_height"

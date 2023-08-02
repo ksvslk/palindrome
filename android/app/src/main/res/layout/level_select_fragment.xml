@@ -2,7 +2,6 @@
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:saveEnabled="false"
-    android:id="@+id/level_select_dialog"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
@@ -13,8 +12,8 @@
     app:showDividers="middle">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:saveEnabled="false"
         android:id="@+id/level_select_recyclerview"
+        android:saveEnabled="false"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clickable="true"

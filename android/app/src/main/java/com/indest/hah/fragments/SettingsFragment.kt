@@ -80,7 +80,7 @@ class SettingsFragment : FullBottomSheetDialogFragment() {
                             binding.progressCircular.visibility = View.GONE
                             binding.googleSignInButton.visibility = View.GONE
                             binding.googleSignOutButton.visibility = View.VISIBLE
-                            binding.googleSignOutButton.text = "Signed in as ${levelViewModel.currentlySignedInPlayerName}"
+                            binding.googleSignOutButton.text = "${levelViewModel.currentlySignedInPlayerName} ${resources.getString(R.string.profile_person_symbol)}"
                         }
                         AccountStatus.SIGNED_OUT -> {
                             binding.progressCircular.visibility = View.GONE
@@ -97,7 +97,7 @@ class SettingsFragment : FullBottomSheetDialogFragment() {
                             binding.progressCircular.visibility = View.GONE
                             binding.googleSignInButton.visibility = View.GONE
                             binding.googleSignOutButton.visibility = View.VISIBLE
-                            binding.googleSignOutButton.text = "Signed in as ${levelViewModel.currentlySignedInPlayerName}"
+                            binding.googleSignOutButton.text = "${levelViewModel.currentlySignedInPlayerName} ${resources.getString(R.string.profile_person_symbol)}"
                         }
                     }
 

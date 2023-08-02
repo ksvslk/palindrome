@@ -15,13 +15,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.forEach
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ReportFragment.Companion.reportFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.gms.ads.MobileAds
@@ -50,6 +53,7 @@ import com.indest.hah.general.AccountStatus
 import com.indest.hah.general.GeneralViewModel
 import com.indest.hah.other.C
 import com.indest.hah.other.LevelSelectType
+import com.indest.hah.other.countryCodeToEmoji
 import com.indest.hah.other.hideSystemBars
 import com.indest.hah.other.mapCountryCodeToLanguageAndFlag
 import com.indest.hah.other.safeNavigate
@@ -89,7 +93,6 @@ class MainActivity : AppCompatActivity() {
     lateinit var snapshotHelper: SnapshotHelper
     private lateinit var auth: FirebaseAuth
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -118,6 +121,11 @@ class MainActivity : AppCompatActivity() {
             ViewCompat.setSystemGestureExclusionRects(binding.root, exclusions)
         }
 
+        binding.levelFlag?.setOnClickListener {
+            levelViewModel.viewModelScope.launch {
+                levelViewModel.simulateNewLevelFetch()
+            }
+        }
     }
 
     override fun onStop() {
@@ -150,7 +158,7 @@ class MainActivity : AppCompatActivity() {
             // login button to ask  players to sign-in. Clicking it should
             // call GamesSignInClient.signIn().
             levelViewModel.setAccountStatus(AccountStatus.SIGNED_OUT)
-            levelViewModel.currentlySignedInPlayerName = "Unknown"
+            levelViewModel.currentlySignedInPlayerName = "???"
         }
     }
 
@@ -175,18 +183,19 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {/*
             lifecycleScope.launchWhenCreated { */
             lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
-                levelViewModel.newPlayerLevels.collectLatest { (levelNr, addedLevelsCount, author) ->
-                    if (levelNr == -1 && addedLevelsCount == -1 && author == "") return@collectLatest
-                    if (addedLevelsCount == 1) {
+                levelViewModel.newPlayerLevels.collectLatest { newLevel ->
+                    if (newLevel.lastAddedLevel == -1 && newLevel.multipleLevels == -1 && newLevel.playerName == "") return@collectLatest
+                    if (newLevel.multipleLevels == 1) {
                         showNewLevelMessage(
-                            author,
-                            levelNr
+                            newLevel.playerName,
+                            newLevel.lastAddedLevel,
+                            countryCode = newLevel.countryCode
                         )
-                    } else if (addedLevelsCount > 1) {
+                    } else if (newLevel.multipleLevels > 1) {
                         showNewLevelMessage(
-                            author,
+                            newLevel.playerName,
                             lastAddedLevel = -1,
-                            multipleLevels = addedLevelsCount
+                            multipleLevels = newLevel.multipleLevels,
                         )
                     }
                     levelViewModel.resetNewPlayersLevels()
@@ -199,14 +208,16 @@ class MainActivity : AppCompatActivity() {
     private fun showNewLevelMessage(
         player: String,
         lastAddedLevel: Int,
-        multipleLevels: Int = -1
+        multipleLevels: Int = -1,
+        countryCode: String = ""
     ) {
+        val flagNew = if (countryCode != "") "${countryCode.countryCodeToEmoji()} ${resources.getString(R.string.new_word)}" else resources.getString(R.string.new_word)
         val snackMessage =
-            if (multipleLevels == -1) "New level by $player!" else "$multipleLevels levels added!"
+            if (multipleLevels == -1) "$flagNew ${resources.getString(R.string.level_by)} $player!" else "$multipleLevels ${resources.getString(R.string.levels_added)}"
 
         val snack =
             Snackbar.make(findViewById(android.R.id.content), snackMessage, 15000)
-                .setAction("Play") {
+                .setAction(resources.getString(R.string.play)) {
                     val navHostFragment =
                         supportFragmentManager.findFragmentById(R.id.fragments_container) as NavHostFragment
                     val navController = navHostFragment.navController
@@ -238,7 +249,6 @@ class MainActivity : AppCompatActivity() {
         params.gravity = Gravity.TOP
         params.topMargin = resources.getDimension(com.intuit.sdp.R.dimen._16sdp).toInt()
         snack.view.layoutParams = params
-        /*snack.view.background = ContextCompat.getDrawable(applicationContext, R.drawable.new_level_message_rectangle)*/
         snack.show()
     }
 
@@ -292,12 +302,38 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun submitScore(score: Long, playerLevels: Boolean = false) {
+    private fun submitScore(score: Long, playerLevels: Boolean = false, languageLevels:Boolean = false, countryCode: String) {
         val leaderboardId = if (playerLevels) {
             getString(R.string.leaderboard_player_levels_leaderboard)
+        }
+        else if (languageLevels) {
+            when(countryCode)
+            {
+                "cn" -> getString(R.string.leaderboard_chinese)
+                "de" -> getString(R.string.leaderboard_german)
+                "es" -> getString(R.string.leaderboard_spanish)
+                "et" -> getString(R.string.leaderboard_estonian)
+                "fi" -> getString(R.string.leaderboard_finnish)
+                "fr" -> getString(R.string.leaderboard_french)
+                "hi" -> getString(R.string.leaderboard_hindi)
+                "id" -> getString(R.string.leaderboard_indonesian)
+                "it" -> getString(R.string.leaderboard_italian)
+                "ja" -> getString(R.string.leaderboard_japanese)
+                "ko" -> getString(R.string.leaderboard_korean)
+                "nl" -> getString(R.string.leaderboard_dutch)
+                "pl" -> getString(R.string.leaderboard_polish)
+                "pt" -> getString(R.string.leaderboard_portuguese)
+                "ro" -> getString(R.string.leaderboard_romanian)
+                "ru" -> getString(R.string.leaderboard_russian)
+                "sv" -> getString(R.string.leaderboard_swedish)
+                "tr" -> getString(R.string.leaderboard_turkish)
+                "uk" -> getString(R.string.leaderboard_ukrainian)
+                else -> { ""}
+            }
         } else {
             getString(R.string.leaderboard_crme_de_la_crme)
         }
+        Log.d(TAG, "submitting score for $countryCode with leaderboard ID $leaderboardId")
         PlayGames.getLeaderboardsClient(this)
             .submitScore(
                 leaderboardId,
@@ -370,7 +406,7 @@ class MainActivity : AppCompatActivity() {
                         }
 
                         is LevelViewModel.VariousEvent.SubmitScore -> {
-                            submitScore(event.score, event.playerLevels)
+                            submitScore(event.score, event.playerLevels, event.languageLevels, event.countryCode)
                         }
 
                         is LevelViewModel.VariousEvent.UnlockAchievement -> {
@@ -440,6 +476,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun applyCustomWindowInsets() {
+
         ViewCompat.setOnApplyWindowInsetsListener(binding.container) { _, insets ->
             WindowInsetsCompat.Builder()
                 .setInsets(
@@ -458,7 +495,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
-        hideSystemBars(binding.root)
+        hideSystemBars(binding.container)
     }
 
 

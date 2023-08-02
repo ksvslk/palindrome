@@ -12,7 +12,6 @@ import com.google.android.gms.common.images.ImageManager
 import com.google.android.gms.games.PlayGames
 import com.google.android.gms.games.leaderboard.LeaderboardVariant.COLLECTION_PUBLIC
 import com.google.android.gms.games.leaderboard.LeaderboardVariant.TIME_SPAN_ALL_TIME
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.databinding.ScoreFragmentBinding
 import com.indest.hah.game.viewmodel.LevelViewModel
@@ -96,14 +95,14 @@ class ScoresFragment : FullBottomSheetDialogFragment() {
                                     scoreLayout.findViewById<AppCompatTextView>(R.id.name).text =
                                         score.scoreHolderDisplayName
                                     scoreLayout.findViewById<AppCompatTextView>(R.id.score).text =
-                                        "Score: ${score.rawScore}"
+                                        "${resources.getString(R.string.score)} ${score.rawScore}"
 
                                     if (index == 0) {
                                         binding.playerScoreImproveMessage.text =
-                                            "You rank first!"
+                                            resources.getString(R.string.you_rank_first)
                                     } else {
                                         binding.playerScoreImproveMessage.text =
-                                            "Earn ${leaderBoardScores.scores[index - 1].rawScore - score.rawScore + 1} points to rank up!"
+                                            "${resources.getString(R.string.earn)} ${leaderBoardScores.scores[index - 1].rawScore - score.rawScore + 1} ${resources.getString(R.string.points_to_rank_up)}"
                                     }
                                     binding.scoreFlipper.showNext()
                                     binding.scoreFragment.addView(scoreLayout)
@@ -124,7 +123,7 @@ class ScoresFragment : FullBottomSheetDialogFragment() {
                                     scoreLayout.findViewById<AppCompatTextView>(R.id.name).text =
                                         score.scoreHolderDisplayName
                                     scoreLayout.findViewById<AppCompatTextView>(R.id.score).text =
-                                        "Score: ${score.rawScore}"
+                                        "${resources.getString(R.string.score)} ${score.rawScore}"
                                     binding.scoreFragment.addView(scoreLayout)
                                 }
                             }

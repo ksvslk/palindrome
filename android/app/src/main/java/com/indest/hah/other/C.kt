@@ -11,7 +11,7 @@ object C {
 
     const val FIREBASE_PICS_STORAGE_PATH = "gs://hah-35889753.appspot.com/level_hint/"
     const val PLAYER_LEVELS_COVERED_LOCALLY = 1080
-    val LANGUAGE_LEVELS_RANGE = 10001..10361
+    val LANGUAGE_LEVELS_RANGE = 10001..10330
     val languages = mapOf(
         "cn" to "Chinese",
         "de" to "German",
@@ -19,7 +19,6 @@ object C {
         "et" to "Estonian",
         "fi" to "Finnish",
         "fr" to "French",
-        "hi" to "Hindi",
         "id" to "Indonesian",
         "it" to "Italian",
         "ja" to "Japanese",
@@ -28,10 +27,11 @@ object C {
         "pl" to "Polish",
         "pt" to "Portuguese",
         "ro" to "Romanian",
-        "ru" to "Russian",
         "sv" to "Swedish",
         "tr" to "Turkish",
         "uk" to "Ukrainian"
     )
+
+
 }
 

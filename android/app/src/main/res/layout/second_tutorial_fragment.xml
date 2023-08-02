@@ -2,7 +2,6 @@
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/second_tutorial_fragment"
     android:saveEnabled="false"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -42,7 +41,6 @@
         android:orientation="vertical">
         <androidx.appcompat.widget.AppCompatTextView
             android:saveEnabled="false"
-            android:id="@+id/competitionText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/default_large_margin"
@@ -51,8 +49,7 @@
             android:textSize="@dimen/tutorial_text_size" />
         <androidx.appcompat.widget.AppCompatTextView
             android:saveEnabled="false"
-            
-            android:id="@+id/limitedAmountText"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/default_large_margin"

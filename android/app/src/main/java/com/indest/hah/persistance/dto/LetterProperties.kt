@@ -2,6 +2,7 @@ package com.indest.hah.persistance.dto
 
 import androidx.annotation.Keep
 import androidx.room.*
+import androidx.room.ColumnInfo.Companion.UNICODE
 
 @Keep
 @kotlinx.serialization.Serializable

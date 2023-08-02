@@ -16,7 +16,7 @@ import com.indest.hah.R
 import com.indest.hah.general.GeneralViewModel
 
 private const val REGULAR_VISIBILITY_CASES = 1
-private const val SPECIAL_VISIBILITY_CASES = 3
+private const val SPECIAL_VISIBILITY_CASES = 5
 private const val SENTENCE_WORD_COUNT = 2
 
 class PurchaseButton : LinearLayoutCompat {
@@ -49,7 +49,9 @@ class PurchaseButton : LinearLayoutCompat {
         val case1 = typedArray.getTextArray(R.styleable.PurchaseButton_visibility_case_1)
         val case2 = typedArray.getTextArray(R.styleable.PurchaseButton_visibility_case_2)
         val case3 = typedArray.getTextArray(R.styleable.PurchaseButton_visibility_case_3)
-        for (case in listOf(case1, case2, case3)) {
+        val case4 = typedArray.getTextArray(R.styleable.PurchaseButton_visibility_case_4)
+        val case5 = typedArray.getTextArray(R.styleable.PurchaseButton_visibility_case_5)
+        for (case in listOf(case1, case2, case3, case4, case5)) {
             if (case != null) {
                 visibilityChangingSkus.add(case.map { it.toString() }.toSet())
             }

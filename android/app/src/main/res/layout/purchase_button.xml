@@ -78,7 +78,6 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:saveEnabled="false"
-                android:id="@+id/purchase_button_label_space"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"

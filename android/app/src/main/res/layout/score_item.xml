@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:saveEnabled="false"
     tools:viewBindingIgnore="true"
-    android:id="@+id/score_item"
     android:layout_width="match_parent"
     android:layout_height="@dimen/simple_dialog_item_height"
     android:layout_marginHorizontal="@dimen/default_large_margin"

@@ -3,6 +3,7 @@ package com.indest.hah.persistance.dto
 import androidx.annotation.Keep
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Fts4
 import androidx.room.PrimaryKey
 import com.indest.hah.persistance.level.LevelProgress
 

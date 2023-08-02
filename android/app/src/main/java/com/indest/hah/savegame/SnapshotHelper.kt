@@ -5,13 +5,12 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
 import com.google.android.gms.games.PlayGames
-import com.google.android.gms.games.SnapshotsClient.DataOrConflict
 import com.google.android.gms.games.SnapshotsClient.RESOLUTION_POLICY_MOST_RECENTLY_MODIFIED
 import com.google.android.gms.games.snapshot.Snapshot
 import com.google.android.gms.games.snapshot.SnapshotMetadata
 import com.google.android.gms.games.snapshot.SnapshotMetadataChange
-import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import com.indest.hah.other.C
 import com.indest.hah.persistance.dto.SaveGame
 import dagger.hilt.android.scopes.ActivityScoped
@@ -27,37 +26,44 @@ class SnapshotHelper @Inject constructor() {
     private val TAG = "SnapshotHelper"
     private val MY_RESOLUTION_POLICY = RESOLUTION_POLICY_MOST_RECENTLY_MODIFIED
 
-    fun save(activity: AppCompatActivity, saveGame: SaveGame, calculatedGameProgress:Long)  {
-        val snapshotsClient = PlayGames.getSnapshotsClient(activity)
-        snapshotsClient.open(
-            C.SAVE_GAME,
-            true,
-            MY_RESOLUTION_POLICY
-        ).addOnCompleteListener { task ->
-            try {
-                if (task.isSuccessful) {
-                    task.result.data?.let { snapshot ->
-                        val coverImage = getCoverImage(activity)
-                        val bytes = gameToBytes(saveGame)
-                        writeSnapshot(
-                            snapshot = snapshot,
-                            data = bytes,
-                            coverImage = coverImage,
-                            desc = "Calculated progress ${calculatedGameProgress}.",
-                            progress = calculatedGameProgress,
-                            activity
+    fun save(activity: AppCompatActivity, saveGame: SaveGame, calculatedGameProgress: Long) {
+        activity?.let { act ->
+            PlayGames.getGamesSignInClient(act).isAuthenticated.addOnSuccessListener { authResultTask ->
+                if (authResultTask.isAuthenticated) {
+                    try {
+                        val snapshotsClient = PlayGames.getSnapshotsClient(activity)
+                        snapshotsClient.open(
+                            C.SAVE_GAME,
+                            true,
+                            MY_RESOLUTION_POLICY
+                        ).addOnSuccessListener { task ->
+                            task.data?.let { snapshot ->
+                                val coverImage = getCoverImage(activity)
+                                val bytes = gameToBytes(saveGame)
+                                writeSnapshot(
+                                    snapshot = snapshot,
+                                    data = bytes,
+                                    coverImage = coverImage,
+                                    desc = "Calculated progress ${calculatedGameProgress}.",
+                                    progress = calculatedGameProgress,
+                                    activity
+                                )
+                            }
+                        }.addOnFailureListener { ex ->
+                            Log.e(TAG, "Could not open the snapshot: ${ex.message}")
+                        }
+                    } catch (e: java.lang.Exception) {
+                        Log.e(
+                            TAG,
+                            "Something went wrong while saving the game :(" + e.message.toString()
                         )
                     }
-                } else {
-                    throw task.exception ?: Exception("Could not save the snapshot.")
                 }
-            } catch (e: java.lang.Exception) {
-                Log.e(TAG, "Something went wrong while saving the game :(" + e.message.toString())
             }
         }
     }
 
-    suspend fun load(activity: AppCompatActivity): SaveGame?  {
+    suspend fun load(activity: AppCompatActivity): SaveGame? {
         try {
             val bytes = getSaveGameBytes(activity).await()
             if (bytes != null) {
@@ -74,18 +80,19 @@ class SnapshotHelper @Inject constructor() {
     private fun getSaveGameBytes(activity: AppCompatActivity): Task<ByteArray?> {
         val snapshotsClient = PlayGames.getSnapshotsClient(activity)
         return snapshotsClient.open(C.SAVE_GAME, true, MY_RESOLUTION_POLICY)
-            .addOnFailureListener { Log.e(TAG, "Error while opening Snapshot.", it.cause) }
-            .continueWith(object : Continuation<DataOrConflict<Snapshot?>?, ByteArray?> {
-                override fun then(task: Task<DataOrConflict<Snapshot?>?>): ByteArray? {
-                    try {
-                        val snapshot = task.result?.data
-                        return snapshot?.snapshotContents?.readFully()
-                    } catch (e: java.lang.Exception) {
-                        Log.e(TAG, "Error while reading Snapshot.", e.cause)
-                    }
-                    return null
+            .addOnFailureListener { exception ->
+                Log.e(TAG, "Error while opening Snapshot.", exception)
+                Tasks.forResult(null)
+            }
+            .onSuccessTask { snapshot ->
+                try {
+                    val saveData = snapshot?.data?.snapshotContents?.readFully()
+                    Tasks.forResult(saveData)
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error while reading Snapshot.", e)
+                    Tasks.forResult<ByteArray?>(null)
                 }
-            }).addOnCompleteListener { return@addOnCompleteListener }
+            }
     }
 
 

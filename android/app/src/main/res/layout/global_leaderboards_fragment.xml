@@ -13,8 +13,8 @@
     app:showDividers="middle">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:saveEnabled="false"
         android:id="@+id/global_leaderboards_recyclerview"
+        android:saveEnabled="false"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clickable="true"

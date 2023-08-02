@@ -8,8 +8,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
-        android:saveEnabled="false"
         android:id="@+id/progress_circular"
+        android:saveEnabled="false"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:indeterminate="true"
@@ -22,8 +22,8 @@
         app:layout_constraintTop_toTopOf="parent"/>
 
     <com.indest.hah.views.CellContainer
-        android:saveEnabled="false"
         android:id="@+id/level_fragment"
+        android:saveEnabled="false"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:animateLayoutChanges="true"

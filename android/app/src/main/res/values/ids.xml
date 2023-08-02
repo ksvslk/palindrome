@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--Google Play game services IDs. Save this file as res/values/ids.xml in your project.-->
 <resources>
-    <string name="app_package_url">https://play.google.com/store/apps/details?id=com.indest.hah</string>
-    <string name="company_social_url">https://twitter.com/IndestGames</string>
-    <string name="vending_package">com.android.vending</string>
+    <string name="app_package_url" translatable="false">https://play.google.com/store/apps/details?id=com.indest.hah</string>
+    <string name="company_social_url" translatable="false">https://twitter.com/IndestGames</string>
+    <string name="vending_package" translatable="false">com.android.vending</string>
     <!--app_id-->
     <string name="app_preferences" translatable="false">AppPreferences</string>
 
@@ -18,55 +18,60 @@
     -->
 
      <!-- Web client id for Firebase login Google play Games -->
-    <string name="gpg_web_client_id">1023077026447-3s7mh9c6c1q10pcblp6g84t2ik6rikhl.apps.googleusercontent.com</string>
-    
+
     <!-- IAP -->
-    <string name="all_inclusive_pack">all_inclusive_pack</string>
-    <string name="instant_letters">instant_letters</string>
-    <string name="instant_clues">instant_clues</string>
-    <string name="sad_mode">sad_mode</string>
-    <string name="instant_pictures">instant_pictures</string>
+    <string name="all_inclusive_pack" translatable="false">all_inclusive_pack</string>
+    <string name="all_inclusive_pack_2" translatable="false">all_inclusive_pack_2</string>
+    <string name="instant_letters" translatable="false">instant_letters</string>
+    <string name="instant_clues" translatable="false">instant_clues</string>
+    <string name="sad_mode" translatable="false">sad_mode</string>
+    <string name="instant_pictures" translatable="false">instant_pictures</string>
 
 
     <!-- IAPs that will unlock clues. ANY match will do. -->
     <string-array name="iap_group_that_unlock_clues">
         <item>@string/all_inclusive_pack</item>
+        <item>@string/all_inclusive_pack_2</item>
         <item>@string/instant_clues</item>
     </string-array>
 
     <!-- IAPs that will unlock pictures. ANY match will do. -->
     <string-array name="iap_group_that_unlock_pictures">
-        <item>@string/all_inclusive_pack</item>
+        <item>@string/all_inclusive_pack_2</item>
         <item>@string/instant_pictures</item>
     </string-array>
 
     <!-- IAPs that will unlock letters. ANY match will do. -->
     <string-array name="iap_group_that_unlock_letters">
         <item>@string/all_inclusive_pack</item>
+        <item>@string/all_inclusive_pack_2</item>
         <item>@string/instant_letters</item>
     </string-array>
 
     <!-- IAPs that will hide letters purchase button from menu. ANY match will do -->
     <string-array name="letters_case_1">
         <item>@string/all_inclusive_pack</item>
+        <item>@string/all_inclusive_pack_2</item>
         <item>@string/instant_letters</item>
     </string-array>
 
-    <!-- IAPs that will hide letters purchase button from menu. ANY match will do -->
+    <!-- IAPs that will hide pictures purchase button from menu. ANY match will do -->
     <string-array name="pictures_case_1">
-        <item>@string/all_inclusive_pack</item>
+        <item>@string/all_inclusive_pack_2</item>
         <item>@string/instant_pictures</item>
     </string-array>
 
     <!-- IAPs that will hide clue purchase button from menu. ANY match will do. -->
     <string-array name="clues_case_1">
         <item>@string/all_inclusive_pack</item>
+        <item>@string/all_inclusive_pack_2</item>
         <item>@string/instant_clues</item>
     </string-array>
 
     <!-- IAPs that will hide intermediate ads removal purchase button from menu. ANY match will do. -->
     <string-array name="sad_mode_case_1">
         <item>@string/all_inclusive_pack</item>
+        <item>@string/all_inclusive_pack_2</item>
         <item>@string/sad_mode</item>
     </string-array>
 
@@ -84,6 +89,9 @@
     </string-array>
     <string-array name="all_inclusive_pack_case4">
         <item>@string/instant_pictures</item>
+    </string-array>
+    <string-array name="all_inclusive_pack_case5">
+        <item>@string/all_inclusive_pack_2</item>
     </string-array>
 
 </resources>
