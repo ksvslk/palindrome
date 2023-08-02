@@ -115,7 +115,7 @@ interface LevelDao {
                     )
                 }
                 val solution = level.solutionToCategory.keys.first()
-                val puzzleShuffled = Shuffler.getShuffledSolution(solution)
+                val puzzleShuffled = Shuffler.getShuffledSolution(solution).replace("-","")
                 updatePuzzle(nextLevelId, puzzleShuffled)
                 puzzleShuffled.forEachIndexed { index, char ->
                     insertLetterData(
@@ -165,7 +165,7 @@ interface LevelDao {
                     )
                 }
                 val solution = level.solutionToCategory.keys.first()
-                val puzzleShuffled = Shuffler.getShuffledSolution(solution).replace("-", "")
+                val puzzleShuffled = Shuffler.getShuffledSolution(solution).replace("-","")
                 updatePuzzle(level.levelId.toInt(), puzzleShuffled)
                 puzzleShuffled.forEachIndexed { index, char ->
                     insertLetterData(

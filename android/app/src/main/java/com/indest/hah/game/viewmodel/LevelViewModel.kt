@@ -135,9 +135,7 @@ class LevelViewModel @Inject constructor(
             val language = _currentLevel.value.levelInfo.countryCode
             val levels = levelRepository.getLevelsForCountry(language)
             val levelsCount = levels.count()
-            Log.d(TAG, "leves for cuntry: $levelsCount")
             val levelShownInUi = levels.indexOfFirst { levelData -> levelData.levelId == levelId } + 1
-            Log.d(TAG, "levelShownInUi: $levelShownInUi")
             val authorIfExists = if (author.isNotEmpty()) " - $author" else ""
             val text =
                 if (solutionsCount > 1) "$levelShownInUi*$authorIfExists" else "$levelShownInUi$authorIfExists"
@@ -563,7 +561,8 @@ class LevelViewModel @Inject constructor(
         viewModelScope.launch {
             val solution = _currentLevel.value.solutions.first().palindrome.replace(Regex("[\\s-]+"), "")
             var solutionData = SolutionData()
-
+            Log.d(TAG, "Guess: $guess")
+            Log.d(TAG, "Solution: $solution")
             if (guess.length == solution.length) {
                 val playerGuess = guess.map { char ->
                     if ("^([?!.,’':-]–)".contains(char)) "" else char
