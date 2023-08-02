@@ -54,7 +54,8 @@ abstract class LevelDatabase : RoomDatabase() {
         override fun onPostMigrate(db: SupportSQLiteDatabase) {
             super.onPostMigrate(db)
             // delete all letters info except level 1
-            db.delete("letter_info_table", "owner_id > ?", arrayOf(1))
+            val countDeleted = db.delete("letter_info_table","1",null)
+            Log.e("LevelDatabase", "Letters deleted count: $countDeleted")
         }
     }
 
