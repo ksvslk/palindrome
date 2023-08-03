@@ -97,12 +97,10 @@ abstract class LevelDatabase : RoomDatabase() {
         private val MIGRATION_3_4 = object : Migration(3, 4) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 try{
-                    database.beginTransaction()
                     database.execSQL("ALTER TABLE level_info_table ADD COLUMN picture_rewarded INTEGER NOT NULL DEFAULT 0")
                     database.execSQL("ALTER TABLE level_info_table ADD COLUMN country_code TEXT NOT NULL DEFAULT 'gb'")
                     database.delete("letter_info_table", null, null)
                     database.execSQL("UPDATE level_info_table SET progress = 4 WHERE progress > 0")
-                    database.endTransaction()
                 } catch (ex: SQLiteException) {
                     Log.e("LevelDatabase", "Migrating from version 3 to 4: " + ex.message)
                 }

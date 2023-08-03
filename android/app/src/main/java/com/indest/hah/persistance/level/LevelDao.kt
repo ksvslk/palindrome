@@ -197,8 +197,8 @@ interface LevelDao {
     @Query("select max(level_id) from level_info_table")
     suspend fun getMaxLevelId(): Int
 
-    @Query("select level_id from level_info_table where level_id > 1000")
-    suspend fun getAllLevelIdsExcludingGameLevels(): List<Int>
+    @Query("select max(level_id) from level_info_table where level_id > 1000 and level_id < 10000")
+    suspend fun getMaxPlayerLevelId(): Int
     @Query("select min(level_id) from level_info_table where country_code = :cc")
     suspend fun getMinLevelIdForCountry(cc:String): Int
 
