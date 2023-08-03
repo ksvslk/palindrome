@@ -121,7 +121,7 @@ fun String.mapCountryCodeToLanguageAndFlag(context: Context): Pair<String, Int> 
         "ro" -> return Pair(context.getString(R.string.romanian), R.drawable.ro)
         "nl" -> return Pair(context.getString(R.string.dutch), R.drawable.nl)
     }
-    return Pair("English", R.drawable.gb)
+    return Pair(context.getString(R.string.english), R.drawable.gb)
 }
 
 fun String.countryCodeToEmoji(): String {

@@ -34,6 +34,7 @@ import com.google.android.gms.games.PlayGames
 import com.google.android.gms.games.Player
 import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.BaseTransientBottomBar.ANIMATION_MODE_FADE
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.ump.ConsentForm
@@ -121,11 +122,6 @@ class MainActivity : AppCompatActivity() {
             ViewCompat.setSystemGestureExclusionRects(binding.root, exclusions)
         }
 
-        binding.levelFlag?.setOnClickListener {
-            levelViewModel.viewModelScope.launch {
-                levelViewModel.simulateNewLevelFetch()
-            }
-        }
     }
 
     override fun onStop() {

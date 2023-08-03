@@ -73,7 +73,7 @@ class LevelViewModel @Inject constructor(
 
     var currentlySignedInPlayerName = "???"
     var tempSubmissionPalindrome = ""
-    var tempCountrySelected = "gb"
+    var tempCountrySelected = Pair("gb",0)
     var currentRelativeLevelNumber = -1
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
@@ -783,7 +783,7 @@ class LevelViewModel @Inject constructor(
 
     private suspend fun subscribeToRealTimePlayerLevelUpdates() {
         if (_accountStatus.value == AccountStatus.SIGNED_IN_WITH_FIREBASE) {
-            val maxPlayerLevelId = levelRepository.getMaxPlayerLevelId()
+            val maxPlayerLevelId = levelRepository.getMaxPlayerLevelId() ?: 1000
             val maxLevelId = levelRepository.getMaxLevelId()
             val query = fsDb.collection("user_submitted_levels").where(
                 Filter.or(
@@ -890,7 +890,7 @@ class LevelViewModel @Inject constructor(
             "palindrome" to playersPalindrome,
             "player" to currentlySignedInPlayerName,
             "solutionToCategory" to hashMapOf(Pair(playersPalindrome, "[ADD_CATEGORY]")),
-            "countryCode" to tempCountrySelected,
+            "countryCode" to tempCountrySelected.first,
             "timestamp" to FieldValue.serverTimestamp(),
         )
 

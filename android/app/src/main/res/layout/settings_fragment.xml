@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:gravity="center"
     android:orientation="vertical"
     android:paddingVertical="@dimen/default_large_margin"
@@ -134,7 +135,6 @@
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/google_sign_in_out_button"
-
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
         android:layout_marginTop="@dimen/default_margin"
@@ -144,7 +144,6 @@
 
         <com.google.android.gms.common.SignInButton
             android:id="@+id/google_sign_in_button"
-
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/simple_dialog_header_left_margin"

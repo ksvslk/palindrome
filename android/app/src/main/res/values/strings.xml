@@ -1,28 +1,9 @@
 <resources>
-    <string name="app_name">hah</string>
-    <string name="title_activity_main">hah</string>
+    <string name="app_name" translatable="false">hah</string>
+    <string name="title_activity_main" translatable="false">hah</string>
     <string name="exit_game_title">Quit game?</string>
     <string name="continue_game">Continue</string>
     <string name="quit">Quit</string>
-
-    <string-array name="quitting_quotes">
-        <item>\"Effort only fully releases its reward after a person refuses to quit.\" ― Napoleon Hill</item>
-        <item>\"Our greatest glory is not in never falling but in rising every time we fall.\" ― Confucius</item>
-        <item>\"You can never quit. Winners never quit, and quitters never win.\" ― Ted Turner</item>
-        <item>\"A quitter never wins and a winner never quits.\" ― Napoleon Hill</item>
-        <item>\"Some quit due to slow progress. Never grasping the fact that slow progress is still progress.\" ― Anonymous</item>
-        <item>\"Cowards never start. The weak never finish. Winners never quit.\" ― Anonymous</item>
-        <item>\"Pain is temporary. Quitting is forever.\" ― Lance Armstrong</item>
-        <item>\"No man is ever whipped until he quits in his own mind.\" ― Napoleon Hill</item>
-        <item>\"It’s hard to beat a person who never gives up.\" ― Babe Ruth</item>
-        <item>\"If you get tired, learn to rest, not to quit.\" ― Banksy</item>
-        <item>\"If you quit once it becomes a habit. Never quit.\" ― Michael Jordan</item>
-        <item>\"Age wrinkles the body; quitting wrinkles the soul.\" ― Douglas MacArthur</item>
-        <item>\"The difference in winning and losing is most often not quitting.\" ― Walt Disney</item>
-        <item>\"It’s not that I’m so smart, it’s just that I stay with problems longer.\" ― Albert Einstein</item>
-        <item>\"Many of life’s failures are people who did not realize how close they were to success when they gave up.\" ― Thomas Edison </item>
-    </string-array>
-
     <string name="select_language">Select Language</string>
     <string name="game_levels">Game Levels</string>
     <string name="player_levels">Player Levels</string>
@@ -36,8 +17,8 @@
     <string name="send_level_input_hint">Enter Your Palindrome</string>
     <string name="stages">Levels</string>
     <string name="hints">Hints</string>
-    <string name="min_length_error">Minimum length is&#160;</string>
-    <string name="max_length_error">Maximum length is&#160;</string>
+    <string name="min_length_error">Minimum length is</string>
+    <string name="max_length_error">Maximum length is</string>
     <string name="all_digits_error">Cannot be all digits</string>
     <string name="palindrome_exists">Palindrome is already added</string>
     <string name="not_a_palindrome_error">Solution must be a palindrome</string>
@@ -70,9 +51,9 @@
     <string name="tap_to_finish">Tap to finish!</string>
     <string name="final_screen_message">Check out also the levels you have not played yet! Or send cool palindromes which can be featured in the game!</string>
     <string name="game_completed_shout">Yay!</string>
-    <string name="game_completed_shout_smiley">(>‿◠)✌</string>
+    <string name="game_completed_shout_smiley" translatable="false">(>‿◠)✌</string>
     <string name="game_completed_shout_shout2">Winning!</string>
-    <string name="game_completed_shout_smiley2">(͠≖ ͜ʖ͠≖)👌</string>
+    <string name="game_completed_shout_smiley2" translatable="false">(͠≖ ͜ʖ͠≖)👌</string>
     <string name="share">Share</string>
     <string name="placeholder">…</string>
     <string name="watch_ad_top_notice">Watch ad = no Sad Mode</string>
@@ -91,15 +72,15 @@
     <string name="level_by">level by</string>
     <string name="levels_added">levels added!</string>
     <string name="level_already_completed">Level is already completed.</string>
-    <string name="of">of</string>
     <string name="points">points</string>
     <string name="send_levels_country_top">Send palindromes and rise your country.</string>
-
+    <string name="picture_hint">Picture hint</string>
 
     <string-array name="save_24_percent_label">
-        <item>SAVE</item>
+        <item>–</item>
         <item>24%</item>
     </string-array>
+
     <string-array name="best_loved_label">
         <item>BEST-</item>
         <item>LOVED</item>
@@ -124,7 +105,6 @@
     <string-array name="solution_wrong_texts">
         <item>Try again.</item>
         <item>Keep trying.</item>
-        <item>Take another stab.</item>
         <item>Look it over.</item>
     </string-array>
 
@@ -165,7 +145,6 @@
     <string name="analytics_user_prop" translatable="false">app_type</string>
     <string name="status_installed" translatable="false">installed</string>
     <string name="status_instant" translatable="false">instant</string>
-    <string name="picture_hint">Picture hint</string>
 
     <!-- Languages -->
     <string name="chinese">Chinese</string>
@@ -208,6 +187,27 @@
         <item>Swedish</item>
         <item>Estonian</item>
         <item>Romanian</item>
+    </string-array>
+
+    <string-array translatable="false" name="country_codes_array">
+        <item>gb</item>
+        <item>es</item>
+        <item>pt</item>
+        <item>cn</item>
+        <item>ko</item>
+        <item>it</item>
+        <item>ka</item>
+        <item>de</item>
+        <item>id</item>
+        <item>tr</item>
+        <item>fr</item>
+        <item>nl</item>
+        <item>fi</item>
+        <item>pl</item>
+        <item>uk</item>
+        <item>sv</item>
+        <item>et</item>
+        <item>ro</item>
     </string-array>
 
 </resources>

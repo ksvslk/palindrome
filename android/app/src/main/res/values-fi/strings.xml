@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="exit_game_title">Lopettaako peli?</string>
+    <string name="continue_game">Jatka</string>
+    <string name="quit">Lopeta</string>
+    <string name="select_language">Valitse Kieli</string>
+    <string name="game_levels">Pelitasot</string>
+    <string name="player_levels">Pelaajatasot</string>
+    <string name="international_levels">Kansainväliset tasot</string>
+    <string name="global_leaderboards">Kansainväliset tulostaulukot</string>
+    <string name="submit_level">Lähetä palindromi</string>
+    <string name="send">Lähetä tarkistettavaksi</string>
+    <string name="something_went_wrong">Jokin meni pieleen.</string>
+    <string name="try_again">Yritä uudelleen</string>
+    <string name="player_leaderboard_text">Pelaajan tulostaulukko</string>
+    <string name="send_level_input_hint">Syötä palindromiisi</string>
+    <string name="stages">Tasot</string>
+    <string name="hints">Vinkkejä</string>
+    <string name="min_length_error">Minimipituus on</string>
+    <string name="max_length_error">Enimmäispituus on</string>
+    <string name="all_digits_error">Ei voi olla kaikkia numeroita</string>
+    <string name="palindrome_exists">Palindromi on jo lisätty</string>
+    <string name="not_a_palindrome_error">Ratkaisun täytyy olla palindromi</string>
+    <string name="levels">Tasot</string>
+    <string name="scores">Pisteet</string>
+    <string name="follow">Seuraa</string>
+    <string name="tutorial">Opetusohjelma</string>
+    <string name="level_select">Pelitason valinta</string>
+    <string name="player_level_select">Soittimen tason valinta</string>
+    <string name="palindrome_successfully_sent">Kiitos! Se tarkistetaan pian!</string>
+    <string name="rate_game">Anna palautetta</string>
+    <string name="you_are_signed_in">Olet kirjautunut sisään</string>
+    <string name="no_internet">Ei Internet-yhteyttä</string>
+    <string name="please_sign_in">Kirjaudu sisään &amp;quot;Asetukset&amp;quot;-sivulta.</string>
+    <string name="achievements">Saavutukset</string>
+    <string name="leaderboard">Pelin tulostaulukko</string>
+    <string name="rewarded_reveal_picture">Paljasta kuva</string>
+    <string name="rewarded_reveal_clue">Paljasta vihje</string>
+    <string name="rewarded_place_letter">Paikka kirje</string>
+    <string name="remove_letter_ads_text">Pikakirjeet</string>
+    <string name="no_ad_available">Vihje ei saatavilla</string>
+    <string name="instantly">Välittömästi</string>
+    <string name="sound_text">Ääni</string>
+    <string name="vibration_text">Värinä</string>
+    <string name="settings">Asetukset</string>
+    <string name="watch_rewarded_video">Katso palkintovideo</string>
+    <string name="play_games">Pelaa pelejä</string>
+    <string name="placeholder_text">paikkamerkki</string>
+    <string name="tap_to_continue">Jatka napauttamalla</string>
+    <string name="tap_to_finish">Lopeta napauttamalla!</string>
+    <string name="final_screen_message">Katso myös tasot, joita et ole vielä pelannut! Tai lähetä upeita palindromeja, jotka voivat olla mukana pelissä!</string>
+    <string name="game_completed_shout">Joo!</string>
+    <string name="game_completed_shout_smiley" translatable="false">(&gt;‿◠)✌</string>
+    <string name="game_completed_shout_shout2">Voitto!</string>
+    <string name="game_completed_shout_smiley2" translatable="false">(͠≖ ͜ʖ͠≖)👌</string>
+    <string name="share">Jaa</string>
+    <string name="placeholder">…</string>
+    <string name="watch_ad_top_notice">Katsomainos = ei surullista tilaa</string>
+    <string name="entering_sad_mode">Olet surullisessa tilassa 😕</string>
+    <string name="entering_normal_mode">Olet normaalitilassa 😆</string>
+    <string name="hints_are_available">Vihjeitä löytyy alta ↙️</string>
+    <string name="send_a_cool_palindrome">Lähetä palindromit ↓</string>
+    <string name="not_a_palindrome">Ei palindromi</string>
+    <string name="submit_once_per_day_limit">Voit lähettää kerran päivässä.</string>
+    <string name="profile_person_symbol">❦</string>
+    <string name="score">Pistemäärä:</string>
+    <string name="you_rank_first">Olet ensimmäisellä sijalla!</string>
+    <string name="earn">Ansaitse</string>
+    <string name="points_to_rank_up">pistettä sijoittumiseen!</string>
+    <string name="new_word">Uusi</string>
+    <string name="level_by">tason mukaan</string>
+    <string name="levels_added">tasoja lisätty!</string>
+    <string name="level_already_completed">Taso on jo suoritettu.</string>
+    <string name="points">pistettä</string>
+    <string name="send_levels_country_top">Lähetä palindromeja ja nosta maasi.</string>
+    <string name="picture_hint">Kuvavinkki</string>
+
+    <string-array name="save_24_percent_label">
+        <item>–</item>
+        <item>24 %</item>
+    </string-array>
+
+    <string-array name="best_loved_label">
+        <item>PARAS-</item>
+        <item>LOVED</item>
+    </string-array>
+
+    <string-array name="good_texts">
+        <item>Oikein!</item>
+        <item>Hyvä!</item>
+        <item>Jatka!</item>
+        <item>Kyllä!</item>
+        <item>Hurraa!</item>
+    </string-array>
+
+    <string-array name="very_good_texts">
+        <item>Mahtavaa!</item>
+        <item>Upeaa!</item>
+        <item>Erinomainen!</item>
+        <item>Täydellinen!</item>
+        <item>Erinomainen!</item>
+    </string-array>
+
+    <string-array name="solution_wrong_texts">
+        <item>Yritä uudelleen.</item>
+        <item>Yritä edelleen.</item>
+        <item>Katso sitä.</item>
+    </string-array>
+
+    <string-array name="palindrome_wrong_texts">
+        <item>Väärä palindromi.</item>
+        <item>Väärä palindromi.</item>
+    </string-array>
+
+
+    <!-- TUTORIAL -->
+    <string name="tutorial_text">Luo sanoja ja lauseita, jotka luetaan samalla tavalla molemmilta puolilta</string>
+    <string name="tutorial3_second_text">• Lauseet vaativat säännöllisiä välimerkkejä \\n• Useissa ratkaisuissa on \\&amp;quot;*\\&amp;quot; -merkki \\n• Vähemmän virheitä = parempi tulos</string>
+    <string name="tutorial_25_level_promo">Yksi asia vielä… Saavuta taso 25 ja saat palkkioksi \\&amp;quot;Instant Clues\\&amp;quot;.</string>
+    <string name="tutorial_complete_text">Valmis! Nauti pelistä 🚀</string>
+    <string name="next">Seuraavaksi</string>
+    <string name="play">Pelaa</string>
+
+
+    <!-- Languages -->
+    <string name="chinese">Kiina</string>
+    <string name="estonian">Viro</string>
+    <string name="romanian">Romania</string>
+    <string name="japanese">Japani</string>
+    <string name="korean">Korealainen</string>
+    <string name="dutch">Hollanti</string>
+    <string name="german">Saksa</string>
+    <string name="french">Ranskalainen</string>
+    <string name="finnish">Suomi</string>
+    <string name="polish">Puola</string>
+    <string name="hindi">Hindi</string>
+    <string name="indonesian">Indonesia</string>
+    <string name="spanish">Espanja</string>
+    <string name="portuguese">Portugali</string>
+    <string name="ukrainian">Ukrainalainen</string>
+    <string name="russian">Venäjä</string>
+    <string name="swedish">Ruotsi</string>
+    <string name="turkish">Turkki</string>
+    <string name="italian">Italialainen</string>
+    <string name="english">Englanti</string>
+
+    <string-array name="languages_array">
+        <item>Englanti</item>
+        <item>Espanja</item>
+        <item>Portugali</item>
+        <item>Kiina</item>
+        <item>Korealainen</item>
+        <item>Italialainen</item>
+        <item>Japani</item>
+        <item>Saksa</item>
+        <item>Indonesia</item>
+        <item>Turkki</item>
+        <item>Ranskalainen</item>
+        <item>Hollanti</item>
+        <item>Suomi</item>
+        <item>Puola</item>
+        <item>Ukrainalainen</item>
+        <item>Ruotsi</item>
+        <item>Viro</item>
+        <item>Romania</item>
+    </string-array>
+
+</resources>

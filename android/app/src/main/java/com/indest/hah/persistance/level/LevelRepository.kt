@@ -20,7 +20,7 @@ class LevelRepository @Inject constructor(
     }
 
     suspend fun getMaxLevelId():Int = levelDao.getMaxLevelId()
-    suspend fun getMaxPlayerLevelId():Int
+    suspend fun getMaxPlayerLevelId():Int?
         = levelDao.getMaxPlayerLevelId()
 
     suspend fun getMinLevelIdForCountry(cc:String):Int

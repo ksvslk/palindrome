@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="exit_game_title">Stop het spel?</string>
+    <string name="continue_game">Doorgaan</string>
+    <string name="quit">Stop</string>
+    <string name="select_language">Taal selecteren</string>
+    <string name="game_levels">Spelniveaus</string>
+    <string name="player_levels">Spelerniveaus</string>
+    <string name="international_levels">Internationale niveaus</string>
+    <string name="global_leaderboards">Internationale klassementen</string>
+    <string name="submit_level">Stuur je palindroom</string>
+    <string name="send">Verzenden ter beoordeling</string>
+    <string name="something_went_wrong">Er is iets misgegaan.</string>
+    <string name="try_again">Probeer het opnieuw</string>
+    <string name="player_leaderboard_text">Spelerklassement</string>
+    <string name="send_level_input_hint">Ga je palindroom binnen</string>
+    <string name="stages">Niveaus</string>
+    <string name="hints">Tips</string>
+    <string name="min_length_error">Minimale lengte is</string>
+    <string name="max_length_error">Maximale lengte is</string>
+    <string name="all_digits_error">Kan niet uit alle cijfers bestaan</string>
+    <string name="palindrome_exists">Palindroom is al toegevoegd</string>
+    <string name="not_a_palindrome_error">De oplossing moet een palindroom zijn</string>
+    <string name="levels">Niveaus</string>
+    <string name="scores">Uitslagen</string>
+    <string name="follow">Volgen</string>
+    <string name="tutorial">Zelfstudie</string>
+    <string name="level_select">Spelniveau selecteren</string>
+    <string name="player_level_select">Spelerniveau selecteren</string>
+    <string name="palindrome_successfully_sent">Bedankt! Het wordt binnenkort beoordeeld!</string>
+    <string name="rate_game">Feedback geven</string>
+    <string name="you_are_signed_in">U bent aangemeld</string>
+    <string name="no_internet">Geen internetverbinding</string>
+    <string name="please_sign_in">Meld u aan vanaf de pagina &amp;quot;Instellingen&amp;quot;.</string>
+    <string name="achievements">Prestaties</string>
+    <string name="leaderboard">Spelklassement</string>
+    <string name="rewarded_reveal_picture">Beeld onthullen</string>
+    <string name="rewarded_reveal_clue">Onthullen aanwijzing</string>
+    <string name="rewarded_place_letter">Plaats brief</string>
+    <string name="remove_letter_ads_text">Directe brieven</string>
+    <string name="no_ad_available">Tip niet beschikbaar</string>
+    <string name="instantly">Meteen</string>
+    <string name="sound_text">Geluid</string>
+    <string name="vibration_text">Trillingen</string>
+    <string name="settings">Instellingen</string>
+    <string name="watch_rewarded_video">Bekijk beloonde video</string>
+    <string name="play_games">Games spelen</string>
+    <string name="placeholder_text">plaatshouder</string>
+    <string name="tap_to_continue">Tik om door te gaan</string>
+    <string name="tap_to_finish">Tik om te voltooien!</string>
+    <string name="final_screen_message">Bekijk ook de levels die je nog niet hebt gespeeld! Of stuur coole palindromen die in het spel kunnen voorkomen!</string>
+    <string name="game_completed_shout">Jeej!</string>
+    <string name="game_completed_shout_smiley" translatable="false">(&gt;‿◠)✌</string>
+    <string name="game_completed_shout_shout2">Winnen!</string>
+    <string name="game_completed_shout_smiley2" translatable="false">(͠≖ ͜ʖ͠≖)👌</string>
+    <string name="share">Delen</string>
+    <string name="placeholder">…</string>
+    <string name="watch_ad_top_notice">Advertentie bekijken = geen verdrietige modus</string>
+    <string name="entering_sad_mode">Je bent in de droevige modus 😕</string>
+    <string name="entering_normal_mode">U bevindt zich in de normale modus 😆</string>
+    <string name="hints_are_available">Hints vind je hieronder ↙️</string>
+    <string name="send_a_cool_palindrome">Stuur palindromen ↓</string>
+    <string name="not_a_palindrome">Geen palindroom</string>
+    <string name="submit_once_per_day_limit">Je kunt één keer per dag indienen.</string>
+    <string name="profile_person_symbol">❦</string>
+    <string name="score">Score:</string>
+    <string name="you_rank_first">Jij staat op de eerste plaats!</string>
+    <string name="earn">Verdien</string>
+    <string name="points_to_rank_up">punten om hoger te scoren!</string>
+    <string name="new_word">Nieuw</string>
+    <string name="level_by">niveau door</string>
+    <string name="levels_added">levels toegevoegd!</string>
+    <string name="level_already_completed">Niveau is al voltooid.</string>
+    <string name="points">punten</string>
+    <string name="send_levels_country_top">Stuur palindromen en verhef je land.</string>
+    <string name="picture_hint">Pictogram</string>
+
+    <string-array name="save_24_percent_label">
+        <item>–</item>
+        <item>24%</item>
+    </string-array>
+
+    <string-array name="best_loved_label">
+        <item>BESTE-</item>
+        <item>GEWELDIG</item>
+    </string-array>
+
+    <string-array name="good_texts">
+        <item>Juist!</item>
+        <item>Goed!</item>
+        <item>Ga door!</item>
+        <item>Ja!</item>
+        <item>Hoera!</item>
+    </string-array>
+
+    <string-array name="very_good_texts">
+        <item>Geweldig!</item>
+        <item>Fantastisch!</item>
+        <item>Uitstekend!</item>
+        <item>Perfect!</item>
+        <item>Uitstekend!</item>
+    </string-array>
+
+    <string-array name="solution_wrong_texts">
+        <item>Probeer het opnieuw.</item>
+        <item>Blijf proberen.</item>
+        <item>Kijk er eens naar.</item>
+    </string-array>
+
+    <string-array name="palindrome_wrong_texts">
+        <item>Verkeerd palindroom.</item>
+        <item>Onjuist palindroom.</item>
+    </string-array>
+
+
+    <!-- TUTORIAL -->
+    <string name="tutorial_text">Maak woorden en zinnen die van beide kanten hetzelfde lezen</string>
+    <string name="tutorial3_second_text">• Zinnen vereisen regelmatige interpunctie \\n• Meerdere oplossingen hebben een \\&amp;quot;*\\&amp;quot; markering \\n• Minder fouten = betere score</string>
+    <string name="tutorial_25_level_promo">Nog één ding... Bereik level 25 en ontvang \\&amp;quot;Instant Clues\\&amp;quot; als beloning.</string>
+    <string name="tutorial_complete_text">Klaar! Geniet van het spel 🚀</string>
+    <string name="next">Volgende</string>
+    <string name="play">Spelen</string>
+
+
+    <!-- Languages -->
+    <string name="chinese">Chinees</string>
+    <string name="estonian">Ests</string>
+    <string name="romanian">Roemeens</string>
+    <string name="japanese">Japans</string>
+    <string name="korean">Koreaans</string>
+    <string name="dutch">Nederlands</string>
+    <string name="german">Duits</string>
+    <string name="french">Frans</string>
+    <string name="finnish">Fins</string>
+    <string name="polish">Pools</string>
+    <string name="hindi">Hindi</string>
+    <string name="indonesian">Indonesisch</string>
+    <string name="spanish">Spaans</string>
+    <string name="portuguese">Portugees</string>
+    <string name="ukrainian">Oekraïens</string>
+    <string name="russian">Russisch</string>
+    <string name="swedish">Zweeds</string>
+    <string name="turkish">Turks</string>
+    <string name="italian">Italiaans</string>
+    <string name="english">Engels</string>
+
+    <string-array name="languages_array">
+        <item>Engels</item>
+        <item>Spaans</item>
+        <item>Portugees</item>
+        <item>Chinees</item>
+        <item>Koreaans</item>
+        <item>Italiaans</item>
+        <item>Japans</item>
+        <item>Duits</item>
+        <item>Indonesisch</item>
+        <item>Turks</item>
+        <item>Frans</item>
+        <item>Nederlands</item>
+        <item>Fins</item>
+        <item>Pools</item>
+        <item>Oekraïens</item>
+        <item>Zweeds</item>
+        <item>Ests</item>
+        <item>Roemeens</item>
+    </string-array>
+
+</resources>

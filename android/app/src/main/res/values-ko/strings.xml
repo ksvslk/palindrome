@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="exit_game_title">게임을 종료하시겠습니까?</string>
+    <string name="continue_game">계속</string>
+    <string name="quit">종료</string>
+    <string name="select_language">언어 선택</string>
+    <string name="game_levels">게임 레벨</string>
+    <string name="player_levels">플레이어 레벨</string>
+    <string name="international_levels">국제 수준</string>
+    <string name="global_leaderboards">국제 순위표</string>
+    <string name="submit_level">회문 보내기</string>
+    <string name="send">검토를 위해 보내기</string>
+    <string name="something_went_wrong">문제가 발생했습니다.</string>
+    <string name="try_again">다시 시도</string>
+    <string name="player_leaderboard_text">플레이어 리더보드</string>
+    <string name="send_level_input_hint">회문 입력</string>
+    <string name="stages">레벨</string>
+    <string name="hints">힌트</string>
+    <string name="min_length_error">최소 길이는</string>
+    <string name="max_length_error">최대 길이는</string>
+    <string name="all_digits_error">모든 숫자가 될 수 없음</string>
+    <string name="palindrome_exists">Palindrome이 이미 추가되었습니다.</string>
+    <string name="not_a_palindrome_error">솔루션은 회문이어야 합니다.</string>
+    <string name="levels">레벨</string>
+    <string name="scores">점수</string>
+    <string name="follow">팔로우</string>
+    <string name="tutorial">튜토리얼</string>
+    <string name="level_select">게임 레벨 선택</string>
+    <string name="player_level_select">플레이어 레벨 선택</string>
+    <string name="palindrome_successfully_sent">감사합니다! 곧 리뷰하겠습니다!</string>
+    <string name="rate_game">피드백 제공</string>
+    <string name="you_are_signed_in">로그인되었습니다</string>
+    <string name="no_internet">인터넷 연결 없음</string>
+    <string name="please_sign_in">&amp;quot;설정&amp;quot; 페이지에서 로그인하십시오.</string>
+    <string name="achievements">성과</string>
+    <string name="leaderboard">게임 순위표</string>
+    <string name="rewarded_reveal_picture">사진 공개</string>
+    <string name="rewarded_reveal_clue">단서를 밝히다</string>
+    <string name="rewarded_place_letter">장소 편지</string>
+    <string name="remove_letter_ads_text">인스턴트 레터</string>
+    <string name="no_ad_available">힌트 없음</string>
+    <string name="instantly">즉시</string>
+    <string name="sound_text">사운드</string>
+    <string name="vibration_text">진동</string>
+    <string name="settings">설정</string>
+    <string name="watch_rewarded_video">보상 비디오 보기</string>
+    <string name="play_games">게임을 하다</string>
+    <string name="placeholder_text">자리표시자</string>
+    <string name="tap_to_continue">계속하려면 탭하세요.</string>
+    <string name="tap_to_finish">끝내려면 탭하세요!</string>
+    <string name="final_screen_message">아직 플레이하지 않은 레벨도 확인하세요! 또는 게임에 등장할 수 있는 멋진 회문을 보내십시오!</string>
+    <string name="game_completed_shout">야호!</string>
+    <string name="game_completed_shout_smiley" translatable="false">(◠‿◠)✌</string>
+    <string name="game_completed_shout_shout2">승리!</string>
+    <string name="game_completed_shout_smiley2" translatable="false">(͠≖ ͜ʖ͠≖)👌</string>
+    <string name="share">공유</string>
+    <string name="placeholder">…</string>
+    <string name="watch_ad_top_notice">광고 보기 = 슬픈 모드 없음</string>
+    <string name="entering_sad_mode">당신은 슬픈 모드에 있습니다 😕</string>
+    <string name="entering_normal_mode">정상 모드입니다 😆</string>
+    <string name="hints_are_available">힌트는 아래에서 확인할 수 있습니다 ↙️</string>
+    <string name="send_a_cool_palindrome">회문 보내기 ↓</string>
+    <string name="not_a_palindrome">회문이 아니다</string>
+    <string name="submit_once_per_day_limit">하루에 한 번 제출할 수 있습니다.</string>
+    <string name="profile_person_symbol">❦</string>
+    <string name="score">점수:</string>
+    <string name="you_rank_first">당신이 1등입니다!</string>
+    <string name="earn">적립</string>
+    <string name="points_to_rank_up">랭크업 포인트!</string>
+    <string name="new_word">신규</string>
+    <string name="level_by">레벨 기준</string>
+    <string name="levels_added">레벨이 추가되었습니다!</string>
+    <string name="level_already_completed">레벨은 이미 완료되었습니다.</string>
+    <string name="points">포인트</string>
+    <string name="send_levels_country_top">팰린드롬을 보내고 나라를 일으켜라.</string>
+    <string name="picture_hint">그림 힌트</string>
+
+    <string-array name="save_24_percent_label">
+        <item>–</item>
+        <item>24%</item>
+    </string-array>
+
+    <string-array name="best_loved_label">
+        <item>베스트-</item>
+        <item>사랑</item>
+    </string-array>
+
+    <string-array name="good_texts">
+        <item>맞아!</item>
+        <item>좋다!</item>
+        <item>계속해!</item>
+        <item>예!</item>
+        <item>만세!</item>
+    </string-array>
+
+    <string-array name="very_good_texts">
+        <item>굉장해!</item>
+        <item>훌륭합니다!</item>
+        <item>좋아요!</item>
+        <item>완벽해!</item>
+        <item>뛰어나다!</item>
+    </string-array>
+
+    <string-array name="solution_wrong_texts">
+        <item>다시 시도하십시오.</item>
+        <item>계속 노력해.</item>
+        <item>찾아봐.</item>
+    </string-array>
+
+    <string-array name="palindrome_wrong_texts">
+        <item>잘못된 회문.</item>
+        <item>잘못된 회문.</item>
+    </string-array>
+
+
+    <!-- TUTORIAL -->
+    <string name="tutorial_text">양쪽에서 읽어도 같은 단어와 문장 만들기</string>
+    <string name="tutorial3_second_text">• 문장에는 일반 구두점이 필요합니다. \\n• 여러 솔루션에는 \\&amp;quot;*\\&amp;quot; 표시가 있습니다. \\n• 실수가 적을수록 점수가 높아집니다.</string>
+    <string name="tutorial_25_level_promo">한 가지 더… 레벨 25에 도달하고 \\&amp;quot;Instant Clues\\&amp;quot;를 보상으로 받으세요.</string>
+    <string name="tutorial_complete_text">완료! 게임을 즐기세요 🚀</string>
+    <string name="next">다음</string>
+    <string name="play">재생</string>
+
+
+    <!-- Languages -->
+    <string name="chinese">중국어</string>
+    <string name="estonian">에스토니아어</string>
+    <string name="romanian">루마니아어</string>
+    <string name="japanese">일본어</string>
+    <string name="korean">한국어</string>
+    <string name="dutch">네덜란드어</string>
+    <string name="german">독일어</string>
+    <string name="french">프랑스어</string>
+    <string name="finnish">핀란드어</string>
+    <string name="polish">폴란드어</string>
+    <string name="hindi">힌디어</string>
+    <string name="indonesian">인도네시아어</string>
+    <string name="spanish">스페인어</string>
+    <string name="portuguese">포르투갈어</string>
+    <string name="ukrainian">우크라이나어</string>
+    <string name="russian">러시아어</string>
+    <string name="swedish">스웨덴어</string>
+    <string name="turkish">터키어</string>
+    <string name="italian">이탈리아어</string>
+    <string name="english">영어</string>
+
+    <string-array name="languages_array">
+        <item>영어</item>
+        <item>스페인어</item>
+        <item>포르투갈어</item>
+        <item>중국어</item>
+        <item>한국어</item>
+        <item>이탈리아어</item>
+        <item>일본어</item>
+        <item>독일어</item>
+        <item>인도네시아어</item>
+        <item>터키어</item>
+        <item>프랑스어</item>
+        <item>네덜란드어</item>
+        <item>핀란드어</item>
+        <item>폴란드어</item>
+        <item>우크라이나어</item>
+        <item>스웨덴어</item>
+        <item>에스토니아어</item>
+        <item>루마니아어</item>
+    </string-array>
+</resources>

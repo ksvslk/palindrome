@@ -12,8 +12,6 @@ import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.indest.hah.R
 import com.indest.hah.other.findSuitableParent
-import com.indest.hah.views.MessageSnackBar.Companion.TextSize.BIG
-import com.indest.hah.views.MessageSnackBar.Companion.TextSize.SMALL
 
 
 class MessageSnackBar(
@@ -55,7 +53,6 @@ class MessageSnackBar(
             view: View,
             message: String,
             duration: Int,
-            textSize: TextSize,
             animateText: Boolean = false,
             isViewEnabled:Boolean = true
         ): MessageSnackBar {
@@ -71,7 +68,6 @@ class MessageSnackBar(
             ) as MessageSnackView
             val textView = customView.findViewById<TextView>(R.id.message)
             textView.text = message
-            textView.textSize = getTextSize(view.context, textSize)
             val snackBar = MessageSnackBar(parent, customView)
             snackBar.view.isEnabled = isViewEnabled
             snackBar.duration = duration
@@ -88,39 +84,6 @@ class MessageSnackBar(
                 it.repeatMode = ObjectAnimator.REVERSE
                 it.start()
             }
-        }
-
-        private fun getTextSize(
-            context: Context,
-            textSize: TextSize
-        ): Float {
-
-            //val textBig = context.resources.getDimension(R.dimen.winning_message_size)
-            //val textSmall = context.resources.getDimension(R.dimen.other_message_size)
-            val smallestWidth = context.resources.configuration.smallestScreenWidthDp
-            val divider = when {
-                smallestWidth < 600f -> 12 // compact
-                (600f <= smallestWidth && smallestWidth < 840f) -> 20 // medium
-                smallestWidth > 840f -> 30 // expanded
-                else -> 12
-            }
-
-            val widthDivided: Int = context.resources.displayMetrics.widthPixels / divider
-            val textBig = widthDivided / context.resources.displayMetrics.density
-            val textSmall = widthDivided / context.resources.displayMetrics.density * 0.8f
-
-            val s = context.resources.getDimension(com.intuit.ssp.R.dimen._8ssp)
-            val b = context.resources.getDimension(com.intuit.ssp.R.dimen._9ssp)
-
-            return when (textSize) {
-                SMALL -> s
-                BIG -> b
-            }
-        }
-
-        enum class TextSize {
-            SMALL,
-            BIG
         }
     }
 }

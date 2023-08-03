@@ -217,7 +217,7 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
     implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
     implementation "androidx.fragment:fragment-ktx:$fragment_version"
-    implementation "com.google.android.gms:play-services-ads-lite:$ads_version"
+    implementation "com.google.android.gms:play-services-ads:$ads_version"
     implementation "com.google.android.gms:play-services-auth:$google_play_services_auth_version"
     implementation "com.google.android.gms:play-services-games-v2:$play_games_services_version"
     implementation "com.google.android.ump:user-messaging-platform:$user_messaging_platform_version"

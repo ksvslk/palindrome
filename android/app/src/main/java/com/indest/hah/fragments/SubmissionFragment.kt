@@ -1,5 +1,6 @@
 package com.indest.hah.fragments
 
+import android.app.Dialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -12,7 +13,10 @@ import androidx.core.content.ContextCompat
 import androidx.core.text.isDigitsOnly
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.indest.hah.MainActivity
 import com.indest.hah.R
 import com.indest.hah.databinding.SubmissionFragmentBinding
 import com.indest.hah.game.viewmodel.LevelViewModel
@@ -21,7 +25,7 @@ import com.indest.hah.other.isPalindrome
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 
-class SubmissionFragment : FullBottomSheetDialogFragment() {
+class SubmissionFragment : BottomSheetDialogFragment() {
     private val TAG = "SubmissionFragment"
     private var _binding: SubmissionFragmentBinding? = null
     private val binding get() = _binding!!
@@ -41,27 +45,25 @@ class SubmissionFragment : FullBottomSheetDialogFragment() {
 
     private fun showLanguageSelectionDialog()
     {
+        // these to match in length
         val languages = resources.getStringArray(R.array.languages_array)
-        val languagesReversed = C.languages.entries.associate { it.value to it.key }
+        val countryCodes = resources.getStringArray(R.array.country_codes_array)
+        assert(languages.size == countryCodes.size)
 
-        MaterialAlertDialogBuilder(requireContext())
+        val selectionDialog = MaterialAlertDialogBuilder(requireContext())
             .setTitle(resources.getString(R.string.select_language))
             .setItems(languages) { _, index ->
-                // correct index, languages_array has one more English as the first element.
-                // so if index is always -1 and if it is -1 then it is English
-                val selectedLanguage = languages[index]
-                val countryCode = if (selectedLanguage == "English") "gb" else languagesReversed[selectedLanguage]
-                Log.d(TAG, "Selected is $selectedLanguage with country code $countryCode")
-                levelViewModel.tempCountrySelected = countryCode!!
+                val countryCode = countryCodes[index]
+                levelViewModel.tempCountrySelected = Pair(countryCode!!,index)
                 refreshSelectedLanguage()
-            }.show()
-
+            }.create()
+        selectionDialog.show()
     }
 
     private fun refreshSelectedLanguage()
     {
-        val language = if (levelViewModel.tempCountrySelected == "gb") resources.getString(R.string.english)
-                       else C.languages[levelViewModel.tempCountrySelected]
+        val languages = resources.getStringArray(R.array.languages_array)
+        val language = languages[levelViewModel.tempCountrySelected.second]
         binding.currentlySelectedLanguage.text = language
         binding.enterPalindromeTextInputLayout.editText?.setText(levelViewModel.tempSubmissionPalindrome)
     }
@@ -125,7 +127,7 @@ class SubmissionFragment : FullBottomSheetDialogFragment() {
                                 )
                             )
                             errors.remove(getString(R.string.palindrome_exists))
-                            if (p0.toString().isPalindrome(language = levelViewModel.tempCountrySelected)) {
+                            if (p0.toString().isPalindrome(language = levelViewModel.tempCountrySelected.first)) {
                                 errors.remove(getString(R.string.not_a_palindrome_error))
                                 binding.enterPalindromeTextInputLayout.error = null
                                 binding.enterPalindromeTextInputLayout.errorIconDrawable = null
@@ -175,12 +177,14 @@ class SubmissionFragment : FullBottomSheetDialogFragment() {
         binding.sendLevelButton.setOnClickListener {
             lifecycleScope.launchWhenCreated {
                 binding.enterPalindromeTextInputLayout.visibility = View.GONE
+                binding.languageSelectionButton.visibility = View.GONE
                 binding.sendLevelFlipper.showNext()
                 levelViewModel.submissionEventFlow.collect { event ->
                     when (event) {
                         LevelViewModel.SubmissionEvent.Succeeded -> {
                             binding.sendLevelFlipper.showNext()
                             binding.sendLevelSuccessView.visibility = View.VISIBLE
+                            binding.languageSelectionButton.visibility = View.GONE
                             binding.enterPalindromeTextInputLayout.visibility = View.GONE
                             lifecycleScope.launchWhenCreated {
                                 delay(3000)
@@ -194,6 +198,7 @@ class SubmissionFragment : FullBottomSheetDialogFragment() {
                             binding.sendLevelFailedButton.setOnClickListener {
                                 binding.sendLevelFailedView.visibility = View.GONE
                                 binding.sendLevelFlipper.showNext()
+                                binding.languageSelectionButton.visibility = View.VISIBLE
                                 binding.enterPalindromeTextInputLayout.visibility = View.VISIBLE
                             }
                             this.cancel()

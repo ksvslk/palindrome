@@ -352,7 +352,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             view = binding.levelFragment,
             message = randomCorrectMessage,
             duration = 2000,
-            textSize = MessageSnackBar.Companion.TextSize.BIG,
         )
         messages.add(winningMessage)
         return winningMessage
@@ -363,7 +362,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             view = binding.levelFragment,
             message = "",
             duration = 2000,
-            textSize = MessageSnackBar.Companion.TextSize.SMALL,
         )
         messages.add(scoreMessage)
         return scoreMessage
@@ -371,12 +369,11 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
     private fun getContinueMessage(isLastLevel: Pair<Boolean, Boolean>):MessageSnackBar {
         val continueMessage = MessageSnackBar.make(
-            view = binding.levelFragment,
+            view = binding.root,
             message = if (!isLastLevel.first && !isLastLevel.second) getString(R.string.tap_to_continue) else getString(
                 R.string.tap_to_finish
             ),
-            duration = Int.MAX_VALUE,
-            textSize = MessageSnackBar.Companion.TextSize.SMALL,
+            duration = Int.MAX_VALUE
         )
         messages.add(continueMessage)
         return continueMessage
@@ -395,7 +392,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             view = binding.levelFragment,
             message = messageToDisplay,
             duration = 2000,
-            textSize = MessageSnackBar.Companion.TextSize.SMALL,
             animateText = false,
             isViewEnabled = false
         )

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="exit_game_title">Вийти з гри?</string>
+    <string name="continue_game">Продовжити</string>
+    <string name="quit">Вийти</string>
+    <string name="select_language">Вибір мови</string>
+    <string name="game_levels">Рівні гри</string>
+    <string name="player_levels">Рівні гравців</string>
+    <string name="international_levels">Міжнародні рівні</string>
+    <string name="global_leaderboards">Міжнародні таблиці лідерів</string>
+    <string name="submit_level">Надішліть свій паліндром</string>
+    <string name="send">Надіслати на перевірку</string>
+    <string name="something_went_wrong">Щось пішло не так.</string>
+    <string name="try_again">Спробуйте ще раз</string>
+    <string name="player_leaderboard_text">Таблиця лідерів гравців</string>
+    <string name="send_level_input_hint">Введіть свій паліндром</string>
+    <string name="stages">Рівні</string>
+    <string name="hints">Підказки</string>
+    <string name="min_length_error">Мінімальна довжина</string>
+    <string name="max_length_error">Максимальна довжина</string>
+    <string name="all_digits_error">Не може бути всіма цифрами</string>
+    <string name="palindrome_exists">Palindrome вже додано</string>
+    <string name="not_a_palindrome_error">Рішення має бути паліндромом</string>
+    <string name="levels">Рівні</string>
+    <string name="scores">Оцінки</string>
+    <string name="follow">Слідуй</string>
+    <string name="tutorial">Навчальний посібник</string>
+    <string name="level_select">Вибір рівня гри</string>
+    <string name="player_level_select">Вибір рівня гравця</string>
+    <string name="palindrome_successfully_sent">Дякую! Незабаром його буде розглянуто!</string>
+    <string name="rate_game">Надішліть відгук</string>
+    <string name="you_are_signed_in">Ви ввійшли</string>
+    <string name="no_internet">Немає підключення до Інтернету</string>
+    <string name="please_sign_in">Увійдіть зі сторінки «Налаштування».</string>
+    <string name="achievements">Досягнення</string>
+    <string name="leaderboard">Таблиця лідерів гри</string>
+    <string name="rewarded_reveal_picture">Відкрити зображення</string>
+    <string name="rewarded_reveal_clue">Розкрити підказку
+37 </string>
+    <string name="rewarded_place_letter">Літера місця</string>
+    <string name="remove_letter_ads_text">Миттєві листи</string>
+    <string name="no_ad_available">Підказка недоступна</string>
+    <string name="instantly">Миттєво</string>
+    <string name="sound_text">Звук</string>
+    <string name="vibration_text">Вібрація</string>
+    <string name="settings">Налаштування</string>
+    <string name="watch_rewarded_video">Перегляньте відео з винагородою</string>
+    <string name="play_games">Грати в ігри</string>
+    <string name="placeholder_text">заповнювач</string>
+    <string name="tap_to_continue">Натисніть, щоб продовжити</string>
+    <string name="tap_to_finish">Торкніться, щоб закінчити!</string>
+    <string name="final_screen_message">Перегляньте також рівні, на яких ви ще не грали! Або надішліть круті паліндроми, які можуть бути представлені в грі!</string>
+    <string name="game_completed_shout">Ура!</string>
+    <string name="game_completed_shout_smiley" translatable="false">(&gt;‿◠)✌</string>
+    <string name="game_completed_shout_shout2">Перемога!</string>
+    <string name="game_completed_shout_smiley2" translatable="false">(͠≖ ͜ʖ͠≖)👌</string>
+    <string name="share">Поділитися</string>
+    <string name="placeholder">…</string>
+    <string name="watch_ad_top_notice">Переглянути рекламу = немає сумного режиму</string>
+    <string name="entering_sad_mode">Ви в сумному режимі 😕</string>
+    <string name="entering_normal_mode">Ви в звичайному режимі 😆</string>
+    <string name="hints_are_available">Поради можна знайти нижче ↙️</string>
+    <string name="send_a_cool_palindrome">Надіслати паліндроми ↓</string>
+    <string name="not_a_palindrome">Не паліндром</string>
+    <string name="submit_once_per_day_limit">Ви можете надсилати раз на день.</string>
+    <string name="profile_person_symbol">❦</string>
+    <string name="score">Оцінка:</string>
+    <string name="you_rank_first">Ви займаєте перше місце!</string>
+    <string name="earn">Заробити</string>
+    <string name="points_to_rank_up">балів для підвищення!</string>
+    <string name="new_word">Нове</string>
+    <string name="level_by">level by</string>
+    <string name="levels_added">додано рівнів!</string>
+    <string name="level_already_completed">Рівень уже пройдено.</string>
+    <string name="points">балів</string>
+    <string name="send_levels_country_top">Надішліть паліндром і підніміть свою країну.</string>
+    <string name="picture_hint">Підказка до малюнка</string>
+
+    <string-array name="save_24_percent_label">
+        <item>–</item>
+        <item>24%</item>
+    </string-array>
+    <string-array name="best_loved_label">
+        <item>КРАЩИЙ-</item>
+        <item>ЛЮБЛЮ</item>
+    </string-array>
+
+    <string-array name="good_texts">
+        <item>Правильно!</item>
+        <item>Добре!</item>
+        <item>Продовжуйте!</item>
+        <item>Так!</item>
+        <item>Ура!</item>
+    </string-array>
+
+    <string-array name="very_good_texts">
+        <item>Чудово!</item>
+        <item>Чудово!</item>
+        <item>Чудово!</item>
+        <item>Ідеально!</item>
+        <item>Видатно!</item>
+    </string-array>
+
+    <string-array name="solution_wrong_texts">
+        <item>Спробуйте ще раз.</item>
+        <item>Продовжуйте намагатися.</item>
+        <item>Перегляньте.</item>
+    </string-array>
+
+    <string-array name="palindrome_wrong_texts">
+        <item>Неправильний паліндром.</item>
+        <item>Неправильний паліндром.</item>
+    </string-array>
+
+    <!-- TUTORIAL -->
+    <string name="tutorial_text">Створіть слова та речення, які читаються однаково з обох сторін</string>
+    <string name="tutorial3_second_text">• Речення вимагають правильної пунктуації \\n• Кілька рішень мають позначку \\&amp;quot;*\\&amp;quot; \\n• Менше помилок = кращий бал</string>
+    <string name="tutorial_25_level_promo">Ще одна річ… Досягніть рівня 25 і отримайте \\&amp;quot;Миттєві підказки\\&amp;quot; як нагороду.</string>
+    <string name="tutorial_complete_text">Готово! Насолоджуйтесь грою 🚀</string>
+    <string name="next">Далі</string>
+    <string name="play">Грати</string>
+
+    <!-- Languages -->
+    <string name="chinese">Китайська</string>
+    <string name="estonian">Естонська</string>
+    <string name="romanian">Румунська</string>
+    <string name="japanese">Японська</string>
+    <string name="korean">Корейська</string>
+    <string name="dutch">Голландська</string>
+    <string name="german">Німецька</string>
+    <string name="french">Французька</string>
+    <string name="finnish">Фінська</string>
+    <string name="polish">Польська</string>
+    <string name="hindi">Хінді</string>
+    <string name="indonesian">Індонезійська</string>
+    <string name="spanish">Іспанська</string>
+    <string name="portuguese">Португальська</string>
+    <string name="ukrainian">Українська</string>
+    <string name="russian">Російська</string>
+    <string name="swedish">Шведська</string>
+    <string name="turkish">Турецька</string>
+    <string name="italian">Італійська</string>
+    <string name="english">Англійська</string>
+
+    <string-array name="languages_array">
+        <item>Англійська</item>
+        <item>Іспанська</item>
+        <item>Португальська</item>
+        <item>Китайська</item>
+        <item>Корейська</item>
+        <item>Італійська</item>
+        <item>Японська</item>
+        <item>Німецька</item>
+        <item>Індонезійська</item>
+        <item>Турецька</item>
+        <item>Французька</item>
+        <item>Голландська</item>
+        <item>Фінська</item>
+        <item>Польська</item>
+        <item>Українська</item>
+        <item>Шведська</item>
+        <item>Естонська</item>
+        <item>Румунська</item>
+    </string-array>
+
+</resources>
