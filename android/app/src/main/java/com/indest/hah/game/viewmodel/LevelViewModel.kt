@@ -783,10 +783,24 @@ class LevelViewModel @Inject constructor(
 
     private suspend fun subscribeToRealTimePlayerLevelUpdates() {
         if (_accountStatus.value == AccountStatus.SIGNED_IN_WITH_FIREBASE) {
-            val allLevelsIdsExcludingGameLevels = levelRepository.getAllLevelIdsExcludingGameLevels()
-            val query = fsDb.collection("user_submitted_levels")
-                .whereEqualTo("isFeatured", true)
-                .whereNotIn("levelId", allLevelsIdsExcludingGameLevels)
+            val maxPlayerLevelId = levelRepository.getMaxPlayerLevelId()
+            val maxLevelId = levelRepository.getMaxLevelId()
+            val query = fsDb.collection("user_submitted_levels").where(
+                Filter.or(
+                    // player levels 1000+
+                    Filter.and(
+                        Filter.equalTo("isFeatured", true),
+                        Filter.greaterThan("levelId", maxPlayerLevelId),
+                        Filter.lessThan("levelId",10000)
+                    ),
+                    // language levels 10000+
+                    Filter.and(
+                        Filter.equalTo("isFeatured", true),
+                        Filter.greaterThan("levelId", 10000),
+                        Filter.greaterThan("levelId", maxLevelId),
+                    )
+                )
+            )
             liveStoreRegistration = query.addSnapshotListener(EventListener { snapshots, e ->
                 if (e != null) {
                     Log.w(TAG, "listen:error", e)
