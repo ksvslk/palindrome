@@ -2,7 +2,6 @@ package com.indest.hah.persistance.level
 
 import android.content.ContentValues
 import android.content.Context
-import android.database.sqlite.SQLiteDatabase.CONFLICT_REPLACE
 import android.database.sqlite.SQLiteException
 import android.util.Log
 import androidx.annotation.Keep
@@ -21,6 +20,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.decodeFromJsonElement
 
+
 @Keep
 @Serializable
 data class LevelInfo(val nr: Int, val solutionToCategory:Map<String,String>)
@@ -33,10 +33,6 @@ data class LevelInfo(val nr: Int, val solutionToCategory:Map<String,String>)
             from = 1,
             to = 2,
             spec = LevelDatabase.MyAutoMigration::class
-        ),
-        AutoMigration(
-            from = 3,
-            to = 4
         )
     ],
     exportSchema = true
@@ -93,11 +89,25 @@ abstract class LevelDatabase : RoomDatabase() {
                     database.execSQL("ALTER TABLE level_info_table ADD COLUMN column_count INTEGER NOT NULL DEFAULT 7")
                     database.execSQL("ALTER TABLE interval ADD COLUMN timestamp INTEGER NOT NULL DEFAULT -1")
                 } catch (ex: SQLiteException) {
-                    Log.w("LevelDatabase", "Altering database to migrate from version 2 to 3: " + ex.message)
+                    Log.e("LevelDatabase", "Altering database to migrate from version 2 to 3: " + ex.message)
                 }
             }
         }
 
+        private val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                try{
+                    database.beginTransaction()
+                    database.execSQL("ALTER TABLE level_info_table ADD COLUMN picture_rewarded INTEGER NOT NULL DEFAULT 0")
+                    database.execSQL("ALTER TABLE level_info_table ADD COLUMN country_code TEXT NOT NULL DEFAULT 'gb'")
+                    database.delete("letter_info_table", null, null)
+                    database.execSQL("UPDATE level_info_table SET progress = 4 WHERE progress > 0")
+                    database.endTransaction()
+                } catch (ex: SQLiteException) {
+                    Log.e("LevelDatabase", "Migrating from version 3 to 4: " + ex.message)
+                }
+            }
+        }
 
         @Volatile
         private var INSTANCE: LevelDatabase? = null
@@ -112,9 +122,8 @@ abstract class LevelDatabase : RoomDatabase() {
                         LevelDatabase::class.java,
                         "dbd.db"
                     )
-                        .addMigrations(MIGRATION_2_3)
+                        .addMigrations(MIGRATION_2_3, MIGRATION_3_4)
                         .addAutoMigrationSpec(MyAutoMigration(context))
-                        .fallbackToDestructiveMigration()
                         .createFromAsset("dbd.db")
                               /*
                     .addCallback(object : RoomDatabase.Callback() {
