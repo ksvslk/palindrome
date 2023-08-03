@@ -33,6 +33,7 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.decodeFromJsonElement
 import java.util.Arrays
 import javax.inject.Inject
+import kotlin.math.max
 
 
 @HiltViewModel
@@ -198,8 +199,8 @@ class LevelViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             levelRepository.init()
+            addLanguagePacks()
         }
-
     }
 
 
@@ -898,6 +899,26 @@ class LevelViewModel @Inject constructor(
 
     fun isAllowedToSubmitAndSignedInToFirebase(): Boolean {
         return _accountStatus.value == AccountStatus.SIGNED_IN_WITH_FIREBASE
+    }
+
+    private suspend fun addLanguagePacks() {
+        if (levelRepository.getUniqueCountries().isEmpty())
+        {
+            C.languages.entries.forEach { entry ->
+                val cc = entry.key
+                val jsonInstance = Json { isLenient = true }
+                val json =
+                    getApplication<Application>().applicationContext.assets.open("language_pack_$cc.json")
+                        .bufferedReader().use {
+                            it.readText()
+                        }
+                val languageLevels = jsonInstance
+                    .decodeFromString<List<JsonElement>>(json)
+                    .map { jsonInstance.decodeFromJsonElement(it) as LanguageLevel }
+
+                levelRepository.insertLanguageLevelPack(languageLevels, cc)
+            }
+        }
     }
 
 }

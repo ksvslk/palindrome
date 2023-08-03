@@ -425,7 +425,7 @@ interface LevelDao {
         deleteLetterInfo(levelNr)
         val levelSolutions = getLevelSolutions(levelNr)
         val solution = levelSolutions.first()
-        val puzzle = Shuffler.getShuffledSolution(solution)
+        val puzzle = Shuffler.getShuffledSolution(solution).replace("-","")
         updatePuzzle(levelNr, puzzle)
         puzzle.forEachIndexed { index, char ->
             insertLetterData(
@@ -441,11 +441,24 @@ interface LevelDao {
         updateProgress(levelNr, progress)
     }
 
+    @Query("select level_id from level_info_table where progress = 4")
+    suspend fun getAllMigratedLevelIds():List<Int>
+
+
+    @Transaction
+    suspend fun resetAllMigratedLevels()
+    {
+        val allLevelsToBeReset = getAllMigratedLevelIds()
+        allLevelsToBeReset.forEach { levelNr ->
+            resetLevel(levelNr, LevelProgress.REPLAY)
+        }
+    }
 
     @Transaction
     suspend fun init() {
         val firstLevelProgress = getLevelProgress(1)
         if (firstLevelProgress == LevelProgress.TODO) resetLevel(1)
+        resetAllMigratedLevels()
     }
 
     @Transaction
