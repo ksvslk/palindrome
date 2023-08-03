@@ -100,6 +100,7 @@ abstract class LevelDatabase : RoomDatabase() {
                     database.execSQL("ALTER TABLE level_info_table ADD COLUMN picture_rewarded INTEGER NOT NULL DEFAULT 0")
                     database.execSQL("ALTER TABLE level_info_table ADD COLUMN country_code TEXT NOT NULL DEFAULT 'gb'")
                     database.delete("letter_info_table", null, null)
+                    database.execSQL("UPDATE level_info_table SET progress = 1 WHERE level_id > 1000 and level_id < 10000")
                     database.execSQL("UPDATE level_info_table SET progress = 4 WHERE progress > 0")
                 } catch (ex: SQLiteException) {
                     Log.e("LevelDatabase", "Migrating from version 3 to 4: " + ex.message)
