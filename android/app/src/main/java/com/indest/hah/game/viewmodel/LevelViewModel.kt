@@ -31,6 +31,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.decodeFromJsonElement
+import java.util.Arrays
 import javax.inject.Inject
 
 
@@ -781,10 +782,10 @@ class LevelViewModel @Inject constructor(
 
     private suspend fun subscribeToRealTimePlayerLevelUpdates() {
         if (_accountStatus.value == AccountStatus.SIGNED_IN_WITH_FIREBASE) {
-            val maxLevelId = levelRepository.getMaxLevelId()
+            val allLevelsIdsExcludingGameLevels = levelRepository.getAllLevelIdsExcludingGameLevels()
             val query = fsDb.collection("user_submitted_levels")
                 .whereEqualTo("isFeatured", true)
-                .whereGreaterThan("levelId", maxLevelId)
+                .whereNotIn("levelId", allLevelsIdsExcludingGameLevels)
             liveStoreRegistration = query.addSnapshotListener(EventListener { snapshots, e ->
                 if (e != null) {
                     Log.w(TAG, "listen:error", e)
