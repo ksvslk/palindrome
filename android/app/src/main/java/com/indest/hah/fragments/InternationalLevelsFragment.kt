@@ -42,10 +42,6 @@ class InternationalLevelsFragment : FullBottomSheetDialogFragment() {
                             DividerItemDecoration.VERTICAL
                         )
                     )
-                    binding.internationalLevelsRecyclerview.updatePadding(
-                        left = resources.getDimensionPixelSize(R.dimen.simple_dialog_header_left_margin),
-                        right = resources.getDimensionPixelSize(R.dimen.simple_dialog_header_left_margin)
-                    )
                     binding.internationalLevelsRecyclerview.adapter =
                         LanguageItemAdapter(false, countries) {
                              it?.let {cc ->

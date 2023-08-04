@@ -17,7 +17,6 @@
         style="@style/Widget.Design.TextInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/def"
         android:layout_marginHorizontal="@dimen/default_large_margin"
         app:counterEnabled="true"
         app:counterMaxLength="@integer/maxUserPalindromeLength"
@@ -33,7 +32,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/send_level_input_hint"
             android:inputType="textNoSuggestions|textCapCharacters"
-            android:textSize="@dimen/_12ssp" />
+            android:textSize="@dimen/body_small_text_size" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -43,7 +42,6 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="vertical"
-        android:layout_margin="@dimen/def"
         android:layout_marginHorizontal="@dimen/default_large_margin"
         android:saveEnabled="false">
 

@@ -224,6 +224,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         binding.levelFragment.removeAllViewsInLayout()
         lifecycleScope.launch(Dispatchers.Main)
         {
+
             val levelGridLayout = levelCreator.getLevel(
                 level,
                 layoutInflater,

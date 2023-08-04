@@ -7,8 +7,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_marginStart="@dimen/simple_dialog_item_left_margin"
-        android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
         android:clickable="false"
         android:tint="?colorOnPrimaryContainer"
         android:contentDescription="@string/remove_letter_ads_text"
@@ -19,7 +17,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clickable="false"
-        android:layout_marginRight="@dimen/simple_dialog_header_left_margin"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:weightSum="2">
@@ -49,7 +46,6 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:background="?colorTertiaryContainer"
-                android:paddingHorizontal="@dimen/_3sdp"
                 android:text="@string/placeholder"
                 android:textAppearance="@style/TextAppearance.OC.Caption"
                 android:textColor="?colorOnTertiaryContainer" />
@@ -71,7 +67,6 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:background="?colorTertiaryContainer"
-                android:padding="@dimen/_3sdp"
                 android:text="@string/placeholder"
                 android:textAppearance="@style/TextAppearance.OC.Caption"
                 android:textColor="?colorOnTertiaryContainer" />
@@ -92,7 +87,6 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:background="?colorTertiary"
-                android:padding="@dimen/_3sdp"
                 android:text="@string/placeholder"
                 android:textAppearance="@style/TextAppearance.OC.Caption"
                 android:textColor="?colorOnTertiary" />

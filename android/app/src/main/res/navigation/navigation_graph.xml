@@ -36,29 +36,7 @@
         android:name="com.indest.hah.fragments.TutorialFragment"
         android:label="@string/tutorial"
         tools:layout="@layout/tutorial_fragment" >
-        <action
-            android:id="@+id/action_navigation_tutorial_to_navigation_third_tutorial"
-            app:destination="@id/navigation_third_tutorial"
-            app:popUpTo="@id/navigation_level" />
     </dialog>
-
-    <dialog
-        android:id="@+id/navigation_second_tutorial"
-        android:name="com.indest.hah.fragments.SecondTutorialFragment"
-        android:label="@string/tutorial"
-        tools:layout="@layout/second_tutorial_fragment" />
-
-    <dialog
-        android:id="@+id/navigation_third_tutorial"
-        android:name="com.indest.hah.fragments.ThirdTutorialFragment"
-        android:label="@string/tutorial"
-        tools:layout="@layout/third_tutorial_fragment" >
-        <action
-            android:id="@+id/action_navigation_third_tutorial_to_navigation_second_tutorial"
-            app:popUpTo="@id/navigation_level"
-            app:destination="@id/navigation_second_tutorial" />
-    </dialog>
-
 
     <fragment
         android:id="@+id/navigation_final_screen"
@@ -84,7 +62,6 @@
         android:name="com.indest.hah.fragments.HintsFragment"
         android:label="@string/hints"
         tools:layout="@layout/hints_fragment" >
-
     </dialog>
 
     <dialog

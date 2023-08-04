@@ -57,62 +57,56 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         palindrome: String
     ): DensitySettings {
         val puzzleOnlyLetters = getPuzzle(info)
-        val columns = min(7, palindrome.split(" ").maxBy { it.length }.length)
-        val boxDecreaseRate = 1.01f
-        val smallGap = context.resources.getDimensionPixelSize(com.intuit.sdp.R.dimen._2sdp)
+        var columns = min(7, palindrome.split(" ").maxBy { it.length }.length)
+        val smallGap = context.resources.getDimensionPixelSize(R.dimen.gap_between_letters)
         val usableWidth = container.width
         val usableHeight = container.height
-        val widthAndHeight = Pair(usableWidth, usableHeight)
-        val maxBoxSize = context.resources.getDimension(R.dimen.max_box_size)
-
         val totalAreaRatio = (usableWidth.toFloat() / usableHeight.toFloat())
         var closestColumnsRatio = Pair(columns, Float.MAX_VALUE)
 
-        for (cols in columns..palindrome.length) {
-            val usedAreaRatio = getUsedAreaRatio(cols, puzzleOnlyLetters, palindrome, smallGap)
-            val newDistance = abs(usedAreaRatio - totalAreaRatio)
-            val currentBestDistance = abs(closestColumnsRatio.second - totalAreaRatio)
+        while (columns <= palindrome.length) {
+            val usedAreaRatio = getUsedAreaRatio(
+                columns = columns,
+                puzzleOnlyLetters = puzzleOnlyLetters,
+                palindrome = palindrome,
+                smallGap = smallGap
+            )
+            val newDistance = Math.abs(usedAreaRatio - totalAreaRatio)
+            val currentBestDistance = Math.abs(closestColumnsRatio.second - totalAreaRatio)
             if (newDistance < currentBestDistance) {
-                closestColumnsRatio = Pair(cols, usedAreaRatio)
+                closestColumnsRatio = Pair(columns, usedAreaRatio)
             }
+            columns += 1
         }
 
-        val rowsCount =
-            puzzleOnlyLetters.chunked(closestColumnsRatio.first).count() + getSolutionRows(
-                palindrome,
-                closestColumnsRatio.first
-            ).count()
+        val solutionRows = getSolutionRows(puzzle = palindrome, cols = closestColumnsRatio.first)
+        var boxSize = context.resources.getDimension(R.dimen.max_letter_box_size)
+        val boxDecreaseRate = 1.05f
 
-        var boxSize = maxBoxSize
-
-        var exceedingWidth = isWidthLimitExceeded(
-            widthAndHeight = widthAndHeight,
-            boxSize = boxSize,
-            smallGapBetweenLetters = smallGap,
-            columns = closestColumnsRatio.first
-        )
-
-        var exceedingHeight = isHeightLimitExceeded(
-            widthAndHeight = widthAndHeight,
-            rowsCount = rowsCount,
+        var exceedingWidth = getUsedWidth(
+            columns = closestColumnsRatio.first,
             boxSize = boxSize,
             smallGapBetweenLetters = smallGap
-        )
+        ) >= usableWidth
 
-        while (exceedingWidth.first || exceedingHeight.first) {
+        var exceedingHeight = getUsedHeight(
+            rowsCount = solutionRows.size,
+            boxSize = boxSize,
+            smallGapBetweenLetters = smallGap
+        ) >= usableHeight
+
+        while (exceedingWidth || exceedingHeight) {
             boxSize /= boxDecreaseRate
-            exceedingWidth = isWidthLimitExceeded(
-                widthAndHeight = widthAndHeight,
-                boxSize = boxSize,
-                smallGapBetweenLetters = smallGap,
-                columns = closestColumnsRatio.first
-            )
-            exceedingHeight = isHeightLimitExceeded(
-                widthAndHeight = widthAndHeight,
-                rowsCount = rowsCount,
+            exceedingWidth = getUsedWidth(
+                columns = closestColumnsRatio.first,
                 boxSize = boxSize,
                 smallGapBetweenLetters = smallGap
-            )
+            ) >= usableWidth
+            exceedingHeight = getUsedHeight(
+                rowsCount = solutionRows.size,
+                boxSize = boxSize,
+                smallGapBetweenLetters = smallGap
+            ) >= usableHeight
         }
 
         var updatedIndexes = mapOf<Int, Int>()
@@ -127,7 +121,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
 
         return DensitySettings(
             closestColumnsRatio.first,
-            min(boxSize, maxBoxSize).toInt(),
+            boxSize.toInt(),
             updatedIndexes
         )
     }
@@ -155,27 +149,6 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
     private fun getUsedWidth(columns: Int, boxSize: Float, smallGapBetweenLetters: Int): Float {
         return (columns * (boxSize + smallGapBetweenLetters) + 2 * (boxSize + smallGapBetweenLetters))
     }
-
-    private fun isHeightLimitExceeded(
-        widthAndHeight: Pair<Int, Int>,
-        rowsCount: Int,
-        boxSize: Float,
-        smallGapBetweenLetters: Int
-    ): Pair<Boolean, Float> {
-        val usedHeight = getUsedHeight(rowsCount, boxSize, smallGapBetweenLetters)
-        return Pair((widthAndHeight.second - usedHeight) <= 0, usedHeight)
-    }
-
-    private fun isWidthLimitExceeded(
-        widthAndHeight: Pair<Int, Int>,
-        columns: Int,
-        boxSize: Float,
-        smallGapBetweenLetters: Int
-    ): Pair<Boolean, Float> {
-        val usedWidth = getUsedWidth(columns, boxSize, smallGapBetweenLetters)
-        return Pair((widthAndHeight.first - usedWidth) <= 0, usedWidth)
-    }
-
 
     private fun addLetters(grid: GridLayout, ds: DensitySettings, info: Level, context: Context) {
         val puzzle = info.lettersProperties
@@ -305,7 +278,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
 
     // Takes a word and chunks it to given lengths adding "-"
     // in the end
-    private fun getChunkedStringWithHyphens(word: String, cols:Int): String {
+    private fun getChunkedStringWithHyphens(word: String, cols: Int): String {
         val windowed = word.windowed(cols, cols, true).toMutableList()
         val lastElement = windowed.last()
         if (lastElement.length == 1) {
@@ -349,7 +322,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                 if (s.length <= cols) {
                     "$acc$s "
                 } else {
-                    acc + getChunkedStringWithHyphens(s, cols-1) + " "
+                    acc + getChunkedStringWithHyphens(s, cols - 1) + " "
                 }
             }
         val puzzleWords = modified.split(' ')

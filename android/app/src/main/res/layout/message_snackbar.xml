@@ -18,7 +18,7 @@
         android:text="Tap to continue"
         app:autoSizeTextType="uniform"
         app:autoSizeMaxTextSize="25sp"
-        android:layout_marginHorizontal="@dimen/_32sdp"
+        android:layout_marginHorizontal="@dimen/default_large_margin"
         android:textColor="?colorOnBackground"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

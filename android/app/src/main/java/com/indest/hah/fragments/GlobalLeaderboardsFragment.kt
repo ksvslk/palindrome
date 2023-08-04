@@ -43,10 +43,6 @@ class GlobalLeaderboardsFragment : FullBottomSheetDialogFragment() {
                             DividerItemDecoration.VERTICAL
                         )
                     )
-                    binding.globalLeaderboardsRecyclerview.updatePadding(
-                        left = resources.getDimensionPixelSize(R.dimen.simple_dialog_header_left_margin),
-                        right = resources.getDimensionPixelSize(R.dimen.simple_dialog_header_left_margin)
-                    )
                     val countriesModifiedForAdapter = countries.map { Pair(it, 1) }
                     binding.globalLeaderboardsRecyclerview.adapter =
                         LanguageItemAdapter(true, countriesModifiedForAdapter) {

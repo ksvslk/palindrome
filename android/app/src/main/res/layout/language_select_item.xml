@@ -2,9 +2,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/_48sdp"
+    android:layout_height="@dimen/simple_dialog_item_height"
     android:gravity="center"
     android:saveEnabled="false"
+    android:layout_marginHorizontal="@dimen/default_large_margin"
     tools:viewBindingIgnore="true">
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -21,9 +22,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginHorizontal="@dimen/default_gap"
             android:layout_weight="1"
             android:contentDescription="@string/rewarded_place_letter"
+            android:layout_marginEnd="@dimen/default_large_margin"
             android:saveEnabled="false"
             app:srcCompat="@drawable/letter_icon"
             tools:ignore="RtlSymmetry" />

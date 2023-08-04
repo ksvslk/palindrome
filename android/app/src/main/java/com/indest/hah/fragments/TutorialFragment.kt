@@ -47,14 +47,10 @@ class TutorialFragment : FullBottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.continueButton.setOnClickListener {
             cleanUp()
-            findNavController().safeNavigate(R.id.action_navigation_tutorial_to_navigation_third_tutorial)
+            dismissAllowingStateLoss()
         }
         view.doOnLayout {
             repeatingTutorialAnimation()
-        }
-
-        this.dialog?.let { dialog ->
-
         }
     }
 

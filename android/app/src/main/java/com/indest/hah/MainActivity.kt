@@ -243,7 +243,6 @@ class MainActivity : AppCompatActivity() {
 
         val params = snack.view.layoutParams as FrameLayout.LayoutParams
         params.gravity = Gravity.TOP
-        params.topMargin = resources.getDimension(com.intuit.sdp.R.dimen._16sdp).toInt()
         snack.view.layoutParams = params
         snack.show()
     }

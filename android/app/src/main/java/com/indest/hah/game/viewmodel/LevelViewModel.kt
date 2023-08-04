@@ -200,8 +200,22 @@ class LevelViewModel @Inject constructor(
         viewModelScope.launch {
             levelRepository.init()
             addLanguagePacks()
+
+        }
+        viewModelScope.launch {
+            insertPlayerLevels(
+                listOf(
+                    PlayerLevel(
+                        11000, "Mina", mapOf(
+                            "Qodana is a next-generation code quality platform and smart static analysis tool. It brings JetBrains IDE-native inspections to any CI pipeline, runs resource-intensive checks on the server, and saves time and computing resources. Enjoy support for 60+ technologies and analyze unlimited LOCs." to "QOdana"
+                        ),
+                        "et"
+                    )
+                )
+            )
         }
     }
+
 
 
     suspend fun isShowScores(): Boolean {

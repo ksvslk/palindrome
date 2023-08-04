@@ -9,7 +9,6 @@
     android:paddingVertical="@dimen/default_large_margin"
     app:divider="@drawable/divider"
     app:showDividers="middle"
-    app:dividerPadding="@dimen/simple_dialog_header_left_margin"
     android:orientation="vertical">
 
     <com.indest.hah.views.AnyButton
@@ -17,7 +16,6 @@
         android:id="@+id/global_leaderboards_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
-        android:layout_margin="@dimen/_2sdp"
         android:background="?attr/selectableItemBackground"
         android:clickable="true"
         android:focusable="true"
@@ -30,7 +28,6 @@
         android:id="@+id/leaderboards_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
-        android:layout_margin="@dimen/_2sdp"
         android:background="?attr/selectableItemBackground"
         android:clickable="true"
         android:focusable="true"
@@ -43,7 +40,6 @@
         android:id="@+id/player_levels_leaderboard_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
-        android:layout_margin="@dimen/_2sdp"
         android:background="?attr/selectableItemBackground"
         android:clickable="true"
         android:focusable="true"
@@ -56,7 +52,6 @@
         android:id="@+id/achievements_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
-        android:layout_margin="@dimen/_2sdp"
         android:background="?attr/selectableItemBackground"
         android:clickable="true"
         android:focusable="true"
@@ -69,7 +64,6 @@
         android:id="@+id/alternative_screen"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/simple_dialog_item_height"
-        android:layout_margin="@dimen/_2sdp"
         android:background="?attr/selectableItemBackground"
         android:orientation="horizontal">
 
