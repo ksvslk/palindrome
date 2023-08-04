@@ -21,6 +21,6 @@
 
     <!-- Letters field -->
     <dimen name="gap_between_letters">2sp</dimen>
-    <dimen name="max_letter_box_size">38sp</dimen>
+    <dimen name="max_letter_box_size">40sp</dimen>
 
 </resources>
