@@ -102,6 +102,23 @@ abstract class LevelDatabase : RoomDatabase() {
                     database.delete("letter_info_table", null, null)
                     database.execSQL("UPDATE level_info_table SET progress = 1 WHERE level_id > 1000 and level_id < 10000")
                     database.execSQL("UPDATE level_info_table SET progress = 4 WHERE progress > 0")
+                    database.execSQL("ALTER TABLE solution_table ADD COLUMN hint_cn TEXT NOT NULL DEFAULT ''");
+                    database.execSQL("ALTER TABLE solution_table ADD COLUMN hint_de TEXT NOT NULL DEFAULT ''");
+                    database.execSQL("ALTER TABLE solution_table ADD COLUMN hint_es TEXT NOT NULL DEFAULT ''");
+                    database.execSQL("ALTER TABLE solution_table ADD COLUMN hint_et TEXT NOT NULL DEFAULT ''");
+                    database.execSQL("ALTER TABLE solution_table ADD COLUMN hint_fi TEXT NOT NULL DEFAULT ''");
+                    database.execSQL("ALTER TABLE solution_table ADD COLUMN hint_fr TEXT NOT NULL DEFAULT ''");
+                    database.execSQL("ALTER TABLE solution_table ADD COLUMN hint_id TEXT NOT NULL DEFAULT ''");
+                    database.execSQL("ALTER TABLE solution_table ADD COLUMN hint_it TEXT NOT NULL DEFAULT ''");
+                    database.execSQL("ALTER TABLE solution_table ADD COLUMN hint_ja TEXT NOT NULL DEFAULT ''");
+                    database.execSQL("ALTER TABLE solution_table ADD COLUMN hint_ko TEXT NOT NULL DEFAULT ''");
+                    database.execSQL("ALTER TABLE solution_table ADD COLUMN hint_nl TEXT NOT NULL DEFAULT ''");
+                    database.execSQL("ALTER TABLE solution_table ADD COLUMN hint_pl TEXT NOT NULL DEFAULT ''");
+                    database.execSQL("ALTER TABLE solution_table ADD COLUMN hint_pt TEXT NOT NULL DEFAULT ''");
+                    database.execSQL("ALTER TABLE solution_table ADD COLUMN hint_ro TEXT NOT NULL DEFAULT ''");
+                    database.execSQL("ALTER TABLE solution_table ADD COLUMN hint_sv TEXT NOT NULL DEFAULT ''");
+                    database.execSQL("ALTER TABLE solution_table ADD COLUMN hint_tr TEXT NOT NULL DEFAULT ''");
+                    database.execSQL("ALTER TABLE solution_table ADD COLUMN hint_uk TEXT NOT NULL DEFAULT ''");
                 } catch (ex: SQLiteException) {
                     Log.e("LevelDatabase", "Migrating from version 3 to 4: " + ex.message)
                 }

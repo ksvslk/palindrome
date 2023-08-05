@@ -30,6 +30,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.decodeFromJsonElement
 import java.util.Arrays
 import javax.inject.Inject
@@ -68,12 +69,12 @@ class LevelViewModel @Inject constructor(
     private var liveStoreRegistration: ListenerRegistration? = null
 
     private val _newPlayerLevels =
-        MutableStateFlow(NewLevelNotification(-1,-1,"",""))
+        MutableStateFlow(NewLevelNotification(-1, -1, "", ""))
     val newPlayerLevels = _newPlayerLevels.asStateFlow()
 
     var currentlySignedInPlayerName = "???"
     var tempSubmissionPalindrome = ""
-    var tempCountrySelected = Pair("gb",0)
+    var tempCountrySelected = Pair("gb", 0)
     var currentRelativeLevelNumber = -1
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
@@ -85,8 +86,7 @@ class LevelViewModel @Inject constructor(
         startCollectingLevelUpdate()
     }
 
-    fun updateColumnCount(newCols:Int)
-    {
+    fun updateColumnCount(newCols: Int) {
         viewModelScope.launch {
             levelRepository.updateColumnCount(newCols, currentLevel.value.levelInfo.levelId)
         }
@@ -134,7 +134,8 @@ class LevelViewModel @Inject constructor(
             val language = _currentLevel.value.levelInfo.countryCode
             val levels = levelRepository.getLevelsForCountry(language)
             val levelsCount = levels.count()
-            val levelShownInUi = levels.indexOfFirst { levelData -> levelData.levelId == levelId } + 1
+            val levelShownInUi =
+                levels.indexOfFirst { levelData -> levelData.levelId == levelId } + 1
             val authorIfExists = if (author.isNotEmpty()) " - $author" else ""
             val text =
                 if (solutionsCount > 1) "$levelShownInUi*$authorIfExists" else "$levelShownInUi$authorIfExists"
@@ -200,22 +201,9 @@ class LevelViewModel @Inject constructor(
         viewModelScope.launch {
             levelRepository.init()
             addLanguagePacks()
-
-        }
-        viewModelScope.launch {
-            insertPlayerLevels(
-                listOf(
-                    PlayerLevel(
-                        11000, "Mina", mapOf(
-                            "Qodana is a next-generation code quality platform and smart static analysis tool. It brings JetBrains IDE-native inspections to any CI pipeline, runs resource-intensive checks on the server, and saves time and computing resources. Enjoy support for 60+ technologies and analyze unlimited LOCs." to "QOdana"
-                        ),
-                        "et"
-                    )
-                )
-            )
+            //checkLanguagePackValidity()
         }
     }
-
 
 
     suspend fun isShowScores(): Boolean {
@@ -305,8 +293,7 @@ class LevelViewModel @Inject constructor(
         }
     }
 
-    fun resetLetterInfo(levelNr:Int)
-    {
+    fun resetLetterInfo(levelNr: Int) {
         viewModelScope.launch {
             Log.d(TAG, "resetLetterInfo")
             levelRepository.resetLetterInfo(levelNr)
@@ -388,7 +375,7 @@ class LevelViewModel @Inject constructor(
         }
     }
 
-    fun allUniqueCountriesWithLevelCount(): Flow<List<Pair<String,Int>>> {
+    fun allUniqueCountriesWithLevelCount(): Flow<List<Pair<String, Int>>> {
         return flow {
             emit(levelRepository.getUniqueCountriesWithLevelCount())
         }
@@ -466,7 +453,13 @@ class LevelViewModel @Inject constructor(
 
     sealed class VariousEvent {
         data class UnlockAchievement(val achievement: String) : VariousEvent()
-        data class SubmitScore(val score: Long, val playerLevels: Boolean, val languageLevels:Boolean, val countryCode:String) : VariousEvent()
+        data class SubmitScore(
+            val score: Long,
+            val playerLevels: Boolean,
+            val languageLevels: Boolean,
+            val countryCode: String
+        ) : VariousEvent()
+
         data class SaveGame(
             val localSaveGame: com.indest.hah.persistance.dto.SaveGame,
             val calculatedGameProgress: Long
@@ -532,12 +525,10 @@ class LevelViewModel @Inject constructor(
         unlockRelativeLanguageLevelAchievement()
     }
 
-    private fun unlockRelativeLanguageLevelAchievement()
-    {
+    private fun unlockRelativeLanguageLevelAchievement() {
         viewModelScope.launch {
             val res = getApplication<Application>().applicationContext.resources
-            if (currentRelativeLevelNumber == 10)
-            {
+            if (currentRelativeLevelNumber == 10) {
                 when (_currentLevel.value.levelInfo.countryCode) {
                     "cn" -> unlockAchievement(res.getString(R.string.achievement_chinese_linguist))
                     "de" -> unlockAchievement(res.getString(R.string.achievement_german_linguist))
@@ -572,7 +563,8 @@ class LevelViewModel @Inject constructor(
 
     private fun updateSolutionState(index: Int, guess: String) {
         viewModelScope.launch {
-            val solution = _currentLevel.value.solutions.first().palindrome.replace(Regex("[\\s-]+"), "")
+            val solution =
+                _currentLevel.value.solutions.first().palindrome.replace(Regex("[\\s-]+"), "")
             var solutionData = SolutionData()
             Log.d(TAG, "Guess: $guess")
             Log.d(TAG, "Solution: $solution")
@@ -585,8 +577,8 @@ class LevelViewModel @Inject constructor(
                     getApplication<Application>().getString(R.string.hint_suggestion)
 
                 val maxScore = _currentLevel.value.levelInfo.levelId.getLevelScore(
-                        _currentLevel.value.levelInfo.puzzle
-                    )
+                    _currentLevel.value.levelInfo.puzzle
+                )
 
                 when {
                     isSolutionCorrect(guess) -> {
@@ -660,7 +652,8 @@ class LevelViewModel @Inject constructor(
 
     private fun logLevelEnd() {
         viewModelScope.launch(Dispatchers.Default) {
-            val maxScore = _currentLevel.value.levelInfo.levelId.getLevelScore(_currentLevel.value.levelInfo.puzzle)
+            val maxScore =
+                _currentLevel.value.levelInfo.levelId.getLevelScore(_currentLevel.value.levelInfo.puzzle)
             val scoreToMaxRatio = (_currentLevel.value.levelInfo.score / maxScore).toFloat()
             val parameters = Bundle().apply {
                 this.putInt(FirebaseAnalytics.Param.LEVEL, _currentLevel.value.levelInfo.levelId)
@@ -748,7 +741,7 @@ class LevelViewModel @Inject constructor(
                     val level = PlayerLevel(
                         levelId = levelValues["levelId"] as Long,
                         player = levelValues["player"] as String,
-                        solutionToCategory = solutionsToCategories,
+                        solutionToCategory = mapOf(), // TODO: FIX
                         countryCode = countryCode as String
                     )
                     playerLevels.add(level)
@@ -767,8 +760,7 @@ class LevelViewModel @Inject constructor(
                     // Second element is the level count when there are more than 1 level added.
                     val levelAndCount = insertPlayerLevels(playerLevels)
                     if (levelAndCount.second > 0) {
-                        if (levelAndCount.second > 1)
-                        {
+                        if (levelAndCount.second > 1) {
                             _newPlayerLevels.update {
                                 NewLevelNotification(
                                     -1,
@@ -777,8 +769,7 @@ class LevelViewModel @Inject constructor(
                                     ""
                                 )
                             }
-                        }
-                        else {
+                        } else {
                             _newPlayerLevels.update {
                                 NewLevelNotification(
                                     levelAndCount.first.levelId,
@@ -805,7 +796,7 @@ class LevelViewModel @Inject constructor(
                     Filter.and(
                         Filter.equalTo("isFeatured", true),
                         Filter.greaterThan("levelId", maxPlayerLevelId),
-                        Filter.lessThan("levelId",10000)
+                        Filter.lessThan("levelId", 10000)
                     ),
                     // language levels 10000+
                     Filter.and(
@@ -836,7 +827,7 @@ class LevelViewModel @Inject constructor(
                                             PlayerLevel(
                                                 levelId = levelValues["levelId"] as Long,
                                                 player = levelValues["player"] as String,
-                                                solutionToCategory = solutionsToCategories,
+                                                solutionToCategory = mapOf(),  // TODO: FIX
                                                 countryCode = countryCode as String
                                             )
                                         )
@@ -862,16 +853,14 @@ class LevelViewModel @Inject constructor(
                         // Second element is the level count when there are more than 1 level added.
                         val levelAndCount = insertPlayerLevels(playerLevels)
                         if (levelAndCount.second > 0) {
-                            if (levelAndCount.second > 1)
-                            {
+                            if (levelAndCount.second > 1) {
                                 _newPlayerLevels.value = NewLevelNotification(
                                     -1,
                                     levelAndCount.second,
                                     "",
                                     ""
                                 )
-                            }
-                            else {
+                            } else {
                                 _newPlayerLevels.value = NewLevelNotification(
                                     levelAndCount.first.levelId,
                                     -1,
@@ -888,7 +877,7 @@ class LevelViewModel @Inject constructor(
 
 
     fun resetNewPlayersLevels() {
-        _newPlayerLevels.value = NewLevelNotification(-1,-1,"","")
+        _newPlayerLevels.value = NewLevelNotification(-1, -1, "", "")
     }
 
 
@@ -930,8 +919,7 @@ class LevelViewModel @Inject constructor(
     }
 
     private suspend fun addLanguagePacks() {
-        if (levelRepository.getUniqueCountries().isEmpty())
-        {
+        if (levelRepository.getUniqueCountries().isEmpty()) {
             C.languages.entries.forEach { entry ->
                 val cc = entry.key
                 val jsonInstance = Json { isLenient = true }
@@ -940,12 +928,40 @@ class LevelViewModel @Inject constructor(
                         .bufferedReader().use {
                             it.readText()
                         }
-                val languageLevels = jsonInstance
-                    .decodeFromString<List<JsonElement>>(json)
-                    .map { jsonInstance.decodeFromJsonElement(it) as LanguageLevel }
-
+                val languageLevels = jsonInstance.decodeFromString<List<LanguageLevel>>(json)
                 levelRepository.insertLanguageLevelPack(languageLevels, cc)
             }
+        }
+    }
+
+    private fun checkLanguagePackValidity() {
+        C.languages.entries.forEach { entry ->
+            val cc = entry.key
+            val jsonInstance = Json { isLenient = true }
+            val json =
+                getApplication<Application>().applicationContext.assets.open("language_pack_$cc.json")
+                    .bufferedReader().use {
+                        it.readText()
+                    }
+            val languageLevels = jsonInstance.decodeFromString<List<LanguageLevel>>(json)
+            val missingLanguagesMap = mutableMapOf<Int, List<String>>()
+
+            languageLevels.forEachIndexed { index, level ->
+                val missingLangs = arrayListOf<String>()
+                level.solutionToCategory.forEach { solution ->
+                    val diff = C.languages.keys.minus(solution.value.keys.map { it.substringAfter("_") }.toSet())
+                    missingLangs.addAll(diff)
+                    if (!solution.value.keys.contains("hint")) missingLangs.add("gb")
+                }
+               if (missingLangs.isNotEmpty())
+               {
+                   missingLanguagesMap[index] = missingLangs
+               }
+            }
+
+            Log.d(TAG, "Missing languages for $cc: $missingLanguagesMap")
+            Log.d(TAG, "Levels count $cc: ${languageLevels.count()}")
+            Log.d(TAG, "--------------------------------------------")
         }
     }
 
