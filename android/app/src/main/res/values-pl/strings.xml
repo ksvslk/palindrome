@@ -3,6 +3,7 @@
     <string name="exit_game_title">Wyjść z gry?</string>
     <string name="continue_game">Kontynuuj</string>
     <string name="quit">Wyjdź</string>
+    <string name="menu_language">Język menu</string>
     <string name="select_language">Wybierz język</string>
     <string name="game_levels">Poziomy gry</string>
     <string name="player_levels">Poziomy graczy</string>

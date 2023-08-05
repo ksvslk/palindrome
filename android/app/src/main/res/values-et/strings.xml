@@ -3,6 +3,7 @@
     <string name="exit_game_title">Lõpeta mäng?</string>
     <string name="continue_game">Jätka</string>
     <string name="quit">Lõpeta</string>
+    <string name="menu_language">Menüü Keel</string>
     <string name="select_language">Valige keel</string>
     <string name="game_levels">Mängu tasemed</string>
     <string name="player_levels">Mängijate tasemed</string>
@@ -93,7 +94,7 @@
     </string-array>
 
     <string-array name="very_good_texts">
-        <item>Suurepärane!</item>
+        <item>Fantastiline!</item>
         <item>Suurepärane!</item>
         <item>Suurepärane!</item>
         <item>Täiuslik!</item>
@@ -107,7 +108,7 @@
     </string-array>
 
     <string-array name="palindrome_wrong_texts">
-        <item>Vale palindroom.</item>
+        <item>Leia parem palindroom.</item>
         <item>Vale palindroom.</item>
     </string-array>
 

@@ -3,6 +3,7 @@ package com.indest.hah.game.viewmodel
 import android.app.Application
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.bundleOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -18,6 +19,7 @@ import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
 import com.indest.hah.persistance.dto.NewLevelNotification
 import com.indest.hah.persistance.dto.PlayerLevel
+import com.indest.hah.persistance.dto.RegularLevel
 import com.indest.hah.persistance.dto.SaveGame
 import com.indest.hah.persistance.level.LevelProgress
 import com.indest.hah.persistance.level.LevelRepository
@@ -33,6 +35,7 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.decodeFromJsonElement
 import java.util.Arrays
+import java.util.Locale
 import javax.inject.Inject
 import kotlin.math.max
 
@@ -199,8 +202,9 @@ class LevelViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            levelRepository.init()
+            addRegularLevels()
             addLanguagePacks()
+            levelRepository.init()
             //checkLanguagePackValidity()
         }
     }
@@ -631,6 +635,38 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+    fun getCurrentHintInLocale(): String {
+        val currentLocaleName = if (!AppCompatDelegate.getApplicationLocales().isEmpty) {
+            // Fetches the current Application Locale from the list
+            AppCompatDelegate.getApplicationLocales()[0]?.toLanguageTag()
+        } else {
+            // Fetches the default System Locale
+            Locale.getDefault().toLanguageTag()
+        }?.substring(0, 2)
+        return when (currentLocaleName) {
+            "en" -> _currentLevel.value.solutions.first().hint
+            "cn" -> _currentLevel.value.solutions.first().hint_cn
+            "de" -> _currentLevel.value.solutions.first().hint_de
+            "es" -> _currentLevel.value.solutions.first().hint_es
+            "et" -> _currentLevel.value.solutions.first().hint_et
+            "fi" -> _currentLevel.value.solutions.first().hint_fi
+            "fr" -> _currentLevel.value.solutions.first().hint_fr
+            "id" -> _currentLevel.value.solutions.first().hint_id
+            "it" -> _currentLevel.value.solutions.first().hint_it
+            "ja" -> _currentLevel.value.solutions.first().hint_ja
+            "ko" -> _currentLevel.value.solutions.first().hint_ko
+            "nl" -> _currentLevel.value.solutions.first().hint_nl
+            "pl" -> _currentLevel.value.solutions.first().hint_pl
+            "pt" -> _currentLevel.value.solutions.first().hint_pt
+            "ro" -> _currentLevel.value.solutions.first().hint_ro
+            "sv" -> _currentLevel.value.solutions.first().hint_sv
+            "tr" -> _currentLevel.value.solutions.first().hint_tr
+            "uk" -> _currentLevel.value.solutions.first().hint_uk
+            else -> {
+                _currentLevel.value.solutions.first().hint + "*"
+            }
+        }
+    }
 
     private fun logLevelStart() {
         viewModelScope.launch(Dispatchers.Default) {
@@ -934,6 +970,19 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+    private suspend fun addRegularLevels() {
+            C.languages.entries.forEach { entry ->
+                val jsonInstance = Json { isLenient = true }
+                val json =
+                    getApplication<Application>().applicationContext.assets.open("level_pack_1_modified.json")
+                        .bufferedReader().use {
+                            it.readText()
+                        }
+                val regularLevels = jsonInstance.decodeFromString<List<RegularLevel>>(json)
+                levelRepository.insertRegularLevels(regularLevels)
+            }
+    }
+
     private fun checkLanguagePackValidity() {
         C.languages.entries.forEach { entry ->
             val cc = entry.key
@@ -949,14 +998,15 @@ class LevelViewModel @Inject constructor(
             languageLevels.forEachIndexed { index, level ->
                 val missingLangs = arrayListOf<String>()
                 level.solutionToCategory.forEach { solution ->
-                    val diff = C.languages.keys.minus(solution.value.keys.map { it.substringAfter("_") }.toSet())
+                    val diff =
+                        C.languages.keys.minus(solution.value.keys.map { it.substringAfter("_") }
+                            .toSet())
                     missingLangs.addAll(diff)
                     if (!solution.value.keys.contains("hint")) missingLangs.add("gb")
                 }
-               if (missingLangs.isNotEmpty())
-               {
-                   missingLanguagesMap[index] = missingLangs
-               }
+                if (missingLangs.isNotEmpty()) {
+                    missingLanguagesMap[index] = missingLangs
+                }
             }
 
             Log.d(TAG, "Missing languages for $cc: $missingLanguagesMap")

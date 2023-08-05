@@ -6,7 +6,7 @@
     <string name="continue_game">继续</string>
 
     <string name="quit">退出</string>
-
+    <string name="menu_language">菜单语言</string>
     <string name="select_language">选择语言</string>
 
     <string name="game_levels">游戏关卡</string>

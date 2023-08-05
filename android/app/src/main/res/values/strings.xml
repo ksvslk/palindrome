@@ -75,6 +75,7 @@
     <string name="points">points</string>
     <string name="send_levels_country_top">Send palindromes and rise your country.</string>
     <string name="picture_hint">Picture hint</string>
+    <string name="menu_language">Menu Language</string>
 
     <string-array name="save_24_percent_label">
         <item>–</item>
@@ -196,7 +197,7 @@
         <item>cn</item>
         <item>ko</item>
         <item>it</item>
-        <item>ka</item>
+        <item>ja</item>
         <item>de</item>
         <item>id</item>
         <item>tr</item>

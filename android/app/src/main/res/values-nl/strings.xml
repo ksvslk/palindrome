@@ -4,6 +4,7 @@
     <string name="exit_game_title">Stop het spel?</string>
     <string name="continue_game">Doorgaan</string>
     <string name="quit">Stop</string>
+    <string name="menu_language">Menutaal</string>
     <string name="select_language">Taal selecteren</string>
     <string name="game_levels">Spelniveaus</string>
     <string name="player_levels">Spelerniveaus</string>

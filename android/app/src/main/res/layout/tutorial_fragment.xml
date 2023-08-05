@@ -5,7 +5,7 @@
     android:saveEnabled="false"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="@dimen/default_large_margin"
+    android:padding="@dimen/default_large_margin"
     android:gravity="center"
     android:orientation="vertical"
     tools:context=".fragments.TutorialFragment">
@@ -16,18 +16,15 @@
         android:layout_height="0dp"
         android:layout_weight="3"
         android:gravity="center"
-        android:layout_margin="@dimen/default_large_margin"
         android:orientation="vertical">
 
         <Button
             android:saveEnabled="false"
-            style="@style/Widget.Material3.Button.TonalButton"
+            style="@style/Widget.Material3.Button"
             android:id="@+id/continueButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/yantramanav_bold"
-            android:text="@string/play"
-            android:textSize="@dimen/label_large_text_size"/>
+            android:text="@string/play"/>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -35,7 +32,7 @@
         android:saveEnabled="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/default_large_margin"
+        android:paddingVertical="@dimen/default_large_margin"
         android:layout_weight="0.5"
         android:gravity="start"
         android:text="@string/tutorial_text"
@@ -46,9 +43,9 @@
         android:id="@+id/tutorialGameplay"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:padding="@dimen/default_large_margin"
         android:layout_weight="2.5"
         android:alpha="0"
+        android:paddingBottom="@dimen/default_large_margin"
         android:animateLayoutChanges="true"
         android:clipChildren="false"
         android:gravity="center"
@@ -213,20 +210,6 @@
                 android:rotationY="180"
                 app:layout_gravity="center" />
         </androidx.gridlayout.widget.GridLayout>
-
     </FrameLayout>
 
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:saveEnabled="false"
-        
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:padding="@dimen/default_large_margin"
-        android:animateLayoutChanges="true"
-        android:clipChildren="false"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-    </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.appcompat.widget.LinearLayoutCompat>

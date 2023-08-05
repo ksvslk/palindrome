@@ -19,8 +19,8 @@
             android:saveEnabled="false"
             android:id="@+id/any_button_icon"
             android:tint="?colorOnPrimaryContainer"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="@dimen/default_large_margin"
             android:clickable="false"
@@ -31,7 +31,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clickable="false"
-            android:gravity="center_vertical"
             android:orientation="vertical">
 
             <androidx.appcompat.widget.AppCompatTextView

@@ -3,6 +3,7 @@
     <string name="exit_game_title">Oyundan çıkılsın mı?</string>
     <string name="continue_game">Devam</string>
     <string name="quit">Çık</string>
+    <string name="menu_language">Menü Dili</string>
     <string name="select_language">Dil Seçin</string>
     <string name="game_levels">Oyun Seviyeleri</string>
     <string name="player_levels">Oyuncu Seviyeleri</string>

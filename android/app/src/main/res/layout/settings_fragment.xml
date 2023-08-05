@@ -72,6 +72,7 @@
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.appcompat.widget.LinearLayoutCompat>
 
+
     <com.indest.hah.views.AnyButton
         android:id="@+id/twitter_button"
         android:layout_width="match_parent"
@@ -122,39 +123,16 @@
         anybutton:any_button_icon="@drawable/baseline_share_black_36"
         anybutton:any_button_title="@string/share" />
 
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/google_sign_in_out_button"
+    <com.indest.hah.views.AnyButton
+        android:id="@+id/select_app_locale_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
-        android:layout_marginTop="@dimen/default_margin"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:saveEnabled="false">
-
-        <com.google.android.gms.common.SignInButton
-            android:id="@+id/google_sign_in_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:saveEnabled="false"
-            android:visibility="gone" />
-
-        <com.google.android.material.progressindicator.CircularProgressIndicator
-            android:id="@+id/progress_circular"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:indeterminate="true"
-            android:saveEnabled="false"
-            android:visibility="gone"/>
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/google_sign_out_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:saveEnabled="false"
-            android:text="@string/you_are_signed_in"
-            android:textAppearance="@style/TextAppearance.OC.Body1"
-            android:visibility="gone" />
-    </androidx.appcompat.widget.LinearLayoutCompat>
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="horizontal"
+        android:saveEnabled="false"
+        anybutton:any_button_icon="@drawable/es"
+        anybutton:any_button_title="@string/menu_language" />
 
 </androidx.appcompat.widget.LinearLayoutCompat>

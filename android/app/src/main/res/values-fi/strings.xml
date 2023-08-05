@@ -4,6 +4,7 @@
     <string name="exit_game_title">Lopettaako peli?</string>
     <string name="continue_game">Jatka</string>
     <string name="quit">Lopeta</string>
+    <string name="menu_language">Valikon kieli</string>
     <string name="select_language">Valitse Kieli</string>
     <string name="game_levels">Pelitasot</string>
     <string name="player_levels">Pelaajatasot</string>

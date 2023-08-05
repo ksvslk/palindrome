@@ -3,6 +3,7 @@
     <string name="exit_game_title">Avsluta spelet?</string>
     <string name="continue_game">Fortsätt</string>
     <string name="quit">Avsluta</string>
+    <string name="menu_language">Menyspråk</string>
     <string name="select_language">Välj Språk</string>
     <string name="game_levels">Spelnivåer</string>
     <string name="player_levels">Spelarnivåer</string>

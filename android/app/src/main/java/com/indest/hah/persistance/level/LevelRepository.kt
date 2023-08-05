@@ -23,16 +23,14 @@ class LevelRepository @Inject constructor(
     suspend fun getMaxPlayerLevelId():Int?
         = levelDao.getMaxPlayerLevelId()
 
-    suspend fun getMinLevelIdForCountry(cc:String):Int
-        = levelDao.getMinLevelIdForCountry(cc)
-
-    suspend fun getMaxLevelIdForCountry(cc:String):Int
-            = levelDao.getMaxLevelIdForCountry(cc)
-
     suspend fun getMaxGameLevelId():Int = levelDao.getMaxGameLevels()
 
     suspend fun insertPlayerLevels(playerLevels:List<PlayerLevel>):Pair<LevelData,Int> {
         return levelDao.insertPlayerLevels(playerLevels)
+    }
+
+    suspend fun insertRegularLevels(playerLevels:List<RegularLevel>) {
+        return levelDao.insertRegularLevels(playerLevels)
     }
 
     suspend fun updateFriendIndex(homeIndex: Int, newFriendIndex: Int, level: Int): String {
@@ -102,16 +100,8 @@ class LevelRepository @Inject constructor(
         return levelDao.getAllPalindromes().map { it.replace("[!?’,.;:'\\-\"\\s]".toRegex(), "") }.toHashSet()
     }
 
-    suspend fun nextLevelActions(current: Int, chosenLevel: Int) {
-        levelDao.nextLevelActions(current, chosenLevel)
-    }
-
     suspend fun setCountTo(name: String, count: Int) {
         levelDao.setCountTo(name, count)
-    }
-
-    suspend fun getIntervalCount(name: String): Int {
-        return levelDao.getIntervalCount(name)
     }
 
     suspend fun increaseCountAndGetResult(name: String): Boolean {

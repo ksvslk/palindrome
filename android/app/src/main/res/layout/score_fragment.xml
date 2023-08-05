@@ -7,13 +7,12 @@
     android:layout_height="wrap_content"
     android:gravity="center"
     android:orientation="vertical"
-    android:paddingVertical="@dimen/default_large_margin"
+    android:layout_marginHorizontal="@dimen/default_large_margin"
     app:divider="@drawable/divider"
     app:showDividers="middle">
 
     <ViewFlipper
         android:saveEnabled="false"
-
         android:id="@+id/score_flipper"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -29,16 +28,14 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:saveEnabled="false"
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="@dimen/default_gap"
                 app:srcCompat="@drawable/ic_baseline_stars_24" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:saveEnabled="false"
-
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"

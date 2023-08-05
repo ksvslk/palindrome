@@ -21,8 +21,8 @@
         <ImageView
             android:saveEnabled="false"
             android:id="@+id/icon"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_gravity="center_vertical"
             android:contentDescription="@string/rewarded_place_letter"
             android:layout_marginHorizontal="@dimen/default_gap"

@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -48,6 +49,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
 import java.io.File
+import java.util.Locale
 import javax.inject.Inject
 
 
@@ -97,12 +99,8 @@ class HintsFragment : FullBottomSheetDialogFragment() {
             }
         }
 
-        val uniqueHints = viewModel.currentLevel.value.solutions.map { it.hint }.toSet()
-        if (uniqueHints.isNotEmpty()) {
-            val hints =
-                if (uniqueHints.size > 1) uniqueHints.joinToString(" / ") { it } else uniqueHints.first()
-            binding.rewardCategoryButton.setClue(hints)
-        }
+        val hintInLocale = levelViewModel.getCurrentHintInLocale()
+        binding.rewardCategoryButton.setClue(hintInLocale)
         if (viewModel.currentLevel.value.levelInfo.categoryRewarded) {
             binding.rewardCategoryButton.showClue()
         }

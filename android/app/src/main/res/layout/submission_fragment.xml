@@ -17,7 +17,6 @@
         style="@style/Widget.Design.TextInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/default_large_margin"
         app:counterEnabled="true"
         app:counterMaxLength="@integer/maxUserPalindromeLength"
         app:endIconMode="custom"
@@ -41,8 +40,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
+        android:layout_marginVertical="@dimen/default_large_margin"
         android:orientation="vertical"
-        android:layout_marginHorizontal="@dimen/default_large_margin"
         android:saveEnabled="false">
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -76,7 +75,9 @@
             style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="match_parent"
             android:layout_height="@dimen/simple_dialog_item_height"
-            android:layout_marginHorizontal="@dimen/default_large_margin"
+            app:autoSizeTextType="uniform"
+            app:autoSizeMaxTextSize="@dimen/label_large_text_size"
+            android:maxLines="1"
             android:text="@string/send"/>
 
         <com.google.android.material.progressindicator.LinearProgressIndicator

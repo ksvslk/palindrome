@@ -140,7 +140,7 @@ abstract class LevelDatabase : RoomDatabase() {
                     )
                         .addMigrations(MIGRATION_2_3, MIGRATION_3_4)
                         .addAutoMigrationSpec(MyAutoMigration(context))
-                        .createFromAsset("dbd.db")
+                        //.createFromAsset("dbd.db")
                               /*
                     .addCallback(object : RoomDatabase.Callback() {
 

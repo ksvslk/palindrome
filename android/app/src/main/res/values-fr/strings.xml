@@ -5,7 +5,7 @@
     <string name="continue_game">Continuer</string>
 
     <string name="quit">Quitter</string>
-
+    <string name="menu_language">Langue des menus</string>
     <string name="select_language">Sélectionnez la langue</string>
 
     <string name="game_levels">Niveaux de jeu</string>

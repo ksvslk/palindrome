@@ -148,6 +148,8 @@
 
     <string name="picture_hint">Bildhinweis</string>
 
+    <string name="menu_language">Menüsprache</string>
+
     <string-array name="save_24_percent_label">
 
         <item>–</item>

@@ -1,5 +1,6 @@
 package com.indest.hah
 
+import android.content.Context
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -12,8 +13,10 @@ import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.Insets
+import androidx.core.os.LocaleListCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -94,8 +97,31 @@ class MainActivity : AppCompatActivity() {
     lateinit var snapshotHelper: SnapshotHelper
     private lateinit var auth: FirebaseAuth
 
+    companion object {
+        const val PREFERENCE_NAME = "shared_preference"
+        const val PREFERENCE_MODE = Context.MODE_PRIVATE
+
+        const val FIRST_TIME_MIGRATION = "first_time_migration"
+        const val SELECTED_LANGUAGE = "selected_language"
+
+        const val STATUS_DONE = "status_done"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Check if the migration has already been done or not
+        if (getString(FIRST_TIME_MIGRATION) != STATUS_DONE) {
+            // Fetch the selected language from wherever it was stored. In this case its SharedPref
+            getString(SELECTED_LANGUAGE)?.let {
+                // Set this locale using the AndroidX library that will handle the storage itself
+                val localeList = LocaleListCompat.forLanguageTags(it)
+                AppCompatDelegate.setApplicationLocales(localeList)
+                // Set the migration flag to ensure that this is executed only once
+                putString(FIRST_TIME_MIGRATION, STATUS_DONE)
+            }
+        }
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         auth = Firebase.auth
@@ -566,6 +592,17 @@ class MainActivity : AppCompatActivity() {
             return localFile.exists()
         }
         return false
+    }
+
+    private fun putString(key: String, value: String) {
+        val editor = getSharedPreferences(PREFERENCE_NAME, PREFERENCE_MODE).edit()
+        editor.putString(key, value)
+        editor.apply()
+    }
+
+    private fun getString(key: String): String? {
+        val preference = getSharedPreferences(PREFERENCE_NAME, PREFERENCE_MODE)
+        return preference.getString(key, null)
     }
 
 }

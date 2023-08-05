@@ -3,6 +3,7 @@
     <string name="exit_game_title">게임을 종료하시겠습니까?</string>
     <string name="continue_game">계속</string>
     <string name="quit">종료</string>
+    <string name="menu_language">메뉴 언어</string>
     <string name="select_language">언어 선택</string>
     <string name="game_levels">게임 레벨</string>
     <string name="player_levels">플레이어 레벨</string>

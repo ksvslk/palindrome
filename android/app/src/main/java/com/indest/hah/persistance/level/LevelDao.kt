@@ -7,15 +7,14 @@ import com.indest.hah.game.creation.Shuffler
 import com.indest.hah.other.getLevelScore
 import com.indest.hah.persistance.dto.*
 import kotlinx.coroutines.flow.Flow
+import kotlin.math.max
 
 @Dao
 interface LevelDao {
-
     private val databaseIdentityQuery: SimpleSQLiteQuery
         get() = SimpleSQLiteQuery(
             "SELECT identity_hash FROM room_master_table"
         )
-
     @RawQuery
     suspend fun getDatabaseIdentityViaQuery(query: SupportSQLiteQuery = databaseIdentityQuery): String
 
@@ -38,9 +37,6 @@ interface LevelDao {
 
     @Query("select letter from letter_info_table where owner_id=:levelNr and friend_index!=-666 order by friend_index asc")
     suspend fun getCurrentSolution(levelNr: Int): List<Char>
-
-    @Query("select count(*) from letter_info_table where owner_id=:levelNr")
-    suspend fun levelLettersCount(levelNr: Int): Int
 
     @Query("update level_info_table set time_modified = (select time_modified + 1 from level_info_table where level_id=:currentLevelNr) where level_id=:chosenLevel")
     suspend fun updateChosenLevelTimestamp(currentLevelNr: Int, chosenLevel: Int)
@@ -74,9 +70,6 @@ interface LevelDao {
 
     @Query("select max(solution_id) from solution_table")
     suspend fun getMaxSolutionId(): Int
-
-    @Query("select * from level_info_table where level_id = (select max(level_id) from level_info_table)")
-    suspend fun getMaxLevel(): LevelData
 
     @Query("select * from level_info_table where level_id = :id")
     suspend fun getSpecificLevel(id: Long): LevelData
@@ -147,6 +140,72 @@ interface LevelDao {
                 puzzleShuffled.forEachIndexed { index, char ->
                     insertLetterData(
                         ownerId = nextLevelId,
+                        homeIndex = index,
+                        friendIndex = -666,
+                        letter = char,
+                        locked = false,
+                    )
+                }
+            }
+        }
+    }
+
+    @Transaction
+    suspend fun insertRegularLevels(playerLevel: List<RegularLevel>) {
+        playerLevel.forEach { level ->
+            if (!isLevelAdded(level.nr)) {
+                val puzzle = level.solutionToCategory.keys.firstOrNull() ?: ""
+                insertLevelInfo(
+                    LevelData(
+                        levelId = level.nr.toInt(),
+                        puzzle = puzzle,
+                        categoryRewarded = false,
+                        pictureRewarded = false,
+                        progress = LevelProgress.TODO,
+                        score = level.nr.toInt().getLevelScore(puzzle = puzzle),
+                        best_score = 0,
+                        timeModified = 0,
+                        columnCount = -1,
+                    )
+                )
+                level.solutionToCategory.entries.forEach { solutionToCategory ->
+                    var maxSolutionId = 0
+                    if (level.nr > 1) {
+                        maxSolutionId = getMaxSolutionId()
+                    }
+                    insertSolution(
+                        Solution(
+                            solutionId = if (maxSolutionId == 100) 1001 else maxSolutionId + 1,
+                            parentId = level.nr.toInt(),
+                            palindrome = solutionToCategory.key,
+                            hint = solutionToCategory.value["hint"] ?: "",
+                            hint_cn = solutionToCategory.value["hint_cn"] ?: "",
+                            hint_de = solutionToCategory.value["hint_de"] ?: "",
+                            hint_es = solutionToCategory.value["hint_es"] ?: "",
+                            hint_et = solutionToCategory.value["hint_et"] ?: "",
+                            hint_fi = solutionToCategory.value["hint_fi"] ?: "",
+                            hint_fr = solutionToCategory.value["hint_fr"] ?: "",
+                            hint_id = solutionToCategory.value["hint_id"] ?: "",
+                            hint_it = solutionToCategory.value["hint_it"] ?: "",
+                            hint_ja = solutionToCategory.value["hint_ja"] ?: "",
+                            hint_ko = solutionToCategory.value["hint_ko"] ?: "",
+                            hint_nl = solutionToCategory.value["hint_nl"] ?: "",
+                            hint_pl = solutionToCategory.value["hint_pl"] ?: "",
+                            hint_pt = solutionToCategory.value["hint_pt"] ?: "",
+                            hint_ro = solutionToCategory.value["hint_ro"] ?: "",
+                            hint_sv = solutionToCategory.value["hint_sv"] ?: "",
+                            hint_tr = solutionToCategory.value["hint_tr"] ?: "",
+                            hint_uk = solutionToCategory.value["hint_uk"] ?: "",
+                            solved = false
+                        )
+                    )
+                }
+                val solution = level.solutionToCategory.keys.first()
+                val puzzleShuffled = Shuffler.getShuffledSolution(solution).replace("-","")
+                updatePuzzle(level.nr.toInt(), puzzleShuffled)
+                puzzleShuffled.forEachIndexed { index, char ->
+                    insertLetterData(
+                        ownerId = level.nr.toInt(),
                         homeIndex = index,
                         friendIndex = -666,
                         letter = char,
@@ -312,14 +371,8 @@ interface LevelDao {
     @Query("update level_info_table set category_rewarded=:value where level_id=:level")
     suspend fun updateCategoryRewarded(value: Boolean, level: Int)
 
-    @Query("select category_rewarded from level_info_table where level_id=:level")
-    suspend fun isCategoryRewarded(level: Int): Boolean
-
     @Query("update level_info_table set picture_rewarded=:value where level_id=:level")
     suspend fun updatePictureRewarded(value: Boolean, level: Int)
-
-    @Query("select picture_rewarded from level_info_table where level_id=:level")
-    suspend fun isPictureRewarded(level: Int): Boolean
 
     @Query("update interval set current_count = (select current_count + 1 from interval where name=:name) where name=:name")
     suspend fun increaseCurrentCount(name: String)
@@ -391,9 +444,6 @@ interface LevelDao {
         locked: Boolean
     )
 
-    @Update
-    suspend fun updateLevelData(levelInfo: LevelData)
-
     @Query("update level_info_table set progress = :progress where level_id = :level")
     suspend fun updateProgress(level: Int, progress: LevelProgress)
 
@@ -436,9 +486,6 @@ interface LevelDao {
 
     @Query("select palindrome from solution_table where parent_id=:level")
     suspend fun getLevelSolutions(level: Int): List<String>
-
-    @Query("select count(*) from solution_table")
-    suspend fun debugGetSolutionsCount(): Int
 
     @Query("select progress from level_info_table where level_id=:level")
     suspend fun getLevelProgress(level: Int): LevelProgress
@@ -525,7 +572,5 @@ interface LevelDao {
     @Query("select max(time_modified) from level_info_table")
     suspend fun getMaximumTimestamp(): Long?
 
-    @Query("DELETE FROM level_info_table WHERE level_id = :levelNr")
-    suspend fun removeLevel(levelNr: Int)
 
 }

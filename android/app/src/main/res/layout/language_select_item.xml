@@ -19,8 +19,8 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/language_image"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:contentDescription="@string/rewarded_place_letter"

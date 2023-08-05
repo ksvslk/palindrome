@@ -3,6 +3,7 @@
     <string name="exit_game_title">Renunți la joc?</string>
     <string name="continue_game">Continuă</string>
     <string name="quit">Renunță</string>
+    <string name="menu_language">Limba meniului</string>
     <string name="select_language">Selectați limba</string>
     <string name="game_levels">Niveluri de joc</string>
     <string name="player_levels">Niveluri de jucător</string>
