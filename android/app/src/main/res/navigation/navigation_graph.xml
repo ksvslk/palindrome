@@ -81,8 +81,7 @@
         tools:layout="@layout/settings_fragment" >
         <action
             android:id="@+id/action_navigation_settings_to_navigation_tutorial"
-            app:destination="@id/navigation_tutorial"
-            app:popUpTo="@id/navigation_level" />
+            app:destination="@id/navigation_tutorial" />
     </dialog>
 
     <dialog
@@ -92,15 +91,12 @@
         tools:layout="@layout/stages_fragment" >
         <action
             android:id="@+id/action_navigation_stages_to_navigation_level_select"
-            app:popUpTo="@id/navigation_level"
             app:destination="@id/navigation_level_select" />
         <action
             android:id="@+id/action_navigation_stages_to_navigation_submission"
-            app:popUpTo="@id/navigation_level"
             app:destination="@id/navigation_submission" />
         <action
             android:id="@+id/action_navigation_stages_to_navigation_international"
-            app:popUpTo="@id/navigation_level"
             app:destination="@id/navigation_international" />
     </dialog>
 
@@ -112,7 +108,6 @@
 
         <action
             android:id="@+id/action_navigation_international_to_navigation_level_select"
-            app:popUpTo="@id/navigation_level"
             app:destination="@id/navigation_level_select" />
     </dialog>
 
