@@ -36,8 +36,7 @@
     <string name="achievements">Досягнення</string>
     <string name="leaderboard">Таблиця лідерів гри</string>
     <string name="rewarded_reveal_picture">Відкрити зображення</string>
-    <string name="rewarded_reveal_clue">Розкрити підказку
-37 </string>
+    <string name="rewarded_reveal_clue">Розкрити підказку</string>
     <string name="rewarded_place_letter">Літера місця</string>
     <string name="remove_letter_ads_text">Миттєві листи</string>
     <string name="no_ad_available">Підказка недоступна</string>
