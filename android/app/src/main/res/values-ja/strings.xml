@@ -100,7 +100,7 @@
 
     <string name="game_completed_shout">やった！</string>
 
-    <string name="game_completed_shout_smiley" translatable="false">(&gt;‿◠)✌</string>
+    <string name="game_completed_shout_smiley" translatable="false">(◠‿◠)✌</string>
 
     <string name="game_completed_shout_shout2">勝利！</string>
 

@@ -13,7 +13,9 @@ import com.indest.hah.R
 import com.indest.hah.ads.RewardType
 import com.indest.hah.general.AccountStatus
 import com.indest.hah.other.C
+import com.indest.hah.other.getCountryTagOrDefault
 import com.indest.hah.other.getLevelScore
+import com.indest.hah.persistance.dto.Interval
 import com.indest.hah.persistance.dto.LanguageLevel
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
@@ -23,6 +25,7 @@ import com.indest.hah.persistance.dto.RegularLevel
 import com.indest.hah.persistance.dto.SaveGame
 import com.indest.hah.persistance.level.LevelProgress
 import com.indest.hah.persistance.level.LevelRepository
+import dagger.hilt.android.internal.Contexts
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
@@ -97,11 +100,9 @@ class LevelViewModel @Inject constructor(
 
     private fun startCollectingLevelUpdate() {
         viewModelScope.launch {
+            val tag = getCountryTagOrDefault()
+            levelRepository.matchFirstLevelWithUserLocale(tag)
             levelRepository.latestLevelFlow().collect {
-                /*
-                val changeInColumnsCount =
-                    it.levelInfo.columnCount != _currentLevel.value.levelInfo.columnCount
-                    */
                 val changeInLevelId = it.levelInfo.levelId != _currentLevel.value.levelInfo.levelId
                 _currentLevel.value = it
                 if (isCurrentLevelLegit() && (changeInLevelId)) {
@@ -201,12 +202,14 @@ class LevelViewModel @Inject constructor(
 
 
     init {
+        /*
         viewModelScope.launch {
             addRegularLevels()
             addLanguagePacks()
-            levelRepository.init()
+            addIntervals()
             //checkLanguagePackValidity()
         }
+         */
     }
 
 
@@ -981,6 +984,63 @@ class LevelViewModel @Inject constructor(
                 val regularLevels = jsonInstance.decodeFromString<List<RegularLevel>>(json)
                 levelRepository.insertRegularLevels(regularLevels)
             }
+    }
+
+    private fun addIntervals()
+    {
+        val sad = getApplication<Application>().getString(R.string.sad_mode_interval)
+        val scores = getApplication<Application>().getString(R.string.player_centered_scores)
+        val hint = getApplication<Application>().getString(R.string.hint_suggestion)
+        val last = getApplication<Application>().getString(R.string.last_submission)
+        val five = getApplication<Application>().getString(R.string.achievement_flawless_5)
+        val fifteen = getApplication<Application>().getString(R.string.achievement_flawless_15)
+
+        val intervalSadMode = Interval(
+            name = sad,
+            currentCount = 0,
+            limitCount = 10,
+            timestamp = -1
+        )
+
+        val scoresInterval = Interval(
+            name = scores,
+            currentCount = 0,
+            limitCount = 6,
+            timestamp = -1
+        )
+
+        val hintInterval = Interval(
+            name = hint,
+            currentCount = 0,
+            limitCount = 3,
+            timestamp = -1
+        )
+
+        val lastInterval = Interval(
+            name = last,
+            currentCount = 0,
+            limitCount = 7,
+            timestamp = -1
+        )
+
+        val fiveInterval = Interval(
+            name = five,
+            currentCount = 0,
+            limitCount = 5,
+            timestamp = -1
+        )
+
+        val fifteenInterval = Interval(
+            name = fifteen,
+            currentCount = 0,
+            limitCount = 15,
+            timestamp = -1
+        )
+        viewModelScope.launch {
+            listOf(intervalSadMode, scoresInterval, hintInterval, fiveInterval, fifteenInterval, lastInterval).forEach {
+                levelRepository.addInterval(it)
+            }
+        }
     }
 
     private fun checkLanguagePackValidity() {

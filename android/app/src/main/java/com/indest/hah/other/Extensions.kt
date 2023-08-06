@@ -1,6 +1,5 @@
 package com.indest.hah.other
 
-import android.content.ContentResolver
 import android.content.Context
 import android.os.Build
 import android.provider.Settings
@@ -8,13 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.os.bundleOf
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.NavController
 import com.indest.hah.R
-import java.text.Normalizer
+import java.util.Locale
 
 fun NavController.safeNavigate(
     action: Int,
@@ -30,6 +30,26 @@ fun NavController.safeNavigate(
         navigate(action, bundle)
     }
 }
+
+fun getCountryTagOrDefault():String {
+    // Fetching the current application locale using the AndroidX support Library
+    var currentLocaleName = if (!AppCompatDelegate.getApplicationLocales().isEmpty) {
+        // Fetches the current Application Locale from the list
+        AppCompatDelegate.getApplicationLocales()[0]?.toLanguageTag()
+    } else {
+        // Fetches the default System Locale
+        Locale.getDefault().toLanguageTag()
+    }?.substring(0, 2)
+
+    if (currentLocaleName == "en" ||
+        currentLocaleName == null ||
+        !C.languages.containsKey(currentLocaleName)
+    ) {
+        currentLocaleName = "gb"
+    }
+    return currentLocaleName
+}
+
 
 
 fun String.isPalindrome(language: String = "gb"): Boolean {

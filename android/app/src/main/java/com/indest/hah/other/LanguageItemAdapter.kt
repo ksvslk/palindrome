@@ -1,5 +1,6 @@
 package com.indest.hah.other
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,7 @@ import java.security.AccessController.getContext
 
 
 class LanguageItemAdapter(
+    private val context: Context,
     private val disableCount:Boolean = false,
     private val dataSet: List<Pair<String,Int>>,
     private val onItemClicked: (String?) -> Unit) :
@@ -49,7 +51,7 @@ class LanguageItemAdapter(
     }
 
     override fun onBindViewHolder(holder: LanguageItemViewHolder, position: Int) {
-        val languageAndFlag = dataSet[position].first.mapCountryCodeToLanguageAndFlag(holder.itemView.context.applicationContext)
+        val languageAndFlag = dataSet[position].first.mapCountryCodeToLanguageAndFlag(context)
         holder.itemView.findViewById<AppCompatTextView>(R.id.language_to_select).text = languageAndFlag.first
         holder.itemView.findViewById<AppCompatImageView>(R.id.language_image).setImageResource(languageAndFlag.second)
         if (!disableCount) {

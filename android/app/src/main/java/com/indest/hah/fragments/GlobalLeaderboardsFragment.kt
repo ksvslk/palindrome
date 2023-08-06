@@ -43,9 +43,11 @@ class GlobalLeaderboardsFragment : FullBottomSheetDialogFragment() {
                             DividerItemDecoration.VERTICAL
                         )
                     )
-                    val countriesModifiedForAdapter = countries.map { Pair(it, 1) }
+                    val countriesModifiedForAdapter = countries.map {
+                        Pair(it, 1)
+                    }
                     binding.globalLeaderboardsRecyclerview.adapter =
-                        LanguageItemAdapter(true, countriesModifiedForAdapter) {
+                        LanguageItemAdapter(requireContext(), true, countriesModifiedForAdapter) {
                              it?.let { cc ->
                                  val id = getCountryCodeLeaderboardId(cc)
                                  showLeaderBoard(id)

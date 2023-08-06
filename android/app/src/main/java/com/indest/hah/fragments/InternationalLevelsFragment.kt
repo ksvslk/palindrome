@@ -43,7 +43,7 @@ class InternationalLevelsFragment : FullBottomSheetDialogFragment() {
                         )
                     )
                     binding.internationalLevelsRecyclerview.adapter =
-                        LanguageItemAdapter(false, countries) {
+                        LanguageItemAdapter(requireContext(), false, countries) {
                              it?.let {cc ->
                                  findNavController().safeNavigate(
                                      R.id.action_navigation_international_to_navigation_level_select,
@@ -57,8 +57,6 @@ class InternationalLevelsFragment : FullBottomSheetDialogFragment() {
             }
         }
     }
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater,

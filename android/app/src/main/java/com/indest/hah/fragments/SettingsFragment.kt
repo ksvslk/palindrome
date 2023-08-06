@@ -26,10 +26,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.indest.hah.BuildConfig
 import com.indest.hah.R
 import com.indest.hah.databinding.SettingsFragmentBinding
 import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.general.GeneralViewModel
+import com.indest.hah.other.getCountryTagOrDefault
 import com.indest.hah.other.mapCountryCodeToLanguageAndFlag
 import com.indest.hah.other.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
@@ -53,14 +55,14 @@ class SettingsFragment : FullBottomSheetDialogFragment() {
             {
                 generalViewModel.internet.combine(levelViewModel.accountStatus) { i, a ->
                     Pair(i, a)
-                }.collect { (internet, accountStatus) ->
+                }.collect { (internet, _) ->
                     binding.shareButtonSettings.visibility =
                         if (internet) View.VISIBLE else View.GONE
                     binding.shareButtonSettings.setOnClickListener {
                         val shareIntent = generalViewModel.getShareIntent("SettingsFragment")
                         startActivity(shareIntent)
                     }
-                    binding.twitterButton?.setOnClickListener {
+                    binding.twitterButton.setOnClickListener {
                         context?.let {
                             when (internet) {
                                 true -> {
@@ -112,6 +114,15 @@ class SettingsFragment : FullBottomSheetDialogFragment() {
         binding.tutorialButton.setOnClickListener {
             findNavController().safeNavigate(R.id.action_navigation_settings_to_navigation_tutorial)
         }
+        binding.tutorialButton.findViewById<AppCompatImageView>(R.id.any_button_icon).setOnLongClickListener {
+            val info = "${BuildConfig.VERSION_CODE}; ${BuildConfig.VERSION_NAME}; ${BuildConfig.GIT_HASH}"
+            Toast.makeText(
+                context,
+                info,
+                Toast.LENGTH_LONG
+            ).show()
+            return@setOnLongClickListener true
+        }
 
         setInitialPreference(binding.soundSwitch, getString(R.string.sound_on_pref))
         setInitialPreference(binding.vibrationSwitch, getString(R.string.vibration_on_pref))
@@ -119,23 +130,15 @@ class SettingsFragment : FullBottomSheetDialogFragment() {
 
     private fun setCorrectLanguageToSelector()
     {
-        // Fetching the current application locale using the AndroidX support Library
-        var currentLocaleName = if (!AppCompatDelegate.getApplicationLocales().isEmpty) {
-            // Fetches the current Application Locale from the list
-            AppCompatDelegate.getApplicationLocales()[0]?.toLanguageTag()
-        } else {
-            // Fetches the default System Locale
-            Locale.getDefault().toLanguageTag()
-        }?.substring(0, 2)
-        Log.d(TAG, "Current locale: $currentLocaleName")
-        if (currentLocaleName == "en") currentLocaleName = "gb"
+        val currentLocaleName = getCountryTagOrDefault()
         binding.selectAppLocaleButton.findViewById<AppCompatImageView>(R.id.any_button_icon).apply {
             val flag = AppCompatResources.getDrawable(
                 context,
-                currentLocaleName!!.mapCountryCodeToLanguageAndFlag(requireContext()).second)
+                currentLocaleName.mapCountryCodeToLanguageAndFlag(requireContext()).second)
             this.setImageDrawable(flag)
         }
     }
+
     private fun set50PercentIntensity(imageView: AppCompatImageView) {
         val matrix = ColorMatrix().apply {
             setSaturation(0.5f)

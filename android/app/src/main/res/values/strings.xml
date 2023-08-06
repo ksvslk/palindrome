@@ -118,6 +118,7 @@
     <string name="sad_mode_interval" translatable="false">sad_mode</string>
     <string name="player_centered_scores" translatable="false">player_centered_scores</string>
     <string name="hint_suggestion" translatable="false">hint_suggestion</string>
+    <string name="last_submission" translatable="false">last_submission</string>
 
     <!-- PREFERENCES -->
     <string name="tutorial_passed" translatable="false">TUTORIAL_PASSED</string>

@@ -3,6 +3,7 @@ package com.indest.hah.persistance.level
 import androidx.room.*
 import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteQuery
+import androidx.work.Operation.State.IN_PROGRESS
 import com.indest.hah.game.creation.Shuffler
 import com.indest.hah.other.getLevelScore
 import com.indest.hah.persistance.dto.*
@@ -87,6 +88,7 @@ interface LevelDao {
         if (maxLevelId < 10000) maxLevelId = 10000
         var nextLevelId = maxLevelId
         levels.forEach { level ->
+            val progress = if (nextLevelId == maxLevelId) LevelProgress.IN_PROGRESS else LevelProgress.TODO
             nextLevelId += 1
             if (!isLevelAdded(nextLevelId.toLong())) {
                 val puzzle = level.solutionToCategory.keys.firstOrNull() ?: ""
@@ -96,7 +98,7 @@ interface LevelDao {
                         puzzle = puzzle,
                         categoryRewarded = false,
                         pictureRewarded = false,
-                        progress = LevelProgress.TODO,
+                        progress = progress,
                         score = nextLevelId.getLevelScore(puzzle = puzzle),
                         best_score = 0,
                         timeModified = 0,
@@ -152,6 +154,7 @@ interface LevelDao {
 
     @Transaction
     suspend fun insertRegularLevels(playerLevel: List<RegularLevel>) {
+        val levelToSetProgressInProgress = playerLevel.minBy { it.nr }.nr
         playerLevel.forEach { level ->
             if (!isLevelAdded(level.nr)) {
                 val puzzle = level.solutionToCategory.keys.firstOrNull() ?: ""
@@ -161,9 +164,10 @@ interface LevelDao {
                         puzzle = puzzle,
                         categoryRewarded = false,
                         pictureRewarded = false,
-                        progress = LevelProgress.TODO,
+                        progress = if (level.nr == levelToSetProgressInProgress) LevelProgress.IN_PROGRESS else LevelProgress.TODO,
                         score = level.nr.toInt().getLevelScore(puzzle = puzzle),
                         best_score = 0,
+                        author = "",
                         timeModified = 0,
                         columnCount = -1,
                     )
@@ -490,6 +494,8 @@ interface LevelDao {
     @Query("select progress from level_info_table where level_id=:level")
     suspend fun getLevelProgress(level: Int): LevelProgress
 
+    @Query("select min(level_id) from level_info_table where country_code = :cc")
+    suspend fun getFirstLevelLevelIdForCountry(cc:String): Int
 
     /** Steps taken to reset the level:
             1. Delete letters info
@@ -536,10 +542,17 @@ interface LevelDao {
     }
 
     @Transaction
-    suspend fun init() {
-        val firstLevelProgress = getLevelProgress(1)
-        if (firstLevelProgress == LevelProgress.TODO) resetLevel(1)
-        resetAllMigratedLevels()
+    suspend fun matchFirstLevelWithUserLocale(currentTag:String) {
+        if (getMaximumTimestamp()?.equals(0L) == true)
+        {
+            var levelId = 1
+            if (currentTag != "gb") {
+                levelId = getFirstLevelLevelIdForCountry(currentTag)
+            }
+            updateProgress(1, LevelProgress.IN_PROGRESS)
+            updateChosenLevelTimestamp(1, levelId)
+            resetAllMigratedLevels()
+        }
     }
 
     @Transaction
