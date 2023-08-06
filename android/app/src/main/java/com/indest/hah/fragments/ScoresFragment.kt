@@ -17,6 +17,7 @@ import com.indest.hah.databinding.ScoreFragmentBinding
 import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.general.AccountStatus
 import com.indest.hah.general.GeneralViewModel
+import com.indest.hah.other.getCountryCodeLeaderboardId
 
 class ScoresFragment : FullBottomSheetDialogFragment() {
     private var _binding: ScoreFragmentBinding? = null
@@ -56,14 +57,14 @@ class ScoresFragment : FullBottomSheetDialogFragment() {
         }
 
         if (levelViewModel.accountStatus.value in setOf(AccountStatus.SIGNED_IN, AccountStatus.SIGNED_IN_WITH_FIREBASE)) {
-
-            val leaderboardId = if (generalViewModel.currentLevel.value.levelInfo.levelId > 1000) {
+            val leaderboardId =  if (generalViewModel.currentLevel.value.levelInfo.levelId > 10000) {
+                generalViewModel.currentLevel.value.levelInfo.countryCode.getCountryCodeLeaderboardId(requireContext())
+            }
+            else if (generalViewModel.currentLevel.value.levelInfo.levelId > 1000) {
                 getString(R.string.leaderboard_player_levels_leaderboard)
             } else {
                 getString(R.string.leaderboard_crme_de_la_crme)
             }
-
-
             activity?.let { activity ->
                 PlayGames.getLeaderboardsClient(activity)
                     .loadPlayerCenteredScores(
