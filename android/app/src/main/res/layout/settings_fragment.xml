@@ -73,17 +73,7 @@
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 
-    <com.indest.hah.views.AnyButton
-        android:id="@+id/twitter_button"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/simple_dialog_item_height"
-        android:background="?attr/selectableItemBackground"
-        android:clickable="true"
-        android:focusable="true"
-        android:orientation="horizontal"
-        android:saveEnabled="false"
-        anybutton:any_button_icon="@drawable/twitter_black"
-        anybutton:any_button_title="@string/follow" />
+
 
 
     <com.indest.hah.views.AnyButton
@@ -110,6 +100,18 @@
         android:saveEnabled="false"
         anybutton:any_button_icon="@drawable/baseline_rate_review_black_36"
         anybutton:any_button_title="@string/rate_game" />
+
+    <com.indest.hah.views.AnyButton
+        android:id="@+id/twitter_button"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/simple_dialog_item_height"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="horizontal"
+        android:saveEnabled="false"
+        anybutton:any_button_icon="@drawable/x_logo"
+        anybutton:any_button_title="@string/follow" />
 
     <com.indest.hah.views.AnyButton
         android:id="@+id/share_button_settings"
