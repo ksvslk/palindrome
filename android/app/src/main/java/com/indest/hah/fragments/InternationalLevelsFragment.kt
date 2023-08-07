@@ -33,7 +33,7 @@ class InternationalLevelsFragment : FullBottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED)
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED)
             {
                 levelViewModel.allUniqueCountriesWithLevelCount().collect { countries ->
                     binding.internationalLevelsRecyclerview.addItemDecoration(
