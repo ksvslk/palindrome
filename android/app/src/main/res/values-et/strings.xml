@@ -32,7 +32,7 @@
     <string name="rate_game">Andke tagasisidet</string>
     <string name="you_are_signed_in">Olete sisse logitud</string>
     <string name="no_internet">Interneti-ühendus puudub</string>
-    <string name="please_sign_in">Logige sisse lehelt &amp;quot;Seaded&amp;quot;.</string>
+    <string name="please_sign_in">Juurdepääs ainult liikmetele</string>
     <string name="achievements">Saavutused</string>
     <string name="leaderboard">Mängu edetabel</string>
     <string name="rewarded_reveal_picture">Avalda Pilt</string>

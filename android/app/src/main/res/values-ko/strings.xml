@@ -32,7 +32,7 @@
     <string name="rate_game">피드백 제공</string>
     <string name="you_are_signed_in">로그인되었습니다</string>
     <string name="no_internet">인터넷 연결 없음</string>
-    <string name="please_sign_in">페이지에서 로그인하십시오.</string>
+    <string name="please_sign_in">회원 전용 액세스</string>
     <string name="achievements">성과</string>
     <string name="leaderboard">게임 순위표</string>
     <string name="rewarded_reveal_picture">사진 공개</string>

@@ -62,19 +62,21 @@
     <androidx.appcompat.widget.LinearLayoutCompat
         android:saveEnabled="false"
         android:id="@+id/alternative_screen"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/simple_dialog_item_height"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground"
         android:orientation="horizontal">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:saveEnabled="false"
             android:id="@+id/alternative_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/simple_dialog_item_height"
             android:layout_gravity="center"
+            app:autoSizeMaxTextSize="@dimen/body_large_text_size"
+            app:autoSizeTextType="uniform"
             android:text="@string/please_sign_in"
-            android:textAppearance="@style/TextAppearance.OC.Body1"
             />
     </androidx.appcompat.widget.LinearLayoutCompat>
 

@@ -32,7 +32,7 @@
     <string name="rate_game">Надішліть відгук</string>
     <string name="you_are_signed_in">Ви ввійшли</string>
     <string name="no_internet">Немає підключення до Інтернету</string>
-    <string name="please_sign_in">Увійдіть зі сторінки «Налаштування».</string>
+    <string name="please_sign_in">Доступ обмежено для членів</string>
     <string name="achievements">Досягнення</string>
     <string name="leaderboard">Таблиця лідерів гри</string>
     <string name="rewarded_reveal_picture">Відкрити зображення</string>

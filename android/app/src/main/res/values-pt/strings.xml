@@ -62,7 +62,7 @@
 
     <string name="no_internet">Sem conexão com a Internet</string>
 
-    <string name="please_sign_in">Faça login na página Configurações.</string>
+    <string name="please_sign_in">Acesso reservado para membros</string>
 
     <string name="achievements">Conquistas</string>
 
@@ -147,6 +147,7 @@
     <string name="send_levels_country_top">Envie palíndromos e eleve seu país.</string>
 
     <string name="picture_hint">Dica de imagem</string>
+    <string name="other">Outro</string>
 
     <string-array name="save_24_percent_label">
 

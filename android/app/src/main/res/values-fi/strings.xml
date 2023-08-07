@@ -33,7 +33,7 @@
     <string name="rate_game">Anna palautetta</string>
     <string name="you_are_signed_in">Olet kirjautunut sisään</string>
     <string name="no_internet">Ei Internet-yhteyttä</string>
-    <string name="please_sign_in">Kirjaudu sisään &amp;quot;Asetukset&amp;quot;-sivulta.</string>
+    <string name="please_sign_in">Pääsy vain jäsenille</string>
     <string name="achievements">Saavutukset</string>
     <string name="leaderboard">Pelin tulostaulukko</string>
     <string name="rewarded_reveal_picture">Paljasta kuva</string>
