@@ -148,6 +148,9 @@
 
     <string name="picture_hint">Sugerencia de imagen</string>
 
+    <string name="other">Otro</string>
+
+
     <string-array name="save_24_percent_label">
 
         <item>–</item>
@@ -165,49 +168,30 @@
     </string-array>
 
     <string-array name="good_texts">
-
         <item>¡Correcto!</item>
-
-        <item>¡Bien!</item>
-
+        <item>¡Bueno!</item>
         <item>¡Sigue adelante!</item>
-
         <item>¡Sí!</item>
-
-        <item>¡Viva!</item>
-
+        <item>¡Hurra!</item>
     </string-array>
 
     <string-array name="very_good_texts">
-
-        <item>¡Impresionante!</item>
-
-        <item>¡Magnífico!</item>
-
-        <item>¡Excelente!</item>
-
+        <item>¡Increíble!</item>
+        <item>¡Genial!</item>
+        <item>¡Estupendo!</item>
         <item>¡Perfecto!</item>
-
-        <item>¡Pendiente!</item>
-
+        <item>¡Excepcional!</item>
     </string-array>
 
     <string-array name="solution_wrong_texts">
-
-        <item>Intentar otra vez.</item>
-
-        <item>Sigue intentándolo.</item>
-
-        <item>Mirar por encima.</item>
-
+        <item>Inténtalo de nuevo.</item>
+        <item>Incorrecto.</item>
+        <item>Verifica la respuesta.</item>
     </string-array>
 
     <string-array name="palindrome_wrong_texts">
-
-        <item>Palíndromo equivocado.</item>
-
-        <item>Palíndromo incorrecto.</item>
-
+        <item>Palíndromo, pero no es la solución.</item>
+        <item>Palíndromo, pero no del todo correcto.</item>
     </string-array>
 
 

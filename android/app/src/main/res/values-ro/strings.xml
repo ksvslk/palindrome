@@ -75,6 +75,7 @@
     <string name="points">puncte</string>
     <string name="send_levels_country_top">Trimite palindromuri și ridică-ți țara.</string>
     <string name="picture_hint">Sugestie imagine</string>
+    <string name="other">Altul</string>
 
     <string-array name="save_24_percent_label">
         <item>–</item>
@@ -87,29 +88,29 @@
 
     <string-array name="good_texts">
         <item>Corect!</item>
-        <item>Bine!</item>
-        <item>Continuă!</item>
+        <item>Bună treabă!</item>
+        <item>Continuă așa!</item>
         <item>Da!</item>
-        <item>Hura!</item>
+        <item>Ura!</item>
     </string-array>
 
     <string-array name="very_good_texts">
-        <item>Minunat!</item>
-        <item>Super!</item>
-        <item>Excelent!</item>
+        <item>Uimitor!</item>
+        <item>Excelentă muncă!</item>
         <item>Perfect!</item>
         <item>Remarcabil!</item>
+        <item>Deosebit de bine!</item>
     </string-array>
 
     <string-array name="solution_wrong_texts">
-        <item>Încearcă din nou.</item>
-        <item>Continuă să încerci.</item>
-        <item>Uită-te bine.</item>
+        <item>Mai încearcă o dată.</item>
+        <item>Greșit.</item>
+        <item>Verifică răspunsul.</item>
     </string-array>
 
     <string-array name="palindrome_wrong_texts">
-        <item>Palindrom greșit.</item>
-        <item>Palindrom incorect.</item>
+        <item>Palindrom, dar nu este soluția.</item>
+        <item>Palindrom, dar nu chiar corect.</item>
     </string-array>
 
 

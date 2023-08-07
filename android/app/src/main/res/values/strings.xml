@@ -76,6 +76,7 @@
     <string name="send_levels_country_top">Send palindromes and rise your country.</string>
     <string name="picture_hint">Picture hint</string>
     <string name="menu_language">Menu Language</string>
+    <string name="other">Other</string>
 
     <string-array name="save_24_percent_label">
         <item>–</item>
@@ -105,13 +106,13 @@
 
     <string-array name="solution_wrong_texts">
         <item>Try again.</item>
-        <item>Keep trying.</item>
-        <item>Look it over.</item>
+        <item>Incorrect.</item>
+        <item>Check answer.</item>
     </string-array>
 
     <string-array name="palindrome_wrong_texts">
-        <item>Wrong palindrome.</item>
-        <item>Incorrect palindrome.</item>
+        <item>Palindrome, but not the solution.</item>
+        <item>Palindrome, but not quite right.</item>
     </string-array>
 
     <!-- Interval table -->

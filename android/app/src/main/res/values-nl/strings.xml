@@ -76,6 +76,7 @@
     <string name="points">punten</string>
     <string name="send_levels_country_top">Stuur palindromen en verhef je land.</string>
     <string name="picture_hint">Pictogram</string>
+    <string name="other">Andere</string>
 
     <string-array name="save_24_percent_label">
         <item>–</item>
@@ -88,30 +89,30 @@
     </string-array>
 
     <string-array name="good_texts">
-        <item>Juist!</item>
-        <item>Goed!</item>
-        <item>Ga door!</item>
+        <item>Correct!</item>
+        <item>Goed gedaan!</item>
+        <item>Ga zo door!</item>
         <item>Ja!</item>
         <item>Hoera!</item>
     </string-array>
 
     <string-array name="very_good_texts">
         <item>Geweldig!</item>
-        <item>Fantastisch!</item>
-        <item>Uitstekend!</item>
+        <item>Super!</item>
+        <item>Uitstekend gedaan!</item>
         <item>Perfect!</item>
-        <item>Uitstekend!</item>
+        <item>Fantastisch!</item>
     </string-array>
 
     <string-array name="solution_wrong_texts">
-        <item>Probeer het opnieuw.</item>
-        <item>Blijf proberen.</item>
-        <item>Kijk er eens naar.</item>
+        <item>Probeer opnieuw.</item>
+        <item>Onjuist.</item>
+        <item>Controleer antwoord.</item>
     </string-array>
 
     <string-array name="palindrome_wrong_texts">
-        <item>Verkeerd palindroom.</item>
-        <item>Onjuist palindroom.</item>
+        <item>Palindroom, maar niet de oplossing.</item>
+        <item>Palindroom, maar niet helemaal juist.</item>
     </string-array>
 
 

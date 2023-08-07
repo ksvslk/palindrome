@@ -148,6 +148,7 @@
     <string name="send_levels_country_top">发送回文并崛起您的国家。</string>
 
     <string name="picture_hint">图片提示</string>
+    <string name="other">其他</string>
 
     <string-array name="save_24_percent_label">
 
@@ -166,49 +167,30 @@
     </string-array>
 
     <string-array name="good_texts">
-
         <item>正确！</item>
-
-        <item>好！</item>
-
-        <item>继续！</item>
-
+        <item>不错！</item>
+        <item>继续前进！</item>
         <item>是的！</item>
-
-        <item>欢呼！</item>
-
+        <item>万岁！</item>
     </string-array>
 
     <string-array name="very_good_texts">
-
-        <item>太棒了！</item>
-
-        <item>太棒了！</item>
-
-        <item>太棒了！</item>
-
-        <item>完美！</item>
-
-        <item>出众！</item>
-
+        <item>棒极了！</item>
+        <item>了不起的表现！</item>
+        <item>完美无缺！</item>
+        <item>极好！</item>
+        <item>绝佳！</item>
     </string-array>
 
     <string-array name="solution_wrong_texts">
-
         <item>再试一次。</item>
-
-        <item>继续尝试。</item>
-
-        <item>仔细看看。</item>
-
+        <item>错误。</item>
+        <item>检查答案。</item>
     </string-array>
 
     <string-array name="palindrome_wrong_texts">
-
-        <item>错误的回文。</item>
-
-        <item>不正确的回文。</item>
-
+        <item>回文，但不是解决方案。</item>
+        <item>回文，但不完全正确。</item>
     </string-array>
 
 

@@ -46,8 +46,8 @@ class SubmissionFragment : BottomSheetDialogFragment() {
     private fun showLanguageSelectionDialog()
     {
         // these to match in length
-        val languages = resources.getStringArray(R.array.languages_array)
-        val countryCodes = resources.getStringArray(R.array.country_codes_array)
+        val languages = resources.getStringArray(R.array.languages_array).plus(resources.getString(R.string.other))
+        val countryCodes = resources.getStringArray(R.array.country_codes_array).plus("other")
         assert(languages.size == countryCodes.size)
 
         val selectionDialog = MaterialAlertDialogBuilder(requireContext())
@@ -62,7 +62,7 @@ class SubmissionFragment : BottomSheetDialogFragment() {
 
     private fun refreshSelectedLanguage()
     {
-        val languages = resources.getStringArray(R.array.languages_array)
+        val languages = resources.getStringArray(R.array.languages_array).plus(resources.getString(R.string.other))
         val language = languages[levelViewModel.tempCountrySelected.second]
         binding.currentlySelectedLanguage.text = language
         binding.enterPalindromeTextInputLayout.editText?.setText(levelViewModel.tempSubmissionPalindrome)

@@ -3,6 +3,7 @@ package com.indest.hah.other
 import android.content.Context
 import android.os.Build
 import android.provider.Settings
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -41,12 +42,19 @@ fun getCountryTagOrDefault():String {
         Locale.getDefault().toLanguageTag()
     }?.substring(0, 2)
 
-    if (currentLocaleName == "en" ||
-        currentLocaleName == null ||
-        !C.languages.containsKey(currentLocaleName)
-    ) {
+    if (currentLocaleName == "en") {
         currentLocaleName = "gb"
     }
+    else if (currentLocaleName == "zh")
+    {
+        currentLocaleName = "cn"
+    }
+
+    if (currentLocaleName == null || !C.languages.containsKey(currentLocaleName))
+    {
+        currentLocaleName = "gb"
+    }
+
     return currentLocaleName
 }
 
@@ -61,16 +69,17 @@ fun String.isPalindrome(language: String = "gb"): Boolean {
 }
 
 fun AppCompatActivity.hideSystemBars(viewGroup: ViewGroup) {
+    /*
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
         val buttonNavigation =
             Settings.Secure.getInt(this.contentResolver, "navigation_mode", 0) == 2
         if (!buttonNavigation) {
+        }
+        }*/
             val insetsController = WindowInsetsControllerCompat(window, viewGroup)
             insetsController.systemBarsBehavior =
                 WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             insetsController.hide(WindowInsetsCompat.Type.systemBars())
-        }
-    }
 }
 
 

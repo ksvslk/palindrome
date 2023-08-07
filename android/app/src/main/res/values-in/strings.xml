@@ -147,6 +147,7 @@
     <string name="send_levels_country_top">Kirimkan palindrom dan bangkitkan negaramu.</string>
 
     <string name="picture_hint">Petunjuk gambar</string>
+    <string name="other">Lainnya</string>
 
     <string-array name="save_24_percent_label">
 
@@ -165,49 +166,30 @@
     </string-array>
 
     <string-array name="good_texts">
-
         <item>Benar!</item>
-
-        <item>Bagus!</item>
-
-        <item>Teruskan!</item>
-
+        <item>Baik sekali!</item>
+        <item>Tetap lanjutkan!</item>
         <item>Ya!</item>
-
-        <item>Hore!</item>
-
+        <item>Hebat!</item>
     </string-array>
 
     <string-array name="very_good_texts">
-
-        <item>Luar biasa!</item>
-
-        <item>Luar biasa!</item>
-
-        <item>Luar biasa!</item>
-
+        <item>Luar Biasa!</item>
+        <item>Hebat sekali!</item>
+        <item>Kerja yang luar biasa!</item>
         <item>Sempurna!</item>
-
-        <item>Luar biasa!</item>
-
+        <item>Luar biasa sekali!</item>
     </string-array>
 
     <string-array name="solution_wrong_texts">
-
         <item>Coba lagi.</item>
-
-        <item>Teruslah mencoba.</item>
-
-        <item>Lihatlah.</item>
-
+        <item>Salah.</item>
+        <item>Periksa jawaban.</item>
     </string-array>
 
     <string-array name="palindrome_wrong_texts">
-
-        <item>Palindrom salah.</item>
-
-        <item>Palindrom salah.</item>
-
+        <item>Palindrom, tapi bukan solusinya.</item>
+        <item>Palindrom, tapi tidak sepenuhnya benar.</item>
     </string-array>
 
 

@@ -76,6 +76,7 @@
     <string name="points">pistettä</string>
     <string name="send_levels_country_top">Lähetä palindromeja ja nosta maasi.</string>
     <string name="picture_hint">Kuvavinkki</string>
+    <string name="other">Muut</string>
 
     <string-array name="save_24_percent_label">
         <item>–</item>
@@ -89,29 +90,29 @@
 
     <string-array name="good_texts">
         <item>Oikein!</item>
-        <item>Hyvä!</item>
-        <item>Jatka!</item>
+        <item>Hyvin tehty!</item>
+        <item>Jatka samaan malliin!</item>
         <item>Kyllä!</item>
         <item>Hurraa!</item>
     </string-array>
 
     <string-array name="very_good_texts">
         <item>Mahtavaa!</item>
-        <item>Upeaa!</item>
-        <item>Erinomainen!</item>
-        <item>Täydellinen!</item>
-        <item>Erinomainen!</item>
+        <item>Upeaa työtä!</item>
+        <item>Täydellistä!</item>
+        <item>Hienoa suoritusta!</item>
+        <item>Loistavaa!</item>
     </string-array>
 
     <string-array name="solution_wrong_texts">
         <item>Yritä uudelleen.</item>
-        <item>Yritä edelleen.</item>
-        <item>Katso sitä.</item>
+        <item>Väärin.</item>
+        <item>Tarkista vastaus.</item>
     </string-array>
 
     <string-array name="palindrome_wrong_texts">
-        <item>Väärä palindromi.</item>
-        <item>Väärä palindromi.</item>
+        <item>Palindromi, mutta ei ole ratkaisu.</item>
+        <item>Palindromi, mutta ei aivan oikein.</item>
     </string-array>
 
 

@@ -160,6 +160,7 @@ class SettingsFragment : FullBottomSheetDialogFragment() {
             .setItems(languages) { _, index ->
                 var countryCode = countryCodes[index]
                 if (countryCode == "gb") countryCode = "en"
+                else if (countryCode == "cn") countryCode = "zh"
                 val localeList = LocaleListCompat.forLanguageTags(countryCode)
                 AppCompatDelegate.setApplicationLocales(localeList)
             }.create()

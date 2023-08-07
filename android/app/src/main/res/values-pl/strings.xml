@@ -75,6 +75,7 @@
     <string name="points">punktów</string>
     <string name="send_levels_country_top">Wyślij palindromy i wznieś swój kraj.</string>
     <string name="picture_hint">Podpowiedź do zdjęcia</string>
+    <string name="other">Inne</string>
 
     <string-array name="save_24_percent_label">
         <item>–</item>
@@ -86,25 +87,25 @@
     </string-array>
 
     <string-array name="good_texts">
-        <item>Zgadza się!</item>
+        <item>Prawidłowo!</item>
         <item>Dobrze!</item>
-        <item>Kontynuuj!</item>
+        <item>Trzymaj tak dalej!</item>
         <item>Tak!</item>
         <item>Hurra!</item>
     </string-array>
 
     <string-array name="very_good_texts">
-        <item>Niesamowite!</item>
-        <item>Wspaniale!</item>
-        <item>Wspaniale!</item>
-        <item>Idealnie!</item>
-        <item>Znakomity!</item>
+        <item>Świetnie!</item>
+        <item>Perfekcyjnie!</item>
+        <item>Znakomicie!</item>
+        <item>Rewelacyjnie!</item>
+        <item>Doskonale!</item>
     </string-array>
 
     <string-array name="solution_wrong_texts">
         <item>Spróbuj ponownie.</item>
-        <item>Próbuj dalej.</item>
-        <item>Przejrzyj to.</item>
+        <item>Niepoprawnie.</item>
+        <item>Sprawdź odpowiedź.</item>
     </string-array>
 
     <string-array name="palindrome_wrong_texts">

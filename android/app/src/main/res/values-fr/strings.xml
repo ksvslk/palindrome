@@ -147,6 +147,7 @@
     <string name="send_levels_country_top">Envoyez des palindromes et élevez votre pays.</string>
 
     <string name="picture_hint">Indice d\'image</string>
+    <string name="other">Autre</string>
 
     <string-array name="save_24_percent_label">
 
@@ -165,49 +166,30 @@
     </string-array>
 
     <string-array name="good_texts">
-
-        <item>Exact !</item>
-
-        <item>Bien !</item>
-
-        <item>Continuez !</item>
-
+        <item>Correct !</item>
+        <item>Bien joué !</item>
+        <item>Continuez ainsi !</item>
         <item>Oui !</item>
-
-        <item>Hourra !</item>
-
+        <item>Hurrah !</item>
     </string-array>
 
     <string-array name="very_good_texts">
-
         <item>Génial !</item>
-
-        <item>Superbe !</item>
-
-        <item>Excellent!</item>
-
-        <item>Parfait !</item>
-
+        <item>Formidable !</item>
+        <item>Parfaitement exécuté !</item>
         <item>Exceptionnel !</item>
-
+        <item>Incroyable !</item>
     </string-array>
 
     <string-array name="solution_wrong_texts">
-
         <item>Essayez à nouveau.</item>
-
-        <item>Continuez d\'essayer.</item>
-
-        <item>Regardez-le.</item>
-
+        <item>Incorrect.</item>
+        <item>Vérifiez la réponse.</item>
     </string-array>
 
     <string-array name="palindrome_wrong_texts">
-
-        <item>Mauvais palindrome.</item>
-
-        <item>Palindrome incorrect.</item>
-
+        <item>Palindrome, mais pas la solution.</item>
+        <item>Palindrome, mais pas tout à fait correct.</item>
     </string-array>
 
     <!-- TUTORIAL -->

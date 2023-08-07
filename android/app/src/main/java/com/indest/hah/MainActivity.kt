@@ -155,17 +155,6 @@ class MainActivity : AppCompatActivity() {
         levelViewModel.saveGameImmediately()
     }
 
-
-    fun signInManually() {
-        levelViewModel.setAccountStatus(AccountStatus.LOADING)
-        val gamesSignInClient = PlayGames.getGamesSignInClient(this)
-        gamesSignInClient.signIn()
-            .addOnCompleteListener { isAuthenticatedTask: Task<AuthenticationResult> ->
-                handleAuthTask(gamesSignInClient, isAuthenticatedTask)
-            }
-    }
-
-
     private fun handleAuthTask(
         gamesSignInClient: GamesSignInClient,
         isAuthenticatedTask: Task<AuthenticationResult>

@@ -149,6 +149,7 @@
     <string name="picture_hint">Bildhinweis</string>
 
     <string name="menu_language">Menüsprache</string>
+    <string name="other">Andere</string>
 
     <string-array name="save_24_percent_label">
 
@@ -167,49 +168,30 @@
     </string-array>
 
     <string-array name="good_texts">
-
         <item>Richtig!</item>
-
-        <item>Gut!</item>
-
+        <item>Gut gemacht!</item>
         <item>Mach weiter so!</item>
-
         <item>Ja!</item>
-
         <item>Hurra!</item>
-
     </string-array>
 
     <string-array name="very_good_texts">
-
-        <item>Genial!</item>
-
-        <item>Hervorragend!</item>
-
-        <item>Ausgezeichnet!</item>
-
-        <item>Perfekt!</item>
-
-        <item>Hervorragend!</item>
-
+        <item>Tolle Leistung!</item>
+        <item>Großartig!</item>
+        <item>Perfekt gemeistert!</item>
+        <item>Herausragend!</item>
+        <item>Klasse gemacht!</item>
     </string-array>
 
     <string-array name="solution_wrong_texts">
-
-        <item>Versuche es noch einmal.</item>
-
-        <item>Versuche es weiter.</item>
-
-        <item>Sieh es dir an.</item>
-
+        <item>Versuche es erneut.</item>
+        <item>Falsch.</item>
+        <item>Antwort überprüfen.</item>
     </string-array>
 
     <string-array name="palindrome_wrong_texts">
-
-        <item>Falsches Palindrom.</item>
-
-        <item>Falsches Palindrom.</item>
-
+        <item>Palindrome, aber nicht die Lösung.</item>
+        <item>Palindrome, aber nicht ganz richtig.</item>
     </string-array>
 
     <!-- TUTORIAL -->

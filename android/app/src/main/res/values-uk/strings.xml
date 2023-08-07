@@ -75,6 +75,7 @@
     <string name="points">балів</string>
     <string name="send_levels_country_top">Надішліть паліндром і підніміть свою країну.</string>
     <string name="picture_hint">Підказка до малюнка</string>
+    <string name="other">Інше</string>
 
     <string-array name="save_24_percent_label">
         <item>–</item>
@@ -88,28 +89,28 @@
     <string-array name="good_texts">
         <item>Правильно!</item>
         <item>Добре!</item>
-        <item>Продовжуйте!</item>
+        <item>Продовжуйте так!</item>
         <item>Так!</item>
         <item>Ура!</item>
     </string-array>
 
     <string-array name="very_good_texts">
+        <item>Відмінно!</item>
         <item>Чудово!</item>
-        <item>Чудово!</item>
-        <item>Чудово!</item>
-        <item>Ідеально!</item>
-        <item>Видатно!</item>
+        <item>Прекрасна робота!</item>
+        <item>Виконано на відмінно!</item>
+        <item>Вражаюче!</item>
     </string-array>
 
     <string-array name="solution_wrong_texts">
-        <item>Спробуйте ще раз.</item>
-        <item>Продовжуйте намагатися.</item>
-        <item>Перегляньте.</item>
+        <item>Спробуйте знову.</item>
+        <item>Неправильно.</item>
+        <item>Перевірте відповідь.</item>
     </string-array>
 
     <string-array name="palindrome_wrong_texts">
-        <item>Неправильний паліндром.</item>
-        <item>Неправильний паліндром.</item>
+        <item>Паліндром, але не розвязок.</item>
+        <item>Паліндром, але не зовсім правильно.</item>
     </string-array>
 
     <!-- TUTORIAL -->

@@ -147,6 +147,7 @@
     <string name="send_levels_country_top">Invia palindromi e fai crescere il tuo paese.</string>
 
     <string name="picture_hint">Suggerimento per l\'immagine</string>
+    <string name="other">Altro</string>
 
     <string-array name="save_24_percent_label">
 
@@ -165,49 +166,30 @@
     </string-array>
 
     <string-array name="good_texts">
-
         <item>Corretto!</item>
-
-        <item>Bene!</item>
-
-        <item>Continuare!</item>
-
-        <item>SÌ!</item>
-
+        <item>Bravo!</item>
+        <item>Continua così!</item>
+        <item>Sì!</item>
         <item>Evviva!</item>
-
     </string-array>
 
     <string-array name="very_good_texts">
-
-        <item>Eccezionale!</item>
-
         <item>Stupendo!</item>
-
-        <item>Eccellente!</item>
-
-        <item>Perfetto!</item>
-
         <item>Eccezionale!</item>
-
+        <item>Perfetto al massimo!</item>
+        <item>Meraviglioso!</item>
+        <item>Straordinario!</item>
     </string-array>
 
     <string-array name="solution_wrong_texts">
-
         <item>Riprova.</item>
-
-        <item>Continua a provare.</item>
-
-        <item>Controllalo.</item>
-
+        <item>Non corretto.</item>
+        <item>Verifica risposta.</item>
     </string-array>
 
     <string-array name="palindrome_wrong_texts">
-
-        <item>Palindromo errato.</item>
-
-        <item>Palindromo errato.</item>
-
+        <item>Palindromo, ma non è la soluzione.</item>
+        <item>Palindromo, ma non del tutto corretto.</item>
     </string-array>
 
 

@@ -165,49 +165,30 @@
     </string-array>
 
     <string-array name="good_texts">
-
         <item>Correto!</item>
-
         <item>Bom!</item>
-
-        <item>Continue!</item>
-
+        <item>Continue assim!</item>
         <item>Sim!</item>
-
-        <item>Viva!</item>
-
+        <item>Eba!</item>
     </string-array>
 
     <string-array name="very_good_texts">
-
+        <item>Fantástico!</item>
         <item>Incrível!</item>
-
-        <item>Soberbo!</item>
-
-        <item>Excelente!</item>
-
+        <item>Ótimo trabalho!</item>
+        <item>Maravilhoso!</item>
         <item>Perfeito!</item>
-
-        <item>Excelente!</item>
-
     </string-array>
 
     <string-array name="solution_wrong_texts">
-
         <item>Tente novamente.</item>
-
-        <item>Continue tentando.</item>
-
-        <item>Dê uma olhada.</item>
-
+        <item>Incorreto.</item>
+        <item>Verifique a resposta.</item>
     </string-array>
 
     <string-array name="palindrome_wrong_texts">
-
-        <item>Palíndromo errado.</item>
-
-        <item>Palíndromo incorreto.</item>
-
+        <item>Palíndromo, mas não é a solução.</item>
+        <item>Palíndromo, mas não está completamente certo.</item>
     </string-array>
 
 

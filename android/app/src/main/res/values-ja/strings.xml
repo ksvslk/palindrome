@@ -147,6 +147,7 @@
     <string name="send_levels_country_top">回文を送って、あなたの国を立ち上げてください。</string>
 
     <string name="picture_hint">画像のヒント</string>
+    <string name="other">その他</string>
 
     <string-array name="save_24_percent_label">
 
@@ -165,49 +166,30 @@
     </string-array>
 
     <string-array name="good_texts">
-
         <item>正解！</item>
-
-        <item>いいね！</item>
-
-        <item>続けてください！</item>
-
+        <item>良いですね！</item>
+        <item>これからも頑張って！</item>
         <item>はい！</item>
-
-        <item>万歳！</item>
-
+        <item>やった！</item>
     </string-array>
 
     <string-array name="very_good_texts">
-
-        <item>素晴らしい！</item>
-
-        <item>素晴らしい！</item>
-
-        <item>素晴らしい！</item>
-
+        <item>すごい！</item>
+        <item>最高！</item>
         <item>完璧！</item>
-
-        <item>素晴らしい！</item>
-
+        <item>素晴らしい成績！</item>
+        <item>抜群！</item>
     </string-array>
 
     <string-array name="solution_wrong_texts">
-
-        <item>もう一度お試しください。</item>
-
-        <item>試し続けてください。</item>
-
-        <item>よく見てください。</item>
-
+        <item>もう一度試してみてください。</item>
+        <item>誤りです。</item>
+        <item>回答を確認してください。</item>
     </string-array>
 
     <string-array name="palindrome_wrong_texts">
-
-        <item>回文が間違っています。</item>
-
-        <item>回文が正しくありません。</item>
-
+        <item>回文ですが、解答ではありません。</item>
+        <item>回文ですが、少し違います。</item>
     </string-array>
 
     <!-- TUTORIAL -->

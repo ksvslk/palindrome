@@ -36,7 +36,6 @@
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowActionModeOverlay">false</item>
         <item name="android:windowActionBarOverlay">false</item>
-
         <item name="android:windowFullscreen">true</item>
 
         <item name="fontFamily">@font/yantramanav_bold</item>

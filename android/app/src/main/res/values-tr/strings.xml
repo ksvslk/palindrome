@@ -75,6 +75,7 @@
     <string name="points">puan</string>
     <string name="send_levels_country_top">Palindromlar gönder ve ülkeni yükselt.</string>
     <string name="picture_hint">Resim ipucu</string>
+    <string name="other">Diğer</string>
 
     <string-array name="save_24_percent_label">
         <item>–</item>
@@ -87,29 +88,29 @@
 
     <string-array name="good_texts">
         <item>Doğru!</item>
-        <item>Güzel!</item>
-        <item>Devam et!</item>
+        <item>İyi!</item>
+        <item>Bu şekilde devam et!</item>
         <item>Evet!</item>
         <item>Yaşasın!</item>
     </string-array>
 
     <string-array name="very_good_texts">
         <item>Harika!</item>
-        <item>Harika!</item>
-        <item>Mükemmel!</item>
-        <item>Mükemmel!</item>
-        <item>Olağanüstü!</item>
+        <item>Mükemmel bir iş!</item>
+        <item>Süper!</item>
+        <item>Fevkalade!</item>
+        <item>Muhteşem!</item>
     </string-array>
 
     <string-array name="solution_wrong_texts">
-        <item>Tekrar deneyin.</item>
-        <item>Denemeye devam et.</item>
-        <item>Şuna bir bak.</item>
+        <item>Yeniden dene.</item>
+        <item>Yanlış.</item>
+        <item>Cevabı kontrol et.</item>
     </string-array>
 
     <string-array name="palindrome_wrong_texts">
-        <item>Yanlış palindrom.</item>
-        <item>Yanlış palindrom.</item>
+        <item>Palindrom, ama çözüm değil.</item>
+        <item>Palindrom, ama tam olarak doğru değil.</item>
     </string-array>
 
 

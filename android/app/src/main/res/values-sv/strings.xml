@@ -75,6 +75,7 @@
     <string name="points">poäng</string>
     <string name="send_levels_country_top">Skicka palindromer och höj ditt land.</string>
     <string name="picture_hint">Bildtips</string>
+    <string name="other">Annat</string>
 
     <string-array name="save_24_percent_label">
         <item>–</item>
@@ -87,29 +88,29 @@
 
     <string-array name="good_texts">
         <item>Korrekt!</item>
-        <item>Bra!</item>
-        <item>Fortsätt!</item>
+        <item>Bra jobbat!</item>
+        <item>Fortsätt så här!</item>
         <item>Ja!</item>
         <item>Hurra!</item>
     </string-array>
 
     <string-array name="very_good_texts">
         <item>Fantastiskt!</item>
-        <item>Superbra!</item>
-        <item>Utmärkt!</item>
-        <item>Perfekt!</item>
+        <item>Grymt bra!</item>
+        <item>Perfekt utfört!</item>
         <item>Enastående!</item>
+        <item>Fantastisk prestation!</item>
     </string-array>
 
     <string-array name="solution_wrong_texts">
         <item>Försök igen.</item>
-        <item>Fortsätt försöka.</item>
-        <item>Titta över det.</item>
+        <item>Fel.</item>
+        <item>Kontrollera svaret.</item>
     </string-array>
 
     <string-array name="palindrome_wrong_texts">
-        <item>Fel palindrom.</item>
-        <item>Felaktig palindrom.</item>
+        <item>Palindrom, men inte lösningen.</item>
+        <item>Palindrom, men inte helt rätt.</item>
     </string-array>
 
 

@@ -74,6 +74,7 @@
     <string name="points">punkti</string>
     <string name="send_levels_country_top">Saatke palindroomid ja tõstke oma riik üles.</string>
     <string name="picture_hint">Pilt vihje</string>
+    <string name="other">Muu</string>
 
     <string-array name="save_24_percent_label">
         <item>–</item>
@@ -86,30 +87,30 @@
     </string-array>
 
     <string-array name="good_texts">
-        <item>Õige!</item>
-        <item>Tore!</item>
-        <item>Jätkake!</item>
+        <item>Õige vastus!</item>
+        <item>Hea töö!</item>
+        <item>Jätka samas vaimus!</item>
         <item>Jah!</item>
-        <item>Hurraa!</item>
+        <item>Elagu!</item>
     </string-array>
 
     <string-array name="very_good_texts">
-        <item>Fantastiline!</item>
-        <item>Suurepärane!</item>
-        <item>Suurepärane!</item>
-        <item>Täiuslik!</item>
-        <item>Suurepärane!</item>
+        <item>Vägev!</item>
+        <item>Suurepärane töö!</item>
+        <item>Ideaalne!</item>
+        <item>Ülivägev!</item>
+        <item>Imetlusväärne!</item>
     </string-array>
 
     <string-array name="solution_wrong_texts">
         <item>Proovi uuesti.</item>
-        <item>Püüdke edasi.</item>
-        <item>Vaata üle.</item>
+        <item>Vale.</item>
+        <item>Kontrolli vastust.</item>
     </string-array>
 
     <string-array name="palindrome_wrong_texts">
-        <item>Leia parem palindroom.</item>
-        <item>Vale palindroom.</item>
+        <item>Palindroom, kuid mitte lahendus.</item>
+        <item>Palindroom, kuid mitte päris õige.</item>
     </string-array>
 
 
