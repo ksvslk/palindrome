@@ -46,6 +46,7 @@ import com.indest.hah.other.safeNavigate
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.level.LevelProgress
 import com.indest.hah.views.Cell
+import com.indest.hah.views.HahConstraintLayout
 import com.indest.hah.views.MessageSnackBar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -129,7 +130,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     ): View {
         _binding = LevelFragmentBinding.inflate(layoutInflater, container, false)
         activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-        binding.levelFragment.layoutTransition = animations.getLayoutTransitionFade()
+        binding.levelFragment.layoutTransition = animations.getLayoutTransition()
         return binding.root
     }
 
@@ -406,26 +407,39 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     ) {
         val continueMessage = getContinueMessage(isLastLevel)
         continueMessage.view.isClickable = true
+        val containerView = requireActivity().findViewById<HahConstraintLayout>(R.id.container)
+
+        containerView.setOnClickListener {
+            containerView.setOnClickListener(null)
+            continueMessage.view.setOnClickListener(null)
+            continueMessageAction(continueMessage, isLastLevel)
+        }
         continueMessage.view.setOnClickListener {
-            if (isVisible) {
-                activateBottomNavBar()
-                it.isClickable = false
-                continueMessage.dismiss()
-                soundPlayer.play(soundPlayer.sounds.levelTransition, volume = 0.2f)
-                playTrainAnimation()
-                when (isLastLevel) {
-                    Pair(false, false) -> {
-                        levelViewModel.executeLevelCompleteActions()
-                    }
-                    Pair(true, false), Pair(false, true) -> {
-                        levelViewModel.executeLevelCompleteActionsFinal()
-                        soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.2f)
-                        findNavController().safeNavigate(R.id.action_navigation_level_to_navigation_final_screen)
-                    }
+           containerView.setOnClickListener(null)
+           continueMessage.view.setOnClickListener(null)
+           continueMessageAction(continueMessage, isLastLevel)
+        }
+        continueMessage.show()
+    }
+
+    private fun continueMessageAction(continueMessage:MessageSnackBar, isLastLevel: Pair<Boolean, Boolean>)
+    {
+        if (isVisible) {
+            activateBottomNavBar()
+            continueMessage.dismiss()
+            soundPlayer.play(soundPlayer.sounds.levelTransition, volume = 0.2f)
+            playTrainAnimation()
+            when (isLastLevel) {
+                Pair(false, false) -> {
+                    levelViewModel.executeLevelCompleteActions()
+                }
+                Pair(true, false), Pair(false, true) -> {
+                    levelViewModel.executeLevelCompleteActionsFinal()
+                    soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.2f)
+                    findNavController().safeNavigate(R.id.action_navigation_level_to_navigation_final_screen)
                 }
             }
         }
-        continueMessage.show()
     }
 
 

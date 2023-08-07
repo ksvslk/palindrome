@@ -4,9 +4,11 @@
     <dimen name="default_margin">8dp</dimen>
     <dimen name="default_padding_text">8dp</dimen>
     <dimen name="simple_dialog_item_height">56dp</dimen>
-    <dimen name="carriage_width">15dp</dimen>
-    <dimen name="carriage_height">16dp</dimen>
-    <dimen name="first_carriage_width">20dp</dimen>
+
+    <!-- Train size -->
+    <dimen name="carriage_width">26dp</dimen>
+    <dimen name="carriage_height">7dp</dimen>
+    <dimen name="first_carriage_width">34dp</dimen>
 
     <!--- Text sizes -->
     <dimen name="body_large_text_size">16sp</dimen>
