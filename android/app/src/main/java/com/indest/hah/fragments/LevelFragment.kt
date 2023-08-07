@@ -83,9 +83,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED)
             {
-                if (levelViewModel.isShowScores()) {
-                    showPlayerCenteredScores()
-                }
                 showTutorial()
 
                 generalViewModel.rewardState.collect { rewardType ->
@@ -174,6 +171,9 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                                     it.downloadHintPictureIfNeeded(
                                         event.level.levelInfo.levelId
                                     )
+                                }
+                                if (levelViewModel.isShowScores()) {
+                                    showPlayerCenteredScores()
                                 }
                             }
                         }
