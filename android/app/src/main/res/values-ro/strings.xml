@@ -77,15 +77,6 @@
     <string name="picture_hint">Sugestie imagine</string>
     <string name="other">Altul</string>
 
-    <string-array name="save_24_percent_label">
-        <item>–</item>
-        <item>24%</item>
-    </string-array>
-    <string-array name="best_loved_label">
-        <item>CEL MAI BUN-</item>
-        <item>IUBIT</item>
-    </string-array>
-
     <string-array name="good_texts">
         <item>Corect!</item>
         <item>Bună treabă!</item>

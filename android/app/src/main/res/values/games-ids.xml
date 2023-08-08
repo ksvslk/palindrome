@@ -36,8 +36,6 @@
     <string name="achievement_finnish_linguist" translatable="false">CgkIj5WSoeMdEAIQKA</string>
     <!--achievement French Linguist-->
     <string name="achievement_french_linguist" translatable="false">CgkIj5WSoeMdEAIQKQ</string>
-    <!--achievement Hindi Linguist-->
-    <string name="achievement_hindi_linguist" translatable="false">CgkIj5WSoeMdEAIQKg</string>
     <!--achievement Indonesian Linguist-->
     <string name="achievement_indonesian_linguist" translatable="false">CgkIj5WSoeMdEAIQKw</string>
     <!--achievement Italian Linguist-->
@@ -54,8 +52,6 @@
     <string name="achievement_polish_linguist" translatable="false">CgkIj5WSoeMdEAIQMQ</string>
     <!--achievement Romanian Linguist-->
     <string name="achievement_romanian_linguist" translatable="false">CgkIj5WSoeMdEAIQMg</string>
-    <!--achievement Russian Linguist-->
-    <string name="achievement_russian_linguist" translatable="false">CgkIj5WSoeMdEAIQMw</string>
     <!--achievement Swedish Linguist-->
     <string name="achievement_swedish_linguist" translatable="false">CgkIj5WSoeMdEAIQNA</string>
     <!--achievement Turkish Linguist-->

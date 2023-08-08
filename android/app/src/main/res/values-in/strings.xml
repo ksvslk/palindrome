@@ -149,21 +149,6 @@
     <string name="picture_hint">Petunjuk gambar</string>
     <string name="other">Lainnya</string>
 
-    <string-array name="save_24_percent_label">
-
-        <item>–</item>
-
-        <item>24%</item>
-
-    </string-array>
-
-    <string-array name="best_loved_label">
-
-        <item>TERBAIK-</item>
-
-        <item>DICINTAI</item>
-
-    </string-array>
 
     <string-array name="good_texts">
         <item>Benar!</item>

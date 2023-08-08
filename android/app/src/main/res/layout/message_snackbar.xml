@@ -10,8 +10,8 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/message"
-        android:layout_width="300dp"
-        android:layout_height="65dp"
+        android:layout_width="250dp"
+        android:layout_height="60dp"
         android:background="@drawable/message_round_rectangle"
         android:gravity="center"
         android:saveEnabled="false"

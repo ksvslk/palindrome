@@ -14,77 +14,81 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:saveEnabled="false"
-        tools:viewBindingIgnore="true"
-        android:id="@+id/reward_button_icon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_gravity="center_vertical"
-        android:layout_marginEnd="@dimen/default_large_margin"
-        android:tint="?colorOnPrimaryContainer"
-        android:clickable="false"
-        tools:ignore="RtlSymmetry" />
-
-    <ViewFlipper
-        android:saveEnabled="false"
-        android:id="@+id/reward_button_flipper"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center_vertical"
-        android:clickable="false"
-        android:inAnimation="@android:anim/slide_in_left"
-        android:outAnimation="@android:anim/slide_out_right">
-
-        <androidx.appcompat.widget.LinearLayoutCompat
+        <androidx.appcompat.widget.AppCompatImageView
             android:saveEnabled="false"
+            tools:viewBindingIgnore="true"
+            android:id="@+id/reward_button_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="@dimen/default_large_margin"
+            android:tint="?colorOnPrimaryContainer"
+            android:clickable="false"
+            tools:ignore="RtlSymmetry" />
+
+        <ViewFlipper
+            android:saveEnabled="false"
+            android:id="@+id/reward_button_flipper"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:orientation="vertical">
+            android:layout_gravity="center_vertical"
+            android:clickable="false"
+            android:inAnimation="@android:anim/slide_in_left"
+            android:outAnimation="@android:anim/slide_out_right">
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:saveEnabled="false"
-                android:id="@+id/reward_button_flipper_revealed_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="@string/placeholder"
-                android:textAppearance="@style/TextAppearance.OC.Body1" />
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
 
-            <androidx.appcompat.widget.AppCompatTextView
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:saveEnabled="false"
+                    android:id="@+id/reward_button_flipper_revealed_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/simple_dialog_item_height_almost_half"
+                    android:layout_gravity="center_vertical"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="@string/placeholder"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:saveEnabled="false"
+                    android:id="@+id/reward_button_flipper_revealed_subtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/simple_dialog_item_height_almost_half"
+                    android:gravity="center_vertical"
+                    android:background="?colorPrimary"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="@string/placeholder"
+                    android:paddingHorizontal="@dimen/gap_between_letters"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+                    android:textColor="?colorOnPrimary" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:saveEnabled="false"
-                android:id="@+id/reward_button_flipper_revealed_subtitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:background="?colorPrimary"
-                android:text="@string/placeholder"
-                android:paddingHorizontal="@dimen/gap_between_letters"
-                android:textAppearance="@style/TextAppearance.OC.Caption"
-                android:textColor="?colorOnPrimary" />
-        </androidx.appcompat.widget.LinearLayoutCompat>
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
 
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:saveEnabled="false"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:orientation="vertical">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:saveEnabled="false"
-                android:id="@+id/reward_button_flipper_hidden_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:background="?colorPrimaryContainer"
-                android:padding="@dimen/gap_between_letters"
-                android:text="@string/placeholder"
-                android:textAppearance="@style/TextAppearance.OC.Body1"
-                android:textColor="?colorOnPrimaryContainer" />
-
-        </androidx.appcompat.widget.LinearLayoutCompat>
-    </ViewFlipper>
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:saveEnabled="false"
+                    android:id="@+id/reward_button_flipper_hidden_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/simple_dialog_item_height_almost_half"
+                    android:gravity="center_vertical"
+                    android:background="?colorPrimaryContainer"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="@string/placeholder"
+                    android:paddingHorizontal="@dimen/gap_between_letters"
+                    android:textColor="?colorOnPrimaryContainer"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"/>
+            </androidx.appcompat.widget.LinearLayoutCompat>
+        </ViewFlipper>
     </androidx.appcompat.widget.LinearLayoutCompat>
 </FrameLayout>

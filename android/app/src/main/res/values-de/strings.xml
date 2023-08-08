@@ -151,21 +151,6 @@
     <string name="menu_language">Menüsprache</string>
     <string name="other">Andere</string>
 
-    <string-array name="save_24_percent_label">
-
-        <item>–</item>
-
-        <item>24%</item>
-
-    </string-array>
-
-    <string-array name="best_loved_label">
-
-        <item>BEST-</item>
-
-        <item>GELIEBT</item>
-
-    </string-array>
 
     <string-array name="good_texts">
         <item>Richtig!</item>

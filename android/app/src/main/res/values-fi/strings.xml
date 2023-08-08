@@ -78,15 +78,6 @@
     <string name="picture_hint">Kuvavinkki</string>
     <string name="other">Muut</string>
 
-    <string-array name="save_24_percent_label">
-        <item>–</item>
-        <item>24 %</item>
-    </string-array>
-
-    <string-array name="best_loved_label">
-        <item>PARAS-</item>
-        <item>LOVED</item>
-    </string-array>
 
     <string-array name="good_texts">
         <item>Oikein!</item>

@@ -151,22 +151,6 @@
     <string name="other">Otro</string>
 
 
-    <string-array name="save_24_percent_label">
-
-        <item>–</item>
-
-        <item>24%</item>
-
-    </string-array>
-
-    <string-array name="best_loved_label">
-
-        <item>MEJOR-</item>
-
-        <item>AMADO</item>
-
-    </string-array>
-
     <string-array name="good_texts">
         <item>¡Correcto!</item>
         <item>¡Bueno!</item>

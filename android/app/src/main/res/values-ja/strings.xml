@@ -149,21 +149,6 @@
     <string name="picture_hint">画像のヒント</string>
     <string name="other">その他</string>
 
-    <string-array name="save_24_percent_label">
-
-        <item>–</item>
-
-        <item>24%</item>
-
-    </string-array>
-
-    <string-array name="best_loved_label">
-
-        <item>最高-</item>
-
-        <item>愛されています</item>
-
-    </string-array>
 
     <string-array name="good_texts">
         <item>正解！</item>

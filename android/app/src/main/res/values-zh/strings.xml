@@ -150,22 +150,6 @@
     <string name="picture_hint">图片提示</string>
     <string name="other">其他</string>
 
-    <string-array name="save_24_percent_label">
-
-        <item>–</item>
-
-        <item>24%</item>
-
-    </string-array>
-
-    <string-array name="best_loved_label">
-
-        <item>最佳-</item>
-
-        <item>喜欢</item>
-
-    </string-array>
-
     <string-array name="good_texts">
         <item>正确！</item>
         <item>不错！</item>

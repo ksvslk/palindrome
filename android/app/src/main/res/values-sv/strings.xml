@@ -77,14 +77,6 @@
     <string name="picture_hint">Bildtips</string>
     <string name="other">Annat</string>
 
-    <string-array name="save_24_percent_label">
-        <item>–</item>
-        <item>24%</item>
-    </string-array>
-    <string-array name="best_loved_label">
-        <item>BÄSTA-</item>
-        <item>ÄLSKAD</item>
-    </string-array>
 
     <string-array name="good_texts">
         <item>Korrekt!</item>

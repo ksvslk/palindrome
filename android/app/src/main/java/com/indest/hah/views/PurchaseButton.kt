@@ -22,7 +22,7 @@ private const val SENTENCE_WORD_COUNT = 2
 class PurchaseButton : LinearLayoutCompat {
 
     private var visibilityChangingSkus: MutableList<Set<String>> = mutableListOf()
-    private var labels: Array<CharSequence>? = null
+    private var bestLabel: String? = null
     var sku: String? = null
 
     constructor(context: Context) : super(context) {
@@ -56,7 +56,7 @@ class PurchaseButton : LinearLayoutCompat {
                 visibilityChangingSkus.add(case.map { it.toString() }.toSet())
             }
         }
-        labels = typedArray.getTextArray(R.styleable.PurchaseButton_labels)
+        bestLabel = typedArray.getString(R.styleable.PurchaseButton_best_label)
         sku = typedArray.getString(R.styleable.PurchaseButton_sku)
         typedArray.recycle()
     }
@@ -83,10 +83,10 @@ class PurchaseButton : LinearLayoutCompat {
 
     private fun showLabelIfApplicable()
     {
-        if (labels?.size == SENTENCE_WORD_COUNT) {
-            findViewById<LinearLayoutCompat>(R.id.purchase_button_label_container).visibility = View.VISIBLE
-            findViewById<AppCompatTextView>(R.id.purchase_button_label_first).text = labels!![0]
-            findViewById<AppCompatTextView>(R.id.purchase_button_label_second).text = labels!![1]
+        if (bestLabel != null) {
+            val label = findViewById<AppCompatTextView>(R.id.purchase_button_label)
+            label.visibility = View.VISIBLE
+            label.text = bestLabel
         }
         else {
             hideLabel()
@@ -95,8 +95,7 @@ class PurchaseButton : LinearLayoutCompat {
 
     private fun hideLabel()
     {
-        findViewById<LinearLayoutCompat>(R.id.purchase_button_label_container).visibility =
-            View.GONE
+        findViewById<AppCompatTextView>(R.id.purchase_button_label).visibility = View.GONE
     }
 
     private fun setTitle(title: String)

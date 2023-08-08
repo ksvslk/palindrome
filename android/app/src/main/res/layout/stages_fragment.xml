@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:anybutton="http://schemas.android.com/apk/res-auto"
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:anybutton="http://schemas.android.com/apk/res-auto"
     android:saveEnabled="false"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -59,3 +63,4 @@
         anybutton:any_button_icon="@drawable/baseline_list_alt_black_36"
         anybutton:any_button_title="@string/game_levels" />
 </androidx.appcompat.widget.LinearLayoutCompat>
+</androidx.core.widget.NestedScrollView>

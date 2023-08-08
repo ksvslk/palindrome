@@ -32,7 +32,7 @@
     <string name="rate_game">Give Feedback</string>
     <string name="you_are_signed_in">You are signed in</string>
     <string name="no_internet">No Internet Connection</string>
-    <string name="please_sign_in">Please sign in from "Settings" page.</string>
+    <string name="please_sign_in">Access for members only</string>
     <string name="achievements">Achievements</string>
     <string name="leaderboard">Game Leaderboard</string>
     <string name="rewarded_reveal_picture">Reveal Picture</string>
@@ -55,7 +55,7 @@
     <string name="game_completed_shout_shout2">Winning!</string>
     <string name="game_completed_shout_smiley2" translatable="false">(͠≖ ͜ʖ͠≖)👌</string>
     <string name="share">Share</string>
-    <string name="placeholder">…</string>
+    <string name="placeholder">Check out also the levels you have not played yet!</string>
     <string name="watch_ad_top_notice">Watch ad = no Sad Mode</string>
     <string name="entering_sad_mode">You are in Sad Mode 😕</string>
     <string name="entering_normal_mode">You are in Normal Mode 😆</string>
@@ -78,15 +78,8 @@
     <string name="menu_language">Menu Language</string>
     <string name="other">Other</string>
 
-    <string-array name="save_24_percent_label">
-        <item>–</item>
-        <item>24%</item>
-    </string-array>
-
-    <string-array name="best_loved_label">
-        <item>BEST-</item>
-        <item>LOVED</item>
-    </string-array>
+    <string name="save_24_percent_label" translatable="false">-24%</string>
+    <string name="best_loved_label" translatable="false">👌</string>
 
     <string-array name="good_texts">
         <item>Correct!</item>
@@ -172,24 +165,43 @@
     <string name="english">English</string>
 
     <string-array name="languages_array">
+
         <item>English</item>
+
         <item>Spanish</item>
+
         <item>Portuguese</item>
+
         <item>Chinese</item>
+
         <item>Korean</item>
+
         <item>Italian</item>
+
         <item>Japanese</item>
+
         <item>German</item>
+
         <item>Indonesian</item>
+
         <item>Turkish</item>
+
         <item>French</item>
+
         <item>Dutch</item>
+
         <item>Finnish</item>
+
         <item>Polish</item>
+
         <item>Ukrainian</item>
+
         <item>Swedish</item>
+
         <item>Estonian</item>
+
         <item>Romanian</item>
+
     </string-array>
 
     <string-array translatable="false" name="country_codes_array">
