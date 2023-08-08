@@ -10,7 +10,7 @@
 
     <!-- Train size -->
     <dimen name="carriage_width">26dp</dimen>
-    <dimen name="carriage_height">7dp</dimen>
+    <dimen name="carriage_height">27dp</dimen>
     <dimen name="first_carriage_width">34dp</dimen>
 
     <!--- Text sizes -->
