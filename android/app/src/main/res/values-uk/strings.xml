@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="language_pack_completed">Ви завершили пакет рівнів <xliff:g id="language">%s</xliff:g>! Торкніться, щоб продовжити з англійськими рівнями!</string>
     <string name="exit_game_title">Вийти з гри?</string>
     <string name="continue_game">Продовжити</string>
     <string name="quit">Вийти</string>

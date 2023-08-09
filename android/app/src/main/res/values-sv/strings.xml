@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="language_pack_completed">Du har slutfört nivåpaketet <xliff:g id="language">%s</xliff:g>! Tryck för att fortsätta med engelska nivåer!</string>
+
     <string name="exit_game_title">Avsluta spelet?</string>
     <string name="continue_game">Fortsätt</string>
     <string name="quit">Avsluta</string>

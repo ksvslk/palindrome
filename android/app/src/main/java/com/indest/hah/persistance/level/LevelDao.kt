@@ -576,6 +576,9 @@ interface LevelDao {
     @Query("select max(level_id) = :currentLevel from level_info_table where level_id >= :minLimit and level_id <= :maxLimit")
     suspend fun isFinalLevel(currentLevel: Int, minLimit: Int, maxLimit: Int): Int?
 
+    @Query("select case when level_id = (select max(level_id) from level_info_table where country_code = :countryCode and country_code != 'gb') then 1 else 0 end from level_info_table where level_id = :currentLevel and country_code =:countryCode")
+    suspend fun isLanguagePackFinalLevel(currentLevel: Int, countryCode: String): Boolean
+
     @Query("select timestamp from interval where name = 'last_submission'")
     suspend fun getLastSubmissionTimestamp(): Long?
 

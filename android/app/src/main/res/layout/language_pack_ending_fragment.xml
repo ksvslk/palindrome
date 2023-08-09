@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:anybutton="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_language_pack_view"
+    android:clickable="true"
+    android:saveEnabled="false"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginHorizontal="@dimen/default_large_margin"
+    android:layout_gravity="center"
+    android:focusable="true">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:saveEnabled="false"
+        android:clickable="false"
+        android:focusable="false"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        anybutton:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ViewFlipper
+            android:saveEnabled="false"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:autoStart="true"
+            android:clickable="false"
+            android:flipInterval="@integer/gameCompleteMessageFlipInterval"
+            android:inAnimation="@android:anim/slide_in_left"
+            android:outAnimation="@android:anim/slide_out_right">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:saveEnabled="false"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/round_rectangle"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/default_large_margin"
+                android:paddingVertical="@dimen/default_padding_text"
+                android:text="@string/game_completed_shout"
+                android:textAppearance="@style/TextAppearance.OC.Headline5" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:saveEnabled="false"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:background="@drawable/round_rectangle"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/default_large_margin"
+                android:paddingVertical="@dimen/default_padding_text"
+                android:text="@string/game_completed_shout_smiley"
+                android:textAppearance="@style/TextAppearance.OC.Headline5" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:saveEnabled="false"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:background="@drawable/round_rectangle"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/default_large_margin"
+                android:paddingVertical="@dimen/default_padding_text"
+                android:text="@string/game_completed_shout_shout2"
+                android:textAppearance="@style/TextAppearance.OC.Headline5" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:saveEnabled="false"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:background="@drawable/round_rectangle"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/default_large_margin"
+                android:paddingVertical="@dimen/default_padding_text"
+                android:text="@string/game_completed_shout_smiley2"
+                android:textAppearance="@style/TextAppearance.OC.Headline5" />
+        </ViewFlipper>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/language_pack_completed_text"
+            android:layout_width="325dp"
+            android:layout_height="80dp"
+            android:background="@drawable/message_round_rectangle"
+            android:gravity="center"
+            android:saveEnabled="false"
+            app:autoSizeTextType="uniform"
+            app:autoSizeMaxTextSize="25sp"
+            android:layout_margin="@dimen/default_large_margin"
+            android:text="@string/language_pack_completed" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</androidx.constraintlayout.widget.ConstraintLayout>

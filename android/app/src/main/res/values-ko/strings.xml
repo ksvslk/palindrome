@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="language_pack_completed"><xliff:g id="language">%s</xliff:g> 레벨 팩을 완료했습니다! 영어 레벨로 계속하려면 탭하세요!</string>
+
     <string name="exit_game_title">게임을 종료하시겠습니까?</string>
     <string name="continue_game">계속</string>
     <string name="quit">종료</string>

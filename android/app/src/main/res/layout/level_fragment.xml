@@ -26,7 +26,7 @@
         android:saveEnabled="false"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="@dimen/default_margin"
+        android:layout_margin="@dimen/default_large_margin"
         android:animateLayoutChanges="true"
         android:clipChildren="false"
         android:gravity="center"

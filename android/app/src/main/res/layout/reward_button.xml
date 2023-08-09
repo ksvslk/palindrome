@@ -1,5 +1,6 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:saveEnabled="false"
     tools:viewBindingIgnore="true"
     android:layout_width="match_parent"
@@ -79,15 +80,12 @@
                     android:saveEnabled="false"
                     android:id="@+id/reward_button_flipper_hidden_title"
                     android:layout_width="wrap_content"
-                    android:layout_height="@dimen/simple_dialog_item_height_almost_half"
+                    android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:background="?colorPrimaryContainer"
-                    android:ellipsize="end"
-                    android:maxLines="1"
                     android:text="@string/placeholder"
                     android:paddingHorizontal="@dimen/gap_between_letters"
-                    android:textColor="?colorOnPrimaryContainer"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"/>
+                    android:textColor="?colorOnPrimaryContainer"/>
             </androidx.appcompat.widget.LinearLayoutCompat>
         </ViewFlipper>
     </androidx.appcompat.widget.LinearLayoutCompat>

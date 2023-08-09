@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name" translatable="false">hah</string>
     <string name="title_activity_main" translatable="false">hah</string>
     <string name="exit_game_title">Quit game?</string>
@@ -77,6 +77,7 @@
     <string name="picture_hint">Picture hint</string>
     <string name="menu_language">Menu Language</string>
     <string name="other">Other</string>
+    <string name="language_pack_completed">You have completed <xliff:g id="language">%s</xliff:g> level pack! Tap to continue with English levels!</string>
 
     <string name="save_24_percent_label" translatable="false">-24%</string>
     <string name="best_loved_label" translatable="false">👌</string>

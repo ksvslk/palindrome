@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="language_pack_completed">Ați completat pachetul de nivele <xliff:g id="language">%s</xliff:g>! Atingeți pentru a continua cu nivelele în limba engleză!</string>
+
     <string name="exit_game_title">Renunți la joc?</string>
     <string name="continue_game">Continuă</string>
     <string name="quit">Renunță</string>

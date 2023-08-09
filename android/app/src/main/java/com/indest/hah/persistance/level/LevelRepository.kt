@@ -138,6 +138,7 @@ class LevelRepository @Inject constructor(
         levelDao.levelCompletedActionsFinal(current, hintInterval)
     }
 
+
     fun latestLevelFlow(): Flow<Level> {
         return levelDao.getLastLevel()
     }
@@ -167,7 +168,11 @@ class LevelRepository @Inject constructor(
         Log.e(TAG, "DB id for save game is: ${saveGame.dbIdentityHash} and database id is $dbIdentityHash. Does it match? ${dbIdentityHash == saveGame.dbIdentityHash}")
     }
 
-    suspend fun isFinalLevel(currentLevel:Int, minLimit:Int, maxLimit:Int) = levelDao.isFinalLevel(currentLevel, minLimit, maxLimit)
+    suspend fun isFinalLevel(currentLevel:Int, minLimit:Int, maxLimit:Int) =
+        levelDao.isFinalLevel(currentLevel, minLimit, maxLimit)
+
+    suspend fun isLanguagePackFinalLevel(currentLevel: Int, countryCode: String) =
+        levelDao.isLanguagePackFinalLevel(currentLevel, countryCode)
 
     suspend fun isAllowedToSubmitPalindrome():Boolean
     {

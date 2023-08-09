@@ -1,4 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><resources>
+<?xml version="1.0" encoding="UTF-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="language_pack_completed">Vous avez terminé le pack de niveaux <xliff:g id="language">%s</xliff:g> ! Appuyez pour continuer avec les niveaux en anglais !</string>
 
     <string name="exit_game_title">Quitter le jeu?</string>
 

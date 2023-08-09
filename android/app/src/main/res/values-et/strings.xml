@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="language_pack_completed">Oled lõpetanud tasemete komplekti <xliff:g id="language">%s</xliff:g>! Vajuta inglise tasemete jätkamiseks!</string>
+
     <string name="exit_game_title">Lõpeta mäng?</string>
     <string name="continue_game">Jätka</string>
     <string name="quit">Lõpeta</string>

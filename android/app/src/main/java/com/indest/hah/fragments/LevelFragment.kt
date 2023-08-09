@@ -223,6 +223,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     private fun displayLevel(level: Level) {
         binding.levelFragment.removeAllViews()
         binding.levelFragment.removeAllViewsInLayout()
+        Log.d(TAG, "displayLevel: ${level.levelInfo}")
         lifecycleScope.launch(Dispatchers.Main)
         {
 
@@ -243,6 +244,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                 }
             }
             binding.levelFragment.addView(levelGridLayout.first)
+
         }
 
         askForReview(level.levelInfo.levelId)
@@ -284,7 +286,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
     private fun showCorrectEffects(
         solutionData: SolutionData,
-        isLastLevel: Pair<Boolean, Boolean> = Pair(false, false)
+        isLastLevel: Triple<Boolean, Boolean, String> = Triple(false, false, "")
     ) {
 
         cellDirector?.getCells()?.let { cells ->
@@ -369,7 +371,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         return scoreMessage
     }
 
-    private fun getContinueMessage(isLastLevel: Pair<Boolean, Boolean>):MessageSnackBar {
+    private fun getContinueMessage(isLastLevel: Triple<Boolean, Boolean, String>):MessageSnackBar {
         val continueMessage = MessageSnackBar.make(
             view = binding.root,
             message = if (!isLastLevel.first && !isLastLevel.second) getString(R.string.tap_to_continue) else getString(
@@ -403,7 +405,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
 
     private fun showContinueMessage(
-        isLastLevel: Pair<Boolean, Boolean> = Pair(false, false)
+        isLastLevel: Triple<Boolean, Boolean, String> = Triple(false, false, "")
     ) {
         val continueMessage = getContinueMessage(isLastLevel)
         continueMessage.view.isClickable = true
@@ -422,22 +424,34 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         continueMessage.show()
     }
 
-    private fun continueMessageAction(continueMessage:MessageSnackBar, isLastLevel: Pair<Boolean, Boolean>)
+    private fun continueMessageAction(continueMessage:MessageSnackBar, isLastLevel: Triple<Boolean, Boolean, String>)
     {
         if (isVisible) {
             activateBottomNavBar()
             continueMessage.dismiss()
             soundPlayer.play(soundPlayer.sounds.levelTransition, volume = 0.2f)
             playTrainAnimation()
+
+
+            levelViewModel.executeLevelCompleteActionsFinal()
+            soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.2f)
+            findNavController().safeNavigate(R.id.action_navigation_level_to_navigation_language_pack_ending)
+            return
             when (isLastLevel) {
-                Pair(false, false) -> {
+                Triple(false, false, "") -> {
                     levelViewModel.executeLevelCompleteActions()
                 }
-                Pair(true, false), Pair(false, true) -> {
+                Triple(true, false, ""), Triple(false, true, "") -> {
                     levelViewModel.executeLevelCompleteActionsFinal()
                     soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.2f)
                     findNavController().safeNavigate(R.id.action_navigation_level_to_navigation_final_screen)
                 }
+            }
+            if (isLastLevel.third != "")
+            {
+                levelViewModel.executeLevelCompleteActionsFinal()
+                soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.2f)
+                findNavController().safeNavigate(R.id.action_navigation_level_to_navigation_language_pack_ending)
             }
         }
     }

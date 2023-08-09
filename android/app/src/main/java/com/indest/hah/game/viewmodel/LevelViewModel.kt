@@ -222,12 +222,17 @@ class LevelViewModel @Inject constructor(
     }
 
 
-    suspend fun isLastLevel(): Pair<Boolean, Boolean> {
+    suspend fun isLastLevel(): Triple<Boolean, Boolean, String> {
         val lastGameLevel =
             levelRepository.isFinalLevel(_currentLevel.value.levelInfo.levelId, 1, 100)
         val lastPlayerLevel =
             levelRepository.isFinalLevel(_currentLevel.value.levelInfo.levelId, 1001, Int.MAX_VALUE)
-        return Pair(lastGameLevel == 1, lastPlayerLevel == 1)
+        val isLanguageLevel = levelRepository.isLanguagePackFinalLevel(
+            _currentLevel.value.levelInfo.levelId,
+            currentLevel.value.levelInfo.countryCode
+        )
+        val finalLevelInCountryCode = if (isLanguageLevel) _currentLevel.value.levelInfo.countryCode else ""
+        return Triple(lastGameLevel == 1, lastPlayerLevel == 1, finalLevelInCountryCode)
     }
 
 
@@ -451,7 +456,7 @@ class LevelViewModel @Inject constructor(
         data class DisplayLevel(val level: Level, val progress: Pair<Int, String>) : GameEvent()
         data class SolutionResult(
             val solutionData: SolutionData,
-            val isLastLevel: Pair<Boolean, Boolean>
+            val isLastLevel: Triple<Boolean, Boolean, String>
         ) : GameEvent()
 
         object ShowLoading : GameEvent()
