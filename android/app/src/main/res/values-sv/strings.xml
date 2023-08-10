@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="language_pack_completed">Du har slutfört nivåpaketet <xliff:g id="language">%s</xliff:g>! Tryck för att fortsätta med engelska nivåer!</string>
+    <string name="language_pack_completed">Du har slutfört nivåpaketet <xliff:g id="language">%s</xliff:g>! Tryck för att fortsätta med 🇬🇧 engelska nivåer!</string>
+    <string name="game_pack_completed">Du har slutfört huvudspelet! Bra jobbat! Prova också spelarnivåerna.</string>
+    <string name="player_pack_completed">Du har slutfört spelarpaketet! Grymt jobbat! Skicka dina nivåer och prova också språkpaketen!</string>
 
     <string name="exit_game_title">Avsluta spelet?</string>
     <string name="continue_game">Fortsätt</string>

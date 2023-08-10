@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="language_pack_completed">您已完成<xliff:g id="language">%s</xliff:g>级别包！点击继续进行英语级别！</string>
+    <string name="language_pack_completed">您已完成<xliff:g id="language">%s</xliff:g>级别包！点击继续进行英语级别 🇬🇧！</string>
+    <string name="game_pack_completed">您已完成主游戏！做得好！也试试玩家关卡。</string>
+    <string name="player_pack_completed">您已完成玩家关卡！太棒了！发送您的关卡，也试试语言包！</string>
 
     <string name="exit_game_title">退出游戏？</string>
 

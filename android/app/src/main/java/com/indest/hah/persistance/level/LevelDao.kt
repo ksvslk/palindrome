@@ -454,19 +454,24 @@ interface LevelDao {
     @Query("update level_info_table set puzzle = :puzzle where level_id = :level")
     suspend fun updatePuzzle(level: Int, puzzle: String)
 
+    @Query("select 1 from level_info_table where level_id = :level")
+    suspend fun levelExists(level: Int):Int?
+
     @Transaction
     suspend fun levelCompletedActions(currentLevel: Int, hintInterval: String, chosenLevel: Int) {
+        // if level exists, otherwise 1
+        val chosen = if (levelExists(chosenLevel) != null) chosenLevel else 1
         // reset hint interval
         resetCount(hintInterval)
         // delete current level letters info
         resetLevel(currentLevel, LevelProgress.REPLAY)
         // update chosen level default letters and shuffled puzzle (when level was chosen from level select)
-        if (getLevelProgress(chosenLevel) != LevelProgress.IN_PROGRESS) resetLevel(chosenLevel)
+        if (getLevelProgress(chosen) != LevelProgress.IN_PROGRESS) resetLevel(chosen)
         // reset next level if it exists
         val nextLevel = currentLevel + 1
         if (isLevelAdded(nextLevel.toLong())) resetLevel(nextLevel)
         // update next level timestamp
-        updateChosenLevelTimestamp(currentLevel, chosenLevel)
+        updateChosenLevelTimestamp(currentLevel, chosen)
     }
 
     @Transaction

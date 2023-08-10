@@ -232,26 +232,12 @@ class MainActivity : AppCompatActivity() {
                     val navHostFragment =
                         supportFragmentManager.findFragmentById(R.id.fragments_container) as NavHostFragment
                     val navController = navHostFragment.navController
-                    val currentlyActiveFragment =
-                        navHostFragment.navController.currentDestination?.id
 
                     // Check if there is only one new level
                     if (multipleLevels == -1) {
-                        if (currentlyActiveFragment == R.id.navigation_final_screen) { // If on the final screen
-                            levelViewModel.changeLevel(lastAddedLevel)
-                            navController.safeNavigate(R.id.action_navigation_final_screen_to_navigation_level)
-                        } else { // If on any other screen
-                            levelViewModel.changeLevel(lastAddedLevel)
-                        }
+                        levelViewModel.changeLevel(lastAddedLevel)
                     } else { // If there are multiple new levels
-                        if (currentlyActiveFragment == R.id.navigation_final_screen) { // If on the final screen
-                            navController.safeNavigate(
-                                R.id.action_navigation_final_screen_to_navigation_level_select,
-                                LevelSelectType.PLAYER_LEVELS
-                            )
-                        } else { // If on any other screen
-                            navController.safeNavigate(R.id.action_navigation_level_to_navigation_stages)
-                        }
+                        navController.safeNavigate(R.id.action_navigation_level_to_navigation_stages)
                     }
                 }
                 .setAnimationMode(ANIMATION_MODE_FADE)

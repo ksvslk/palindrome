@@ -77,8 +77,9 @@
     <string name="picture_hint">Picture hint</string>
     <string name="menu_language">Menu Language</string>
     <string name="other">Other</string>
-    <string name="language_pack_completed">You have completed <xliff:g id="language">%s</xliff:g> level pack! Tap to continue with English levels!</string>
-
+    <string name="language_pack_completed">You have completed <xliff:g id="language">%s</xliff:g> level pack! Tap to continue with 🇬🇧 English levels!</string>
+    <string name="game_pack_completed">You have completed the main game! Well done! Try out also the player levels.</string>
+    <string name="player_pack_completed">You have completed the players pack! Awesome! Send your levels and try out also language packs!</string>
     <string name="save_24_percent_label" translatable="false">-24%</string>
     <string name="best_loved_label" translatable="false">👌</string>
 

@@ -24,14 +24,17 @@
             android:id="@+id/action_navigation_level_to_navigation_stages"
             app:destination="@id/navigation_stages" />
         <action
-            android:id="@+id/action_navigation_level_to_navigation_final_screen"
-            app:destination="@id/navigation_final_screen" />
-        <action
             android:id="@+id/action_navigation_level_to_navigation_scores"
             app:destination="@id/navigation_scores" />
         <action
             android:id="@+id/action_navigation_level_to_navigation_language_pack_ending"
             app:destination="@id/navigation_language_pack_ending" />
+        <action
+            android:id="@+id/action_navigation_level_to_navigation_players_pack_ending"
+            app:destination="@id/navigation_players_pack_ending" />
+        <action
+            android:id="@+id/action_navigation_level_to_navigation_game_pack_ending"
+            app:destination="@id/navigation_game_pack_ending" />
     </fragment>
 
     <dialog
@@ -41,39 +44,23 @@
         tools:layout="@layout/tutorial_fragment" >
     </dialog>
 
-    <fragment
-        android:id="@+id/navigation_final_screen"
-        android:name="com.indest.hah.fragments.FinalScreenFragment"
-        android:label="FinalScreenFragment"
-        tools:layout="@layout/final_screen_fragment">
-        <action
-            android:id="@+id/action_navigation_final_screen_to_navigation_level"
-            app:destination="@id/navigation_level"
-            app:popUpTo="@id/navigation_level"
-            app:popUpToInclusive="true" />
-        <action
-            android:id="@+id/action_navigation_final_screen_to_navigation_level_select"
-            app:destination="@id/navigation_level_select" />
-        <action
-            android:id="@+id/action_navigation_final_screen_to_navigation_submission"
-            app:destination="@id/navigation_submission" />
-    </fragment>
-
-    <fragment
+    <dialog
         android:id="@+id/navigation_language_pack_ending"
         android:name="com.indest.hah.fragments.LanguagePackEndingFragment"
         android:label="LanguagePackEndingFragment"
-        tools:layout="@layout/language_pack_ending_fragment">
-        <action
-            android:id="@+id/action_navigation_language_pack_ending_to_navigation_level"
-            app:destination="@id/navigation_level"
-            app:popUpTo="@id/navigation_level"
-            app:popUpToInclusive="true" />
-        <action
-            android:id="@+id/action_navigation_language_pack_ending_to_navigation_level_select"
-            app:destination="@id/navigation_level_select" />
-    </fragment>
+        tools:layout="@layout/language_pack_ending_fragment"/>
 
+    <dialog
+        android:id="@+id/navigation_game_pack_ending"
+        android:name="com.indest.hah.fragments.GamePackEndingFragment"
+        android:label="GamePackEndingFragment"
+        tools:layout="@layout/game_pack_ending_fragment"/>
+
+    <dialog
+        android:id="@+id/navigation_players_pack_ending"
+        android:name="com.indest.hah.fragments.PlayersPackEndingFragment"
+        android:label="PlayersPackEndingFragment"
+        tools:layout="@layout/players_pack_ending_fragment"/>
 
     <dialog
         android:id="@+id/navigation_goods"

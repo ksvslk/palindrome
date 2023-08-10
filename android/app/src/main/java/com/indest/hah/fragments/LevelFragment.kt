@@ -432,24 +432,24 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             soundPlayer.play(soundPlayer.sounds.levelTransition, volume = 0.2f)
             playTrainAnimation()
 
-
-            levelViewModel.executeLevelCompleteActionsFinal()
-            soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.2f)
-            findNavController().safeNavigate(R.id.action_navigation_level_to_navigation_language_pack_ending)
-            return
             when (isLastLevel) {
                 Triple(false, false, "") -> {
                     levelViewModel.executeLevelCompleteActions()
                 }
-                Triple(true, false, ""), Triple(false, true, "") -> {
-                    levelViewModel.executeLevelCompleteActionsFinal()
+                Triple(true, false, "") -> {
+                    levelViewModel.executeLevelCompleteActions(1001)
                     soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.2f)
-                    findNavController().safeNavigate(R.id.action_navigation_level_to_navigation_final_screen)
+                    findNavController().safeNavigate(R.id.action_navigation_level_to_navigation_game_pack_ending)
+                }
+                Triple(false, true, "") -> {
+                    levelViewModel.executeLevelCompleteActions(1)
+                    soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.2f)
+                    findNavController().safeNavigate(R.id.action_navigation_level_to_navigation_players_pack_ending)
                 }
             }
             if (isLastLevel.third != "")
             {
-                levelViewModel.executeLevelCompleteActionsFinal()
+                levelViewModel.executeLevelCompleteActions(1)
                 soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.2f)
                 findNavController().safeNavigate(R.id.action_navigation_level_to_navigation_language_pack_ending)
             }

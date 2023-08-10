@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="language_pack_completed">Ukończyłeś zestaw poziomów <xliff:g id="language">%s</xliff:g>! Dotknij, aby kontynuować z poziomami w języku angielskim!</string>
+    <string name="language_pack_completed">Ukończyłeś zestaw poziomów <xliff:g id="language">%s</xliff:g>! Dotknij, aby kontynuować z poziomami w języku 🇬🇧 angielskim!</string>
+    <string name="game_pack_completed">Ukończyłeś główną grę! Świetnie Ci poszło! Wypróbuj także poziomy graczy.</string>
+    <string name="player_pack_completed">Ukończyłeś pakiet graczy! Fantastycznie! Wyślij swoje poziomy i spróbuj też pakiety językowe!</string>
 
     <string name="exit_game_title">Wyjść z gry?</string>
     <string name="continue_game">Kontynuuj</string>
