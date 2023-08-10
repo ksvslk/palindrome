@@ -202,14 +202,15 @@ class LevelViewModel @Inject constructor(
 
 
     init {
-        /*
+      /*
         viewModelScope.launch {
             addRegularLevels()
+            addPlayerLevelsUntil1080()
             addLanguagePacks()
             addIntervals()
             //checkLanguagePackValidity()
         }
-         */
+      */
     }
 
 
@@ -838,13 +839,13 @@ class LevelViewModel @Inject constructor(
                 Filter.or(
                     // player levels 1000+
                     Filter.and(
-                        Filter.equalTo("isFeatured", true),
+                        Filter.equalTo("testLive", true),
                         Filter.greaterThan("levelId", maxPlayerLevelId),
                         Filter.lessThan("levelId", 10000)
                     ),
                     // language levels 10000+
                     Filter.and(
-                        Filter.equalTo("isFeatured", true),
+                        Filter.equalTo("testLive", true),
                         Filter.greaterThan("levelId", 10000),
                         Filter.greaterThan("levelId", maxLevelId),
                     )
@@ -862,19 +863,23 @@ class LevelViewModel @Inject constructor(
                             DocumentChange.Type.ADDED -> {
                                 try {
                                     dc.document.data.let { levelValues ->
-                                        val solutionsToCategories =
-                                            levelValues["solutionToCategory"] as Map<String, String>
-                                        if (solutionsToCategories.isEmpty()) throw Exception("Solutions were empty")
-                                        val countryCode =
-                                            levelValues.getOrElse("countryCode") { "gb" }
-                                        playerLevels.add(
-                                            PlayerLevel(
-                                                levelId = levelValues["levelId"] as Long,
-                                                player = levelValues["player"] as String,
-                                                solutionToCategory = mapOf(),  // TODO: FIX
-                                                countryCode = countryCode as String
+                                        val levelId = levelValues["levelId"] as Long
+                                        if (levelId > 1080)
+                                        {
+                                            val solutionsToCategories =
+                                                levelValues["solutionToCategory"] as Map<String,Map<String,String>>
+                                            if (solutionsToCategories.isEmpty()) throw Exception("Solutions were empty")
+                                            val countryCode =
+                                                levelValues.getOrElse("countryCode") { "gb" }
+                                            playerLevels.add(
+                                                PlayerLevel(
+                                                    levelId = levelValues["levelId"] as Long,
+                                                    player = levelValues["player"] as String,
+                                                    solutionToCategory = solutionsToCategories,
+                                                    countryCode = countryCode as String
+                                                )
                                             )
-                                        )
+                                        }
                                     }
                                 } catch (e: Exception) {
                                     Log.w(
@@ -989,6 +994,17 @@ class LevelViewModel @Inject constructor(
                 val regularLevels = jsonInstance.decodeFromString<List<RegularLevel>>(json)
                 levelRepository.insertRegularLevels(regularLevels)
             }
+    }
+
+    private suspend fun addPlayerLevelsUntil1080() {
+            val jsonInstance = Json { isLenient = true }
+            val json =
+                getApplication<Application>().applicationContext.assets.open("player_levels_until_1080.json")
+                    .bufferedReader().use {
+                        it.readText()
+                    }
+            val playerLevels = jsonInstance.decodeFromString<List<RegularLevel>>(json)
+            levelRepository.insertRegularLevels(playerLevels)
     }
 
     private fun addIntervals()
