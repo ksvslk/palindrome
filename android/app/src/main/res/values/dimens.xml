@@ -1,26 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="default_large_margin">@dimen/_16sdp</dimen>
-    <dimen name="default_margin">@dimen/_8sdp</dimen>
-    <dimen name="default_padding_text">@dimen/_4sdp</dimen>
+    <dimen name="default_large_margin">20dp</dimen>
+    <dimen name="main_message_margin">30dp</dimen>
+    <dimen name="default_margin">8dp</dimen>
+    <dimen name="default_padding_text">8dp</dimen>
+    <dimen name="divider_list_item">4dp</dimen>
+    <dimen name="simple_dialog_item_height">56dp</dimen>
+    <dimen name="simple_dialog_item_height_almost_half">20dp</dimen>
+    <dimen name="simple_dialog_item_height_half">28dp</dimen>
 
-    <dimen name="simple_dialog_header_height">@dimen/_48sdp</dimen>
-    <dimen name="simple_dialog_item_height">@dimen/_38sdp</dimen>
-    <dimen name="simple_dialog_header_left_margin">@dimen/_25sdp</dimen>
-    <dimen name="simple_dialog_item_left_margin">@dimen/_20sdp</dimen>
-    <dimen name="simple_dialog_divider_margin">@dimen/_20sdp</dimen>
+    <!-- Train size -->
+    <dimen name="carriage_width">26dp</dimen>
+    <dimen name="carriage_height">27dp</dimen>
+    <dimen name="first_carriage_width">34dp</dimen>
 
+    <!--- Text sizes -->
+    <dimen name="body_large_text_size">16sp</dimen>
+    <dimen name="body_medium_text_size">14sp</dimen>
+    <dimen name="body_small_text_size">12sp</dimen>
+    <dimen name="label_large_text_size">14sp</dimen>
 
-    <dimen name="def">@dimen/_18sdp</dimen>
+    <!-- Tutorial -->
+    <dimen name="box_size">38dp</dimen>
+    <dimen name="box_text_size">28sp</dimen>
+    <dimen name="arrow_size">15dp</dimen>
 
-    <dimen name="tutorial_text_size">@dimen/_15ssp</dimen>
-    <dimen name="tutorial_box_size">@dimen/_35sdp</dimen>
-    <dimen name="tutorial_box_text_size">@dimen/_18ssp</dimen>
-    <dimen name="tutorial_primary_button_text_size">@dimen/_18ssp</dimen>
-    <dimen name="tutorial_container_margin">@dimen/_32sdp</dimen>
-    <dimen name="tutorial_arrow_size">@dimen/_16sdp</dimen>
-
-    <dimen name="max_box_size">@dimen/_38sdp</dimen>
-
+    <!-- Letters field -->
+    <dimen name="gap_between_letters">2sp</dimen>
+    <dimen name="max_letter_box_size">40sp</dimen>
 
 </resources>

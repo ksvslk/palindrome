@@ -24,11 +24,17 @@
             android:id="@+id/action_navigation_level_to_navigation_stages"
             app:destination="@id/navigation_stages" />
         <action
-            android:id="@+id/action_navigation_level_to_navigation_final_screen"
-            app:destination="@id/navigation_final_screen" />
-        <action
             android:id="@+id/action_navigation_level_to_navigation_scores"
             app:destination="@id/navigation_scores" />
+        <action
+            android:id="@+id/action_navigation_level_to_navigation_language_pack_ending"
+            app:destination="@id/navigation_language_pack_ending" />
+        <action
+            android:id="@+id/action_navigation_level_to_navigation_players_pack_ending"
+            app:destination="@id/navigation_players_pack_ending" />
+        <action
+            android:id="@+id/action_navigation_level_to_navigation_game_pack_ending"
+            app:destination="@id/navigation_game_pack_ending" />
     </fragment>
 
     <dialog
@@ -36,55 +42,31 @@
         android:name="com.indest.hah.fragments.TutorialFragment"
         android:label="@string/tutorial"
         tools:layout="@layout/tutorial_fragment" >
-        <action
-            android:id="@+id/action_navigation_tutorial_to_navigation_third_tutorial"
-            app:destination="@id/navigation_third_tutorial"
-            app:popUpTo="@id/navigation_level" />
     </dialog>
 
     <dialog
-        android:id="@+id/navigation_second_tutorial"
-        android:name="com.indest.hah.fragments.SecondTutorialFragment"
-        android:label="@string/tutorial"
-        tools:layout="@layout/second_tutorial_fragment" />
+        android:id="@+id/navigation_language_pack_ending"
+        android:name="com.indest.hah.fragments.LanguagePackEndingFragment"
+        android:label="LanguagePackEndingFragment"
+        tools:layout="@layout/language_pack_ending_fragment"/>
 
     <dialog
-        android:id="@+id/navigation_third_tutorial"
-        android:name="com.indest.hah.fragments.ThirdTutorialFragment"
-        android:label="@string/tutorial"
-        tools:layout="@layout/third_tutorial_fragment" >
-        <action
-            android:id="@+id/action_navigation_third_tutorial_to_navigation_second_tutorial"
-            app:popUpTo="@id/navigation_level"
-            app:destination="@id/navigation_second_tutorial" />
-    </dialog>
+        android:id="@+id/navigation_game_pack_ending"
+        android:name="com.indest.hah.fragments.GamePackEndingFragment"
+        android:label="GamePackEndingFragment"
+        tools:layout="@layout/game_pack_ending_fragment"/>
 
-
-    <fragment
-        android:id="@+id/navigation_final_screen"
-        android:name="com.indest.hah.fragments.FinalScreenFragment"
-        android:label="FinalScreenFragment"
-        tools:layout="@layout/final_screen_fragment">
-        <action
-            android:id="@+id/action_navigation_final_screen_to_navigation_level"
-            app:destination="@id/navigation_level"
-            app:popUpTo="@id/navigation_level"
-            app:popUpToInclusive="true" />
-        <action
-            android:id="@+id/action_navigation_final_screen_to_navigation_level_select"
-            app:destination="@id/navigation_level_select" />
-        <action
-            android:id="@+id/action_navigation_final_screen_to_navigation_submission"
-            app:destination="@id/navigation_submission" />
-    </fragment>
-
+    <dialog
+        android:id="@+id/navigation_players_pack_ending"
+        android:name="com.indest.hah.fragments.PlayersPackEndingFragment"
+        android:label="PlayersPackEndingFragment"
+        tools:layout="@layout/players_pack_ending_fragment"/>
 
     <dialog
         android:id="@+id/navigation_goods"
         android:name="com.indest.hah.fragments.HintsFragment"
         android:label="@string/hints"
         tools:layout="@layout/hints_fragment" >
-
     </dialog>
 
     <dialog
@@ -104,8 +86,7 @@
         tools:layout="@layout/settings_fragment" >
         <action
             android:id="@+id/action_navigation_settings_to_navigation_tutorial"
-            app:destination="@id/navigation_tutorial"
-            app:popUpTo="@id/navigation_level" />
+            app:destination="@id/navigation_tutorial" />
     </dialog>
 
     <dialog
@@ -115,15 +96,12 @@
         tools:layout="@layout/stages_fragment" >
         <action
             android:id="@+id/action_navigation_stages_to_navigation_level_select"
-            app:popUpTo="@id/navigation_level"
             app:destination="@id/navigation_level_select" />
         <action
             android:id="@+id/action_navigation_stages_to_navigation_submission"
-            app:popUpTo="@id/navigation_level"
             app:destination="@id/navigation_submission" />
         <action
             android:id="@+id/action_navigation_stages_to_navigation_international"
-            app:popUpTo="@id/navigation_level"
             app:destination="@id/navigation_international" />
     </dialog>
 
@@ -135,7 +113,6 @@
 
         <action
             android:id="@+id/action_navigation_international_to_navigation_level_select"
-            app:popUpTo="@id/navigation_level"
             app:destination="@id/navigation_level_select" />
     </dialog>
 

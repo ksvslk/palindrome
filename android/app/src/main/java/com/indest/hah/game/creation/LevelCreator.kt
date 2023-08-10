@@ -3,7 +3,6 @@ package com.indest.hah.game.creation
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
-
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -18,7 +17,6 @@ import com.indest.hah.views.Letter
 import com.indest.hah.views.Slot
 import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.scopes.ActivityScoped
-
 import javax.inject.Inject
 import kotlin.math.abs
 import kotlin.math.min
@@ -28,6 +26,7 @@ import kotlin.math.min
 class LevelCreator @Inject constructor(@ActivityContext private val context: Context) {
 
     private val TAG = "LevelCreator"
+    private var smallGap = 0
 
     fun getLevel(
         info: Level,
@@ -39,7 +38,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         val densitySettings = getDensitySettings(container, info, palindrome)
         level.columnCount = densitySettings.columnCount
         addLetters(level, densitySettings, info, context)
-        addSlots(palindrome, level, densitySettings, context, info.levelInfo.countryCode)
+        addSlots(palindrome, level, densitySettings, context)
         return Triple(level, level.columnCount, densitySettings.updatedIndexes)
     }
 
@@ -56,20 +55,19 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         info: Level,
         palindrome: String
     ): DensitySettings {
+        smallGap = context.resources.getDimensionPixelSize(R.dimen.gap_between_letters)
         val puzzleOnlyLetters = getPuzzle(info)
         val columns = min(7, palindrome.split(" ").maxBy { it.length }.length)
-        val boxDecreaseRate = 1.01f
-        val smallGap = context.resources.getDimensionPixelSize(com.intuit.sdp.R.dimen._2sdp)
+        val boxDecreaseRate = 0.01f
         val usableWidth = container.width
         val usableHeight = container.height
         val widthAndHeight = Pair(usableWidth, usableHeight)
-        val maxBoxSize = context.resources.getDimension(R.dimen.max_box_size)
-
+        val maxBoxSize = context.resources.getDimension(R.dimen.max_letter_box_size)
         val totalAreaRatio = (usableWidth.toFloat() / usableHeight.toFloat())
         var closestColumnsRatio = Pair(columns, Float.MAX_VALUE)
 
         for (cols in columns..palindrome.length) {
-            val usedAreaRatio = getUsedAreaRatio(cols, puzzleOnlyLetters, palindrome, smallGap)
+            val usedAreaRatio = getUsedAreaRatio(cols, puzzleOnlyLetters, palindrome)
             val newDistance = abs(usedAreaRatio - totalAreaRatio)
             val currentBestDistance = abs(closestColumnsRatio.second - totalAreaRatio)
             if (newDistance < currentBestDistance) {
@@ -87,31 +85,27 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
 
         var exceedingWidth = isWidthLimitExceeded(
             widthAndHeight = widthAndHeight,
-            boxSize = boxSize,
-            smallGapBetweenLetters = smallGap,
-            columns = closestColumnsRatio.first
+            columns = closestColumnsRatio.first,
+            boxSize = boxSize
         )
 
         var exceedingHeight = isHeightLimitExceeded(
             widthAndHeight = widthAndHeight,
             rowsCount = rowsCount,
-            boxSize = boxSize,
-            smallGapBetweenLetters = smallGap
+            boxSize = boxSize
         )
 
         while (exceedingWidth.first || exceedingHeight.first) {
-            boxSize /= boxDecreaseRate
+            boxSize -= boxDecreaseRate
             exceedingWidth = isWidthLimitExceeded(
                 widthAndHeight = widthAndHeight,
-                boxSize = boxSize,
-                smallGapBetweenLetters = smallGap,
-                columns = closestColumnsRatio.first
+                columns = closestColumnsRatio.first,
+                boxSize = boxSize
             )
             exceedingHeight = isHeightLimitExceeded(
                 widthAndHeight = widthAndHeight,
                 rowsCount = rowsCount,
-                boxSize = boxSize,
-                smallGapBetweenLetters = smallGap
+                boxSize = boxSize
             )
         }
 
@@ -135,44 +129,45 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
     private fun getUsedAreaRatio(
         columns: Int,
         puzzleOnlyLetters: String,
-        palindrome: String,
-        smallGap: Int
+        palindrome: String
     ): Float {
         val rowsCount = puzzleOnlyLetters.chunked(columns).count() + getSolutionRows(
             palindrome,
             columns
         ).count()
         val boxSize = 1f
-        val usedHeight = getUsedHeight(rowsCount, boxSize, smallGap)
-        val usedWidth = getUsedWidth(columns, boxSize, smallGap)
+        val usedHeight = getUsedHeight(rowsCount, boxSize)
+        val usedWidth = getUsedWidth(columns, boxSize)
         return usedWidth / usedHeight
     }
 
-    private fun getUsedHeight(rowsCount: Int, boxSize: Float, smallGapBetweenLetters: Int): Float {
-        return (rowsCount * (boxSize + smallGapBetweenLetters)) + 2 * (boxSize + smallGapBetweenLetters)
+    // 2*smallGapBetweenLetters is needed because we need to take into account
+    // that each cell has a margin of the same size
+    private fun getUsedHeight(rowsCount: Int, boxSize: Float): Float {
+        return (rowsCount * (boxSize + 2 * smallGap))
     }
 
-    private fun getUsedWidth(columns: Int, boxSize: Float, smallGapBetweenLetters: Int): Float {
-        return (columns * (boxSize + smallGapBetweenLetters) + 2 * (boxSize + smallGapBetweenLetters))
+    // 2*smallGapBetweenLetters is needed because we need to take into account
+    // that each cell has a margin of the same size
+    private fun getUsedWidth(columns: Int, boxSize: Float): Float {
+        return (columns * (boxSize + 2 * smallGap))
     }
 
     private fun isHeightLimitExceeded(
         widthAndHeight: Pair<Int, Int>,
         rowsCount: Int,
-        boxSize: Float,
-        smallGapBetweenLetters: Int
+        boxSize: Float
     ): Pair<Boolean, Float> {
-        val usedHeight = getUsedHeight(rowsCount, boxSize, smallGapBetweenLetters)
+        val usedHeight = getUsedHeight(rowsCount, boxSize)
         return Pair((widthAndHeight.second - usedHeight) <= 0, usedHeight)
     }
 
     private fun isWidthLimitExceeded(
         widthAndHeight: Pair<Int, Int>,
         columns: Int,
-        boxSize: Float,
-        smallGapBetweenLetters: Int
+        boxSize: Float
     ): Pair<Boolean, Float> {
-        val usedWidth = getUsedWidth(columns, boxSize, smallGapBetweenLetters)
+        val usedWidth = getUsedWidth(columns, boxSize)
         return Pair((widthAndHeight.first - usedWidth) <= 0, usedWidth)
     }
 
@@ -238,8 +233,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         puzzle: String,
         grid: GridLayout,
         ds: DensitySettings,
-        context: Context,
-        cc: String
+        context: Context
     ) {
         val solutionRows = getSolutionRows(puzzle, ds.columnCount)
         for (row in solutionRows) {
@@ -305,7 +299,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
 
     // Takes a word and chunks it to given lengths adding "-"
     // in the end
-    private fun getChunkedStringWithHyphens(word: String, cols:Int): String {
+    private fun getChunkedStringWithHyphens(word: String, cols: Int): String {
         val windowed = word.windowed(cols, cols, true).toMutableList()
         val lastElement = windowed.last()
         if (lastElement.length == 1) {
@@ -349,7 +343,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                 if (s.length <= cols) {
                     "$acc$s "
                 } else {
-                    acc + getChunkedStringWithHyphens(s, cols-1) + " "
+                    acc + getChunkedStringWithHyphens(s, cols - 1) + " "
                 }
             }
         val puzzleWords = modified.split(' ')

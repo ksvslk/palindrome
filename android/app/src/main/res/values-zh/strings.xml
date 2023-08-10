@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="language_pack_completed">您已完成<xliff:g id="language">%s</xliff:g>级别包！点击继续进行英语级别 🇬🇧！</string>
+    <string name="game_pack_completed">您已完成主游戏！做得好！也试试玩家关卡。</string>
+    <string name="player_pack_completed">您已完成玩家关卡！太棒了！发送您的关卡，也试试语言包！</string>
+
+    <string name="exit_game_title">退出游戏？</string>
+
+    <string name="continue_game">继续</string>
+
+    <string name="quit">退出</string>
+    <string name="menu_language">菜单语言</string>
+    <string name="select_language">选择语言</string>
+
+    <string name="game_levels">游戏关卡</string>
+
+    <string name="player_levels">玩家等级</string>
+
+    <string name="international_levels">国际级别</string>
+
+    <string name="global_leaderboards">国际排行榜</string>
+
+    <string name="submit_level">发送您的回文</string>
+
+    <string name="send">送审</string>
+
+    <string name="something_went_wrong">出了点问题。</string>
+
+    <string name="try_again">再试一次</string>
+
+    <string name="player_leaderboard_text">玩家排行榜</string>
+
+    <string name="send_level_input_hint">输入您的回文</string>
+
+    <string name="stages">级别</string>
+
+    <string name="hints">提示</string>
+
+    <string name="min_length_error">最小长度为</string>
+
+    <string name="max_length_error">最大长度为</string>
+
+    <string name="all_digits_error">不能全是数字</string>
+
+    <string name="palindrome_exists">回文已添加</string>
+
+    <string name="not_a_palindrome_error">解必须是回文</string>
+
+    <string name="levels">级别</string>
+
+    <string name="scores">分数</string>
+
+    <string name="follow">关注</string>
+
+    <string name="tutorial">教程</string>
+
+    <string name="level_select">游戏关卡选择</string>
+
+    <string name="player_level_select">玩家等级选择</string>
+
+    <string name="palindrome_successfully_sent">谢谢！我们将很快对其进行审核！</string>
+
+    <string name="rate_game">提供反馈</string>
+
+    <string name="you_are_signed_in">您已登录</string>
+
+    <string name="no_internet">没有互联网连接</string>
+
+    <string name="please_sign_in">仅限会员访问</string>
+
+    <string name="achievements">成就</string>
+
+    <string name="leaderboard">游戏排行榜</string>
+
+    <string name="rewarded_reveal_picture">显示图片</string>
+
+    <string name="rewarded_reveal_clue">揭示线索</string>
+
+    <string name="rewarded_place_letter">放置字母</string>
+
+    <string name="remove_letter_ads_text">即时信件</string>
+
+    <string name="no_ad_available">提示不可用</string>
+
+    <string name="instantly">立即</string>
+
+    <string name="sound_text">声音</string>
+
+    <string name="vibration_text">振动</string>
+
+    <string name="settings">设置</string>
+
+    <string name="watch_rewarded_video">观看奖励视频</string>
+
+    <string name="play_games">玩游戏</string>
+
+    <string name="placeholder_text">占位符</string>
+
+    <string name="tap_to_continue">点击以继续</string>
+
+    <string name="tap_to_finish">点击完成！</string>
+
+    <string name="final_screen_message">还可以查看您还没有玩过的关卡！或者发送可以在游戏中使用的炫酷回文！</string>
+
+    <string name="game_completed_shout">耶！</string>
+
+    <string name="game_completed_shout_smiley" translatable="false">(&gt;‿◠)✌</string>
+
+    <string name="game_completed_shout_shout2">赢了！</string>
+
+    <string name="game_completed_shout_smiley2" translatable="false">(͠≖ ͜ʖ͠≖)👌</string>
+
+    <string name="share">分享</string>
+
+    <string name="placeholder">…</string>
+
+    <string name="watch_ad_top_notice">观看广告 = 无悲伤模式</string>
+
+    <string name="entering_sad_mode">您正处于悲伤模式 😕</string>
+
+    <string name="entering_normal_mode">您处于正常模式 😆</string>
+
+    <string name="hints_are_available">提示可以在下面找到 ↙️</string>
+
+    <string name="send_a_cool_palindrome">发送回文 ↓</string>
+
+    <string name="not_a_palindrome">不是回文</string>
+
+    <string name="submit_once_per_day_limit">您每天可以提交一次。</string>
+
+    <string name="profile_person_symbol">❦</string>
+
+    <string name="score">得分：</string>
+
+    <string name="you_rank_first">你排名第一！</string>
+
+    <string name="earn">赚取</string>
+
+    <string name="points_to_rank_up">积分排名！</string>
+
+    <string name="new_word">新的</string>
+
+    <string name="level_by">逐级提升</string>
+
+    <string name="levels_added">添加了关卡！</string>
+
+    <string name="level_already_completed">关卡已完成。</string>
+
+    <string name="points">积分</string>
+
+    <string name="send_levels_country_top">发送回文并崛起您的国家。</string>
+
+    <string name="picture_hint">图片提示</string>
+    <string name="other">其他</string>
+
+    <string-array name="good_texts">
+        <item>正确！</item>
+        <item>不错！</item>
+        <item>继续前进！</item>
+        <item>是的！</item>
+        <item>万岁！</item>
+    </string-array>
+
+    <string-array name="very_good_texts">
+        <item>棒极了！</item>
+        <item>了不起的表现！</item>
+        <item>完美无缺！</item>
+        <item>极好！</item>
+        <item>绝佳！</item>
+    </string-array>
+
+    <string-array name="solution_wrong_texts">
+        <item>再试一次。</item>
+        <item>错误。</item>
+        <item>检查答案。</item>
+    </string-array>
+
+    <string-array name="palindrome_wrong_texts">
+        <item>回文，但不是解决方案。</item>
+        <item>回文，但不完全正确。</item>
+    </string-array>
+
+
+    <!-- TUTORIAL -->
+
+    <string name="tutorial_text">创建从两侧读相同的单词和句子</string>
+
+    <string name="tutorial3_second_text">• 句子需要有规律的标点符号 \n• 多个答案带有“*”标记 \n• 更少的错误 = 更好的分数</string>
+
+    <string name="tutorial_25_level_promo">还有一件事......达到 25 级并获得“即时线索”作为奖励。</string>
+
+    <string name="tutorial_complete_text">完成！享受游戏&#128640;?</string>
+
+    <string name="next">下一步</string>
+
+    <string name="play">玩</string>
+
+    <!-- Languages -->
+
+    <string name="chinese">中文</string>
+
+    <string name="estonian">爱沙尼亚语</string>
+
+    <string name="romanian">罗马尼亚语</string>
+
+    <string name="japanese">日语</string>
+
+    <string name="korean">韩语</string>
+
+    <string name="dutch">荷兰语</string>
+
+    <string name="german">德国人</string>
+
+    <string name="french">法语</string>
+
+    <string name="finnish">芬兰语</string>
+
+    <string name="polish">波兰语</string>
+
+    <string name="hindi">印地语</string>
+
+    <string name="indonesian">印尼语</string>
+
+    <string name="spanish">西班牙语</string>
+
+    <string name="portuguese">葡萄牙语</string>
+
+    <string name="ukrainian">乌克兰语</string>
+
+    <string name="russian">俄语</string>
+
+    <string name="swedish">瑞典语</string>
+
+    <string name="turkish">土耳其语</string>
+
+    <string name="italian">意大利语</string>
+
+    <string name="english">英语</string>
+
+    <string-array name="languages_array">
+
+        <item>英语</item>
+
+        <item>西班牙语</item>
+
+        <item>葡萄牙语</item>
+
+        <item>中文</item>
+
+        <item>韩语</item>
+
+        <item>意大利语</item>
+
+        <item>日语</item>
+
+        <item>德国人</item>
+
+        <item>印尼语</item>
+
+        <item>土耳其语</item>
+
+        <item>法语</item>
+
+        <item>荷兰语</item>
+
+        <item>芬兰语</item>
+
+        <item>波兰语</item>
+
+        <item>乌克兰语</item>
+
+        <item>瑞典语</item>
+
+        <item>爱沙尼亚语</item>
+
+        <item>罗马尼亚语</item>
+
+    </string-array>
+
+
+</resources>

@@ -1,175 +1,148 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:anybutton="http://schemas.android.com/apk/res-auto"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center"
-    android:orientation="vertical"
-    android:paddingVertical="@dimen/default_large_margin"
-    android:saveEnabled="false"
-    app:divider="@drawable/divider"
-    app:dividerPadding="@dimen/simple_dialog_header_left_margin"
-    app:showDividers="middle">
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
-
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:saveEnabled="false"
-        android:weightSum="2">
-
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/vibration_button"
-
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/simple_dialog_item_height"
-            android:layout_margin="@dimen/_2sdp"
-            android:layout_weight="1"
-            android:background="?attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:orientation="horizontal"
-            android:saveEnabled="false">
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/vibration_switch"
-
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="@dimen/simple_dialog_item_left_margin"
-                android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
-                android:clickable="false"
-                android:layoutDirection="rtl"
-                android:saveEnabled="false"
-                android:text="@string/vibration_text"
-                android:textAppearance="@style/TextAppearance.OC.Body1" />
-        </androidx.appcompat.widget.LinearLayoutCompat>
-
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/sound_button"
-
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/simple_dialog_item_height"
-            android:layout_margin="@dimen/_2sdp"
-            android:layout_weight="1"
-            android:background="?attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:orientation="horizontal"
-            android:saveEnabled="false">
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/sound_switch"
-
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="@dimen/simple_dialog_item_left_margin"
-                android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
-                android:clickable="false"
-                android:layoutDirection="rtl"
-                android:saveEnabled="false"
-                android:text="@string/sound_text"
-                android:textAppearance="@style/TextAppearance.OC.Body1" />
-
-        </androidx.appcompat.widget.LinearLayoutCompat>
-    </androidx.appcompat.widget.LinearLayoutCompat>
-
-    <com.indest.hah.views.AnyButton
-        android:id="@+id/twitter_button"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/simple_dialog_item_height"
-        android:layout_margin="@dimen/_2sdp"
-        android:background="?attr/selectableItemBackground"
-        android:clickable="true"
-        android:focusable="true"
-        android:orientation="horizontal"
-        android:saveEnabled="false"
-        anybutton:any_button_icon="@drawable/twitter_black"
-        anybutton:any_button_title="@string/follow" />
-
-
-    <com.indest.hah.views.AnyButton
-        android:id="@+id/tutorial_button"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/simple_dialog_item_height"
-        android:layout_margin="@dimen/_2sdp"
-        android:background="?attr/selectableItemBackground"
-        android:clickable="true"
-        android:focusable="true"
-        android:orientation="horizontal"
-        android:saveEnabled="false"
-        anybutton:any_button_icon="@drawable/baseline_help_center_black_36"
-        anybutton:any_button_title="@string/tutorial" />
-
-
-    <com.indest.hah.views.AnyButton
-        android:id="@+id/rate_game_button"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/simple_dialog_item_height"
-        android:layout_margin="@dimen/_2sdp"
-        android:background="?attr/selectableItemBackground"
-        android:clickable="true"
-        android:focusable="true"
-        android:orientation="horizontal"
-        android:saveEnabled="false"
-        anybutton:any_button_icon="@drawable/baseline_rate_review_black_36"
-        anybutton:any_button_title="@string/rate_game" />
-
-    <com.indest.hah.views.AnyButton
-        android:id="@+id/share_button_settings"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/simple_dialog_item_height"
-        android:layout_margin="@dimen/_2sdp"
-        android:background="?attr/selectableItemBackground"
-        android:clickable="true"
-        android:focusable="true"
-        android:orientation="horizontal"
-        android:saveEnabled="false"
-        anybutton:any_button_icon="@drawable/baseline_share_black_36"
-        anybutton:any_button_title="@string/share" />
-
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/google_sign_in_out_button"
-
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/simple_dialog_item_height"
-        android:layout_marginTop="@dimen/default_margin"
+        android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical"
-        android:saveEnabled="false">
+        android:paddingVertical="@dimen/default_large_margin"
+        android:saveEnabled="false"
+        app:divider="@drawable/divider"
+        app:showDividers="middle">
 
-        <com.google.android.gms.common.SignInButton
-            android:id="@+id/google_sign_in_button"
-
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/simple_dialog_header_left_margin"
-            android:paddingHorizontal="@dimen/_8sdp"
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
             android:saveEnabled="false"
-            android:visibility="gone" />
+            android:layout_marginHorizontal="@dimen/default_large_margin"
+            android:weightSum="7">
 
-        <com.google.android.material.progressindicator.CircularProgressIndicator
-            android:id="@+id/progress_circular"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:indeterminate="true"
-            android:saveEnabled="false"
-            android:visibility="gone"/>
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/vibration_button"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/simple_dialog_item_height"
+                android:layout_weight="3"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="horizontal"
+                android:saveEnabled="false">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/google_sign_out_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/simple_dialog_header_left_margin"
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/vibration_switch"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:clickable="false"
+                    android:layoutDirection="rtl"
+                    android:saveEnabled="false"
+                    android:text="@string/vibration_text"
+                    android:gravity="center|start"
+                    android:maxLines="1"
+                    app:autoSizeMaxTextSize="@dimen/body_large_text_size"
+                    app:autoSizeTextType="uniform" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/sound_button"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/simple_dialog_item_height"
+                android:layout_weight="3"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="horizontal"
+                android:saveEnabled="false">
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/sound_switch"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:clickable="false"
+                    android:layoutDirection="rtl"
+                    android:saveEnabled="false"
+                    android:gravity="center|start"
+                    android:maxLines="1"
+                    app:autoSizeMaxTextSize="@dimen/body_large_text_size"
+                    app:autoSizeTextType="uniform"
+                    android:text="@string/sound_text" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <com.indest.hah.views.AnyButton
+            android:id="@+id/tutorial_button"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/simple_dialog_item_height"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
             android:saveEnabled="false"
-            android:text="@string/you_are_signed_in"
-            android:textAppearance="@style/TextAppearance.OC.Body1"
-            android:visibility="gone" />
+            anybutton:any_button_icon="@drawable/baseline_help_center_black_36"
+            anybutton:any_button_title="@string/tutorial" />
+
+
+        <com.indest.hah.views.AnyButton
+            android:id="@+id/rate_game_button"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/simple_dialog_item_height"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
+            android:saveEnabled="false"
+            anybutton:any_button_icon="@drawable/baseline_rate_review_black_36"
+            anybutton:any_button_title="@string/rate_game" />
+
+        <com.indest.hah.views.AnyButton
+            android:id="@+id/twitter_button"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/simple_dialog_item_height"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
+            android:saveEnabled="false"
+            anybutton:any_button_icon="@drawable/x_logo"
+            anybutton:any_button_title="@string/follow" />
+
+        <com.indest.hah.views.AnyButton
+            android:id="@+id/share_button_settings"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/simple_dialog_item_height"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
+            android:saveEnabled="false"
+            anybutton:any_button_icon="@drawable/baseline_share_black_36"
+            anybutton:any_button_title="@string/share" />
+
+        <com.indest.hah.views.AnyButton
+            android:id="@+id/select_app_locale_button"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/simple_dialog_item_height"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
+            android:saveEnabled="false"
+            anybutton:any_button_icon="@drawable/es"
+            anybutton:any_button_title="@string/menu_language" />
+
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-</androidx.appcompat.widget.LinearLayoutCompat>
+</androidx.core.widget.NestedScrollView>

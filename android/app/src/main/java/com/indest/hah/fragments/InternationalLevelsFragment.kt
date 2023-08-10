@@ -33,7 +33,7 @@ class InternationalLevelsFragment : FullBottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED)
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED)
             {
                 levelViewModel.allUniqueCountriesWithLevelCount().collect { countries ->
                     binding.internationalLevelsRecyclerview.addItemDecoration(
@@ -42,12 +42,8 @@ class InternationalLevelsFragment : FullBottomSheetDialogFragment() {
                             DividerItemDecoration.VERTICAL
                         )
                     )
-                    binding.internationalLevelsRecyclerview.updatePadding(
-                        left = resources.getDimensionPixelSize(R.dimen.simple_dialog_header_left_margin),
-                        right = resources.getDimensionPixelSize(R.dimen.simple_dialog_header_left_margin)
-                    )
                     binding.internationalLevelsRecyclerview.adapter =
-                        LanguageItemAdapter(false, countries) {
+                        LanguageItemAdapter(requireContext(), false, countries) {
                              it?.let {cc ->
                                  findNavController().safeNavigate(
                                      R.id.action_navigation_international_to_navigation_level_select,
@@ -61,8 +57,6 @@ class InternationalLevelsFragment : FullBottomSheetDialogFragment() {
             }
         }
     }
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater,

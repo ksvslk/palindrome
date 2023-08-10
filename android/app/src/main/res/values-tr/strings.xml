@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="language_pack_completed">"<xliff:g id="language">%s</xliff:g>" seviye paketini tamamladınız! 🇬🇧 İngilizce seviyelerine devam etmek için dokunun!</string>
+    <string name="game_pack_completed">Ana oyunu tamamladınız! Harika iş! Ayrıca oyuncu seviyelerini de deneyin.</string>
+    <string name="player_pack_completed">Oyuncu paketini tamamladınız! Harika! Seviyelerinizi gönderin ve dil paketlerini de deneyin!</string>
+
+    <string name="exit_game_title">Oyundan çıkılsın mı?</string>
+    <string name="continue_game">Devam</string>
+    <string name="quit">Çık</string>
+    <string name="menu_language">Menü Dili</string>
+    <string name="select_language">Dil Seçin</string>
+    <string name="game_levels">Oyun Seviyeleri</string>
+    <string name="player_levels">Oyuncu Seviyeleri</string>
+    <string name="international_levels">Uluslararası Düzeyler</string>
+    <string name="global_leaderboards">Uluslararası Skor Tabloları</string>
+    <string name="submit_level">Palindromunuzu Gönderin</string>
+    <string name="send">İnceleme için Gönder</string>
+    <string name="something_went_wrong">Bir şeyler ters gitti.</string>
+    <string name="try_again">Tekrar deneyin</string>
+    <string name="player_leaderboard_text">Oyuncu Skor Tahtası</string>
+    <string name="send_level_input_hint">Palindromunuzu Girin</string>
+    <string name="stages">Seviyeler</string>
+    <string name="hints">İpuçları</string>
+    <string name="min_length_error">Minimum uzunluk</string>
+    <string name="max_length_error">Maksimum uzunluk</string>
+    <string name="all_digits_error">Tamamı rakam olamaz</string>
+    <string name="palindrome_exists">Palindrome zaten eklendi</string>
+    <string name="not_a_palindrome_error">Çözüm bir palindrom olmalı</string>
+    <string name="levels">Seviyeler</string>
+    <string name="scores">Skorlar</string>
+    <string name="follow">Takip et</string>
+    <string name="tutorial">Öğretici</string>
+    <string name="level_select">Oyun Seviyesi Seçimi</string>
+    <string name="player_level_select">Oyuncu Seviyesi Seçimi</string>
+    <string name="palindrome_successfully_sent">Teşekkürler! Kısa süre içinde incelenecektir!</string>
+    <string name="rate_game">Geri Bildirim Ver</string>
+    <string name="you_are_signed_in">Giriş yaptınız</string>
+    <string name="no_internet">İnternet Bağlantısı Yok</string>
+    <string name="please_sign_in">Erişim üyelere özeldir</string>
+    <string name="achievements">Başarılar</string>
+    <string name="leaderboard">Oyun Skor Tahtası</string>
+    <string name="rewarded_reveal_picture">Resmi Göster</string>
+    <string name="rewarded_reveal_clue">İpucu Ortaya Çıkar</string>
+    <string name="rewarded_place_letter">Yer Harfi</string>
+    <string name="remove_letter_ads_text">Anlık Mektuplar</string>
+    <string name="no_ad_available">İpucu Yok</string>
+    <string name="instantly">Anında</string>
+    <string name="sound_text">Ses</string>
+    <string name="vibration_text">Titreşim</string>
+    <string name="settings">Ayarlar</string>
+    <string name="watch_rewarded_video">Ödüllü Videoyu İzle</string>
+    <string name="play_games">Oyun Oyna</string>
+    <string name="placeholder_text">yer tutucu</string>
+    <string name="tap_to_continue">Devam etmek için dokunun</string>
+    <string name="tap_to_finish">Bitirmek için dokunun!</string>
+    <string name="final_screen_message">Henüz oynamadığınız seviyelere de göz atın! Veya oyunda öne çıkarılabilecek havalı palindromlar gönderin!</string>
+    <string name="game_completed_shout">Yaşasın!</string>
+    <string name="game_completed_shout_smiley" translatable="false">(&gt;‿◠)✌</string>
+    <string name="game_completed_shout_shout2">Kazanmak!</string>
+    <string name="game_completed_shout_smiley2" translatable="false">(͠≖ ͜ʖ͠≖)👌</string>
+    <string name="share">Paylaş</string>
+    <string name="placeholder">…</string>
+    <string name="watch_ad_top_notice">Reklamı izle = Hüzünlü Mod yok</string>
+    <string name="entering_sad_mode">Hüzünlü Moddasın 😕</string>
+    <string name="entering_normal_mode">Normal Moddasınız 😆</string>
+    <string name="hints_are_available">İpuçları aşağıda bulunabilir ↙️</string>
+    <string name="send_a_cool_palindrome">Palindrom gönder ↓</string>
+    <string name="not_a_palindrome">Bir palindrom değil</string>
+    <string name="submit_once_per_day_limit">Günde bir kez gönderebilirsiniz.</string>
+    <string name="profile_person_symbol">❦</string>
+    <string name="score">Puan:</string>
+    <string name="you_rank_first">Birinci sıradasın!</string>
+    <string name="earn">Kazan</string>
+    <string name="points_to_rank_up">Rütbe atlamak için puan!</string>
+    <string name="new_word">Yeni</string>
+    <string name="level_by">seviye tarafından</string>
+    <string name="levels_added">seviye eklendi!</string>
+    <string name="level_already_completed">Seviye zaten tamamlandı.</string>
+    <string name="points">puan</string>
+    <string name="send_levels_country_top">Palindromlar gönder ve ülkeni yükselt.</string>
+    <string name="picture_hint">Resim ipucu</string>
+    <string name="other">Diğer</string>
+
+
+    <string-array name="good_texts">
+        <item>Doğru!</item>
+        <item>İyi!</item>
+        <item>Bu şekilde devam et!</item>
+        <item>Evet!</item>
+        <item>Yaşasın!</item>
+    </string-array>
+
+    <string-array name="very_good_texts">
+        <item>Harika!</item>
+        <item>Mükemmel bir iş!</item>
+        <item>Süper!</item>
+        <item>Fevkalade!</item>
+        <item>Muhteşem!</item>
+    </string-array>
+
+    <string-array name="solution_wrong_texts">
+        <item>Yeniden dene.</item>
+        <item>Yanlış.</item>
+        <item>Cevabı kontrol et.</item>
+    </string-array>
+
+    <string-array name="palindrome_wrong_texts">
+        <item>Palindrom, ama çözüm değil.</item>
+        <item>Palindrom, ama tam olarak doğru değil.</item>
+    </string-array>
+
+
+    <!-- TUTORIAL -->
+    <string name="tutorial_text">Her iki taraftan da aynı okunan kelimeler ve cümleler oluşturun</string>
+    <string name="tutorial3_second_text">• Cümleler düzenli noktalama işaretleri gerektirir \\n• Birden çok çözümde \\&amp;quot;*\\&amp;quot; işareti bulunur \\n• Daha az hata = daha iyi puan</string>
+    <string name="tutorial_25_level_promo">Bir şey daha... 25. seviyeye ulaşın ve ödül olarak \\&amp;quot;Anlık İpuçları\\&amp;quot; kazanın.</string>
+    <string name="tutorial_complete_text">Bitti! Oyunun tadını çıkarın 🚀</string>
+    <string name="next">Sonraki</string>
+    <string name="play">Çal</string>
+
+
+    <!-- Languages -->
+    <string name="chinese">Çince</string>
+    <string name="estonian">Estonca</string>
+    <string name="romanian">Rumence</string>
+    <string name="japanese">Japonca</string>
+    <string name="korean">Koreli</string>
+    <string name="dutch">Hollandalı</string>
+    <string name="german">Almanca</string>
+    <string name="french">Fransızca</string>
+    <string name="finnish">Fince</string>
+    <string name="polish">Lehçe</string>
+    <string name="hindi">Hintçe</string>
+    <string name="indonesian">Endonezyalı</string>
+    <string name="spanish">İspanyolca</string>
+    <string name="portuguese">Portekizce</string>
+    <string name="ukrainian">Ukraynaca</string>
+    <string name="russian">Rusça</string>
+    <string name="swedish">İsveççe</string>
+    <string name="turkish">Türkçe</string>
+    <string name="italian">İtalyan</string>
+    <string name="english">İngilizce</string>
+
+    <string-array name="languages_array">
+        <item>İngilizce</item>
+        <item>İspanyolca</item>
+        <item>Portekizce</item>
+        <item>Çince</item>
+        <item>Koreli</item>
+        <item>İtalyan</item>
+        <item>Japonca</item>
+        <item>Almanca</item>
+        <item>Endonezyalı</item>
+        <item>Türkçe</item>
+        <item>Fransızca</item>
+        <item>Hollandalı</item>
+        <item>Fince</item>
+        <item>Lehçe</item>
+        <item>Ukraynaca</item>
+        <item>İsveççe</item>
+        <item>Estonyalı</item>
+        <item>Rumence</item>
+    </string-array>
+
+</resources>

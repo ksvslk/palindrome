@@ -1,5 +1,6 @@
 package com.indest.hah
 
+import android.content.Context
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -12,8 +13,10 @@ import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.Insets
+import androidx.core.os.LocaleListCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -34,6 +37,7 @@ import com.google.android.gms.games.PlayGames
 import com.google.android.gms.games.Player
 import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.BaseTransientBottomBar.ANIMATION_MODE_FADE
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.ump.ConsentForm
@@ -93,8 +97,31 @@ class MainActivity : AppCompatActivity() {
     lateinit var snapshotHelper: SnapshotHelper
     private lateinit var auth: FirebaseAuth
 
+    companion object {
+        const val PREFERENCE_NAME = "shared_preference"
+        const val PREFERENCE_MODE = Context.MODE_PRIVATE
+
+        const val FIRST_TIME_MIGRATION = "first_time_migration"
+        const val SELECTED_LANGUAGE = "selected_language"
+
+        const val STATUS_DONE = "status_done"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Check if the migration has already been done or not
+        if (getString(FIRST_TIME_MIGRATION) != STATUS_DONE) {
+            // Fetch the selected language from wherever it was stored. In this case its SharedPref
+            getString(SELECTED_LANGUAGE)?.let {
+                // Set this locale using the AndroidX library that will handle the storage itself
+                val localeList = LocaleListCompat.forLanguageTags(it)
+                AppCompatDelegate.setApplicationLocales(localeList)
+                // Set the migration flag to ensure that this is executed only once
+                putString(FIRST_TIME_MIGRATION, STATUS_DONE)
+            }
+        }
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         auth = Firebase.auth
@@ -121,28 +148,12 @@ class MainActivity : AppCompatActivity() {
             ViewCompat.setSystemGestureExclusionRects(binding.root, exclusions)
         }
 
-        binding.levelFlag?.setOnClickListener {
-            levelViewModel.viewModelScope.launch {
-                levelViewModel.simulateNewLevelFetch()
-            }
-        }
     }
 
     override fun onStop() {
         super.onStop()
         levelViewModel.saveGameImmediately()
     }
-
-
-    fun signInManually() {
-        levelViewModel.setAccountStatus(AccountStatus.LOADING)
-        val gamesSignInClient = PlayGames.getGamesSignInClient(this)
-        gamesSignInClient.signIn()
-            .addOnCompleteListener { isAuthenticatedTask: Task<AuthenticationResult> ->
-                handleAuthTask(gamesSignInClient, isAuthenticatedTask)
-            }
-    }
-
 
     private fun handleAuthTask(
         gamesSignInClient: GamesSignInClient,
@@ -221,33 +232,18 @@ class MainActivity : AppCompatActivity() {
                     val navHostFragment =
                         supportFragmentManager.findFragmentById(R.id.fragments_container) as NavHostFragment
                     val navController = navHostFragment.navController
-                    val currentlyActiveFragment =
-                        navHostFragment.navController.currentDestination?.id
 
                     // Check if there is only one new level
                     if (multipleLevels == -1) {
-                        if (currentlyActiveFragment == R.id.navigation_final_screen) { // If on the final screen
-                            levelViewModel.changeLevel(lastAddedLevel)
-                            navController.safeNavigate(R.id.action_navigation_final_screen_to_navigation_level)
-                        } else { // If on any other screen
-                            levelViewModel.changeLevel(lastAddedLevel)
-                        }
+                        levelViewModel.changeLevel(lastAddedLevel)
                     } else { // If there are multiple new levels
-                        if (currentlyActiveFragment == R.id.navigation_final_screen) { // If on the final screen
-                            navController.safeNavigate(
-                                R.id.action_navigation_final_screen_to_navigation_level_select,
-                                LevelSelectType.PLAYER_LEVELS
-                            )
-                        } else { // If on any other screen
-                            navController.safeNavigate(R.id.action_navigation_level_to_navigation_stages)
-                        }
+                        navController.safeNavigate(R.id.action_navigation_level_to_navigation_stages)
                     }
                 }
                 .setAnimationMode(ANIMATION_MODE_FADE)
 
         val params = snack.view.layoutParams as FrameLayout.LayoutParams
         params.gravity = Gravity.TOP
-        params.topMargin = resources.getDimension(com.intuit.sdp.R.dimen._16sdp).toInt()
         snack.view.layoutParams = params
         snack.show()
     }
@@ -571,6 +567,17 @@ class MainActivity : AppCompatActivity() {
             return localFile.exists()
         }
         return false
+    }
+
+    private fun putString(key: String, value: String) {
+        val editor = getSharedPreferences(PREFERENCE_NAME, PREFERENCE_MODE).edit()
+        editor.putString(key, value)
+        editor.apply()
+    }
+
+    private fun getString(key: String): String? {
+        val preference = getSharedPreferences(PREFERENCE_NAME, PREFERENCE_MODE)
+        return preference.getString(key, null)
     }
 
 }

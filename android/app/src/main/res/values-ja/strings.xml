@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="language_pack_completed">「<xliff:g id="language">%s</xliff:g>」のレベルパックをクリアしました！ タップして英語のレベルに進んでください 🇬🇧！</string>
+    <string name="game_pack_completed">メインゲームをクリアしました！おめでとうございます！プレイヤーレベルも試してみてください。</string>
+    <string name="player_pack_completed">プレイヤーパックをクリアしました！素晴らしい！あなたのレベルを送信して言語パックも試してみてください！</string>
+
+    <string name="exit_game_title">ゲームを終了しますか？</string>
+
+    <string name="continue_game">続行</string>
+
+    <string name="quit">終了</string>
+    <string name="menu_language">メニュー言語</string>
+    <string name="select_language">言語を選択</string>
+
+    <string name="game_levels">ゲームレベル</string>
+
+    <string name="player_levels">プレイヤーレベル</string>
+
+    <string name="international_levels">国際レベル</string>
+
+    <string name="global_leaderboards">国際リーダーボード</string>
+
+    <string name="submit_level">あなたの回文を送ってください</string>
+
+    <string name="send">レビューのために送信</string>
+
+    <string name="something_went_wrong">問題が発生しました。</string>
+
+    <string name="try_again">もう一度お試しください</string>
+
+    <string name="player_leaderboard_text">プレイヤーリーダーボード</string>
+
+    <string name="send_level_input_hint">回文を入力してください</string>
+
+    <string name="stages">レベル</string>
+
+    <string name="hints">ヒント</string>
+
+    <string name="min_length_error">最小長は</string>
+
+    <string name="max_length_error">最大長は</string>
+
+    <string name="all_digits_error">すべての数字にすることはできません</string>
+
+    <string name="palindrome_exists">回文はすでに追加されています</string>
+
+    <string name="not_a_palindrome_error">解決策は回文でなければなりません</string>
+
+    <string name="levels">レベル</string>
+
+    <string name="scores">スコア</string>
+
+    <string name="follow">フォローする</string>
+
+    <string name="tutorial">チュートリアル</string>
+
+    <string name="level_select">ゲームレベル選択</string>
+
+    <string name="player_level_select">プレイヤーレベル選択</string>
+
+    <string name="palindrome_successfully_sent">ありがとう！すぐにレビューされます！</string>
+
+    <string name="rate_game">フィードバックを送信</string>
+
+    <string name="you_are_signed_in">サインインしています</string>
+
+    <string name="no_internet">インターネット接続なし</string>
+
+    <string name="please_sign_in">メンバー専用アクセス</string>
+
+    <string name="achievements">アチーブメント</string>
+
+    <string name="leaderboard">ゲームリーダーボード</string>
+
+    <string name="rewarded_reveal_picture">画像を明らかにする</string>
+
+    <string name="rewarded_reveal_clue">手がかりを明らかにする</string>
+
+    <string name="rewarded_place_letter">プレイスレター</string>
+
+    <string name="remove_letter_ads_text">インスタントレター</string>
+
+    <string name="no_ad_available">ヒントは利用できません</string>
+
+    <string name="instantly">すぐに</string>
+
+    <string name="sound_text">サウンド</string>
+
+    <string name="vibration_text">振動</string>
+
+    <string name="settings">設定</string>
+
+    <string name="watch_rewarded_video">リワードビデオを見る</string>
+
+    <string name="play_games">ゲームをプレイ</string>
+
+    <string name="placeholder_text">プレースホルダー</string>
+
+    <string name="tap_to_continue">タップして続行</string>
+
+    <string name="tap_to_finish">タップして終了！</string>
+
+    <string name="final_screen_message">まだプレイしていないレベルもチェックしてください！または、ゲームで紹介できるクールな回文を送信してください！</string>
+
+    <string name="game_completed_shout">やった！</string>
+
+    <string name="game_completed_shout_smiley" translatable="false">(◠‿◠)✌</string>
+
+    <string name="game_completed_shout_shout2">勝利！</string>
+
+    <string name="game_completed_shout_smiley2" translatable="false">(͠≖ ͜ʖ͠≖)👌</string>
+
+    <string name="share">共有</string>
+
+    <string name="placeholder">…</string>
+
+    <string name="watch_ad_top_notice">広告を見る = 悲しいモードなし</string>
+
+    <string name="entering_sad_mode">あなたは悲しいモードです 😕</string>
+
+    <string name="entering_normal_mode">ノーマルモードです 😆</string>
+
+    <string name="hints_are_available">ヒントは以下にあります ↙️</string>
+
+    <string name="send_a_cool_palindrome">回文を送る ↓</string>
+
+    <string name="not_a_palindrome">回文ではありません</string>
+
+    <string name="submit_once_per_day_limit">1 日 1 回提出できます。</string>
+
+    <string name="profile_person_symbol">❦</string>
+
+    <string name="score">スコア：</string>
+
+    <string name="you_rank_first">あなたが 1 位になりました！</string>
+
+    <string name="earn">稼ぐ</string>
+
+    <string name="points_to_rank_up">ランクアップするポイント！</string>
+
+    <string name="new_word">新しい</string>
+
+    <string name="level_by">レベル</string>
+
+    <string name="levels_added">レベルが追加されました！</string>
+
+    <string name="level_already_completed">レベルはすでに完了しています。</string>
+
+    <string name="points">ポイント</string>
+
+    <string name="send_levels_country_top">回文を送って、あなたの国を立ち上げてください。</string>
+
+    <string name="picture_hint">画像のヒント</string>
+    <string name="other">その他</string>
+
+
+    <string-array name="good_texts">
+        <item>正解！</item>
+        <item>良いですね！</item>
+        <item>これからも頑張って！</item>
+        <item>はい！</item>
+        <item>やった！</item>
+    </string-array>
+
+    <string-array name="very_good_texts">
+        <item>すごい！</item>
+        <item>最高！</item>
+        <item>完璧！</item>
+        <item>素晴らしい成績！</item>
+        <item>抜群！</item>
+    </string-array>
+
+    <string-array name="solution_wrong_texts">
+        <item>もう一度試してみてください。</item>
+        <item>誤りです。</item>
+        <item>回答を確認してください。</item>
+    </string-array>
+
+    <string-array name="palindrome_wrong_texts">
+        <item>回文ですが、解答ではありません。</item>
+        <item>回文ですが、少し違います。</item>
+    </string-array>
+
+    <!-- TUTORIAL -->
+
+    <string name="tutorial_text">どちらの側からも同じように読める単語や文章を作成する</string>
+
+    <string name="tutorial3_second_text">• 文には定期的な句読点が必要です \n• 複数のソリューションに「*」マークが付いています \n• ミスが少ない = より良いスコア</string>
+
+    <string name="tutorial_25_level_promo">もう 1 つ...レベル 25 に到達して、報酬として「インスタント手がかり」を手に入れましょう。</string>
+
+    <string name="tutorial_complete_text">完了！ゲームをお楽しみください&#128640;?</string>
+
+    <string name="next">次へ</string>
+
+    <string name="play">プレイ</string>
+
+
+    <!-- Languages -->
+
+    <string name="chinese">中国語</string>
+
+    <string name="estonian">エストニア語</string>
+
+    <string name="romanian">ルーマニア語</string>
+
+    <string name="japanese">日本語</string>
+
+    <string name="korean">韓国語</string>
+
+    <string name="dutch">オランダ語</string>
+
+    <string name="german">ドイツ語</string>
+
+    <string name="french">フランス語</string>
+
+    <string name="finnish">フィンランド語</string>
+
+    <string name="polish">ポーランド語</string>
+
+    <string name="hindi">ヒンディー語</string>
+
+    <string name="indonesian">インドネシア語</string>
+
+    <string name="spanish">スペイン語</string>
+
+    <string name="portuguese">ポルトガル語</string>
+
+    <string name="ukrainian">ウクライナ語</string>
+
+    <string name="russian">ロシア語</string>
+
+    <string name="swedish">スウェーデン語</string>
+
+    <string name="turkish">トルコ語</string>
+
+    <string name="italian">イタリア語</string>
+
+    <string name="english">英語</string>
+
+    <string-array name="languages_array">
+
+        <item>英語</item>
+
+        <item>スペイン語</item>
+
+        <item>ポルトガル語</item>
+
+        <item>中国語</item>
+
+        <item>韓国語</item>
+
+        <item>イタリア語</item>
+
+        <item>日本語</item>
+
+        <item>ドイツ語</item>
+
+        <item>インドネシア語</item>
+
+        <item>トルコ語</item>
+
+        <item>フランス語</item>
+
+        <item>オランダ語</item>
+
+        <item>フィンランド語</item>
+
+        <item>ポーランド語</item>
+
+        <item>ウクライナ語</item>
+
+        <item>スウェーデン語</item>
+
+        <item>エストニア語</item>
+
+        <item>ルーマニア語</item>
+
+    </string-array>
+
+</resources>

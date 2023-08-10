@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="language_pack_completed">Oled lõpetanud tasemete komplekti <xliff:g id="language">%s</xliff:g>! Vajuta 🇬🇧 inglise tasemete jätkamiseks!</string>
+    <string name="game_pack_completed">Oled põhimängu lõpetanud! Tubli töö! Proovi ka mängijate tasemeid.</string>
+    <string name="player_pack_completed">Oled mängijate paki lõpetanud! Suurepärane! Saada oma tasemed ja proovi ka keelepakette!</string>
+
+    <string name="exit_game_title">Lõpeta mäng?</string>
+    <string name="continue_game">Jätka</string>
+    <string name="quit">Lõpeta</string>
+    <string name="menu_language">Menüü Keel</string>
+    <string name="select_language">Valige keel</string>
+    <string name="game_levels">Mängu tasemed</string>
+    <string name="player_levels">Mängijate tasemed</string>
+    <string name="international_levels">Rahvusvahelised tasemed</string>
+    <string name="global_leaderboards">Rahvusvahelised edetabelid</string>
+    <string name="submit_level">Saada oma palindroom</string>
+    <string name="send">Saada ülevaatamiseks</string>
+    <string name="something_went_wrong">Midagi läks valesti.</string>
+    <string name="try_again">Proovi uuesti</string>
+    <string name="player_leaderboard_text">Mängijate edetabel</string>
+    <string name="send_level_input_hint">Sisestage oma palindroom</string>
+    <string name="stages">Tasemed</string>
+    <string name="hints">Vihjed</string>
+    <string name="min_length_error">Minimaalne pikkus on</string>
+    <string name="max_length_error">Maksimaalne pikkus on</string>
+    <string name="all_digits_error">Ei saa olla kõik numbrid</string>
+    <string name="palindrome_exists">Palindroom on juba lisatud</string>
+    <string name="not_a_palindrome_error">Lahendus peab olema palindroom</string>
+    <string name="levels">Tasemed</string>
+    <string name="scores">Skoorid</string>
+    <string name="follow">Jälgi</string>
+    <string name="tutorial">Õpetus</string>
+    <string name="level_select">Mängu taseme valimine</string>
+    <string name="player_level_select">Mängija taseme valimine</string>
+    <string name="palindrome_successfully_sent">Aitäh! See vaadatakse peagi üle!</string>
+    <string name="rate_game">Andke tagasisidet</string>
+    <string name="you_are_signed_in">Olete sisse logitud</string>
+    <string name="no_internet">Interneti-ühendus puudub</string>
+    <string name="please_sign_in">Juurdepääs ainult liikmetele</string>
+    <string name="achievements">Saavutused</string>
+    <string name="leaderboard">Mängu edetabel</string>
+    <string name="rewarded_reveal_picture">Avalda Pilt</string>
+    <string name="rewarded_reveal_clue">Avalda Vihje</string>
+    <string name="rewarded_place_letter">Aseta täht</string>
+    <string name="remove_letter_ads_text">Kohesed Tähed</string>
+    <string name="no_ad_available">Vihje pole saadaval</string>
+    <string name="instantly">Kohe</string>
+    <string name="sound_text">Heli</string>
+    <string name="vibration_text">Vibratsioon</string>
+    <string name="settings">Seaded</string>
+    <string name="watch_rewarded_video">Vaadake preemiaga videot</string>
+    <string name="placeholder_text">kohatäide</string>
+    <string name="tap_to_continue">Jätkamiseks puuduta</string>
+    <string name="tap_to_finish">Puudutage lõpetamiseks!</string>
+    <string name="final_screen_message">Vaadake ka tasemeid, mida te pole veel mänginud! Või saatke lahedaid palindroome, mida saab mängus esile tõsta!</string>
+    <string name="game_completed_shout">Jaa!</string>
+    <string name="game_completed_shout_smiley" translatable="false">(&gt;‿◠)✌</string>
+    <string name="game_completed_shout_shout2">Võit!</string>
+    <string name="game_completed_shout_smiley2" translatable="false">(͠≖ ͜ʖ͠≖)👌</string>
+    <string name="share">Jaga</string>
+    <string name="placeholder">…</string>
+    <string name="watch_ad_top_notice">Vaata reklaami ja kurb režiim kaob</string>
+    <string name="entering_sad_mode">Olete kurvas režiimis 😕</string>
+    <string name="entering_normal_mode">Olete tavarežiimis 😆</string>
+    <string name="hints_are_available">Vihjed leiate altpoolt ↙️</string>
+    <string name="send_a_cool_palindrome">Saada palindroomid ↓</string>
+    <string name="not_a_palindrome">Ei ole palindroom</string>
+    <string name="submit_once_per_day_limit">Saate saata üks kord päevas.</string>
+    <string name="profile_person_symbol">❦</string>
+    <string name="score">Skoor:</string>
+    <string name="you_rank_first">Sa oled esikohal!</string>
+    <string name="earn">Teeni</string>
+    <string name="points_to_rank_up">punkti, et paremusjärjestus!</string>
+    <string name="new_word">Uus</string>
+    <string name="level_by">taseme järgi</string>
+    <string name="levels_added">tasemeid lisatud!</string>
+    <string name="level_already_completed">Tase on juba lõpetatud.</string>
+    <string name="points">punkti</string>
+    <string name="send_levels_country_top">Saatke palindroomid ja tõstke oma riik üles.</string>
+    <string name="picture_hint">Pilt vihje</string>
+    <string name="other">Muu</string>
+
+
+    <string-array name="good_texts">
+        <item>Õige vastus!</item>
+        <item>Hea töö!</item>
+        <item>Jätka samas vaimus!</item>
+        <item>Jah!</item>
+        <item>Elagu!</item>
+    </string-array>
+
+    <string-array name="very_good_texts">
+        <item>Vägev!</item>
+        <item>Suurepärane töö!</item>
+        <item>Ideaalne!</item>
+        <item>Ülivägev!</item>
+        <item>Imetlusväärne!</item>
+    </string-array>
+
+    <string-array name="solution_wrong_texts">
+        <item>Proovi uuesti.</item>
+        <item>Vale.</item>
+        <item>Kontrolli vastust.</item>
+    </string-array>
+
+    <string-array name="palindrome_wrong_texts">
+        <item>Palindroom, kuid mitte lahendus.</item>
+        <item>Palindroom, kuid mitte päris õige.</item>
+    </string-array>
+
+
+    <!-- TUTORIAL -->
+    <string name="tutorial_text">Looge sõnu ja lauseid, mis loevad mõlemalt poolt samamoodi</string>
+    <string name="tutorial3_second_text">• Laused nõuavad korrapäraseid kirjavahemärke \\n• Mitmel lahendusel on märk \\&amp;quot;*\\&amp;quot; \\n• Vähem vigu = parem tulemus</string>
+    <string name="tutorial_25_level_promo">Veel üks asi... Saavutage 25. tase ja saate preemiaks \\&amp;quot;Instant Clues\\&amp;quot;.</string>
+    <string name="tutorial_complete_text">Valmis! Nautige mängu 🚀</string>
+    <string name="next">Järgmine</string>
+    <string name="play">Mängi</string>
+
+
+    <!-- Languages -->
+    <string name="chinese">Hiina</string>
+    <string name="estonian">Eesti</string>
+    <string name="romanian">Rumeenia</string>
+    <string name="japanese">Jaapani</string>
+    <string name="korean">Korea</string>
+    <string name="dutch">Hollandi</string>
+    <string name="german">Saksa</string>
+    <string name="french">Prantsuse</string>
+    <string name="finnish">Soome</string>
+    <string name="polish">Poola</string>
+    <string name="hindi">Hindi</string>
+    <string name="indonesian">Indoneesia</string>
+    <string name="spanish">Hispaania</string>
+    <string name="portuguese">Portugali</string>
+    <string name="ukrainian">Ukraina</string>
+    <string name="russian">Vene</string>
+    <string name="swedish">Rootsi</string>
+    <string name="turkish">Türgi</string>
+    <string name="italian">Itaalia</string>
+    <string name="english">Inglise</string>
+
+    <string-array name="languages_array">
+        <item>Inglise</item>
+        <item>Hispaania</item>
+        <item>Portugali</item>
+        <item>Hiina</item>
+        <item>Korea</item>
+        <item>Itaalia</item>
+        <item>Jaapani</item>
+        <item>Saksa</item>
+        <item>Indoneesia</item>
+        <item>Türgi</item>
+        <item>Prantsuse</item>
+        <item>Hollandi</item>
+        <item>Soome</item>
+        <item>Poola</item>
+        <item>Ukraina</item>
+        <item>Rootsi</item>
+        <item>Eesti</item>
+        <item>Rumeenia</item>
+    </string-array>
+
+</resources>

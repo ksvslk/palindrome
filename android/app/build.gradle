@@ -176,8 +176,6 @@ dependencies {
     def nav_version = '2.6.0'
     def lifecycle_version = '2.6.1'
     def lifecycle_runtime_ktx = '2.6.1'
-    def sdp_version = '1.1.0'
-    def ssp_version = '1.1.0'
     def window_manager_version = '1.0.0'
     def ads_version = '22.2.0'
     def billing_version = '4.1.0'
@@ -204,8 +202,6 @@ dependencies {
 
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization"
     implementation "nl.dionsegijn:konfetti-xml:$konfetti_version"
-    implementation "com.intuit.sdp:sdp-android:$sdp_version"
-    implementation "com.intuit.ssp:ssp-android:$ssp_version"
     implementation "androidx.core:core-ktx:$androidx_core_version"
     implementation "com.google.android.material:material:$material_version"
     implementation "androidx.constraintlayout:constraintlayout:$constraintlayout_version"
@@ -217,7 +213,7 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
     implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
     implementation "androidx.fragment:fragment-ktx:$fragment_version"
-    implementation "com.google.android.gms:play-services-ads-lite:$ads_version"
+    implementation "com.google.android.gms:play-services-ads:$ads_version"
     implementation "com.google.android.gms:play-services-auth:$google_play_services_auth_version"
     implementation "com.google.android.gms:play-services-games-v2:$play_games_services_version"
     implementation "com.google.android.ump:user-messaging-platform:$user_messaging_platform_version"

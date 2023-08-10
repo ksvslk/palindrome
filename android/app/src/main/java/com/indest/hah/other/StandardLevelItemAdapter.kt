@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.indest.hah.R
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
+import com.indest.hah.persistance.level.LevelProgress
 
 class StandardLevelItemAdapter(
     private val dataSet: List<LevelData>,
@@ -52,6 +53,13 @@ class StandardLevelItemAdapter(
     override fun onBindViewHolder(levelItemViewHolder: StandardLevelItemHolder, position: Int) {
         levelItemViewHolder.textView.text = (position + 1).toString()
         levelItemViewHolder.setIsRecyclable(false)
+        levelItemViewHolder.itemView.isClickable = if (dataSet[position].progress == LevelProgress.TODO) {
+            levelItemViewHolder.textView.isEnabled = false
+            false
+        } else {
+            levelItemViewHolder.textView.isEnabled = true
+            true
+        }
     }
 
     // Return the size of your dataset (invoked by the layout manager)

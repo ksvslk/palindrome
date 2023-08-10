@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:anybutton="http://schemas.android.com/tools"
     android:saveEnabled="false"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
     android:orientation="vertical"
-    android:paddingVertical="@dimen/default_large_margin"
     app:divider="@drawable/divider"
-    app:dividerPadding="@dimen/simple_dialog_header_left_margin"
     app:showDividers="middle">
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:saveEnabled="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/default_large_margin"
         android:orientation="horizontal">
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/internationals_levels_title"
             android:saveEnabled="false"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
+            android:layout_height="@dimen/simple_dialog_item_height"
             android:fontFamily="@font/roboto_medium"
             android:layout_gravity="center"
+            android:padding="@dimen/default_large_margin"
+            android:gravity="center"
+            android:maxLines="2"
+            app:autoSizeMaxTextSize="@dimen/body_large_text_size"
+            app:autoSizeTextType="uniform"
             android:text="@string/send_levels_country_top"/>
     </androidx.appcompat.widget.LinearLayoutCompat>
 

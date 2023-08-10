@@ -21,7 +21,7 @@
     <com.google.android.material.progressindicator.LinearProgressIndicator
         android:saveEnabled="false"
         android:id="@+id/gameProgress"
-        android:layout_height="@dimen/_10sdp"
+        android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:translationZ="3dp"
         app:layout_constraintLeft_toLeftOf="parent"

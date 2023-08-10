@@ -1,32 +1,44 @@
 package com.indest.hah.fragments
 
+import android.app.LocaleManager
 import android.content.Context
 import android.content.Intent
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
 import android.net.Uri
 import android.os.Bundle
+import android.os.LocaleList
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.CompoundButton
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.os.LocaleListCompat
+import androidx.core.util.toAndroidPair
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import com.google.android.gms.common.SignInButton
-import com.indest.hah.MainActivity
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.indest.hah.BuildConfig
 import com.indest.hah.R
 import com.indest.hah.databinding.SettingsFragmentBinding
 import com.indest.hah.game.viewmodel.LevelViewModel
-import com.indest.hah.general.AccountStatus
 import com.indest.hah.general.GeneralViewModel
+import com.indest.hah.other.getCountryTagOrDefault
+import com.indest.hah.other.mapCountryCodeToLanguageAndFlag
 import com.indest.hah.other.safeNavigate
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
-import com.indest.hah.BuildConfig
+import java.util.Locale
+
 
 @AndroidEntryPoint
 class SettingsFragment : FullBottomSheetDialogFragment() {
@@ -43,14 +55,14 @@ class SettingsFragment : FullBottomSheetDialogFragment() {
             {
                 generalViewModel.internet.combine(levelViewModel.accountStatus) { i, a ->
                     Pair(i, a)
-                }.collect { (internet, accountStatus) ->
+                }.collect { (internet, _) ->
                     binding.shareButtonSettings.visibility =
                         if (internet) View.VISIBLE else View.GONE
                     binding.shareButtonSettings.setOnClickListener {
                         val shareIntent = generalViewModel.getShareIntent("SettingsFragment")
                         startActivity(shareIntent)
                     }
-                    binding.twitterButton?.setOnClickListener {
+                    binding.twitterButton.setOnClickListener {
                         context?.let {
                             when (internet) {
                                 true -> {
@@ -74,47 +86,16 @@ class SettingsFragment : FullBottomSheetDialogFragment() {
                             }
                         }
                     }
-
-                    when (accountStatus) {
-                        AccountStatus.SIGNED_IN -> {
-                            binding.progressCircular.visibility = View.GONE
-                            binding.googleSignInButton.visibility = View.GONE
-                            binding.googleSignOutButton.visibility = View.VISIBLE
-                            binding.googleSignOutButton.text = "${levelViewModel.currentlySignedInPlayerName} ${resources.getString(R.string.profile_person_symbol)}"
-                        }
-                        AccountStatus.SIGNED_OUT -> {
-                            binding.progressCircular.visibility = View.GONE
-                            binding.googleSignOutButton.visibility = View.GONE
-                            binding.googleSignInButton.visibility = View.VISIBLE
-                        }
-                        AccountStatus.LOADING -> {
-                            binding.progressCircular.visibility = View.VISIBLE
-                            binding.googleSignOutButton.visibility = View.GONE
-                            binding.googleSignInButton.visibility = View.GONE
-                        }
-                        AccountStatus.NOT_SET -> {}
-                        AccountStatus.SIGNED_IN_WITH_FIREBASE -> {
-                            binding.progressCircular.visibility = View.GONE
-                            binding.googleSignInButton.visibility = View.GONE
-                            binding.googleSignOutButton.visibility = View.VISIBLE
-                            binding.googleSignOutButton.text = "${levelViewModel.currentlySignedInPlayerName} ${resources.getString(R.string.profile_person_symbol)}"
-                        }
-                    }
-
-                    binding.googleSignInButton.setOnClickListener {
-                        when (internet) {
-                            true -> {
-                                signInToGoogle()
-                            }
-                            false -> {
-                                context?.let {
-                                    showNoInternetToast(it)
-                                }
-                            }
-                        }
-                    }
                 }
             }
+        }
+        setCorrectLanguageToSelector()
+        val flagImageView = binding.selectAppLocaleButton.findViewById<AppCompatImageView>(R.id.any_button_icon)
+        flagImageView.imageTintList = null
+        set50PercentIntensity(flagImageView)
+
+        binding.selectAppLocaleButton.setOnClickListener {
+            showLanguageSelectionDialog()
         }
 
         binding.soundButton.setOnClickListener {
@@ -133,8 +114,7 @@ class SettingsFragment : FullBottomSheetDialogFragment() {
         binding.tutorialButton.setOnClickListener {
             findNavController().safeNavigate(R.id.action_navigation_settings_to_navigation_tutorial)
         }
-
-        binding.googleSignInOutButton.setOnLongClickListener {
+        binding.tutorialButton.findViewById<AppCompatImageView>(R.id.any_button_icon).setOnLongClickListener {
             val info = "${BuildConfig.VERSION_CODE}; ${BuildConfig.VERSION_NAME}; ${BuildConfig.GIT_HASH}"
             Toast.makeText(
                 context,
@@ -146,7 +126,45 @@ class SettingsFragment : FullBottomSheetDialogFragment() {
 
         setInitialPreference(binding.soundSwitch, getString(R.string.sound_on_pref))
         setInitialPreference(binding.vibrationSwitch, getString(R.string.vibration_on_pref))
-        binding.googleSignInButton.setSize(SignInButton.SIZE_WIDE)
+    }
+
+    private fun setCorrectLanguageToSelector()
+    {
+        val currentLocaleName = getCountryTagOrDefault()
+        binding.selectAppLocaleButton.findViewById<AppCompatImageView>(R.id.any_button_icon).apply {
+            val flag = AppCompatResources.getDrawable(
+                context,
+                currentLocaleName.mapCountryCodeToLanguageAndFlag(requireContext()).second)
+            this.setImageDrawable(flag)
+        }
+    }
+
+    private fun set50PercentIntensity(imageView: AppCompatImageView) {
+        val matrix = ColorMatrix().apply {
+            setSaturation(0.5f)
+        }
+
+        val colorFilter = ColorMatrixColorFilter(matrix)
+        imageView.colorFilter = colorFilter
+    }
+
+    private fun showLanguageSelectionDialog()
+    {
+        // these to match in length
+        val languages = resources.getStringArray(R.array.languages_array)
+        val countryCodes = resources.getStringArray(R.array.country_codes_array)
+        assert(languages.size == countryCodes.size)
+
+        val selectionDialog = MaterialAlertDialogBuilder(requireContext())
+            .setTitle(resources.getString(R.string.select_language))
+            .setItems(languages) { _, index ->
+                var countryCode = countryCodes[index]
+                if (countryCode == "gb") countryCode = "en"
+                else if (countryCode == "cn") countryCode = "zh"
+                val localeList = LocaleListCompat.forLanguageTags(countryCode)
+                AppCompatDelegate.setApplicationLocales(localeList)
+            }.create()
+        selectionDialog.show()
     }
 
     private fun openWebsite(url:String, context: Context)
@@ -183,12 +201,6 @@ class SettingsFragment : FullBottomSheetDialogFragment() {
         _binding = b
         activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         return b.root
-    }
-
-    private fun signInToGoogle() {
-        activity?.let { activity ->
-            (activity as MainActivity).signInManually()
-        }
     }
 
     private fun changePreference(setting: String, value: Boolean) {

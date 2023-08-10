@@ -4,15 +4,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:saveEnabled="false"
     tools:viewBindingIgnore="true"
-    tools:layout_height="wrap_content"
+    tools:layout_height="match_parent"
     tools:layout_width="match_parent"
     tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
     <androidx.appcompat.widget.AppCompatTextView
-        android:saveEnabled="false"
         android:id="@+id/message"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="250dp"
+        android:layout_height="60dp"
         android:background="@drawable/message_round_rectangle"
+        android:gravity="center"
+        android:saveEnabled="false"
+        android:text="Tap to continue"
+        app:autoSizeTextType="uniform"
+        app:autoSizeMaxTextSize="25sp"
+        android:layout_marginHorizontal="@dimen/default_large_margin"
         android:textColor="?colorOnBackground"
-        android:gravity="center"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </merge>

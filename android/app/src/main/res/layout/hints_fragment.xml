@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:purchasebutton="http://schemas.android.com/apk/res-auto"
     xmlns:rewardbutton="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:animateLayoutChanges="true"
+    >
+<androidx.appcompat.widget.LinearLayoutCompat
     android:saveEnabled="false"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
     android:orientation="vertical"
     android:paddingVertical="@dimen/default_large_margin"
-    android:animateLayoutChanges="true"
     app:divider="@drawable/divider"
-    app:dividerPadding="@dimen/simple_dialog_header_left_margin"
     app:showDividers="middle">
 
     <com.indest.hah.views.RewardButton
@@ -19,7 +23,6 @@
         android:saveEnabled="false"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
-        android:layout_margin="@dimen/_2sdp"
         android:background="?attr/selectableItemBackground"
         android:clickable="true"
         android:focusable="true"
@@ -36,7 +39,6 @@
         android:saveEnabled="false"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
-        android:layout_margin="@dimen/_2sdp"
         android:background="?attr/selectableItemBackground"
         android:clickable="true"
         android:focusable="true"
@@ -53,7 +55,6 @@
         android:id="@+id/reward_place_letter"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
-        android:layout_margin="@dimen/_2sdp"
         android:background="?attr/selectableItemBackground"
         android:clickable="true"
         android:focusable="true"
@@ -70,11 +71,11 @@
         android:id="@+id/purchase_button_pictures"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
-        android:layout_margin="@dimen/_2sdp"
         android:background="?attr/selectableItemBackground"
         android:clickable="true"
         android:focusable="true"
         android:orientation="horizontal"
+        purchasebutton:best_label="@string/best_loved_label"
         purchasebutton:sku="@string/instant_pictures"
         purchasebutton:visibility_case_1="@array/pictures_case_1" />
 
@@ -83,7 +84,6 @@
         android:id="@+id/purchase_button_clues"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
-        android:layout_margin="@dimen/_2sdp"
         android:background="?attr/selectableItemBackground"
         android:clickable="true"
         android:focusable="true"
@@ -96,12 +96,10 @@
         android:id="@+id/purchase_button_letters"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
-        android:layout_margin="@dimen/_2sdp"
         android:background="?attr/selectableItemBackground"
         android:clickable="true"
         android:focusable="true"
         android:orientation="horizontal"
-        purchasebutton:labels="@array/best_loved_label"
         purchasebutton:sku="@string/instant_letters"
         purchasebutton:visibility_case_1="@array/letters_case_1" />
 
@@ -110,7 +108,6 @@
         android:id="@+id/purchase_no_sad_mode"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
-        android:layout_margin="@dimen/_2sdp"
         android:background="?attr/selectableItemBackground"
         android:clickable="true"
         android:focusable="true"
@@ -123,12 +120,11 @@
         android:id="@+id/purchase_all_inclusive_pack_2"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
-        android:layout_margin="@dimen/_2sdp"
         android:background="?attr/selectableItemBackground"
         android:clickable="true"
         android:focusable="true"
         android:orientation="horizontal"
-        purchasebutton:labels="@array/save_24_percent_label"
+        purchasebutton:best_label="@string/save_24_percent_label"
         purchasebutton:sku="@string/all_inclusive_pack_2"
         purchasebutton:visibility_case_1="@array/all_inclusive_pack_case1"
         purchasebutton:visibility_case_2="@array/all_inclusive_pack_case2"
@@ -138,3 +134,4 @@
         />
 
 </androidx.appcompat.widget.LinearLayoutCompat>
+</androidx.core.widget.NestedScrollView>

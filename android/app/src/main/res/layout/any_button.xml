@@ -1,46 +1,49 @@
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:viewBindingIgnore="true">
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:saveEnabled="false"
-        android:id="@+id/any_button_icon"
-        android:tint="?colorOnPrimaryContainer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginStart="@dimen/simple_dialog_item_left_margin"
-        android:layout_marginEnd="@dimen/simple_dialog_divider_margin"
-        android:clickable="false"
-        tools:ignore="RtlSymmetry" />
+    android:saveEnabled="false"
+    tools:viewBindingIgnore="true"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/simple_dialog_item_height"
+    android:layout_marginHorizontal="@dimen/default_large_margin"
+    android:orientation="horizontal">
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:saveEnabled="false"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginRight="@dimen/simple_dialog_header_left_margin"
-        android:clickable="false"
         android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:weightSum="1">
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:saveEnabled="false"
+            android:id="@+id/any_button_icon"
+            android:tint="?colorOnPrimaryContainer"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="@dimen/default_large_margin"
+            android:clickable="false"
+            tools:ignore="RtlSymmetry" />
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:saveEnabled="false"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:clickable="false"
-            android:gravity="center_vertical"
             android:orientation="vertical">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:saveEnabled="false"
                 android:id="@+id/any_button_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/simple_dialog_item_height"
                 android:layout_gravity="center_vertical"
-                android:text="@string/placeholder"
-                android:textAppearance="@style/TextAppearance.OC.Body1" />
+                android:gravity="center|start"
+                android:maxLines="1"
+                app:autoSizeMaxTextSize="@dimen/body_large_text_size"
+                app:autoSizeTextType="uniform"
+                android:text="@string/placeholder" />
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.appcompat.widget.LinearLayoutCompat>
-</merge>
+</FrameLayout>

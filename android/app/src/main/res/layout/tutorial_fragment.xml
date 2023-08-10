@@ -5,7 +5,7 @@
     android:saveEnabled="false"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="@dimen/default_large_margin"
+    android:padding="@dimen/default_large_margin"
     android:gravity="center"
     android:orientation="vertical"
     tools:context=".fragments.TutorialFragment">
@@ -16,20 +16,15 @@
         android:layout_height="0dp"
         android:layout_weight="3"
         android:gravity="center"
-        android:layout_margin="@dimen/default_large_margin"
         android:orientation="vertical">
 
         <Button
             android:saveEnabled="false"
+            style="@style/Widget.Material3.Button"
             android:id="@+id/continueButton"
-            style="@style/Widget.Material3.Button.TonalButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/yantramanav_bold"
-            android:drawableEnd="@drawable/ic_baseline_arrow_right_24"
-            android:text="@string/next"
-            android:textAppearance="@style/TextAppearance.OC.Headline5"
-            android:textSize="@dimen/tutorial_primary_button_text_size" />
+            android:text="@string/play"/>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -37,20 +32,20 @@
         android:saveEnabled="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/default_large_margin"
+        android:paddingVertical="@dimen/default_large_margin"
         android:layout_weight="0.5"
         android:gravity="start"
         android:text="@string/tutorial_text"
-        android:textSize="@dimen/tutorial_text_size" />
+        android:textSize="@dimen/body_large_text_size" />
 
     <FrameLayout
         android:saveEnabled="false"
         android:id="@+id/tutorialGameplay"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:padding="@dimen/default_large_margin"
         android:layout_weight="2.5"
         android:alpha="0"
+        android:paddingBottom="@dimen/default_large_margin"
         android:animateLayoutChanges="true"
         android:clipChildren="false"
         android:gravity="center"
@@ -59,8 +54,8 @@
         <androidx.appcompat.widget.AppCompatImageView
             android:saveEnabled="false"
             android:id="@+id/hand"
-            android:layout_width="@dimen/_44sdp"
-            android:layout_height="@dimen/_44sdp"
+            android:layout_width="@dimen/box_text_size"
+            android:layout_height="@dimen/box_text_size"
             android:background="@drawable/tutorial_hand_drawable"
             android:elevation="2dp" />
 
@@ -79,49 +74,49 @@
             <androidx.appcompat.widget.AppCompatTextView
                 android:saveEnabled="false"
                 android:id="@+id/letter1"
-                android:layout_width="@dimen/tutorial_box_size"
-                android:layout_height="@dimen/tutorial_box_size"
+                android:layout_width="@dimen/box_size"
+                android:layout_height="@dimen/box_size"
                 android:elevation="1dp"
                 android:fontFamily="@font/yantramanav_bold"
                 android:gravity="center"
                 android:background="?colorSecondaryContainer"
                 android:textColor="?colorOnSecondaryContainer"
                 android:text="A"
-                android:textSize="@dimen/tutorial_box_text_size" />
+                android:textSize="@dimen/box_text_size" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:saveEnabled="false"
                 android:id="@+id/letter2"
-                android:layout_width="@dimen/tutorial_box_size"
-                android:layout_height="@dimen/tutorial_box_size"
+                android:layout_width="@dimen/box_size"
+                android:layout_height="@dimen/box_size"
                 android:elevation="1dp"
                 android:fontFamily="@font/yantramanav_bold"
                 android:gravity="center"
                 android:background="?colorSecondaryContainer"
                 android:textColor="?colorOnSecondaryContainer"
                 android:text="H"
-                android:textSize="@dimen/tutorial_box_text_size" />
+                android:textSize="@dimen/box_text_size" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:saveEnabled="false"
                 
                 android:id="@+id/letter3"
-                android:layout_width="@dimen/tutorial_box_size"
-                android:layout_height="@dimen/tutorial_box_size"
+                android:layout_width="@dimen/box_size"
+                android:layout_height="@dimen/box_size"
                 android:elevation="1dp"
                 android:fontFamily="@font/yantramanav_bold"
                 android:gravity="center"
                 android:background="?colorSecondaryContainer"
                 android:textColor="?colorOnSecondaryContainer"
                 android:text="H"
-                android:textSize="@dimen/tutorial_box_text_size" />
+                android:textSize="@dimen/box_text_size" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:saveEnabled="false"
                 
                 android:id="@+id/r1"
-                android:layout_width="@dimen/tutorial_arrow_size"
-                android:layout_height="@dimen/tutorial_arrow_size"
+                android:layout_width="@dimen/arrow_size"
+                android:layout_height="@dimen/arrow_size"
                 android:alpha="0"
                 android:background="@drawable/ic_baseline_double_arrow_24"
                 app:layout_gravity="center" />
@@ -130,8 +125,8 @@
                 android:saveEnabled="false"
                 
                 android:id="@+id/r2"
-                android:layout_width="@dimen/tutorial_arrow_size"
-                android:layout_height="@dimen/tutorial_arrow_size"
+                android:layout_width="@dimen/arrow_size"
+                android:layout_height="@dimen/arrow_size"
                 android:alpha="0"
                 android:background="@drawable/ic_baseline_double_arrow_24"
                 app:layout_gravity="center" />
@@ -140,8 +135,8 @@
                 android:saveEnabled="false"
                 
                 android:id="@+id/r3"
-                android:layout_width="@dimen/tutorial_arrow_size"
-                android:layout_height="@dimen/tutorial_arrow_size"
+                android:layout_width="@dimen/arrow_size"
+                android:layout_height="@dimen/arrow_size"
                 android:alpha="0"
                 android:background="@drawable/ic_baseline_double_arrow_24"
                 app:layout_gravity="center" />
@@ -150,44 +145,44 @@
                 android:saveEnabled="false"
                 
                 android:id="@+id/space1"
-                android:layout_width="@dimen/tutorial_box_size"
-                android:layout_height="@dimen/tutorial_box_size"
+                android:layout_width="@dimen/box_size"
+                android:layout_height="@dimen/box_size"
                 android:background="?colorOutline"
                 android:elevation="0dp"
                 android:fontFamily="@font/yantramanav_bold"
                 android:gravity="center"
-                android:textSize="@dimen/tutorial_box_text_size" />
+                android:textSize="@dimen/box_text_size" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:saveEnabled="false"
                 
                 android:id="@+id/space2"
-                android:layout_width="@dimen/tutorial_box_size"
-                android:layout_height="@dimen/tutorial_box_size"
+                android:layout_width="@dimen/box_size"
+                android:layout_height="@dimen/box_size"
                 android:background="?colorOutline"
                 android:elevation="0dp"
                 android:fontFamily="@font/yantramanav_bold"
                 android:gravity="center"
-                android:textSize="@dimen/tutorial_box_text_size" />
+                android:textSize="@dimen/box_text_size" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:saveEnabled="false"
                 
                 android:id="@+id/space3"
-                android:layout_width="@dimen/tutorial_box_size"
-                android:layout_height="@dimen/tutorial_box_size"
+                android:layout_width="@dimen/box_size"
+                android:layout_height="@dimen/box_size"
                 android:background="?colorOutline"
                 android:elevation="0dp"
                 android:fontFamily="@font/yantramanav_bold"
                 android:gravity="center"
-                android:textSize="@dimen/tutorial_box_text_size" />
+                android:textSize="@dimen/box_text_size" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:saveEnabled="false"
                 
                 android:id="@+id/l3"
-                android:layout_width="@dimen/tutorial_arrow_size"
-                android:layout_height="@dimen/tutorial_arrow_size"
+                android:layout_width="@dimen/arrow_size"
+                android:layout_height="@dimen/arrow_size"
                 android:alpha="0"
                 android:background="@drawable/ic_baseline_double_arrow_24"
                 android:rotationY="180"
@@ -197,8 +192,8 @@
                 android:saveEnabled="false"
                 
                 android:id="@+id/l2"
-                android:layout_width="@dimen/tutorial_arrow_size"
-                android:layout_height="@dimen/tutorial_arrow_size"
+                android:layout_width="@dimen/arrow_size"
+                android:layout_height="@dimen/arrow_size"
                 android:alpha="0"
                 android:background="@drawable/ic_baseline_double_arrow_24"
                 android:rotationY="180"
@@ -208,27 +203,13 @@
                 android:saveEnabled="false"
                 
                 android:id="@+id/l1"
-                android:layout_width="@dimen/tutorial_arrow_size"
-                android:layout_height="@dimen/tutorial_arrow_size"
+                android:layout_width="@dimen/arrow_size"
+                android:layout_height="@dimen/arrow_size"
                 android:alpha="0"
                 android:background="@drawable/ic_baseline_double_arrow_24"
                 android:rotationY="180"
                 app:layout_gravity="center" />
         </androidx.gridlayout.widget.GridLayout>
-
     </FrameLayout>
 
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:saveEnabled="false"
-        
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:padding="@dimen/default_large_margin"
-        android:animateLayoutChanges="true"
-        android:clipChildren="false"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-    </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.appcompat.widget.LinearLayoutCompat>

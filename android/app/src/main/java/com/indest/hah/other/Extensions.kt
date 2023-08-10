@@ -1,20 +1,21 @@
 package com.indest.hah.other
 
-import android.content.ContentResolver
 import android.content.Context
 import android.os.Build
 import android.provider.Settings
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.os.bundleOf
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.NavController
 import com.indest.hah.R
-import java.text.Normalizer
+import java.util.Locale
 
 fun NavController.safeNavigate(
     action: Int,
@@ -31,6 +32,33 @@ fun NavController.safeNavigate(
     }
 }
 
+fun getCountryTagOrDefault():String {
+    // Fetching the current application locale using the AndroidX support Library
+    var currentLocaleName = if (!AppCompatDelegate.getApplicationLocales().isEmpty) {
+        // Fetches the current Application Locale from the list
+        AppCompatDelegate.getApplicationLocales()[0]?.toLanguageTag()
+    } else {
+        // Fetches the default System Locale
+        Locale.getDefault().toLanguageTag()
+    }?.substring(0, 2)
+
+    if (currentLocaleName == "en") {
+        currentLocaleName = "gb"
+    }
+    else if (currentLocaleName == "zh")
+    {
+        currentLocaleName = "cn"
+    }
+
+    if (currentLocaleName == null || !C.languages.containsKey(currentLocaleName))
+    {
+        currentLocaleName = "gb"
+    }
+
+    return currentLocaleName
+}
+
+
 
 fun String.isPalindrome(language: String = "gb"): Boolean {
     val testString = this.lowercase()
@@ -41,16 +69,17 @@ fun String.isPalindrome(language: String = "gb"): Boolean {
 }
 
 fun AppCompatActivity.hideSystemBars(viewGroup: ViewGroup) {
+    /*
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
         val buttonNavigation =
             Settings.Secure.getInt(this.contentResolver, "navigation_mode", 0) == 2
         if (!buttonNavigation) {
+        }
+        }*/
             val insetsController = WindowInsetsControllerCompat(window, viewGroup)
             insetsController.systemBarsBehavior =
                 WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             insetsController.hide(WindowInsetsCompat.Type.systemBars())
-        }
-    }
 }
 
 
@@ -121,7 +150,7 @@ fun String.mapCountryCodeToLanguageAndFlag(context: Context): Pair<String, Int> 
         "ro" -> return Pair(context.getString(R.string.romanian), R.drawable.ro)
         "nl" -> return Pair(context.getString(R.string.dutch), R.drawable.nl)
     }
-    return Pair("English", R.drawable.gb)
+    return Pair(context.getString(R.string.english), R.drawable.gb)
 }
 
 fun String.countryCodeToEmoji(): String {
@@ -161,5 +190,28 @@ fun Int.getLevelScore(puzzle: String = ""): Int {
     return puzzle.replace("-", "").replace("\\s".toRegex(), "").length * multiplier
 }
 
-
-
+fun String.getCountryCodeLeaderboardId(context: Context) : String {
+    when(this)
+    {
+        "cn" -> return context.resources.getString(R.string.leaderboard_chinese)
+        "ee" -> return context.resources.getString(R.string.leaderboard_estonian)
+        "fi" -> return context.resources.getString(R.string.leaderboard_finnish)
+        "fr" -> return context.resources.getString(R.string.leaderboard_french)
+        "de" -> return context.resources.getString(R.string.leaderboard_german)
+        "in" -> return context.resources.getString(R.string.leaderboard_hindi)
+        "id" -> return context.resources.getString(R.string.leaderboard_indonesian)
+        "it" -> return context.resources.getString(R.string.leaderboard_italian)
+        "jp" -> return context.resources.getString(R.string.leaderboard_japanese)
+        "kr" -> return context.resources.getString(R.string.leaderboard_korean)
+        "br" -> return context.resources.getString(R.string.leaderboard_portuguese)
+        "ru" -> return context.resources.getString(R.string.leaderboard_russian)
+        "es" -> return context.resources.getString(R.string.leaderboard_spanish)
+        "se" -> return context.resources.getString(R.string.leaderboard_swedish)
+        "tr" -> return context.resources.getString(R.string.leaderboard_turkish)
+        "pl" -> return context.resources.getString(R.string.leaderboard_polish)
+        "ro" -> return context.resources.getString(R.string.leaderboard_romanian)
+        "nl" -> return context.resources.getString(R.string.leaderboard_dutch)
+        "ua" -> return context.resources.getString(R.string.leaderboard_ukrainian)
+    }
+    return context.resources.getString(R.string.global_leaderboards)
+}

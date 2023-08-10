@@ -46,6 +46,7 @@ import com.indest.hah.other.safeNavigate
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.level.LevelProgress
 import com.indest.hah.views.Cell
+import com.indest.hah.views.HahConstraintLayout
 import com.indest.hah.views.MessageSnackBar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -83,9 +84,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED)
             {
-                if (levelViewModel.isShowScores()) {
-                    showPlayerCenteredScores()
-                }
                 showTutorial()
 
                 generalViewModel.rewardState.collect { rewardType ->
@@ -132,7 +130,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     ): View {
         _binding = LevelFragmentBinding.inflate(layoutInflater, container, false)
         activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-        binding.levelFragment.layoutTransition = animations.getLayoutTransitionFade()
+        binding.levelFragment.layoutTransition = animations.getLayoutTransition()
         return binding.root
     }
 
@@ -174,6 +172,9 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                                     it.downloadHintPictureIfNeeded(
                                         event.level.levelInfo.levelId
                                     )
+                                }
+                                if (levelViewModel.isShowScores()) {
+                                    showPlayerCenteredScores()
                                 }
                             }
                         }
@@ -222,8 +223,10 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     private fun displayLevel(level: Level) {
         binding.levelFragment.removeAllViews()
         binding.levelFragment.removeAllViewsInLayout()
+        Log.d(TAG, "displayLevel: ${level.levelInfo}")
         lifecycleScope.launch(Dispatchers.Main)
         {
+
             val levelGridLayout = levelCreator.getLevel(
                 level,
                 layoutInflater,
@@ -241,6 +244,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                 }
             }
             binding.levelFragment.addView(levelGridLayout.first)
+
         }
 
         askForReview(level.levelInfo.levelId)
@@ -282,7 +286,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
     private fun showCorrectEffects(
         solutionData: SolutionData,
-        isLastLevel: Pair<Boolean, Boolean> = Pair(false, false)
+        isLastLevel: Triple<Boolean, Boolean, String> = Triple(false, false, "")
     ) {
 
         cellDirector?.getCells()?.let { cells ->
@@ -352,7 +356,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             view = binding.levelFragment,
             message = randomCorrectMessage,
             duration = 2000,
-            textSize = MessageSnackBar.Companion.TextSize.BIG,
         )
         messages.add(winningMessage)
         return winningMessage
@@ -363,20 +366,18 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             view = binding.levelFragment,
             message = "",
             duration = 2000,
-            textSize = MessageSnackBar.Companion.TextSize.SMALL,
         )
         messages.add(scoreMessage)
         return scoreMessage
     }
 
-    private fun getContinueMessage(isLastLevel: Pair<Boolean, Boolean>):MessageSnackBar {
+    private fun getContinueMessage(isLastLevel: Triple<Boolean, Boolean, String>):MessageSnackBar {
         val continueMessage = MessageSnackBar.make(
-            view = binding.levelFragment,
+            view = binding.root,
             message = if (!isLastLevel.first && !isLastLevel.second) getString(R.string.tap_to_continue) else getString(
                 R.string.tap_to_finish
             ),
-            duration = Int.MAX_VALUE,
-            textSize = MessageSnackBar.Companion.TextSize.SMALL,
+            duration = Int.MAX_VALUE
         )
         messages.add(continueMessage)
         return continueMessage
@@ -395,7 +396,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             view = binding.levelFragment,
             message = messageToDisplay,
             duration = 2000,
-            textSize = MessageSnackBar.Companion.TextSize.SMALL,
             animateText = false,
             isViewEnabled = false
         )
@@ -405,30 +405,55 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
 
     private fun showContinueMessage(
-        isLastLevel: Pair<Boolean, Boolean> = Pair(false, false)
+        isLastLevel: Triple<Boolean, Boolean, String> = Triple(false, false, "")
     ) {
         val continueMessage = getContinueMessage(isLastLevel)
         continueMessage.view.isClickable = true
+        val containerView = requireActivity().findViewById<HahConstraintLayout>(R.id.container)
+
+        containerView.setOnClickListener {
+            containerView.setOnClickListener(null)
+            continueMessage.view.setOnClickListener(null)
+            continueMessageAction(continueMessage, isLastLevel)
+        }
         continueMessage.view.setOnClickListener {
-            if (isVisible) {
-                activateBottomNavBar()
-                it.isClickable = false
-                continueMessage.dismiss()
-                soundPlayer.play(soundPlayer.sounds.levelTransition, volume = 0.2f)
-                playTrainAnimation()
-                when (isLastLevel) {
-                    Pair(false, false) -> {
-                        levelViewModel.executeLevelCompleteActions()
-                    }
-                    Pair(true, false), Pair(false, true) -> {
-                        levelViewModel.executeLevelCompleteActionsFinal()
-                        soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.2f)
-                        findNavController().safeNavigate(R.id.action_navigation_level_to_navigation_final_screen)
-                    }
-                }
-            }
+           containerView.setOnClickListener(null)
+           continueMessage.view.setOnClickListener(null)
+           continueMessageAction(continueMessage, isLastLevel)
         }
         continueMessage.show()
+    }
+
+    private fun continueMessageAction(continueMessage:MessageSnackBar, isLastLevel: Triple<Boolean, Boolean, String>)
+    {
+        if (isVisible) {
+            activateBottomNavBar()
+            continueMessage.dismiss()
+            soundPlayer.play(soundPlayer.sounds.levelTransition, volume = 0.2f)
+            playTrainAnimation()
+
+            when (isLastLevel) {
+                Triple(false, false, "") -> {
+                    levelViewModel.executeLevelCompleteActions()
+                }
+                Triple(true, false, "") -> {
+                    levelViewModel.executeLevelCompleteActions(1001)
+                    soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.2f)
+                    findNavController().safeNavigate(R.id.action_navigation_level_to_navigation_game_pack_ending)
+                }
+                Triple(false, true, "") -> {
+                    levelViewModel.executeLevelCompleteActions(1)
+                    soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.2f)
+                    findNavController().safeNavigate(R.id.action_navigation_level_to_navigation_players_pack_ending)
+                }
+            }
+            if (isLastLevel.third != "")
+            {
+                levelViewModel.executeLevelCompleteActions(1)
+                soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.2f)
+                findNavController().safeNavigate(R.id.action_navigation_level_to_navigation_language_pack_ending)
+            }
+        }
     }
 
 

@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="language_pack_completed">Anda telah menyelesaikan paket level <xliff:g id="language">%s</xliff:g>! Ketuk untuk melanjutkan dengan level bahasa 🇬🇧 Inggris!</string>
+    <string name="game_pack_completed">Anda telah menyelesaikan permainan utama! Bagus sekali! Cobalah juga level pemain.</string>
+    <string name="player_pack_completed">Anda telah menyelesaikan paket pemain! Hebat! Kirim level Anda dan cobalah juga paket bahasa!</string>
+
+    <string name="exit_game_title">Keluar dari game?</string>
+
+    <string name="continue_game">Lanjutkan</string>
+
+    <string name="quit">Keluar</string>
+    <string name="menu_language">Bahasa Menu</string>
+    <string name="select_language">Pilih Bahasa</string>
+
+    <string name="game_levels">Level Game</string>
+
+    <string name="player_levels">Level Pemain</string>
+
+    <string name="international_levels">Level Internasional</string>
+
+    <string name="global_leaderboards">Papan Peringkat Internasional</string>
+
+    <string name="submit_level">Kirim Palindrom Anda</string>
+
+    <string name="send">Kirim untuk Ditinjau</string>
+
+    <string name="something_went_wrong">Ada yang salah.</string>
+
+    <string name="try_again">Coba lagi</string>
+
+    <string name="player_leaderboard_text">Papan Peringkat Pemain</string>
+
+    <string name="send_level_input_hint">Masukkan Palindrom Anda</string>
+
+    <string name="stages">Level</string>
+
+    <string name="hints">Petunjuk</string>
+
+    <string name="min_length_error">Panjang minimum adalah</string>
+
+    <string name="max_length_error">Panjang maksimum adalah</string>
+
+    <string name="all_digits_error">Tidak boleh semua digit</string>
+
+    <string name="palindrome_exists">Palindrom sudah ditambahkan</string>
+
+    <string name="not_a_palindrome_error">Solusi harus berupa palindrom</string>
+
+    <string name="levels">Level</string>
+
+    <string name="scores">Skor</string>
+
+    <string name="follow">Ikuti</string>
+
+    <string name="tutorial">Tutorial</string>
+
+    <string name="level_select">Pilih Level Game</string>
+
+    <string name="player_level_select">Pilih Level Pemain</string>
+
+    <string name="palindrome_successfully_sent">Terima kasih! Ini akan segera ditinjau!</string>
+
+    <string name="rate_game">Berikan Masukan</string>
+
+    <string name="you_are_signed_in">Anda masuk</string>
+
+    <string name="no_internet">Tidak Ada Koneksi Internet</string>
+
+    <string name="please_sign_in">Akses hanya untuk anggota</string>
+
+    <string name="achievements">Prestasi</string>
+
+    <string name="leaderboard">Papan Peringkat Permainan</string>
+
+    <string name="rewarded_reveal_picture">Ungkap Gambar</string>
+
+    <string name="rewarded_reveal_clue">Ungkap Petunjuk</string>
+
+    <string name="rewarded_place_letter">Tempatkan Surat</string>
+
+    <string name="remove_letter_ads_text">Surat Instan</string>
+
+    <string name="no_ad_available">Petunjuk Tidak Tersedia</string>
+
+    <string name="instantly">Seketika</string>
+
+    <string name="sound_text">Suara</string>
+
+    <string name="vibration_text">Getaran</string>
+
+    <string name="settings">Pengaturan</string>
+
+    <string name="watch_rewarded_video">Tonton Video Berhadiah</string>
+
+    <string name="play_games">Mainkan Game</string>
+
+    <string name="placeholder_text">placeholder</string>
+
+    <string name="tap_to_continue">Ketuk untuk melanjutkan</string>
+
+    <string name="tap_to_finish">Ketuk untuk menyelesaikan!</string>
+
+    <string name="final_screen_message">Lihat juga level yang belum kamu mainkan! Atau kirim palindrom keren yang bisa ditampilkan dalam game!</string>
+
+    <string name="game_completed_shout">Hore!</string>
+
+    <string name="game_completed_shout_smiley" translatable="false">(&gt;‿◠)✌</string>
+
+    <string name="game_completed_shout_shout2">Menang!</string>
+
+    <string name="game_completed_shout_smiley2" translatable="false">(͠≖ ͜ʖ͠≖)👌</string>
+
+    <string name="share">Bagikan</string>
+
+    <string name="placeholder">…</string>
+
+    <string name="watch_ad_top_notice">Tonton iklan = tanpa Mode Sedih</string>
+
+    <string name="entering_sad_mode">Kamu dalam Mode Sedih 😕</string>
+
+    <string name="entering_normal_mode">Kamu dalam Mode Normal 😆</string>
+
+    <string name="hints_are_available">Petunjuk dapat ditemukan di bawah ↙️</string>
+
+    <string name="send_a_cool_palindrome">Kirim palindrom ↓ </string>
+
+    <string name="not_a_palindrome">Bukan palindrom</string>
+
+    <string name="submit_once_per_day_limit">Anda dapat mengirimkan sekali per hari.</string>
+
+    <string name="profile_person_symbol">❦</string>
+
+    <string name="score">Skor:</string>
+
+    <string name="you_rank_first">Kamu peringkat pertama!</string>
+
+    <string name="earn">Hasilkan</string>
+
+    <string name="points_to_rank_up">poin untuk naik peringkat!</string>
+
+    <string name="new_word">Baru</string>
+
+    <string name="level_by">tingkat oleh</string>
+
+    <string name="levels_added">level ditambahkan!</string>
+
+    <string name="level_already_completed">Level sudah selesai.</string>
+
+    <string name="points">poin</string>
+
+    <string name="send_levels_country_top">Kirimkan palindrom dan bangkitkan negaramu.</string>
+
+    <string name="picture_hint">Petunjuk gambar</string>
+    <string name="other">Lainnya</string>
+
+
+    <string-array name="good_texts">
+        <item>Benar!</item>
+        <item>Baik sekali!</item>
+        <item>Tetap lanjutkan!</item>
+        <item>Ya!</item>
+        <item>Hebat!</item>
+    </string-array>
+
+    <string-array name="very_good_texts">
+        <item>Luar Biasa!</item>
+        <item>Hebat sekali!</item>
+        <item>Kerja yang luar biasa!</item>
+        <item>Sempurna!</item>
+        <item>Luar biasa sekali!</item>
+    </string-array>
+
+    <string-array name="solution_wrong_texts">
+        <item>Coba lagi.</item>
+        <item>Salah.</item>
+        <item>Periksa jawaban.</item>
+    </string-array>
+
+    <string-array name="palindrome_wrong_texts">
+        <item>Palindrom, tapi bukan solusinya.</item>
+        <item>Palindrom, tapi tidak sepenuhnya benar.</item>
+    </string-array>
+
+
+    <!-- TUTORIAL -->
+
+    <string name="tutorial_text">Buat kata dan kalimat yang dibaca sama dari kedua sisi</string>
+
+    <string name="tutorial3_second_text">• Kalimat membutuhkan tanda baca yang teratur \n• Beberapa solusi memiliki tanda \"*\". \n• Lebih sedikit kesalahan = skor lebih baik</string>
+
+    <string name="tutorial_25_level_promo">Satu hal lagi… Capai level 25 dan dapatkan \"Petunjuk Instan\" sebagai hadiah.</string>
+
+    <string name="tutorial_complete_text">Selesai! Nikmati permainannya &#128640;</string>
+
+    <string name="next">Selanjutnya</string>
+
+    <string name="play">Mainkan</string>
+
+
+    <!-- Languages -->
+
+    <string name="chinese">Cina</string>
+
+    <string name="estonian">Bahasa Estonia</string>
+
+    <string name="romanian">Rumania</string>
+
+    <string name="japanese">Jepang</string>
+
+    <string name="korean">Bahasa Korea</string>
+
+    <string name="dutch">Belanda</string>
+
+    <string name="german">Jerman</string>
+
+    <string name="french">Prancis</string>
+
+    <string name="finnish">Bahasa Finlandia</string>
+
+    <string name="polish">Bahasa Polandia</string>
+
+    <string name="hindi">Hindi</string>
+
+    <string name="indonesian">Bahasa Indonesia</string>
+
+    <string name="spanish">Spanyol</string>
+
+    <string name="portuguese">Portugis</string>
+
+    <string name="ukrainian">Ukraina</string>
+
+    <string name="russian">Rusia</string>
+
+    <string name="swedish">Bahasa Swedia</string>
+
+    <string name="turkish">Turki</string>
+
+    <string name="italian">Italia</string>
+
+    <string name="english">Bahasa Inggris</string>
+
+    <string-array name="languages_array">
+
+        <item>Bahasa Inggris</item>
+
+        <item>Spanyol</item>
+
+        <item>Portugis</item>
+
+        <item>Cina</item>
+
+        <item>Bahasa Korea</item>
+
+        <item>Italia</item>
+
+        <item>Jepang</item>
+
+        <item>Jerman</item>
+
+        <item>Bahasa Indonesia</item>
+
+        <item>Turki</item>
+
+        <item>Prancis</item>
+
+        <item>Belanda</item>
+
+        <item>Bahasa Finlandia</item>
+
+        <item>Bahasa Polandia</item>
+
+        <item>Ukraina</item>
+
+        <item>Bahasa Swedia</item>
+
+        <item>Bahasa Estonia</item>
+
+        <item>Rumania</item>
+
+    </string-array>
+
+</resources>

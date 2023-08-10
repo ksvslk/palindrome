@@ -34,7 +34,7 @@ class GlobalLeaderboardsFragment : FullBottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED)
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED)
             {
                 levelViewModel.allUniqueCountries().collect { countries ->
                     binding.globalLeaderboardsRecyclerview.addItemDecoration(
@@ -43,13 +43,11 @@ class GlobalLeaderboardsFragment : FullBottomSheetDialogFragment() {
                             DividerItemDecoration.VERTICAL
                         )
                     )
-                    binding.globalLeaderboardsRecyclerview.updatePadding(
-                        left = resources.getDimensionPixelSize(R.dimen.simple_dialog_header_left_margin),
-                        right = resources.getDimensionPixelSize(R.dimen.simple_dialog_header_left_margin)
-                    )
-                    val countriesModifiedForAdapter = countries.map { Pair(it, 1) }
+                    val countriesModifiedForAdapter = countries.map {
+                        Pair(it, 1)
+                    }
                     binding.globalLeaderboardsRecyclerview.adapter =
-                        LanguageItemAdapter(true, countriesModifiedForAdapter) {
+                        LanguageItemAdapter(requireContext(), true, countriesModifiedForAdapter) {
                              it?.let { cc ->
                                  val id = getCountryCodeLeaderboardId(cc)
                                  showLeaderBoard(id)

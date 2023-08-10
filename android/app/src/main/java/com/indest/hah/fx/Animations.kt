@@ -187,6 +187,30 @@ class Animations @Inject constructor(
         return itemLayoutTransition
     }
 
+    fun getLayoutTransition(): LayoutTransition {
+        val scaleDown: Animator = ObjectAnimator.ofPropertyValuesHolder(
+            null as Any?,
+            PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, 0f),
+            PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, 0f)
+        )
+        scaleDown.duration = 300
+        scaleDown.interpolator = DecelerateInterpolator()
+        val scaleUp: Animator = ObjectAnimator.ofPropertyValuesHolder(
+            null as Any?,
+            PropertyValuesHolder.ofFloat(View.SCALE_X, 0f, 1f),
+            PropertyValuesHolder.ofFloat(View.SCALE_Y, 0f, 1f)
+        )
+        scaleUp.duration = 300
+        scaleUp.startDelay = 300
+        scaleUp.interpolator = OvershootInterpolator(1.2f)
+
+        val itemLayoutTransition = LayoutTransition()
+        itemLayoutTransition.setAnimator(LayoutTransition.APPEARING, scaleUp)
+        itemLayoutTransition.setAnimator(LayoutTransition.DISAPPEARING, scaleDown)
+
+        return itemLayoutTransition
+    }
+
     fun getTrainAnimation(fixed:Boolean = false, fixedValue:Int = 20): LinearLayoutCompat {
         val activity = (context as MainActivity)
         val trainLinearLayout = activity.findViewById<LinearLayoutCompat>(R.id.trainLinearLayout)
@@ -249,7 +273,7 @@ class Animations @Inject constructor(
         animator.addUpdateListener { animation ->
             scoreView.text = StringBuilder()
                 .append(animation.animatedValue.toString().padStart(paddingLength, '0'))
-                .append(" ${context.resources.getString(R.string.of)} $maxScore ${context.resources.getString(R.string.points)}")
+                .append(" / $maxScore")
         }
         if (score > 0) soundPlayer.play(soundPlayer.sounds.scoreSound, volume = 0.2f)
         return animator

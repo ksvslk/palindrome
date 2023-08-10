@@ -5,5 +5,5 @@ import androidx.annotation.Keep
 @Keep
 @kotlinx.serialization.Serializable
 data class LanguageLevel(
-    val solutionToCategory:Map<String,String>
+    val solutionToCategory:Map<String,Map<String,String>>
 )

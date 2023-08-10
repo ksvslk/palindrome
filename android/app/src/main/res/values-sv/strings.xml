@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="language_pack_completed">Du har slutfört nivåpaketet <xliff:g id="language">%s</xliff:g>! Tryck för att fortsätta med 🇬🇧 engelska nivåer!</string>
+    <string name="game_pack_completed">Du har slutfört huvudspelet! Bra jobbat! Prova också spelarnivåerna.</string>
+    <string name="player_pack_completed">Du har slutfört spelarpaketet! Grymt jobbat! Skicka dina nivåer och prova också språkpaketen!</string>
+
+    <string name="exit_game_title">Avsluta spelet?</string>
+    <string name="continue_game">Fortsätt</string>
+    <string name="quit">Avsluta</string>
+    <string name="menu_language">Menyspråk</string>
+    <string name="select_language">Välj Språk</string>
+    <string name="game_levels">Spelnivåer</string>
+    <string name="player_levels">Spelarnivåer</string>
+    <string name="international_levels">Internationella nivåer</string>
+    <string name="global_leaderboards">Internationella topplistor</string>
+    <string name="submit_level">Skicka din palindrom</string>
+    <string name="send">Skicka för granskning</string>
+    <string name="something_went_wrong">Något gick fel.</string>
+    <string name="try_again">Försök igen</string>
+    <string name="player_leaderboard_text">Spelartavla</string>
+    <string name="send_level_input_hint">Enter Your Palindrome</string>
+    <string name="stages">Nivåer</string>
+    <string name="hints">Tips</string>
+    <string name="min_length_error">Minsta längd är</string>
+    <string name="max_length_error">Maximal längd är</string>
+    <string name="all_digits_error">Kan inte vara alla siffror</string>
+    <string name="palindrome_exists">Palindrom har redan lagts till</string>
+    <string name="not_a_palindrome_error">Lösningen måste vara ett palindrom</string>
+    <string name="levels">Levels</string>
+    <string name="scores">Poäng</string>
+    <string name="follow">Följ</string>
+    <string name="tutorial">Handledning</string>
+    <string name="level_select">Välj spelnivå</string>
+    <string name="player_level_select">Spelarnivå Välj</string>
+    <string name="palindrome_successfully_sent">Tack! Den kommer att granskas inom kort!</string>
+    <string name="rate_game">Ge feedback</string>
+    <string name="you_are_signed_in">Du är inloggad</string>
+    <string name="no_internet">Ingen Internetanslutning</string>
+    <string name="please_sign_in">Åtkomst reserverad för medlemmar</string>
+    <string name="achievements">Prestationer</string>
+    <string name="leaderboard">Speltavlan</string>
+    <string name="rewarded_reveal_picture">Reveal Picture</string>
+    <string name="rewarded_reveal_clue">Reveal Clue</string>
+    <string name="rewarded_place_letter">Platsbrev</string>
+    <string name="remove_letter_ads_text">Instant Letters</string>
+    <string name="no_ad_available">Tips ej tillgänglig</string>
+    <string name="instantly">Omedelbart</string>
+    <string name="sound_text">Ljud</string>
+    <string name="vibration_text">Vibration</string>
+    <string name="settings">Inställningar</string>
+    <string name="watch_rewarded_video">Titta på belönad video</string>
+    <string name="play_games">Spela spel</string>
+    <string name="placeholder_text">platshållare</string>
+    <string name="tap_to_continue">Knacka för att fortsätta</string>
+    <string name="tap_to_finish">Knacka för att avsluta!</string>
+    <string name="final_screen_message">Kolla även in de nivåer du inte har spelat ännu! Eller skicka coola palindromer som kan finnas med i spelet!</string>
+    <string name="game_completed_shout">Jaha!</string>
+    <string name="game_completed_shout_smiley" translatable="false">(&gt;‿◠)✌</string>
+    <string name="game_completed_shout_shout2">Vinnande!</string>
+    <string name="game_completed_shout_smiley2" translatable="false">(͠≖ ͜ʖ͠≖)👌</string>
+    <string name="share">Dela</string>
+    <string name="placeholder">...</string>
+    <string name="watch_ad_top_notice">Se annons = inget sorgligt läge</string>
+    <string name="entering_sad_mode">Du är i sorgligt läge 😕</string>
+    <string name="entering_normal_mode">Du är i normalt läge 😆</string>
+    <string name="hints_are_available">Tips hittar du nedan ↙️</string>
+    <string name="send_a_cool_palindrome">Skicka palindromer ↓</string>
+    <string name="not_a_palindrome">Inte en palindrom</string>
+    <string name="submit_once_per_day_limit">Du kan skicka in en gång per dag.</string>
+    <string name="profile_person_symbol">❦</string>
+    <string name="score">Poäng:</string>
+    <string name="you_rank_first">Du rankas först!</string>
+    <string name="earn">Tjäna</string>
+    <string name="points_to_rank_up">poäng för att rankas upp!</string>
+    <string name="new_word">Ny</string>
+    <string name="level_by">nivå efter</string>
+    <string name="levels_added">nivåer tillagda!</string>
+    <string name="level_already_completed">Nivå är redan klar.</string>
+    <string name="points">poäng</string>
+    <string name="send_levels_country_top">Skicka palindromer och höj ditt land.</string>
+    <string name="picture_hint">Bildtips</string>
+    <string name="other">Annat</string>
+
+
+    <string-array name="good_texts">
+        <item>Korrekt!</item>
+        <item>Bra jobbat!</item>
+        <item>Fortsätt så här!</item>
+        <item>Ja!</item>
+        <item>Hurra!</item>
+    </string-array>
+
+    <string-array name="very_good_texts">
+        <item>Fantastiskt!</item>
+        <item>Grymt bra!</item>
+        <item>Perfekt utfört!</item>
+        <item>Enastående!</item>
+        <item>Fantastisk prestation!</item>
+    </string-array>
+
+    <string-array name="solution_wrong_texts">
+        <item>Försök igen.</item>
+        <item>Fel.</item>
+        <item>Kontrollera svaret.</item>
+    </string-array>
+
+    <string-array name="palindrome_wrong_texts">
+        <item>Palindrom, men inte lösningen.</item>
+        <item>Palindrom, men inte helt rätt.</item>
+    </string-array>
+
+
+    <!-- TUTORIAL -->
+    <string name="tutorial_text">Skapa ord och meningar som läser samma från båda sidor</string>
+    <string name="tutorial3_second_text">• Meningar kräver regelbunden interpunktion \\n• Flera lösningar har \\&amp;quot;*\\&amp;quot; tecken \\n• Färre misstag = bättre poäng</string>
+    <string name="tutorial_25_level_promo">En sak till... Nå nivå 25 och få \\&amp;quot;Instant Clues\\&amp;quot; som belöning.</string>
+    <string name="tutorial_complete_text">Klart! Njut av spelet 🚀</string>
+    <string name="next">Nästa</string>
+    <string name="play">Spela</string>
+
+
+    <!-- Languages -->
+    <string name="chinese">Kinesiska</string>
+    <string name="estonian">Estniska</string>
+    <string name="romanian">Rumänska</string>
+    <string name="japanese">Japanska</string>
+    <string name="korean">Koreanska</string>
+    <string name="dutch">Holländska</string>
+    <string name="german">Tyska</string>
+    <string name="french">Franska</string>
+    <string name="finnish">Finska</string>
+    <string name="polish">Polska</string>
+    <string name="hindi">Hindi</string>
+    <string name="indonesian">Indonesiska</string>
+    <string name="spanish">Spanska</string>
+    <string name="portuguese">Portugisiska</string>
+    <string name="ukrainian">Ukrainska</string>
+    <string name="russian">Ryska</string>
+    <string name="swedish">Svensk</string>
+    <string name="turkish">Turkiska</string>
+    <string name="italian">Italienska</string>
+    <string name="english">Engelska</string>
+
+    <string-array name="languages_array">
+        <item>Engelska</item>
+        <item>Spanska</item>
+        <item>Portugisiska</item>
+        <item>Kinesiska</item>
+        <item>Koreanska</item>
+        <item>Italienska</item>
+        <item>Japanska</item>
+        <item>Tyska</item>
+        <item>Indonesiska</item>
+        <item>Turkiska</item>
+        <item>Franska</item>
+        <item>Holländska</item>
+        <item>Finska</item>
+        <item>Polska</item>
+        <item>Ukrainska</item>
+        <item>Svensk</item>
+        <item>Estnisk</item>
+        <item>Rumänska</item>
+    </string-array>
+</resources>

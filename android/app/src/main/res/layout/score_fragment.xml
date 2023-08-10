@@ -7,15 +7,14 @@
     android:layout_height="wrap_content"
     android:gravity="center"
     android:orientation="vertical"
-    android:paddingVertical="@dimen/default_large_margin"
     app:divider="@drawable/divider"
-    app:dividerPadding="@dimen/simple_dialog_header_left_margin"
+    android:padding="@dimen/default_margin"
     app:showDividers="middle">
 
     <ViewFlipper
         android:saveEnabled="false"
-
         android:id="@+id/score_flipper"
+        android:paddingHorizontal="@dimen/default_large_margin"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:inAnimation="@android:anim/slide_in_left"
@@ -23,25 +22,21 @@
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:saveEnabled="false"
-
             android:id="@+id/scores_dialog_title_1"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/simple_dialog_header_height"
-            android:layout_marginHorizontal="@dimen/simple_dialog_header_left_margin"
+            android:layout_height="@dimen/simple_dialog_item_height"
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:saveEnabled="false"
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="@dimen/default_gap"
                 app:srcCompat="@drawable/ic_baseline_stars_24" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:saveEnabled="false"
-
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -50,21 +45,17 @@
                 android:gravity="center_vertical"
                 android:text="@string/scores"
                 android:textAppearance="@style/TextAppearance.OC.Headline5" />
-
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:saveEnabled="false"
-
             android:id="@+id/scores_dialog_title_2"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/simple_dialog_header_height"
-            android:layout_marginHorizontal="@dimen/simple_dialog_header_left_margin"
+            android:layout_height="@dimen/simple_dialog_item_height"
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:saveEnabled="false"
-
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -73,7 +64,6 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:saveEnabled="false"
-
                 android:id="@+id/player_score_improve_message"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

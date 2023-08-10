@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="language_pack_completed">Du hast das <xliff:g id="language">%s</xliff:g>-Paket abgeschlossen! Tippe, um mit den 🇬🇧 englischen Levels fortzufahren!</string>
+    <string name="game_pack_completed">Du hast das Hauptspiel abgeschlossen! Gut gemacht! Probiere auch die Spielerlevel aus.</string>
+    <string name="player_pack_completed">Du hast das Spielerpaket abgeschlossen! Fantastisch! Sende deine Level und probiere auch Sprachpakete aus!</string>
+
+    <string name="exit_game_title">Spiel beenden?</string>
+
+    <string name="continue_game">Weiter</string>
+
+    <string name="quit">Beenden</string>
+
+    <string name="select_language">Sprache auswählen</string>
+
+    <string name="game_levels">Spiel-Level</string>
+
+    <string name="player_levels">Spieler-Level</string>
+
+    <string name="international_levels">Internationale Levels</string>
+
+    <string name="global_leaderboards">Internationale Bestenlisten</string>
+
+    <string name="submit_level">Senden Sie Ihr Palindrom</string>
+
+    <string name="send">Zur Überprüfung senden</string>
+
+    <string name="something_went_wrong">Etwas ist schief gelaufen.</string>
+
+    <string name="try_again">Versuche es noch einmal</string>
+
+    <string name="player_leaderboard_text">Spieler-Bestenliste</string>
+
+    <string name="send_level_input_hint">Betritt dein Palindrom</string>
+
+    <string name="stages">Levels</string>
+
+    <string name="hints">Hinweise</string>
+
+    <string name="min_length_error">Mindestlänge ist</string>
+
+    <string name="max_length_error">Die maximale Länge beträgt</string>
+
+    <string name="all_digits_error">Kann nicht aus allen Ziffern bestehen</string>
+
+    <string name="palindrome_exists">Palindrom ist bereits hinzugefügt</string>
+
+    <string name="not_a_palindrome_error">Die Lösung muss ein Palindrom sein</string>
+
+    <string name="levels">Levels</string>
+
+    <string name="scores">Ergebnisse</string>
+
+    <string name="follow">Folgen</string>
+
+    <string name="tutorial">Tutorial</string>
+
+    <string name="level_select">Level-Auswahl des Spiels</string>
+
+    <string name="player_level_select">Spieler-Level-Auswahl</string>
+
+    <string name="palindrome_successfully_sent">Danke! Es wird in Kürze überprüft!</string>
+
+    <string name="rate_game">Feedback geben</string>
+
+    <string name="you_are_signed_in">Du bist angemeldet</string>
+
+    <string name="no_internet">Keine Internetverbindung</string>
+
+    <string name="please_sign_in">Zugriff nur für Mitglieder</string>
+
+    <string name="achievements">Erfolge</string>
+
+    <string name="leaderboard">Spiel-Bestenliste</string>
+
+    <string name="rewarded_reveal_picture">Bild enthüllen</string>
+
+    <string name="rewarded_reveal_clue">Hinweise aufdecken</string>
+
+    <string name="rewarded_place_letter">Buchstaben platzieren</string>
+
+    <string name="remove_letter_ads_text">Instant Letters</string>
+
+    <string name="no_ad_available">Hinweis nicht verfügbar</string>
+
+    <string name="instantly">Sofort</string>
+
+    <string name="sound_text">Ton</string>
+
+    <string name="vibration_text">Vibration</string>
+
+    <string name="settings">Einstellungen</string>
+
+    <string name="watch_rewarded_video">Video mit Prämie ansehen</string>
+
+
+    <string name="placeholder_text">Platzhalter</string>
+
+    <string name="tap_to_continue">Tippe, um fortzufahren</string>
+
+    <string name="tap_to_finish">Tippe, um zu beenden!</string>
+
+    <string name="final_screen_message">Schau dir auch die Level an, die du noch nicht gespielt hast! Oder sende coole Palindrome, die im Spiel vorgestellt werden können!</string>
+
+    <string name="game_completed_shout">Juhu!</string>
+
+    <string name="game_completed_shout_smiley" translatable="false">(&gt;‿◠)✌</string>
+
+    <string name="game_completed_shout_shout2">Gewinnen!</string>
+
+    <string name="game_completed_shout_smiley2" translatable="false">(͠≖ ͜ʖ͠≖)👌</string>
+
+    <string name="share">Teilen</string>
+
+    <string name="placeholder">…</string>
+
+    <string name="watch_ad_top_notice">Anzeige ansehen = kein trauriger Modus</string>
+
+    <string name="entering_sad_mode">Du bist im traurigen Modus 😕</string>
+
+    <string name="entering_normal_mode">Du befindest dich im Normalmodus 😆</string>
+
+    <string name="hints_are_available">Hinweise findest du weiter unten ↙️</string>
+
+    <string name="send_a_cool_palindrome">Sende Palindrome </string>
+
+    <string name="not_a_palindrome">Kein Palindrom</string>
+
+    <string name="submit_once_per_day_limit">Du kannst einmal pro Tag einreichen.</string>
+
+    <string name="profile_person_symbol" />
+
+    <string name="score">Punktzahl:</string>
+
+    <string name="you_rank_first">Sie stehen an erster Stelle!</string>
+
+    <string name="earn">Verdiene</string>
+
+    <string name="points_to_rank_up">Punkte, um aufzusteigen!</string>
+
+    <string name="new_word">Neu</string>
+
+    <string name="level_by">Level um</string>
+
+    <string name="levels_added">Level hinzugefügt!</string>
+
+    <string name="level_already_completed">Level ist bereits abgeschlossen.</string>
+
+    <string name="points">Punkte</string>
+
+    <string name="send_levels_country_top">Sende Palindrome und erhebe dein Land.</string>
+
+    <string name="picture_hint">Bildhinweis</string>
+
+    <string name="menu_language">Menüsprache</string>
+    <string name="other">Andere</string>
+
+
+    <string-array name="good_texts">
+        <item>Richtig!</item>
+        <item>Gut gemacht!</item>
+        <item>Mach weiter so!</item>
+        <item>Ja!</item>
+        <item>Hurra!</item>
+    </string-array>
+
+    <string-array name="very_good_texts">
+        <item>Tolle Leistung!</item>
+        <item>Großartig!</item>
+        <item>Perfekt gemeistert!</item>
+        <item>Herausragend!</item>
+        <item>Klasse gemacht!</item>
+    </string-array>
+
+    <string-array name="solution_wrong_texts">
+        <item>Versuche es erneut.</item>
+        <item>Falsch.</item>
+        <item>Antwort überprüfen.</item>
+    </string-array>
+
+    <string-array name="palindrome_wrong_texts">
+        <item>Palindrome, aber nicht die Lösung.</item>
+        <item>Palindrome, aber nicht ganz richtig.</item>
+    </string-array>
+
+    <!-- TUTORIAL -->
+
+    <string name="tutorial_text">Erstelle Wörter und Sätze, die von beiden Seiten gleich gelesen werden</string>
+
+    <string name="tutorial3_second_text">• Sätze erfordern regelmäßige Interpunktion \n• Mehrere Lösungen haben ein \"*\"-Zeichen \n• Weniger Fehler = bessere Punktzahl</string>
+
+    <string name="tutorial_25_level_promo">Und noch etwas... Erreiche Level 25 und erhalte \"Instant-Hinweise\" als Belohnung.</string>
+
+    <string name="tutorial_complete_text">Fertig! Viel Spaß beim Spiel</string>
+
+    <string name="next">Weiter</string>
+
+    <string name="play">Spielen</string>
+
+
+    <!-- Languages -->
+
+    <string name="chinese">Chinesisch</string>
+
+    <string name="estonian">Estnisch</string>
+
+    <string name="romanian">Rumänisch</string>
+
+    <string name="japanese">Japanisch</string>
+
+    <string name="korean">Koreanisch</string>
+
+    <string name="dutch">Niederländisch</string>
+
+    <string name="german">Deutsch</string>
+
+    <string name="french">Französisch</string>
+
+    <string name="finnish">Finnisch</string>
+
+    <string name="polish">Polnisch</string>
+
+    <string name="hindi">Hindi</string>
+
+    <string name="indonesian">Indonesisch</string>
+
+    <string name="spanish">Spanisch</string>
+
+    <string name="portuguese">Portugiesisch</string>
+
+    <string name="ukrainian">Ukrainisch</string>
+
+    <string name="russian">Russisch</string>
+
+    <string name="swedish">Schwedisch</string>
+
+    <string name="turkish">Türkisch</string>
+
+    <string name="italian">Italienisch</string>
+
+    <string name="english">Deutsch</string>
+
+    <string-array name="languages_array">
+
+        <item>Deutsch</item>
+
+        <item>Spanisch</item>
+
+        <item>Portugiesisch</item>
+
+        <item>Chinesisch</item>
+
+        <item>Koreanisch</item>
+
+        <item>Italienisch</item>
+
+        <item>Japanisch</item>
+
+        <item>Deutsch</item>
+
+        <item>Indonesisch</item>
+
+        <item>Türkisch</item>
+
+        <item>Französisch</item>
+
+        <item>Niederländisch</item>
+
+        <item>Finnisch</item>
+
+        <item>Polnisch</item>
+
+        <item>Ukrainisch</item>
+
+        <item>Schwedisch</item>
+
+        <item>Estnisch</item>
+
+        <item>Rumänisch</item>
+
+    </string-array>
+
+
+</resources>

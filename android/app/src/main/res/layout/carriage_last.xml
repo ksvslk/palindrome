@@ -2,6 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:saveEnabled="false"
     tools:viewBindingIgnore="true"
-    android:layout_width="@dimen/_23sdp"
-    android:layout_height="@dimen/_24sdp"
+    android:layout_width="@dimen/carriage_width"
+    android:layout_height="@dimen/carriage_height"
     android:background="@drawable/ic_carriage_last" />

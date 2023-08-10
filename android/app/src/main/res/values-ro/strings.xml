@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="language_pack_completed">Ați completat pachetul de nivele <xliff:g id="language">%s</xliff:g>! Atingeți pentru a continua cu nivelele în limba 🇬🇧 engleză!</string>
+    <string name="game_pack_completed">Ați terminat jocul principal! Foarte bine! Încercați și nivelurile jucătorilor.</string>
+    <string name="player_pack_completed">Ați terminat pachetul de jucători! Minunat! Trimiteți-vă nivelele și încercați și pachetele de limbă!</string>
+
+    <string name="exit_game_title">Renunți la joc?</string>
+    <string name="continue_game">Continuă</string>
+    <string name="quit">Renunță</string>
+    <string name="menu_language">Limba meniului</string>
+    <string name="select_language">Selectați limba</string>
+    <string name="game_levels">Niveluri de joc</string>
+    <string name="player_levels">Niveluri de jucător</string>
+    <string name="international_levels">Niveluri internaționale</string>
+    <string name="global_leaderboards">Clasamente internaționale</string>
+    <string name="submit_level">Trimite-ți palindromul</string>
+    <string name="send">Trimite pentru revizuire</string>
+    <string name="something_went_wrong">Ceva a mers prost.</string>
+    <string name="try_again">Încercați din nou</string>
+    <string name="player_leaderboard_text">Clasamentul jucătorilor</string>
+    <string name="send_level_input_hint">Intră în palindromul tău</string>
+    <string name="stages">Niveluri</string>
+    <string name="hints">Sugestii</string>
+    <string name="min_length_error">Lungimea minimă este</string>
+    <string name="max_length_error">Lungimea maximă este</string>
+    <string name="all_digits_error">Nu pot fi toate cifrele</string>
+    <string name="palindrome_exists">Palindromul este deja adăugat</string>
+    <string name="not_a_palindrome_error">Soluția trebuie să fie un palindrom</string>
+    <string name="levels">Niveluri</string>
+    <string name="scores">Scoruri</string>
+    <string name="follow">Urmeaza</string>
+    <string name="tutorial">Tutorial</string>
+    <string name="level_select">Selectare nivel de joc</string>
+    <string name="player_level_select">Selectare nivel jucător</string>
+    <string name="palindrome_successfully_sent">Multumesc! Va fi revizuit în curând!</string>
+    <string name="rate_game">Oferă feedback</string>
+    <string name="you_are_signed_in">Ești conectat</string>
+    <string name="no_internet">Fără conexiune la internet</string>
+    <string name="please_sign_in">Acces rezervat pentru membri</string>
+    <string name="achievements">Realizări</string>
+    <string name="leaderboard">Clasamentul jocului</string>
+    <string name="rewarded_reveal_picture">Revelează imaginea</string>
+    <string name="rewarded_reveal_clue">Reveal Clue</string>
+    <string name="rewarded_place_letter">Scrisoare de loc</string>
+    <string name="remove_letter_ads_text">Scrisori instantanee</string>
+    <string name="no_ad_available">Sugestie nu este disponibilă</string>
+    <string name="instantly">Instantaneu</string>
+    <string name="sound_text">Sunet</string>
+    <string name="vibration_text">Vibrație</string>
+    <string name="settings">Setări</string>
+    <string name="watch_rewarded_video">Vizionați videoclipul cu recompensă</string>
+    <string name="play_games">Play Games</string>
+    <string name="placeholder_text">substituent</string>
+    <string name="tap_to_continue">Atingeți pentru a continua</string>
+    <string name="tap_to_finish">Atinge pentru a termina!</string>
+    <string name="final_screen_message">Verifică și nivelurile pe care nu le-ai jucat încă! Sau trimiteți palindromuri grozave care pot fi prezentate în joc!</string>
+    <string name="game_completed_shout">Da!</string>
+    <string name="game_completed_shout_smiley" translatable="false">(&gt;‿◠)✌</string>
+    <string name="game_completed_shout_shout2">Câștigător!</string>
+    <string name="game_completed_shout_smiley2" translatable="false">(͠≖ ͜ʖ͠≖)👌</string>
+    <string name="share">Distribuie</string>
+    <string name="placeholder">…</string>
+    <string name="watch_ad_top_notice">Vizionare anunț = fără Mod Trist</string>
+    <string name="entering_sad_mode">Ești în modul Trist 😕</string>
+    <string name="entering_normal_mode">Ești în modul normal 😆</string>
+    <string name="hints_are_available">Sugestii pot fi găsite mai jos ↙️</string>
+    <string name="send_a_cool_palindrome">Trimite palindromuri ↓</string>
+    <string name="not_a_palindrome">Nu un palindrom</string>
+    <string name="submit_once_per_day_limit">Puteți trimite o dată pe zi.</string>
+    <string name="profile_person_symbol">❦</string>
+    <string name="score">Scor:</string>
+    <string name="you_rank_first">Ești primul!</string>
+    <string name="earn">Câștigă</string>
+    <string name="points_to_rank_up">puncte pentru a urca!</string>
+    <string name="new_word">Nou</string>
+    <string name="level_by">nivel de</string>
+    <string name="levels_added">niveluri adăugate!</string>
+    <string name="level_already_completed">Nivelul este deja finalizat.</string>
+    <string name="points">puncte</string>
+    <string name="send_levels_country_top">Trimite palindromuri și ridică-ți țara.</string>
+    <string name="picture_hint">Sugestie imagine</string>
+    <string name="other">Altul</string>
+
+    <string-array name="good_texts">
+        <item>Corect!</item>
+        <item>Bună treabă!</item>
+        <item>Continuă așa!</item>
+        <item>Da!</item>
+        <item>Ura!</item>
+    </string-array>
+
+    <string-array name="very_good_texts">
+        <item>Uimitor!</item>
+        <item>Excelentă muncă!</item>
+        <item>Perfect!</item>
+        <item>Remarcabil!</item>
+        <item>Deosebit de bine!</item>
+    </string-array>
+
+    <string-array name="solution_wrong_texts">
+        <item>Mai încearcă o dată.</item>
+        <item>Greșit.</item>
+        <item>Verifică răspunsul.</item>
+    </string-array>
+
+    <string-array name="palindrome_wrong_texts">
+        <item>Palindrom, dar nu este soluția.</item>
+        <item>Palindrom, dar nu chiar corect.</item>
+    </string-array>
+
+
+    <!-- TUTORIAL -->
+    <string name="tutorial_text">Creează cuvinte și propoziții care citesc la fel din ambele părți</string>
+    <string name="tutorial3_second_text">• Propozițiile necesită semne de punctuație regulate \\n• Soluțiile multiple au semnul \\&amp;quot;*\\&amp;quot; \\n• Mai puține greșeli = scor mai bun</string>
+    <string name="tutorial_25_level_promo">Încă un lucru... Atingeți nivelul 25 și obțineți \\&amp;quot;Indicii instantanee\\&amp;quot; ca recompensă.</string>
+    <string name="tutorial_complete_text">Gata! Bucurați-vă de joc 🚀</string>
+    <string name="next">Următorul</string>
+    <string name="play">Joacă</string>
+
+
+    <!-- Languages -->
+    <string name="chinese">Chinezesc</string>
+    <string name="estonian">Estonian</string>
+    <string name="romanian">Română</string>
+    <string name="japanese">Japoneză</string>
+    <string name="korean">Coreeană</string>
+    <string name="dutch">Olandeză</string>
+    <string name="german">Germană</string>
+    <string name="french">Franceză</string>
+    <string name="finnish">Finlandeză</string>
+    <string name="polish">Poloneză</string>
+    <string name="hindi">Hindi</string>
+    <string name="indonesian">Indonezian</string>
+    <string name="spanish">Spaniolă</string>
+    <string name="portuguese">Portugheză</string>
+    <string name="ukrainian">Ucraineană</string>
+    <string name="russian">Rusă</string>
+    <string name="swedish">Suedez</string>
+    <string name="turkish">Turc</string>
+    <string name="italian">Italiană</string>
+    <string name="english">Engleză</string>
+
+    <string-array name="languages_array">
+        <item>Engleză</item>
+        <item>Spaniolă</item>
+        <item>Portugheză</item>
+        <item>Chinezesc</item>
+        <item>Coreeană</item>
+        <item>Italiană</item>
+        <item>Japoneză</item>
+        <item>Germană</item>
+        <item>Indonezian</item>
+        <item>Turc</item>
+        <item>Franceză</item>
+        <item>Olandeză</item>
+        <item>Finlandeză</item>
+        <item>Poloneză</item>
+        <item>Ucraineană</item>
+        <item>Suedez</item>
+        <item>Estone</item>
+        <item>Română</item>
+    </string-array>
+
+</resources>

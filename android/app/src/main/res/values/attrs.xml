@@ -16,7 +16,7 @@
         <attr name="visibility_case_3" format="reference" />
         <attr name="visibility_case_4" format="reference" />
         <attr name="visibility_case_5" format="reference" />
-        <attr name="labels" format="reference" />
+        <attr name="best_label" format="string" />
     </declare-styleable>
     <declare-styleable name="AnyButton">
         <attr name="any_button_icon" format="reference" />

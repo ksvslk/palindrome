@@ -1,7 +1,10 @@
 package com.indest.hah.persistance.level
 
+import android.app.Application
 import android.util.Log
+import com.indest.hah.R
 import com.indest.hah.persistance.dto.*
+import dagger.hilt.android.internal.Contexts.getApplication
 import kotlinx.coroutines.flow.Flow
 import java.time.Duration
 import java.time.Instant
@@ -15,24 +18,22 @@ class LevelRepository @Inject constructor(
 ) {
     private val TAG = "LevelRepository"
 
-    suspend fun init() {
-        levelDao.init()
+    suspend fun matchFirstLevelWithUserLocale(currentTag:String) {
+        levelDao.matchFirstLevelWithUserLocale(currentTag)
     }
 
     suspend fun getMaxLevelId():Int = levelDao.getMaxLevelId()
-    suspend fun getMaxPlayerLevelId():Int
+    suspend fun getMaxPlayerLevelId():Int?
         = levelDao.getMaxPlayerLevelId()
-
-    suspend fun getMinLevelIdForCountry(cc:String):Int
-        = levelDao.getMinLevelIdForCountry(cc)
-
-    suspend fun getMaxLevelIdForCountry(cc:String):Int
-            = levelDao.getMaxLevelIdForCountry(cc)
 
     suspend fun getMaxGameLevelId():Int = levelDao.getMaxGameLevels()
 
     suspend fun insertPlayerLevels(playerLevels:List<PlayerLevel>):Pair<LevelData,Int> {
         return levelDao.insertPlayerLevels(playerLevels)
+    }
+
+    suspend fun insertRegularLevels(playerLevels:List<RegularLevel>) {
+        return levelDao.insertRegularLevels(playerLevels)
     }
 
     suspend fun updateFriendIndex(homeIndex: Int, newFriendIndex: Int, level: Int): String {
@@ -102,16 +103,8 @@ class LevelRepository @Inject constructor(
         return levelDao.getAllPalindromes().map { it.replace("[!?’,.;:'\\-\"\\s]".toRegex(), "") }.toHashSet()
     }
 
-    suspend fun nextLevelActions(current: Int, chosenLevel: Int) {
-        levelDao.nextLevelActions(current, chosenLevel)
-    }
-
     suspend fun setCountTo(name: String, count: Int) {
         levelDao.setCountTo(name, count)
-    }
-
-    suspend fun getIntervalCount(name: String): Int {
-        return levelDao.getIntervalCount(name)
     }
 
     suspend fun increaseCountAndGetResult(name: String): Boolean {
@@ -121,6 +114,11 @@ class LevelRepository @Inject constructor(
     suspend fun increaseCount(name:String)
     {
         levelDao.increaseCurrentCount(name)
+    }
+
+    suspend fun addInterval(interval:Interval)
+    {
+        levelDao.insertInterval(interval)
     }
 
     suspend fun isLimitAttained(name:String):Boolean {
@@ -139,6 +137,7 @@ class LevelRepository @Inject constructor(
     suspend fun executeLevelCompleteTransactionFinal(current: Int, hintInterval: String) {
         levelDao.levelCompletedActionsFinal(current, hintInterval)
     }
+
 
     fun latestLevelFlow(): Flow<Level> {
         return levelDao.getLastLevel()
@@ -169,7 +168,11 @@ class LevelRepository @Inject constructor(
         Log.e(TAG, "DB id for save game is: ${saveGame.dbIdentityHash} and database id is $dbIdentityHash. Does it match? ${dbIdentityHash == saveGame.dbIdentityHash}")
     }
 
-    suspend fun isFinalLevel(currentLevel:Int, minLimit:Int, maxLimit:Int) = levelDao.isFinalLevel(currentLevel, minLimit, maxLimit)
+    suspend fun isFinalLevel(currentLevel:Int, minLimit:Int, maxLimit:Int) =
+        levelDao.isFinalLevel(currentLevel, minLimit, maxLimit)
+
+    suspend fun isLanguagePackFinalLevel(currentLevel: Int, countryCode: String) =
+        levelDao.isLanguagePackFinalLevel(currentLevel, countryCode)
 
     suspend fun isAllowedToSubmitPalindrome():Boolean
     {
