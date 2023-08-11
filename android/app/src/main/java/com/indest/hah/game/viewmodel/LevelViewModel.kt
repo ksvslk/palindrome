@@ -202,7 +202,7 @@ class LevelViewModel @Inject constructor(
 
 
     init {
-/*
+        /*
         viewModelScope.launch {
             addRegularLevels()
             addPlayerLevelsUntil1080()
@@ -210,8 +210,7 @@ class LevelViewModel @Inject constructor(
             addIntervals()
             //checkLanguagePackValidity()
         }
- */
-
+        */
     }
 
 
