@@ -302,7 +302,7 @@ abstract class LevelDatabase : RoomDatabase() {
                         db.insert(
                             "letter_info_table",
                             OnConflictStrategy.REPLACE,
-                            contentValues)
+                            letterContentValue)
                     }
                 }
             }
