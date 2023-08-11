@@ -103,6 +103,10 @@ class LevelViewModel @Inject constructor(
             val tag = getCountryTagOrDefault()
             levelRepository.matchFirstLevelWithUserLocale(tag)
             levelRepository.latestLevelFlow().collect {
+                if (it.levelInfo.progress == LevelProgress.MIGRATED3TO4)
+                {
+                    levelRepository.resetLevel(it.levelInfo.levelId)
+                }
                 val changeInLevelId = it.levelInfo.levelId != _currentLevel.value.levelInfo.levelId
                 _currentLevel.value = it
                 if (isCurrentLevelLegit() && (changeInLevelId)) {

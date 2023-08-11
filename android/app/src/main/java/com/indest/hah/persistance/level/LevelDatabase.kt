@@ -209,12 +209,14 @@ abstract class LevelDatabase : RoomDatabase() {
                     arrayOf(level.nr)
                 )
 
+                /*
                 shuffled.forEachIndexed { index, char ->
                     db.execSQL(
                         "INSERT INTO letter_info_table (owner_id, home_index, friend_index, letter, locked) VALUES (?,?,?,?,?)",
                         arrayOf(level.nr, index, -666, char, false)
                     )
                 }
+                 */
             }
 
             var currentLevelId = 10000
@@ -285,15 +287,17 @@ abstract class LevelDatabase : RoomDatabase() {
                         OnConflictStrategy.REPLACE,
                         contentValues,
                     )
+                    /*
                     shuffled.forEachIndexed { index, char ->
                         db.execSQL(
                             "INSERT INTO letter_info_table (owner_id, home_index, friend_index, letter, locked) VALUES (?,?,?,?,?)",
                             arrayOf(currentLevelId, index, -666, char, false)
                         )
                     }
+                     */
                 }
             }
-            db.execSQL("UPDATE level_info_table SET progress = 2 where progress > 0")
+            db.execSQL("UPDATE level_info_table SET progress = 4 where progress > 0")
         }
     }
 
