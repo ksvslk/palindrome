@@ -533,19 +533,6 @@ interface LevelDao {
         updateProgress(levelNr, progress)
     }
 
-    @Query("select level_id from level_info_table where progress = 4")
-    suspend fun getAllMigratedLevelIds():List<Int>
-
-
-    @Transaction
-    suspend fun resetAllMigratedLevels()
-    {
-        val allLevelsToBeReset = getAllMigratedLevelIds()
-        allLevelsToBeReset.forEach { levelNr ->
-            resetLevel(levelNr, LevelProgress.REPLAY)
-        }
-    }
-
     @Transaction
     suspend fun matchFirstLevelWithUserLocale(currentTag:String) {
         if (getMaximumTimestamp()?.equals(0L) == true)
@@ -556,7 +543,6 @@ interface LevelDao {
             }
             updateProgress(1, LevelProgress.IN_PROGRESS)
             updateChosenLevelTimestamp(1, levelId)
-            resetAllMigratedLevels()
         }
     }
 
