@@ -145,6 +145,11 @@ class LevelRepository @Inject constructor(
         return levelDao.getLastLevel()
     }
 
+    suspend fun resetLevel(level: Int)
+    {
+        levelDao.resetLevel(level)
+    }
+
     fun intervalAttainedFlow(name:String): Flow<Boolean> {
         return levelDao.sadModeIntervalFlow(name)
     }

@@ -7,5 +7,6 @@ enum class LevelProgress {
     TODO,
     IN_PROGRESS,
     REPLAY,
-    INTERMEDIATE
+    INTERMEDIATE,
+    MIGRATED3TO4
 }
