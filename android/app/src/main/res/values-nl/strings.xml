@@ -3,6 +3,7 @@
     <string name="language_pack_completed">Je hebt het <xliff:g id="language">%s</xliff:g>-levelpakket voltooid! Tik om door te gaan met 🇬🇧 Engelse levels!</string>
     <string name="game_pack_completed">Je hebt het hoofdspel voltooid! Goed gedaan! Probeer ook de spelerlevels uit.</string>
     <string name="player_pack_completed">Je hebt het spelerspakket voltooid! Geweldig! Stuur je levels op en probeer ook taalpakketten uit!</string>
+    <string name="privacy_policy" translatable="false">Privacybeleid</string>
 
     <string name="exit_game_title">Stop het spel?</string>
     <string name="continue_game">Doorgaan</string>

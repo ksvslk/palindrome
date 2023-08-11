@@ -3,6 +3,7 @@
     <string name="language_pack_completed">Anda telah menyelesaikan paket level <xliff:g id="language">%s</xliff:g>! Ketuk untuk melanjutkan dengan level bahasa 🇬🇧 Inggris!</string>
     <string name="game_pack_completed">Anda telah menyelesaikan permainan utama! Bagus sekali! Cobalah juga level pemain.</string>
     <string name="player_pack_completed">Anda telah menyelesaikan paket pemain! Hebat! Kirim level Anda dan cobalah juga paket bahasa!</string>
+    <string name="privacy_policy" translatable="false">Kebijakan Privasi</string>
 
     <string name="exit_game_title">Keluar dari game?</string>
 

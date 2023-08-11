@@ -3,6 +3,7 @@
     <string name="language_pack_completed"><xliff:g id="language">%s</xliff:g> 레벨 팩을 완료했습니다! 영어 레벨로 계속하려면 탭하세요 🇬🇧!</string>
     <string name="game_pack_completed">메인 게임을 완료했습니다! 잘 하셨어요! 플레이어 레벨도 시도해보세요.</string>
     <string name="player_pack_completed">플레이어 팩을 완료했습니다! 멋지네요! 당신의 레벨을 보내고 언어 팩도 시도해보세요!</string>
+    <string name="privacy_policy" translatable="false">개인정보 처리방침</string>
 
     <string name="exit_game_title">게임을 종료하시겠습니까?</string>
     <string name="continue_game">계속</string>

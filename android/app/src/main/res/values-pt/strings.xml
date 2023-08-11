@@ -4,6 +4,7 @@
     <string name="language_pack_completed">Você concluiu o pacote de níveis <xliff:g id="language">%s</xliff:g>! Toque para continuar com os níveis em 🇬🇧 inglês!</string>
     <string name="game_pack_completed">Você completou o jogo principal! Muito bem! Experimente também os níveis de jogador.</string>
     <string name="player_pack_completed">Você completou o pacote de jogadores! Incrível! Envie suas fases e experimente também os pacotes de idiomas!</string>
+    <string name="privacy_policy" translatable="false">Política de Privacidade</string>
 
     <string name="exit_game_title">Sair do jogo?</string>
 
