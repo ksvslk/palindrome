@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 4,
-    "identityHash": "6e0138df56ea02dfc97ea78fabe44f2b",
+    "identityHash": "2b2c833b58c33e1c14e010e2e37b8602",
     "entities": [
       {
         "tableName": "level_info_table",
@@ -198,7 +198,7 @@
       },
       {
         "tableName": "solution_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`solution_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `parent_id` INTEGER NOT NULL, `palindrome` TEXT NOT NULL, `hint` TEXT NOT NULL, `hint_cn` TEXT NOT NULL, `hint_de` TEXT NOT NULL, `hint_es` TEXT NOT NULL, `hint_et` TEXT NOT NULL, `hint_fi` TEXT NOT NULL, `hint_fr` TEXT NOT NULL, `hint_id` TEXT NOT NULL, `hint_it` TEXT NOT NULL, `hint_ja` TEXT NOT NULL, `hint_ko` TEXT NOT NULL, `hint_nl` TEXT NOT NULL, `hint_pl` TEXT NOT NULL, `hint_pt` TEXT NOT NULL, `hint_ro` TEXT NOT NULL, `hint_sv` TEXT NOT NULL, `hint_tr` TEXT NOT NULL, `hint_uk` TEXT NOT NULL, `solved` INTEGER NOT NULL, FOREIGN KEY(`parent_id`) REFERENCES `level_info_table`(`level_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`solution_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `parent_id` INTEGER NOT NULL, `palindrome` TEXT NOT NULL, `hint` TEXT NOT NULL, `hint_cn` TEXT NOT NULL DEFAULT '', `hint_de` TEXT NOT NULL DEFAULT '', `hint_es` TEXT NOT NULL DEFAULT '', `hint_et` TEXT NOT NULL DEFAULT '', `hint_fi` TEXT NOT NULL DEFAULT '', `hint_fr` TEXT NOT NULL DEFAULT '', `hint_id` TEXT NOT NULL DEFAULT '', `hint_it` TEXT NOT NULL DEFAULT '', `hint_ja` TEXT NOT NULL DEFAULT '', `hint_ko` TEXT NOT NULL DEFAULT '', `hint_nl` TEXT NOT NULL DEFAULT '', `hint_pl` TEXT NOT NULL DEFAULT '', `hint_pt` TEXT NOT NULL DEFAULT '', `hint_ro` TEXT NOT NULL DEFAULT '', `hint_sv` TEXT NOT NULL DEFAULT '', `hint_tr` TEXT NOT NULL DEFAULT '', `hint_uk` TEXT NOT NULL DEFAULT '', `solved` INTEGER NOT NULL, FOREIGN KEY(`parent_id`) REFERENCES `level_info_table`(`level_id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "solutionId",
@@ -228,103 +228,120 @@
             "fieldPath": "hint_cn",
             "columnName": "hint_cn",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "''"
           },
           {
             "fieldPath": "hint_de",
             "columnName": "hint_de",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "''"
           },
           {
             "fieldPath": "hint_es",
             "columnName": "hint_es",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "''"
           },
           {
             "fieldPath": "hint_et",
             "columnName": "hint_et",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "''"
           },
           {
             "fieldPath": "hint_fi",
             "columnName": "hint_fi",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "''"
           },
           {
             "fieldPath": "hint_fr",
             "columnName": "hint_fr",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "''"
           },
           {
             "fieldPath": "hint_id",
             "columnName": "hint_id",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "''"
           },
           {
             "fieldPath": "hint_it",
             "columnName": "hint_it",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "''"
           },
           {
             "fieldPath": "hint_ja",
             "columnName": "hint_ja",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "''"
           },
           {
             "fieldPath": "hint_ko",
             "columnName": "hint_ko",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "''"
           },
           {
             "fieldPath": "hint_nl",
             "columnName": "hint_nl",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "''"
           },
           {
             "fieldPath": "hint_pl",
             "columnName": "hint_pl",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "''"
           },
           {
             "fieldPath": "hint_pt",
             "columnName": "hint_pt",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "''"
           },
           {
             "fieldPath": "hint_ro",
             "columnName": "hint_ro",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "''"
           },
           {
             "fieldPath": "hint_sv",
             "columnName": "hint_sv",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "''"
           },
           {
             "fieldPath": "hint_tr",
             "columnName": "hint_tr",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "''"
           },
           {
             "fieldPath": "hint_uk",
             "columnName": "hint_uk",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": true,
+            "defaultValue": "''"
           },
           {
             "fieldPath": "solved",
@@ -368,7 +385,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6e0138df56ea02dfc97ea78fabe44f2b')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2b2c833b58c33e1c14e010e2e37b8602')"
     ]
   }
 }
