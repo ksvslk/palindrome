@@ -202,7 +202,7 @@ class LevelViewModel @Inject constructor(
 
 
     init {
-      /*
+/*
         viewModelScope.launch {
             addRegularLevels()
             addPlayerLevelsUntil1080()
@@ -210,7 +210,8 @@ class LevelViewModel @Inject constructor(
             addIntervals()
             //checkLanguagePackValidity()
         }
-      */
+ */
+
     }
 
 
@@ -984,7 +985,6 @@ class LevelViewModel @Inject constructor(
     }
 
     private suspend fun addRegularLevels() {
-            C.languages.entries.forEach { entry ->
                 val jsonInstance = Json { isLenient = true }
                 val json =
                     getApplication<Application>().applicationContext.assets.open("level_pack_1_modified.json")
@@ -993,7 +993,6 @@ class LevelViewModel @Inject constructor(
                         }
                 val regularLevels = jsonInstance.decodeFromString<List<RegularLevel>>(json)
                 levelRepository.insertRegularLevels(regularLevels)
-            }
     }
 
     private suspend fun addPlayerLevelsUntil1080() {

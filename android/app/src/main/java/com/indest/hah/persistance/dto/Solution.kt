@@ -28,39 +28,39 @@ data class Solution(
     val palindrome: String,
     @ColumnInfo(name = "hint")
     val hint: String,
-    @ColumnInfo(name = "hint_cn")
+    @ColumnInfo(name = "hint_cn", defaultValue = "")
     val hint_cn: String = "",
-    @ColumnInfo(name = "hint_de")
+    @ColumnInfo(name = "hint_de", defaultValue = "")
     val hint_de: String = "",
-    @ColumnInfo(name = "hint_es")
+    @ColumnInfo(name = "hint_es", defaultValue = "")
     val hint_es: String = "",
-    @ColumnInfo(name = "hint_et")
+    @ColumnInfo(name = "hint_et", defaultValue = "")
     val hint_et: String = "",
-    @ColumnInfo(name = "hint_fi")
+    @ColumnInfo(name = "hint_fi", defaultValue = "")
     val hint_fi: String = "",
-    @ColumnInfo(name = "hint_fr")
+    @ColumnInfo(name = "hint_fr", defaultValue = "")
     val hint_fr: String = "",
-    @ColumnInfo(name = "hint_id")
+    @ColumnInfo(name = "hint_id", defaultValue = "")
     val hint_id: String = "",
-    @ColumnInfo(name = "hint_it")
+    @ColumnInfo(name = "hint_it", defaultValue = "")
     val hint_it: String = "",
-    @ColumnInfo(name = "hint_ja")
+    @ColumnInfo(name = "hint_ja", defaultValue = "")
     val hint_ja: String = "",
-    @ColumnInfo(name = "hint_ko")
+    @ColumnInfo(name = "hint_ko", defaultValue = "")
     val hint_ko: String = "",
-    @ColumnInfo(name = "hint_nl")
+    @ColumnInfo(name = "hint_nl", defaultValue = "")
     val hint_nl: String = "",
-    @ColumnInfo(name = "hint_pl")
+    @ColumnInfo(name = "hint_pl", defaultValue = "")
     val hint_pl: String = "",
-    @ColumnInfo(name = "hint_pt")
+    @ColumnInfo(name = "hint_pt", defaultValue = "")
     val hint_pt: String = "",
-    @ColumnInfo(name = "hint_ro")
+    @ColumnInfo(name = "hint_ro", defaultValue = "")
     val hint_ro: String = "",
-    @ColumnInfo(name = "hint_sv")
+    @ColumnInfo(name = "hint_sv", defaultValue = "")
     val hint_sv: String = "",
-    @ColumnInfo(name = "hint_tr")
+    @ColumnInfo(name = "hint_tr", defaultValue = "")
     val hint_tr: String = "",
-    @ColumnInfo(name = "hint_uk")
+    @ColumnInfo(name = "hint_uk", defaultValue = "")
     val hint_uk: String = "",
     @ColumnInfo(name = "solved")
     val solved: Boolean,
