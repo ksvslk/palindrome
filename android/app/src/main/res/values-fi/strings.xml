@@ -3,6 +3,7 @@
     <string name="language_pack_completed">Olet suorittanut tason paketin <xliff:g id="language">%s</xliff:g>! Napauta jatkaaksesi 🇬🇧 englanninkielisiä tasoja!</string>
     <string name="game_pack_completed">Olet suorittanut pääpelin! Hienoa työtä! Kokeile myös pelaajien tasoja.</string>
     <string name="player_pack_completed">Olet suorittanut pelaajien paketin! Mahtavaa! Lähetä omat tasosi ja kokeile myös kielipaketteja!</string>
+    <string name="privacy_policy" translatable="false">Tietosuojakäytäntö</string>
 
     <string name="exit_game_title">Lopettaako peli?</string>
     <string name="continue_game">Jatka</string>

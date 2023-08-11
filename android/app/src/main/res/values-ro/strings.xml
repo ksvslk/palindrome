@@ -3,6 +3,7 @@
     <string name="language_pack_completed">Ați completat pachetul de nivele <xliff:g id="language">%s</xliff:g>! Atingeți pentru a continua cu nivelele în limba 🇬🇧 engleză!</string>
     <string name="game_pack_completed">Ați terminat jocul principal! Foarte bine! Încercați și nivelurile jucătorilor.</string>
     <string name="player_pack_completed">Ați terminat pachetul de jucători! Minunat! Trimiteți-vă nivelele și încercați și pachetele de limbă!</string>
+    <string name="privacy_policy" translatable="false">Politica de confidențialitate</string>
 
     <string name="exit_game_title">Renunți la joc?</string>
     <string name="continue_game">Continuă</string>

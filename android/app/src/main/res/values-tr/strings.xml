@@ -3,6 +3,7 @@
     <string name="language_pack_completed">"<xliff:g id="language">%s</xliff:g>" seviye paketini tamamladınız! 🇬🇧 İngilizce seviyelerine devam etmek için dokunun!</string>
     <string name="game_pack_completed">Ana oyunu tamamladınız! Harika iş! Ayrıca oyuncu seviyelerini de deneyin.</string>
     <string name="player_pack_completed">Oyuncu paketini tamamladınız! Harika! Seviyelerinizi gönderin ve dil paketlerini de deneyin!</string>
+    <string name="privacy_policy" translatable="false">Gizlilik Politikası</string>
 
     <string name="exit_game_title">Oyundan çıkılsın mı?</string>
     <string name="continue_game">Devam</string>

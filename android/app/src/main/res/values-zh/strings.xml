@@ -5,6 +5,7 @@
     <string name="player_pack_completed">您已完成玩家关卡！太棒了！发送您的关卡，也试试语言包！</string>
 
     <string name="exit_game_title">退出游戏？</string>
+    <string name="privacy_policy" translatable="false">隐私政策</string>
 
     <string name="continue_game">继续</string>
 

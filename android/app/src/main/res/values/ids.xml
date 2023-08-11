@@ -3,6 +3,7 @@
 <resources>
     <string name="app_package_url" translatable="false">https://play.google.com/store/apps/details?id=com.indest.hah</string>
     <string name="company_social_url" translatable="false">https://twitter.com/IndestGames</string>
+    <string name="privacy_policy_url" translatable="false">https://indest.ee/privacy-policy</string>
     <string name="vending_package" translatable="false">com.android.vending</string>
     <!--app_id-->
     <string name="app_preferences" translatable="false">AppPreferences</string>

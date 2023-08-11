@@ -82,6 +82,7 @@
     <string name="player_pack_completed">You have completed the players pack! Awesome! Send your levels and try out also language packs!</string>
     <string name="save_24_percent_label" translatable="false">-24%</string>
     <string name="best_loved_label" translatable="false">👌</string>
+    <string name="privacy_policy" translatable="false">Privacy Policy</string>
 
     <string-array name="good_texts">
         <item>Correct!</item>

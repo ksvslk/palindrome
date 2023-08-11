@@ -86,6 +86,18 @@ class SettingsFragment : FullBottomSheetDialogFragment() {
                             }
                         }
                     }
+                    binding.privacyPolicyButton.setOnClickListener {
+                        context?.let {
+                            when (internet) {
+                                true -> {
+                                    openWebsite(getString(R.string.privacy_policy_url), it)
+                                }
+                                false -> {
+                                    showNoInternetToast(it.applicationContext)
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

@@ -143,6 +143,22 @@
             anybutton:any_button_icon="@drawable/es"
             anybutton:any_button_title="@string/menu_language" />
 
+        <com.indest.hah.views.AnyButton
+            android:id="@+id/privacy_policy_button"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/privacy_policy_height"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
+            android:saveEnabled="false"
+            android:gravity="center|start"
+            android:layout_marginVertical="@dimen/default_padding_text"
+            android:maxLines="1"
+            app:autoSizeMaxTextSize="@dimen/body_large_text_size"
+            app:autoSizeTextType="uniform"
+            anybutton:any_button_icon="@drawable/baseline_info_36"
+            anybutton:any_button_title="@string/privacy_policy" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 </androidx.core.widget.NestedScrollView>

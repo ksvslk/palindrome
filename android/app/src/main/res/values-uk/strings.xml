@@ -3,6 +3,7 @@
     <string name="language_pack_completed">Ви завершили пакет рівнів <xliff:g id="language">%s</xliff:g>! Торкніться, щоб продовжити з 🇬🇧 англійськими рівнями!</string>
     <string name="game_pack_completed">Ви завершили основну гру! Добре зроблено! Спробуйте також рівні гравця.</string>
     <string name="player_pack_completed">Ви завершили пакет гравця! Вражаюче! Надішліть свої рівні й спробуйте також пакети мови!</string>
+    <string name="privacy_policy" translatable="false">Політика конфіденційності</string>
 
     <string name="exit_game_title">Вийти з гри?</string>
     <string name="continue_game">Продовжити</string>

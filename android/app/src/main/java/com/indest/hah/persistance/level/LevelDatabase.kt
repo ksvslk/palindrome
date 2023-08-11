@@ -110,7 +110,7 @@ abstract class LevelDatabase : RoomDatabase() {
                     val bestScore = cursor.getInt(cursor.getColumnIndexOrThrow("best_score"))
                     val timeModified = cursor.getLong(cursor.getColumnIndexOrThrow("time_modified"))
                     val author = cursor.getString(cursor.getColumnIndexOrThrow("author"))
-                    val columnCount = cursor.getInt(cursor.getColumnIndexOrThrow("columnCount"))
+                    val columnCount = cursor.getInt(cursor.getColumnIndexOrThrow("column_count"))
 
                     val levelData = LevelData(
                         levelId = levelId,
