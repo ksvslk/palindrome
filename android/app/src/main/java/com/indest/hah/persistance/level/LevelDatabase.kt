@@ -133,7 +133,6 @@ abstract class LevelDatabase : RoomDatabase() {
 
             db.delete("letter_info_table", null, null)
             db.delete("solution_table", null, null)
-            db.execSQL("UPDATE level_info_table SET progress = 2 where progress > 0")
 
             val jsonInstance = Json { isLenient = true }
             val json = context.applicationContext.assets.open("level_pack_1_modified.json")
@@ -211,16 +210,10 @@ abstract class LevelDatabase : RoomDatabase() {
                 )
 
                 shuffled.forEachIndexed { index, char ->
-                    val letterContentValue = ContentValues()
-                    letterContentValue.put("owner_id", level.nr)
-                    letterContentValue.put("home_index", index)
-                    letterContentValue.put("friend_index", -666)
-                    letterContentValue.put("letter", char.toString())
-                    letterContentValue.put("locked", false)
-                    db.insert(
-                        "letter_info_table",
-                        OnConflictStrategy.REPLACE,
-                        letterContentValue)
+                    db.execSQL(
+                        "INSERT INTO letter_info_table (owner_id, home_index, friend_index, letter, locked) VALUES (?,?,?,?,?)",
+                        arrayOf(level.nr, index, -666, char, false)
+                    )
                 }
             }
 
@@ -293,20 +286,14 @@ abstract class LevelDatabase : RoomDatabase() {
                         contentValues,
                     )
                     shuffled.forEachIndexed { index, char ->
-                        val letterContentValue = ContentValues()
-                        letterContentValue.put("owner_id", currentLevelId)
-                        letterContentValue.put("home_index", index)
-                        letterContentValue.put("friend_index", -666)
-                        letterContentValue.put("letter", char.toString())
-                        letterContentValue.put("locked", false)
-                        db.insert(
-                            "letter_info_table",
-                            OnConflictStrategy.REPLACE,
-                            letterContentValue)
+                        db.execSQL(
+                            "INSERT INTO letter_info_table (owner_id, home_index, friend_index, letter, locked) VALUES (?,?,?,?,?)",
+                            arrayOf(currentLevelId, index, -666, char, false)
+                        )
                     }
                 }
             }
-
+            db.execSQL("UPDATE level_info_table SET progress = 2 where progress > 0")
         }
     }
 

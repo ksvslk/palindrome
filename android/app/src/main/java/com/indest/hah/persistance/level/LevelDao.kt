@@ -154,7 +154,6 @@ interface LevelDao {
 
     @Transaction
     suspend fun insertRegularLevels(playerLevel: List<RegularLevel>) {
-        val levelToSetProgressInProgress = playerLevel.minBy { it.nr }.nr
         playerLevel.forEach { level ->
             if (!isLevelAdded(level.nr)) {
                 val puzzle = level.solutionToCategory.keys.firstOrNull() ?: ""
@@ -164,10 +163,10 @@ interface LevelDao {
                         puzzle = puzzle,
                         categoryRewarded = false,
                         pictureRewarded = false,
-                        progress = if (level.nr == levelToSetProgressInProgress) LevelProgress.IN_PROGRESS else LevelProgress.TODO,
+                        progress = if (level.nr.toInt() == 1 || level.nr > 1000) LevelProgress.IN_PROGRESS else LevelProgress.TODO,
                         score = level.nr.toInt().getLevelScore(puzzle = puzzle),
                         best_score = 0,
-                        author = "",
+                        author = level.author,
                         timeModified = 0,
                         columnCount = -1,
                     )

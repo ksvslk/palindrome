@@ -7,4 +7,5 @@ import androidx.annotation.Keep
 data class RegularLevel(
     val nr: Long,
     val solutionToCategory:Map<String,Map<String,String>>,
+    val author:String = ""
 )
