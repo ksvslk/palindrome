@@ -96,6 +96,41 @@ abstract class LevelDatabase : RoomDatabase() {
         override fun onPostMigrate(db: SupportSQLiteDatabase) {
             super.onPostMigrate(db)
 
+            val levelMap = mutableMapOf<Int, LevelData>()
+            val query = "SELECT * FROM level_info_table"
+            val cursorResult = db.query(query)
+
+            cursorResult.use { cursor ->
+                while (cursor.moveToNext()) {
+                    val levelId = cursor.getInt(cursor.getColumnIndexOrThrow("level_id"))
+                    val puzzle = cursor.getString(cursor.getColumnIndexOrThrow("puzzle"))
+                    val categoryRewarded = cursor.getInt(cursor.getColumnIndexOrThrow("category_rewarded")) == 1
+                    val progress = cursor.getInt(cursor.getColumnIndexOrThrow("progress"))
+                    val score = cursor.getInt(cursor.getColumnIndexOrThrow("score"))
+                    val bestScore = cursor.getInt(cursor.getColumnIndexOrThrow("best_score"))
+                    val timeModified = cursor.getLong(cursor.getColumnIndexOrThrow("time_modified"))
+                    val author = cursor.getString(cursor.getColumnIndexOrThrow("author"))
+                    val columnCount = cursor.getInt(cursor.getColumnIndexOrThrow("columnCount"))
+
+                    val levelData = LevelData(
+                        levelId = levelId,
+                        puzzle = puzzle,
+                        categoryRewarded = categoryRewarded,
+                        progress = LevelProgress.values()[progress],
+                        score = score,
+                        best_score = bestScore,
+                        timeModified = timeModified,
+                        author = author,
+                        columnCount = columnCount
+                    )
+
+                    levelMap[levelId] = levelData
+                }
+            }
+            cursorResult.close()
+
+            // get all levels info for levels 1-100 and 1001-1080
+
             db.delete("letter_info_table", null, null)
             db.delete("solution_table", null, null)
             db.execSQL("UPDATE level_info_table SET progress = 2 where progress > 0")
@@ -126,6 +161,15 @@ abstract class LevelDatabase : RoomDatabase() {
                 val contentValues = ContentValues()
                 contentValues.put("puzzle", shuffled)
                 contentValues.put("score", score)
+                if (levelMap.contains(level.nr.toInt()))
+                {
+                    val oldLevelInfo = levelMap[level.nr.toInt()]!!
+                    contentValues.put("best_score", oldLevelInfo.best_score)
+                    contentValues.put("progress", oldLevelInfo.progress.ordinal)
+                    contentValues.put("category_rewarded", oldLevelInfo.categoryRewarded)
+                    contentValues.put("time_modified", oldLevelInfo.timeModified)
+                    contentValues.put("author", oldLevelInfo.author)
+                }
 
                 for (solutionToCategory in level.solutionToCategory.entries) {
                     val solutionContentValues = ContentValues()
@@ -301,7 +345,6 @@ abstract class LevelDatabase : RoomDatabase() {
                         .addMigrations(MIGRATION_2_3)
                         .addAutoMigrationSpec(MyAutoMigration(context))
                         .addAutoMigrationSpec(AutoMigrationFrom3to4(context))
-                        .fallbackToDestructiveMigration()
                         .createFromAsset("dbd.db")
                         /*
               .addCallback(object : RoomDatabase.Callback() {

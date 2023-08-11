@@ -37,7 +37,6 @@ android {
         }
     }
 
-
     buildTypes {
         release {
             // Enables code shrinking, obfuscation, and optimization for only
@@ -152,8 +151,6 @@ configurations.all {
 apply plugin: 'com.google.gms.google-services'
 
 dependencies {
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.5.1'
     def firebase_version = '32.1.1'
     def play_games_services_version = "17.0.0"
     def sqlite_version = "2.3.1"
