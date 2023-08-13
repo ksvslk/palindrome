@@ -54,8 +54,11 @@ class StandardLevelItemAdapter(
         levelItemViewHolder.textView.text = (position + 1).toString()
         levelItemViewHolder.setIsRecyclable(false)
         levelItemViewHolder.itemView.isClickable = if (dataSet[position].progress == LevelProgress.TODO) {
-            levelItemViewHolder.textView.isEnabled = false
-            false
+            // TODO: change back
+            //levelItemViewHolder.textView.isEnabled = false
+            //false
+            levelItemViewHolder.textView.isEnabled = true
+            true
         } else {
             levelItemViewHolder.textView.isEnabled = true
             true

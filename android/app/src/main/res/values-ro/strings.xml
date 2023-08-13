@@ -73,8 +73,7 @@
     <string name="you_rank_first">Ești primul!</string>
     <string name="earn">Câștigă</string>
     <string name="points_to_rank_up">puncte pentru a urca!</string>
-    <string name="new_word">Nou</string>
-    <string name="level_by">nivel de</string>
+    <string name="new_level_by">Nivel nou creat de către <xliff:g id="player_name">%s</xliff:g>!</string>
     <string name="levels_added">niveluri adăugate!</string>
     <string name="level_already_completed">Nivelul este deja finalizat.</string>
     <string name="points">puncte</string>

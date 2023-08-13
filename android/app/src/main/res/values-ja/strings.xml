@@ -139,9 +139,7 @@
 
     <string name="points_to_rank_up">ランクアップするポイント！</string>
 
-    <string name="new_word">新しい</string>
-
-    <string name="level_by">レベル</string>
+    <string name="new_level_by"><xliff:g id="player_name">%s</xliff:g>による新しいレベル!</string>
 
     <string name="levels_added">レベルが追加されました！</string>
 

@@ -16,19 +16,20 @@ interface LevelDao {
         get() = SimpleSQLiteQuery(
             "SELECT identity_hash FROM room_master_table"
         )
+
     @RawQuery
     suspend fun getDatabaseIdentityViaQuery(query: SupportSQLiteQuery = databaseIdentityQuery): String
 
     @Query("select distinct country_code from level_info_table where country_code not in('gb')")
-    suspend fun getUniqueCountries():List<String>
+    suspend fun getUniqueCountries(): List<String>
 
     @MapInfo(keyColumn = "language", valueColumn = "count")
     @Query("select country_code as language, count(*) AS count from level_info_table where country_code not in('gb') group by country_code order by count desc")
-    suspend fun getUniqueCountriesWithLevelCount():Map<String, Int>
+    suspend fun getUniqueCountriesWithLevelCount(): Map<String, Int>
 
     @Transaction
     @Query("select * from level_info_table where country_code = :cc")
-    suspend fun getLevelsForCountry(cc:String):List<Level>
+    suspend fun getLevelsForCountry(cc: String): List<Level>
 
     @Query("delete from letter_info_table where owner_id = :levelNr")
     suspend fun deleteLetterInfo(levelNr: Int)
@@ -58,7 +59,7 @@ interface LevelDao {
     suspend fun getTotalPlayerLevelsScore(): Int?
 
     @Query("select sum(best_score) from level_info_table where level_id > 10000 and country_code =:countryCode")
-    suspend fun getTotalScoreForCountry(countryCode:String): Int
+    suspend fun getTotalScoreForCountry(countryCode: String): Int
 
     @Insert
     suspend fun insertLevelInfo(levels: LevelData)
@@ -82,13 +83,13 @@ interface LevelDao {
     suspend fun isLevelAdded(id: Long): Boolean
 
     @Transaction
-    suspend fun insertLanguagePackLevel(levels:List<LanguageLevel>, countryCode:String)
-    {
+    suspend fun insertLanguagePackLevel(levels: List<LanguageLevel>, countryCode: String) {
         var maxLevelId = getMaxLevelId()
         if (maxLevelId < 10000) maxLevelId = 10000
         var nextLevelId = maxLevelId
         levels.forEach { level ->
-            val progress = if (nextLevelId == maxLevelId) LevelProgress.IN_PROGRESS else LevelProgress.TODO
+            val progress =
+                if (nextLevelId == maxLevelId) LevelProgress.IN_PROGRESS else LevelProgress.TODO
             nextLevelId += 1
             if (!isLevelAdded(nextLevelId.toLong())) {
                 val puzzle = level.solutionToCategory.keys.firstOrNull() ?: ""
@@ -137,7 +138,7 @@ interface LevelDao {
                     )
                 }
                 val solution = level.solutionToCategory.keys.first()
-                val puzzleShuffled = Shuffler.getShuffledSolution(solution).replace("-","")
+                val puzzleShuffled = Shuffler.getShuffledSolution(solution).replace("-", "")
                 updatePuzzle(nextLevelId, puzzleShuffled)
                 puzzleShuffled.forEachIndexed { index, char ->
                     insertLetterData(
@@ -204,7 +205,7 @@ interface LevelDao {
                     )
                 }
                 val solution = level.solutionToCategory.keys.first()
-                val puzzleShuffled = Shuffler.getShuffledSolution(solution).replace("-","")
+                val puzzleShuffled = Shuffler.getShuffledSolution(solution).replace("-", "")
                 updatePuzzle(level.nr.toInt(), puzzleShuffled)
                 puzzleShuffled.forEachIndexed { index, char ->
                     insertLetterData(
@@ -225,6 +226,7 @@ interface LevelDao {
         var newLevelsCount = 0
         var oneLevelId = 1L
         playerLevel.forEach { level ->
+            val isLanguagePackCompleted = if (level.countryCode != "" && level.countryCode != "gb") isLanguagePackCompleted(level.countryCode) else true
             if (!isLevelAdded(level.levelId)) {
                 val puzzle = level.solutionToCategory.keys.firstOrNull() ?: ""
                 insertLevelInfo(
@@ -233,7 +235,7 @@ interface LevelDao {
                         puzzle = puzzle,
                         categoryRewarded = false,
                         pictureRewarded = false,
-                        progress = LevelProgress.TODO,
+                        progress = if (isLanguagePackCompleted) LevelProgress.IN_PROGRESS else LevelProgress.TODO,
                         score = level.levelId.toInt().getLevelScore(puzzle = puzzle),
                         best_score = 0,
                         timeModified = 0,
@@ -272,7 +274,7 @@ interface LevelDao {
                     )
                 }
                 val solution = level.solutionToCategory.keys.first()
-                val puzzleShuffled = Shuffler.getShuffledSolution(solution).replace("-","")
+                val puzzleShuffled = Shuffler.getShuffledSolution(solution).replace("-", "")
                 updatePuzzle(level.levelId.toInt(), puzzleShuffled)
                 puzzleShuffled.forEachIndexed { index, char ->
                     insertLetterData(
@@ -295,11 +297,12 @@ interface LevelDao {
 
     @Query("select max(level_id) from level_info_table where level_id > 1000 and level_id < 10000")
     suspend fun getMaxPlayerLevelId(): Int?
+
     @Query("select min(level_id) from level_info_table where country_code = :cc")
-    suspend fun getMinLevelIdForCountry(cc:String): Int
+    suspend fun getMinLevelIdForCountry(cc: String): Int
 
     @Query("select max(level_id) from level_info_table where country_code = :cc")
-    suspend fun getMaxLevelIdForCountry(cc:String): Int
+    suspend fun getMaxLevelIdForCountry(cc: String): Int
 
     @Query("select max(level_id) from level_info_table where level_id < 1000")
     suspend fun getMaxGameLevels(): Int
@@ -360,6 +363,26 @@ interface LevelDao {
 
     @Query("DELETE FROM level_info_table")
     suspend fun deleteLevels()
+
+
+    /*
+    Delete level methods
+     */
+    @Transaction
+    suspend fun deleteLevel(levelNr: Int) {
+        deleteSolutionsFor(levelNr)
+        deleteLettersFor(levelNr)
+        deleteLevelFor(levelNr)
+    }
+
+    @Query("DELETE FROM solution_table WHERE parent_id = :levelNr")
+    suspend fun deleteSolutionsFor(levelNr: Int)
+
+    @Query("DELETE FROM letter_info_table WHERE owner_id = :levelNr")
+    suspend fun deleteLettersFor(levelNr: Int)
+
+    @Query("DELETE FROM level_info_table WHERE level_id = :levelNr")
+    suspend fun deleteLevelFor(levelNr: Int)
 
     @Transaction
     @Query("select * from level_info_table")
@@ -454,7 +477,7 @@ interface LevelDao {
     suspend fun updatePuzzle(level: Int, puzzle: String)
 
     @Query("select 1 from level_info_table where level_id = :level")
-    suspend fun levelExists(level: Int):Int?
+    suspend fun levelExists(level: Int): Int?
 
     @Transaction
     suspend fun levelCompletedActions(currentLevel: Int, hintInterval: String, chosenLevel: Int) {
@@ -474,8 +497,7 @@ interface LevelDao {
     }
 
     @Transaction
-    suspend fun chooseLevelActions(currentLevel: Int, chosenLevel: Int, hintInterval: String)
-    {
+    suspend fun chooseLevelActions(currentLevel: Int, chosenLevel: Int, hintInterval: String) {
         // reset hint interval
         resetCount(hintInterval)
         // update chosen level timestamp
@@ -499,14 +521,14 @@ interface LevelDao {
     suspend fun getLevelProgress(level: Int): LevelProgress
 
     @Query("select min(level_id) from level_info_table where country_code = :cc")
-    suspend fun getFirstLevelLevelIdForCountry(cc:String): Int
+    suspend fun getFirstLevelLevelIdForCountry(cc: String): Int
 
     /** Steps taken to reset the level:
-            1. Delete letters info
-            2. Update puzzle (shuffle and set)
-            3. Update letters info to initial blank field (set friend to -666)
-            4. Update initial score to the max you can get from the level
-            5. Update progress to IN_PROGRESS or REPLAY (if just finished)
+    1. Delete letters info
+    2. Update puzzle (shuffle and set)
+    3. Update letters info to initial blank field (set friend to -666)
+    4. Update initial score to the max you can get from the level
+    5. Update progress to IN_PROGRESS or REPLAY (if just finished)
      *
      * @param levelNr level nr to be set to initial state.
      * @param progress progress that should be set to this level after reset.
@@ -516,7 +538,7 @@ interface LevelDao {
         deleteLetterInfo(levelNr)
         val levelSolutions = getLevelSolutions(levelNr)
         val solution = levelSolutions.first()
-        val puzzle = Shuffler.getShuffledSolution(solution).replace("-","")
+        val puzzle = Shuffler.getShuffledSolution(solution).replace("-", "")
         updatePuzzle(levelNr, puzzle)
         puzzle.forEachIndexed { index, char ->
             insertLetterData(
@@ -533,9 +555,8 @@ interface LevelDao {
     }
 
     @Transaction
-    suspend fun matchFirstLevelWithUserLocale(currentTag:String) {
-        if (getMaximumTimestamp()?.equals(0L) == true)
-        {
+    suspend fun matchFirstLevelWithUserLocale(currentTag: String) {
+        if (getMaximumTimestamp()?.equals(0L) == true) {
             var levelId = 1
             if (currentTag != "gb") {
                 levelId = getFirstLevelLevelIdForCountry(currentTag)
@@ -578,5 +599,6 @@ interface LevelDao {
     @Query("select max(time_modified) from level_info_table")
     suspend fun getMaximumTimestamp(): Long?
 
-
+    @Query("SELECT CASE WHEN COUNT(*) > 0 THEN 0 ELSE 1 END AS result FROM level_info_table WHERE country_code = :countryCode AND progress < 1")
+    suspend fun isLanguagePackCompleted(countryCode: String):Boolean
 }

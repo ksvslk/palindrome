@@ -139,9 +139,7 @@
 
     <string name="points_to_rank_up">points pour progresser !</string>
 
-    <string name="new_word">Nouveau</string>
-
-    <string name="level_by">niveau par</string>
+    <string name="new_level_by">Nouveau niveau créé par <xliff:g id="player_name">%s</xliff:g>!</string>
 
     <string name="levels_added">niveaux ajoutés !</string>
 

@@ -4,5 +4,6 @@ data class NewLevelNotification(
     val lastAddedLevel: Int,
     val multipleLevels: Int = -1,
     val playerName: String,
-    val countryCode: String
+    val countryCode: String,
+    val showPlayButton:Boolean = true
 )

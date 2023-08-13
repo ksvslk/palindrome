@@ -73,8 +73,7 @@
     <string name="you_rank_first">Birinci sıradasın!</string>
     <string name="earn">Kazan</string>
     <string name="points_to_rank_up">Rütbe atlamak için puan!</string>
-    <string name="new_word">Yeni</string>
-    <string name="level_by">seviye tarafından</string>
+    <string name="new_level_by"><xliff:g id="player_name">%s</xliff:g> tarafından yeni seviye!</string>
     <string name="levels_added">seviye eklendi!</string>
     <string name="level_already_completed">Seviye zaten tamamlandı.</string>
     <string name="points">puan</string>

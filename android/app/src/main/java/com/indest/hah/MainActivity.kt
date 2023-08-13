@@ -200,7 +200,8 @@ class MainActivity : AppCompatActivity() {
                         showNewLevelMessage(
                             newLevel.playerName,
                             newLevel.lastAddedLevel,
-                            countryCode = newLevel.countryCode
+                            countryCode = newLevel.countryCode,
+                            showPlayButton = newLevel.showPlayButton
                         )
                     } else if (newLevel.multipleLevels > 1) {
                         showNewLevelMessage(
@@ -220,11 +221,18 @@ class MainActivity : AppCompatActivity() {
         player: String,
         lastAddedLevel: Int,
         multipleLevels: Int = -1,
-        countryCode: String = ""
+        countryCode: String = "",
+        showPlayButton:Boolean = true
     ) {
-        val flagNew = if (countryCode != "") "${countryCode.countryCodeToEmoji()} ${resources.getString(R.string.new_word)}" else resources.getString(R.string.new_word)
+        Log.d(TAG, "showNewLevelMessage")
+
+        val flag = if (countryCode != "") { "${countryCode.countryCodeToEmoji()} " } else ""
         val snackMessage =
-            if (multipleLevels == -1) "$flagNew ${resources.getString(R.string.level_by)} $player!" else "$multipleLevels ${resources.getString(R.string.levels_added)}"
+            if (multipleLevels == -1) {
+                "$flag${resources.getString(R.string.new_level_by, player)}"
+            } else {
+                "$multipleLevels ${resources.getString(R.string.levels_added)}"
+            }
 
         val snack =
             Snackbar.make(findViewById(android.R.id.content), snackMessage, 15000)
@@ -234,7 +242,7 @@ class MainActivity : AppCompatActivity() {
                     val navController = navHostFragment.navController
 
                     // Check if there is only one new level
-                    if (multipleLevels == -1) {
+                    if (multipleLevels == -1 && showPlayButton) {
                         levelViewModel.changeLevel(lastAddedLevel)
                     } else { // If there are multiple new levels
                         navController.safeNavigate(R.id.action_navigation_level_to_navigation_stages)

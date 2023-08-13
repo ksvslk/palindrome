@@ -73,8 +73,7 @@
     <string name="you_rank_first">Zajmujesz pierwsze miejsce!</string>
     <string name="earn">Zarabiaj</string>
     <string name="points_to_rank_up">punktów do awansu!</string>
-    <string name="new_word">Nowy</string>
-    <string name="level_by">poziom wg</string>
+    <string name="new_level_by">Nowy poziom stworzony przez <xliff:g id="player_name">%s</xliff:g>!</string>
     <string name="levels_added">dodane poziomy!</string>
     <string name="level_already_completed">Poziom jest już ukończony.</string>
     <string name="points">punktów</string>

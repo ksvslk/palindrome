@@ -139,9 +139,7 @@
 
     <string name="points_to_rank_up">积分排名！</string>
 
-    <string name="new_word">新的</string>
-
-    <string name="level_by">逐级提升</string>
+    <string name="new_level_by">新关卡由 <xliff:g id="player_name">%s</xliff:g> 创建!</string>
 
     <string name="levels_added">添加了关卡！</string>
 

@@ -139,9 +139,7 @@
 
     <string name="points_to_rank_up">poin untuk naik peringkat!</string>
 
-    <string name="new_word">Baru</string>
-
-    <string name="level_by">tingkat oleh</string>
+    <string name="new_level_by">Level baru oleh <xliff:g id="player_name">%s</xliff:g>!</string>
 
     <string name="levels_added">level ditambahkan!</string>
 

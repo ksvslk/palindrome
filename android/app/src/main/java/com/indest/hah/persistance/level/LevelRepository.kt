@@ -42,6 +42,11 @@ class LevelRepository @Inject constructor(
         return levelDao.updateFriendIndex(homeIndex, newFriendIndex, level)
     }
 
+    suspend fun isLanguagePackCompleted(countryCode: String):Boolean
+    {
+        return levelDao.isLanguagePackCompleted(countryCode)
+    }
+
     suspend fun setLetterLocked(homeIndex: Int, level: Int) {
         levelDao.setLetterLocked(homeIndex, level)
     }
@@ -148,6 +153,12 @@ class LevelRepository @Inject constructor(
     suspend fun resetLevel(level: Int)
     {
         levelDao.resetLevel(level)
+    }
+
+
+    suspend fun deleteLevel(level: Int)
+    {
+        levelDao.deleteLevel(level)
     }
 
     fun intervalAttainedFlow(name:String): Flow<Boolean> {
