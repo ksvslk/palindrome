@@ -139,9 +139,8 @@
 
     <string name="points_to_rank_up">积分排名！</string>
 
-    <string name="new_word">新的</string>
-
-    <string name="level_by">逐级提升</string>
+    <string name="new_level_by">新关卡由 <xliff:g id="player_name">%s</xliff:g> 创建!</string>
+    <string name="new_level_by_language_pack_incomplete"><xliff:g id="player_name_incomplete">%s</xliff:g>制作的新关卡，完成关卡包即可畅玩！</string>
 
     <string name="levels_added">添加了关卡！</string>
 
@@ -184,7 +183,7 @@
 
     <!-- TUTORIAL -->
 
-    <string name="tutorial_text">创建从两侧读相同的单词和句子</string>
+    <string name="tutorial_text">创建从两侧读相同的单词和句子。 通过减少错误来赚取更多积分。</string>
 
     <string name="tutorial3_second_text">• 句子需要有规律的标点符号 \n• 多个答案带有“*”标记 \n• 更少的错误 = 更好的分数</string>
 

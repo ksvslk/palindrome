@@ -73,8 +73,8 @@
     <string name="you_rank_first">Olet ensimmäisellä sijalla!</string>
     <string name="earn">Ansaitse</string>
     <string name="points_to_rank_up">pistettä sijoittumiseen!</string>
-    <string name="new_word">Uusi</string>
-    <string name="level_by">tason mukaan</string>
+    <string name="new_level_by">Uusi taso pelaajalta <xliff:g id="player_name">%s</xliff:g>!</string>
+    <string name="new_level_by_language_pack_incomplete">Uusi taso tekijältä <xliff:g id="player_name_incomplete">%s</xliff:g>, suorita tasopaketti pelataksesi sitä!</string>
     <string name="levels_added">tasoja lisätty!</string>
     <string name="level_already_completed">Taso on jo suoritettu.</string>
     <string name="points">pistettä</string>

@@ -68,8 +68,8 @@
     <string name="you_rank_first">You rank first!</string>
     <string name="earn">Earn</string>
     <string name="points_to_rank_up">points to rank up!</string>
-    <string name="new_word">New</string>
-    <string name="level_by">level by</string>
+    <string name="new_level_by">New level by <xliff:g id="player_name">%s</xliff:g>!</string>
+    <string name="new_level_by_language_pack_incomplete">New level by <xliff:g id="player_name_incomplete">%s</xliff:g>, complete level pack to play it.</string>
     <string name="levels_added">levels added!</string>
     <string name="level_already_completed">Level is already completed.</string>
     <string name="points">points</string>

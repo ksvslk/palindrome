@@ -72,8 +72,8 @@
     <string name="you_rank_first">Sa oled esikohal!</string>
     <string name="earn">Teeni</string>
     <string name="points_to_rank_up">punkti, et paremusjärjestus!</string>
-    <string name="new_word">Uus</string>
-    <string name="level_by">taseme järgi</string>
+    <string name="new_level_by">Uus tase mängija <xliff:g id="player_name">%s</xliff:g> poolt!</string>
+    <string name="new_level_by_language_pack_incomplete">Uus tase autorilt <xliff:g id="player_name_incomplete">%s</xliff:g>, mängimiseks täitke tasemepakett!</string>
     <string name="levels_added">tasemeid lisatud!</string>
     <string name="level_already_completed">Tase on juba lõpetatud.</string>
     <string name="points">punkti</string>

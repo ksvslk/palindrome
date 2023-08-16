@@ -213,7 +213,6 @@ class LevelViewModel @Inject constructor(
         */
     }
 
-
     suspend fun isShowScores(): Boolean {
         val showScoresString =
             getApplication<Application>().getString(R.string.player_centered_scores)
@@ -232,7 +231,8 @@ class LevelViewModel @Inject constructor(
             _currentLevel.value.levelInfo.levelId,
             currentLevel.value.levelInfo.countryCode
         )
-        val finalLevelInCountryCode = if (isLanguageLevel) _currentLevel.value.levelInfo.countryCode else ""
+        val finalLevelInCountryCode =
+            if (isLanguageLevel) _currentLevel.value.levelInfo.countryCode else ""
         return Triple(lastGameLevel == 1, lastPlayerLevel == 1, finalLevelInCountryCode)
     }
 
@@ -769,85 +769,25 @@ class LevelViewModel @Inject constructor(
         }
     }
 
-    suspend fun simulateNewLevelFetch() {
-        val playerLevels = mutableListOf<PlayerLevel>()
-        val docRef: DocumentReference = fsDb
-            .collection("user_submitted_levels")
-            .document("Bc4MHj3i0hMNRsgVAMdc")
-        docRef.get().addOnSuccessListener {
-            try {
-                Log.d(TAG, it.data.toString())
-                it.data.let { levelValues ->
-                    val solutionsToCategories =
-                        levelValues?.get("solutionToCategory") as Map<String, String>
-                    if (solutionsToCategories.isEmpty()) throw Exception("Solutions were empty")
-                    val countryCode =
-                        levelValues.getOrElse("countryCode") { "gb" }
-                    val level = PlayerLevel(
-                        levelId = levelValues["levelId"] as Long,
-                        player = levelValues["player"] as String,
-                        solutionToCategory = mapOf(), // TODO: FIX
-                        countryCode = countryCode as String
-                    )
-                    playerLevels.add(level)
-                }
-            } catch (e: Exception) {
-                Log.w(
-                    TAG,
-                    "Something went wrong when parsing the user level from FB.",
-                    e
-                )
-            }
-
-            viewModelScope.launch {
-                if (playerLevels.size != 0) {
-                    // Get Pair where first element is a level when only 1 level added
-                    // Second element is the level count when there are more than 1 level added.
-                    val levelAndCount = insertPlayerLevels(playerLevels)
-                    if (levelAndCount.second > 0) {
-                        if (levelAndCount.second > 1) {
-                            _newPlayerLevels.update {
-                                NewLevelNotification(
-                                    -1,
-                                    levelAndCount.second,
-                                    "",
-                                    ""
-                                )
-                            }
-                        } else {
-                            _newPlayerLevels.update {
-                                NewLevelNotification(
-                                    levelAndCount.first.levelId,
-                                    1,
-                                    levelAndCount.first.author,
-                                    levelAndCount.first.countryCode
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-    }
 
     private suspend fun subscribeToRealTimePlayerLevelUpdates() {
         if (_accountStatus.value == AccountStatus.SIGNED_IN_WITH_FIREBASE) {
             val maxPlayerLevelId = levelRepository.getMaxPlayerLevelId() ?: 1000
             val maxLevelId = levelRepository.getMaxLevelId()
             val query = fsDb.collection("user_submitted_levels").where(
-                Filter.or(
-                    // player levels 1000+
-                    Filter.and(
-                        Filter.equalTo("testLive", true),
-                        Filter.greaterThan("levelId", maxPlayerLevelId),
-                        Filter.lessThan("levelId", 10000)
-                    ),
-                    // language levels 10000+
-                    Filter.and(
-                        Filter.equalTo("testLive", true),
-                        Filter.greaterThan("levelId", 10000),
-                        Filter.greaterThan("levelId", maxLevelId),
+                Filter.and(
+                    Filter.equalTo("testLive", true),
+                    Filter.or(
+                        // player levels 1000+
+                        Filter.and(
+                            Filter.greaterThan("levelId", maxPlayerLevelId),
+                            Filter.lessThan("levelId", 10000)
+                        ),
+                        // language levels 10000+
+                        Filter.and(
+                            Filter.greaterThan("levelId", 10000),
+                            Filter.greaterThan("levelId", maxLevelId),
+                        )
                     )
                 )
             )
@@ -864,10 +804,9 @@ class LevelViewModel @Inject constructor(
                                 try {
                                     dc.document.data.let { levelValues ->
                                         val levelId = levelValues["levelId"] as Long
-                                        if (levelId > 1080)
-                                        {
+                                        if (levelId > 1080) {
                                             val solutionsToCategories =
-                                                levelValues["solutionToCategory"] as Map<String,Map<String,String>>
+                                                levelValues["solutionToCategory"] as Map<String, Map<String, String>>
                                             if (solutionsToCategories.isEmpty()) throw Exception("Solutions were empty")
                                             val countryCode =
                                                 levelValues.getOrElse("countryCode") { "gb" }
@@ -884,15 +823,18 @@ class LevelViewModel @Inject constructor(
                                 } catch (e: Exception) {
                                     Log.w(
                                         TAG,
-                                        "Something went wrong when parsing the user level from FB.",
+                                        "Something went wrong when adding the user level from Firebase.",
                                         e
                                     )
                                     return@EventListener
                                 }
                             }
 
-                            DocumentChange.Type.MODIFIED -> {}
-                            DocumentChange.Type.REMOVED -> {}
+                            DocumentChange.Type.MODIFIED -> {
+                            }
+
+                            DocumentChange.Type.REMOVED -> {
+                            }
                         }
                     }
                 }
@@ -903,19 +845,28 @@ class LevelViewModel @Inject constructor(
                         val levelAndCount = insertPlayerLevels(playerLevels)
                         if (levelAndCount.second > 0) {
                             if (levelAndCount.second > 1) {
-                                _newPlayerLevels.value = NewLevelNotification(
-                                    -1,
-                                    levelAndCount.second,
-                                    "",
-                                    ""
-                                )
+                                _newPlayerLevels.update {
+                                    NewLevelNotification(
+                                        -1,
+                                        levelAndCount.second,
+                                        "",
+                                        ""
+                                    )
+                                }
                             } else {
-                                _newPlayerLevels.value = NewLevelNotification(
-                                    levelAndCount.first.levelId,
-                                    -1,
-                                    levelAndCount.first.author,
-                                    levelAndCount.first.countryCode
-                                )
+                                val isLanguagePackComplete =
+                                    if (levelAndCount.first.countryCode != "gb" && levelAndCount.first.countryCode != "") {
+                                        levelRepository.isLanguagePackCompleted(levelAndCount.first.countryCode)
+                                    } else true
+                                _newPlayerLevels.update {
+                                    NewLevelNotification(
+                                        levelAndCount.first.levelId,
+                                        1,
+                                        levelAndCount.first.author,
+                                        levelAndCount.first.countryCode,
+                                        showPlayButton = isLanguagePackComplete
+                                    )
+                                }
                             }
                         }
                     }
@@ -984,29 +935,28 @@ class LevelViewModel @Inject constructor(
     }
 
     private suspend fun addRegularLevels() {
-                val jsonInstance = Json { isLenient = true }
-                val json =
-                    getApplication<Application>().applicationContext.assets.open("level_pack_1_modified.json")
-                        .bufferedReader().use {
-                            it.readText()
-                        }
-                val regularLevels = jsonInstance.decodeFromString<List<RegularLevel>>(json)
-                levelRepository.insertRegularLevels(regularLevels)
+        val jsonInstance = Json { isLenient = true }
+        val json =
+            getApplication<Application>().applicationContext.assets.open("level_pack_1_modified.json")
+                .bufferedReader().use {
+                    it.readText()
+                }
+        val regularLevels = jsonInstance.decodeFromString<List<RegularLevel>>(json)
+        levelRepository.insertRegularLevels(regularLevels)
     }
 
     private suspend fun addPlayerLevelsUntil1080() {
-            val jsonInstance = Json { isLenient = true }
-            val json =
-                getApplication<Application>().applicationContext.assets.open("player_levels_until_1080.json")
-                    .bufferedReader().use {
-                        it.readText()
-                    }
-            val playerLevels = jsonInstance.decodeFromString<List<RegularLevel>>(json)
-            levelRepository.insertRegularLevels(playerLevels)
+        val jsonInstance = Json { isLenient = true }
+        val json =
+            getApplication<Application>().applicationContext.assets.open("player_levels_until_1080.json")
+                .bufferedReader().use {
+                    it.readText()
+                }
+        val playerLevels = jsonInstance.decodeFromString<List<RegularLevel>>(json)
+        levelRepository.insertRegularLevels(playerLevels)
     }
 
-    private fun addIntervals()
-    {
+    private fun addIntervals() {
         val sad = getApplication<Application>().getString(R.string.sad_mode_interval)
         val scores = getApplication<Application>().getString(R.string.player_centered_scores)
         val hint = getApplication<Application>().getString(R.string.hint_suggestion)
@@ -1056,7 +1006,14 @@ class LevelViewModel @Inject constructor(
             timestamp = -1
         )
         viewModelScope.launch {
-            listOf(intervalSadMode, scoresInterval, hintInterval, fiveInterval, fifteenInterval, lastInterval).forEach {
+            listOf(
+                intervalSadMode,
+                scoresInterval,
+                hintInterval,
+                fiveInterval,
+                fifteenInterval,
+                lastInterval
+            ).forEach {
                 levelRepository.addInterval(it)
             }
         }
