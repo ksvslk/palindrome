@@ -116,7 +116,7 @@ abstract class LevelDatabase : RoomDatabase() {
                         categoryRewarded = categoryRewarded,
                         progress = LevelProgress.values()[progress],
                         score = score,
-                        best_score = bestScore,
+                        bestScore = bestScore,
                         timeModified = timeModified,
                         author = author,
                         columnCount = columnCount
@@ -161,7 +161,15 @@ abstract class LevelDatabase : RoomDatabase() {
                 if (levelMap.contains(level.nr.toInt()))
                 {
                     val oldLevelInfo = levelMap[level.nr.toInt()]!!
-                    contentValues.put("best_score", oldLevelInfo.best_score)
+                    oldLevelInfo.levelId
+                    oldLevelInfo.author
+                    oldLevelInfo.bestScore
+                    oldLevelInfo.progress
+                    oldLevelInfo.categoryRewarded
+                    oldLevelInfo.countryCode
+                    oldLevelInfo.puzzle
+                    oldLevelInfo.score
+                    contentValues.put("best_score", oldLevelInfo.bestScore)
                     contentValues.put("progress", oldLevelInfo.progress.ordinal)
                     contentValues.put("category_rewarded", oldLevelInfo.categoryRewarded)
                     contentValues.put("time_modified", oldLevelInfo.timeModified)
