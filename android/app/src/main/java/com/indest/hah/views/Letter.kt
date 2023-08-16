@@ -37,7 +37,7 @@ class Letter @Inject constructor(
     var isLocked = false
     var state: LetterState = initialState
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         state.draw(this)
         super.onDraw(canvas)
     }
