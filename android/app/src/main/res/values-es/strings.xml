@@ -140,7 +140,7 @@
     <string name="points_to_rank_up">puntos para subir de rango!</string>
 
     <string name="new_level_by">Nuevo nivel creado por <xliff:g id="player_name">%s</xliff:g>!</string>
-
+    <string name="new_level_by_language_pack_incomplete">Nuevo nivel de <xliff:g id="player_name_incomplete">%s</xliff:g>, ¡paquete de niveles completo para jugarlo!</string>
     <string name="levels_added">niveles añadidos!</string>
 
     <string name="level_already_completed">El nivel ya está completo.</string>

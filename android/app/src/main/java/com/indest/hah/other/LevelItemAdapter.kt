@@ -73,11 +73,8 @@ class LevelItemAdapter(
         else {
             levelItemViewHolder.itemView.isClickable =
                 if (dataSet[position].second.progress == LevelProgress.TODO) {
-                    //TODO: Change back
-                    //levelItemViewHolder.textView.isEnabled = false
-                    //false
-                    levelItemViewHolder.textView.isEnabled = true
-                    true
+                    levelItemViewHolder.textView.isEnabled = false
+                    false
                 } else {
                     levelItemViewHolder.textView.isEnabled = true
                     true

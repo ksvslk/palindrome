@@ -74,6 +74,7 @@
     <string name="earn">Tjäna</string>
     <string name="points_to_rank_up">poäng för att rankas upp!</string>
     <string name="new_level_by">Ny nivå av <xliff:g id="player_name">%s</xliff:g>!</string>
+    <string name="new_level_by_language_pack_incomplete">Ny nivå av <xliff:g id="player_name_incomplete">%s</xliff:g>, komplett nivåpaket för att spela det!</string>
     <string name="levels_added">nivåer tillagda!</string>
     <string name="level_already_completed">Nivå är redan klar.</string>
     <string name="points">poäng</string>

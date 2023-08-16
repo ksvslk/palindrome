@@ -140,6 +140,7 @@
     <string name="points_to_rank_up">poin untuk naik peringkat!</string>
 
     <string name="new_level_by">Level baru oleh <xliff:g id="player_name">%s</xliff:g>!</string>
+    <string name="new_level_by_language_pack_incomplete">Level baru dari <xliff:g id="player_name_incomplete">%s</xliff:g>, selesaikan paket level untuk memainkannya!</string>
 
     <string name="levels_added">level ditambahkan!</string>
 

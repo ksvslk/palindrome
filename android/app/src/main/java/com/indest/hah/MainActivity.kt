@@ -229,12 +229,22 @@ class MainActivity : AppCompatActivity() {
         val flag = if (countryCode != "") { "${countryCode.countryCodeToEmoji()} " } else ""
         val snackMessage =
             if (multipleLevels == -1) {
-                "$flag${resources.getString(R.string.new_level_by, player)}"
+                if (!showPlayButton)
+                {
+                    "$flag${resources.getString(R.string.new_level_by_language_pack_incomplete, player)}"
+                }
+                else {
+                    "$flag${resources.getString(R.string.new_level_by, player)}"
+                }
             } else {
                 "$multipleLevels ${resources.getString(R.string.levels_added)}"
             }
 
-        val snack =
+        val snack = if (multipleLevels == -1 && !showPlayButton) {
+            Snackbar.make(findViewById(android.R.id.content), snackMessage, 15000)
+                .setAnimationMode(ANIMATION_MODE_FADE)
+        }
+        else {
             Snackbar.make(findViewById(android.R.id.content), snackMessage, 15000)
                 .setAction(resources.getString(R.string.play)) {
                     val navHostFragment =
@@ -242,13 +252,14 @@ class MainActivity : AppCompatActivity() {
                     val navController = navHostFragment.navController
 
                     // Check if there is only one new level
-                    if (multipleLevels == -1 && showPlayButton) {
+                    if (multipleLevels == -1) {
                         levelViewModel.changeLevel(lastAddedLevel)
                     } else { // If there are multiple new levels
                         navController.safeNavigate(R.id.action_navigation_level_to_navigation_stages)
                     }
                 }
                 .setAnimationMode(ANIMATION_MODE_FADE)
+        }
 
         val params = snack.view.layoutParams as FrameLayout.LayoutParams
         params.gravity = Gravity.TOP

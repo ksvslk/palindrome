@@ -140,6 +140,7 @@
     <string name="points_to_rank_up">ランクアップするポイント！</string>
 
     <string name="new_level_by"><xliff:g id="player_name">%s</xliff:g>による新しいレベル!</string>
+    <string name="new_level_by_language_pack_incomplete"><xliff:g id="player_name_incomplete">%s</xliff:g>による新しいレベル、レベルパックを完成させてプレイしてください!</string>
 
     <string name="levels_added">レベルが追加されました！</string>
 

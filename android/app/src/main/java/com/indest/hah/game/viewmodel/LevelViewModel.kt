@@ -769,67 +769,6 @@ class LevelViewModel @Inject constructor(
         }
     }
 
-    suspend fun simulateNewLevelFetch() {
-        val playerLevels = mutableListOf<PlayerLevel>()
-        val docRef: DocumentReference = fsDb
-            .collection("user_submitted_levels")
-            .document("Bc4MHj3i0hMNRsgVAMdc")
-        docRef.get().addOnSuccessListener {
-            try {
-                Log.d(TAG, it.data.toString())
-                it.data.let { levelValues ->
-                    val solutionsToCategories =
-                        levelValues?.get("solutionToCategory") as Map<String, String>
-                    if (solutionsToCategories.isEmpty()) throw Exception("Solutions were empty")
-                    val countryCode =
-                        levelValues.getOrElse("countryCode") { "gb" }
-                    val level = PlayerLevel(
-                        levelId = levelValues["levelId"] as Long,
-                        player = levelValues["player"] as String,
-                        solutionToCategory = mapOf(), // TODO: FIX
-                        countryCode = countryCode as String
-                    )
-                    playerLevels.add(level)
-                }
-            } catch (e: Exception) {
-                Log.w(
-                    TAG,
-                    "Something went wrong when parsing the user level from FB.",
-                    e
-                )
-            }
-
-            viewModelScope.launch {
-                if (playerLevels.size != 0) {
-                    // Get Pair where first element is a level when only 1 level added
-                    // Second element is the level count when there are more than 1 level added.
-                    val levelAndCount = insertPlayerLevels(playerLevels)
-                    if (levelAndCount.second > 0) {
-                        if (levelAndCount.second > 1) {
-                            _newPlayerLevels.update {
-                                NewLevelNotification(
-                                    -1,
-                                    levelAndCount.second,
-                                    "",
-                                    ""
-                                )
-                            }
-                        } else {
-                            _newPlayerLevels.update {
-                                NewLevelNotification(
-                                    levelAndCount.first.levelId,
-                                    1,
-                                    levelAndCount.first.author,
-                                    levelAndCount.first.countryCode
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-    }
 
     private suspend fun subscribeToRealTimePlayerLevelUpdates() {
         if (_accountStatus.value == AccountStatus.SIGNED_IN_WITH_FIREBASE) {

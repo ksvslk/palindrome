@@ -74,6 +74,7 @@
     <string name="earn">Kazan</string>
     <string name="points_to_rank_up">Rütbe atlamak için puan!</string>
     <string name="new_level_by"><xliff:g id="player_name">%s</xliff:g> tarafından yeni seviye!</string>
+    <string name="new_level_by_language_pack_incomplete"><xliff:g id="player_name_incomplete">%s</xliff:g> tarafından yeni seviye, oynamak için seviye paketini tamamlayın!</string>
     <string name="levels_added">seviye eklendi!</string>
     <string name="level_already_completed">Seviye zaten tamamlandı.</string>
     <string name="points">puan</string>

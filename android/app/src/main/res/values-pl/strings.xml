@@ -74,6 +74,7 @@
     <string name="earn">Zarabiaj</string>
     <string name="points_to_rank_up">punktów do awansu!</string>
     <string name="new_level_by">Nowy poziom stworzony przez <xliff:g id="player_name">%s</xliff:g>!</string>
+    <string name="new_level_by_language_pack_incomplete">Nowy poziom autorstwa <xliff:g id="player_name_incomplete">%s</xliff:g>, pełny pakiet poziomów, aby w niego zagrać!</string>
     <string name="levels_added">dodane poziomy!</string>
     <string name="level_already_completed">Poziom jest już ukończony.</string>
     <string name="points">punktów</string>

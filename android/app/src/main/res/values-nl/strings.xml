@@ -74,6 +74,7 @@
     <string name="earn">Verdien</string>
     <string name="points_to_rank_up">punten om hoger te scoren!</string>
     <string name="new_level_by">Nieuw level gemaakt door <xliff:g id="player_name">%s</xliff:g>!</string>
+    <string name="new_level_by_language_pack_incomplete">Nieuw level door <xliff:g id="player_name_incomplete">%s</xliff:g>, compleet levelpakket om het te spelen!</string>
     <string name="levels_added">levels toegevoegd!</string>
     <string name="level_already_completed">Niveau is al voltooid.</string>
     <string name="points">punten</string>
