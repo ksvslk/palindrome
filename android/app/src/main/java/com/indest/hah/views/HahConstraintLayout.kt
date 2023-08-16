@@ -34,10 +34,10 @@ class HahConstraintLayout : ConstraintLayout {
         paint.colorFilter = ColorMatrixColorFilter(cm)
     }
 
-    override fun dispatchDraw(canvas: Canvas?) {
-        if (isSadMode) canvas?.saveLayer(null, paint)
+    override fun dispatchDraw(canvas: Canvas) {
+        if (isSadMode) canvas.saveLayer(null, paint)
         super.dispatchDraw(canvas)
-        if (isSadMode) canvas?.restore()
+        if (isSadMode) canvas.restore()
     }
 
 }
