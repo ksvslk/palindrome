@@ -3,12 +3,10 @@ package com.indest.hah.persistance.level
 import androidx.room.*
 import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteQuery
-import androidx.work.Operation.State.IN_PROGRESS
 import com.indest.hah.game.creation.Shuffler
 import com.indest.hah.other.getLevelScore
 import com.indest.hah.persistance.dto.*
 import kotlinx.coroutines.flow.Flow
-import kotlin.math.max
 
 @Dao
 interface LevelDao {
@@ -101,7 +99,7 @@ interface LevelDao {
                         pictureRewarded = false,
                         progress = progress,
                         score = nextLevelId.getLevelScore(puzzle = puzzle),
-                        best_score = 0,
+                        bestScore = 0,
                         timeModified = 0,
                         author = "",
                         columnCount = -1,
@@ -166,7 +164,7 @@ interface LevelDao {
                         pictureRewarded = false,
                         progress = if (level.nr.toInt() == 1 || level.nr > 1000) LevelProgress.IN_PROGRESS else LevelProgress.TODO,
                         score = level.nr.toInt().getLevelScore(puzzle = puzzle),
-                        best_score = 0,
+                        bestScore = 0,
                         author = level.author,
                         timeModified = 0,
                         columnCount = -1,
@@ -237,7 +235,7 @@ interface LevelDao {
                         pictureRewarded = false,
                         progress = if (isLanguagePackCompleted) LevelProgress.IN_PROGRESS else LevelProgress.TODO,
                         score = level.levelId.toInt().getLevelScore(puzzle = puzzle),
-                        best_score = 0,
+                        bestScore = 0,
                         timeModified = 0,
                         author = level.player,
                         columnCount = -1,

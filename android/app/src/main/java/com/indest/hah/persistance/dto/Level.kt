@@ -30,7 +30,7 @@ class Level(
             pictureRewarded = false,
             progress = LevelProgress.IN_PROGRESS,
             score = 0,
-            best_score = 0,
+            bestScore = 0,
             timeModified = 0,
             author = "",
             columnCount = 7
