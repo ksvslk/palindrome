@@ -59,11 +59,8 @@ class LevelItemAdapter(
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
         val levelNr = if (playerLevel) dataSet[position].second.levelId - 1000 else dataSet[position].second.levelId
-        if (dataSet[position].first) {
-            levelItemViewHolder.textView.text = "$levelNr*"
-        } else {
-            levelItemViewHolder.textView.text = levelNr.toString()
-        }
+        levelItemViewHolder.textView.text =
+            "$levelNr${getNewBadge(dataSet[position].first, dataSet[position].second)}"
 
         if (playerLevel)
         {
@@ -88,6 +85,17 @@ class LevelItemAdapter(
             }
         }
 
+    }
+
+    // progress = 0, time_modified = 0 and level_id < 10000 && level_id > 1080 - NEW PLAYER LEVEL
+    private fun getNewBadge(multipleSolutions:Boolean, level:LevelData):String
+    {
+        var badge = if (multipleSolutions) "*" else ""
+        if (level.progress == LevelProgress.TODO && level.timeModified == 0L && level.levelId in 1080..9999)
+        {
+            badge = "$badge✨"
+        }
+        return badge
     }
 
     // Return the size of your dataset (invoked by the layout manager)

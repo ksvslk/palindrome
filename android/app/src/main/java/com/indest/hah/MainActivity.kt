@@ -564,6 +564,7 @@ class MainActivity : AppCompatActivity() {
         else {
             val storage = Firebase.storage
             val gsReference = storage.getReferenceFromUrl("${C.FIREBASE_PICS_STORAGE_PATH}level${levelNr}.jpg")
+            Log.d(TAG, "gsReference: ${gsReference.name}")
             this.filesDir?.let {
                 val localFile = File(it, "level${levelNr}.jpg")
                 gsReference.getFile(localFile).addOnSuccessListener {

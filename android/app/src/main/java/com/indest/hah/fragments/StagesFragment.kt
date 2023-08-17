@@ -1,19 +1,22 @@
 package com.indest.hah.fragments
 
 import android.os.Bundle
-import android.util.Log
+import android.text.Html
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.SuperscriptSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.databinding.StagesFragmentBinding
 import com.indest.hah.game.viewmodel.LevelViewModel
@@ -21,6 +24,7 @@ import com.indest.hah.general.AccountStatus
 import com.indest.hah.general.GeneralViewModel
 import com.indest.hah.other.LevelSelectType
 import com.indest.hah.other.safeNavigate
+import com.indest.hah.persistance.level.LevelProgress
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
@@ -69,6 +73,25 @@ class StagesFragment : FullBottomSheetDialogFragment() {
                             binding.submitYourLevelButton.visibility = View.GONE
                         }
                     }
+                }
+
+            }
+        }
+        lifecycleScope.launch {
+            levelViewModel.allPlayerLevelsFlow().collect { playerLevels ->
+                val countOfNewLevels = playerLevels.count {
+                    it.second.progress == LevelProgress.TODO &&
+                            it.second.timeModified == 0L &&
+                            it.second.levelId in 1080..9999
+                }
+                val count = "+$countOfNewLevels"
+                val string = SpannableString(count)
+                string.setSpan(SuperscriptSpan(), 1, string.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+                if (countOfNewLevels > 0) {
+                    val title = binding.playerLevelsButton.findViewById<AppCompatTextView>(R.id.any_button_title)
+                    title.text = "${title.text} $string"
+
                 }
             }
         }

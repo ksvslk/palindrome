@@ -44,7 +44,7 @@ class LevelRepository @Inject constructor(
 
     suspend fun isLanguagePackCompleted(countryCode: String):Boolean
     {
-        return levelDao.isLanguagePackCompleted(countryCode)
+        return levelDao.isLanguagePackCompleted(countryCode) == 1
     }
 
     suspend fun setLetterLocked(homeIndex: Int, level: Int) {
@@ -123,6 +123,11 @@ class LevelRepository @Inject constructor(
         levelDao.increaseCurrentCount(name)
     }
 
+    suspend fun getNextLevelForLanguageLevel(levelId:Int, countryCode: String):Int?
+    {
+        return levelDao.getNextLevelForLanguageLevel(levelId, countryCode)
+    }
+
     suspend fun addInterval(interval:Interval)
     {
         levelDao.insertInterval(interval)
@@ -190,7 +195,7 @@ class LevelRepository @Inject constructor(
         levelDao.isFinalLevel(currentLevel, minLimit, maxLimit)
 
     suspend fun isLanguagePackFinalLevel(currentLevel: Int, countryCode: String) =
-        levelDao.isLanguagePackFinalLevel(currentLevel, countryCode)
+        levelDao.isLanguagePackFinalLevel(currentLevel, countryCode) == 1
 
     suspend fun isAllowedToSubmitPalindrome():Boolean
     {

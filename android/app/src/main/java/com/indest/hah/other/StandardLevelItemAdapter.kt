@@ -51,7 +51,8 @@ class StandardLevelItemAdapter(
     // Replace the contents of a view (invoked by the layout manager)
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(levelItemViewHolder: StandardLevelItemHolder, position: Int) {
-        levelItemViewHolder.textView.text = (position + 1).toString()
+        val badge = getNewBadge(dataSet[position])
+        levelItemViewHolder.textView.text = "${(position + 1)}$badge"
         levelItemViewHolder.setIsRecyclable(false)
         levelItemViewHolder.itemView.isClickable = if (dataSet[position].progress == LevelProgress.TODO) {
             levelItemViewHolder.textView.isEnabled = false
@@ -60,6 +61,17 @@ class StandardLevelItemAdapter(
             levelItemViewHolder.textView.isEnabled = true
             true
         }
+    }
+
+    // time_modified = 0 level_id > 10000 and author != ""
+    private fun getNewBadge(level:LevelData):String
+    {
+        var badge = ""
+        if (level.timeModified == 0L && level.levelId > 10000 && level.author != "")
+        {
+            badge = "$badge✨"
+        }
+        return badge
     }
 
     // Return the size of your dataset (invoked by the layout manager)

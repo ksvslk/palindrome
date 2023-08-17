@@ -27,7 +27,9 @@ import com.indest.hah.other.LevelSelectType.*
 import com.indest.hah.other.StandardLevelItemAdapter
 import com.indest.hah.other.safeNavigate
 import com.indest.hah.persistance.dto.LevelData
+import com.indest.hah.persistance.level.LevelProgress
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -63,12 +65,23 @@ class LevelSelectFragment : FullBottomSheetDialogFragment() {
                 when (levelSelectType) {
                     GAME_LEVELS -> {
                         levelViewModel.allGameLevelsFlow().collect { levels ->
+                            val countOfNewLevels = levels.count {
+                                it.second.progress == LevelProgress.TODO &&
+                                        it.second.timeModified == 0L &&
+                                        it.second.levelId in 1080..9999
+                            }
                             handleLevelsCollection(levels)
+                            binding.progressIndicator.visibility = View.GONE
+                            binding.levelSelectRecyclerview.visibility = View.VISIBLE
                         }
                     }
-
                     PLAYER_LEVELS -> {
                         levelViewModel.allPlayerLevelsFlow().collect { playerLevels ->
+                            val countOfNewLevels = playerLevels.count {
+                                it.second.progress == LevelProgress.TODO &&
+                                it.second.timeModified == 0L &&
+                                it.second.levelId in 1080..9999
+                            }
                             val currentLevel =
                                 levelViewModel.currentLevel.replayCache.firstOrNull()?.levelInfo?.levelId
                             val currentLevelIcon = getCurrentLevelIcon(currentLevel)
@@ -86,11 +99,15 @@ class LevelSelectFragment : FullBottomSheetDialogFragment() {
                                         }
                                     }
                                 }
+                            binding.progressIndicator.visibility = View.GONE
+                            binding.levelSelectRecyclerview.visibility = View.VISIBLE
                         }
                     }
 
                     LANGUAGE_LEVELS -> {
                         levelViewModel.getLevelsForCountry(language!!).collect { languageLevels ->
+                            // time_modified = 0 level_id > 10000 and author != ""
+                            val countOfNewLevels = languageLevels.count { it.timeModified == 0L && it.levelId > 10000 && it.author != "" }
                             val currentLevel =
                                 levelViewModel.currentLevel.replayCache.firstOrNull()?.levelInfo?.levelId
                             binding.levelSelectRecyclerview.adapter =
@@ -102,6 +119,8 @@ class LevelSelectFragment : FullBottomSheetDialogFragment() {
                                         }
                                     }
                                 }
+                            binding.progressIndicator.visibility = View.GONE
+                            binding.levelSelectRecyclerview.visibility = View.VISIBLE
                         }
                     }
 
@@ -124,6 +143,7 @@ class LevelSelectFragment : FullBottomSheetDialogFragment() {
                     }
                 }
             }
+
     }
 
     private fun getCurrentLevelIcon(level: Int?): String {

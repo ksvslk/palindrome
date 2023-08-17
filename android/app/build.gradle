@@ -132,11 +132,15 @@ android {
             excludes += ['**/attach_hotspot_windows.dll', 'META-INF/licenses/**', 'META-INF/AL2.0', 'META-INF/LGPL2.1']
         }
     }
-    buildToolsVersion '33.0.0'
     namespace 'com.indest.hah'
     androidResources {
         noCompress 'wav'
-        generateLocaleConfig true
+    }
+
+    bundle {
+        language {
+            enableSplit = false
+        }
     }
 
 }

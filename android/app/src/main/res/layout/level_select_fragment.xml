@@ -10,8 +10,16 @@
     app:divider="@drawable/divider"
     app:showDividers="middle">
 
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/progress_indicator"
+        android:layout_marginHorizontal="@dimen/default_large_margin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="true" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/level_select_recyclerview"
+        android:visibility="invisible"
         android:saveEnabled="false"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
