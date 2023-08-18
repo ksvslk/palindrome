@@ -1,9 +1,10 @@
 package com.indest.hah.other
 
 import android.content.Context
-import android.os.Build
-import android.provider.Settings
-import android.util.Log
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import android.text.style.RelativeSizeSpan
+import android.text.style.SuperscriptSpan
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -66,6 +67,27 @@ fun String.isPalindrome(language: String = "gb"): Boolean {
     // japanese kaibun might not be classic palindrome
     val isStringPalindrome = if (language == "ja") true else testString == testString.reversed()
     return testString.length >= 4 && isStringPalindrome
+}
+
+fun String.appendSmallSuperscript(superScript:String):SpannableStringBuilder
+{
+    val superscriptLevelCount = SpannableString(superScript)
+    superscriptLevelCount.setSpan(
+        RelativeSizeSpan(0.6f),
+        0, superScript.length,
+        SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
+    )
+    superscriptLevelCount.setSpan(
+        SuperscriptSpan(),
+        0, superScript.length,
+        SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
+    )
+
+    val spannableStringBuilder = SpannableStringBuilder()
+    spannableStringBuilder.append(this)
+    spannableStringBuilder.append(" ")
+    spannableStringBuilder.append(superscriptLevelCount)
+    return spannableStringBuilder
 }
 
 fun AppCompatActivity.hideSystemBars(viewGroup: ViewGroup) {

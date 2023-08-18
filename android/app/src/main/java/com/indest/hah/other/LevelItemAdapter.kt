@@ -2,16 +2,21 @@
 
 package com.indest.hah.other
 
+import android.R.attr.text
 import android.annotation.SuppressLint
-import android.util.Log
+import android.graphics.Color
+import android.text.SpannableString
+import android.text.style.UnderlineSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.color.MaterialColors
 import com.indest.hah.R
 import com.indest.hah.persistance.dto.LevelData
 import com.indest.hah.persistance.level.LevelProgress
+
 
 class LevelItemAdapter(
     private val currentLevelIcon: String,
@@ -59,8 +64,24 @@ class LevelItemAdapter(
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
         val levelNr = if (playerLevel) dataSet[position].second.levelId - 1000 else dataSet[position].second.levelId
-        levelItemViewHolder.textView.text =
-            "$levelNr${getNewBadge(dataSet[position].first, dataSet[position].second)}"
+        levelItemViewHolder.textView.text = if(dataSet[position].first) "$levelNr*" else "$levelNr"
+
+        val newLevel = isNewLevel(dataSet[position].second)
+        if (newLevel) {
+            val highlightedColor = MaterialColors.getColor(
+                levelItemViewHolder.textView.context,
+                com.google.android.material.R.attr.colorPrimary, Color.RED
+            )
+            val underlinedText = SpannableString(levelItemViewHolder.textView.text)
+            underlinedText.setSpan(
+                UnderlineSpan(),
+                0,
+                levelItemViewHolder.textView.text.length,
+                SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            levelItemViewHolder.textView.text = underlinedText
+            levelItemViewHolder.textView.setTextColor(highlightedColor)
+        }
 
         if (playerLevel)
         {
@@ -83,19 +104,22 @@ class LevelItemAdapter(
                 levelItemViewHolder.setIsRecyclable(false)
                 levelItemViewHolder.textView.text = currentLevelIcon
             }
+            if (newLevel)
+            {
+                levelItemViewHolder.setIsRecyclable(false)
+            }
         }
 
     }
 
     // progress = 0, time_modified = 0 and level_id < 10000 && level_id > 1080 - NEW PLAYER LEVEL
-    private fun getNewBadge(multipleSolutions:Boolean, level:LevelData):String
+    private fun isNewLevel(level:LevelData):Boolean
     {
-        var badge = if (multipleSolutions) "*" else ""
         if (level.progress == LevelProgress.TODO && level.timeModified == 0L && level.levelId in 1080..9999)
         {
-            badge = "$badge✨"
+            return true
         }
-        return badge
+        return false
     }
 
     // Return the size of your dataset (invoked by the layout manager)

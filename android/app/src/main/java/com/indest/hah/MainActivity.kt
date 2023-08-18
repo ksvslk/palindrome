@@ -1,6 +1,7 @@
 package com.indest.hah
 
 import android.content.Context
+import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -36,7 +37,9 @@ import com.google.android.gms.games.GamesSignInClient
 import com.google.android.gms.games.PlayGames
 import com.google.android.gms.games.Player
 import com.google.android.gms.tasks.Task
+import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.color.MaterialColors
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.BaseTransientBottomBar.ANIMATION_MODE_FADE
 import com.google.android.material.snackbar.Snackbar
@@ -65,6 +68,7 @@ import com.indest.hah.persistance.dto.SaveGame
 import com.indest.hah.savegame.SnapshotHelper
 import com.indest.hah.views.ButtonState
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
@@ -142,6 +146,7 @@ class MainActivity : AppCompatActivity() {
         collectRewardInfo()
         collectVariousEvents()
         collectPlayerLevelsForNotification()
+        collectNewLevelCount()
 
         binding.root.doOnNextLayout {
             val exclusions = listOf(Rect(0, 0, it.width, it.height))
@@ -222,18 +227,23 @@ class MainActivity : AppCompatActivity() {
         lastAddedLevel: Int,
         multipleLevels: Int = -1,
         countryCode: String = "",
-        showPlayButton:Boolean = true
+        showPlayButton: Boolean = true
     ) {
         Log.d(TAG, "showNewLevelMessage")
 
-        val flag = if (countryCode != "") { "${countryCode.countryCodeToEmoji()} " } else ""
+        val flag = if (countryCode != "") {
+            "${countryCode.countryCodeToEmoji()} "
+        } else ""
         val snackMessage =
             if (multipleLevels == -1) {
-                if (!showPlayButton)
-                {
-                    "$flag${resources.getString(R.string.new_level_by_language_pack_incomplete, player)}"
-                }
-                else {
+                if (!showPlayButton) {
+                    "$flag${
+                        resources.getString(
+                            R.string.new_level_by_language_pack_incomplete,
+                            player
+                        )
+                    }"
+                } else {
                     "$flag${resources.getString(R.string.new_level_by, player)}"
                 }
             } else {
@@ -243,8 +253,7 @@ class MainActivity : AppCompatActivity() {
         val snack = if (multipleLevels == -1 && !showPlayButton) {
             Snackbar.make(findViewById(android.R.id.content), snackMessage, 15000)
                 .setAnimationMode(ANIMATION_MODE_FADE)
-        }
-        else {
+        } else {
             Snackbar.make(findViewById(android.R.id.content), snackMessage, 15000)
                 .setAction(resources.getString(R.string.play)) {
                     val navHostFragment =
@@ -317,13 +326,16 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun submitScore(score: Long, playerLevels: Boolean = false, languageLevels:Boolean = false, countryCode: String) {
+    private fun submitScore(
+        score: Long,
+        playerLevels: Boolean = false,
+        languageLevels: Boolean = false,
+        countryCode: String
+    ) {
         val leaderboardId = if (playerLevels) {
             getString(R.string.leaderboard_player_levels_leaderboard)
-        }
-        else if (languageLevels) {
-            when(countryCode)
-            {
+        } else if (languageLevels) {
+            when (countryCode) {
                 "cn" -> getString(R.string.leaderboard_chinese)
                 "de" -> getString(R.string.leaderboard_german)
                 "es" -> getString(R.string.leaderboard_spanish)
@@ -343,7 +355,9 @@ class MainActivity : AppCompatActivity() {
                 "sv" -> getString(R.string.leaderboard_swedish)
                 "tr" -> getString(R.string.leaderboard_turkish)
                 "uk" -> getString(R.string.leaderboard_ukrainian)
-                else -> { ""}
+                else -> {
+                    ""
+                }
             }
         } else {
             getString(R.string.leaderboard_crme_de_la_crme)
@@ -421,7 +435,12 @@ class MainActivity : AppCompatActivity() {
                         }
 
                         is LevelViewModel.VariousEvent.SubmitScore -> {
-                            submitScore(event.score, event.playerLevels, event.languageLevels, event.countryCode)
+                            submitScore(
+                                event.score,
+                                event.playerLevels,
+                                event.languageLevels,
+                                event.countryCode
+                            )
                         }
 
                         is LevelViewModel.VariousEvent.UnlockAchievement -> {
@@ -470,6 +489,18 @@ class MainActivity : AppCompatActivity() {
                             binding.container.invalidate()
                         }
                     }
+                }
+            }
+        }
+    }
+
+    private fun collectNewLevelCount()
+    {
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED)
+            {
+                levelViewModel.countOfNewPlayerLevelsAndLanguageLevels().collect {
+                    showNewLevelsCount(it.second + it.first)
                 }
             }
         }
@@ -540,7 +571,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    fun updateProgressBar(progress: Pair<Int, String>, countryCode:String) {
+    fun updateProgressBar(progress: Pair<Int, String>, countryCode: String) {
         binding.levelNumber.text = progress.second
         val drawableId = countryCode.mapCountryCodeToLanguageAndFlag(applicationContext).second
         binding.levelFlag.setImageResource(drawableId)
@@ -549,21 +580,18 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
-    fun downloadHintPictureIfNeeded(levelNr: Int)
-    {
+    fun downloadHintPictureIfNeeded(levelNr: Int) {
         Log.d(TAG, "downloadHintIfNeeded")
 
         // let's assume each time we don't have the picture
         levelViewModel.setPictureDownloaded(isPresent = false)
 
-        if (checkIfHintExistsForLevel(levelNr))
-        {
+        if (checkIfHintExistsForLevel(levelNr)) {
             levelViewModel.setPictureDownloaded(isPresent = true)
-        }
-        else {
+        } else {
             val storage = Firebase.storage
-            val gsReference = storage.getReferenceFromUrl("${C.FIREBASE_PICS_STORAGE_PATH}level${levelNr}.jpg")
+            val gsReference =
+                storage.getReferenceFromUrl("${C.FIREBASE_PICS_STORAGE_PATH}level${levelNr}.jpg")
             Log.d(TAG, "gsReference: ${gsReference.name}")
             this.filesDir?.let {
                 val localFile = File(it, "level${levelNr}.jpg")
@@ -578,8 +606,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkIfHintExistsForLevel(levelNr:Int) : Boolean
-    {
+    private fun checkIfHintExistsForLevel(levelNr: Int): Boolean {
         if (levelNr <= C.PLAYER_LEVELS_COVERED_LOCALLY || levelNr in C.LANGUAGE_LEVELS_RANGE) return true
         val outputDir = this.filesDir
         outputDir?.let {
@@ -598,6 +625,19 @@ class MainActivity : AppCompatActivity() {
     private fun getString(key: String): String? {
         val preference = getSharedPreferences(PREFERENCE_NAME, PREFERENCE_MODE)
         return preference.getString(key, null)
+    }
+
+    private fun showNewLevelsCount(newLevelCount:Int) {
+        val levelsBadge = binding.root.findViewById<BottomNavigationView>(R.id.bottomNavView)
+            .getOrCreateBadge(R.id.navigation_stages)
+        if (newLevelCount > 0)
+        {
+            levelsBadge.isVisible = true
+            levelsBadge.number = newLevelCount
+        }
+        else {
+            levelsBadge.isVisible = false
+        }
     }
 
 }

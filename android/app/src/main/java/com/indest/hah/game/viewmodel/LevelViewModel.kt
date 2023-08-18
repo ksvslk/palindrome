@@ -370,6 +370,28 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+    fun countOfNewPlayerLevelsAndLanguageLevels(): Flow<Pair<Int, Int>> {
+        return flow {
+            emit(
+                Pair(
+                    levelRepository.getAllLevels().count {
+                        it.second.progress == LevelProgress.TODO &&
+                                it.second.timeModified == 0L &&
+                                it.second.levelId in 1080..9999
+                    },
+                    levelRepository.getAllLevels().count {
+                        it.second.timeModified == 0L &&
+                                it.second.levelId > 10000 &&
+                                it.second.author != "" &&
+                                it.second.countryCode != "gb" &&
+                                it.second.countryCode != ""
+                    })
+            )
+        }
+    }
+
+
+
     fun allGameLevelsFlow(): Flow<List<Pair<Boolean, LevelData>>> {
         return flow {
             emit(levelRepository.getAllLevels().filter { it.second.levelId <= 100 })
@@ -389,12 +411,9 @@ class LevelViewModel @Inject constructor(
     }
 
 
-    // progress = 0, time_modified = 0 and level_id < 10000 && level_id > 1080 - NEW PLAYER LEVEL
-    // time_modified = 0 level_id > 10000 and author != ""
-
-    fun allUniqueCountriesWithLevelCount(): Flow<List<Pair<String, Int>>> {
+    fun allUniqueCountriesWithLevelCount(): Flow<List<Triple<String, Int, Int?>>> {
         return flow {
-            emit(levelRepository.getUniqueCountriesWithLevelCount())
+            emit(levelRepository.getUniqueCountriesWithNewLevelCount())
         }
     }
 

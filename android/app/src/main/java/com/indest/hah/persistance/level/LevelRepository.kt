@@ -100,8 +100,13 @@ class LevelRepository @Inject constructor(
     suspend fun getUniqueCountries():List<String>
         = levelDao.getUniqueCountries()
 
-    suspend fun getUniqueCountriesWithLevelCount():List<Pair<String,Int>>
-        = levelDao.getUniqueCountriesWithLevelCount().map { Pair(it.key, it.value) }
+    suspend fun getUniqueCountriesWithNewLevelCount():List<Triple<String,Int,Int?>> {
+        val languageNewLevelsCount = levelDao.getUniqueCountriesWithNewLevelCount()
+        val languageLevelsCount = levelDao.getUniqueCountriesWithLevelCount()
+        return languageLevelsCount.map {
+            Triple(it.key, it.value, languageNewLevelsCount[it.key])
+        }
+    }
 
     suspend fun getLevelsForCountry(cc:String):List<LevelData>
         = levelDao.getLevelsForCountry(cc).map { it.levelInfo }

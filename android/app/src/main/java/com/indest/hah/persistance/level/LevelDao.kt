@@ -29,6 +29,11 @@ interface LevelDao {
     @Query("select country_code as language, count(*) AS count from level_info_table where country_code not in('gb') group by country_code order by count desc")
     suspend fun getUniqueCountriesWithLevelCount(): Map<String, Int>
 
+
+    @MapInfo(keyColumn = "language", valueColumn = "count")
+    @Query("select country_code as language, count(*) AS count from level_info_table where country_code not in('gb') and time_modified = 0 and level_id > 10000 and author != '' and country_code != '' group by country_code order by count desc")
+    suspend fun getUniqueCountriesWithNewLevelCount(): Map<String, Int>
+
     @Transaction
     @Query("select * from level_info_table where country_code = :cc")
     suspend fun getLevelsForCountry(cc: String): List<Level>

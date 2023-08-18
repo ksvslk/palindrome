@@ -1,10 +1,6 @@
 package com.indest.hah.fragments
 
 import android.os.Bundle
-import android.text.Html
-import android.text.SpannableString
-import android.text.Spanned
-import android.text.style.SuperscriptSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +19,7 @@ import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.general.AccountStatus
 import com.indest.hah.general.GeneralViewModel
 import com.indest.hah.other.LevelSelectType
+import com.indest.hah.other.appendSmallSuperscript
 import com.indest.hah.other.safeNavigate
 import com.indest.hah.persistance.level.LevelProgress
 import kotlinx.coroutines.flow.combine
@@ -77,21 +74,23 @@ class StagesFragment : FullBottomSheetDialogFragment() {
 
             }
         }
+
         lifecycleScope.launch {
-            levelViewModel.allPlayerLevelsFlow().collect { playerLevels ->
-                val countOfNewLevels = playerLevels.count {
-                    it.second.progress == LevelProgress.TODO &&
-                            it.second.timeModified == 0L &&
-                            it.second.levelId in 1080..9999
+            levelViewModel.countOfNewPlayerLevelsAndLanguageLevels().collect { (newPlayerLevelCount, newLanguageLevelCount) ->
+                val superScriptPlayer = "+$newPlayerLevelCount"
+                val playerLevelSelectButtonTitle = binding.playerLevelsButton.findViewById<AppCompatTextView>(R.id.any_button_title)
+                val finalPlayerTitle = playerLevelSelectButtonTitle.text.toString().appendSmallSuperscript(superScriptPlayer)
+
+                if (newPlayerLevelCount > 0) {
+                    playerLevelSelectButtonTitle.text = finalPlayerTitle
                 }
-                val count = "+$countOfNewLevels"
-                val string = SpannableString(count)
-                string.setSpan(SuperscriptSpan(), 1, string.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 
-                if (countOfNewLevels > 0) {
-                    val title = binding.playerLevelsButton.findViewById<AppCompatTextView>(R.id.any_button_title)
-                    title.text = "${title.text} $string"
+                val superScriptLanguage = "+$newLanguageLevelCount"
+                val langLevelSelectButtonTitle = binding.internationalLevelsButton.findViewById<AppCompatTextView>(R.id.any_button_title)
+                val langPlayerTitle = langLevelSelectButtonTitle.text.toString().appendSmallSuperscript(superScriptLanguage)
 
+                if (newLanguageLevelCount > 0) {
+                    langLevelSelectButtonTitle.text = langPlayerTitle
                 }
             }
         }
