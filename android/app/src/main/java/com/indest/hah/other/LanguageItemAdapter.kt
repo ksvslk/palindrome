@@ -17,7 +17,7 @@ import java.security.AccessController.getContext
 class LanguageItemAdapter(
     private val context: Context,
     private val disableCount:Boolean = false,
-    private val dataSet: List<Pair<String,Int>>,
+    private val dataSet: List<Triple<String,Int,Int?>>,
     private val onItemClicked: (String?) -> Unit) :
         RecyclerView.Adapter<LanguageItemAdapter.LanguageItemViewHolder>() {
 
@@ -52,7 +52,8 @@ class LanguageItemAdapter(
 
     override fun onBindViewHolder(holder: LanguageItemViewHolder, position: Int) {
         val languageAndFlag = dataSet[position].first.mapCountryCodeToLanguageAndFlag(context)
-        holder.itemView.findViewById<AppCompatTextView>(R.id.language_to_select).text = languageAndFlag.first
+        val countOfNewLevels = if (dataSet[position].third != null) "+${dataSet[position].third}" else ""
+        holder.itemView.findViewById<AppCompatTextView>(R.id.language_to_select).text = languageAndFlag.first.appendSmallSuperscript(countOfNewLevels)
         holder.itemView.findViewById<AppCompatImageView>(R.id.language_image).setImageResource(languageAndFlag.second)
         if (!disableCount) {
             holder.itemView.findViewById<AppCompatTextView>(R.id.count_of_levels).text = dataSet[position].second.toString()

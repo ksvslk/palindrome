@@ -27,7 +27,9 @@ import com.indest.hah.other.LevelSelectType.*
 import com.indest.hah.other.StandardLevelItemAdapter
 import com.indest.hah.other.safeNavigate
 import com.indest.hah.persistance.dto.LevelData
+import com.indest.hah.persistance.level.LevelProgress
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -64,9 +66,10 @@ class LevelSelectFragment : FullBottomSheetDialogFragment() {
                     GAME_LEVELS -> {
                         levelViewModel.allGameLevelsFlow().collect { levels ->
                             handleLevelsCollection(levels)
+                            binding.progressIndicator.visibility = View.GONE
+                            binding.levelSelectRecyclerview.visibility = View.VISIBLE
                         }
                     }
-
                     PLAYER_LEVELS -> {
                         levelViewModel.allPlayerLevelsFlow().collect { playerLevels ->
                             val currentLevel =
@@ -86,6 +89,8 @@ class LevelSelectFragment : FullBottomSheetDialogFragment() {
                                         }
                                     }
                                 }
+                            binding.progressIndicator.visibility = View.GONE
+                            binding.levelSelectRecyclerview.visibility = View.VISIBLE
                         }
                     }
 
@@ -102,6 +107,8 @@ class LevelSelectFragment : FullBottomSheetDialogFragment() {
                                         }
                                     }
                                 }
+                            binding.progressIndicator.visibility = View.GONE
+                            binding.levelSelectRecyclerview.visibility = View.VISIBLE
                         }
                     }
 
@@ -124,6 +131,7 @@ class LevelSelectFragment : FullBottomSheetDialogFragment() {
                     }
                 }
             }
+
     }
 
     private fun getCurrentLevelIcon(level: Int?): String {

@@ -69,7 +69,7 @@
     <string name="earn">Earn</string>
     <string name="points_to_rank_up">points to rank up!</string>
     <string name="new_level_by">New level by <xliff:g id="player_name">%s</xliff:g>!</string>
-    <string name="new_level_by_language_pack_incomplete">New level by <xliff:g id="player_name_incomplete">%s</xliff:g>, complete level pack to play it.</string>
+    <string name="new_level_by_language_pack_incomplete">New level by <xliff:g id="player_name_incomplete">%s</xliff:g>.\nComplete level pack to play it.</string>
     <string name="levels_added">levels added!</string>
     <string name="level_already_completed">Level is already completed.</string>
     <string name="points">points</string>
@@ -124,11 +124,7 @@
     <string name="sad_mode_pref" translatable="false">SAD_MODE</string>
 
     <!-- TUTORIAL -->
-    <string name="tutorial_text">Create words and sentences that read same from either side</string>
-    <string name="tutorial3_second_text">• Sentences require regular punctuation \n• Multiple solutions have \"*\" mark \n• Fewer mistakes = better score</string>
-    <string name="tutorial_25_level_promo">One more thing… Reach level 25 and get \"Instant Clues\" as a reward.</string>
-    <string name="tutorial_complete_text">Done! Enjoy the game 🚀</string>
-    <string name="next">Next</string>
+    <string name="tutorial_text">Create words and sentences that read same from either side. Fewer mistakes = better score.</string>
     <string name="play">Play</string>
 
     <!-- LEVEL SELECT ICONS -->

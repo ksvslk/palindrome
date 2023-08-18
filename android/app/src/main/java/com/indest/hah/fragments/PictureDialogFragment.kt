@@ -21,9 +21,10 @@ class PictureDialogFragment : DialogFragment() {
     private var customDrawable:Drawable? = null
     private var bitmap:Bitmap? = null
 
-    fun setDrawable(localContext: Context, levelNr:Int, countryCode:String = "gb") {
+    fun setDrawable(localContext: Context, levelNr: Int, relativeLevelNr:Int, countryCode:String = "gb") {
+        Log.d(TAG, "LEVEL NR: $levelNr")
         if (levelNr <= C.PLAYER_LEVELS_COVERED_LOCALLY || levelNr in LANGUAGE_LEVELS_RANGE) {
-            val hintResourceId = getDrawableFor(levelNr = levelNr, cc = countryCode, context = localContext)
+            val hintResourceId = getDrawableFor(levelNr = relativeLevelNr, cc = countryCode, context = localContext)
             customDrawable = ContextCompat.getDrawable(localContext, hintResourceId)
         }
         else {
@@ -40,6 +41,7 @@ class PictureDialogFragment : DialogFragment() {
             }
         }
     }
+
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog  {
         val layout = layoutInflater.inflate(

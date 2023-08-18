@@ -1,11 +1,15 @@
 package com.indest.hah.other
 
 import android.annotation.SuppressLint
+import android.graphics.Color
+import android.text.SpannableString
+import android.text.style.UnderlineSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.color.MaterialColors
 import com.indest.hah.R
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
@@ -51,7 +55,26 @@ class StandardLevelItemAdapter(
     // Replace the contents of a view (invoked by the layout manager)
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(levelItemViewHolder: StandardLevelItemHolder, position: Int) {
-        levelItemViewHolder.textView.text = (position + 1).toString()
+        levelItemViewHolder.textView.text = "${(position + 1)}"
+
+        val newLevel = isNewLevel(dataSet[position])
+        if (newLevel) {
+            val highlightedColor = MaterialColors.getColor(
+                levelItemViewHolder.textView.context,
+                com.google.android.material.R.attr.colorPrimary, Color.RED
+            )
+            val underlinedText = SpannableString(levelItemViewHolder.textView.text)
+            underlinedText.setSpan(
+                UnderlineSpan(),
+                0,
+                levelItemViewHolder.textView.text.length,
+                SpannableString.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            levelItemViewHolder.textView.text = underlinedText
+            if (dataSet[position].progress != LevelProgress.TODO) levelItemViewHolder.textView.setTextColor(highlightedColor)
+        }
+
+
         levelItemViewHolder.setIsRecyclable(false)
         levelItemViewHolder.itemView.isClickable = if (dataSet[position].progress == LevelProgress.TODO) {
             levelItemViewHolder.textView.isEnabled = false
@@ -60,6 +83,16 @@ class StandardLevelItemAdapter(
             levelItemViewHolder.textView.isEnabled = true
             true
         }
+    }
+
+    // time_modified = 0 level_id > 10000 and author != ""
+    private fun isNewLevel(level:LevelData):Boolean
+    {
+        if (level.timeModified == 0L && level.levelId > 10000 && level.author != "")
+        {
+            return true
+        }
+        return false
     }
 
     // Return the size of your dataset (invoked by the layout manager)

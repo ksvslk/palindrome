@@ -74,7 +74,7 @@
     <string name="earn">Zarabiaj</string>
     <string name="points_to_rank_up">punktów do awansu!</string>
     <string name="new_level_by">Nowy poziom stworzony przez <xliff:g id="player_name">%s</xliff:g>!</string>
-    <string name="new_level_by_language_pack_incomplete">Nowy poziom autorstwa <xliff:g id="player_name_incomplete">%s</xliff:g>, pełny pakiet poziomów, aby w niego zagrać!</string>
+    <string name="new_level_by_language_pack_incomplete">Nowy poziom autorstwa <xliff:g id="player_name_incomplete">%s</xliff:g>.\nPełny pakiet poziomów, aby w niego zagrać!</string>
     <string name="levels_added">dodane poziomy!</string>
     <string name="level_already_completed">Poziom jest już ukończony.</string>
     <string name="points">punktów</string>
@@ -110,11 +110,7 @@
     </string-array>
 
     <!-- TUTORIAL -->
-    <string name="tutorial_text">Twórz słowa i zdania, które brzmią tak samo z obu stron</string>
-    <string name="tutorial3_second_text">• Zdania wymagają regularnej interpunkcji \\n• Wiele rozwiązań ma znak \\&amp;quot;*\\&amp;quot; \\n• Mniej błędów = lepszy wynik</string>
-    <string name="tutorial_25_level_promo">Jeszcze jedno… Osiągnij poziom 25 i zdobądź \\&amp;quot;Natychmiastowe wskazówki\\&amp;quot; jako nagrodę.</string>
-    <string name="tutorial_complete_text">Gotowe! Ciesz się grą 🚀</string>
-    <string name="next">Następny</string>
+    <string name="tutorial_text">Twórz słowa i zdania, które brzmią tak samo z obu stron. Mniej błędów = lepszy wynik.</string>
     <string name="play">Odtwórz</string>
 
     <!-- Languages -->

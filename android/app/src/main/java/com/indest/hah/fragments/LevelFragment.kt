@@ -434,7 +434,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
             when (isLastLevel) {
                 Triple(false, false, "") -> {
-                    levelViewModel.executeLevelCompleteActions()
+                    levelViewModel.executeLevelCompleteActions(justNext = true)
                 }
                 Triple(true, false, "") -> {
                     levelViewModel.executeLevelCompleteActions(1001)

@@ -140,7 +140,7 @@
     <string name="points_to_rank_up">punti per salire di livello!</string>
 
     <string name="new_level_by">Nuovo livello creato da <xliff:g id="player_name">%s</xliff:g>!</string>
-    <string name="new_level_by_language_pack_incomplete">Nuovo livello di <xliff:g id="player_name_incomplete">%s</xliff:g>, pacchetto di livello completo per giocarci!</string>
+    <string name="new_level_by_language_pack_incomplete">Nuovo livello di <xliff:g id="player_name_incomplete">%s</xliff:g>.\nPacchetto di livello completo per giocarci!</string>
 
     <string name="levels_added">livelli aggiunti!</string>
 
@@ -184,16 +184,7 @@
 
     <!-- TUTORIAL -->
 
-    <string name="tutorial_text">Crea parole e frasi che leggono lo stesso da entrambi i lati</string>
-
-    <string name="tutorial3_second_text">• Le frasi richiedono una punteggiatura regolare • Le soluzioni multiple hanno il segno \"*\" • Meno errori = punteggio migliore</string>
-
-    <string name="tutorial_25_level_promo">Ancora una cosa... Raggiungi il livello 25 e ottieni \"Indizi istantanei\" come ricompensa.</string>
-
-    <string name="tutorial_complete_text">Fatto! Goditi il ​​gioco &#128640;</string>
-
-    <string name="next">Prossimo</string>
-
+    <string name="tutorial_text">Crea parole e frasi che leggono lo stesso da entrambi i lati. Meno errori = punteggio migliore.</string>
     <string name="play">Giocare</string>
 
 

@@ -141,7 +141,7 @@
     <string name="points_to_rank_up">pontos para subir de nível!</string>
 
     <string name="new_level_by">Novo nível criado por <xliff:g id="player_name">%s</xliff:g>!</string>
-    <string name="new_level_by_language_pack_incomplete">Novo nível de <xliff:g id="player_name_incomplete">%s</xliff:g>, pacote de nível completo para jogá-lo!</string>
+    <string name="new_level_by_language_pack_incomplete">Novo nível de <xliff:g id="player_name_incomplete">%s</xliff:g>.\nPacote de nível completo para jogá-lo!</string>
 
     <string name="levels_added">níveis adicionados!</string>
 
@@ -185,16 +185,7 @@
 
     <!-- TUTORIAL -->
 
-    <string name="tutorial_text">Crie palavras e frases que se lêem de ambos os lados</string>
-
-    <string name="tutorial3_second_text">• As frases exigem pontuação regular \n• Várias soluções têm a marca \"*\" \n• Menos erros = melhor pontuação</string>
-
-    <string name="tutorial_25_level_promo">Mais uma coisa… Alcance o nível 25 e receba \"Pistas Instantâneas\" como recompensa.</string>
-
-    <string name="tutorial_complete_text">Feito! Aproveite o jogo &#128640;</string>
-
-    <string name="next">Próximo</string>
-
+    <string name="tutorial_text">Crie palavras e frases que se lêem de ambos os lados. Menos erros = melhor pontuação.</string>
     <string name="play">Jogar</string>
 
 

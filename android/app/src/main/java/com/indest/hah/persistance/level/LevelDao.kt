@@ -1,5 +1,6 @@
 package com.indest.hah.persistance.level
 
+import android.util.Log
 import androidx.room.*
 import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteQuery
@@ -7,9 +8,12 @@ import com.indest.hah.game.creation.Shuffler
 import com.indest.hah.other.getLevelScore
 import com.indest.hah.persistance.dto.*
 import kotlinx.coroutines.flow.Flow
+import kotlin.Exception
 
+private val TAG = "LevelDao"
 @Dao
 interface LevelDao {
+
     private val databaseIdentityQuery: SimpleSQLiteQuery
         get() = SimpleSQLiteQuery(
             "SELECT identity_hash FROM room_master_table"
@@ -24,6 +28,11 @@ interface LevelDao {
     @MapInfo(keyColumn = "language", valueColumn = "count")
     @Query("select country_code as language, count(*) AS count from level_info_table where country_code not in('gb') group by country_code order by count desc")
     suspend fun getUniqueCountriesWithLevelCount(): Map<String, Int>
+
+
+    @MapInfo(keyColumn = "language", valueColumn = "count")
+    @Query("select country_code as language, count(*) AS count from level_info_table where country_code not in('gb') and time_modified = 0 and level_id > 10000 and author != '' and country_code != '' group by country_code order by count desc")
+    suspend fun getUniqueCountriesWithNewLevelCount(): Map<String, Int>
 
     @Transaction
     @Query("select * from level_info_table where country_code = :cc")
@@ -223,70 +232,75 @@ interface LevelDao {
     suspend fun insertPlayerLevels(playerLevel: List<PlayerLevel>): Pair<LevelData, Int> {
         var newLevelsCount = 0
         var oneLevelId = 1L
-        playerLevel.forEach { level ->
-            val isLanguagePackCompleted = if (level.countryCode != "" && level.countryCode != "gb") isLanguagePackCompleted(level.countryCode) else true
-            if (!isLevelAdded(level.levelId)) {
-                val puzzle = level.solutionToCategory.keys.firstOrNull() ?: ""
-                insertLevelInfo(
-                    LevelData(
-                        levelId = level.levelId.toInt(),
-                        puzzle = puzzle,
-                        categoryRewarded = false,
-                        pictureRewarded = false,
-                        progress = if (isLanguagePackCompleted) LevelProgress.IN_PROGRESS else LevelProgress.TODO,
-                        score = level.levelId.toInt().getLevelScore(puzzle = puzzle),
-                        bestScore = 0,
-                        timeModified = 0,
-                        author = level.player,
-                        columnCount = -1,
-                        countryCode = level.countryCode
-                    )
-                )
-                level.solutionToCategory.entries.forEach { solutionToCategory ->
-                    val maxSolutionId = getMaxSolutionId()
-                    insertSolution(
-                        Solution(
-                            solutionId = if (maxSolutionId == 100) 1001 else maxSolutionId + 1,
-                            parentId = level.levelId.toInt(),
-                            palindrome = solutionToCategory.key,
-                            hint = solutionToCategory.value["hint"] ?: "",
-                            hint_cn = solutionToCategory.value["hint_cn"] ?: "",
-                            hint_de = solutionToCategory.value["hint_de"] ?: "",
-                            hint_es = solutionToCategory.value["hint_es"] ?: "",
-                            hint_et = solutionToCategory.value["hint_et"] ?: "",
-                            hint_fi = solutionToCategory.value["hint_fi"] ?: "",
-                            hint_fr = solutionToCategory.value["hint_fr"] ?: "",
-                            hint_id = solutionToCategory.value["hint_id"] ?: "",
-                            hint_it = solutionToCategory.value["hint_it"] ?: "",
-                            hint_ja = solutionToCategory.value["hint_ja"] ?: "",
-                            hint_ko = solutionToCategory.value["hint_ko"] ?: "",
-                            hint_nl = solutionToCategory.value["hint_nl"] ?: "",
-                            hint_pl = solutionToCategory.value["hint_pl"] ?: "",
-                            hint_pt = solutionToCategory.value["hint_pt"] ?: "",
-                            hint_ro = solutionToCategory.value["hint_ro"] ?: "",
-                            hint_sv = solutionToCategory.value["hint_sv"] ?: "",
-                            hint_tr = solutionToCategory.value["hint_tr"] ?: "",
-                            hint_uk = solutionToCategory.value["hint_uk"] ?: "",
-                            solved = false
+        try {
+            playerLevel.forEach { level ->
+                val isLanguagePackCompleted = if (level.countryCode != "" && level.countryCode != "gb") isLanguagePackCompleted(level.countryCode) else true
+                if (!isLevelAdded(level.levelId)) {
+                    val puzzle = level.solutionToCategory.keys.first()
+                    insertLevelInfo(
+                        LevelData(
+                            levelId = level.levelId.toInt(),
+                            puzzle = puzzle,
+                            categoryRewarded = false,
+                            pictureRewarded = false,
+                            progress = if (isLanguagePackCompleted == 1) LevelProgress.IN_PROGRESS else LevelProgress.TODO,
+                            score = level.levelId.toInt().getLevelScore(puzzle = puzzle),
+                            bestScore = 0,
+                            timeModified = 0,
+                            author = level.player,
+                            columnCount = -1,
+                            countryCode = level.countryCode
                         )
                     )
+                    level.solutionToCategory.entries.forEach { solutionToHintsMap ->
+                        val maxSolutionId = getMaxSolutionId()
+                        insertSolution(
+                            Solution(
+                                solutionId = if (maxSolutionId == 100) 1001 else maxSolutionId + 1,
+                                parentId = level.levelId.toInt(),
+                                palindrome = solutionToHintsMap.key,
+                                hint = solutionToHintsMap.value.getOrDefault("hint", ""),
+                                hint_cn = solutionToHintsMap.value.getOrDefault("hint_cn", ""),
+                                hint_de = solutionToHintsMap.value.getOrDefault("hint_de", ""),
+                                hint_es = solutionToHintsMap.value.getOrDefault("hint_es", ""),
+                                hint_et = solutionToHintsMap.value.getOrDefault("hint_et", ""),
+                                hint_fi = solutionToHintsMap.value.getOrDefault("hint_fi", ""),
+                                hint_fr = solutionToHintsMap.value.getOrDefault("hint_fr", ""),
+                                hint_id = solutionToHintsMap.value.getOrDefault("hint_id", ""),
+                                hint_it = solutionToHintsMap.value.getOrDefault("hint_it", ""),
+                                hint_ja = solutionToHintsMap.value.getOrDefault("hint_ja", ""),
+                                hint_ko = solutionToHintsMap.value.getOrDefault("hint_ko", ""),
+                                hint_nl = solutionToHintsMap.value.getOrDefault("hint_nl", ""),
+                                hint_pl = solutionToHintsMap.value.getOrDefault("hint_pl", ""),
+                                hint_pt = solutionToHintsMap.value.getOrDefault("hint_pt", ""),
+                                hint_ro = solutionToHintsMap.value.getOrDefault("hint_ro", ""),
+                                hint_sv = solutionToHintsMap.value.getOrDefault("hint_sv", ""),
+                                hint_tr = solutionToHintsMap.value.getOrDefault("hint_tr", ""),
+                                hint_uk = solutionToHintsMap.value.getOrDefault("hint_uk", ""),
+                                solved = false
+                            )
+                        )
+                    }
+                    val puzzleShuffled = Shuffler.getShuffledSolution(puzzle).replace("-", "")
+                    updatePuzzle(level.levelId.toInt(), puzzleShuffled)
+                    puzzleShuffled.forEachIndexed { index, char ->
+                        insertLetterData(
+                            ownerId = level.levelId.toInt(),
+                            homeIndex = index,
+                            friendIndex = -666,
+                            letter = char,
+                            locked = false,
+                        )
+                    }
+                    newLevelsCount++
+                    oneLevelId = level.levelId
                 }
-                val solution = level.solutionToCategory.keys.first()
-                val puzzleShuffled = Shuffler.getShuffledSolution(solution).replace("-", "")
-                updatePuzzle(level.levelId.toInt(), puzzleShuffled)
-                puzzleShuffled.forEachIndexed { index, char ->
-                    insertLetterData(
-                        ownerId = level.levelId.toInt(),
-                        homeIndex = index,
-                        friendIndex = -666,
-                        letter = char,
-                        locked = false,
-                    )
-                }
-                newLevelsCount++
-                oneLevelId = level.levelId
             }
+        } catch (e:Exception)
+        {
+            Log.e(TAG, "Could not insert level(s): $playerLevel to database.")
         }
+
         return Pair(getSpecificLevel(oneLevelId), newLevelsCount)
     }
 
@@ -554,7 +568,7 @@ interface LevelDao {
 
     @Transaction
     suspend fun matchFirstLevelWithUserLocale(currentTag: String) {
-        if (getMaximumTimestamp()?.equals(0L) == true) {
+        if (getMaximumTimestamp()?.equals(1L) == true) {
             var levelId = 1
             if (currentTag != "gb") {
                 levelId = getFirstLevelLevelIdForCountry(currentTag)
@@ -585,8 +599,8 @@ interface LevelDao {
     @Query("select max(level_id) = :currentLevel from level_info_table where level_id >= :minLimit and level_id <= :maxLimit")
     suspend fun isFinalLevel(currentLevel: Int, minLimit: Int, maxLimit: Int): Int?
 
-    @Query("select case when level_id = (select max(level_id) from level_info_table where country_code = :countryCode and country_code != 'gb') then 1 else 0 end from level_info_table where level_id = :currentLevel and country_code =:countryCode")
-    suspend fun isLanguagePackFinalLevel(currentLevel: Int, countryCode: String): Boolean
+    @Query("select case when :currentLevel = (select max(level_id) from level_info_table where country_code = :countryCode and country_code != 'gb') then 1 else 0 end")
+    suspend fun isLanguagePackFinalLevel(currentLevel: Int, countryCode: String): Int
 
     @Query("select timestamp from interval where name = 'last_submission'")
     suspend fun getLastSubmissionTimestamp(): Long?
@@ -597,6 +611,10 @@ interface LevelDao {
     @Query("select max(time_modified) from level_info_table")
     suspend fun getMaximumTimestamp(): Long?
 
-    @Query("SELECT CASE WHEN COUNT(*) > 0 THEN 0 ELSE 1 END AS result FROM level_info_table WHERE country_code = :countryCode AND progress < 1")
-    suspend fun isLanguagePackCompleted(countryCode: String):Boolean
+    @Query("select case when 0 = (select count(*) FROM level_info_table WHERE country_code = :countryCode AND progress < 1) then 1 else 0 end")
+    suspend fun isLanguagePackCompleted(countryCode: String):Int
+
+    @Query("select level_id from level_info_table where level_id > :levelId and country_code = :countryCode order by level_id asc limit 1")
+    suspend fun getNextLevelForLanguageLevel(levelId:Int, countryCode: String):Int?
+
 }

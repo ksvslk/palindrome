@@ -30,6 +30,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
@@ -203,14 +204,14 @@ class LevelViewModel @Inject constructor(
 
     init {
         /*
+        // Initial db creation
         viewModelScope.launch {
             addRegularLevels()
             addPlayerLevelsUntil1080()
             addLanguagePacks()
             addIntervals()
-            //checkLanguagePackValidity()
         }
-        */
+         */
     }
 
     suspend fun isShowScores(): Boolean {
@@ -227,12 +228,12 @@ class LevelViewModel @Inject constructor(
             levelRepository.isFinalLevel(_currentLevel.value.levelInfo.levelId, 1, 100)
         val lastPlayerLevel =
             levelRepository.isFinalLevel(_currentLevel.value.levelInfo.levelId, 1001, Int.MAX_VALUE)
-        val isLanguageLevel = levelRepository.isLanguagePackFinalLevel(
+        val isLanguageLevelFinal = levelRepository.isLanguagePackFinalLevel(
             _currentLevel.value.levelInfo.levelId,
             currentLevel.value.levelInfo.countryCode
         )
         val finalLevelInCountryCode =
-            if (isLanguageLevel) _currentLevel.value.levelInfo.countryCode else ""
+            if (isLanguageLevelFinal) _currentLevel.value.levelInfo.countryCode else ""
         return Triple(lastGameLevel == 1, lastPlayerLevel == 1, finalLevelInCountryCode)
     }
 
@@ -338,43 +339,24 @@ class LevelViewModel @Inject constructor(
         }
     }
 
-
-    fun executeLevelCompleteActions(changeLevelTo: Int = _currentLevel.value.levelInfo.levelId + 1) {
+    fun executeLevelCompleteActions(
+        changeLevelTo: Int = _currentLevel.value.levelInfo.levelId + 1,
+        justNext: Boolean = false
+    ) {
         val levelNr = _currentLevel.value.levelInfo.levelId
         val hintInterval = getApplication<Application>().getString(R.string.hint_suggestion)
         viewModelScope.launch {
-            levelRepository.executeLevelCompleteTransaction(levelNr, hintInterval, changeLevelTo)
+            val levelToLoad = if (justNext) levelRepository.getNextLevelForLanguageLevel(
+                levelNr,
+                _currentLevel.value.levelInfo.countryCode
+            )!! else changeLevelTo
+            levelRepository.executeLevelCompleteTransaction(levelNr, hintInterval, levelToLoad)
             levelRepository.increaseCount(getApplication<Application>().getString(R.string.sad_mode_interval))
             levelRepository.increaseCount(getApplication<Application>().getString(R.string.player_centered_scores))
-            if (changeLevelTo - _currentLevel.value.levelInfo.levelId == 1) saveGameImmediately()
+            if (levelToLoad - _currentLevel.value.levelInfo.levelId == 1) saveGameImmediately()
             logLevelStart()
         }
     }
-
-
-    fun executeLevelCompleteActionsFinal() {
-        val levelNr = _currentLevel.value.levelInfo.levelId
-        val hintInterval = getApplication<Application>().getString(R.string.hint_suggestion)
-        viewModelScope.launch {
-            levelRepository.executeLevelCompleteTransactionFinal(levelNr, hintInterval)
-            saveGameImmediately()
-        }
-    }
-
-
-    fun allPlayerLevelsFlow(): Flow<List<Pair<Boolean, LevelData>>> {
-        return flow {
-            emit(levelRepository.getAllLevels().filter { it.second.levelId in 1000..9999 })
-        }
-    }
-
-
-    fun allGameLevelsFlow(): Flow<List<Pair<Boolean, LevelData>>> {
-        return flow {
-            emit(levelRepository.getAllLevels().filter { it.second.levelId <= 100 })
-        }
-    }
-
 
     fun allPalindromesFlow(): Flow<MutableSet<String>> {
         return flow {
@@ -382,15 +364,37 @@ class LevelViewModel @Inject constructor(
         }
     }
 
-    fun allUniqueCountries(): Flow<List<String>> {
+    fun allPlayerLevelsFlow(): Flow<List<Pair<Boolean, LevelData>>> {
         return flow {
-            emit(levelRepository.getUniqueCountries())
+            emit(levelRepository.getAllLevels().filter { it.second.levelId in 1000..9999 })
         }
     }
 
-    fun allUniqueCountriesWithLevelCount(): Flow<List<Pair<String, Int>>> {
+    fun countOfNewPlayerLevelsAndLanguageLevels(): Flow<Pair<Int, Int>> {
         return flow {
-            emit(levelRepository.getUniqueCountriesWithLevelCount())
+            emit(
+                Pair(
+                    levelRepository.getAllLevels().count {
+                        it.second.progress == LevelProgress.TODO &&
+                                it.second.timeModified == 0L &&
+                                it.second.levelId in 1080..9999
+                    },
+                    levelRepository.getAllLevels().count {
+                        it.second.timeModified == 0L &&
+                                it.second.levelId > 10000 &&
+                                it.second.author != "" &&
+                                it.second.countryCode != "gb" &&
+                                it.second.countryCode != ""
+                    })
+            )
+        }
+    }
+
+
+
+    fun allGameLevelsFlow(): Flow<List<Pair<Boolean, LevelData>>> {
+        return flow {
+            emit(levelRepository.getAllLevels().filter { it.second.levelId <= 100 })
         }
     }
 
@@ -400,6 +404,18 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+    fun allUniqueCountries(): Flow<List<String>> {
+        return flow {
+            emit(levelRepository.getUniqueCountries())
+        }
+    }
+
+
+    fun allUniqueCountriesWithLevelCount(): Flow<List<Triple<String, Int, Int?>>> {
+        return flow {
+            emit(levelRepository.getUniqueCountriesWithNewLevelCount())
+        }
+    }
 
     fun saveGameImmediately() {
         viewModelScope.launch(saveGameExceptionHandler) {
@@ -772,7 +788,7 @@ class LevelViewModel @Inject constructor(
 
     private suspend fun subscribeToRealTimePlayerLevelUpdates() {
         if (_accountStatus.value == AccountStatus.SIGNED_IN_WITH_FIREBASE) {
-            val maxPlayerLevelId = levelRepository.getMaxPlayerLevelId() ?: 1000
+            val maxPlayerLevelId = levelRepository.getMaxPlayerLevelId() ?: 1080
             val maxLevelId = levelRepository.getMaxLevelId()
             val query = fsDb.collection("user_submitted_levels").where(
                 Filter.and(
@@ -780,6 +796,7 @@ class LevelViewModel @Inject constructor(
                     Filter.or(
                         // player levels 1000+
                         Filter.and(
+                            Filter.greaterThan("levelId", 1080),
                             Filter.greaterThan("levelId", maxPlayerLevelId),
                             Filter.lessThan("levelId", 10000)
                         ),
@@ -810,14 +827,13 @@ class LevelViewModel @Inject constructor(
                                             if (solutionsToCategories.isEmpty()) throw Exception("Solutions were empty")
                                             val countryCode =
                                                 levelValues.getOrElse("countryCode") { "gb" }
-                                            playerLevels.add(
-                                                PlayerLevel(
-                                                    levelId = levelValues["levelId"] as Long,
-                                                    player = levelValues["player"] as String,
-                                                    solutionToCategory = solutionsToCategories,
-                                                    countryCode = countryCode as String
-                                                )
+                                            val playerLevel = PlayerLevel(
+                                                levelId = levelValues["levelId"] as Long,
+                                                player = levelValues["player"] as String,
+                                                solutionToCategory = solutionsToCategories,
+                                                countryCode = countryCode as String
                                             )
+                                            playerLevels.add(playerLevel)
                                         }
                                     }
                                 } catch (e: Exception) {

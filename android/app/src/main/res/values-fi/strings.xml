@@ -74,7 +74,7 @@
     <string name="earn">Ansaitse</string>
     <string name="points_to_rank_up">pistettä sijoittumiseen!</string>
     <string name="new_level_by">Uusi taso pelaajalta <xliff:g id="player_name">%s</xliff:g>!</string>
-    <string name="new_level_by_language_pack_incomplete">Uusi taso tekijältä <xliff:g id="player_name_incomplete">%s</xliff:g>, suorita tasopaketti pelataksesi sitä!</string>
+    <string name="new_level_by_language_pack_incomplete">Uusi taso tekijältä <xliff:g id="player_name_incomplete">%s</xliff:g>.\nSuorita tasopaketti pelataksesi sitä!</string>
     <string name="levels_added">tasoja lisätty!</string>
     <string name="level_already_completed">Taso on jo suoritettu.</string>
     <string name="points">pistettä</string>
@@ -112,11 +112,7 @@
 
 
     <!-- TUTORIAL -->
-    <string name="tutorial_text">Luo sanoja ja lauseita, jotka luetaan samalla tavalla molemmilta puolilta</string>
-    <string name="tutorial3_second_text">• Lauseet vaativat säännöllisiä välimerkkejä \\n• Useissa ratkaisuissa on \\&amp;quot;*\\&amp;quot; -merkki \\n• Vähemmän virheitä = parempi tulos</string>
-    <string name="tutorial_25_level_promo">Yksi asia vielä… Saavuta taso 25 ja saat palkkioksi \\&amp;quot;Instant Clues\\&amp;quot;.</string>
-    <string name="tutorial_complete_text">Valmis! Nauti pelistä 🚀</string>
-    <string name="next">Seuraavaksi</string>
+    <string name="tutorial_text">Luo sanoja ja lauseita, jotka luetaan samalla tavalla molemmilta puolilta. Vähemmän virheitä = parempi tulos.</string>
     <string name="play">Pelaa</string>
 
 

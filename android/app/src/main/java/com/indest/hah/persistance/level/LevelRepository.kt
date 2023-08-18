@@ -44,7 +44,7 @@ class LevelRepository @Inject constructor(
 
     suspend fun isLanguagePackCompleted(countryCode: String):Boolean
     {
-        return levelDao.isLanguagePackCompleted(countryCode)
+        return levelDao.isLanguagePackCompleted(countryCode) == 1
     }
 
     suspend fun setLetterLocked(homeIndex: Int, level: Int) {
@@ -100,8 +100,13 @@ class LevelRepository @Inject constructor(
     suspend fun getUniqueCountries():List<String>
         = levelDao.getUniqueCountries()
 
-    suspend fun getUniqueCountriesWithLevelCount():List<Pair<String,Int>>
-        = levelDao.getUniqueCountriesWithLevelCount().map { Pair(it.key, it.value) }
+    suspend fun getUniqueCountriesWithNewLevelCount():List<Triple<String,Int,Int?>> {
+        val languageNewLevelsCount = levelDao.getUniqueCountriesWithNewLevelCount()
+        val languageLevelsCount = levelDao.getUniqueCountriesWithLevelCount()
+        return languageLevelsCount.map {
+            Triple(it.key, it.value, languageNewLevelsCount[it.key])
+        }
+    }
 
     suspend fun getLevelsForCountry(cc:String):List<LevelData>
         = levelDao.getLevelsForCountry(cc).map { it.levelInfo }
@@ -121,6 +126,11 @@ class LevelRepository @Inject constructor(
     suspend fun increaseCount(name:String)
     {
         levelDao.increaseCurrentCount(name)
+    }
+
+    suspend fun getNextLevelForLanguageLevel(levelId:Int, countryCode: String):Int?
+    {
+        return levelDao.getNextLevelForLanguageLevel(levelId, countryCode)
     }
 
     suspend fun addInterval(interval:Interval)
@@ -190,7 +200,7 @@ class LevelRepository @Inject constructor(
         levelDao.isFinalLevel(currentLevel, minLimit, maxLimit)
 
     suspend fun isLanguagePackFinalLevel(currentLevel: Int, countryCode: String) =
-        levelDao.isLanguagePackFinalLevel(currentLevel, countryCode)
+        levelDao.isLanguagePackFinalLevel(currentLevel, countryCode) == 1
 
     suspend fun isAllowedToSubmitPalindrome():Boolean
     {

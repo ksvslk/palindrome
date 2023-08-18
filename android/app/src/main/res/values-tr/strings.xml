@@ -74,7 +74,7 @@
     <string name="earn">Kazan</string>
     <string name="points_to_rank_up">Rütbe atlamak için puan!</string>
     <string name="new_level_by"><xliff:g id="player_name">%s</xliff:g> tarafından yeni seviye!</string>
-    <string name="new_level_by_language_pack_incomplete"><xliff:g id="player_name_incomplete">%s</xliff:g> tarafından yeni seviye, oynamak için seviye paketini tamamlayın!</string>
+    <string name="new_level_by_language_pack_incomplete"><xliff:g id="player_name_incomplete">%s</xliff:g> tarafından yeni seviye.\nOynamak için seviye paketini tamamlayın!</string>
     <string name="levels_added">seviye eklendi!</string>
     <string name="level_already_completed">Seviye zaten tamamlandı.</string>
     <string name="points">puan</string>
@@ -112,11 +112,7 @@
 
 
     <!-- TUTORIAL -->
-    <string name="tutorial_text">Her iki taraftan da aynı okunan kelimeler ve cümleler oluşturun</string>
-    <string name="tutorial3_second_text">• Cümleler düzenli noktalama işaretleri gerektirir \\n• Birden çok çözümde \\&amp;quot;*\\&amp;quot; işareti bulunur \\n• Daha az hata = daha iyi puan</string>
-    <string name="tutorial_25_level_promo">Bir şey daha... 25. seviyeye ulaşın ve ödül olarak \\&amp;quot;Anlık İpuçları\\&amp;quot; kazanın.</string>
-    <string name="tutorial_complete_text">Bitti! Oyunun tadını çıkarın 🚀</string>
-    <string name="next">Sonraki</string>
+    <string name="tutorial_text">Her iki taraftan da aynı okunan kelimeler ve cümleler oluşturun. Daha az hata = daha iyi puan.</string>
     <string name="play">Çal</string>
 
 

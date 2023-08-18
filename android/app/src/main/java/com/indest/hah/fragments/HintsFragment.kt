@@ -301,6 +301,7 @@ class HintsFragment : FullBottomSheetDialogFragment() {
         Log.d(TAG, "CC: ${levelViewModel.currentLevel.value.levelInfo.countryCode}")
         pictureDialogFragment.setDrawable(
             requireContext(),
+            levelViewModel.currentLevel.value.levelInfo.levelId,
             levelViewModel.currentRelativeLevelNumber,
             levelViewModel.currentLevel.value.levelInfo.countryCode
         )
