@@ -568,7 +568,7 @@ interface LevelDao {
 
     @Transaction
     suspend fun matchFirstLevelWithUserLocale(currentTag: String) {
-        if (getMaximumTimestamp()?.equals(0L) == true) {
+        if (getMaximumTimestamp()?.equals(1L) == true) {
             var levelId = 1
             if (currentTag != "gb") {
                 levelId = getFirstLevelLevelIdForCountry(currentTag)

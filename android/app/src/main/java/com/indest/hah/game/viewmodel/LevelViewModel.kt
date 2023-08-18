@@ -204,14 +204,14 @@ class LevelViewModel @Inject constructor(
 
     init {
         /*
+        // Initial db creation
         viewModelScope.launch {
             addRegularLevels()
             addPlayerLevelsUntil1080()
             addLanguagePacks()
             addIntervals()
-            //checkLanguagePackValidity()
         }
-        */
+         */
     }
 
     suspend fun isShowScores(): Boolean {
