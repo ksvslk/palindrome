@@ -74,7 +74,7 @@
     <string name="earn">Câștigă</string>
     <string name="points_to_rank_up">puncte pentru a urca!</string>
     <string name="new_level_by">Nivel nou creat de către <xliff:g id="player_name">%s</xliff:g>!</string>
-    <string name="new_level_by_language_pack_incomplete">Nivel nou de <xliff:g id="player_name_incomplete">%s</xliff:g>, completează pachetul de nivel pentru a-l juca!</string>
+    <string name="new_level_by_language_pack_incomplete">Nivel nou de <xliff:g id="player_name_incomplete">%s</xliff:g>.\nCompletează pachetul de nivel pentru a-l juca!</string>
     <string name="levels_added">niveluri adăugate!</string>
     <string name="level_already_completed">Nivelul este deja finalizat.</string>
     <string name="points">puncte</string>
@@ -111,11 +111,7 @@
 
 
     <!-- TUTORIAL -->
-    <string name="tutorial_text">Creează cuvinte și propoziții care citesc la fel din ambele părți</string>
-    <string name="tutorial3_second_text">• Propozițiile necesită semne de punctuație regulate \\n• Soluțiile multiple au semnul \\&amp;quot;*\\&amp;quot; \\n• Mai puține greșeli = scor mai bun</string>
-    <string name="tutorial_25_level_promo">Încă un lucru... Atingeți nivelul 25 și obțineți \\&amp;quot;Indicii instantanee\\&amp;quot; ca recompensă.</string>
-    <string name="tutorial_complete_text">Gata! Bucurați-vă de joc 🚀</string>
-    <string name="next">Următorul</string>
+    <string name="tutorial_text">Creează cuvinte și propoziții care citesc la fel din ambele părți. Mai puține greșeli = scor mai bun.</string>
     <string name="play">Joacă</string>
 
 

@@ -139,7 +139,7 @@
     <string name="points_to_rank_up">Punkte, um aufzusteigen!</string>
 
     <string name="new_level_by">Neuer Level von <xliff:g id="player_name">%s</xliff:g>!</string>
-    <string name="new_level_by_language_pack_incomplete">Neues Level von <xliff:g id="player_name_incomplete">%s</xliff:g>, komplettes Levelpaket zum Spielen!</string>
+    <string name="new_level_by_language_pack_incomplete">Neues Level von <xliff:g id="player_name_incomplete">%s</xliff:g>.\nKomplettes Levelpaket zum Spielen!</string>
     <string name="levels_added">Level hinzugefügt!</string>
 
     <string name="level_already_completed">Level ist bereits abgeschlossen.</string>
@@ -183,16 +183,7 @@
 
     <!-- TUTORIAL -->
 
-    <string name="tutorial_text">Erstelle Wörter und Sätze, die von beiden Seiten gleich gelesen werden</string>
-
-    <string name="tutorial3_second_text">• Sätze erfordern regelmäßige Interpunktion \n• Mehrere Lösungen haben ein \"*\"-Zeichen \n• Weniger Fehler = bessere Punktzahl</string>
-
-    <string name="tutorial_25_level_promo">Und noch etwas... Erreiche Level 25 und erhalte \"Instant-Hinweise\" als Belohnung.</string>
-
-    <string name="tutorial_complete_text">Fertig! Viel Spaß beim Spiel</string>
-
-    <string name="next">Weiter</string>
-
+    <string name="tutorial_text">Erstelle Wörter und Sätze, die von beiden Seiten gleich gelesen werden. Weniger Fehler = bessere Punktzahl.</string>
     <string name="play">Spielen</string>
 
 

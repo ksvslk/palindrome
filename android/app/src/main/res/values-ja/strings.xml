@@ -140,7 +140,7 @@
     <string name="points_to_rank_up">ランクアップするポイント！</string>
 
     <string name="new_level_by"><xliff:g id="player_name">%s</xliff:g>による新しいレベル!</string>
-    <string name="new_level_by_language_pack_incomplete"><xliff:g id="player_name_incomplete">%s</xliff:g>による新しいレベル、レベルパックを完成させてプレイしてください!</string>
+    <string name="new_level_by_language_pack_incomplete"><xliff:g id="player_name_incomplete">%s</xliff:g>による新しいレベル。\nレベルパックを完成させてプレイしてください!</string>
 
     <string name="levels_added">レベルが追加されました！</string>
 
@@ -183,16 +183,7 @@
 
     <!-- TUTORIAL -->
 
-    <string name="tutorial_text">どちらの側からも同じように読める単語や文章を作成する</string>
-
-    <string name="tutorial3_second_text">• 文には定期的な句読点が必要です \n• 複数のソリューションに「*」マークが付いています \n• ミスが少ない = より良いスコア</string>
-
-    <string name="tutorial_25_level_promo">もう 1 つ...レベル 25 に到達して、報酬として「インスタント手がかり」を手に入れましょう。</string>
-
-    <string name="tutorial_complete_text">完了！ゲームをお楽しみください&#128640;?</string>
-
-    <string name="next">次へ</string>
-
+    <string name="tutorial_text">どちらの側からも同じように読める単語や文章を作成する。ミスが少ない = より良いスコア。</string>
     <string name="play">プレイ</string>
 
 

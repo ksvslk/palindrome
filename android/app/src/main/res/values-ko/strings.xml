@@ -74,7 +74,7 @@
     <string name="earn">적립</string>
     <string name="points_to_rank_up">랭크업 포인트!</string>
     <string name="new_level_by"><xliff:g id="player_name">%s</xliff:g>의 새로운 레벨!</string>
-    <string name="new_level_by_language_pack_incomplete"><xliff:g id="player_name_incomplete">%s</xliff:g>님의 새 레벨, 플레이하려면 레벨 팩을 완료하세요!</string>
+    <string name="new_level_by_language_pack_incomplete"><xliff:g id="player_name_incomplete">%s</xliff:g>님의 새 레벨.\n플레이하려면 레벨 팩을 완료하세요!</string>
     <string name="levels_added">레벨이 추가되었습니다!</string>
     <string name="level_already_completed">레벨은 이미 완료되었습니다.</string>
     <string name="points">포인트</string>
@@ -111,11 +111,7 @@
 
 
     <!-- TUTORIAL -->
-    <string name="tutorial_text">양쪽에서 읽어도 같은 단어와 문장 만들기</string>
-    <string name="tutorial3_second_text">• 문장에는 일반 구두점이 필요합니다. \\n• 여러 솔루션에는 \\&amp;quot;*\\&amp;quot; 표시가 있습니다. \\n• 실수가 적을수록 점수가 높아집니다.</string>
-    <string name="tutorial_25_level_promo">한 가지 더… 레벨 25에 도달하고 \\&amp;quot;Instant Clues\\&amp;quot;를 보상으로 받으세요.</string>
-    <string name="tutorial_complete_text">완료! 게임을 즐기세요 🚀</string>
-    <string name="next">다음</string>
+    <string name="tutorial_text">양쪽에서 읽어도 같은 단어와 문장 만들기. 실수가 적을수록 점수가 높아집니다.</string>
     <string name="play">재생</string>
 
 

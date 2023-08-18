@@ -140,7 +140,7 @@
     <string name="points_to_rank_up">points pour progresser !</string>
 
     <string name="new_level_by">Nouveau niveau créé par <xliff:g id="player_name">%s</xliff:g>!</string>
-    <string name="new_level_by_language_pack_incomplete">Nouveau niveau par <xliff:g id="player_name_incomplete">%s</xliff:g>, pack de niveau complet pour y jouer!</string>
+    <string name="new_level_by_language_pack_incomplete">Nouveau niveau par <xliff:g id="player_name_incomplete">%s</xliff:g>.\nPack de niveau complet pour y jouer!</string>
 
     <string name="levels_added">niveaux ajoutés !</string>
 
@@ -183,16 +183,7 @@
 
     <!-- TUTORIAL -->
 
-    <string name="tutorial_text">Créez des mots et des phrases qui se lisent de la même manière des deux côtés</string>
-
-    <string name="tutorial3_second_text">• Les phrases nécessitent une ponctuation régulière \n• Plusieurs solutions ont la marque \"*\" \n• Moins d\'erreurs = meilleur score</string>
-
-    <string name="tutorial_25_level_promo">Encore une chose... Atteignez le niveau 25 et obtenez des \"indices instantanés\" en récompense.</string>
-
-    <string name="tutorial_complete_text">Terminé ! Profitez du jeu</string>
-
-    <string name="next">Suivant</string>
-
+    <string name="tutorial_text">Créez des mots et des phrases qui se lisent de la même manière des deux côtés. Moins d\'erreurs = meilleur score.</string>
     <string name="play">Jouer</string>
 
 

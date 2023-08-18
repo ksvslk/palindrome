@@ -140,7 +140,7 @@
     <string name="points_to_rank_up">puntos para subir de rango!</string>
 
     <string name="new_level_by">Nuevo nivel creado por <xliff:g id="player_name">%s</xliff:g>!</string>
-    <string name="new_level_by_language_pack_incomplete">Nuevo nivel de <xliff:g id="player_name_incomplete">%s</xliff:g>, ¡paquete de niveles completo para jugarlo!</string>
+    <string name="new_level_by_language_pack_incomplete">Nuevo nivel de <xliff:g id="player_name_incomplete">%s</xliff:g>.\n¡Paquete de niveles completo para jugarlo!</string>
     <string name="levels_added">niveles añadidos!</string>
 
     <string name="level_already_completed">El nivel ya está completo.</string>
@@ -184,16 +184,7 @@
 
     <!-- TUTORIAL -->
 
-    <string name="tutorial_text">Crea palabras y oraciones que se leen igual desde cualquier lado</string>
-
-    <string name="tutorial3_second_text">• Las oraciones requieren puntuación regular • Las soluciones múltiples tienen una marca \"*\" • Menos errores = mejor puntaje</string>
-
-    <string name="tutorial_25_level_promo">Una cosa más... Alcanza el nivel 25 y obtén \"Pistas instantáneas\" como recompensa.</string>
-
-    <string name="tutorial_complete_text">¡Hecho! Disfruta el juego &#128640;</string>
-
-    <string name="next">Próximo</string>
-
+    <string name="tutorial_text">Crea palabras y oraciones que se leen igual desde cualquier lado. Menos errores = mejor puntaje.</string>
     <string name="play">Jugar</string>
 
 

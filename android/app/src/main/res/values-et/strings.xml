@@ -73,7 +73,7 @@
     <string name="earn">Teeni</string>
     <string name="points_to_rank_up">punkti, et paremusjärjestus!</string>
     <string name="new_level_by">Uus tase mängija <xliff:g id="player_name">%s</xliff:g> poolt!</string>
-    <string name="new_level_by_language_pack_incomplete">Uus tase autorilt <xliff:g id="player_name_incomplete">%s</xliff:g>, mängimiseks täitke tasemepakett!</string>
+    <string name="new_level_by_language_pack_incomplete">Uus tase autorilt <xliff:g id="player_name_incomplete">%s</xliff:g>.\nMängimiseks täitke tasemepakett!</string>
     <string name="levels_added">tasemeid lisatud!</string>
     <string name="level_already_completed">Tase on juba lõpetatud.</string>
     <string name="points">punkti</string>
@@ -111,11 +111,7 @@
 
 
     <!-- TUTORIAL -->
-    <string name="tutorial_text">Looge sõnu ja lauseid, mis loevad mõlemalt poolt samamoodi</string>
-    <string name="tutorial3_second_text">• Laused nõuavad korrapäraseid kirjavahemärke \\n• Mitmel lahendusel on märk \\&amp;quot;*\\&amp;quot; \\n• Vähem vigu = parem tulemus</string>
-    <string name="tutorial_25_level_promo">Veel üks asi... Saavutage 25. tase ja saate preemiaks \\&amp;quot;Instant Clues\\&amp;quot;.</string>
-    <string name="tutorial_complete_text">Valmis! Nautige mängu 🚀</string>
-    <string name="next">Järgmine</string>
+    <string name="tutorial_text">Looge sõnu ja lauseid, mis loevad mõlemalt poolt samamoodi. Vähem vigu = parem tulemus.</string>
     <string name="play">Mängi</string>
 
 

@@ -611,7 +611,7 @@ interface LevelDao {
     @Query("select max(time_modified) from level_info_table")
     suspend fun getMaximumTimestamp(): Long?
 
-    @Query("SELECT CASE WHEN COUNT(*) > 0 THEN 0 ELSE 1 END AS result FROM level_info_table WHERE country_code = :countryCode AND progress < 1")
+    @Query("select case when 0 = (select count(*) FROM level_info_table WHERE country_code = :countryCode AND progress < 1) then 1 else 0 end")
     suspend fun isLanguagePackCompleted(countryCode: String):Int
 
     @Query("select level_id from level_info_table where level_id > :levelId and country_code = :countryCode order by level_id asc limit 1")

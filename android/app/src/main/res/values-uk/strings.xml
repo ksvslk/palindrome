@@ -74,7 +74,7 @@
     <string name="earn">Заробити</string>
     <string name="points_to_rank_up">балів для підвищення!</string>
     <string name="new_level_by">Новий рівень від <xliff:g id="player_name">%s</xliff:g>!</string>
-    <string name="new_level_by_language_pack_incomplete">Новий рівень від <xliff:g id="player_name_incomplete">%s</xliff:g>, пройдіть пакет рівнів, щоб грати в нього!</string>
+    <string name="new_level_by_language_pack_incomplete">Новий рівень від <xliff:g id="player_name_incomplete">%s</xliff:g>.\nПройдіть пакет рівнів, щоб грати в нього!</string>
     <string name="levels_added">додано рівнів!</string>
     <string name="level_already_completed">Рівень уже пройдено.</string>
     <string name="points">балів</string>
@@ -110,11 +110,7 @@
     </string-array>
 
     <!-- TUTORIAL -->
-    <string name="tutorial_text">Створіть слова та речення, які читаються однаково з обох сторін</string>
-    <string name="tutorial3_second_text">• Речення вимагають правильної пунктуації \\n• Кілька рішень мають позначку \\&amp;quot;*\\&amp;quot; \\n• Менше помилок = кращий бал</string>
-    <string name="tutorial_25_level_promo">Ще одна річ… Досягніть рівня 25 і отримайте \\&amp;quot;Миттєві підказки\\&amp;quot; як нагороду.</string>
-    <string name="tutorial_complete_text">Готово! Насолоджуйтесь грою 🚀</string>
-    <string name="next">Далі</string>
+    <string name="tutorial_text">Створіть слова та речення, які читаються однаково з обох сторін. Менше помилок = кращий бал.</string>
     <string name="play">Грати</string>
 
     <!-- Languages -->

@@ -140,7 +140,7 @@
     <string name="points_to_rank_up">poin untuk naik peringkat!</string>
 
     <string name="new_level_by">Level baru oleh <xliff:g id="player_name">%s</xliff:g>!</string>
-    <string name="new_level_by_language_pack_incomplete">Level baru dari <xliff:g id="player_name_incomplete">%s</xliff:g>, selesaikan paket level untuk memainkannya!</string>
+    <string name="new_level_by_language_pack_incomplete">Level baru dari <xliff:g id="player_name_incomplete">%s</xliff:g>.\nSelesaikan paket level untuk memainkannya!</string>
 
     <string name="levels_added">level ditambahkan!</string>
 
@@ -184,16 +184,7 @@
 
     <!-- TUTORIAL -->
 
-    <string name="tutorial_text">Buat kata dan kalimat yang dibaca sama dari kedua sisi</string>
-
-    <string name="tutorial3_second_text">• Kalimat membutuhkan tanda baca yang teratur \n• Beberapa solusi memiliki tanda \"*\". \n• Lebih sedikit kesalahan = skor lebih baik</string>
-
-    <string name="tutorial_25_level_promo">Satu hal lagi… Capai level 25 dan dapatkan \"Petunjuk Instan\" sebagai hadiah.</string>
-
-    <string name="tutorial_complete_text">Selesai! Nikmati permainannya &#128640;</string>
-
-    <string name="next">Selanjutnya</string>
-
+    <string name="tutorial_text">Buat kata dan kalimat yang dibaca sama dari kedua sisi. Lebih sedikit kesalahan = skor lebih baik.</string>
     <string name="play">Mainkan</string>
 
 

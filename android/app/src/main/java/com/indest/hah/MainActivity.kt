@@ -497,7 +497,7 @@ class MainActivity : AppCompatActivity() {
     private fun collectNewLevelCount()
     {
         lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED)
+            lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED)
             {
                 levelViewModel.countOfNewPlayerLevelsAndLanguageLevels().collect {
                     showNewLevelsCount(it.second + it.first)

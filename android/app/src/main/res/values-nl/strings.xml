@@ -74,7 +74,7 @@
     <string name="earn">Verdien</string>
     <string name="points_to_rank_up">punten om hoger te scoren!</string>
     <string name="new_level_by">Nieuw level gemaakt door <xliff:g id="player_name">%s</xliff:g>!</string>
-    <string name="new_level_by_language_pack_incomplete">Nieuw level door <xliff:g id="player_name_incomplete">%s</xliff:g>, compleet levelpakket om het te spelen!</string>
+    <string name="new_level_by_language_pack_incomplete">Nieuw level door <xliff:g id="player_name_incomplete">%s</xliff:g>.\nCompleet levelpakket om het te spelen!</string>
     <string name="levels_added">levels toegevoegd!</string>
     <string name="level_already_completed">Niveau is al voltooid.</string>
     <string name="points">punten</string>
@@ -112,11 +112,7 @@
 
 
     <!-- TUTORIAL -->
-    <string name="tutorial_text">Maak woorden en zinnen die van beide kanten hetzelfde lezen</string>
-    <string name="tutorial3_second_text">• Zinnen vereisen regelmatige interpunctie \\n• Meerdere oplossingen hebben een \\&amp;quot;*\\&amp;quot; markering \\n• Minder fouten = betere score</string>
-    <string name="tutorial_25_level_promo">Nog één ding... Bereik level 25 en ontvang \\&amp;quot;Instant Clues\\&amp;quot; als beloning.</string>
-    <string name="tutorial_complete_text">Klaar! Geniet van het spel 🚀</string>
-    <string name="next">Volgende</string>
+    <string name="tutorial_text">Maak woorden en zinnen die van beide kanten hetzelfde lezen. Minder fouten = betere score.</string>
     <string name="play">Spelen</string>
 
 
