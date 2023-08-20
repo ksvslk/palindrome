@@ -212,28 +212,27 @@ fun Int.getLevelScore(puzzle: String = ""): Int {
     return puzzle.replace("-", "").replace("\\s".toRegex(), "").length * multiplier
 }
 
+
 fun String.getCountryCodeLeaderboardId(context: Context) : String {
     when(this)
     {
         "cn" -> return context.resources.getString(R.string.leaderboard_chinese)
-        "ee" -> return context.resources.getString(R.string.leaderboard_estonian)
+        "de" -> return context.resources.getString(R.string.leaderboard_german)
+        "es" -> return context.resources.getString(R.string.leaderboard_spanish)
+        "et" -> return context.resources.getString(R.string.leaderboard_estonian)
         "fi" -> return context.resources.getString(R.string.leaderboard_finnish)
         "fr" -> return context.resources.getString(R.string.leaderboard_french)
-        "de" -> return context.resources.getString(R.string.leaderboard_german)
-        "in" -> return context.resources.getString(R.string.leaderboard_hindi)
         "id" -> return context.resources.getString(R.string.leaderboard_indonesian)
         "it" -> return context.resources.getString(R.string.leaderboard_italian)
-        "jp" -> return context.resources.getString(R.string.leaderboard_japanese)
-        "kr" -> return context.resources.getString(R.string.leaderboard_korean)
-        "br" -> return context.resources.getString(R.string.leaderboard_portuguese)
-        "ru" -> return context.resources.getString(R.string.leaderboard_russian)
-        "es" -> return context.resources.getString(R.string.leaderboard_spanish)
-        "se" -> return context.resources.getString(R.string.leaderboard_swedish)
-        "tr" -> return context.resources.getString(R.string.leaderboard_turkish)
-        "pl" -> return context.resources.getString(R.string.leaderboard_polish)
-        "ro" -> return context.resources.getString(R.string.leaderboard_romanian)
+        "ja" -> return context.resources.getString(R.string.leaderboard_japanese)
+        "ko" -> return context.resources.getString(R.string.leaderboard_korean)
         "nl" -> return context.resources.getString(R.string.leaderboard_dutch)
-        "ua" -> return context.resources.getString(R.string.leaderboard_ukrainian)
+        "pl" -> return context.resources.getString(R.string.leaderboard_polish)
+        "pt" -> return context.resources.getString(R.string.leaderboard_portuguese)
+        "ro" -> return context.resources.getString(R.string.leaderboard_romanian)
+        "sv" -> return context.resources.getString(R.string.leaderboard_swedish)
+        "tr" -> return context.resources.getString(R.string.leaderboard_turkish)
+        "uk" -> return context.resources.getString(R.string.leaderboard_ukrainian)
     }
     return context.resources.getString(R.string.global_leaderboards)
 }

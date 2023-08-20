@@ -3,10 +3,8 @@ package com.indest.hah.fragments
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +13,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.animation.doOnEnd
-import androidx.core.content.ContextCompat
 import androidx.core.view.*
 import androidx.fragment.app.*
 import androidx.lifecycle.Lifecycle
@@ -37,7 +34,6 @@ import com.indest.hah.fx.SoundPlayer
 import com.indest.hah.game.creation.LevelCreator
 import com.indest.hah.game.director.CellDirector
 import com.indest.hah.game.viewmodel.LevelViewModel
-import com.indest.hah.game.viewmodel.Solution
 import com.indest.hah.game.viewmodel.Solution.*
 import com.indest.hah.game.viewmodel.SolutionData
 import com.indest.hah.general.GeneralViewModel
@@ -49,9 +45,6 @@ import com.indest.hah.views.Cell
 import com.indest.hah.views.HahConstraintLayout
 import com.indest.hah.views.MessageSnackBar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -87,8 +80,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                 showTutorial()
 
                 generalViewModel.rewardState.collect { rewardType ->
-                    if (rewardType == LETTER)
-                    {
+                    if (rewardType == LETTER) {
                         generalViewModel.updateRewardState(RewardType.NONE)
                         cellDirector?.rewardWithRandomLetter()
                     }
@@ -130,7 +122,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     ): View {
         _binding = LevelFragmentBinding.inflate(layoutInflater, container, false)
         activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-        binding.levelFragment.layoutTransition = animations.getLayoutTransition()
+        binding.gameFieldContainer.layoutTransition = animations.getLayoutTransition()
         return binding.root
     }
 
@@ -139,8 +131,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         findNavController().safeNavigate(R.id.action_navigation_level_to_navigation_scores)
     }
 
-    private fun clearMessages()
-    {
+    private fun clearMessages() {
         messages.forEach {
             it.removeMessageCallback()
             it.dismiss()
@@ -161,8 +152,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                             if (event.level.levelInfo.progress == LevelProgress.INTERMEDIATE) {
                                 displayLevel(event.level)
                                 showContinueMessage(levelViewModel.isLastLevel())
-                            }
-                            else {
+                            } else {
                                 displayLevel(event.level)
                                 (requireActivity() as MainActivity)?.let {
                                     it.updateProgressBar(
@@ -182,7 +172,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                             when (event.solutionData.solution) {
                                 CORRECT -> {
                                     showCorrectEffects(event.solutionData, event.isLastLevel)
-                                    binding.levelFragment.notClickable = true
+                                    binding.gameFieldContainer.notClickable = true
                                     hideHintsBadge()
                                 }
                                 WRONG, BOGUS_PALINDROME -> {
@@ -203,49 +193,37 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     }
 
 
-    private fun enableLoading()
-    {
+    private fun enableLoading() {
         deactivateBottomNavBar()
         binding.progressCircular.visibility = View.VISIBLE
-        binding.levelFragment.notClickable = true
-        binding.levelFragment.alpha = .2f
+        binding.gameFieldContainer.notClickable = true
+        binding.gameFieldContainer.alpha = .2f
     }
 
 
-    private fun disableLoading()
-    {
+    private fun disableLoading() {
         activateBottomNavBar()
         binding.progressCircular.visibility = View.GONE
-        binding.levelFragment.notClickable = false
-        binding.levelFragment.alpha = 1f
+        binding.gameFieldContainer.notClickable = false
+        binding.gameFieldContainer.alpha = 1f
     }
 
     private fun displayLevel(level: Level) {
-        binding.levelFragment.removeAllViews()
-        binding.levelFragment.removeAllViewsInLayout()
-        Log.d(TAG, "displayLevel: ${level.levelInfo}")
-        lifecycleScope.launch(Dispatchers.Main)
-        {
+        val levelGridLayout = levelCreator.getLevel(
+            level,
+            layoutInflater,
+            binding.gameFieldContainer
+        )
+        val list = levelGridLayout.first.children.filterIsInstance<Cell<*, *>>().toMutableList()
+        cellDirector = CellDirector(
+            list,
+            levelViewModel,
+            levelGridLayout.second,
+            levelGridLayout.third
+        )
 
-            val levelGridLayout = levelCreator.getLevel(
-                level,
-                layoutInflater,
-                binding.levelFragment
-            )
-
-            levelGridLayout.first.children.filterIsInstance<Cell<*, *>>().toMutableList().apply {
-                levelGridLayout.first.doOnPreDraw {
-                    cellDirector = CellDirector(
-                        this,
-                        levelViewModel,
-                        levelGridLayout.second,
-                        levelGridLayout.third
-                    )
-                }
-            }
-            binding.levelFragment.addView(levelGridLayout.first)
-
-        }
+        binding.gameFieldContainer.removeAllViews()
+        binding.gameFieldContainer.addView(levelGridLayout.first)
 
         askForReview(level.levelInfo.levelId)
         showSubmitPalindromesBadge(level.levelInfo.levelId)
@@ -353,7 +331,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             }
 
         val winningMessage = MessageSnackBar.make(
-            view = binding.levelFragment,
+            view = binding.gameFieldContainer,
             message = randomCorrectMessage,
             duration = 2000,
         )
@@ -363,7 +341,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
     private fun getScoreMessage(): MessageSnackBar {
         val scoreMessage = MessageSnackBar.make(
-            view = binding.levelFragment,
+            view = binding.gameFieldContainer,
             message = "",
             duration = 2000,
         )
@@ -371,7 +349,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         return scoreMessage
     }
 
-    private fun getContinueMessage(isLastLevel: Triple<Boolean, Boolean, String>):MessageSnackBar {
+    private fun getContinueMessage(isLastLevel: Triple<Boolean, Boolean, String>): MessageSnackBar {
         val continueMessage = MessageSnackBar.make(
             view = binding.root,
             message = if (!isLastLevel.first && !isLastLevel.second) getString(R.string.tap_to_continue) else getString(
@@ -384,7 +362,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     }
 
     private fun showWrongEffects(solutionData: SolutionData) {
-        animations.getWrongSolutionAnimation(binding.levelFragment).start()
+        animations.getWrongSolutionAnimation(binding.gameFieldContainer).start()
         soundPlayer.vibrateDoubleClick()
         val messageToDisplay =
             if (solutionData.solution == BOGUS_PALINDROME)
@@ -393,7 +371,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                 resources.getStringArray(R.array.solution_wrong_texts).random()
 
         val message = MessageSnackBar.make(
-            view = binding.levelFragment,
+            view = binding.gameFieldContainer,
             message = messageToDisplay,
             duration = 2000,
             animateText = false,
@@ -417,15 +395,17 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             continueMessageAction(continueMessage, isLastLevel)
         }
         continueMessage.view.setOnClickListener {
-           containerView.setOnClickListener(null)
-           continueMessage.view.setOnClickListener(null)
-           continueMessageAction(continueMessage, isLastLevel)
+            containerView.setOnClickListener(null)
+            continueMessage.view.setOnClickListener(null)
+            continueMessageAction(continueMessage, isLastLevel)
         }
         continueMessage.show()
     }
 
-    private fun continueMessageAction(continueMessage:MessageSnackBar, isLastLevel: Triple<Boolean, Boolean, String>)
-    {
+    private fun continueMessageAction(
+        continueMessage: MessageSnackBar,
+        isLastLevel: Triple<Boolean, Boolean, String>
+    ) {
         if (isVisible) {
             activateBottomNavBar()
             continueMessage.dismiss()
@@ -447,8 +427,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                     findNavController().safeNavigate(R.id.action_navigation_level_to_navigation_players_pack_ending)
                 }
             }
-            if (isLastLevel.third != "")
-            {
+            if (isLastLevel.third != "") {
                 levelViewModel.executeLevelCompleteActions(1)
                 soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.2f)
                 findNavController().safeNavigate(R.id.action_navigation_level_to_navigation_language_pack_ending)
@@ -506,11 +485,9 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
     private fun showHintsBadge() {
         if (isVisible) {
-
             activity?.let {
                 val hintBadge = it.findViewById<BottomNavigationView>(R.id.bottomNavView)
                     .getOrCreateBadge(R.id.navigation_goods)
-                hintBadge.backgroundColor =  MaterialColors.getColor(it.applicationContext, com.google.android.material.R.attr.colorTertiary, Color.RED)
                 hintBadge.badgeGravity = BadgeDrawable.TOP_END
                 val text = getString(R.string.hints_are_available)
                 val duration = Toast.LENGTH_LONG
@@ -525,15 +502,12 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
 
     private fun showSubmitPalindromesBadge(levelId: Int) {
-        if (levelId == 5)
-        {
-            if (levelViewModel.isAllowedToSubmitAndSignedInToFirebase())
-            {
+        if (levelId == 5) {
+            if (levelViewModel.isAllowedToSubmitAndSignedInToFirebase()) {
                 if (isVisible) {
                     activity?.let {
                         val stagesBadge = it.findViewById<BottomNavigationView>(R.id.bottomNavView)
                             .getOrCreateBadge(R.id.navigation_stages)
-                        stagesBadge.backgroundColor = MaterialColors.getColor(it.applicationContext, com.google.android.material.R.attr.colorTertiary, Color.RED)
                         stagesBadge.badgeGravity = BadgeDrawable.TOP_END
                         val text = getString(R.string.send_a_cool_palindrome)
                         val duration = Toast.LENGTH_LONG

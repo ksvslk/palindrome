@@ -3,7 +3,6 @@ package com.indest.hah.fragments
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,11 +12,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.DividerItemDecoration
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.indest.hah.R
 import com.indest.hah.databinding.LevelSelectFragmentBinding
 import com.indest.hah.game.viewmodel.LevelViewModel
@@ -25,11 +21,8 @@ import com.indest.hah.other.LevelItemAdapter
 import com.indest.hah.other.LevelSelectType
 import com.indest.hah.other.LevelSelectType.*
 import com.indest.hah.other.StandardLevelItemAdapter
-import com.indest.hah.other.safeNavigate
 import com.indest.hah.persistance.dto.LevelData
-import com.indest.hah.persistance.level.LevelProgress
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -84,8 +77,11 @@ class LevelSelectFragment : FullBottomSheetDialogFragment() {
                                 ) {
                                     it?.levelId?.let { nr ->
                                         if (nr != currentLevel) {
+                                            findNavController().popBackStack(R.id.navigation_level,
+                                                inclusive = false,
+                                                saveState = false
+                                            )
                                             levelViewModel.changeLevel(nr)
-                                            findNavController().safeNavigate(R.id.action_navigation_level_select_to_navigation_level)
                                         }
                                     }
                                 }
@@ -102,8 +98,11 @@ class LevelSelectFragment : FullBottomSheetDialogFragment() {
                                 StandardLevelItemAdapter(languageLevels) {
                                     it?.levelId?.let { nr ->
                                         if (nr != currentLevel) {
+                                            findNavController().popBackStack(R.id.navigation_level,
+                                                inclusive = false,
+                                                saveState = false
+                                            )
                                             levelViewModel.changeLevel(nr)
-                                            findNavController().safeNavigate(R.id.action_navigation_level_select_to_navigation_level)
                                         }
                                     }
                                 }
@@ -126,8 +125,11 @@ class LevelSelectFragment : FullBottomSheetDialogFragment() {
             LevelItemAdapter(currentLevelIcon, currentLevel, levels) {
                 it?.levelId?.let { nr ->
                     if (nr != currentLevel) {
+                        findNavController().popBackStack(R.id.navigation_level,
+                            inclusive = false,
+                            saveState = false
+                        )
                         levelViewModel.changeLevel(nr)
-                        findNavController().safeNavigate(R.id.action_navigation_level_select_to_navigation_level)
                     }
                 }
             }
