@@ -135,9 +135,7 @@
 
     <string name="you_rank_first">¡Tú ocupas el primer lugar!</string>
 
-    <string name="earn">Ganar</string>
-
-    <string name="points_to_rank_up">puntos para subir de rango!</string>
+    <string name="earn">¡Gana <xliff:g id="puntos">%d</xliff:g> para el próximo rango!</string>
 
     <string name="new_level_by">Nuevo nivel creado por <xliff:g id="player_name">%s</xliff:g>!</string>
     <string name="new_level_by_language_pack_incomplete">Nuevo nivel de <xliff:g id="player_name_incomplete">%s</xliff:g>.\n¡Paquete de niveles completo para jugarlo!</string>

@@ -90,7 +90,7 @@
             android:saveEnabled="false"
             app:strokeColor="?colorOutline"
             app:strokeWidth="1dp"
-            app:srcCompat="@drawable/fr"/>
+            app:srcCompat="@drawable/gb"/>
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.LinearLayoutCompat

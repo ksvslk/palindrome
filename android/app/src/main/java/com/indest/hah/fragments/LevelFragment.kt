@@ -215,12 +215,14 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             binding.gameFieldContainer
         )
         val list = levelGridLayout.first.children.filterIsInstance<Cell<*, *>>().toMutableList()
-        cellDirector = CellDirector(
-            list,
-            levelViewModel,
-            levelGridLayout.second,
-            levelGridLayout.third
-        )
+        levelGridLayout.first.doOnPreDraw {
+            cellDirector = CellDirector(
+                list,
+                levelViewModel,
+                levelGridLayout.second,
+                levelGridLayout.third
+            )
+        }
 
         binding.gameFieldContainer.removeAllViews()
         binding.gameFieldContainer.addView(levelGridLayout.first)
@@ -306,7 +308,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                     }
                     scoreMessage.addCallback(scoreMessageCallback)
                     winningMessage.show()
-                    soundPlayer.play(soundPlayer.sounds.correctSound, 0.1f)
+                    soundPlayer.play(soundPlayer.sounds.correctSound, 0.015f)
                 }
             }
             cellsAnimation.start()
@@ -409,7 +411,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         if (isVisible) {
             activateBottomNavBar()
             continueMessage.dismiss()
-            soundPlayer.play(soundPlayer.sounds.levelTransition, volume = 0.2f)
+            soundPlayer.play(soundPlayer.sounds.levelTransition, volume = 0.05f)
             playTrainAnimation()
 
             when (isLastLevel) {
@@ -418,18 +420,18 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                 }
                 Triple(true, false, "") -> {
                     levelViewModel.executeLevelCompleteActions(1001)
-                    soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.2f)
+                    soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.1f)
                     findNavController().safeNavigate(R.id.action_navigation_level_to_navigation_game_pack_ending)
                 }
                 Triple(false, true, "") -> {
                     levelViewModel.executeLevelCompleteActions(1)
-                    soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.2f)
+                    soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.1f)
                     findNavController().safeNavigate(R.id.action_navigation_level_to_navigation_players_pack_ending)
                 }
             }
             if (isLastLevel.third != "") {
                 levelViewModel.executeLevelCompleteActions(1)
-                soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.2f)
+                soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.1f)
                 findNavController().safeNavigate(R.id.action_navigation_level_to_navigation_language_pack_ending)
             }
         }

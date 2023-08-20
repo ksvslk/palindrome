@@ -70,8 +70,7 @@
     <string name="profile_person_symbol">❦</string>
     <string name="score">Skoor:</string>
     <string name="you_rank_first">Sa oled esikohal!</string>
-    <string name="earn">Teeni</string>
-    <string name="points_to_rank_up">punkti, et paremusjärjestus!</string>
+    <string name="earn">Teenige järgmise järgu saamiseks <xliff:g id="points">%d</xliff:g>!</string>
     <string name="new_level_by">Uus tase mängija <xliff:g id="player_name">%s</xliff:g> poolt!</string>
     <string name="new_level_by_language_pack_incomplete">Uus tase autorilt <xliff:g id="player_name_incomplete">%s</xliff:g>.\nMängimiseks täitke tasemepakett!</string>
     <string name="levels_added">tasemeid lisatud!</string>

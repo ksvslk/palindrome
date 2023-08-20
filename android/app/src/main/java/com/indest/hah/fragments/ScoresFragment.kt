@@ -102,8 +102,8 @@ class ScoresFragment : FullBottomSheetDialogFragment() {
                                         binding.playerScoreImproveMessage.text =
                                             resources.getString(R.string.you_rank_first)
                                     } else {
-                                        binding.playerScoreImproveMessage.text =
-                                            "${resources.getString(R.string.earn)} ${leaderBoardScores.scores[index - 1].rawScore - score.rawScore + 1} ${resources.getString(R.string.points_to_rank_up)}"
+                                        val scoreToEarn = leaderBoardScores.scores[index - 1].rawScore - score.rawScore + 1
+                                        binding.playerScoreImproveMessage.text = resources.getString(R.string.earn, scoreToEarn)
                                     }
                                     binding.scoreFlipper.showNext()
                                     binding.scoreFragment.addView(scoreLayout)

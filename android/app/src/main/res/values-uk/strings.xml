@@ -71,8 +71,7 @@
     <string name="profile_person_symbol">❦</string>
     <string name="score">Оцінка:</string>
     <string name="you_rank_first">Ви займаєте перше місце!</string>
-    <string name="earn">Заробити</string>
-    <string name="points_to_rank_up">балів для підвищення!</string>
+    <string name="earn">Заробіть <xliff:g id="points">%d</xliff:g> для наступного рангу!</string>
     <string name="new_level_by">Новий рівень від <xliff:g id="player_name">%s</xliff:g>!</string>
     <string name="new_level_by_language_pack_incomplete">Новий рівень від <xliff:g id="player_name_incomplete">%s</xliff:g>.\nПройдіть пакет рівнів, щоб грати в нього!</string>
     <string name="levels_added">додано рівнів!</string>

@@ -66,8 +66,7 @@
     <string name="profile_person_symbol">❦</string>
     <string name="score">Score:</string>
     <string name="you_rank_first">You rank first!</string>
-    <string name="earn">Earn</string>
-    <string name="points_to_rank_up">points to rank up!</string>
+    <string name="earn">Earn <xliff:g id="points">%d</xliff:g> for next rank!</string>
     <string name="new_level_by">New level by <xliff:g id="player_name">%s</xliff:g>!</string>
     <string name="new_level_by_language_pack_incomplete">New level by <xliff:g id="player_name_incomplete">%s</xliff:g>.\nComplete level pack to play it.</string>
     <string name="levels_added">levels added!</string>

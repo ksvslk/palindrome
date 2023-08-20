@@ -668,15 +668,17 @@ class LevelViewModel @Inject constructor(
             // Fetches the default System Locale
             Locale.getDefault().toLanguageTag()
         }?.substring(0, 2)
+        Log.d(TAG, "Locale for the hint: $currentLocaleName")
         return when (currentLocaleName) {
             "en" -> _currentLevel.value.solutions.first().hint
-            "cn" -> _currentLevel.value.solutions.first().hint_cn
+            "zh" -> _currentLevel.value.solutions.first().hint_cn
             "de" -> _currentLevel.value.solutions.first().hint_de
             "es" -> _currentLevel.value.solutions.first().hint_es
             "et" -> _currentLevel.value.solutions.first().hint_et
             "fi" -> _currentLevel.value.solutions.first().hint_fi
             "fr" -> _currentLevel.value.solutions.first().hint_fr
-            "id" -> _currentLevel.value.solutions.first().hint_id
+            "in" -> _currentLevel.value.solutions.first().hint_id // note
+            "id" -> _currentLevel.value.solutions.first().hint_id // same country
             "it" -> _currentLevel.value.solutions.first().hint_it
             "ja" -> _currentLevel.value.solutions.first().hint_ja
             "ko" -> _currentLevel.value.solutions.first().hint_ko

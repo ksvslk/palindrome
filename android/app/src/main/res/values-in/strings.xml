@@ -135,9 +135,7 @@
 
     <string name="you_rank_first">Kamu peringkat pertama!</string>
 
-    <string name="earn">Hasilkan</string>
-
-    <string name="points_to_rank_up">poin untuk naik peringkat!</string>
+    <string name="earn">Dapatkan <xliff:g id="points">%d</xliff:g> untuk peringkat berikutnya!</string>
 
     <string name="new_level_by">Level baru oleh <xliff:g id="player_name">%s</xliff:g>!</string>
     <string name="new_level_by_language_pack_incomplete">Level baru dari <xliff:g id="player_name_incomplete">%s</xliff:g>.\nSelesaikan paket level untuk memainkannya!</string>

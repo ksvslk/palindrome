@@ -560,12 +560,12 @@ class MainActivity : AppCompatActivity() {
         when (isSadMode) {
             true -> {
                 showSadModeToast()
-                soundPlayer.play(soundPlayer.sounds.sadMode, volume = 0.5f)
+                soundPlayer.play(soundPlayer.sounds.sadMode, volume = 0.15f)
             }
 
             false -> {
                 showNormalModeToast()
-                soundPlayer.play(soundPlayer.sounds.normalMode, volume = 0.5f)
+                soundPlayer.play(soundPlayer.sounds.normalMode, volume = 0.15f)
             }
         }
     }

@@ -71,8 +71,7 @@
     <string name="profile_person_symbol">❦</string>
     <string name="score">Score:</string>
     <string name="you_rank_first">Jij staat op de eerste plaats!</string>
-    <string name="earn">Verdien</string>
-    <string name="points_to_rank_up">punten om hoger te scoren!</string>
+    <string name="earn">Verdien <xliff:g id="points">%d</xliff:g> voor de volgende rang!</string>
     <string name="new_level_by">Nieuw level gemaakt door <xliff:g id="player_name">%s</xliff:g>!</string>
     <string name="new_level_by_language_pack_incomplete">Nieuw level door <xliff:g id="player_name_incomplete">%s</xliff:g>.\nCompleet levelpakket om het te spelen!</string>
     <string name="levels_added">levels toegevoegd!</string>

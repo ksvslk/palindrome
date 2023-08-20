@@ -19,7 +19,7 @@ class SoundPlayer @Inject constructor(
     val sounds: Sounds
 ) {
 
-    fun play(id: Int, volume:Float = 1f) {
+    fun play(id: Int, volume:Float = 0.1f) {
         context.getSharedPreferences(
             context.getString(R.string.app_preferences),
             Context.MODE_PRIVATE
@@ -32,7 +32,7 @@ class SoundPlayer @Inject constructor(
 
     }
 
-    fun playNote(index: Int, volume: Float = 0.1f) {
+    fun playNote(index: Int, volume: Float = 0.015f) {
 
         context.getSharedPreferences(
             context.getString(R.string.app_preferences),
