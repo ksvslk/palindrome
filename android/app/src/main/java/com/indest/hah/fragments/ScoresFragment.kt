@@ -58,7 +58,7 @@ class ScoresFragment : FullBottomSheetDialogFragment() {
 
         if (levelViewModel.accountStatus.value in setOf(AccountStatus.SIGNED_IN, AccountStatus.SIGNED_IN_WITH_FIREBASE)) {
             val leaderboardId =  if (generalViewModel.currentLevel.value.levelInfo.levelId > 10000) {
-                generalViewModel.currentLevel.value.levelInfo.countryCode.getCountryCodeLeaderboardId(requireContext())
+                generalViewModel.currentLevel.value.levelInfo.countryCode.getCountryCodeLeaderboardId(requireContext().applicationContext)
             }
             else if (generalViewModel.currentLevel.value.levelInfo.levelId > 1000) {
                 getString(R.string.leaderboard_player_levels_leaderboard)

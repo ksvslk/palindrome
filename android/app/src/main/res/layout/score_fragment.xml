@@ -44,6 +44,9 @@
                 android:drawablePadding="@dimen/default_large_margin"
                 android:gravity="center_vertical"
                 android:text="@string/scores"
+                app:autoSizeTextType="uniform"
+                app:autoSizeMaxTextSize="25sp"
+                android:maxLines="1"
                 android:textAppearance="@style/TextAppearance.OC.Headline5" />
         </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -72,6 +75,9 @@
                 android:drawablePadding="@dimen/default_large_margin"
                 android:drawableEnd="@drawable/ic_baseline_disabled_by_default_36"
                 android:text="@string/scores"
+                app:autoSizeTextType="uniform"
+                app:autoSizeMaxTextSize="25sp"
+                android:maxLines="1"
                 android:textAppearance="@style/TextAppearance.OC.Headline6" />
         </androidx.appcompat.widget.LinearLayoutCompat>
     </ViewFlipper>
