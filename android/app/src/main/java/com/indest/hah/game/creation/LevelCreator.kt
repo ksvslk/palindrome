@@ -39,6 +39,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         level.columnCount = densitySettings.columnCount
         addLetters(level, densitySettings, info, context)
         addSlots(palindrome, level, densitySettings, context)
+        level.id = level.hashCode()
         return Triple(level, level.columnCount, densitySettings.updatedIndexes)
     }
 
@@ -191,6 +192,7 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
                     LetterState.HOME
                 )
                     .apply {
+                        id = this.hashCode()
                         width = ds.boxSize
                         height = ds.boxSize
                         typeface = ResourcesCompat.getFont(context, R.font.roboto_bold)
@@ -216,7 +218,9 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
 
         val emptySpaces = getEmptySpacesCountForRow(puzzle, ds.columnCount)
         for (i in 1..emptySpaces) {
-            grid.addView(Space(context))
+            val space = Space(context)
+            space.id = space.hashCode()
+            grid.addView(space)
         }
     }
 
@@ -239,59 +243,72 @@ class LevelCreator @Inject constructor(@ActivityContext private val context: Con
         for (row in solutionRows) {
             for (char in row) {
                 when (char) {
-                    ' ' -> grid.addView(Space(context))
-                    '-' -> grid.addView(Slot(context, char).apply {
-                        contentDescription = "Slot nr ${this.homeIndex}"
-                        width = ds.boxSize
-                        height = ds.boxSize
-                        // set slot color and border
-                        val drawable = GradientDrawable()
-                        drawable.shape = GradientDrawable.RECTANGLE
-                        drawable.setStroke(2, Color.TRANSPARENT)
-                        drawable.setColor(Color.TRANSPARENT)
-                        background = drawable
-                        typeface = ResourcesCompat.getFont(context, R.font.roboto_bold)
-                        gravity = Gravity.CENTER
-                        setTextColor(
-                            MaterialColors.getColor(
-                                context,
-                                com.google.android.material.R.attr.colorOutline,
-                                Color.DKGRAY
+                    ' ' -> {
+                        val space = Space(context)
+                        space.id = space.hashCode()
+                        grid.addView(space)
+                    }
+                    '-' -> {
+                        val slot = Slot(context, char)
+                        slot.id = slot.hashCode()
+                        grid.addView(slot.apply {
+                            id = this.hashCode()
+                            contentDescription = "Slot nr ${this.homeIndex}"
+                            width = ds.boxSize
+                            height = ds.boxSize
+                            // set slot color and border
+                            val drawable = GradientDrawable()
+                            drawable.shape = GradientDrawable.RECTANGLE
+                            drawable.setStroke(2, Color.TRANSPARENT)
+                            drawable.setColor(Color.TRANSPARENT)
+                            background = drawable
+                            typeface = ResourcesCompat.getFont(context, R.font.roboto_bold)
+                            gravity = Gravity.CENTER
+                            setTextColor(
+                                MaterialColors.getColor(
+                                    context,
+                                    com.google.android.material.R.attr.colorOutline,
+                                    Color.DKGRAY
+                                )
                             )
-                        )
-                        isHyphen = true
-                        text = "–"
-                    })
+                            isHyphen = true
+                            text = "–"
+                        })
+                    }
 
-                    else -> grid.addView(Slot(context, char).apply {
-                        contentDescription = "Slot nr ${this.homeIndex}"
-                        width = ds.boxSize
-                        height = ds.boxSize
+                    else -> {
+                        val slot = Slot(context, char)
+                        slot.id = slot.hashCode()
+                        grid.addView(slot.apply {
+                            contentDescription = "Slot nr ${this.homeIndex}"
+                            width = ds.boxSize
+                            height = ds.boxSize
 
-                        // set slot color and border
-                        val drawable = GradientDrawable()
-                        drawable.shape = GradientDrawable.RECTANGLE
-                        drawable.setStroke(2, Color.TRANSPARENT)
-                        drawable.setColor(
-                            MaterialColors.getColor(
-                                context,
-                                com.google.android.material.R.attr.colorOutline,
-                                Color.DKGRAY
+                            // set slot color and border
+                            val drawable = GradientDrawable()
+                            drawable.shape = GradientDrawable.RECTANGLE
+                            drawable.setStroke(2, Color.TRANSPARENT)
+                            drawable.setColor(
+                                MaterialColors.getColor(
+                                    context,
+                                    com.google.android.material.R.attr.colorOutline,
+                                    Color.DKGRAY
+                                )
                             )
-                        )
-                        background = drawable
+                            background = drawable
 
-                        typeface = ResourcesCompat.getFont(context, R.font.roboto_bold)
-                        gravity = Gravity.CENTER
-                        setTextColor(
-                            MaterialColors.getColor(
-                                context,
-                                com.google.android.material.R.attr.colorSecondaryContainer,
-                                Color.RED
+                            typeface = ResourcesCompat.getFont(context, R.font.roboto_bold)
+                            gravity = Gravity.CENTER
+                            setTextColor(
+                                MaterialColors.getColor(
+                                    context,
+                                    com.google.android.material.R.attr.colorSecondaryContainer,
+                                    Color.RED
+                                )
                             )
-                        )
-                        text = " "
-                    })
+                            text = " "
+                        })
+                    }
                 }
             }
         }
