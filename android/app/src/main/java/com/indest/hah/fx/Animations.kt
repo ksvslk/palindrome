@@ -275,7 +275,7 @@ class Animations @Inject constructor(
                 .append(animation.animatedValue.toString().padStart(paddingLength, '0'))
                 .append(" / $maxScore")
         }
-        if (score > 0) soundPlayer.play(soundPlayer.sounds.scoreSound, volume = 0.2f)
+        if (score > 0) soundPlayer.play(soundPlayer.sounds.scoreSound, volume = 0.02f)
         return animator
     }
 

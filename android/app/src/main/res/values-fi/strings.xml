@@ -71,8 +71,7 @@
     <string name="profile_person_symbol">❦</string>
     <string name="score">Pistemäärä:</string>
     <string name="you_rank_first">Olet ensimmäisellä sijalla!</string>
-    <string name="earn">Ansaitse</string>
-    <string name="points_to_rank_up">pistettä sijoittumiseen!</string>
+    <string name="earn">Ansaitse <xliff:g id="points">%d</xliff:g> seuraavalle sijalle!</string>
     <string name="new_level_by">Uusi taso pelaajalta <xliff:g id="player_name">%s</xliff:g>!</string>
     <string name="new_level_by_language_pack_incomplete">Uusi taso tekijältä <xliff:g id="player_name_incomplete">%s</xliff:g>.\nSuorita tasopaketti pelataksesi sitä!</string>
     <string name="levels_added">tasoja lisätty!</string>

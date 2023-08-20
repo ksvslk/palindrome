@@ -20,11 +20,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
 import com.indest.hah.R
 import com.indest.hah.ads.RewardType
 import com.indest.hah.ads.RewardType.AD_FAILED
@@ -44,12 +39,9 @@ import com.indest.hah.views.ButtonState.NO_AD
 import com.indest.hah.views.ButtonState.PREMIUM
 import com.indest.hah.views.PurchaseButton
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
-import java.io.File
-import java.util.Locale
 import javax.inject.Inject
 
 
@@ -81,7 +73,7 @@ class HintsFragment : FullBottomSheetDialogFragment() {
                         binding.purchaseButtonClues.updateButtonUi(it)
                         binding.purchaseButtonLetters.updateButtonUi(it)
                         binding.purchaseNoSadMode.updateButtonUi(it)
-                        binding.purchaseAllInclusivePack2?.updateButtonUi(it)
+                        binding.purchaseAllInclusivePack2.updateButtonUi(it)
                     }
                 }
                 launch {
@@ -235,7 +227,7 @@ class HintsFragment : FullBottomSheetDialogFragment() {
     }
 
     private fun revealClue() {
-        soundPlayer.play(soundPlayer.sounds.letterRewardedSoundId)
+        soundPlayer.play(soundPlayer.sounds.letterRewardedSoundId, volume = 0.02f)
         binding.rewardCategoryButton.showClue()
     }
 
@@ -295,10 +287,8 @@ class HintsFragment : FullBottomSheetDialogFragment() {
     }
 
     private fun showPictureHintForCurrentLevel() {
-        soundPlayer.play(soundPlayer.sounds.letterRewardedSoundId)
+        soundPlayer.play(soundPlayer.sounds.letterRewardedSoundId, volume = 0.02f)
         val pictureDialogFragment = PictureDialogFragment()
-        Log.d(TAG, "CURRENT: ${levelViewModel.currentRelativeLevelNumber}")
-        Log.d(TAG, "CC: ${levelViewModel.currentLevel.value.levelInfo.countryCode}")
         pictureDialogFragment.setDrawable(
             requireContext(),
             levelViewModel.currentLevel.value.levelInfo.levelId,

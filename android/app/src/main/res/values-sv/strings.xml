@@ -71,8 +71,7 @@
     <string name="profile_person_symbol">❦</string>
     <string name="score">Poäng:</string>
     <string name="you_rank_first">Du rankas först!</string>
-    <string name="earn">Tjäna</string>
-    <string name="points_to_rank_up">poäng för att rankas upp!</string>
+    <string name="earn">Tjäna <xliff:g id="points">%d</xliff:g> för nästa ranking!</string>
     <string name="new_level_by">Ny nivå av <xliff:g id="player_name">%s</xliff:g>!</string>
     <string name="new_level_by_language_pack_incomplete">Ny nivå av <xliff:g id="player_name_incomplete">%s</xliff:g>.\nKomplett nivåpaket för att spela det!</string>
     <string name="levels_added">nivåer tillagda!</string>

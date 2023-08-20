@@ -81,7 +81,7 @@ class Effects @Inject constructor(
                     soundPlayer.play(soundPlayer.sounds.switchLettersSoundId)
                 }
                 SoundSelector.LETTER_REWARDED -> {
-                    soundPlayer.play(soundPlayer.sounds.letterRewardedSoundId)
+                    soundPlayer.play(soundPlayer.sounds.letterRewardedSoundId, volume = 0.02f)
                 }
             }
         }

@@ -50,6 +50,10 @@ fun getCountryTagOrDefault():String {
     {
         currentLocaleName = "cn"
     }
+    else if (currentLocaleName == "in")
+    {
+        currentLocaleName = "id"
+    }
 
     if (currentLocaleName == null || !C.languages.containsKey(currentLocaleName))
     {

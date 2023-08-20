@@ -71,8 +71,7 @@
     <string name="profile_person_symbol">❦</string>
     <string name="score">Scor:</string>
     <string name="you_rank_first">Ești primul!</string>
-    <string name="earn">Câștigă</string>
-    <string name="points_to_rank_up">puncte pentru a urca!</string>
+    <string name="earn">Câștigați <xliff:g id="points">%d</xliff:g> pentru următorul rang!</string>
     <string name="new_level_by">Nivel nou creat de către <xliff:g id="player_name">%s</xliff:g>!</string>
     <string name="new_level_by_language_pack_incomplete">Nivel nou de <xliff:g id="player_name_incomplete">%s</xliff:g>.\nCompletează pachetul de nivel pentru a-l juca!</string>
     <string name="levels_added">niveluri adăugate!</string>

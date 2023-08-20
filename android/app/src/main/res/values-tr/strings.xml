@@ -71,8 +71,7 @@
     <string name="profile_person_symbol">❦</string>
     <string name="score">Puan:</string>
     <string name="you_rank_first">Birinci sıradasın!</string>
-    <string name="earn">Kazan</string>
-    <string name="points_to_rank_up">Rütbe atlamak için puan!</string>
+    <string name="earn">Bir sonraki rütbe için <xliff:g id="points">%d</xliff:g> kazanın!</string>
     <string name="new_level_by"><xliff:g id="player_name">%s</xliff:g> tarafından yeni seviye!</string>
     <string name="new_level_by_language_pack_incomplete"><xliff:g id="player_name_incomplete">%s</xliff:g> tarafından yeni seviye.\nOynamak için seviye paketini tamamlayın!</string>
     <string name="levels_added">seviye eklendi!</string>
