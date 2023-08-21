@@ -227,7 +227,7 @@ class LevelViewModel @Inject constructor(
         val lastGameLevel =
             levelRepository.isFinalLevel(_currentLevel.value.levelInfo.levelId, 1, 100)
         val lastPlayerLevel =
-            levelRepository.isFinalLevel(_currentLevel.value.levelInfo.levelId, 1001, Int.MAX_VALUE)
+            levelRepository.isFinalLevel(_currentLevel.value.levelInfo.levelId, 1001, 10000)
         val isLanguageLevelFinal = levelRepository.isLanguagePackFinalLevel(
             _currentLevel.value.levelInfo.levelId,
             currentLevel.value.levelInfo.countryCode
@@ -343,13 +343,19 @@ class LevelViewModel @Inject constructor(
         changeLevelTo: Int = _currentLevel.value.levelInfo.levelId + 1,
         justNext: Boolean = false
     ) {
+        Log.d(TAG, "changeLevelTo: $changeLevelTo")
         val levelNr = _currentLevel.value.levelInfo.levelId
+        Log.d(TAG, "levelNr: $levelNr")
+        Log.d(TAG, "justNext: $justNext")
+
         val hintInterval = getApplication<Application>().getString(R.string.hint_suggestion)
         viewModelScope.launch {
             val levelToLoad = if (justNext) levelRepository.getNextLevelForLanguageLevel(
                 levelNr,
                 _currentLevel.value.levelInfo.countryCode
             )!! else changeLevelTo
+            Log.d(TAG, "Trying to change level to: $levelToLoad")
+            Log.d(TAG, "levelToLoad - _currentLevel.value.levelInfo.levelId: ${levelToLoad - _currentLevel.value.levelInfo.levelId}")
             levelRepository.executeLevelCompleteTransaction(levelNr, hintInterval, levelToLoad)
             levelRepository.increaseCount(getApplication<Application>().getString(R.string.sad_mode_interval))
             levelRepository.increaseCount(getApplication<Application>().getString(R.string.player_centered_scores))
