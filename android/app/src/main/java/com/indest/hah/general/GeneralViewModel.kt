@@ -9,7 +9,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.indest.hah.BuildConfig
 import com.indest.hah.R
 import com.indest.hah.ads.AdsLiveData
 import com.indest.hah.ads.RewardType
@@ -264,7 +263,12 @@ class GeneralViewModel @Inject constructor(
         val app = getApplication<Application>()
         val sadModeSku = app.getString(R.string.sad_mode)
         val allInclusiveSku = app.getString(R.string.all_inclusive_pack)
-        return (minSkuDetailsMap[sadModeSku]?.isPurchased == true || minSkuDetailsMap[allInclusiveSku]?.isPurchased == true)
+        val allInclusiveSku2 = app.getString(R.string.all_inclusive_pack_2)
+        return (
+                minSkuDetailsMap[sadModeSku]?.isPurchased == true ||
+                minSkuDetailsMap[allInclusiveSku]?.isPurchased == true ||
+                minSkuDetailsMap[allInclusiveSku2]?.isPurchased == true
+        )
     }
 
     fun getShareIntent(screen: String): Intent {
@@ -276,15 +280,16 @@ class GeneralViewModel @Inject constructor(
                 )
             }
         }
-        val puzzle = "\uD83C\uDD30\uD83C\uDD30\uD83C\uDD31\uD83C\uDD31"
+        val shareDescription = getApplication<Application>().applicationContext.getString(R.string.share_description)
+        val shareTitle = getApplication<Application>().applicationContext.getString(R.string.share)
         return Intent.createChooser(Intent().apply {
             action = Intent.ACTION_SEND
             putExtra(
                 Intent.EXTRA_TEXT,
-                "Rearrange chars to solve puzzle: $puzzle. Hint: famous band and most importantly - palindrome! Play full game: https://play.google.com/store/apps/details?id=${BuildConfig.APPLICATION_ID}"
+                shareDescription
             )
             type = "text/plain"
-        }, "Share Game")
+        }, shareTitle)
     }
 
     data class ButtonInfo(

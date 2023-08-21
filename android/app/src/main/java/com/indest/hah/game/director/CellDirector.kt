@@ -114,7 +114,6 @@ class CellDirector constructor(
                         val letter = letters.find { it.homeIndex == letterProperties.homeIndex }
                         if (slot == null || letter == null) {
                             Log.e(TAG, "Could not restore letter placements. Slot was $slot and letter was $letter. At least one of them is null.", )
-                            Log.e(TAG, "Letterproperties: $letterProperties")
                             return
                         }
 

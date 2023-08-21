@@ -227,7 +227,7 @@ class LevelViewModel @Inject constructor(
         val lastGameLevel =
             levelRepository.isFinalLevel(_currentLevel.value.levelInfo.levelId, 1, 100)
         val lastPlayerLevel =
-            levelRepository.isFinalLevel(_currentLevel.value.levelInfo.levelId, 1001, Int.MAX_VALUE)
+            levelRepository.isFinalLevel(_currentLevel.value.levelInfo.levelId, 1001, 10000)
         val isLanguageLevelFinal = levelRepository.isLanguagePackFinalLevel(
             _currentLevel.value.levelInfo.levelId,
             currentLevel.value.levelInfo.countryCode
@@ -309,7 +309,6 @@ class LevelViewModel @Inject constructor(
 
     fun resetLetterInfo(levelNr: Int) {
         viewModelScope.launch {
-            Log.d(TAG, "resetLetterInfo")
             levelRepository.resetLetterInfo(levelNr)
         }
     }
@@ -344,6 +343,7 @@ class LevelViewModel @Inject constructor(
         justNext: Boolean = false
     ) {
         val levelNr = _currentLevel.value.levelInfo.levelId
+
         val hintInterval = getApplication<Application>().getString(R.string.hint_suggestion)
         viewModelScope.launch {
             val levelToLoad = if (justNext) levelRepository.getNextLevelForLanguageLevel(
@@ -358,7 +358,7 @@ class LevelViewModel @Inject constructor(
         }
     }
 
-    fun allPalindromesFlow(): Flow<MutableSet<String>> {
+    fun allPalindromesFlow(): Flow<Map<String,List<String>>> {
         return flow {
             emit(levelRepository.getAllPalindromes())
         }
@@ -595,8 +595,6 @@ class LevelViewModel @Inject constructor(
             val solution =
                 _currentLevel.value.solutions.first().palindrome.replace(Regex("[\\s-]+"), "")
             var solutionData = SolutionData()
-            Log.d(TAG, "Guess: $guess")
-            Log.d(TAG, "Solution: $solution")
             if (guess.length == solution.length) {
                 val playerGuess = guess.map { char ->
                     if ("^([?!.,’':-]–)".contains(char)) "" else char
@@ -668,7 +666,6 @@ class LevelViewModel @Inject constructor(
             // Fetches the default System Locale
             Locale.getDefault().toLanguageTag()
         }?.substring(0, 2)
-        Log.d(TAG, "Locale for the hint: $currentLocaleName")
         return when (currentLocaleName) {
             "en" -> _currentLevel.value.solutions.first().hint
             "zh" -> _currentLevel.value.solutions.first().hint_cn
@@ -794,7 +791,7 @@ class LevelViewModel @Inject constructor(
             val maxLevelId = levelRepository.getMaxLevelId()
             val query = fsDb.collection("user_submitted_levels").where(
                 Filter.and(
-                    Filter.equalTo("testLive", true),
+                    Filter.equalTo("isFeatured", true),
                     Filter.or(
                         // player levels 1000+
                         Filter.and(
@@ -826,7 +823,15 @@ class LevelViewModel @Inject constructor(
                                         if (levelId > 1080) {
                                             val solutionsToCategories =
                                                 levelValues["solutionToCategory"] as Map<String, Map<String, String>>
-                                            if (solutionsToCategories.isEmpty()) throw Exception("Solutions were empty")
+                                            if (solutionsToCategories.isEmpty()) {
+                                                throw Exception("Solutions were empty")
+                                            }
+                                            val supportedHints = C.languages.keys.map { "hint_$it" }.plus("hint")
+                                            if (!solutionsToCategories.keys.all {
+                                                    solutionsToCategories[it]?.keys?.containsAll(supportedHints) == true
+                                                }) {
+                                                throw Exception("Solutions did not include hints for all languages.")
+                                            }
                                             val countryCode =
                                                 levelValues.getOrElse("countryCode") { "gb" }
                                             val playerLevel = PlayerLevel(
@@ -904,13 +909,16 @@ class LevelViewModel @Inject constructor(
     }
 
     suspend fun submitUserLevel(playersPalindrome: String) {
+        val hintMap =  C.languages.map { "hint_${it.key}" to "[FILL_HERE]" }.plus("hint" to "[FILL_HERE]").toMap()
         // Create a new user with a first, middle, and last name
         val level = hashMapOf(
             "isFeatured" to false,
             "levelId" to -1337,
             "palindrome" to playersPalindrome,
             "player" to currentlySignedInPlayerName,
-            "solutionToCategory" to hashMapOf(Pair(playersPalindrome, "[ADD_CATEGORY]")),
+            "solutionToCategory" to hashMapOf(
+                Pair(playersPalindrome, hintMap)
+            ),
             "countryCode" to tempCountrySelected.first,
             "timestamp" to FieldValue.serverTimestamp(),
         )

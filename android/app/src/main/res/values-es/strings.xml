@@ -150,7 +150,7 @@
     <string name="picture_hint">Sugerencia de imagen</string>
 
     <string name="other">Otro</string>
-
+    <string name="share_description">¿Puedes crear una palabra que se lea igual de cualquier lado de: ARRAP? Resuelve más: https://play.google.com/store/apps/details?id=com.indest.hah</string>
 
     <string-array name="good_texts">
         <item>¡Correcto!</item>

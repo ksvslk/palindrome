@@ -80,6 +80,7 @@
     <string name="send_levels_country_top">Trimite palindromuri și ridică-ți țara.</string>
     <string name="picture_hint">Sugestie imagine</string>
     <string name="other">Altul</string>
+    <string name="share_description">Puteți crea un cuvânt care se citește la fel din ambele părți din: IMMIN? Rezolvați mai multe: https://play.google.com/store/apps/details?id=com.indest.hah</string>
 
     <string-array name="good_texts">
         <item>Corect!</item>

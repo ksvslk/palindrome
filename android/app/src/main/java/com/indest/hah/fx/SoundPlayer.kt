@@ -32,7 +32,7 @@ class SoundPlayer @Inject constructor(
 
     }
 
-    fun playNote(index: Int, volume: Float = 0.015f) {
+    fun playNote(index: Int, volume: Float = 0.025f) {
 
         context.getSharedPreferences(
             context.getString(R.string.app_preferences),

@@ -80,7 +80,7 @@
     <string name="send_levels_country_top">Skicka palindromer och höj ditt land.</string>
     <string name="picture_hint">Bildtips</string>
     <string name="other">Annat</string>
-
+    <string name="share_description">Kan du skapa ett ord som läser samma från båda sidor från: LILTIT? Lös mer: https://play.google.com/store/apps/details?id=com.indest.hah</string>
 
     <string-array name="good_texts">
         <item>Korrekt!</item>

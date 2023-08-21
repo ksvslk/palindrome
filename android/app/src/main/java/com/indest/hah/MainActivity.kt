@@ -229,8 +229,6 @@ class MainActivity : AppCompatActivity() {
         countryCode: String = "",
         showPlayButton: Boolean = true
     ) {
-        Log.d(TAG, "showNewLevelMessage")
-
         val flag = if (countryCode != "") {
             "${countryCode.countryCodeToEmoji()} "
         } else ""
@@ -362,7 +360,6 @@ class MainActivity : AppCompatActivity() {
         } else {
             getString(R.string.leaderboard_crme_de_la_crme)
         }
-        Log.d(TAG, "submitting score for $countryCode with leaderboard ID $leaderboardId")
         PlayGames.getLeaderboardsClient(this)
             .submitScore(
                 leaderboardId,
@@ -560,12 +557,12 @@ class MainActivity : AppCompatActivity() {
         when (isSadMode) {
             true -> {
                 showSadModeToast()
-                soundPlayer.play(soundPlayer.sounds.sadMode, volume = 0.15f)
+                soundPlayer.play(soundPlayer.sounds.sadMode, volume = 0.18f)
             }
 
             false -> {
                 showNormalModeToast()
-                soundPlayer.play(soundPlayer.sounds.normalMode, volume = 0.15f)
+                soundPlayer.play(soundPlayer.sounds.normalMode, volume = 0.18f)
             }
         }
     }
@@ -581,8 +578,6 @@ class MainActivity : AppCompatActivity() {
 
 
     fun downloadHintPictureIfNeeded(levelNr: Int) {
-        Log.d(TAG, "downloadHintIfNeeded")
-
         // let's assume each time we don't have the picture
         levelViewModel.setPictureDownloaded(isPresent = false)
 
@@ -592,15 +587,13 @@ class MainActivity : AppCompatActivity() {
             val storage = Firebase.storage
             val gsReference =
                 storage.getReferenceFromUrl("${C.FIREBASE_PICS_STORAGE_PATH}level${levelNr}.jpg")
-            Log.d(TAG, "gsReference: ${gsReference.name}")
             this.filesDir?.let {
                 val localFile = File(it, "level${levelNr}.jpg")
                 gsReference.getFile(localFile).addOnSuccessListener {
                     levelViewModel.setPictureDownloaded(isPresent = true)
-                    Log.d(TAG, "Picture hint is ready to show.")
-                }.addOnFailureListener {
+                }.addOnFailureListener {ex ->
                     levelViewModel.setPictureDownloaded(isPresent = false)
-                    Log.e(TAG, "Failed to create local file from storage.", it)
+                    Log.e(TAG, "Failed to create local file from storage.", ex)
                 }
             }
         }

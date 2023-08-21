@@ -80,6 +80,7 @@
     <string name="send_levels_country_top">팰린드롬을 보내고 나라를 일으켜라.</string>
     <string name="picture_hint">그림 힌트</string>
     <string name="other">다른</string>
+    <string name="share_description">조할건건조에서 앞뒤가 같은 단어를 만들 수 있나요? 더보기: https://play.google.com/store/apps/details?id=com.indest.hah</string>
 
     <string-array name="good_texts">
         <item>정답입니다!</item>

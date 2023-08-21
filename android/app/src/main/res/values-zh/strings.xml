@@ -150,6 +150,7 @@
 
     <string name="picture_hint">图片提示</string>
     <string name="other">其他</string>
+    <string name="share_description">你能创造一个从两边读起来都一样的词吗：法语？ 解决更多：https://play.google.com/store/apps/details?id=com.indest.hah</string>
 
     <string-array name="good_texts">
         <item>正确！</item>

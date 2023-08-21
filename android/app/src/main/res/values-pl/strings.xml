@@ -80,6 +80,7 @@
     <string name="send_levels_country_top">Wyślij palindromy i wznieś swój kraj.</string>
     <string name="picture_hint">Podpowiedź do zdjęcia</string>
     <string name="other">Inne</string>
+    <string name="share_description">Czy możesz utworzyć słowo, które czyta się tak samo z obu stron z: JAAKK? Rozwiąż więcej: https://play.google.com/store/apps/details?id=com.indest.hah</string>
 
     <string-array name="good_texts">
         <item>Prawidłowo!</item>

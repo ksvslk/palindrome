@@ -308,7 +308,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                     }
                     scoreMessage.addCallback(scoreMessageCallback)
                     winningMessage.show()
-                    soundPlayer.play(soundPlayer.sounds.correctSound, 0.015f)
+                    soundPlayer.play(soundPlayer.sounds.correctSound, 0.01f)
                 }
             }
             cellsAnimation.start()
@@ -411,7 +411,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         if (isVisible) {
             activateBottomNavBar()
             continueMessage.dismiss()
-            soundPlayer.play(soundPlayer.sounds.levelTransition, volume = 0.05f)
+            soundPlayer.play(soundPlayer.sounds.levelTransition, volume = 0.08f)
             playTrainAnimation()
 
             when (isLastLevel) {

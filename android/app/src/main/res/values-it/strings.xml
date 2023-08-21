@@ -150,7 +150,7 @@
 
     <string name="picture_hint">Suggerimento per l\'immagine</string>
     <string name="other">Altro</string>
-
+    <string name="share_description">Puoi creare una parola che si legge allo stesso modo da entrambi i lati di: EEAAR? Risolvi di più: https://play.google.com/store/apps/details?id=com.indest.hah</string>
 
     <string-array name="good_texts">
         <item>Corretto!</item>

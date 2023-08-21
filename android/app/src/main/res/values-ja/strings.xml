@@ -150,7 +150,7 @@
 
     <string name="picture_hint">画像のヒント</string>
     <string name="other">その他</string>
-
+    <string name="share_description">どちらの側から見ても同じように読める単語「か磨鏡ぬ」を作成できますか? さらに解決するには: https://play.google.com/store/apps/details?id=com.indest.hah</string>
 
     <string-array name="good_texts">
         <item>正解！</item>

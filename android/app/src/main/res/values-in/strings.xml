@@ -150,7 +150,7 @@
 
     <string name="picture_hint">Petunjuk gambar</string>
     <string name="other">Lainnya</string>
-
+    <string name="share_description">Dapatkah Anda membuat kata yang dibaca sama dari kedua sisi dari: PAAKK? Selesaikan lebih banyak: https://play.google.com/store/apps/details?id=com.indest.hah</string>
 
     <string-array name="good_texts">
         <item>Benar!</item>
