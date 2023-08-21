@@ -75,13 +75,13 @@ class Effects @Inject constructor(
             ) return
             when (soundSelector) {
                 SoundSelector.PLACE_LETTER_IN_EMPTY_BOX -> {
-                    soundPlayer.play(soundPlayer.sounds.placeLetterSoundId)
+                    soundPlayer.play(soundPlayer.sounds.placeLetterSoundId, volume = 0.12f)
                 }
                 SoundSelector.SWITCH_LETTERS -> {
-                    soundPlayer.play(soundPlayer.sounds.switchLettersSoundId)
+                    soundPlayer.play(soundPlayer.sounds.switchLettersSoundId, volume = 0.2f)
                 }
                 SoundSelector.LETTER_REWARDED -> {
-                    soundPlayer.play(soundPlayer.sounds.letterRewardedSoundId, volume = 0.02f)
+                    soundPlayer.play(soundPlayer.sounds.letterRewardedSoundId, volume = 0.05f)
                 }
             }
         }

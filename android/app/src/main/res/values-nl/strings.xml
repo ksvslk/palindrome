@@ -80,7 +80,7 @@
     <string name="send_levels_country_top">Stuur palindromen en verhef je land.</string>
     <string name="picture_hint">Pictogram</string>
     <string name="other">Andere</string>
-
+    <string name="share_description">Kun jij een woord maken dat van beide kanten hetzelfde leest van: LLEEP? Meer oplossen: https://play.google.com/store/apps/details?id=com.indest.hah</string>
 
     <string-array name="good_texts">
         <item>Correct!</item>

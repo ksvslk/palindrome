@@ -22,7 +22,6 @@ class PictureDialogFragment : DialogFragment() {
     private var bitmap:Bitmap? = null
 
     fun setDrawable(localContext: Context, levelNr: Int, relativeLevelNr:Int, countryCode:String = "gb") {
-        Log.d(TAG, "LEVEL NR: $levelNr")
         if (levelNr <= C.PLAYER_LEVELS_COVERED_LOCALLY || levelNr in LANGUAGE_LEVELS_RANGE) {
             val hintResourceId = getDrawableFor(levelNr = relativeLevelNr, cc = countryCode, context = localContext)
             customDrawable = ContextCompat.getDrawable(localContext, hintResourceId)

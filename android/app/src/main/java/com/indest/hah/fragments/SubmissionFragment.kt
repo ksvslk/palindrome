@@ -1,6 +1,5 @@
 package com.indest.hah.fragments
 
-import android.app.Dialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -13,15 +12,13 @@ import androidx.core.content.ContextCompat
 import androidx.core.text.isDigitsOnly
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.indest.hah.MainActivity
 import com.indest.hah.R
 import com.indest.hah.databinding.SubmissionFragmentBinding
 import com.indest.hah.game.viewmodel.LevelViewModel
-import com.indest.hah.other.C
 import com.indest.hah.other.isPalindrome
+import com.indest.hah.other.lettersOnlyPalindrome
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 
@@ -36,7 +33,6 @@ class SubmissionFragment : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        Log.d(TAG, "onCreateView")
         val b = SubmissionFragmentBinding.inflate(layoutInflater, container, false)
         _binding = b
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
@@ -102,10 +98,7 @@ class SubmissionFragment : BottomSheetDialogFragment() {
                         } else if (p0.toString().length < resources.getInteger(R.integer.minUserPalindromeLength)) {
                             errors.add(getString(R.string.min_length_error) + resources.getInteger(R.integer.minUserPalindromeLength))
                             binding.enterPalindromeTextInputLayout.endIconDrawable = null
-                        } else if (palindromes.contains(
-                                p0?.toString()?.replace("[!?’,.;:'\\-\"\\s]".toRegex(), "")
-                            )
-                        ) {
+                        } else if (palindromeAddedForCurrentLanguage(p0.toString(), palindromes)) {
                             errors.add(getString(R.string.palindrome_exists))
                             binding.enterPalindromeTextInputLayout.endIconDrawable = null
                         } else if (p0.toString().length > resources.getInteger(R.integer.maxUserPalindromeLength)) {
@@ -212,5 +205,18 @@ class SubmissionFragment : BottomSheetDialogFragment() {
         }
     }
 
+    private fun palindromeAddedForCurrentLanguage(palindrome:String, palindromes:Map<String,List<String>>): Boolean
+    {
+        val countryCodes = resources.getStringArray(R.array.country_codes_array).plus("other")
+        val cc = countryCodes[levelViewModel.tempCountrySelected.second]
+        return if (palindromes.contains(cc)) {
+            val currentCountryPalindromes = palindromes[cc]!!
+            currentCountryPalindromes.any {
+                it.lettersOnlyPalindrome() == palindrome.lettersOnlyPalindrome()
+            }
+        } else {
+            false
+        }
+    }
 
 }

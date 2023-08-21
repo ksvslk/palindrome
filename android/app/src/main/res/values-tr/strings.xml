@@ -80,7 +80,7 @@
     <string name="send_levels_country_top">Palindromlar gönder ve ülkeni yükselt.</string>
     <string name="picture_hint">Resim ipucu</string>
     <string name="other">Diğer</string>
-
+    <string name="share_description">ÇÜÜKK´ten her iki tarafı da aynı şekilde okunan bir kelime oluşturabilir misiniz? Daha fazlasını çözün: https://play.google.com/store/apps/details?id=com.indest.hah</string>
 
     <string-array name="good_texts">
         <item>Doğru!</item>

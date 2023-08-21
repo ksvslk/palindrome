@@ -80,6 +80,7 @@
     <string name="send_levels_country_top">Надішліть паліндром і підніміть свою країну.</string>
     <string name="picture_hint">Підказка до малюнка</string>
     <string name="other">Інше</string>
+    <string name="share_description">Чи можете ви створити слово, яке однаково читається з обох сторін від: ККООР? Вирішіть більше: https://play.google.com/store/apps/details?id=com.indest.hah</string>
 
     <string-array name="good_texts">
         <item>Правильно!</item>

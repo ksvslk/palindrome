@@ -73,6 +73,12 @@ fun String.isPalindrome(language: String = "gb"): Boolean {
     return testString.length >= 4 && isStringPalindrome
 }
 
+
+fun String.lettersOnlyPalindrome(): String {
+    return this.replace("[!?’,.;:'\\-\"\\s]".toRegex(), "")
+}
+
+
 fun String.appendSmallSuperscript(superScript:String):SpannableStringBuilder
 {
     val superscriptLevelCount = SpannableString(superScript)

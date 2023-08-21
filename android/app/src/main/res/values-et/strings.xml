@@ -79,7 +79,7 @@
     <string name="send_levels_country_top">Saatke palindroomid ja tõstke oma riik üles.</string>
     <string name="picture_hint">Pilt vihje</string>
     <string name="other">Muu</string>
-
+    <string name="share_description">Kas saate luua sõna, mis loeb mõlemalt poolt sama: RIIKK? Lahendage rohkem: https://play.google.com/store/apps/details?id=com.indest.hah</string>
 
     <string-array name="good_texts">
         <item>Õige vastus!</item>

@@ -80,7 +80,7 @@
     <string name="send_levels_country_top">Lähetä palindromeja ja nosta maasi.</string>
     <string name="picture_hint">Kuvavinkki</string>
     <string name="other">Muut</string>
-
+    <string name="share_description">Voitko luoda sanan, joka lukee saman kummaltakin puolelta: AAAJJ? Ratkaise lisää: https://play.google.com/store/apps/details?id=com.indest.hah</string>
 
     <string-array name="good_texts">
         <item>Oikein!</item>

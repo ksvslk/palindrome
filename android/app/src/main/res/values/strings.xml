@@ -82,6 +82,7 @@
     <string name="save_24_percent_label" translatable="false">-24%</string>
     <string name="best_loved_label" translatable="false">👌</string>
     <string name="privacy_policy" translatable="false">Privacy Policy</string>
+    <string name="share_description">Can you create a word that reads the same from either side from: ELLEV? Solve more: https://play.google.com/store/apps/details?id=com.indest.hah</string>
 
     <string-array name="good_texts">
         <item>Correct!</item>

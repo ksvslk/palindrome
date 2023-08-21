@@ -111,8 +111,8 @@ class LevelRepository @Inject constructor(
     suspend fun getLevelsForCountry(cc:String):List<LevelData>
         = levelDao.getLevelsForCountry(cc).map { it.levelInfo }
 
-    suspend fun getAllPalindromes():MutableSet<String> {
-        return levelDao.getAllPalindromes().map { it.replace("[!?’,.;:'\\-\"\\s]".toRegex(), "") }.toHashSet()
+    suspend fun getAllPalindromes():Map<String,List<String>> {
+        return levelDao.getAllPalindromes()
     }
 
     suspend fun setCountTo(name: String, count: Int) {

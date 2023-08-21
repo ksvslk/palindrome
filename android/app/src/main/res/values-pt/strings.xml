@@ -151,7 +151,7 @@
 
     <string name="picture_hint">Dica de imagem</string>
     <string name="other">Outro</string>
-
+    <string name="share_description">Você pode criar uma palavra que seja lida igual em ambos os lados de: RIIMM? Resolva mais: https://play.google.com/store/apps/details?id=com.indest.hah</string>
 
     <string-array name="good_texts">
         <item>Correto!</item>

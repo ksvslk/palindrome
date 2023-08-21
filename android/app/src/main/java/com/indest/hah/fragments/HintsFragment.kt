@@ -83,7 +83,6 @@ class HintsFragment : FullBottomSheetDialogFragment() {
                 }
                 launch {
                     levelViewModel.pictureHintDownloaded.collectLatest {
-                        Log.d(TAG, "pictureHintDownloaded: $it")
                         if (it) binding.rewardPictureButton.removeDownloadingState()
                         else binding.rewardPictureButton.addDownloadingState()
                     }
@@ -227,7 +226,7 @@ class HintsFragment : FullBottomSheetDialogFragment() {
     }
 
     private fun revealClue() {
-        soundPlayer.play(soundPlayer.sounds.letterRewardedSoundId, volume = 0.02f)
+        soundPlayer.play(soundPlayer.sounds.letterRewardedSoundId, volume = 0.05f)
         binding.rewardCategoryButton.showClue()
     }
 
@@ -287,7 +286,7 @@ class HintsFragment : FullBottomSheetDialogFragment() {
     }
 
     private fun showPictureHintForCurrentLevel() {
-        soundPlayer.play(soundPlayer.sounds.letterRewardedSoundId, volume = 0.02f)
+        soundPlayer.play(soundPlayer.sounds.letterRewardedSoundId, volume = 0.05f)
         val pictureDialogFragment = PictureDialogFragment()
         pictureDialogFragment.setDrawable(
             requireContext(),

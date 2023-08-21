@@ -2,7 +2,6 @@
 
 package com.indest.hah.other
 
-import android.R.attr.text
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.text.SpannableString

@@ -150,7 +150,7 @@
 
     <string name="picture_hint">Indice d\'image</string>
     <string name="other">Autre</string>
-
+    <string name="share_description">Pouvez-vous créer un mot qui se lit de la même manière de chaque côté à partir de : ÊÉÉTT ? Résolvez plus : https://play.google.com/store/apps/details?id=com.indest.hah</string>
 
     <string-array name="good_texts">
         <item>Correct !</item>

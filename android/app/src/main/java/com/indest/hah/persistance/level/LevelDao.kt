@@ -403,8 +403,9 @@ interface LevelDao {
     @Query("select * from interval")
     suspend fun getAllIntervals(): List<Interval>
 
-    @Query("select palindrome from solution_table")
-    suspend fun getAllPalindromes(): List<String>
+    @MapInfo(keyColumn = "country_code", valueColumn = "palindrome")
+    @Query("select country_code, palindrome from level_info_table join solution_table on level_id = parent_id")
+    suspend fun getAllPalindromes(): Map<String, List<String>>
 
     @Query("update level_info_table set category_rewarded=:value where level_id=:level")
     suspend fun updateCategoryRewarded(value: Boolean, level: Int)
