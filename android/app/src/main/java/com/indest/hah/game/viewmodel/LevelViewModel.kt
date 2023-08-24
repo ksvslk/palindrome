@@ -532,7 +532,7 @@ class LevelViewModel @Inject constructor(
         updateAndConsiderFlawlessAchievements(solutionData)
 
         // Zero mistakes achievement
-        if (_currentLevel.value.levelInfo.levelId >= 21 &&
+        if (_currentLevel.value.levelInfo.levelId in 21..100 &&
             solutionData.score == solutionData.maxScore
         ) {
             unlockAchievement(context.getString(R.string.achievement_zero_mistakes))
@@ -791,7 +791,7 @@ class LevelViewModel @Inject constructor(
             val maxLevelId = levelRepository.getMaxLevelId()
             val query = fsDb.collection("user_submitted_levels").where(
                 Filter.and(
-                    Filter.equalTo("isFeatured", true),
+                    Filter.equalTo(C.PLAYER_LEVELS_TAG, true),
                     Filter.or(
                         // player levels 1000+
                         Filter.and(
@@ -912,7 +912,7 @@ class LevelViewModel @Inject constructor(
         val hintMap =  C.languages.map { "hint_${it.key}" to "[FILL_HERE]" }.plus("hint" to "[FILL_HERE]").toMap()
         // Create a new user with a first, middle, and last name
         val level = hashMapOf(
-            "isFeatured" to false,
+            C.PLAYER_LEVELS_TAG to false,
             "levelId" to -1337,
             "palindrome" to playersPalindrome,
             "player" to currentlySignedInPlayerName,

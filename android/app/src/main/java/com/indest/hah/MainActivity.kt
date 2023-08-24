@@ -37,10 +37,7 @@ import com.google.android.gms.games.GamesSignInClient
 import com.google.android.gms.games.PlayGames
 import com.google.android.gms.games.Player
 import com.google.android.gms.tasks.Task
-import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.color.MaterialColors
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.BaseTransientBottomBar.ANIMATION_MODE_FADE
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.ump.ConsentForm
@@ -59,7 +56,6 @@ import com.indest.hah.game.viewmodel.LevelViewModel
 import com.indest.hah.general.AccountStatus
 import com.indest.hah.general.GeneralViewModel
 import com.indest.hah.other.C
-import com.indest.hah.other.LevelSelectType
 import com.indest.hah.other.countryCodeToEmoji
 import com.indest.hah.other.hideSystemBars
 import com.indest.hah.other.mapCountryCodeToLanguageAndFlag
@@ -68,7 +64,6 @@ import com.indest.hah.persistance.dto.SaveGame
 import com.indest.hah.savegame.SnapshotHelper
 import com.indest.hah.views.ButtonState
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
