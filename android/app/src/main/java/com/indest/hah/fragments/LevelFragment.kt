@@ -227,7 +227,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         binding.gameFieldContainer.removeAllViews()
         binding.gameFieldContainer.addView(levelGridLayout.first)
 
-        askForReview(level.levelInfo.levelId)
+        askForReview()
         showSubmitPalindromesBadge(level.levelInfo.levelId)
     }
 
@@ -524,8 +524,8 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         }
     }
 
-    private fun askForReview(level: Int) {
-        if (level == 8) {
+    private fun askForReview() {
+        if (levelViewModel.currentRelativeLevelNumber == 15) {
             activity?.let {
                 val reviewManager = ReviewManagerFactory.create(it.applicationContext)
                 val request = reviewManager.requestReviewFlow()
