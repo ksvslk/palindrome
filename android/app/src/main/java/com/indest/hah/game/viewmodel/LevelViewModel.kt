@@ -763,7 +763,6 @@ class LevelViewModel @Inject constructor(
         }
     }
 
-
     fun logRewardGiven(rewardType: RewardType) {
         viewModelScope.launch(Dispatchers.Default) {
             val currentLevel = _currentLevel.value.levelInfo.levelId
