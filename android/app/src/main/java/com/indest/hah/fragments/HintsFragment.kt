@@ -4,17 +4,13 @@ import android.animation.Animator
 import android.animation.LayoutTransition
 import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
-import android.app.Dialog
-import android.content.DialogInterface
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -87,11 +83,16 @@ class HintsFragment : FullBottomSheetDialogFragment() {
                         else binding.rewardPictureButton.addDownloadingState()
                     }
                 }
+
+                launch {
+                    levelViewModel.currentLevel.collectLatest {
+                        val hintInLocale = levelViewModel.getCurrentHintInLocale()
+                        binding.rewardCategoryButton.setClue(hintInLocale)
+                    }
+                }
             }
         }
 
-        val hintInLocale = levelViewModel.getCurrentHintInLocale()
-        binding.rewardCategoryButton.setClue(hintInLocale)
         if (viewModel.currentLevel.value.levelInfo.categoryRewarded) {
             binding.rewardCategoryButton.showClue()
         }

@@ -37,9 +37,9 @@
 
     <string name="hints">Conseils</string>
 
-    <string name="min_length_error">La longueur minimale est</string>
+    <string name="min_length_error">La longueur minimale est </string>
 
-    <string name="max_length_error">La longueur maximale est</string>
+    <string name="max_length_error">La longueur maximale est </string>
 
     <string name="all_digits_error">Ne peut pas être composé uniquement de chiffres</string>
 

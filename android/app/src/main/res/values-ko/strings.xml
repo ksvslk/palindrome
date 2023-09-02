@@ -22,8 +22,8 @@
     <string name="send_level_input_hint">회문 입력</string>
     <string name="stages">레벨</string>
     <string name="hints">힌트</string>
-    <string name="min_length_error">최소 길이는</string>
-    <string name="max_length_error">최대 길이는</string>
+    <string name="min_length_error">최소 길이는 </string>
+    <string name="max_length_error">최대 길이는 </string>
     <string name="all_digits_error">모든 숫자가 될 수 없음</string>
     <string name="palindrome_exists">Palindrome이 이미 추가되었습니다.</string>
     <string name="not_a_palindrome_error">솔루션은 회문이어야 합니다.</string>

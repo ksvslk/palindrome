@@ -17,8 +17,8 @@
     <string name="send_level_input_hint">Enter Your Palindrome</string>
     <string name="stages">Levels</string>
     <string name="hints">Hints</string>
-    <string name="min_length_error">Minimum length is</string>
-    <string name="max_length_error">Maximum length is</string>
+    <string name="min_length_error">Minimum length is </string>
+    <string name="max_length_error">Maximum length is </string>
     <string name="all_digits_error">Cannot be all digits</string>
     <string name="palindrome_exists">Palindrome is already added</string>
     <string name="not_a_palindrome_error">Solution must be a palindrome</string>

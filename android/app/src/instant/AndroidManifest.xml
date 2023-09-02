@@ -36,6 +36,28 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:host="www.indest.ee" />
+                <data android:pathPrefix="/hah" />
+            </intent-filter>
+
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="https" />
+                <data android:host="www.indest.ee" />
+                <data android:pathPrefix="/hah" />
+            </intent-filter>
+
         </activity>
 
         <service
@@ -46,33 +68,32 @@
                 android:name="autoStoreLocales"
                 android:value="true" />
         </service>
-
         <!--
-              <meta-data android:name="firebase_analytics_collection_enabled" android:value="false" />
-                <meta-data android:name="firebase_analytics_collection_deactivated" android:value="true" />-->
+                      <meta-data android:name="firebase_analytics_collection_enabled" android:value="false" />
+                        <meta-data android:name="firebase_analytics_collection_deactivated" android:value="true" />-->
 
-                <meta-data
-                    android:name="com.google.android.gms.instant.flavor"
-                    android:value="1337" />
+                        <meta-data
+                            android:name="com.google.android.gms.instant.flavor"
+                            android:value="1337" />
 
-                <meta-data
-                    android:name="com.google.android.gms.ads.APPLICATION_ID"
-                    android:value="@string/admob_app_id" />
-                <meta-data
-                    android:name="com.google.android.gms.games.APP_ID"
-                    android:value="@string/game_services_project_id" />
-                <meta-data
-                    android:name="com.google.android.gms.version"
-                    android:value="@integer/google_play_services_version" />
+                        <meta-data
+                            android:name="com.google.android.gms.ads.APPLICATION_ID"
+                            android:value="@string/admob_app_id" />
+                        <meta-data
+                            android:name="com.google.android.gms.games.APP_ID"
+                            android:value="@string/game_services_project_id" />
+                        <meta-data
+                            android:name="com.google.android.gms.version"
+                            android:value="@integer/google_play_services_version" />
 
-                <meta-data
-                    android:name="com.google.android.gms.ads.flag.OPTIMIZE_INITIALIZATION"
-                    android:value="true"/>
+                        <meta-data
+                            android:name="com.google.android.gms.ads.flag.OPTIMIZE_INITIALIZATION"
+                            android:value="true"/>
 
-                <meta-data
-                    android:name="com.google.android.gms.ads.flag.OPTIMIZE_AD_LOADING"
-                    android:value="true"/>
+                        <meta-data
+                            android:name="com.google.android.gms.ads.flag.OPTIMIZE_AD_LOADING"
+                            android:value="true"/>
 
-            </application>
+                    </application>
 
-        </manifest>
+                </manifest>

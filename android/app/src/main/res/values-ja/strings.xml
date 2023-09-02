@@ -37,9 +37,9 @@
 
     <string name="hints">ヒント</string>
 
-    <string name="min_length_error">最小長は</string>
+    <string name="min_length_error">最小長は </string>
 
-    <string name="max_length_error">最大長は</string>
+    <string name="max_length_error">最大長は </string>
 
     <string name="all_digits_error">すべての数字にすることはできません</string>
 

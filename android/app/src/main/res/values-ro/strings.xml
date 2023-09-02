@@ -22,8 +22,8 @@
     <string name="send_level_input_hint">Intră în palindromul tău</string>
     <string name="stages">Niveluri</string>
     <string name="hints">Sugestii</string>
-    <string name="min_length_error">Lungimea minimă este</string>
-    <string name="max_length_error">Lungimea maximă este</string>
+    <string name="min_length_error">Lungimea minimă este </string>
+    <string name="max_length_error">Lungimea maximă este </string>
     <string name="all_digits_error">Nu pot fi toate cifrele</string>
     <string name="palindrome_exists">Palindromul este deja adăugat</string>
     <string name="not_a_palindrome_error">Soluția trebuie să fie un palindrom</string>

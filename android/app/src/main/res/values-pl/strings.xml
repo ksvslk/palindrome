@@ -22,8 +22,8 @@
     <string name="send_level_input_hint">Wprowadź swój palindrom</string>
     <string name="stages">Poziomy</string>
     <string name="hints">Wskazówki</string>
-    <string name="min_length_error">Minimalna długość to</string>
-    <string name="max_length_error">Maksymalna długość to</string>
+    <string name="min_length_error">Minimalna długość to </string>
+    <string name="max_length_error">Maksymalna długość to </string>
     <string name="all_digits_error">Nie może składać się wyłącznie z cyfr</string>
     <string name="palindrome_exists">Palindrom jest już dodany</string>
     <string name="not_a_palindrome_error">Rozwiązanie musi być palindromem</string>
