@@ -37,9 +37,9 @@
 
     <string name="hints">提示</string>
 
-    <string name="min_length_error">最小长度为</string>
+    <string name="min_length_error">最小长度为 </string>
 
-    <string name="max_length_error">最大长度为</string>
+    <string name="max_length_error">最大长度为 </string>
 
     <string name="all_digits_error">不能全是数字</string>
 

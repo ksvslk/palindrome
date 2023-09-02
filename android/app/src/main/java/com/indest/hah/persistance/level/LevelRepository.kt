@@ -1,13 +1,8 @@
 package com.indest.hah.persistance.level
 
-import android.app.Application
 import android.util.Log
-import com.indest.hah.R
 import com.indest.hah.persistance.dto.*
-import dagger.hilt.android.internal.Contexts.getApplication
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.map
 import java.time.Duration
 import java.time.Instant
 
@@ -22,6 +17,11 @@ class LevelRepository @Inject constructor(
 
     suspend fun matchFirstLevelWithUserLocale(currentTag:String) {
         levelDao.matchFirstLevelWithUserLocale(currentTag)
+    }
+
+    suspend fun setUpInstantAppLinkLevel(countryCode: String, level: Int)
+    {
+        levelDao.setUpInstantAppLinkLevel(countryCode, level)
     }
 
     suspend fun getMaxLevelId():Int = levelDao.getMaxLevelId()

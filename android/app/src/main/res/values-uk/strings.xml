@@ -22,8 +22,8 @@
     <string name="send_level_input_hint">Введіть свій паліндром</string>
     <string name="stages">Рівні</string>
     <string name="hints">Підказки</string>
-    <string name="min_length_error">Мінімальна довжина</string>
-    <string name="max_length_error">Максимальна довжина</string>
+    <string name="min_length_error">Мінімальна довжина </string>
+    <string name="max_length_error">Максимальна довжина </string>
     <string name="all_digits_error">Не може бути всіма цифрами</string>
     <string name="palindrome_exists">Palindrome вже додано</string>
     <string name="not_a_palindrome_error">Рішення має бути паліндромом</string>

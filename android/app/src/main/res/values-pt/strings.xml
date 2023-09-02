@@ -38,9 +38,9 @@
 
     <string name="hints">Dicas</string>
 
-    <string name="min_length_error">O comprimento mínimo é</string>
+    <string name="min_length_error">O comprimento mínimo é </string>
 
-    <string name="max_length_error">O comprimento máximo é</string>
+    <string name="max_length_error">O comprimento máximo é </string>
 
     <string name="all_digits_error">Não pode ser todos os dígitos</string>
 

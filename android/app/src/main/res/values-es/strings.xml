@@ -38,9 +38,9 @@
 
     <string name="hints">Sugerencias</string>
 
-    <string name="min_length_error">La longitud mínima es</string>
+    <string name="min_length_error">La longitud mínima es </string>
 
-    <string name="max_length_error">La longitud máxima es</string>
+    <string name="max_length_error">La longitud máxima es </string>
 
     <string name="all_digits_error">No pueden ser todos los dígitos</string>
 

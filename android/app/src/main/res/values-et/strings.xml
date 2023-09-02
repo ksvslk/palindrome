@@ -22,8 +22,8 @@
     <string name="send_level_input_hint">Sisestage oma palindroom</string>
     <string name="stages">Tasemed</string>
     <string name="hints">Vihjed</string>
-    <string name="min_length_error">Minimaalne pikkus on</string>
-    <string name="max_length_error">Maksimaalne pikkus on</string>
+    <string name="min_length_error">Minimaalne pikkus on </string>
+    <string name="max_length_error">Maksimaalne pikkus on </string>
     <string name="all_digits_error">Ei saa olla kõik numbrid</string>
     <string name="palindrome_exists">Palindroom on juba lisatud</string>
     <string name="not_a_palindrome_error">Lahendus peab olema palindroom</string>

@@ -22,8 +22,8 @@
     <string name="send_level_input_hint">Syötä palindromiisi</string>
     <string name="stages">Tasot</string>
     <string name="hints">Vinkkejä</string>
-    <string name="min_length_error">Minimipituus on</string>
-    <string name="max_length_error">Enimmäispituus on</string>
+    <string name="min_length_error">Minimipituus on </string>
+    <string name="max_length_error">Enimmäispituus on </string>
     <string name="all_digits_error">Ei voi olla kaikkia numeroita</string>
     <string name="palindrome_exists">Palindromi on jo lisätty</string>
     <string name="not_a_palindrome_error">Ratkaisun täytyy olla palindromi</string>

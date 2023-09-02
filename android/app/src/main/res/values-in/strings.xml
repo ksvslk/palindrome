@@ -37,9 +37,9 @@
 
     <string name="hints">Petunjuk</string>
 
-    <string name="min_length_error">Panjang minimum adalah</string>
+    <string name="min_length_error">Panjang minimum adalah </string>
 
-    <string name="max_length_error">Panjang maksimum adalah</string>
+    <string name="max_length_error">Panjang maksimum adalah </string>
 
     <string name="all_digits_error">Tidak boleh semua digit</string>
 

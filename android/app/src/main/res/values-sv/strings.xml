@@ -22,8 +22,8 @@
     <string name="send_level_input_hint">Enter Your Palindrome</string>
     <string name="stages">Nivåer</string>
     <string name="hints">Tips</string>
-    <string name="min_length_error">Minsta längd är</string>
-    <string name="max_length_error">Maximal längd är</string>
+    <string name="min_length_error">Minsta längd är </string>
+    <string name="max_length_error">Maximal längd är </string>
     <string name="all_digits_error">Kan inte vara alla siffror</string>
     <string name="palindrome_exists">Palindrom har redan lagts till</string>
     <string name="not_a_palindrome_error">Lösningen måste vara ett palindrom</string>

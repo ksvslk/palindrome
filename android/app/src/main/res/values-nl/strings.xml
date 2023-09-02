@@ -22,8 +22,8 @@
     <string name="send_level_input_hint">Ga je palindroom binnen</string>
     <string name="stages">Niveaus</string>
     <string name="hints">Tips</string>
-    <string name="min_length_error">Minimale lengte is</string>
-    <string name="max_length_error">Maximale lengte is</string>
+    <string name="min_length_error">Minimale lengte is </string>
+    <string name="max_length_error">Maximale lengte is </string>
     <string name="all_digits_error">Kan niet uit alle cijfers bestaan</string>
     <string name="palindrome_exists">Palindroom is al toegevoegd</string>
     <string name="not_a_palindrome_error">De oplossing moet een palindroom zijn</string>

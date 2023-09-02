@@ -22,8 +22,8 @@
     <string name="send_level_input_hint">Palindromunuzu Girin</string>
     <string name="stages">Seviyeler</string>
     <string name="hints">İpuçları</string>
-    <string name="min_length_error">Minimum uzunluk</string>
-    <string name="max_length_error">Maksimum uzunluk</string>
+    <string name="min_length_error">Minimum uzunluk </string>
+    <string name="max_length_error">Maksimum uzunluk </string>
     <string name="all_digits_error">Tamamı rakam olamaz</string>
     <string name="palindrome_exists">Palindrome zaten eklendi</string>
     <string name="not_a_palindrome_error">Çözüm bir palindrom olmalı</string>

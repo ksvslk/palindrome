@@ -137,6 +137,8 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             it.dismiss()
         }
         messages.clear()
+        val containerView = requireActivity().findViewById<HahConstraintLayout>(R.id.container)
+        containerView.setOnClickListener(null)
     }
 
 
@@ -414,6 +416,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             soundPlayer.play(soundPlayer.sounds.levelTransition, volume = 0.08f)
             playTrainAnimation()
 
+            // game level final, player level final, language level final
             when (isLastLevel) {
                 Triple(false, false, "") -> {
                     levelViewModel.executeLevelCompleteActions(justNext = true)
