@@ -19,11 +19,6 @@ class LevelRepository @Inject constructor(
         levelDao.matchFirstLevelWithUserLocale(currentTag)
     }
 
-    suspend fun setUpInstantAppLinkLevel(countryCode: String, level: Int)
-    {
-        levelDao.setUpInstantAppLinkLevel(countryCode, level)
-    }
-
     suspend fun getMaxLevelId():Int = levelDao.getMaxLevelId()
     suspend fun getMaxPlayerLevelId():Int?
         = levelDao.getMaxPlayerLevelId()

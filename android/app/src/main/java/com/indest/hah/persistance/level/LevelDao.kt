@@ -5,7 +5,6 @@ import androidx.room.*
 import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.indest.hah.game.creation.Shuffler
-import com.indest.hah.other.C
 import com.indest.hah.other.getLevelScore
 import com.indest.hah.persistance.dto.*
 import kotlinx.coroutines.flow.Flow
@@ -36,7 +35,7 @@ interface LevelDao {
     suspend fun getUniqueCountriesWithNewLevelCount(): Map<String, Int>
 
     @Transaction
-    @Query("select * from level_info_table where country_code = :cc order by level_id asc")
+    @Query("select * from level_info_table where country_code = :cc")
     suspend fun getLevelsForCountry(cc: String): List<Level>
 
     @Query("delete from letter_info_table where owner_id = :levelNr")
@@ -50,9 +49,6 @@ interface LevelDao {
 
     @Query("update level_info_table set time_modified = (select time_modified + 1 from level_info_table where level_id=:currentLevelNr) where level_id=:chosenLevel")
     suspend fun updateChosenLevelTimestamp(currentLevelNr: Int, chosenLevel: Int)
-
-    @Query("update level_info_table set time_modified = :timestamp where level_id=:level")
-    suspend fun updateLevelTimestamp(level: Int, timestamp: Long)
 
     @Transaction
     suspend fun nextLevelActions(currentLevelNr: Int, chosenLevel: Int) {
@@ -583,44 +579,6 @@ interface LevelDao {
         }
     }
 
-    @Query("update level_info_table set progress = :progress where country_code = :countryCode and level_id <= :level")
-    suspend fun unlockLanguageLevelsSmallerAndEqualTo(countryCode: String, level: Int, progress: LevelProgress = LevelProgress.IN_PROGRESS)
-
-    @Transaction
-    suspend fun setUpInstantAppLinkLevel(countryCode: String, level: Int)
-    {
-        var levelToUpdateTimestamp = -1
-
-        if (C.languages.containsKey(countryCode) && level in 1..15) // language level
-        {
-            val languageLevelsAscendingId = getLevelsForCountry(cc = countryCode)
-            val selectedLevelId = languageLevelsAscendingId[level - 1].levelInfo.levelId
-            unlockLanguageLevelsSmallerAndEqualTo(countryCode, selectedLevelId)
-            levelToUpdateTimestamp = selectedLevelId
-        }
-        else if (countryCode == "gb" && level in 1..25) { // game level
-            unlockLanguageLevelsSmallerAndEqualTo(countryCode, level)
-            levelToUpdateTimestamp = level
-        }
-        else if (countryCode == "gb" && level in 101..180) // player level, no unlocking needed
-        {
-            levelToUpdateTimestamp = level + 900
-        }
-
-        if (levelToUpdateTimestamp != -1)
-        {
-            val timeStamp = getMaximumTimestamp()
-            if (timeStamp == null)
-            {
-                updateLevelTimestamp(levelToUpdateTimestamp, 2)
-            }
-            else {
-                updateLevelTimestamp(levelToUpdateTimestamp, timeStamp + 1)
-            }
-        }
-
-    }
-
     @Transaction
     suspend fun getLocalSaveGame(): SaveGame {
         val levels = getAllLevels()
@@ -659,4 +617,5 @@ interface LevelDao {
 
     @Query("select level_id from level_info_table where level_id > :levelId and country_code = :countryCode order by level_id asc limit 1")
     suspend fun getNextLevelForLanguageLevel(levelId:Int, countryCode: String):Int?
+
 }
