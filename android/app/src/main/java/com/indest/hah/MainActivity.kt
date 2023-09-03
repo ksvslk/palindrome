@@ -20,14 +20,17 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.forEach
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ReportFragment.Companion.reportFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.RequestConfiguration.TAG_FOR_UNDER_AGE_OF_CONSENT_UNSPECIFIED
 import com.google.android.gms.games.AuthenticationResult
 import com.google.android.gms.games.GamesSignInClient
 import com.google.android.gms.games.PlayGames
+import com.google.android.gms.games.PlayGamesSdk
 import com.google.android.gms.games.Player
 import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -63,8 +66,6 @@ import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
 import kotlin.math.min
-import android.content.Intent
-import android.net.Uri
 
 
 private const val RECONNECT_TIMER_START_MILLISECONDS = 1L * 1000L
@@ -103,6 +104,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         // Check if the migration has already been done or not
         if (getString(FIRST_TIME_MIGRATION) != STATUS_DONE) {
             // Fetch the selected language from wherever it was stored. In this case its SharedPref
@@ -119,7 +121,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         auth = Firebase.auth
 
-        levelViewModel.androidAppLinkData = getCountryAndLevelNr(intent)
         levelViewModel.setAccountStatus(AccountStatus.LOADING)
 
         val gamesSignInClient = PlayGames.getGamesSignInClient(this)
@@ -143,21 +144,6 @@ class MainActivity : AppCompatActivity() {
             ViewCompat.setSystemGestureExclusionRects(binding.root, exclusions)
         }
 
-    }
-
-    private fun getCountryAndLevelNr(appLinkIntent: Intent):Pair<String, Int>
-    {
-        val appLinkData: Uri? = appLinkIntent.data
-        val countOfSegments = appLinkData?.pathSegments?.size
-        if (countOfSegments == 3)
-        {
-            (appLinkData.pathSegments?.get(1) as String).let { countryCode ->
-                (appLinkData.pathSegments?.get(2)?.toInt())?.let { levelNr ->
-                    return Pair(countryCode, levelNr)
-                }
-            }
-        }
-        return Pair("", -1)
     }
 
     override fun onStop() {
@@ -379,7 +365,6 @@ class MainActivity : AppCompatActivity() {
     private fun requestLatestConsentInformation() {
         // Set tag for underage of consent. false means users are not underage.
         val params = ConsentRequestParameters.Builder()
-            .setTagForUnderAgeOfConsent(true)
             .build()
 
         consentInformation = UserMessagingPlatform.getConsentInformation(applicationContext)

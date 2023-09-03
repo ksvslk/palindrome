@@ -76,7 +76,6 @@ class LevelViewModel @Inject constructor(
     var tempSubmissionPalindrome = ""
     var tempCountrySelected = Pair("gb", 0)
     var currentRelativeLevelNumber = -1
-    var androidAppLinkData = Pair("", -1)
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Log.e(
@@ -95,16 +94,8 @@ class LevelViewModel @Inject constructor(
 
     private fun startCollectingLevelUpdate() {
         viewModelScope.launch {
-            if (androidAppLinkData.first != "" && androidAppLinkData.second > 0)
-            {
-                levelRepository.setUpInstantAppLinkLevel(androidAppLinkData.first, androidAppLinkData.second)
-                androidAppLinkData = Pair("", -1)
-            }
-            else {
-                val tag = getCountryTagOrDefault()
-                levelRepository.matchFirstLevelWithUserLocale(tag)
-            }
-
+            val tag = getCountryTagOrDefault()
+            levelRepository.matchFirstLevelWithUserLocale(tag)
             levelRepository.latestLevelFlow().collect {
                 val changeInLevelId = it.levelInfo.levelId != _currentLevel.value.levelInfo.levelId
                 _currentLevel.value = it
@@ -235,7 +226,7 @@ class LevelViewModel @Inject constructor(
     }
 
 
-    fun loadLatestLevelFromCloudOrLocal(saveGame: SaveGame?, androidAppLink: Pair<String, Int> = Pair("", -1)) {
+    fun loadLatestLevelFromCloudOrLocal(saveGame: SaveGame?) {
         viewModelScope.launch(exceptionHandler) {
             if (saveGame != null) {
                 levelRepository.updateLocalGame(saveGame)
