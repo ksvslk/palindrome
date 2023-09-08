@@ -646,7 +646,7 @@ class LevelViewModel @Inject constructor(
         }
     }
 
-    fun getCurrentHintInLocale(): String {
+    fun getCurrentHintInLocale(solutions:List<com.indest.hah.persistance.dto.Solution>): String {
         val currentLocaleName = if (!AppCompatDelegate.getApplicationLocales().isEmpty) {
             // Fetches the current Application Locale from the list
             AppCompatDelegate.getApplicationLocales()[0]?.toLanguageTag()
@@ -654,28 +654,29 @@ class LevelViewModel @Inject constructor(
             // Fetches the default System Locale
             Locale.getDefault().toLanguageTag()
         }?.substring(0, 2)
+
         return when (currentLocaleName) {
-            "en" -> _currentLevel.value.solutions.first().hint
-            "zh" -> _currentLevel.value.solutions.first().hint_cn
-            "de" -> _currentLevel.value.solutions.first().hint_de
-            "es" -> _currentLevel.value.solutions.first().hint_es
-            "et" -> _currentLevel.value.solutions.first().hint_et
-            "fi" -> _currentLevel.value.solutions.first().hint_fi
-            "fr" -> _currentLevel.value.solutions.first().hint_fr
-            "in" -> _currentLevel.value.solutions.first().hint_id // note
-            "id" -> _currentLevel.value.solutions.first().hint_id // same country
-            "it" -> _currentLevel.value.solutions.first().hint_it
-            "ja" -> _currentLevel.value.solutions.first().hint_ja
-            "ko" -> _currentLevel.value.solutions.first().hint_ko
-            "nl" -> _currentLevel.value.solutions.first().hint_nl
-            "pl" -> _currentLevel.value.solutions.first().hint_pl
-            "pt" -> _currentLevel.value.solutions.first().hint_pt
-            "ro" -> _currentLevel.value.solutions.first().hint_ro
-            "sv" -> _currentLevel.value.solutions.first().hint_sv
-            "tr" -> _currentLevel.value.solutions.first().hint_tr
-            "uk" -> _currentLevel.value.solutions.first().hint_uk
+            "en" -> solutions.first().hint
+            "zh" -> solutions.first().hint_cn
+            "de" -> solutions.first().hint_de
+            "es" -> solutions.first().hint_es
+            "et" -> solutions.first().hint_et
+            "fi" -> solutions.first().hint_fi
+            "fr" -> solutions.first().hint_fr
+            "in" -> solutions.first().hint_id // note
+            "id" -> solutions.first().hint_id // same country
+            "it" -> solutions.first().hint_it
+            "ja" -> solutions.first().hint_ja
+            "ko" -> solutions.first().hint_ko
+            "nl" -> solutions.first().hint_nl
+            "pl" -> solutions.first().hint_pl
+            "pt" -> solutions.first().hint_pt
+            "ro" -> solutions.first().hint_ro
+            "sv" -> solutions.first().hint_sv
+            "tr" -> solutions.first().hint_tr
+            "uk" -> solutions.first().hint_uk
             else -> {
-                _currentLevel.value.solutions.first().hint + "*"
+                solutions.first().hint + "*"
             }
         }
     }
