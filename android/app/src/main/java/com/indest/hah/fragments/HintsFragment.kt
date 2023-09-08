@@ -86,8 +86,11 @@ class HintsFragment : FullBottomSheetDialogFragment() {
 
                 launch {
                     levelViewModel.currentLevel.collectLatest {
-                        val hintInLocale = levelViewModel.getCurrentHintInLocale()
-                        binding.rewardCategoryButton.setClue(hintInLocale)
+                        if (it.solutions.isNotEmpty())
+                        {
+                            val hintInLocale = levelViewModel.getCurrentHintInLocale(solutions = it.solutions)
+                            binding.rewardCategoryButton.setClue(hintInLocale)
+                        }
                     }
                 }
             }
