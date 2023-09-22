@@ -23,44 +23,43 @@ class Letter: Cell {
     let SWITCH_LETTER_SOUND_ACTION = SKAction.playSoundFileNamed("switch_letters.wav", waitForCompletion: false)
     
     private var feedbackGenerator : UIImpactFeedbackGenerator? = nil
-    private let letterLabel = SKLabelNode()
+    let letterLabel = SKLabelNode()
     
     // MARK: Initialize
     init(data: LetterData, size: CGSize, homePosition: CGPoint, cellDirector: CellDirector) {
         self.cellDirector = cellDirector
         self.data = data
-        super.init(homeIndex: data.homeIndex, texture: nil, color: Theme.colorPrimary, size: size, homePosition: homePosition)
+        super.init(homeIndex: data.homeIndex, texture: nil, color: Theme.shared.colors.surfaceVariant, size: size, homePosition: homePosition)
         letterLabel.text = data.letter
         if (data.letter == "." || data.letter == ",") {
             letterLabel.numberOfLines = 2
         }
        
-        
-        letterLabel.fontName = Theme.yantraBold
+        letterLabel.fontName = Theme.shared.yantraBold
         letterLabel.fontSize = size.width / 1.5
         letterLabel.verticalAlignmentMode = .center
         letterLabel.horizontalAlignmentMode = .center
-        letterLabel.fontColor = Theme.colorOnPrimary
         isUserInteractionEnabled = true
         addChild(letterLabel)
+        switchColor()
     }
     
     
     override func switchColor()
     {
-        color = Theme.colorPrimary
-        letterLabel.fontColor = Theme.colorOnPrimary
+        color = Theme.shared.colors.surfaceVariant
+        letterLabel.fontColor = Theme.shared.colors.onSurfaceVariant
         if (data.friendIndex != -1)
         {
-            color = Theme.colorSecondary
+            color = Theme.shared.colors.primaryContainer
         }
         if (data.locked)
         {
-            color = Theme.letterRewardedColor
+            color = Theme.shared.colors.tertiaryContainer
         }
         if (data.level.progress == Level.Progress.completed.rawValue)
         {
-            color = Theme.successBoxColor
+            color = Theme.shared.colors.tertiaryContainer
         }
     }
     
@@ -81,7 +80,7 @@ class Letter: Cell {
             self.zPosition = C.TOP_LAYER
             currentPosition = self.position
             state = CellState.dragging
-            self.animateColor(to: Theme.colorSecondary, duration: C.ON_CLICK_COLOR_CHANGE_ANIMATION, timingMode: SKActionTimingMode.easeInEaseOut)
+            self.animateColor(to: Theme.shared.colors.secondaryContainer, duration: C.ON_CLICK_COLOR_CHANGE_ANIMATION, timingMode: SKActionTimingMode.easeInEaseOut)
             self.run(SKAction.scale(by: 1 + Letter.scaleAmount, duration: C.ON_CLICK_COLOR_CHANGE_ANIMATION))
         }
         // Instantiate a new generator.
@@ -133,11 +132,14 @@ class Letter: Cell {
     
     
     // MARK: Move action
-    func moveLetter(endColor:UIColor = Theme.colorSecondary, durationMultiplier:CGFloat = 1.0, zLayer:CGFloat? = nil)
+    func moveLetter(endColor:UIColor = Theme.shared.colors.primaryContainer, durationMultiplier:CGFloat = 1.0, zLayer:CGFloat? = nil)
     {
 
         if let zLayer = zLayer {
-            self.color = Theme.colorSecondary
+            if (!data.locked) {
+                self.color = Theme.shared.colors.secondary
+            }
+          
             self.zPosition = zLayer
         }
      
@@ -146,7 +148,9 @@ class Letter: Cell {
         let distance = log2((abs(position.distance(point: currentPosition))))
         let duration = distance.isFinite ? abs(distance * C.HOME_ANIMATION_MULTIPLIER * C.ANIMATION_MODIFIER)*durationMultiplier : C.ON_RELEASE_COLOR_CHANGE_ANIMATION * durationMultiplier
         
-        let endColor = friend != nil ? endColor : Theme.colorPrimary
+        let endColor = friend != nil ? endColor : Theme.shared.colors.surfaceVariant
+    
+     
         state = CellState.resolving
         let moveAction = SKAction.move(to: currentPosition, duration: duration)
         moveAction.timingMode = .easeInEaseOut
@@ -169,7 +173,7 @@ class Letter: Cell {
         colorAction.timingMode = timingMode
         self.run(colorAction)
     }
-
+    
 
     // MARK: Play sound effect
     private func playSound(collisionResult: CollisionResult)

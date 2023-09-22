@@ -3,7 +3,7 @@
     <device id="ipad9_7" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21678"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21679"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -24,9 +24,10 @@
                         <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" fixedFrame="YES" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="R30-Mw-aM6">
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="R30-Mw-aM6">
                                 <rect key="frame" x="0.0" y="946" width="768" height="44"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <items>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="kAX-mj-wUu"/>
                                     <barButtonItem title="Item" image="GameCenterIcon" style="plain" id="Uhd-in-DYt">
@@ -55,8 +56,11 @@
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="tX7-Rd-a7K"/>
                                 </items>
-                                <color key="tintColor" name="colorOnBackground"/>
-                                <color key="barTintColor" name="colorBackground"/>
+                                <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="barTintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <toolbarAppearance key="standardAppearance" backgroundEffect="regular">
+                                    <color key="backgroundColor" name="transparentColor"/>
+                                </toolbarAppearance>
                             </toolbar>
                             <progressView opaque="NO" clipsSubviews="YES" contentMode="scaleAspectFill" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zUv-77-gZa">
                                 <rect key="frame" x="0.0" y="39" width="768" height="4"/>
@@ -95,6 +99,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="backgroundUIView" destination="R30-Mw-aM6" id="24K-6f-dpC"/>
                         <outlet property="gameCenterButtonRef" destination="Uhd-in-DYt" id="dYq-qv-rME"/>
                         <outlet property="hintToolbarItem" destination="yyp-jo-Kfh" id="zCt-Ez-vEX"/>
                         <outlet property="infoLabelButton" destination="lY4-YA-Xyy" id="xjj-M8-RXU"/>

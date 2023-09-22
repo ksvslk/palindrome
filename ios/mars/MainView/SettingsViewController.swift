@@ -10,7 +10,7 @@ import UIKit
 import Toast
 
 class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
-    
+ 
     func didFinishProcessing(result: Bool) {
         DispatchQueue.main.async {
             self.view.hideToastActivity()
@@ -25,18 +25,65 @@ class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
         }
     }
     
-    
     private let soundSwitch:UISwitch = UISwitch()
     private let vibrationSwitch:UISwitch = UISwitch()
     
+    
+    private let colorClosure = { (action: UIAction) in
+        Theme.shared.changeTheme(name: ThemeName(rawValue: action.title)!)
+        
+    }
+    private let colorSelectionButton = UIButton(primaryAction: nil)
+    
     weak var purchaseManager: PurchaseManager?
+
     
     init(purchaseManager:PurchaseManager?) {
         self.purchaseManager = purchaseManager
         super.init(nibName: nil, bundle: nil)
-  
+
+        Theme.shared.addListener {
+            if let selectedIndexPath = self.tableView.indexPathForSelectedRow {
+                self.tableView.deselectRow(at: selectedIndexPath, animated: false)
+            }
+            self.tableView.setNeedsLayout()
+            self.tableView.layoutIfNeeded()
+            self.tableView.reloadData()
+            self.changeColorSelectionButtonColor()
+        }
+        
+
+        colorSelectionButton.layer.cornerRadius = 10
+        colorSelectionButton.contentEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+      
+
+        colorSelectionButton.menu = UIMenu(children: [
+            UIAction(title: ThemeName.original.rawValue, handler: colorClosure),
+            UIAction(title: ThemeName.yellow.rawValue, handler: colorClosure)
+        ])
+        colorSelectionButton.showsMenuAsPrimaryAction = true
+        
+        changeColorSelectionButtonColor()
     }
     
+    
+    private func changeColorSelectionButtonColor()
+    {
+        colorSelectionButton.setTitle("OO", for: .normal)
+        switch Theme.shared.currentTheme {
+        case .original:
+            (colorSelectionButton.menu?.children[0] as? UIAction)?.state = .on
+            (colorSelectionButton.menu?.children[1] as? UIAction)?.state = .off
+            colorSelectionButton.tintColor = .purple
+            colorSelectionButton.backgroundColor = .purple
+        case .yellow:
+            (colorSelectionButton.menu?.children[1] as? UIAction)?.state = .on
+            (colorSelectionButton.menu?.children[0] as? UIAction)?.state = .off
+            colorSelectionButton.tintColor = .yellow
+            colorSelectionButton.backgroundColor = .yellow
+        }
+    }
+
     override func viewDidAppear(_ animated: Bool) {
         self.purchaseManager?.processDelegate = self
         if (self.purchaseManager?.loading == true)
@@ -57,6 +104,9 @@ class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
     
     override var menuItem: [MenuItemInfo] {
         return [
+            MenuItemInfo(name: C.colorButton.0, comment: "", systemImage: C.colorButton.1, closure: {menuItem in
+                
+            }),
             MenuItemInfo(name: C.soundButton.0, comment: "", systemImage: C.soundButton.1, closure: {menuItem in
                 //Swift.debugPrint("Tapped \(C.soundButton.0)")
                 self.soundSwitch.setOn(!self.soundSwitch.isOn, animated: true)
@@ -107,7 +157,11 @@ class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
             cell.stackView.addArrangedSubview(soundSwitch)
             soundSwitch.addTarget(self, action: #selector(soundSwitchStateChanged(_:)), for: .valueChanged)
             soundSwitch.isOn = soundOn
-            soundSwitch.onTintColor = Theme.colorSecondary
+      
+            soundSwitch.tintColor = Theme.shared.colors.surfaceVariant
+            soundSwitch.onTintColor = Theme.shared.colors.primary
+            soundSwitch.thumbTintColor = Theme.shared.colors.onPrimary
+         
         }
         else if (item.name == C.vibrationButton.0)
         {
@@ -116,7 +170,13 @@ class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
             cell.stackView.addArrangedSubview(vibrationSwitch)
             vibrationSwitch.addTarget(self, action: #selector(vibrationSwitchStateChanged(_:)), for: .valueChanged)
             vibrationSwitch.isOn = vibrationOn
-            vibrationSwitch.onTintColor = Theme.colorSecondary
+            vibrationSwitch.tintColor = Theme.shared.colors.surfaceVariant
+            vibrationSwitch.onTintColor = Theme.shared.colors.primary
+            vibrationSwitch.thumbTintColor = Theme.shared.colors.onPrimary
+        }
+        else if (item.name == C.colorButton.0)
+        {
+            cell.stackView.addArrangedSubview(colorSelectionButton)
         }
       
         return cell

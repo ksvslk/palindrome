@@ -11,7 +11,7 @@ import GameplayKit
 import GameKit
 import GoogleMobileAds
 import StoreKit
-
+import Toast
 
 class GameViewController: UIViewController, UIPopoverPresentationControllerDelegate, SKSceneDelegate, MessageDelegate, GKGameCenterControllerDelegate {
     
@@ -26,6 +26,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     @IBOutlet weak var levelNumberLabel: UILabel!
     @IBOutlet weak var infoLabelButton: UIButton!
     
+    
     let goodMessages = ["GM_correct"~,"GM_good"~,"GM_keep_going"~,"GM_yes"~,"GM_hurray"~]
     let veryGoodMessages = ["VGM_awesome"~,"VGM_superb"~,"VGM_excellent"~,"VGM_perfect"~,"VGM_outstanding"~]
     let bogusMessages = ["BM_wrong_palindrome"~, "BM_forbidden_palindrome"~, "BM_bogus_palindrome"~]
@@ -33,10 +34,10 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     
     private var adManager: AdManager?
     
+ 
 
     // MARK: View did load
     override func viewDidLoad() {
-     
         //Swift.debugPrint("viewDidLoad")
         super.viewDidLoad()
         addBackgroundColorLayer()
@@ -58,13 +59,36 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                 }
             }
         }
-        
+        menuColorsChange(doLayout: true)
+     
+        Theme.shared.addListener {
+            self.menuColorsChange(doLayout: true)
+        }
+
     }
+    
+    
+    private func menuColorsChange(doLayout:Bool = false)
+    {
+        Swift.debugPrint("menuColorsChange")
+        backgroundUIView.tintColor = Theme.shared.colors.onSurfaceVariant
+        progressBar.tintColor = Theme.shared.colors.primary
+        levelNumberLabel.textColor = Theme.shared.colors.onSurfaceVariant
+        infoLabelButton.tintColor = Theme.shared.colors.onSurfaceVariant
+        infoLabelButton.setTitleColor(Theme.shared.colors.onSurfaceVariant, for: UIControl.State.normal)
+        if (doLayout) {
+            backgroundUIView.setNeedsLayout()
+            backgroundUIView.layoutIfNeeded()
+        }
+        gameScene?.changeTheme()
+    }
+    
 
     
     func gameCenterViewControllerDidFinish(_ gameCenterViewController: GKGameCenterViewController) {
         gameCenterViewController.dismiss(animated: true, completion: nil)
     }
+
     
     private func addBackgroundColorLayer()
     {
@@ -72,7 +96,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         if let skView = self.view as? SKView {
             backgroundLayer = CALayer()
             if let backgroundLayer = backgroundLayer {
-                backgroundLayer.backgroundColor = Theme.backgroundColor.cgColor
+                backgroundLayer.backgroundColor = Theme.shared.colors.background.cgColor
                 backgroundLayer.frame = skView.bounds
                 skView.layer.addSublayer(backgroundLayer)
                 backgroundLayer.zPosition = -1
@@ -173,7 +197,6 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             enableInfoButton()
             infoLabelButton.setTitle("tap_to_continue"~, for: .normal)
             addNextLevelGestureTap()
-            gameScene?.changeTheme()
         }
         else {
             //Swift.debugPrint("Setting state to .reset")
@@ -187,13 +210,15 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         }) != nil {
             loadScores()
         }
-        
+        gameScene?.changeTheme()
     }
  
+    
     private func enableInfoButton()
     {
         infoLabelButton.alpha = 1.0
     }
+    
     
     private func disableInfoButton()
     {
@@ -221,7 +246,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         Database.shared.hintsSuggestionClosure = {
             let popSoundAction = SKAction.playSound(soundFile: "hint_notification.wav")
             self.gameScene?.run(popSoundAction)
-            self.hintToolbarItem.addBadge(number: 1, andColor: Theme.hintsNotificationColor)
+            self.hintToolbarItem.addBadge(number: 1, andColor: Theme.shared.colors.error)
             self.showToastAboveToolbar(message: "find_hints_below"~)
         }
     }
@@ -316,8 +341,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             return
         }
         
-    
-        gameScene.backgroundColor = Theme.backgroundColor
+        gameScene.backgroundColor = Theme.shared.colors.background
         view.presentScene(gameScene, transition: SKTransition.push(with: SKTransitionDirection.left, duration: 1.0))
         view.ignoresSiblingOrder = true
         
@@ -338,14 +362,10 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     
     // MARK: Trait collection change
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        //Swift.debugPrint("traitCollectionDidChange")
-        if let gameScene = gameScene {
-            gameScene.changeTheme()
-        }
-        else {
-            addBackgroundColorLayer()
-        }
-       
+
+        Theme.shared.changeTheme()
+        self.setToastStyle()
+        menuColorsChange(doLayout: true)
     }
     
     
@@ -372,7 +392,6 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                 self.enableInfoButton()
                 self.infoLabelButton.setTitle("tap_to_continue"~, for: .normal)
                 self.addNextLevelGestureTap()
-                self.gameScene?.changeTheme()
             }
             else {
                 //Swift.debugPrint("Setting state to .reset")
@@ -472,6 +491,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     // MARK: View did appear
     override func viewDidAppear(_ animated: Bool) {
         handleRewards()
+       
     }
     
     
@@ -686,6 +706,17 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     // MARK: Status bar
     override var prefersStatusBarHidden: Bool {
         return true
+    }
+    
+    private func setToastStyle()
+    {
+        var style = ToastStyle()
+        style.backgroundColor = Theme.shared.colors.inverseSurface
+        style.messageColor = Theme.shared.colors.inverseOnSurface
+        style.activityBackgroundColor = Theme.shared.colors.inverseSurface
+        style.activityIndicatorColor = Theme.shared.colors.inverseOnSurface
+        style.messageFont = UIFont(name: Theme.shared.robotoMedium, size: 15)!
+        ToastManager.shared.style = style
     }
     
     

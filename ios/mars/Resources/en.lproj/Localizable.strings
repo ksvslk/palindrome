@@ -22,6 +22,7 @@
 
 
 //MARK: Settings menu
+"color" = "Color";
 "sound" = "Sound";
 "vibration" = "Vibration";
 "tutorial" = "Tutorial";

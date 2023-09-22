@@ -31,13 +31,13 @@ class Slot: Cell {
     
     override func switchColor()
     {
-        color = Theme.colorSecondaryVariant
+        color = Theme.shared.colors.outline
     }
     
     
     init(homeIndex:Int64, size: CGSize, homePosition: CGPoint, actualChar:String) {
         self.actualChar = actualChar
-        super.init(homeIndex: homeIndex, texture: nil, color: Theme.colorSecondaryVariant, size: size, homePosition: homePosition)
+        super.init(homeIndex: homeIndex, texture: nil, color: Theme.shared.colors.outline, size: size, homePosition: homePosition)
         self.zPosition = C.BOTTOM_LAYER
     }
     

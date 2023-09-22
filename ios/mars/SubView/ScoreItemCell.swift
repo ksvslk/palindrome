@@ -27,8 +27,8 @@ class ScoreItemCell: UITableViewCell {
     
     let nameLabel: UILabel = {
         let label = UILabel()
-        label.textColor = Theme.colorOnPrimary
-        label.font = UIFont(name: Theme.yantraBold, size: 17.0)
+        label.textColor = Theme.shared.colors.onSurface
+        label.font = UIFont(name: Theme.shared.yantraBold, size: 17.0)
         label.backgroundColor = .clear
         return label
     }()
@@ -36,17 +36,17 @@ class ScoreItemCell: UITableViewCell {
     
     let scoreLabel: UILabel = {
         let label = UILabel()
-        label.textColor = Theme.colorOnPrimary
+        label.textColor = Theme.shared.colors.onSurfaceVariant
         label.backgroundColor = .clear
-        label.font = UIFont(name: Theme.yantraMedium, size: 13.0)
+        label.font = UIFont(name: Theme.shared.yantraMedium, size: 13.0)
         return label
     }()
     
     let rankLabel: UILabel = {
         let label = UILabel()
-        label.textColor = Theme.colorOnPrimary
+        label.textColor = Theme.shared.colors.onSurface
         label.backgroundColor = .clear
-        label.font = UIFont(name: Theme.yantraBold, size: 20)
+        label.font = UIFont(name: Theme.shared.yantraBold, size: 20)
         return label
     }()
     
@@ -70,7 +70,7 @@ class ScoreItemCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        backgroundColor = Theme.backgroundColor
+        backgroundColor = Theme.shared.colors.background
         isAccessibilityElement = true
         contentView.addSubview(stackView)
         setupConstraints()
@@ -105,16 +105,16 @@ class ScoreItemCell: UITableViewCell {
         self.presentable = presentable
         nameLabel.text = presentable.displayName
         scoreLabel.text = "Score: " + String(presentable.score)
-        nameLabel.textColor = Theme.colorOnPrimary
-        scoreLabel.textColor = Theme.colorOnPrimary
+        nameLabel.textColor = Theme.shared.colors.onSurface
+        scoreLabel.textColor = Theme.shared.colors.onSurfaceVariant
         rankLabel.text = "#" + String(presentable.rank)
-        rankLabel.textColor = Theme.colorOnPrimary
-        iconView.backgroundColor = Theme.darkBlue
+        rankLabel.textColor = Theme.shared.colors.onSurface
+        iconView.backgroundColor = Theme.shared.colors.primaryContainer
         addImageToIconView(image: presentable.photo)
     
 
-        let tintedColor = Theme.letterRewardedColor.withAlphaComponent(0.75)
-        backgroundColor = presentable.isCurrentPlayer ? tintedColor : Theme.backgroundColor
+        let tintedColor = Theme.shared.colors.secondaryContainer.withAlphaComponent(0.5)
+        backgroundColor = presentable.isCurrentPlayer ? tintedColor : Theme.shared.colors.background
     }
     
     
@@ -122,6 +122,7 @@ class ScoreItemCell: UITableViewCell {
     {
         let uiImageView = UIImageView(image: image)
         uiImageView.translatesAutoresizingMaskIntoConstraints = false
+        uiImageView.tintColor = Theme.shared.colors.onPrimaryContainer
         
         // Add the image view as a subview to the container view
         iconView.addSubview(uiImageView)

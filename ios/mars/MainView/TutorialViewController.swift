@@ -30,7 +30,7 @@ class TutorialViewController: UIViewController {
         let symbolConfig = UIImage.SymbolConfiguration(scale: .large)
 
         if let symbolImage = UIImage(systemName: symbolName, withConfiguration: symbolConfig) {
-            let coloredImage = symbolImage.withTintColor(UIColor.gray, renderingMode: .alwaysOriginal)
+            let coloredImage = symbolImage.withTintColor(Theme.shared.colors.primary, renderingMode: .alwaysOriginal)
             let targetSize = CGSize(width: 100, height: 100)
             let renderer = UIGraphicsImageRenderer(size: targetSize)
             let scaledImage = renderer.image { _ in
@@ -100,7 +100,7 @@ class TutorialViewController: UIViewController {
         ])
         
         // Set the background color of the view controller's view
-        view.backgroundColor = Theme.backgroundColor
+        view.backgroundColor = Theme.shared.colors.background
         
         // Add tap gesture recognizer to the view
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
@@ -120,13 +120,13 @@ class TutorialViewController: UIViewController {
         
         let label = UILabel()
         label.text = char
-        label.textColor = Theme.colorOnPrimary
-        label.backgroundColor = Theme.colorPrimary
-        label.font = UIFont(name: Theme.yantraBold, size: 35)
+        label.textColor = Theme.shared.colors.onPrimary
+        label.backgroundColor = Theme.shared.colors.primary
+        label.font = UIFont(name: Theme.shared.yantraBold, size: 35)
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
         label.layer.borderWidth = 0.25
-        label.layer.borderColor = Theme.colorOnSecondary.cgColor
+        label.layer.borderColor = Theme.shared.colors.onSecondary.cgColor
         
         containerView.addSubview(label)
         NSLayoutConstraint.activate([
@@ -148,8 +148,8 @@ class TutorialViewController: UIViewController {
         
         let label = UILabel()
         label.text = " "
-        label.backgroundColor = Theme.colorSecondaryVariant
-        label.font = UIFont(name: Theme.yantraBold, size: 35)
+        label.backgroundColor = Theme.shared.colors.secondaryContainer
+        label.font = UIFont(name: Theme.shared.yantraBold, size: 35)
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -170,8 +170,8 @@ class TutorialViewController: UIViewController {
         let label = UILabel()
         label.text = text
         label.textAlignment = .center
-        label.font = UIFont(name: Theme.yantraBold, size: 24)
-        label.textColor = Theme.colorOnBackground
+        label.font = UIFont(name: Theme.shared.yantraBold, size: 24)
+        label.textColor = Theme.shared.colors.onBackground
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
         label.lineBreakMode = .byTruncatingTail

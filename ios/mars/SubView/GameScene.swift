@@ -23,8 +23,10 @@ class GameScene: SKScene {
     
     func changeTheme()
     {
-        backgroundColor = Theme.backgroundColor
+        backgroundColor = Theme.shared.colors.background
+        print("TERE ", cellDirector.cells.count)
         cellDirector.cells.forEach { cell in
+            print("SIWTCH")
             cell.switchColor()
         }
     }
@@ -117,7 +119,7 @@ class GameScene: SKScene {
         ]
         
         func playCorrectSolutionBoxEffect(node:SKSpriteNode, delay:CGFloat, soundAction:SKAction, isLast:Bool) {
-            let colorAction = SKAction.colorize(with: Theme.successBoxColor, colorBlendFactor: 1, duration: 0.5)
+            let colorAction = SKAction.colorize(with: Theme.shared.colors.tertiaryContainer, colorBlendFactor: 1, duration: 0.5)
             let soundAndColorAction = SKAction.group([soundAction, colorAction])
             let waitAction = SKAction.wait(forDuration: delay)
             let sequence = !isLast ? SKAction.sequence([waitAction, soundAndColorAction])
@@ -135,6 +137,7 @@ class GameScene: SKScene {
         let spriteNodes = cellDirector.cells.compactMap { $0 as? Letter }.sorted { l1, l2 in
             l1.data.friendIndex < l2.data.friendIndex
         }
+  
         let numNodes = spriteNodes.count
         let middleIndex = (numNodes % 2 == 0) ? nil : (numNodes / 2)
         let delayMultiplier = 2.5
@@ -322,7 +325,7 @@ class GameScene: SKScene {
                         )
                         slot.setFriendWithoutDidSet(letter: letter, ignoreScoreChange: true)
                         letter.friend = slot
-                        letter.color = Theme.colorSecondary
+                        letter.color = Theme.shared.colors.secondary
                         
                         if let position = homeIndexesToPositions[letterWithFriend.homeIndex] {
                             letter.homePosition = position

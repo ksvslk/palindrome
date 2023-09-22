@@ -122,7 +122,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
             of: .reveal_clue_btn,
             withName: C.revealClueButton.0,
             withComment: "instantly_comment"~,
-            withCommentColors: (Theme.successBoxColor,Theme.successTextColor),
+            withCommentColors: (Theme.shared.colors.tertiaryContainer, Theme.shared.colors.onTertiaryContainer),
             withTouchEnabled: true)
         
         setShowHintClosure()
@@ -137,7 +137,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
             of: .place_letter_btn,
             withName: C.placeLetterButton.0,
             withComment: "instantly_comment"~,
-            withCommentColors: (Theme.successBoxColor,Theme.successTextColor),
+            withCommentColors: (Theme.shared.colors.tertiaryContainer, Theme.shared.colors.onTertiaryContainer),
             withTouchEnabled: true)
         
         setGiveLetterClosure()
@@ -163,7 +163,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
                     of: .reveal_clue_btn,
                     withName: C.revealClueButton.0,
                     withComment: "watch_ad_comment"~,
-                    withCommentColors: (Theme.colorPrimary, Theme.colorOnPrimary),
+                    withCommentColors: (Theme.shared.colors.primaryContainer, Theme.shared.colors.onPrimaryContainer),
                     withTouchEnabled: true
                 )
                 setAdShowClosure(for: .reveal_clue_btn)
@@ -174,7 +174,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
                     of: .place_letter_btn,
                     withName: C.placeLetterButton.0,
                     withComment: "watch_ad_comment"~,
-                    withCommentColors: (Theme.colorSecondary, Theme.colorOnPrimary),
+                    withCommentColors: (Theme.shared.colors.secondary, Theme.shared.colors.onSecondary),
                     withTouchEnabled: true
                 )
                 setAdShowClosure(for: .place_letter_btn)
@@ -185,7 +185,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
                     of: .reveal_clue_btn,
                     withName: C.revealClueButton.0,
                     withComment: "no_ad_comment"~,
-                    withCommentColors: (Theme.hintsNotificationColor, UIColor.white),
+                    withCommentColors: (Theme.shared.colors.error, Theme.shared.colors.onError),
                     withTouchEnabled: false
                 )
             }
@@ -195,7 +195,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
                     of: .place_letter_btn,
                     withName: C.placeLetterButton.0,
                     withComment: "no_ad_comment"~,
-                    withCommentColors: (Theme.hintsNotificationColor, UIColor.white),
+                    withCommentColors: (Theme.shared.colors.error, Theme.shared.colors.onError),
                     withTouchEnabled: false
                 )
             }
@@ -298,7 +298,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
                     of: Button.purchase_clues_btn,
                     withName: info.product.localizedTitle,
                     withComment: info.localizedPrice,
-                    withCommentColors: (Theme.letterRewardedColor, Theme.colorOnPrimary),
+                    withCommentColors: (Theme.shared.colors.primaryContainer, Theme.shared.colors.onPrimaryContainer),
                     withTouchEnabled: !info.isPurchased,
                     toOwned: info.isPurchased
                 )
@@ -320,7 +320,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
                     of: Button.purchase_letters_btn,
                     withName: info.product.localizedTitle,
                     withComment: info.localizedPrice,
-                    withCommentColors: (Theme.letterRewardedColor, Theme.colorOnPrimary),
+                    withCommentColors: (Theme.shared.colors.primaryContainer, Theme.shared.colors.onPrimaryContainer),
                     withTouchEnabled: !info.isPurchased,
                     toOwned: info.isPurchased
                 )
@@ -339,7 +339,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
                     of: Button.purchase_no_ads_btn,
                     withName: info.product.localizedTitle,
                     withComment: info.localizedPrice,
-                    withCommentColors: (Theme.letterRewardedColor, Theme.colorOnPrimary),
+                    withCommentColors: (Theme.shared.colors.primaryContainer, Theme.shared.colors.onPrimaryContainer),
                     withTouchEnabled: !info.isPurchased,
                     toOwned: info.isPurchased
                 )
@@ -357,7 +357,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
                     of: Button.purchase_all_btn,
                     withName: info.product.localizedTitle,
                     withComment: info.localizedPrice,
-                    withCommentColors: (Theme.letterRewardedColor, Theme.colorOnPrimary),
+                    withCommentColors: (Theme.shared.colors.primaryContainer, Theme.shared.colors.onPrimaryContainer),
                     withTouchEnabled: !info.isPurchased,
                     toOwned: info.isPurchased
                 )
@@ -418,7 +418,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
                 let checkMark = UIImage(systemName: "checkmark.shield.fill")!
                 cell.removeImageFromIconView()
                 cell.addImageToIconView(image: checkMark)
-                cell.iconView.backgroundColor = Theme.successBoxColor
+                cell.iconView.backgroundColor = Theme.shared.colors.tertiaryContainer
                 cell.nameLabel.text = "\(name) ✦"
                 cell.commentLabel.text = ""
                 cell.commentLabel.backgroundColor = .clear
@@ -430,7 +430,8 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
                 let checkMark = UIImage(systemName: "heart")!
                 cell.removeImageFromIconView()
                 cell.addImageToIconView(image: checkMark)
-                cell.iconView.backgroundColor = UIColor.systemYellow
+                cell.iconView.backgroundColor = UIColor.clear
+                cell.iconView.tintColor = Theme.shared.colors.primary
                 cell.nameLabel.text = "Thank you!"
                 cell.commentLabel.text = ""
                 cell.commentLabel.backgroundColor = .clear

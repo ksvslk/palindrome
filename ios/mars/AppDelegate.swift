@@ -45,6 +45,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidBecomeActive(_ application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
         //Swift.debugPrint("applicationDidBecomeActive")
+        Swift.debugPrint("Current system: ", UIDevice.current.systemName)
     }
     
     
@@ -63,11 +64,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private func setToastStyle()
     {
         var style = ToastStyle()
-        style.backgroundColor = Theme.darkBlue
-        style.activityBackgroundColor = Theme.darkBlue
-        style.messageColor = UIColor.white
-        style.messageFont = UIFont(name: Theme.robotoMedium, size: 15)!
+        style.backgroundColor = Theme.shared.colors.inverseSurface
+        style.messageColor = Theme.shared.colors.inverseOnSurface
+        style.activityBackgroundColor = Theme.shared.colors.inverseSurface
+        style.activityIndicatorColor = Theme.shared.colors.inverseOnSurface
+        style.messageFont = UIFont(name: Theme.shared.robotoMedium, size: 15)!
         ToastManager.shared.style = style
     }
+    
+  
 }
 

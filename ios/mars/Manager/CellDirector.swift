@@ -16,7 +16,7 @@ class CellDirector {
                 guard let l = (cell as? Letter) else { continue }
                 if (l.data.locked)
                 {
-                    l.color = Theme.letterRewardedColor
+                    l.color = Theme.shared.colors.primary
                 }
             }
         }
@@ -295,7 +295,7 @@ class CellDirector {
             }
         }
         Database.shared.lockLetter(letter: randomLetter.data)
-        randomLetter.moveLetter(endColor: Theme.letterRewardedColor, durationMultiplier: 3.0, zLayer: C.TOP_LAYER)
+        randomLetter.moveLetter(endColor: Theme.shared.colors.tertiaryContainer, durationMultiplier: 3.0, zLayer: C.TOP_LAYER)
 #if DEBUG
         assertThatLettersHaveUniqueFriends()
         assertThatMaximumOfTwoCellsHaveSameCoordinates()

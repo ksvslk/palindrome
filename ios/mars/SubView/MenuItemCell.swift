@@ -26,21 +26,20 @@ class MenuItemCell: UITableViewCell {
         view.layer.cornerRadius = 8.0
         return view
     }()
-
     
     let nameLabel: UILabel = {
         let label = UILabel()
-        label.textColor = #colorLiteral(red: 0.8196078431, green: 0.8235294118, blue: 0.8274509804, alpha: 1)
-        label.font = UIFont(name: Theme.yantraBold, size: 17.0)
+        label.textColor = Theme.shared.colors.onSurface
+        label.font = UIFont(name: Theme.shared.yantraBold, size: 17.0)
         label.backgroundColor = .clear
         return label
     }()
     
     let commentLabel: UILabel = {
         let label = PaddedLabel()
-        label.textColor = #colorLiteral(red: 0.7019607843, green: 0.7058823529, blue: 0.7137254902, alpha: 1)
+        label.textColor = Theme.shared.colors.onSurfaceVariant
         label.backgroundColor = .clear
-        label.font = UIFont(name: Theme.yantraBold, size: 13.0)
+        label.font = UIFont(name: Theme.shared.yantraBold, size: 13.0)
         return label
     }()
     
@@ -65,7 +64,7 @@ class MenuItemCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
        
-        backgroundColor = Theme.backgroundColor
+        backgroundColor = Theme.shared.colors.background
         isAccessibilityElement = true
         
         let backgroundView = UIView()
@@ -120,17 +119,22 @@ class MenuItemCell: UITableViewCell {
         self.presentable = presentable
         nameLabel.text = presentable.name
         commentLabel.text = presentable.comment
-        nameLabel.textColor = Theme.colorOnPrimary
-        commentLabel.textColor = Theme.colorSecondaryVariant
-        iconView.backgroundColor = Theme.colorSecondary
+        nameLabel.textColor = Theme.shared.colors.onSurface
+        commentLabel.textColor = Theme.shared.colors.onSurfaceVariant
+        iconView.backgroundColor = Theme.shared.colors.primaryContainer
         addImageToIconView(image: presentable.systemImage)
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        removeImageFromIconView()
     }
     
     
     func addImageToIconView(image:UIImage)
     {
         let uiImageView = UIImageView(image: image)
-        uiImageView.tintColor = Theme.colorOnSecondary
+        uiImageView.tintColor = Theme.shared.colors.onPrimaryContainer
         
         uiImageView.translatesAutoresizingMaskIntoConstraints = false
         

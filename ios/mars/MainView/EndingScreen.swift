@@ -24,8 +24,8 @@ class EndingScreen: UIViewController {
         label.text = "end_screen_text"~
         label.textAlignment = .justified
         
-        label.font = UIFont(name: Theme.yantraMedium, size: 18)
-        label.textColor = Theme.colorOnBackground
+        label.font = UIFont(name: Theme.shared.yantraMedium, size: 18)
+        label.textColor = Theme.shared.colors.onBackground
         label.numberOfLines = 0
 
         
@@ -39,7 +39,7 @@ class EndingScreen: UIViewController {
         view.addSubview(stackView)
         
         // Set the background color of the view controller's view
-        view.backgroundColor = Theme.backgroundColor
+        view.backgroundColor = Theme.shared.colors.background
         
         // Add layout constraints for the stack view
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -71,7 +71,7 @@ class EndingScreen: UIViewController {
         for word in wordsToPaint {
             // Find the range of each word to underline
             if let range = originalString.range(of: word) {
-                attributedString.addAttribute(.foregroundColor, value: Theme.colorOnPrimary, range: NSRange(range, in: originalString))
+                attributedString.addAttribute(.foregroundColor, value: Theme.shared.colors.onPrimary, range: NSRange(range, in: originalString))
             }
         }
 

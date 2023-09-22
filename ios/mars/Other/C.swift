@@ -87,6 +87,7 @@ struct C {
     static let FLAWLESS_15_INTERVAL = "flawless_15_interval"
     
     // Settings menu
+    static let colorButton = ("color"~, UIImage(systemName: "music.note")!)
     static let soundButton = ("sound"~, UIImage(systemName: "music.note")!)
     static let vibrationButton = ("vibration"~, UIImage(systemName: "waveform")!)
     static let tutorialButton = ("tutorial"~, UIImage(systemName: "questionmark.app")!)

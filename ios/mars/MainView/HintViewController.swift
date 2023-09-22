@@ -18,8 +18,8 @@ class HintViewController: UIViewController {
         // Customize the label
         label.text = ""
         label.textAlignment = .center
-        label.font = UIFont(name: Theme.yantraBold, size: 24)
-        label.textColor = Theme.colorOnBackground
+        label.font = UIFont(name: Theme.shared.yantraBold, size: 24)
+        label.textColor = Theme.shared.colors.onBackground
 
         // Add the label to the view controller's view
         view.addSubview(label)
@@ -32,7 +32,7 @@ class HintViewController: UIViewController {
         ])
         
         // Set the background color of the view controller's view
-        view.backgroundColor = Theme.backgroundColor
+        view.backgroundColor = Theme.shared.colors.background
   
     }
     

@@ -35,7 +35,7 @@ class GameLevelSelectController: UIViewController {
         self.collectionView.alwaysBounceVertical = true
         self.collectionView.isPrefetchingEnabled = true
         // Add blur effect
-        self.collectionView.backgroundColor = Theme.backgroundColor
+        self.collectionView.backgroundColor = Theme.shared.colors.background
         /*
          self.collectionView.backgroundColor = UIColor.clear
          let blurEffect = UIBlurEffect(style: .prominent)
