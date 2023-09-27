@@ -488,7 +488,8 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
             MenuItemInfo(name: C.purchaseCluesButton.0, comment: "", systemImage: C.purchaseCluesButton.1, closure: purchaseCluesClosure),
             MenuItemInfo(name: C.purchaseLettersButton.0, comment: "", systemImage: C.purchaseLettersButton.1, closure: purchaseLettersClosure),
             MenuItemInfo(name: C.purchaseNoAdsButton.0, comment: "", systemImage: C.purchaseNoAdsButton.1, closure: purchaseNoAdsClosure),
-            MenuItemInfo(name: C.purchaseAllButton.0, comment: "", systemImage: C.purchaseAllButton.1, closure: purchaseAllClosure)
+            MenuItemInfo(name: C.purchaseAllButton.0, comment: "", systemImage: C.purchaseAllButton.1, closure: purchaseAllClosure),
+            
         ]}
     
 }

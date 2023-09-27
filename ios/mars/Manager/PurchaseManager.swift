@@ -36,7 +36,14 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
         C.PURCHASE_LETTERS_ID,
         C.PURCHASE_HINTS_ID,
         C.PURCHASE_NO_ADS_ID,
-        C.PURCHASE_ALL_ID
+        C.PURCHASE_ALL_ID,
+        C.PURCHASE_LEVELS_PACK_1_ID,
+        C.PURCHASE_LEVELS_PACK_2_ID,
+        C.PURCHASE_LEVELS_PACK_3_ID,
+        C.PURCHASE_LEVELS_PACK_4_ID,
+        C.PURCHASE_LEVELS_PACK_5_ID,
+        C.PURCHASE_LEVELS_PACK_6_ID,
+        C.PURCHASE_ALL_LEVELS_ID
     ]
     private var completionHandlers: [SKRequest: (Bool) -> Void] = [:]
     private var purchasedProductIdentifiers: Set<String> = []

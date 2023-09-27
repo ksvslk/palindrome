@@ -52,6 +52,14 @@ struct C {
     static let PURCHASE_NO_ADS_ID = "purchase_no_ads" // 1.99
     static let PURCHASE_ALL_ID = "purchase_all" // 4.99
     
+    static let PURCHASE_ALL_LEVELS_ID = "purchase_all_level_packs"
+    static let PURCHASE_LEVELS_PACK_1_ID = "purchase_level_pack_1"
+    static let PURCHASE_LEVELS_PACK_2_ID = "purchase_level_pack_2"
+    static let PURCHASE_LEVELS_PACK_3_ID = "purchase_level_pack_3"
+    static let PURCHASE_LEVELS_PACK_4_ID = "purchase_level_pack_4"
+    static let PURCHASE_LEVELS_PACK_5_ID = "purchase_level_pack_5"
+    static let PURCHASE_LEVELS_PACK_6_ID = "purchase_level_pack_6"
+    
     static let PURCHASED_PRODUCTS_KEY = "user_defaults_purchases"
     
     
@@ -105,7 +113,13 @@ struct C {
     static let submitLevelButton = ("submit_level"~, UIImage(systemName: "paperplane")!)
     static let playerLevelsButton = ("player_levels"~, UIImage(systemName: "person.2")!)
     static let gameLevelsButton = ("game_levels"~, UIImage(systemName: "square.stack.3d.up")!)
-    
+    static let purchaseAllLevelPacksButton = ("all_level_packs"~, UIImage(systemName: "dollarsign.circle.fill")!)
+    static let purchaseLevelPack1Button = ("level_pack_1"~, UIImage(systemName: "dollarsign.circle.fill")!)
+    static let purchaseLevelPack2Button = ("level_pack_2"~, UIImage(systemName: "dollarsign.circle.fill")!)
+    static let purchaseLevelPack3Button = ("level_pack_3"~, UIImage(systemName: "dollarsign.circle.fill")!)
+    static let purchaseLevelPack4Button = ("level_pack_4"~, UIImage(systemName: "dollarsign.circle.fill")!)
+    static let purchaseLevelPack5Button = ("level_pack_5"~, UIImage(systemName: "dollarsign.circle.fill")!)
+    static let purchaseLevelPack6Button = ("level_pack_6"~, UIImage(systemName: "dollarsign.circle.fill")!)
     
     // Hints menu
     static let revealClueButton = ("reveal_clue"~, UIImage(systemName: "eye")!)
@@ -114,5 +128,5 @@ struct C {
     static let purchaseLettersButton = ("unlimited_letters"~, UIImage(systemName: "dollarsign.circle.fill")!)
     static let purchaseNoAdsButton = ("no_level_ads"~, UIImage(systemName: "dollarsign.circle.fill")!)
     static let purchaseAllButton = ("all_in_pack"~, UIImage(systemName: "dollarsign.circle.fill")!)
- 
+
 }

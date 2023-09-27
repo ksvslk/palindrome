@@ -25,18 +25,16 @@ class Theme {
     }()
     
     
-    func changeTheme(name:ThemeName = .original)
+    func changeTheme(name:ThemeName?)
     {
+        currentTheme = name ?? currentTheme
         let isLightMode = UIScreen.main.traitCollection.userInterfaceStyle == UIUserInterfaceStyle.light
-        switch name {
+        switch currentTheme {
         case .original:
-            currentTheme = .original
             colors = TestTheme(isLightMode: isLightMode)
         case .yellow:
-            currentTheme = .yellow
             colors = DefaultTheme(isLightMode: isLightMode)
         default:
-            currentTheme = .original
             colors = TestTheme(isLightMode: isLightMode)
         }
         notifyListeners()

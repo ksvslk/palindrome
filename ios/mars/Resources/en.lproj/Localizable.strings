@@ -46,12 +46,13 @@
 "instantly_comment" = "Instantly";
 "place_letter" = "Place Letter";
 "reveal_clue" = "Reveal Clue";
+"unlocked_comment" = "Unlocked.";
 
 
 //MARK: Level select menu
 "submit_level" = "Submit Your Level";
 "player_levels" = "Player Levels";
-"game_levels" = "Level Select";
+"game_levels" = "Main Levels";
 
 //MARK: Good texts
 "GM_correct" = "Correct!";
@@ -86,3 +87,11 @@
 "unlimited_letters" = "Unlimited Letters";
 "no_level_ads" = "No Level Ads";
 "all_in_pack" = "All-In Pack";
+"all_level_packs" = "All Level Packs (150 levels)";
+"level_pack_1" = "Symmetric Secrets (25 levels)";
+"level_pack_2" = "Inverted Illusions (25 lsevels)";
+"level_pack_3" = "Reversal Riddles (25 levels)";
+"level_pack_4" = "Echoed Elegance (25 levels)";
+"level_pack_5" = "Twisted Texts (25 levels)";
+"level_pack_6" = "Linguistic Labyrinths (25 levels)";
+

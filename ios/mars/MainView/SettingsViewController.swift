@@ -43,15 +43,8 @@ class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
         super.init(nibName: nil, bundle: nil)
 
         Theme.shared.addListener {
-            if let selectedIndexPath = self.tableView.indexPathForSelectedRow {
-                self.tableView.deselectRow(at: selectedIndexPath, animated: false)
-            }
-            self.tableView.setNeedsLayout()
-            self.tableView.layoutIfNeeded()
-            self.tableView.reloadData()
-            self.changeColorSelectionButtonColor()
+            self.changeSettingsMenuColors()
         }
-        
 
         colorSelectionButton.layer.cornerRadius = 10
         colorSelectionButton.contentEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
@@ -64,6 +57,23 @@ class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
         colorSelectionButton.showsMenuAsPrimaryAction = true
         
         changeColorSelectionButtonColor()
+    }
+    
+    
+    private func changeSettingsMenuColors()
+    {
+        if let selectedIndexPath = self.tableView.indexPathForSelectedRow {
+            self.tableView.deselectRow(at: selectedIndexPath, animated: false)
+        }
+        self.tableView.setNeedsLayout()
+        self.tableView.layoutIfNeeded()
+        self.tableView.reloadData()
+        self.changeColorSelectionButtonColor()
+    }
+    
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        changeSettingsMenuColors()
     }
     
     
@@ -84,6 +94,7 @@ class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
         }
     }
 
+    
     override func viewDidAppear(_ animated: Bool) {
         self.purchaseManager?.processDelegate = self
         if (self.purchaseManager?.loading == true)
@@ -93,9 +104,11 @@ class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
         }
     }
     
+    
     override func viewDidDisappear(_ animated: Bool) {
         self.purchaseManager?.processDelegate = nil
     }
+    
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -135,13 +148,12 @@ class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
             }),
             MenuItemInfo(name: C.restoreButton.0, comment: "", systemImage: C.restoreButton.1, closure: {menuItem in
                 //Swift.debugPrint("Tapped \(C.restoreButton.0)")
-      
                 self.purchaseManager?.restorePurchases()
                 self.view.makeToastActivity(.center)
                 self.view.isUserInteractionEnabled = false
-             
             })]
     }
+    
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as? MenuItemCell

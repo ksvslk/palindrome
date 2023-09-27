@@ -75,6 +75,7 @@ class MenuItemCell: UITableViewCell {
         
         setupConstraints()
     }
+
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -97,7 +98,7 @@ class MenuItemCell: UITableViewCell {
             $0.isActive = true
         }
     }
-    
+  
     // MARK: - Highlight
     
     /**
@@ -124,6 +125,7 @@ class MenuItemCell: UITableViewCell {
         iconView.backgroundColor = Theme.shared.colors.primaryContainer
         addImageToIconView(image: presentable.systemImage)
     }
+ 
     
     override func prepareForReuse() {
         super.prepareForReuse()

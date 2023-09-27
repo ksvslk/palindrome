@@ -2,7 +2,7 @@
 //  LetterData+CoreDataClass.swift
 //  mars
 //
-//  Created by Mina on 29.04.2023.
+//  Created by Mina on 24.09.2023.
 //
 //
 
@@ -11,5 +11,5 @@ import CoreData
 
 @objc(LetterData)
 public class LetterData: NSManagedObject {
-    
+
 }

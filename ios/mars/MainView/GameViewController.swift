@@ -362,8 +362,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     
     // MARK: Trait collection change
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-
-        Theme.shared.changeTheme()
+        Theme.shared.changeTheme(name: nil)
         self.setToastStyle()
         menuColorsChange(doLayout: true)
     }
@@ -432,7 +431,8 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     // MARK: TAP Levels
     @IBAction func onLevelsButtonTap(_ sender: Any) {
         if let buttonView = (sender as! UIBarButtonItem).value(forKey: "view") as? UIView {
-            let gameCenterSheetMenu = LevelSelectController()
+            let appDelegate = UIApplication.shared.delegate as! AppDelegate
+            let gameCenterSheetMenu = LevelSelectController(purchaseManager: appDelegate.purchaseManager)
             presentPanModal(gameCenterSheetMenu, sourceView: buttonView, sourceRect: buttonView.bounds)
         }
     }

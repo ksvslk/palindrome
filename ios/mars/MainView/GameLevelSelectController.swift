@@ -8,12 +8,15 @@
 import UIKit
 import PanModal
 
+
 class GameLevelSelectController: UIViewController {
     
     let dismissLevelSelectMenu: () -> Void
+    let levelPack:LevelPack
     
-    init(dismissLevelSelectMenu: @escaping () -> Void) {
+    init(levelPack:LevelPack, dismissLevelSelectMenu: @escaping () -> Void) {
         self.dismissLevelSelectMenu = dismissLevelSelectMenu
+        self.levelPack = levelPack
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -21,8 +24,7 @@ class GameLevelSelectController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
  
-    
-    var data:[Level.Progress] = Database.shared.getAllGameLevels()
+    var data:[Level.Progress] = Database.shared.getAllGameLevels() // TODO: get level pack levels
     
     // a property to hold the collectionView
     var collectionView: UICollectionView!
@@ -36,15 +38,9 @@ class GameLevelSelectController: UIViewController {
         self.collectionView.isPrefetchingEnabled = true
         // Add blur effect
         self.collectionView.backgroundColor = Theme.shared.colors.background
-        /*
-         self.collectionView.backgroundColor = UIColor.clear
-         let blurEffect = UIBlurEffect(style: .prominent)
-         let blurEffectView = UIVisualEffectView(effect: blurEffect)
-         blurEffectView.frame = self.collectionView.bounds
-         self.collectionView.backgroundView = blurEffectView
-         */
+
         DispatchQueue.main.async {
-            let currentLevel = Database.shared.currentLevel!.levelNumber
+            let currentLevel = Database.shared.currentLevel!.levelNumber // TODO: match with level pack
             let indexPath = IndexPath(item: Int(currentLevel-1), section: 0)
             self.collectionView.scrollToItem(at: indexPath, at: .centeredVertically, animated: false)
         }
@@ -81,7 +77,7 @@ extension GameLevelSelectController: UICollectionViewDelegate {
         //Swift.debugPrint("Collection view at row \(collectionView.tag) selected level nr \(indexPath.item + 1)")
         dismiss(animated: true, completion: {
             self.dismissLevelSelectMenu()
-            Database.shared.changeLevel(to: indexPath.item + 1)
+            Database.shared.changeLevel(to: indexPath.item + 1) //TODO: Get level in level pack
         })
     }
     
