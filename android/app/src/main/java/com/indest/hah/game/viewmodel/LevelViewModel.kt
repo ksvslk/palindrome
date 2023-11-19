@@ -904,10 +904,10 @@ class LevelViewModel @Inject constructor(
         val level = hashMapOf(
             C.PLAYER_LEVELS_TAG to false,
             "levelId" to -1337,
-            "palindrome" to playersPalindrome,
+            "palindrome" to playersPalindrome.uppercase(),
             "player" to currentlySignedInPlayerName,
             "solutionToCategory" to hashMapOf(
-                Pair(playersPalindrome, hintMap)
+                Pair(playersPalindrome.uppercase(), hintMap)
             ),
             "countryCode" to tempCountrySelected.first,
             "timestamp" to FieldValue.serverTimestamp(),
