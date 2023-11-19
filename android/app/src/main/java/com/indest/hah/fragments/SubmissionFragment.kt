@@ -98,7 +98,7 @@ class SubmissionFragment : BottomSheetDialogFragment() {
                         } else if (p0.toString().length < resources.getInteger(R.integer.minUserPalindromeLength)) {
                             errors.add(getString(R.string.min_length_error) + " " + resources.getInteger(R.integer.minUserPalindromeLength))
                             binding.enterPalindromeTextInputLayout.endIconDrawable = null
-                        } else if (palindromeAddedForCurrentLanguage(p0.toString(), palindromes)) {
+                        } else if (palindromeAddedForCurrentLanguage(p0.toString().uppercase(), palindromes)) {
                             errors.add(getString(R.string.palindrome_exists))
                             binding.enterPalindromeTextInputLayout.endIconDrawable = null
                         } else if (p0.toString().length > resources.getInteger(R.integer.maxUserPalindromeLength)) {
