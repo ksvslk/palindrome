@@ -109,10 +109,6 @@ class PurchaseButton : LinearLayoutCompat {
     }
 
     fun updateButtonUi(info: GeneralViewModel.ButtonInfo) {
-        if (!info.internet) {
-            this.visibility = View.GONE
-            return
-        }
         info.skus[sku]?.let {
             setTitle(it.title)
             setPrice(it.price)

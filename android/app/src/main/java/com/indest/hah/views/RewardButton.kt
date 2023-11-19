@@ -107,8 +107,7 @@ class RewardButton : LinearLayoutCompat {
                 this.isClickable = false
                 buttonState = NO_AD
                 findViewById<AppCompatTextView>(R.id.reward_button_flipper_revealed_subtitle).apply {
-                    if (info.internet) this.text = subtitleAdUnavailable
-                    else this.text = context.getString(R.string.no_internet)
+                    this.text = subtitleAdUnavailable
 
                     setBackgroundColor(
                         MaterialColors.getColor(context, com.google.android.material.R.attr.colorSecondaryContainer, Color.RED)

@@ -40,11 +40,7 @@ class GoogleGamesFragment : FullBottomSheetDialogFragment() {
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED)
             {
-                generalViewModel.internet.combine(levelViewModel.accountStatus) { i, a ->
-                    Pair(i, a)
-                }.collect { (internet, accountStatus) ->
-                    when (internet) {
-                        true -> {
+                levelViewModel.accountStatus.collect { accountStatus ->
                             if (accountStatus !in setOf(AccountStatus.SIGNED_IN, AccountStatus.SIGNED_IN_WITH_FIREBASE)) {
                                 binding.alternativeScreen.findViewById<AppCompatTextView>(R.id.alternative_text).text =
                                     getString(R.string.please_sign_in)
@@ -67,20 +63,6 @@ class GoogleGamesFragment : FullBottomSheetDialogFragment() {
                                     showLeaderBoard(getString(R.string.leaderboard_player_levels_leaderboard))
                                 }
                             }
-                        }
-                        false -> {
-                            binding.globalLeaderboardsButton.setOnClickListener(null)
-                            binding.achievementsButton.setOnClickListener(null)
-                            binding.leaderboardsButton.setOnClickListener(null)
-                            binding.playerLevelsLeaderboardButton.setOnClickListener(null)
-                            binding.globalLeaderboardsButton.visibility = View.GONE
-                            binding.achievementsButton.visibility = View.GONE
-                            binding.leaderboardsButton.visibility = View.GONE
-                            binding.playerLevelsLeaderboardButton.visibility = View.GONE
-                            binding.alternativeScreen.findViewById<AppCompatTextView>(R.id.alternative_text).text =
-                                getString(R.string.no_internet)
-                        }
-                    }
                 }
             }
         }

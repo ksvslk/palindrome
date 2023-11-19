@@ -53,53 +53,29 @@ class SettingsFragment : FullBottomSheetDialogFragment() {
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED)
             {
-                generalViewModel.internet.combine(levelViewModel.accountStatus) { i, a ->
-                    Pair(i, a)
-                }.collect { (internet, _) ->
-                    binding.shareButtonSettings.visibility =
-                        if (internet) View.VISIBLE else View.GONE
+
                     binding.shareButtonSettings.setOnClickListener {
                         val shareIntent = generalViewModel.getShareIntent("SettingsFragment")
                         startActivity(shareIntent)
                     }
                     binding.twitterButton.setOnClickListener {
                         context?.let {
-                            when (internet) {
-                                true -> {
+
                                     openWebsite(getString(R.string.company_social_url), it)
-                                }
-                                false -> {
-                                    showNoInternetToast(it.applicationContext)
-                                }
                             }
                         }
-                    }
                     binding.rateGameButton.setOnClickListener {
                         context?.let {
-                            when (internet) {
-                                true -> {
                                     openWebsite(getString(R.string.app_package_url), it)
-                                }
-                                false -> {
-                                    showNoInternetToast(it.applicationContext)
-                                }
+
                             }
                         }
-                    }
                     binding.privacyPolicyButton.setOnClickListener {
                         context?.let {
-                            when (internet) {
-                                true -> {
                                     openWebsite(getString(R.string.privacy_policy_url), it)
-                                }
-                                false -> {
-                                    showNoInternetToast(it.applicationContext)
-                                }
                             }
-                        }
                     }
                 }
-            }
         }
         setCorrectLanguageToSelector()
         val flagImageView = binding.selectAppLocaleButton.findViewById<AppCompatImageView>(R.id.any_button_icon)

@@ -294,7 +294,6 @@ class MainActivity : AppCompatActivity() {
      * specified by RECONNECT_TIMER_MAX_TIME_MILLISECONDS.
      */
     private fun retryFirebaseSignInWithExponentialBackoff(gamesSignInClient: GamesSignInClient) {
-        if (generalViewModel.isConnectedToInternet()) {
             handler.postDelayed(
                 {
                     signInToFirebaseWithCredential(gamesSignInClient)
@@ -305,7 +304,6 @@ class MainActivity : AppCompatActivity() {
                 reconnectMilliseconds * 2,
                 RECONNECT_TIMER_MAX_TIME_MILLISECONDS
             )
-        }
     }
 
 

@@ -39,11 +39,8 @@ class StagesFragment : FullBottomSheetDialogFragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED)
             {
                 val isAllowedToSubmit = generalViewModel.isAllowedToSubmitPalindrome()
-                generalViewModel.internet.combine(levelViewModel.accountStatus) { i, a ->
-                    Pair(i, a)
-                }.collect { (internet, accountStatus) ->
-                    when (internet) {
-                        true -> {
+                levelViewModel.accountStatus.collect { accountStatus ->
+
                             binding.submitYourLevelButton.visibility = View.VISIBLE
                             if (accountStatus == AccountStatus.SIGNED_IN_WITH_FIREBASE) {
                                 binding.submitYourLevelButton.setOnClickListener {
@@ -60,15 +57,6 @@ class StagesFragment : FullBottomSheetDialogFragment() {
                                 if (!generalViewModel.isPlayerLevelsAvailable()) {
                                     binding.playerLevelsButton.visibility = View.GONE
                                 }
-                            }
-                        }
-                        false -> {
-                            if (!generalViewModel.isPlayerLevelsAvailable()) {
-                                binding.playerLevelsButton.visibility = View.GONE
-                            }
-                            binding.submitYourLevelButton.setOnClickListener(null)
-                            binding.submitYourLevelButton.visibility = View.GONE
-                        }
                     }
                 }
 

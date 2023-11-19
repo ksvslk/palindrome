@@ -38,10 +38,6 @@ class GeneralViewModel @Inject constructor(
     private lateinit var _billingDataSource: BillingDataSource
     private val minSkuDetailsMap: MutableMap<String, MinSkuDetails> = mutableMapOf()
 
-    private val _internet: ConnectionLiveData =
-        ConnectionLiveData(application.applicationContext)
-    val internet = _internet.asFlow()
-
     private val _buttonState = MutableSharedFlow<ButtonInfo>(1)
     val buttonState = _buttonState.asSharedFlow()
 
@@ -56,8 +52,6 @@ class GeneralViewModel @Inject constructor(
     private val _sadMode = MutableStateFlow(false)
 
     var refreshPurchases = false
-
-    fun isConnectedToInternet() = _internet.value ?: false
 
     fun refreshPurchasesTriedRedeem()
     {
@@ -104,12 +98,6 @@ class GeneralViewModel @Inject constructor(
             }
             launch {
                 combineAndUpdateMinSkuDetails(application.getString(R.string.all_inclusive_pack_2))
-            }
-            // Collect and react to internet state updates from ConnectionLiveData
-            launch {
-                internet.collect {
-                    updateUiState()
-                }
             }
 
             launch {
@@ -180,14 +168,12 @@ class GeneralViewModel @Inject constructor(
     }
 
     private fun updateUiState() {
-        val internetState = _internet.value == true
-        if (_internet.value == true && _adsLiveData.value?.first == true) {
+        if (_adsLiveData.value?.first == true) {
             viewModelScope.launch {
                 _buttonState.emit(
                     ButtonInfo(
                         ButtonState.AD,
                         minSkuDetailsMap,
-                        internetState,
                         _sadMode.value
                     )
                 )
@@ -198,7 +184,6 @@ class GeneralViewModel @Inject constructor(
                     ButtonInfo(
                         ButtonState.NO_AD,
                         minSkuDetailsMap,
-                        internetState,
                         _sadMode.value
                     )
                 )
@@ -295,7 +280,6 @@ class GeneralViewModel @Inject constructor(
     data class ButtonInfo(
         val state: ButtonState,
         val skus: MutableMap<String, MinSkuDetails>,
-        val internet: Boolean,
         val sadMode: Boolean
     )
 

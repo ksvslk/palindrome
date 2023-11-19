@@ -1,6 +1,6 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name" translatable="false">hah</string>
-    <string name="title_activity_main" translatable="false">hah</string>
+    <string name="app_name">Palindrome</string>
+    <string name="title_activity_main">Palindrome</string>
     <string name="exit_game_title">Quit game?</string>
     <string name="continue_game">Continue</string>
     <string name="quit">Quit</string>

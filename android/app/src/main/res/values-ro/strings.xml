@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">Palindrom</string>
+    <string name="title_activity_main">Palindrom</string>
+
     <string name="language_pack_completed">Ați completat pachetul de nivele <xliff:g id="language">%s</xliff:g>! Atingeți pentru a continua cu nivelele în limba 🇬🇧 engleză!</string>
     <string name="game_pack_completed">Ați terminat jocul principal! Foarte bine! Încercați și nivelurile jucătorilor.</string>
     <string name="player_pack_completed">Ați terminat pachetul de jucători! Minunat! Trimiteți-vă nivelele și încercați și pachetele de limbă!</string>

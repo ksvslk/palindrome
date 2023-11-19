@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">回文</string>
+    <string name="title_activity_main">回文</string>
+
     <string name="language_pack_completed">「<xliff:g id="language">%s</xliff:g>」のレベルパックをクリアしました！ タップして英語のレベルに進んでください 🇬🇧！</string>
     <string name="game_pack_completed">メインゲームをクリアしました！おめでとうございます！プレイヤーレベルも試してみてください。</string>
     <string name="player_pack_completed">プレイヤーパックをクリアしました！素晴らしい！あなたのレベルを送信して言語パックも試してみてください！</string>

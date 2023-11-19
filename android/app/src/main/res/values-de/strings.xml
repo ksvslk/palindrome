@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">Palindrom</string>
+    <string name="title_activity_main">Palindrom</string>
+
     <string name="share_description">Können Sie ein Wort erstellen, das von beiden Seiten gleich lautet: UEENN? Mehr lösen: https://play.google.com/store/apps/details?id=com.indest.hah</string>
     <string name="language_pack_completed">Du hast das <xliff:g id="language">%s</xliff:g>-Paket abgeschlossen! Tippe, um mit den 🇬🇧 englischen Levels fortzufahren!</string>
     <string name="game_pack_completed">Du hast das Hauptspiel abgeschlossen! Gut gemacht! Probiere auch die Spielerlevel aus.</string>

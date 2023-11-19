@@ -180,7 +180,7 @@ dependencies {
     def lifecycle_runtime_ktx = '2.6.1'
     def window_manager_version = '1.0.0'
     def ads_version = '22.2.0'
-    def billing_version = '4.1.0'
+    def billing_version = '6.1.0'
     def konfetti_version = '2.0.2'
     def kotlinx_serialization = '1.3.3'
     def androidx_collection = "1.2.0"
