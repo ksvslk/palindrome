@@ -7,6 +7,7 @@
     <dimen name="divider_list_item">4dp</dimen>
     <dimen name="privacy_policy_height">46dp</dimen>
     <dimen name="simple_dialog_item_height">56dp</dimen>
+    <dimen name="promo_dialog_item_height">60dp</dimen>
     <dimen name="simple_dialog_item_height_almost_half">20dp</dimen>
     <dimen name="simple_dialog_item_height_half">28dp</dimen>
 

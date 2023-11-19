@@ -22,4 +22,8 @@
         <attr name="any_button_icon" format="reference" />
         <attr name="any_button_title" format="string" />
     </declare-styleable>
+    <declare-styleable name="PromoButton">
+        <attr name="promo_button_icon" format="reference" />
+        <attr name="promo_button_title" format="string" />
+    </declare-styleable>
 </resources>

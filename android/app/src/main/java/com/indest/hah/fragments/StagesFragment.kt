@@ -40,23 +40,22 @@ class StagesFragment : FullBottomSheetDialogFragment() {
             {
                 val isAllowedToSubmit = generalViewModel.isAllowedToSubmitPalindrome()
                 levelViewModel.accountStatus.collect { accountStatus ->
-
-                            binding.submitYourLevelButton.visibility = View.VISIBLE
-                            if (accountStatus == AccountStatus.SIGNED_IN_WITH_FIREBASE) {
-                                binding.submitYourLevelButton.setOnClickListener {
-                                    if (isAllowedToSubmit) {
-                                        findNavController().safeNavigate(R.id.action_navigation_stages_to_navigation_submission)
-                                    } else {
-                                        showLimitedSubmissionsToast()
-                                    }
-                                }
-                                binding.playerLevelsButton.visibility = View.VISIBLE
+                    binding.submitYourLevelButton.visibility = View.VISIBLE
+                    if (accountStatus == AccountStatus.SIGNED_IN_WITH_FIREBASE) {
+                        binding.submitYourLevelButton.setOnClickListener {
+                            if (isAllowedToSubmit) {
+                                findNavController().safeNavigate(R.id.action_navigation_stages_to_navigation_submission)
                             } else {
-                                binding.submitYourLevelButton.setOnClickListener(null)
-                                binding.submitYourLevelButton.visibility = View.GONE
-                                if (!generalViewModel.isPlayerLevelsAvailable()) {
-                                    binding.playerLevelsButton.visibility = View.GONE
-                                }
+                                showLimitedSubmissionsToast()
+                            }
+                        }
+                        binding.playerLevelsButton.visibility = View.VISIBLE
+                    } else {
+                        binding.submitYourLevelButton.setOnClickListener(null)
+                        binding.submitYourLevelButton.visibility = View.GONE
+                        if (!generalViewModel.isPlayerLevelsAvailable()) {
+                            binding.playerLevelsButton.visibility = View.GONE
+                        }
                     }
                 }
 
@@ -64,23 +63,28 @@ class StagesFragment : FullBottomSheetDialogFragment() {
         }
 
         lifecycleScope.launch {
-            levelViewModel.countOfNewPlayerLevelsAndLanguageLevels().collect { (newPlayerLevelCount, newLanguageLevelCount) ->
-                val superScriptPlayer = "+$newPlayerLevelCount"
-                val playerLevelSelectButtonTitle = binding.playerLevelsButton.findViewById<AppCompatTextView>(R.id.any_button_title)
-                val finalPlayerTitle = playerLevelSelectButtonTitle.text.toString().appendSmallSuperscript(superScriptPlayer)
+            levelViewModel.countOfNewPlayerLevelsAndLanguageLevels()
+                .collect { (newPlayerLevelCount, newLanguageLevelCount) ->
+                    val superScriptPlayer = "+$newPlayerLevelCount"
+                    val playerLevelSelectButtonTitle =
+                        binding.playerLevelsButton.findViewById<AppCompatTextView>(R.id.any_button_title)
+                    val finalPlayerTitle = playerLevelSelectButtonTitle.text.toString()
+                        .appendSmallSuperscript(superScriptPlayer)
 
-                if (newPlayerLevelCount > 0) {
-                    playerLevelSelectButtonTitle.text = finalPlayerTitle
+                    if (newPlayerLevelCount > 0) {
+                        playerLevelSelectButtonTitle.text = finalPlayerTitle
+                    }
+
+                    val superScriptLanguage = "+$newLanguageLevelCount"
+                    val langLevelSelectButtonTitle =
+                        binding.internationalLevelsButton.findViewById<AppCompatTextView>(R.id.any_button_title)
+                    val langPlayerTitle = langLevelSelectButtonTitle.text.toString()
+                        .appendSmallSuperscript(superScriptLanguage)
+
+                    if (newLanguageLevelCount > 0) {
+                        langLevelSelectButtonTitle.text = langPlayerTitle
+                    }
                 }
-
-                val superScriptLanguage = "+$newLanguageLevelCount"
-                val langLevelSelectButtonTitle = binding.internationalLevelsButton.findViewById<AppCompatTextView>(R.id.any_button_title)
-                val langPlayerTitle = langLevelSelectButtonTitle.text.toString().appendSmallSuperscript(superScriptLanguage)
-
-                if (newLanguageLevelCount > 0) {
-                    langLevelSelectButtonTitle.text = langPlayerTitle
-                }
-            }
         }
 
     }
