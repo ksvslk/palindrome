@@ -122,7 +122,7 @@ class LevelViewModel @Inject constructor(
         var result = Pair(-1, "")
         // Game levels or player levels
         if (levelId in 1001..9999) {
-            val maxLevels = levelRepository.getMaxLevelId() - 1000
+            val maxLevels = levelRepository.getMaxPlayerLevelId()?.minus(1000) ?: -1
             val text =
                 if (solutionsCount > 1) "${levelId - 1000}* - $author" else "${levelId - 1000} - $author"
             val progress = ((levelId - 1000).toFloat() / maxLevels.toFloat() * 100.0).toInt()
