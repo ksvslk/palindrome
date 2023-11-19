@@ -96,13 +96,13 @@ class SubmissionFragment : BottomSheetDialogFragment() {
                             binding.enterPalindromeTextInputLayout.endIconDrawable = null
                             binding.enterPalindromeTextInputLayout.errorIconDrawable = null
                         } else if (p0.toString().length < resources.getInteger(R.integer.minUserPalindromeLength)) {
-                            errors.add(getString(R.string.min_length_error) + resources.getInteger(R.integer.minUserPalindromeLength))
+                            errors.add(getString(R.string.min_length_error) + " " + resources.getInteger(R.integer.minUserPalindromeLength))
                             binding.enterPalindromeTextInputLayout.endIconDrawable = null
                         } else if (palindromeAddedForCurrentLanguage(p0.toString(), palindromes)) {
                             errors.add(getString(R.string.palindrome_exists))
                             binding.enterPalindromeTextInputLayout.endIconDrawable = null
                         } else if (p0.toString().length > resources.getInteger(R.integer.maxUserPalindromeLength)) {
-                            errors.add(getString(R.string.max_length_error) + resources.getInteger(R.integer.maxUserPalindromeLength))
+                            errors.add(getString(R.string.max_length_error) + " " + resources.getInteger(R.integer.maxUserPalindromeLength))
                             binding.enterPalindromeTextInputLayout.endIconDrawable = null
                         }
                         else if (p0.toString().isDigitsOnly()) {
@@ -110,12 +110,12 @@ class SubmissionFragment : BottomSheetDialogFragment() {
                             binding.enterPalindromeTextInputLayout.endIconDrawable = null
                         } else {
                             errors.remove(
-                                getString(R.string.min_length_error) + resources.getInteger(
+                                getString(R.string.min_length_error) + " " + resources.getInteger(
                                     R.integer.minUserPalindromeLength
                                 )
                             )
                             errors.remove(
-                                getString(R.string.max_length_error) + resources.getInteger(
+                                getString(R.string.max_length_error) + " " + resources.getInteger(
                                     R.integer.maxUserPalindromeLength
                                 )
                             )

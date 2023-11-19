@@ -16,6 +16,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.NavController
 import com.indest.hah.R
+import java.text.Normalizer
 import java.util.Locale
 
 fun NavController.safeNavigate(
@@ -31,6 +32,12 @@ fun NavController.safeNavigate(
     currentDestination?.getAction(action)?.run {
         navigate(action, bundle)
     }
+}
+
+private val REGEX_UNACCENT = "\\p{InCombiningDiacriticalMarks}+".toRegex()
+fun CharSequence.unaccent(): String {
+    val temp = Normalizer.normalize(this, Normalizer.Form.NFD)
+    return REGEX_UNACCENT.replace(temp, "")
 }
 
 fun getCountryTagOrDefault():String {
@@ -67,7 +74,7 @@ fun getCountryTagOrDefault():String {
 
 fun String.isPalindrome(language: String = "gb"): Boolean {
     val testString = this.lowercase()
-        .replace("""[\W+]""".toRegex(), "")
+        .replace("""[\W+]""".toRegex(), "").unaccent()
     // japanese kaibun might not be classic palindrome
     val isStringPalindrome = if (language == "ja") true else testString == testString.reversed()
     return testString.length >= 4 && isStringPalindrome
@@ -75,7 +82,7 @@ fun String.isPalindrome(language: String = "gb"): Boolean {
 
 
 fun String.lettersOnlyPalindrome(): String {
-    return this.replace("[!?’,.;:'\\-\"\\s]".toRegex(), "")
+    return this.replace("[!?¿’,.;:'\\-\"\\s]".toRegex(), "").unaccent()
 }
 
 

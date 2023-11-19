@@ -15,6 +15,7 @@ import com.indest.hah.general.AccountStatus
 import com.indest.hah.other.C
 import com.indest.hah.other.getCountryTagOrDefault
 import com.indest.hah.other.getLevelScore
+import com.indest.hah.other.unaccent
 import com.indest.hah.persistance.dto.Interval
 import com.indest.hah.persistance.dto.LanguageLevel
 import com.indest.hah.persistance.dto.Level
@@ -33,6 +34,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import java.text.Normalizer
 import java.util.Locale
 import javax.inject.Inject
 
@@ -573,7 +575,7 @@ class LevelViewModel @Inject constructor(
 
     private fun isSolutionCorrect(guess: String): Boolean {
         return _currentLevel.value.solutions.any {
-            it.palindrome.replace(Regex("[\\s-]+"), "") == guess
+            it.palindrome.replace(Regex("[\\s-]+"), "").unaccent() == guess
         }
     }
 
@@ -585,8 +587,8 @@ class LevelViewModel @Inject constructor(
             var solutionData = SolutionData()
             if (guess.length == solution.length) {
                 val playerGuess = guess.map { char ->
-                    if ("^([?!.,’':-]–)".contains(char)) "" else char
-                }.joinToString("")
+                    if ("^([?¿!.,’':-]–)".contains(char)) "" else char
+                }.joinToString("").unaccent()
 
                 val hintsInterval =
                     getApplication<Application>().getString(R.string.hint_suggestion)
