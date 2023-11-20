@@ -595,10 +595,11 @@ class LevelViewModel @Inject constructor(
             val solution =
                 _currentLevel.value.solutions.first().palindrome.replace(Regex("[\\s-]+"), "")
             var solutionData = SolutionData()
-            if (guess.length == solution.length) {
-                val playerGuess = guess.map { char ->
+            var unaccentedGuess = guess.unaccent()
+            if (unaccentedGuess.length == solution.length) {
+                val playerGuess = unaccentedGuess.map { char ->
                     if ("^([?¿!.,’':-]–)".contains(char)) "" else char
-                }.joinToString("").unaccent()
+                }.joinToString("")
 
                 val hintsInterval =
                     getApplication<Application>().getString(R.string.hint_suggestion)
@@ -608,7 +609,7 @@ class LevelViewModel @Inject constructor(
                 )
 
                 when {
-                    isSolutionCorrect(guess) -> {
+                    isSolutionCorrect(unaccentedGuess) -> {
                         submitScore()
                         levelRepository.updateLevelProgress(
                             _currentLevel.value.levelInfo.levelId,
