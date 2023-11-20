@@ -5,6 +5,8 @@ object FirebaseCustom {
         const val REWARD_GIVEN = "reward_given"
         const val PREMIUM_HINT_USAGE = "premium_hint_usage"
         const val SHARE_GAME_CLICKED = "share_game_clicked"
+        const val DIALOG_PROMO_SHOWN = "dialog_promo_shown"
+        const val MENU_PROMO_CLICKED = "menu_promo_clicked"
     }
     object Params {
         const val REWARD_AD_TYPE = "reward_ad_type"

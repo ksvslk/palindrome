@@ -139,6 +139,8 @@ class MainActivity : AppCompatActivity() {
         collectPlayerLevelsForNotification()
         collectNewLevelCount()
 
+        levelViewModel.downloadPromos()
+
         binding.root.doOnNextLayout {
             val exclusions = listOf(Rect(0, 0, it.width, it.height))
             ViewCompat.setSystemGestureExclusionRects(binding.root, exclusions)
@@ -294,16 +296,16 @@ class MainActivity : AppCompatActivity() {
      * specified by RECONNECT_TIMER_MAX_TIME_MILLISECONDS.
      */
     private fun retryFirebaseSignInWithExponentialBackoff(gamesSignInClient: GamesSignInClient) {
-            handler.postDelayed(
-                {
-                    signInToFirebaseWithCredential(gamesSignInClient)
-                },
-                reconnectMilliseconds
-            )
-            reconnectMilliseconds = min(
-                reconnectMilliseconds * 2,
-                RECONNECT_TIMER_MAX_TIME_MILLISECONDS
-            )
+        handler.postDelayed(
+            {
+                signInToFirebaseWithCredential(gamesSignInClient)
+            },
+            reconnectMilliseconds
+        )
+        reconnectMilliseconds = min(
+            reconnectMilliseconds * 2,
+            RECONNECT_TIMER_MAX_TIME_MILLISECONDS
+        )
     }
 
 
@@ -431,6 +433,10 @@ class MainActivity : AppCompatActivity() {
                         is LevelViewModel.VariousEvent.UnlockAchievement -> {
                             unlockAchievement(event.achievement)
                         }
+
+                        LevelViewModel.VariousEvent.DownloadPromoPicture -> {
+                            downloadPromoPicture()
+                        }
                     }
                 }
             }
@@ -479,8 +485,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun collectNewLevelCount()
-    {
+    private fun collectNewLevelCount() {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED)
             {
@@ -579,8 +584,22 @@ class MainActivity : AppCompatActivity() {
                 val localFile = File(it, "level${levelNr}.jpg")
                 gsReference.getFile(localFile).addOnSuccessListener {
                     levelViewModel.setPictureDownloaded(isPresent = true)
-                }.addOnFailureListener {ex ->
+                }.addOnFailureListener { ex ->
                     levelViewModel.setPictureDownloaded(isPresent = false)
+                    Log.e(TAG, "Failed to create local file from storage.", ex)
+                }
+            }
+        }
+    }
+
+    private fun downloadPromoPicture() {
+        levelViewModel.promoDialogData?.picturePath?.let { picturePath ->
+            val storage = Firebase.storage
+            val gsReference = storage.getReferenceFromUrl(picturePath)
+            this.filesDir?.let {
+                val localFile = File(it, "promo.jpg")
+                gsReference.getFile(localFile).addOnSuccessListener {
+                }.addOnFailureListener { ex ->
                     Log.e(TAG, "Failed to create local file from storage.", ex)
                 }
             }
@@ -608,15 +627,13 @@ class MainActivity : AppCompatActivity() {
         return preference.getString(key, null)
     }
 
-    private fun showNewLevelsCount(newLevelCount:Int) {
+    private fun showNewLevelsCount(newLevelCount: Int) {
         val levelsBadge = binding.root.findViewById<BottomNavigationView>(R.id.bottomNavView)
             .getOrCreateBadge(R.id.navigation_stages)
-        if (newLevelCount > 0)
-        {
+        if (newLevelCount > 0) {
             levelsBadge.isVisible = true
             levelsBadge.number = newLevelCount
-        }
-        else {
+        } else {
             levelsBadge.isVisible = false
         }
     }

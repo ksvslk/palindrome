@@ -63,6 +63,7 @@ class GeneralViewModel @Inject constructor(
         }
     }
 
+
     init {
         _sadMode.value = getSadModeValue()
         viewModelScope.launch {

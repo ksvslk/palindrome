@@ -9,6 +9,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.firestore.*
+import com.google.firebase.firestore.ktx.toObject
 import com.indest.hah.R
 import com.indest.hah.ads.RewardType
 import com.indest.hah.general.AccountStatus
@@ -22,6 +23,8 @@ import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
 import com.indest.hah.persistance.dto.NewLevelNotification
 import com.indest.hah.persistance.dto.PlayerLevel
+import com.indest.hah.persistance.dto.PromoDialogData
+import com.indest.hah.persistance.dto.PromoMenuButtonData
 import com.indest.hah.persistance.dto.RegularLevel
 import com.indest.hah.persistance.dto.SaveGame
 import com.indest.hah.persistance.level.LevelProgress
@@ -78,6 +81,9 @@ class LevelViewModel @Inject constructor(
     var tempSubmissionPalindrome = ""
     var tempCountrySelected = Pair("gb", 0)
     var currentRelativeLevelNumber = -1
+
+    var promoDialogData:PromoDialogData? = null
+    var promoMenuButtonData:PromoMenuButtonData? = null
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Log.e(
@@ -168,11 +174,13 @@ class LevelViewModel @Inject constructor(
                 AccountStatus.SIGNED_IN -> {
                     variousEventChannel.send(VariousEvent.LoadGame)
                 }
+
                 AccountStatus.SIGNED_OUT -> {
                     if (!isCurrentLevelLegit()) {
                         startCollectingLevelUpdate()
                     }
                 }
+
                 AccountStatus.LOADING -> {
                     if (!isCurrentLevelLegit()) {
                         gameEventChannel.send(GameEvent.ShowLoading)
@@ -181,11 +189,13 @@ class LevelViewModel @Inject constructor(
                         gameEventChannel.send(GameEvent.DisplayLevel(_currentLevel.value, progress))
                     }
                 }
+
                 AccountStatus.SIGNED_IN_WITH_FIREBASE -> {
                     if (_accountStatus.value != AccountStatus.SIGNED_IN) {
                         variousEventChannel.send(VariousEvent.LoadGame)
                     }
                 }
+
                 AccountStatus.NOT_SET -> {}
             }
         }
@@ -348,7 +358,7 @@ class LevelViewModel @Inject constructor(
         }
     }
 
-    fun allPalindromesFlow(): Flow<Map<String,List<String>>> {
+    fun allPalindromesFlow(): Flow<Map<String, List<String>>> {
         return flow {
             emit(levelRepository.getAllPalindromes())
         }
@@ -379,7 +389,6 @@ class LevelViewModel @Inject constructor(
             )
         }
     }
-
 
 
     fun allGameLevelsFlow(): Flow<List<Pair<Boolean, LevelData>>> {
@@ -486,6 +495,7 @@ class LevelViewModel @Inject constructor(
             VariousEvent()
 
         object LoadGame : VariousEvent()
+        object DownloadPromoPicture : VariousEvent()
     }
 
 
@@ -648,7 +658,7 @@ class LevelViewModel @Inject constructor(
         }
     }
 
-    fun getCurrentHintInLocale(solutions:List<com.indest.hah.persistance.dto.Solution>): String {
+    fun getCurrentHintInLocale(solutions: List<com.indest.hah.persistance.dto.Solution>): String {
         val currentLocaleName = if (!AppCompatDelegate.getApplicationLocales().isEmpty) {
             // Fetches the current Application Locale from the list
             AppCompatDelegate.getApplicationLocales()[0]?.toLanguageTag()
@@ -774,6 +784,24 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+    fun logDialogPromoShown() {
+        viewModelScope.launch(Dispatchers.Default) {
+            firebaseAnalytics.logEvent(
+                FirebaseCustom.Events.DIALOG_PROMO_SHOWN,
+                bundleOf()
+            )
+        }
+    }
+
+    fun logMenuPromoClicked() {
+        viewModelScope.launch(Dispatchers.Default) {
+            firebaseAnalytics.logEvent(
+                FirebaseCustom.Events.MENU_PROMO_CLICKED,
+                bundleOf()
+            )
+        }
+    }
+
 
     private suspend fun subscribeToRealTimePlayerLevelUpdates() {
         if (_accountStatus.value == AccountStatus.SIGNED_IN_WITH_FIREBASE) {
@@ -816,9 +844,12 @@ class LevelViewModel @Inject constructor(
                                             if (solutionsToCategories.isEmpty()) {
                                                 throw Exception("Solutions were empty")
                                             }
-                                            val supportedHints = C.languages.keys.map { "hint_$it" }.plus("hint")
+                                            val supportedHints =
+                                                C.languages.keys.map { "hint_$it" }.plus("hint")
                                             if (!solutionsToCategories.keys.all {
-                                                    solutionsToCategories[it]?.keys?.containsAll(supportedHints) == true
+                                                    solutionsToCategories[it]?.keys?.containsAll(
+                                                        supportedHints
+                                                    ) == true
                                                 }) {
                                                 throw Exception("Solutions did not include hints for all languages.")
                                             }
@@ -899,7 +930,9 @@ class LevelViewModel @Inject constructor(
     }
 
     suspend fun submitUserLevel(playersPalindrome: String) {
-        val hintMap =  C.languages.map { "hint_${it.key}" to "[FILL_HERE]" }.plus("hint" to "[FILL_HERE]").toMap()
+        val hintMap =
+            C.languages.map { "hint_${it.key}" to "[FILL_HERE]" }.plus("hint" to "[FILL_HERE]")
+                .toMap()
         // Create a new user with a first, middle, and last name
         val level = hashMapOf(
             C.PLAYER_LEVELS_TAG to false,
@@ -1064,6 +1097,29 @@ class LevelViewModel @Inject constructor(
             Log.d(TAG, "Missing languages for $cc: $missingLanguagesMap")
             Log.d(TAG, "Levels count $cc: ${languageLevels.count()}")
             Log.d(TAG, "--------------------------------------------")
+        }
+    }
+
+    fun downloadPromos() {
+        viewModelScope.launch {
+            fsDb.collection("promos").get(Source.SERVER).addOnSuccessListener { result ->
+                for (document in result) {
+                    if (document.id == "dialog") {
+                        val dialogData = document.toObject<PromoDialogData>()
+                        promoDialogData = dialogData
+                        viewModelScope.launch {
+                            variousEventChannel.send(VariousEvent.DownloadPromoPicture)
+                        }
+                        Log.d(TAG, "${document.id} => $promoDialogData. Success?")
+                    } else if (document.id == "menu_button") {
+                        val menuData = document.toObject<PromoMenuButtonData>()
+                        promoMenuButtonData = menuData;
+                        Log.d(TAG, "${document.id} => $menuData. Success?")
+                    }
+                }
+            }.addOnFailureListener {
+                Log.d(TAG, "Error getting documents: ", it)
+            }
         }
     }
 

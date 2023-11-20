@@ -72,3 +72,5 @@
 
 
 -keepnames class com.indest.hah.other.LevelSelectType
+-keep class com.indest.hah.persistance.dto.PromoDialogData
+-keep class com.indest.hah.persistance.dto.PromoMenuButtonData

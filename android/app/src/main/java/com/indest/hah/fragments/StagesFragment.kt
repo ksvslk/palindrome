@@ -1,5 +1,7 @@
 package com.indest.hah.fragments
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -22,6 +24,8 @@ import com.indest.hah.other.LevelSelectType
 import com.indest.hah.other.appendSmallSuperscript
 import com.indest.hah.other.safeNavigate
 import com.indest.hah.persistance.level.LevelProgress
+import com.indest.hah.views.PromoButton
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
@@ -35,6 +39,7 @@ class StagesFragment : FullBottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED)
             {
@@ -59,6 +64,34 @@ class StagesFragment : FullBottomSheetDialogFragment() {
                     }
                 }
 
+            }
+        }
+
+        binding.newPromoButton.visibility = View.GONE
+        levelViewModel.promoMenuButtonData?.let { promoData ->
+            if (promoData.activated == true) {
+                val promoButtonTitle =
+                    binding.newPromoButton.findViewById<AppCompatTextView>(R.id.promo_button_title)
+                promoButtonTitle.text = promoData.title
+                binding.newPromoButton.setOnClickListener {
+                    Intent(Intent.ACTION_VIEW).apply {
+                        data = Uri.parse(promoData.link)
+                        setPackage(getString(R.string.vending_package))
+                        if (context?.let { it1 -> this.resolveActivity(it1.packageManager) } != null) {
+                            startActivity(this)
+                        } else {
+                            val browserIntent = Intent(Intent.ACTION_VIEW).apply {
+                                data = Uri.parse(promoData.link)
+                            }
+                            startActivity(browserIntent)
+                        }
+                    }
+                    levelViewModel.logMenuPromoClicked()
+                }
+                binding.newPromoButton.visibility = View.VISIBLE;
+
+            } else {
+                binding.newPromoButton.visibility = View.GONE;
             }
         }
 
@@ -112,6 +145,7 @@ class StagesFragment : FullBottomSheetDialogFragment() {
         binding.internationalLevelsButton.setOnClickListener {
             findNavController().safeNavigate(R.id.action_navigation_stages_to_navigation_international)
         }
+
         requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         return b.root
     }

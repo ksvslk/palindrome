@@ -53,6 +53,14 @@
         <item name="android:backgroundDimAmount">0.8</item>
     </style>
 
+    <style name="HehMaterialAlertPromoTheme" parent="@style/ThemeOverlay.Material3.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:background">?colorOutline</item>
+        <item name="android:windowMinWidthMinor">100%</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.8</item>
+    </style>
+
     <style name="HehBottomSheetDialogTheme" parent="@style/ThemeOverlay.Material3.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/HehCustomBottomSheet</item>
     </style>

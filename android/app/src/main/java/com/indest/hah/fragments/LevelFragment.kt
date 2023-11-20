@@ -45,6 +45,8 @@ import com.indest.hah.views.Cell
 import com.indest.hah.views.HahConstraintLayout
 import com.indest.hah.views.MessageSnackBar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -126,6 +128,20 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         return binding.root
     }
 
+    private fun showPromoDialog() {
+        levelViewModel.promoDialogData?.let {
+            Log.d(TAG, "Promo dialog info: $it")
+            if (it.activated == true && it.levelIds?.contains(levelViewModel.currentRelativeLevelNumber) == true) {
+                val promoDialogFragment = PromoDialogFragment(promoData = it)
+                promoDialogFragment.setDrawable(
+                    requireContext()
+                )
+                promoDialogFragment.show(childFragmentManager, PromoDialogFragment.TAG)
+                levelViewModel.logDialogPromoShown()
+            }
+        }
+    }
+
 
     private fun showPlayerCenteredScores() {
         findNavController().safeNavigate(R.id.action_navigation_level_to_navigation_scores)
@@ -168,8 +184,10 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                                 if (levelViewModel.isShowScores()) {
                                     showPlayerCenteredScores()
                                 }
+                                showPromoDialog()
                             }
                         }
+
                         is LevelViewModel.GameEvent.SolutionResult -> {
                             when (event.solutionData.solution) {
                                 CORRECT -> {
@@ -177,14 +195,17 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                                     binding.gameFieldContainer.notClickable = true
                                     hideHintsBadge()
                                 }
+
                                 WRONG, BOGUS_PALINDROME -> {
                                     cellDirector?.sendWrongSolutionLetterHome(event.solutionData)
                                     showWrongEffects(event.solutionData)
                                 }
+
                                 NONE -> {
                                 }
                             }
                         }
+
                         LevelViewModel.GameEvent.ShowLoading -> {
                             enableLoading()
                         }
@@ -242,12 +263,15 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                     R.id.navigation_google_games -> {
                         menuItem.setIcon(R.drawable.games_controller_grey)
                     }
+
                     R.id.navigation_goods -> {
                         menuItem.setIcon(R.drawable.lightbulb)
                     }
+
                     R.id.navigation_stages -> {
                         menuItem.setIcon(R.drawable.baseline_list_alt_black_36)
                     }
+
                     R.id.navigation_settings -> {
                         menuItem.setIcon(R.drawable.settings)
                     }
@@ -421,11 +445,13 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                 Triple(false, false, "") -> {
                     levelViewModel.executeLevelCompleteActions(justNext = true)
                 }
+
                 Triple(true, false, "") -> {
                     levelViewModel.executeLevelCompleteActions(1001)
                     soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.1f)
                     findNavController().safeNavigate(R.id.action_navigation_level_to_navigation_game_pack_ending)
                 }
+
                 Triple(false, true, "") -> {
                     levelViewModel.executeLevelCompleteActions(1)
                     soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.1f)
