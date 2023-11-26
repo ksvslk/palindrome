@@ -12,7 +12,7 @@ class Theme {
 
     var listeners: [() -> Void] = []
     
-    var colors:Palette = TestTheme(isLightMode: UIScreen.main.traitCollection.userInterfaceStyle == UIUserInterfaceStyle.light)
+    var colors:Palette = PurpleTheme(isLightMode: UIScreen.main.traitCollection.userInterfaceStyle == UIUserInterfaceStyle.light)
     var currentTheme: ThemeName = .original
     
     var yantraBold : String  = "Yantramanav-Bold"
@@ -31,11 +31,11 @@ class Theme {
         let isLightMode = UIScreen.main.traitCollection.userInterfaceStyle == UIUserInterfaceStyle.light
         switch currentTheme {
         case .original:
-            colors = TestTheme(isLightMode: isLightMode)
+            colors = PurpleTheme(isLightMode: isLightMode)
         case .yellow:
-            colors = DefaultTheme(isLightMode: isLightMode)
+            colors = YellowTheme(isLightMode: isLightMode)
         default:
-            colors = TestTheme(isLightMode: isLightMode)
+            colors = PurpleTheme(isLightMode: isLightMode)
         }
         notifyListeners()
     }
