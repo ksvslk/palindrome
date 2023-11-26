@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-struct DefaultTheme : Palette {
+struct YellowTheme : Palette {
     
     var isLightMode: Bool = true
     
