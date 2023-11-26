@@ -10,6 +10,11 @@ import CoreData
 import CloudKit
 import GameKit
 
+struct JsonLevel: Codable {
+    var nr:Int
+    var solutionToCategory: Dictionary<String, String>
+}
+
 class Database {
     
     enum DatabaseError: Error {
@@ -38,7 +43,6 @@ class Database {
                 fatalError("Failed to load Core Data stack: \(error)")
             }
         }
-        
         context = persistentContainer.viewContext
     }
     
@@ -51,11 +55,6 @@ class Database {
         }
         
         let start = CFAbsoluteTimeGetCurrent()
-        
-        struct JsonLevel: Codable {
-            var nr:Int
-            var solutionToCategory: Dictionary<String, String>
-        }
         var levels = [JsonLevel]()
         let resource = "game_levels"
         
@@ -88,6 +87,50 @@ class Database {
         let diff = CFAbsoluteTimeGetCurrent() - start
         ////Swift.debugPrint("Inserting all levels to database took \(diff) seconds")
         
+    }
+    
+    // MARK: Add level packs
+    func initializeLevelPack(nr levelPackNr:Int, json resource:String)
+    {
+        var levels = [JsonLevel]()
+        if let path = Bundle.main.path(forResource: resource, ofType: "json") {
+            do {
+                let data = try Data(contentsOf: URL(fileURLWithPath: path), options: .alwaysMapped)
+                let list = try JSONDecoder().decode([JsonLevel].self, from: data)
+                levels = list
+            } catch let error {
+                fatalError(error.localizedDescription)
+            }
+        } else {
+            fatalError("Json was not found from path: \(resource)")
+        }
+        
+        let firstLevel: Int = {
+            if levelPackNr == 1 {
+                return 101
+            } else if levelPackNr == 2 {
+                return 126
+            } else if levelPackNr == 3 {
+                return 151
+            } else if levelPackNr == 4 {
+                return 176
+            } else if levelPackNr == 5 {
+                return 201
+            } else if levelPackNr == 6 {
+                return 226
+            } else {
+                return -1
+            }
+        }()
+       
+        levels.forEach { jsonLevel in
+            addNewLevel(
+                levelNr: jsonLevel.nr,
+                palindrome: jsonLevel.solutionToCategory.first!.key,
+                solutionsToHints: jsonLevel.solutionToCategory,
+                progress: jsonLevel.nr == firstLevel ? Level.Progress.in_progress : Level.Progress.locked
+            )
+        }
     }
     
     
