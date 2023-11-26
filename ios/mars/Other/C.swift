@@ -43,6 +43,7 @@ struct C {
     
     // IDs
     static let GAME_LEADERBOARD = "game_leaderboard"
+    static let ANTIMATTER_LEADERBOARD = "antimatter_league"
     static let PLAYER_LEADERBOARD = "player_leaderboard"
     
     

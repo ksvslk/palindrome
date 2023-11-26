@@ -15,6 +15,13 @@ struct JsonLevel: Codable {
     var solutionToCategory: Dictionary<String, String>
 }
 
+struct LevelPackRanges {
+    var ranges: [(Int, Int)]
+    init(_ ranges: KeyValuePairs<Int, Int>) {
+        self.ranges = Array(ranges)
+    }
+}
+
 class Database {
     
     enum DatabaseError: Error {
@@ -29,7 +36,7 @@ class Database {
     private let context: NSManagedObjectContext
     
     var currentLevel: Level?
-    
+
     // MARK: Closures for UI layer
     var levelChangedClosure: ((_ intervals:[Interval]) -> Void)?
     var solutionCheckResultClosure: ((_ solutionCheckResult:SolutionCheckResult, _ scoreAndBest:(Int,Int)) -> Void)?
@@ -44,6 +51,147 @@ class Database {
             }
         }
         context = persistentContainer.viewContext
+    }
+    
+    let levelPackRanges = LevelPackRanges(
+        [
+            1 : 100,
+            101 : 125,
+            126 : 150,
+            151 : 175,
+            176 : 200,
+            201 : 225,
+            226 : 250
+        ]
+    )
+    
+    private func getRangeForLevelPack(pack:LevelPack) -> (Int, Int)
+    {
+        switch pack {
+        case LevelPack.game_pack:
+            return levelPackRanges.ranges[0]
+        case LevelPack.level_pack_1:
+            return levelPackRanges.ranges[1]
+        case LevelPack.level_pack_2:
+            return levelPackRanges.ranges[2]
+        case LevelPack.level_pack_3:
+            return levelPackRanges.ranges[3]
+        case LevelPack.level_pack_4:
+            return levelPackRanges.ranges[4]
+        case LevelPack.level_pack_5:
+            return levelPackRanges.ranges[5]
+        case LevelPack.level_pack_6:
+            return levelPackRanges.ranges[6]
+        }
+    }
+    
+
+    func getLevelPackNr(for level:Int) -> Int
+    {
+        switch level {
+        case levelPackRanges.ranges[0].0...levelPackRanges.ranges[0].1:
+            return 0
+        case levelPackRanges.ranges[1].0...levelPackRanges.ranges[1].1:
+            return 1
+        case levelPackRanges.ranges[2].0...levelPackRanges.ranges[2].1:
+            return 2
+        case levelPackRanges.ranges[3].0...levelPackRanges.ranges[3].1:
+            return 3
+        case levelPackRanges.ranges[4].0...levelPackRanges.ranges[4].1:
+            return 4
+        case levelPackRanges.ranges[5].0...levelPackRanges.ranges[5].1:
+            return 5
+        case levelPackRanges.ranges[6].0...levelPackRanges.ranges[6].1:
+            return 6
+        default:
+            fatalError("No such level: \(level), that matches any level pack.")
+        }
+    }
+    
+    func getLevelPack(for level:Int) -> LevelPack
+    {
+        switch level {
+        case levelPackRanges.ranges[0].0...levelPackRanges.ranges[0].1:
+            return LevelPack.game_pack
+        case levelPackRanges.ranges[1].0...levelPackRanges.ranges[1].1:
+            return LevelPack.level_pack_1
+        case levelPackRanges.ranges[2].0...levelPackRanges.ranges[2].1:
+            return LevelPack.level_pack_2
+        case levelPackRanges.ranges[3].0...levelPackRanges.ranges[3].1:
+            return LevelPack.level_pack_3
+        case levelPackRanges.ranges[4].0...levelPackRanges.ranges[4].1:
+            return LevelPack.level_pack_4
+        case levelPackRanges.ranges[5].0...levelPackRanges.ranges[5].1:
+            return LevelPack.level_pack_5
+        case levelPackRanges.ranges[6].0...levelPackRanges.ranges[6].1:
+            return LevelPack.level_pack_6
+        default:
+            fatalError("No such level: \(level), that matches any level pack.")
+        }
+    }
+    
+    func getNormalizedLevelNumber(levelNr:Int? = nil) -> Int
+    {
+       let currentLevelNumber = levelNr != nil ? levelNr! : Int(currentLevel!.levelNumber)
+       let levelPack = getLevelPack(for: currentLevelNumber)
+       switch levelPack {
+        case LevelPack.game_pack:
+            return currentLevelNumber
+        case LevelPack.level_pack_1:
+           return currentLevelNumber - 100
+        case LevelPack.level_pack_2:
+            return currentLevelNumber - levelPackRanges.ranges[1].1
+        case LevelPack.level_pack_3:
+           return currentLevelNumber - levelPackRanges.ranges[2].1
+        case LevelPack.level_pack_4:
+           return currentLevelNumber - levelPackRanges.ranges[3].1
+        case LevelPack.level_pack_5:
+           return currentLevelNumber - levelPackRanges.ranges[4].1
+        case LevelPack.level_pack_6:
+           return currentLevelNumber - levelPackRanges.ranges[5].1
+        }
+    }
+    
+    func getLevelNrAndPackName(levelNr:Int? = nil) -> String
+    {
+       let currentLevelNumber = levelNr == nil ? Int(currentLevel!.levelNumber) : levelNr!
+       let levelPack = getLevelPack(for: currentLevelNumber)
+       switch levelPack {
+        case LevelPack.game_pack:
+            return String("\(currentLevelNumber)")
+        case LevelPack.level_pack_1:
+           return String("\(currentLevelNumber - 100) - SS Pack")
+        case LevelPack.level_pack_2:
+           return String("\(currentLevelNumber - levelPackRanges.ranges[1].1) - II Pack")
+        case LevelPack.level_pack_3:
+           return String("\(currentLevelNumber - levelPackRanges.ranges[2].1) - RR Pack")
+        case LevelPack.level_pack_4:
+           return String("\(currentLevelNumber - levelPackRanges.ranges[3].1) - EE Pack")
+        case LevelPack.level_pack_5:
+           return String("\(currentLevelNumber - levelPackRanges.ranges[4].1) - TT Pack")
+        case LevelPack.level_pack_6:
+           return String("\(currentLevelNumber - levelPackRanges.ranges[5].1) - LL Pack")
+        }
+    }
+    
+    func getActualLevelNumber(normalizedLevelNr levelNr:Int, levelPack:LevelPack) -> Int
+    {
+       switch levelPack {
+        case LevelPack.game_pack:
+            return levelNr
+        case LevelPack.level_pack_1:
+           return levelNr + 100
+        case LevelPack.level_pack_2:
+            return levelNr + levelPackRanges.ranges[1].1
+        case LevelPack.level_pack_3:
+           return levelNr + levelPackRanges.ranges[2].1
+        case LevelPack.level_pack_4:
+           return levelNr + levelPackRanges.ranges[3].1
+        case LevelPack.level_pack_5:
+           return levelNr + levelPackRanges.ranges[4].1
+        case LevelPack.level_pack_6:
+           return levelNr + levelPackRanges.ranges[5].1
+        }
     }
     
     
@@ -90,46 +238,54 @@ class Database {
     }
     
     // MARK: Add level packs
-    func initializeLevelPack(nr levelPackNr:Int, json resource:String)
+    func initializeLevelPacks()
     {
-        var levels = [JsonLevel]()
-        if let path = Bundle.main.path(forResource: resource, ofType: "json") {
-            do {
-                let data = try Data(contentsOf: URL(fileURLWithPath: path), options: .alwaysMapped)
-                let list = try JSONDecoder().decode([JsonLevel].self, from: data)
-                levels = list
-            } catch let error {
-                fatalError(error.localizedDescription)
-            }
-        } else {
-            fatalError("Json was not found from path: \(resource)")
+        if (maxLevelNumber() >= 250) {
+            return
         }
         
-        let firstLevel: Int = {
-            if levelPackNr == 1 {
-                return 101
-            } else if levelPackNr == 2 {
-                return 126
-            } else if levelPackNr == 3 {
-                return 151
-            } else if levelPackNr == 4 {
-                return 176
-            } else if levelPackNr == 5 {
-                return 201
-            } else if levelPackNr == 6 {
-                return 226
+        let levelPackResources = ["level_pack_1","level_pack_2","level_pack_3","level_pack_4","level_pack_5","level_pack_6"]
+        
+        levelPackResources.forEach { resource in
+            var levels = [JsonLevel]()
+            if let path = Bundle.main.path(forResource: resource, ofType: "json") {
+                do {
+                    let data = try Data(contentsOf: URL(fileURLWithPath: path), options: .alwaysMapped)
+                    let list = try JSONDecoder().decode([JsonLevel].self, from: data)
+                    levels = list
+                } catch let error {
+                    fatalError(error.localizedDescription)
+                }
             } else {
-                return -1
+                fatalError("Json was not found from path: \(resource)")
             }
-        }()
-       
-        levels.forEach { jsonLevel in
-            addNewLevel(
-                levelNr: jsonLevel.nr,
-                palindrome: jsonLevel.solutionToCategory.first!.key,
-                solutionsToHints: jsonLevel.solutionToCategory,
-                progress: jsonLevel.nr == firstLevel ? Level.Progress.in_progress : Level.Progress.locked
-            )
+            
+            let firstLevel: Int = {
+                if resource == "level_pack_1" {
+                    return levelPackRanges.ranges[1].0
+                } else if resource == "level_pack_2" {
+                    return levelPackRanges.ranges[2].0
+                } else if resource == "level_pack_3" {
+                    return levelPackRanges.ranges[3].0
+                } else if resource == "level_pack_4" {
+                    return levelPackRanges.ranges[4].0
+                } else if resource == "level_pack_5" {
+                    return levelPackRanges.ranges[5].0
+                } else if resource == "level_pack_6" {
+                    return levelPackRanges.ranges[6].0
+                } else {
+                    return -1
+                }
+            }()
+           
+            levels.forEach { jsonLevel in
+                addNewLevel(
+                    levelNr: jsonLevel.nr,
+                    palindrome: jsonLevel.solutionToCategory.first!.key,
+                    solutionsToHints: jsonLevel.solutionToCategory,
+                    progress: jsonLevel.nr == firstLevel ? Level.Progress.in_progress : Level.Progress.locked
+                )
+            }
         }
     }
     
@@ -219,13 +375,17 @@ class Database {
     // MARK: Change to next level
     func changeToNextLevel()
     {
-        let nextLevel = Int(currentLevel!.levelNumber + 1)
-        if (nextLevel <= getAllGameLevels().count)
+        let currentLevel = Int(currentLevel!.levelNumber)
+        let nextLevel =  getNormalizedLevelNumber() + 1
+        let levelPack = getLevelPack(for: currentLevel)
+        
+        if (nextLevel <= getAllLevelsProgresses(currentLevel: currentLevel).count)
         {
-            changeLevel(to: Int(nextLevel), withProgressReset: true)
+            changeLevel(to: Int(nextLevel), withProgressReset: true, levelPack: levelPack)
         }
         else {
-            changeLevel(to: 1, withProgressReset: true)
+            let range = getRangeForLevelPack(pack: getLevelPack(for: currentLevel))
+            changeLevel(to: range.0, withProgressReset: true, levelPack: levelPack)
         }
         
     }
@@ -276,70 +436,44 @@ class Database {
     }
     
     
-    private func isLocalProgressBetter(localLevels:[Level], cloudProgresses:[Int64], cloudScores:[Int64]) -> Bool
+    private func isLocalProgressBetter(localLevels:[Level], cloudProgresses:[Int64]) -> Bool
     {
-        let localMaxUnlockedLevel = localLevels.last { level in
+        let localLevelsUnlockedCount = localLevels.filter({ level in
             level.progress != Level.Progress.locked.rawValue
-        }
-      
-        let cloudMaxUnlockedLevel = Int64((cloudProgresses.lastIndex { progress in
+        }).count
+        let cloudLevelsUnlockedCount = cloudProgresses.filter({ progress in
             progress != Level.Progress.locked.rawValue
-        } ?? 99) + 1)
-        
-        ////Swift.debugPrint("isLocalProgressBetter: \(cloudProgresses)")
-        ////Swift.debugPrint("isLocalProgressBetter: \(cloudMaxUnlockedLevel)")
-        ////Swift.debugPrint("isLocalProgressBetter: \(localMaxUnlockedLevel?.levelNumber)!")
-        
-        if let maxLocalUnlockedLevel = localMaxUnlockedLevel?.levelNumber {
-            if (maxLocalUnlockedLevel > cloudMaxUnlockedLevel)
-            {
-                ////Swift.debugPrint("isLocalProgressBetter: Local is better!")
-                return true
-            }
-            else if (localMaxUnlockedLevel?.levelNumber == cloudMaxUnlockedLevel)
-            {
-                // check if local score is higher, return if so
-                let localScore = localLevels.map { level in
-                    level.bestScore
-                }.reduce(0, +)
-                let cloudScore = cloudScores.reduce(0, +)
-                if localScore >= cloudScore {
-                    ////Swift.debugPrint("isLocalProgressBetter: Local is better!")
-                    return true
-                }
-            }
-        }
-        ////Swift.debugPrint("isLocalProgressBetter: Local is WORSE!")
-        return false
+        }).count
+        return localLevelsUnlockedCount > cloudLevelsUnlockedCount || localLevels.count > cloudProgresses.count
     }
     
     
     func loadFromCloudKeyValueStore() {
         let store = NSUbiquitousKeyValueStore.default
-        let scores:[Int64] = store.array(forKey: C.CLOUD_BEST_SCORES_KEY) as? [Int64] ?? []
-        let progresses:[Int64] = store.array(forKey: C.CLOUD_PROGRESS_KEY) as? [Int64] ?? []
-        let currentLevelNumber:Int64 = store.longLong(forKey: C.CLOUD_CURRENT_LEVEL_KEY)
+        let cloudScores:[Int64] = store.array(forKey: C.CLOUD_BEST_SCORES_KEY) as? [Int64] ?? []
+        let cloudProgresses:[Int64] = store.array(forKey: C.CLOUD_PROGRESS_KEY) as? [Int64] ?? []
+        let cloudCurrentLevelNr:Int64 = store.longLong(forKey: C.CLOUD_CURRENT_LEVEL_KEY)
         
         ////Swift.debugPrint("loadFromCloudKeyValueStore: \(scores)")
         ////Swift.debugPrint("loadFromCloudKeyValueStore: \(progresses)")
         ////Swift.debugPrint("loadFromCloudKeyValueStore: \(currentLevelNumber)")
         
-        let localLevels = getAllLevels()
-        guard !isLocalProgressBetter(
-            localLevels: localLevels, cloudProgresses: progresses, cloudScores: scores) else { return }
+        let localLevels = getAllLevels(currentLevel: -1)
+        guard !isLocalProgressBetter(localLevels: localLevels, cloudProgresses: cloudProgresses) else { return }
       
-        if !scores.isEmpty && !progresses.isEmpty {
-            let levels:[Level] = getAllLevels()
-            let areCountsEqual = (levels.count == scores.count) && (scores.count == progresses.count)
+        if !cloudScores.isEmpty && !cloudProgresses.isEmpty {
+            let localLevels:[Level] = getAllLevels(currentLevel: -1)
+            let areCountsEqual = (localLevels.count == cloudScores.count) && (cloudScores.count == cloudProgresses.count)
             if (areCountsEqual) {
-                for (index, level) in levels.enumerated() {
-                    level.bestScore = scores[index]
-                    level.progress = progresses[index]
-                    if (progresses[index] == Level.Progress.completed.rawValue)
+                for level in localLevels {
+                    let levelNr = Int(level.levelNumber) - 1
+                    level.bestScore = cloudScores[levelNr]
+                    level.progress = cloudProgresses[levelNr]
+                    if (cloudProgresses[levelNr] == Level.Progress.completed.rawValue)
                     {
                         level.progress = Int64(Level.Progress.in_progress.rawValue)
                     }
-                    if (level.levelNumber == currentLevelNumber)
+                    if (level.levelNumber == cloudCurrentLevelNr)
                     {
                         level.timeModified = Date.init(timeIntervalSinceNow: .zero)
                     }
@@ -362,31 +496,30 @@ class Database {
     
     func saveToCloudKeyValueStore() {
   
-        let levels:[Level] = getAllLevels()
+        let localLevels:[Level] = getAllLevels(currentLevel: -1)
         
         let store = NSUbiquitousKeyValueStore.default
-        var scores:[Int64] = store.array(forKey: C.CLOUD_BEST_SCORES_KEY) as? [Int64] ?? []
-        var progresses:[Int64] = store.array(forKey: C.CLOUD_PROGRESS_KEY) as? [Int64] ?? []
+        var cloudScores:[Int64] = store.array(forKey: C.CLOUD_BEST_SCORES_KEY) as? [Int64] ?? []
+        var cloudProgresses:[Int64] = store.array(forKey: C.CLOUD_PROGRESS_KEY) as? [Int64] ?? []
         
         ////Swift.debugPrint("saveToCloudKeyValueStore: \(scores)")
         ////Swift.debugPrint("saveToCloudKeyValueStore: \(progresses)")
         
         // local progress should be better to save to cloud
-        guard isLocalProgressBetter(
-            localLevels: levels, cloudProgresses: progresses, cloudScores: scores) else { return }
+        guard isLocalProgressBetter(localLevels: localLevels, cloudProgresses: cloudProgresses) else { return }
         
-        scores.removeAll()
-        progresses.removeAll()
+        cloudScores.removeAll()
+        cloudProgresses.removeAll()
         
-        if (!levels.isEmpty) {
-            levels.forEach { level in
-                scores.append(level.bestScore)
-                progresses.append(level.progress)
+        if (!localLevels.isEmpty) {
+            localLevels.forEach { level in
+                cloudScores.append(level.bestScore)
+                cloudProgresses.append(level.progress)
             }
             
             let store = NSUbiquitousKeyValueStore.default
-            store.set(progresses, forKey: C.CLOUD_PROGRESS_KEY)
-            store.set(scores, forKey: C.CLOUD_BEST_SCORES_KEY)
+            store.set(cloudProgresses, forKey: C.CLOUD_PROGRESS_KEY)
+            store.set(cloudScores, forKey: C.CLOUD_BEST_SCORES_KEY)
             if let currentLevel {
                 store.set(currentLevel.levelNumber, forKey: C.CLOUD_CURRENT_LEVEL_KEY)
             }
@@ -399,10 +532,8 @@ class Database {
     
     
     // MARK: Change level
-    func changeLevel(to nextLevel:Int = -1, toLatest loadLatestLevel:Bool = false, withProgressReset reset:Bool = false)
+    func changeLevel(to nextLevel:Int = -1, toLatest loadLatestLevel:Bool = false, withProgressReset reset:Bool = false, levelPack:LevelPack)
     {
-        print("Change level!!!!")
-        
         var intervals:[Interval] = []
         var previousLevel = Database.shared.currentLevel?.levelNumber
         context.performAndWait {
@@ -469,8 +600,9 @@ class Database {
                     }
                 }
                 else {
+                    let actualLevelNr = getActualLevelNumber(normalizedLevelNr: nextLevel, levelPack: levelPack)
                     let nextLevelRequest: NSFetchRequest<Level> = Level.fetchRequest()
-                    nextLevelRequest.predicate = NSPredicate(format: "levelNumber = %@", String(nextLevel))
+                    nextLevelRequest.predicate = NSPredicate(format: "levelNumber = %@", String(actualLevelNr))
                     nextLevelRequest.fetchLimit = 1
                     let results = try context.fetch(nextLevelRequest)
                     if let chosenLevel = results.first {
@@ -524,11 +656,15 @@ class Database {
     
     
     //MARK: Get total score
-    private func getTotalScore() -> Int {
+    private func getTotalScore(for currentLevel:Int) -> Int {
         var score = 0
         
+        let levelPack = getLevelPack(for:currentLevel)
+        let levelFirstAndLast = getRangeForLevelPack(pack: levelPack)
+        let predicate = NSPredicate(format: "levelNumber >= %@ AND levelNumber <= %@", argumentArray: [levelFirstAndLast.0, levelFirstAndLast.1])
+        
         let request: NSFetchRequest<Level> = Level.fetchRequest()
-        request.predicate = NSPredicate(format: "levelNumber <= %@", argumentArray: [100])
+        request.predicate = predicate
         
         do {
             let results = try context.fetch(request) as [Level]
@@ -543,14 +679,16 @@ class Database {
     
     
     //MARK: Submit score
-    private func submitScoreToLeaderboard(score: Int) async throws {
+    private func submitScoreToLeaderboard(score: Int, levelNr:Int) async throws {
+        
+        let leaderBoard = levelNr > 100 ? C.ANTIMATTER_LEADERBOARD : C.GAME_LEADERBOARD
         
         if GKLocalPlayer.local.isAuthenticated {
             GKLeaderboard.submitScore(
                 score,
                 context: 0,
                 player: GKLocalPlayer.local,
-                leaderboardIDs: [C.GAME_LEADERBOARD],
+                leaderboardIDs: [leaderBoard],
                 completionHandler: { error in
                     if (error != nil) {
                         ////Swift.debugPrint("Could not submit score: \(String(describing: error))")
@@ -584,10 +722,14 @@ class Database {
     
     
     // MARK: Get all levels with progress
-    func getAllGameLevels() -> [Level.Progress]
+    func getAllLevelsProgresses(currentLevel:Int, pack:LevelPack? = nil) -> [Level.Progress]
     {
+        let levelPack = pack == nil ? getLevelPack(for: currentLevel) : pack!
+        let predicateFormat = "levelNumber >= %@ AND levelNumber <= %@"
+        let levelFirstAndLast = getRangeForLevelPack(pack: levelPack)
+        
         let request: NSFetchRequest<Level> = Level.fetchRequest()
-        request.predicate = NSPredicate(format: "levelNumber <= %@", argumentArray: [100])
+        request.predicate = NSPredicate(format: predicateFormat, argumentArray: [levelFirstAndLast.0, levelFirstAndLast.1])
         let sortDescriptor = NSSortDescriptor(key: "levelNumber", ascending: true)
         request.sortDescriptors = [sortDescriptor]
         
@@ -604,12 +746,15 @@ class Database {
         return levels
     }
     
+
     
     // MARK: Get all levels
-    func getAllLevels() -> [Level]
+    func getAllLevels(currentLevel:Int) -> [Level]
     {
+        let predicate = currentLevel == -1 ? NSPredicate(format: "levelNumber <= %@", argumentArray: [250]) : NSPredicate(format: "levelNumber >= %@ AND levelNumber <= %@", argumentArray: [getRangeForLevelPack(pack: getLevelPack(for: currentLevel)).0, getRangeForLevelPack(pack: getLevelPack(for: currentLevel)).1])
+        
         let request: NSFetchRequest<Level> = Level.fetchRequest()
-        request.predicate = NSPredicate(format: "levelNumber <= %@", argumentArray: [100])
+        request.predicate = predicate
         let sortDescriptor = NSSortDescriptor(key: "levelNumber", ascending: true)
         request.sortDescriptors = [sortDescriptor]
         
@@ -621,7 +766,7 @@ class Database {
                 levels.append(level)
             }
         } catch {
-            ////Swift.debugPrint("Error fetching results: \(error.localizedDescription)")
+            Swift.debugPrint("Error fetching results: \(error.localizedDescription)")
         }
         return levels
     }
@@ -848,13 +993,13 @@ class Database {
     // MARK: Set level as completed
     func setLevelCompletedImmediately()
     {
+        let levelNr = Int(currentLevel!.levelNumber)
         currentLevel!.bestScore = max(currentLevel!.score, currentLevel!.bestScore)
         currentLevel!.progress = Int64(Level.Progress.completed.rawValue)
        
-     
         handleLevelCompleteAchievements(
                 isMaxScore: currentLevel!.score == currentLevel!.shuffledPuzzle.maxScore(),
-                levelNr:Int(currentLevel!.levelNumber)
+                levelNr:levelNr
             )
         
         do {
@@ -862,15 +1007,12 @@ class Database {
         } catch {
             ////Swift.debugPrint("Error setting level completed: \(error)")
         }
-        let all:[Level.Progress] = getAllGameLevels()
-        for (index, element) in all.enumerated() {
-            ////Swift.debugPrint("Level \(index + 1) progress is \(element)")
-        }
-        let totalScore = getTotalScore()
+     
+        let totalScore = getTotalScore(for: levelNr)
         
         Task {
             do {
-                try await submitScoreToLeaderboard(score: totalScore)
+                try await submitScoreToLeaderboard(score: totalScore, levelNr: levelNr)
             } catch {
                 ////Swift.debugPrint("Error:", error.localizedDescription)
             }

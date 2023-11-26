@@ -18,7 +18,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     private var gameScene: GameScene?
     var tapGesture:UITapGestureRecognizer? = nil
     private var backgroundLayer:CALayer? = nil
-
+    
     @IBOutlet weak var backgroundUIView: UIView!
     @IBOutlet weak var gameCenterButtonRef: UIBarButtonItem!
     @IBOutlet weak var hintToolbarItem: UIBarButtonItem!
@@ -34,8 +34,8 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     
     private var adManager: AdManager?
     
- 
-
+    
+    
     // MARK: View did load
     override func viewDidLoad() {
         //Swift.debugPrint("viewDidLoad")
@@ -43,7 +43,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         addBackgroundColorLayer()
         self.view.makeToastActivity(.center)
         self.view.isUserInteractionEnabled = false
-      
+        
         UserPrivacy().requestConsentInformation(viewController: self) { _ in
             DispatchQueue.main.async {
                 GADMobileAds.sharedInstance().start { _ in
@@ -60,11 +60,11 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             }
         }
         menuColorsChange(doLayout: true)
-     
+        
         Theme.shared.addListener {
             self.menuColorsChange(doLayout: true)
         }
-
+        
     }
     
     
@@ -83,12 +83,12 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         gameScene?.changeTheme()
     }
     
-
+    
     
     func gameCenterViewControllerDidFinish(_ gameCenterViewController: GKGameCenterViewController) {
         gameCenterViewController.dismiss(animated: true, completion: nil)
     }
-
+    
     
     private func addBackgroundColorLayer()
     {
@@ -129,7 +129,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     {
         self.view.hideToastActivity()
         self.view.isUserInteractionEnabled = true
-        Database.shared.changeLevel(toLatest: true)
+        Database.shared.changeLevel(toLatest: true, levelPack: LevelPack.game_pack)
         self.showTutorial()
     }
     
@@ -170,7 +170,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             
             let appDelegate = UIApplication.shared.delegate as! AppDelegate
             let levelNr = Database.shared.currentLevel!.levelNumber
-        
+            
             if intervals.first(where: { i in
                 i.name == C.ADS_INTERVAL && i.currentCount == i.limitCount
             }) != nil && levelNr >= 15 && !appDelegate.purchaseManager.isNoAdsPurchasedInAnyWay() && adManager?.isInterstitialAdAvailable() == true {
@@ -181,7 +181,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             }
         }
     }
-   
+    
     
     //MARK: Execute level load actions
     private func executeLevelLoadActions(intervals:[Interval] = [])
@@ -190,7 +190,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         loadMainScene()
         let levelNr = Int(Database.shared.currentLevel!.levelNumber)
         askForReview(levelNr: levelNr)
-        levelNumberLabel.text = String(levelNr)
+        levelNumberLabel.text = Database.shared.getLevelNrAndPackName()
         changeProgressBarUI(levelNr: levelNr)
         if (Database.shared.currentLevel!.levelProgress == Level.Progress.completed)
         {
@@ -212,7 +212,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         }
         gameScene?.changeTheme()
     }
- 
+    
     
     private func enableInfoButton()
     {
@@ -222,12 +222,12 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     
     private func disableInfoButton()
     {
-       
+        
         if let tapGesture = tapGesture { view.removeGestureRecognizer(tapGesture) }
         infoLabelButton.alpha = 0.0
         infoLabelButton.titleLabel?.text = String()
     }
-
+    
     
     //MARK: Ask for review
     private func askForReview(levelNr:Int)
@@ -345,15 +345,15 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         view.presentScene(gameScene, transition: SKTransition.push(with: SKTransitionDirection.left, duration: 1.0))
         view.ignoresSiblingOrder = true
         
-        #if DEBUG
+#if DEBUG
         view.showsFPS = true
         view.showsNodeCount = true
-        #endif
+#endif
         
         view.isMultipleTouchEnabled = false
-      
+        
         backgroundLayer?.removeFromSuperlayer()
-
+        
         
         self.gameScene = gameScene // Set the global variable to the gameScene instance
         hintToolbarItem.removeBadge()
@@ -383,9 +383,9 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             guard let level = Database.shared.currentLevel else { return }
             self.loadMainScene()
             let levelNr = Int(level.levelNumber)
-            self.levelNumberLabel.text = String(levelNr)
+            self.levelNumberLabel.text = Database.shared.getLevelNrAndPackName(levelNr: levelNr)
             self.changeProgressBarUI(levelNr: levelNr)
-      
+            
             if (level.levelProgress == Level.Progress.completed)
             {
                 self.enableInfoButton()
@@ -399,7 +399,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             }
         })
     }
-  
+    
     
     // MARK: Tap to continue touch
     @objc func tapToContinueTouched() {
@@ -491,7 +491,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     // MARK: View did appear
     override func viewDidAppear(_ animated: Bool) {
         handleRewards()
-       
+        
     }
     
     
@@ -561,7 +561,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             }
         }
     }
-   
+    
     
     // MARK: Reward with letter
     func rewardWithLetter()
@@ -620,7 +620,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         else {
             tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.tapToContinueTouched))
         }
-     
+        
         self.view.addGestureRecognizer(tapGesture!)
     }
     
@@ -683,13 +683,15 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     // MARK: Change progress bar
     private func changeProgressBarUI(levelNr:Int)
     {
-        if (levelNr <= 100)
-        {
-            let progressPercentage = levelNr
-            let progressValue = Float(progressPercentage) / 100.0
-            progressBar.setProgress(progressValue, animated: true)
+        let levelPack = Database.shared.getLevelPack(for: levelNr)
+        let progressPercentage = switch levelPack {
+        case LevelPack.game_pack:
+            levelNr
+        default:
+            Database.shared.getNormalizedLevelNumber(levelNr: levelNr)
         }
-        
+        let progressValue = Float(progressPercentage) / (levelPack == LevelPack.game_pack ? 100.0 : 25.0)
+        progressBar.setProgress(progressValue, animated: true)
     }
     
     

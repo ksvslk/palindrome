@@ -17,6 +17,7 @@ class GameLevelSelectController: UIViewController {
     init(levelPack:LevelPack, dismissLevelSelectMenu: @escaping () -> Void) {
         self.dismissLevelSelectMenu = dismissLevelSelectMenu
         self.levelPack = levelPack
+        self.data = Database.shared.getAllLevelsProgresses(currentLevel: -2, pack: self.levelPack)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -24,13 +25,14 @@ class GameLevelSelectController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
  
-    var data:[Level.Progress] = Database.shared.getAllGameLevels() // TODO: get level pack levels
+    var data:[Level.Progress] // TODO: get level pack levels, TEST!
     
     // a property to hold the collectionView
     var collectionView: UICollectionView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+     
         self.collectionView.dataSource = self
         self.collectionView.delegate = self
         self.collectionView.register(LevelSelectCell.self, forCellWithReuseIdentifier: "subclassedcell")
@@ -39,11 +41,13 @@ class GameLevelSelectController: UIViewController {
         // Add blur effect
         self.collectionView.backgroundColor = Theme.shared.colors.background
 
+        /*
         DispatchQueue.main.async {
-            let currentLevel = Database.shared.currentLevel!.levelNumber // TODO: match with level pack
+            let currentLevel = Database.shared.getNormalizedLevelNumber() // TODO: match with level pack. TEST!
             let indexPath = IndexPath(item: Int(currentLevel-1), section: 0)
             self.collectionView.scrollToItem(at: indexPath, at: .centeredVertically, animated: false)
         }
+         */
     }
     
     @objc func dismissModal() {
@@ -77,7 +81,7 @@ extension GameLevelSelectController: UICollectionViewDelegate {
         //Swift.debugPrint("Collection view at row \(collectionView.tag) selected level nr \(indexPath.item + 1)")
         dismiss(animated: true, completion: {
             self.dismissLevelSelectMenu()
-            Database.shared.changeLevel(to: indexPath.item + 1) //TODO: Get level in level pack
+            Database.shared.changeLevel(to: indexPath.item + 1, levelPack: self.levelPack) //TODO: Get level in level pack. TEST!
         })
     }
     

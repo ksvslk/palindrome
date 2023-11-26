@@ -31,7 +31,6 @@ class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
     
     private let colorClosure = { (action: UIAction) in
         Theme.shared.changeTheme(name: ThemeName(rawValue: action.title)!)
-        
     }
     private let colorSelectionButton = UIButton(primaryAction: nil)
     
@@ -48,14 +47,11 @@ class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
 
         colorSelectionButton.layer.cornerRadius = 10
         colorSelectionButton.contentEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
-      
-
         colorSelectionButton.menu = UIMenu(children: [
             UIAction(title: ThemeName.original.rawValue, handler: colorClosure),
             UIAction(title: ThemeName.yellow.rawValue, handler: colorClosure)
         ])
         colorSelectionButton.showsMenuAsPrimaryAction = true
-        
         changeColorSelectionButtonColor()
     }
     
@@ -79,7 +75,7 @@ class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
     
     private func changeColorSelectionButtonColor()
     {
-        colorSelectionButton.setTitle("OO", for: .normal)
+        colorSelectionButton.setTitle("OOO", for: .normal)
         switch Theme.shared.currentTheme {
         case .original:
             (colorSelectionButton.menu?.children[0] as? UIAction)?.state = .on
@@ -118,7 +114,7 @@ class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
     override var menuItem: [MenuItemInfo] {
         return [
             MenuItemInfo(name: C.colorButton.0, comment: "", systemImage: C.colorButton.1, closure: {menuItem in
-                
+              
             }),
             MenuItemInfo(name: C.soundButton.0, comment: "", systemImage: C.soundButton.1, closure: {menuItem in
                 //Swift.debugPrint("Tapped \(C.soundButton.0)")
@@ -188,6 +184,7 @@ class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
         }
         else if (item.name == C.colorButton.0)
         {
+            cell.selectionStyle = UITableViewCell.SelectionStyle.none
             cell.stackView.addArrangedSubview(colorSelectionButton)
         }
       

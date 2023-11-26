@@ -22,6 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         registerUserDefaults()
         setToastStyle()
         Database.shared.initializeDatabaseWithGameLevels()
+        Database.shared.initializeLevelPacks()
         return true
     }
     

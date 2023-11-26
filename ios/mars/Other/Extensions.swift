@@ -16,7 +16,6 @@ extension CGPoint {
     }
 }
 
-
 extension String {
     
     // MARK: Chunk string
@@ -46,6 +45,16 @@ extension String {
     // MARK: Get score
     func maxScore() -> Int64 {
         return Int64(self.count * C.SCORE_LETTER_MULTIPLIER)
+    }
+    
+    func getStringOutsideBrackets() -> String {
+        let pattern = "\\([^)]*\\)"
+        let regex = try? NSRegularExpression(pattern: pattern)
+        
+        let range = NSRange(self.startIndex..., in: self)
+        let result = regex?.stringByReplacingMatches(in: self, range: range, withTemplate: "")
+        
+        return result ?? self
     }
     
 }

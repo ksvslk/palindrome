@@ -323,17 +323,6 @@ class LevelSelectController: BaseMenuController,ProductsUpdateDelegate, Transact
     }
     
     
-    func getStringOutsideBrackets(_ str: String) -> String {
-        let pattern = "\\([^)]*\\)"
-        let regex = try? NSRegularExpression(pattern: pattern)
-        
-        let range = NSRange(str.startIndex..., in: str)
-        let result = regex?.stringByReplacingMatches(in: str, range: range, withTemplate: "")
-        
-        return result ?? str
-    }
-    
-    
     //MARK: Change level pack to purchasable
     private func updateLevelPackToPurchasable(info:ProductInfo)
     {
@@ -418,7 +407,7 @@ class LevelSelectController: BaseMenuController,ProductsUpdateDelegate, Transact
         }
         
         if let button = button {
-            let title = getStringOutsideBrackets(info.product.localizedTitle)
+            let title = info.product.localizedTitle.getStringOutsideBrackets()
             updateCell(
                 of: button,
                 withName: title,
