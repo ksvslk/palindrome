@@ -12,7 +12,8 @@ import PanModal
 class GameCenterController: BaseMenuController, GKGameCenterControllerDelegate {
 
     override var menuItem: [MenuItemInfo] {
-        return [MenuItemInfo(name: C.gameLeaderButton.0, comment: "", systemImage: C.gameLeaderButton.1, closure: {menuItem in
+        return [
+         MenuItemInfo(name: C.gameLeaderButton.0, comment: "", systemImage: C.gameLeaderButton.1, closure: {menuItem in
             //Swift.debugPrint("Tapped \(C.gameLeaderButton.0)")
             var viewController = GKGameCenterViewController(
                 leaderboardID: C.GAME_LEADERBOARD,
@@ -21,13 +22,23 @@ class GameCenterController: BaseMenuController, GKGameCenterControllerDelegate {
             self.setDefaultSettings(for: &viewController)
             self.presentPanModal(viewController)
         }),
-            MenuItemInfo(name: C.achievementsButton.0, comment: "", systemImage: C.achievementsButton.1, closure: {menuItem in
+         MenuItemInfo(name: C.antimatterLeaderButton.0, comment: "", systemImage: C.antimatterLeaderButton.1, closure: {menuItem in
+            //Swift.debugPrint("Tapped \(C.gameLeaderButton.0)")
+            var viewController = GKGameCenterViewController(
+                leaderboardID: C.ANTIMATTER_LEADERBOARD,
+                playerScope: .global,
+                timeScope: .allTime)
+            self.setDefaultSettings(for: &viewController)
+            self.presentPanModal(viewController)
+        }),
+        MenuItemInfo(name: C.achievementsButton.0, comment: "", systemImage: C.achievementsButton.1, closure: {menuItem in
             //Swift.debugPrint("Tapped \(C.achievementsButton.0)")
             var viewController = GKGameCenterViewController(state: .achievements)
           
             self.setDefaultSettings(for: &viewController)
             self.presentPanModal(viewController)
-        })]
+        })
+        ]
     }
     
     

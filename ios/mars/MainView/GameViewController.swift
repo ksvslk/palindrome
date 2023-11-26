@@ -525,8 +525,9 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     private func loadScores()
     {
         var scoreItems:[ScoreItemInfo] = []
+        let leaderBoard = Database.shared.currentLevel!.levelNumber <= 100 ? C.GAME_LEADERBOARD : C.ANTIMATTER_LEADERBOARD
         
-        GKLeaderboard.loadLeaderboards(IDs: [C.GAME_LEADERBOARD]) { [weak self] (boards, error) in
+        GKLeaderboard.loadLeaderboards(IDs: [leaderBoard]) { [weak self] (boards, error) in
             if (error == nil)
             {
                 guard let leaderboard = boards?.first else { return }

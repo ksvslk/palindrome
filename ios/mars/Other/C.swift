@@ -107,6 +107,7 @@ struct C {
     // Game Center menu
     static let playerLeaderButton = ("player_leader"~, UIImage(systemName: "increase.indent")!)
     static let gameLeaderButton = ("game_leader"~, UIImage(systemName: "decrease.indent")!)
+    static let antimatterLeaderButton = ("antimatter_leader"~, UIImage(systemName: "decrease.indent")!)
     static let achievementsButton = ("achievements"~, UIImage(systemName: "rosette")!)
 
     
