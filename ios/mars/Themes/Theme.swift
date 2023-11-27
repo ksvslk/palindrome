@@ -19,6 +19,24 @@ class Theme {
     var robotoMedium : String  = "Roboto-Medium"
     var yantraMedium : String = "Yantramanav-Medium"
     
+    init() {
+        let themeName = ThemeName(rawValue: UserDefaults.standard.string(forKey: C.COLOR_THEME)!)!
+        let isLightMode = UIScreen.main.traitCollection.userInterfaceStyle == UIUserInterfaceStyle.light
+        currentTheme = themeName
+        switch themeName {
+        case .red:
+            colors = RedTheme(isLightMode: isLightMode)
+        case .green:
+            colors = GreenTheme(isLightMode: isLightMode)
+        case .blue:
+            colors = BlueTheme(isLightMode: isLightMode)
+        case .yellow:
+            colors = YellowTheme(isLightMode: isLightMode)
+        case .purple:
+            colors = PurpleTheme(isLightMode: isLightMode)
+        }
+    }
+    
     static let shared: Theme = {
         let instance = Theme()
         return instance
@@ -41,6 +59,9 @@ class Theme {
         case .red:
             colors = RedTheme(isLightMode: isLightMode)
         }
+        let userDefaults = UserDefaults.standard
+        userDefaults.set(currentTheme.rawValue, forKey: C.COLOR_THEME)
+        NSUbiquitousKeyValueStore.default.set(currentTheme.rawValue, forKey: C.COLOR_THEME)
         notifyListeners()
     }
     

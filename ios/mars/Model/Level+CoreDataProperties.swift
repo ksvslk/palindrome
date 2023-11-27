@@ -23,7 +23,6 @@ extension Level {
     }
     
     // MARK: Properties
-    @NSManaged public var pictureRewarded: Bool
     @NSManaged public var author: String
     @NSManaged public var bestScore: Int64
     @NSManaged public var categoryRewarded: Bool

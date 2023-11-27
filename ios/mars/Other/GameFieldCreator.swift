@@ -10,8 +10,7 @@ import Foundation
 struct GameFieldCreator {
     
     static let spacing = 5.0
-    static let edgePadding = 16
-    static let maxBoxSize = 40.0
+    static let maxBoxSize = 45.0
     
     // MARK: Create game field
     static func getGameField(palindrome: String, viewSize: CGSize, level: Level) -> GameField
@@ -24,7 +23,7 @@ struct GameFieldCreator {
         
         let columns = palindrome.split(separator: " ").max { $0.count < $1.count }!.count
         let totalAreaRatio = Float(viewSize.width) / Float(viewSize.height)
-        let columnsEnd = max(7, palindrome.count)
+        let columnsEnd = max(3, palindrome.count)
         var closestColumnsRatio: (Int, Float) = (columns, Float.greatestFiniteMagnitude)
         
         for cols in columns...columnsEnd {
@@ -45,10 +44,9 @@ struct GameFieldCreator {
         let letterRows = puzzleOnlyLetters.chunked(into: closestColumnsRatio.0)
         
         var boxSize = maxBoxSize
-        let boxDecreaseRate = 1.05
+        let boxDecreaseRate = 1.02
         
         var exceedingWidth = getUsedWidth(columns: closestColumnsRatio.0, boxSize: Float(boxSize), gap: Int(spacing)) >= Float(viewSize.width)
-        
         var exceedingHeight = getUsedHeight(rowsCount: solutionRows.count, boxSize: Float(boxSize), gap: Int(spacing)) >= Float(viewSize.height)
         
         while(exceedingWidth || exceedingHeight)

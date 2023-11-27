@@ -56,7 +56,6 @@ class LevelSelectController: BaseMenuController,ProductsUpdateDelegate, Transact
     override func viewDidAppear(_ animated: Bool) {
         Database.shared.getLevelPackProgress(levelPack: LevelPack.game_pack) { percentageComplete in
             DispatchQueue.main.async {
-
                     self.updateCell(
                         of: Button.level_pack_game_btn,
                         withComment: "\(percentageComplete)%",
@@ -327,7 +326,7 @@ class LevelSelectController: BaseMenuController,ProductsUpdateDelegate, Transact
                 productId == C.PURCHASE_LEVELS_PACK_5_ID ||
                 productId == C.PURCHASE_LEVELS_PACK_6_ID)
             {
-                if (info.isPurchased || allPacksPurchased || info.product.productIdentifier == C.PURCHASE_LEVELS_PACK_3_ID) {
+                if (info.isPurchased || allPacksPurchased || true) { //TODO: Change back, remove true 
                     updateLevelPackToPremium(info: info)
                     setLevelPackTapClosure(info: info)
                 }

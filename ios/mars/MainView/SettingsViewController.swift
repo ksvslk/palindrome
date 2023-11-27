@@ -30,7 +30,7 @@ class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
     
     
     private let colorClosure = { (action: UIAction) in
-        Theme.shared.changeTheme(name: ThemeName(rawValue: action.title)!)
+        Theme.shared.changeTheme(name: ThemeName(rawValue: action.title.lowercased())!)
     }
     private let colorSelectionButton = UIButton(primaryAction: nil)
     
@@ -48,11 +48,11 @@ class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
         colorSelectionButton.layer.cornerRadius = 10
         colorSelectionButton.contentEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         colorSelectionButton.menu = UIMenu(children: [
-            UIAction(title: ThemeName.purple.rawValue, handler: colorClosure),
-            UIAction(title: ThemeName.yellow.rawValue, handler: colorClosure),
-            UIAction(title: ThemeName.green.rawValue, handler: colorClosure),
-            UIAction(title: ThemeName.blue.rawValue, handler: colorClosure),
-            UIAction(title: ThemeName.red.rawValue, handler: colorClosure),
+            UIAction(title: ThemeName.purple.rawValue.capitalized, handler: colorClosure),
+            UIAction(title: ThemeName.yellow.rawValue.capitalized, handler: colorClosure),
+            UIAction(title: ThemeName.green.rawValue.capitalized, handler: colorClosure),
+            UIAction(title: ThemeName.blue.rawValue.capitalized, handler: colorClosure),
+            UIAction(title: ThemeName.red.rawValue.capitalized, handler: colorClosure),
         ])
         colorSelectionButton.showsMenuAsPrimaryAction = true
         changeColorSelectionButtonColor()

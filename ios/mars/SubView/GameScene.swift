@@ -8,7 +8,7 @@ class GameScene: SKScene {
     private var gridNode:SKNode = SKNode()
     private var startingPosition:CGPoint = CGPoint.zero
     var cellDirector: CellDirector = CellDirector(cells: [Cell]())
-    let horizontalSafe = 16.0
+    let horizontalSafe = 2.0
     let bottomSafe = 34.0 + 44.0 + 8.0
     let topSafe = 59.0 + 4.0 + 8.0
     
@@ -26,7 +26,6 @@ class GameScene: SKScene {
         backgroundColor = Theme.shared.colors.background
         print("TERE ", cellDirector.cells.count)
         cellDirector.cells.forEach { cell in
-            print("SIWTCH")
             cell.switchColor()
         }
     }

@@ -33,6 +33,9 @@ extension String {
         return result
     }
     
+    func isSingleWordAndOverCharacters(length:Int) -> Bool {
+        return !self.contains(" ") && self.count > length
+    }
     
     //MARK: Is string palindrome?
     func isPalindrome() -> Bool {

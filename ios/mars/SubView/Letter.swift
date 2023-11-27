@@ -47,19 +47,21 @@ class Letter: Cell {
     
     override func switchColor()
     {
-        color = Theme.shared.colors.surfaceVariant
-        letterLabel.fontColor = Theme.shared.colors.onSurfaceVariant
-        if (data.friendIndex != -1)
-        {
-            color = Theme.shared.colors.primaryContainer
-        }
-        if (data.locked)
-        {
-            color = Theme.shared.colors.tertiaryContainer
-        }
-        if (data.level.progress == Level.Progress.completed.rawValue)
-        {
-            color = Theme.shared.colors.tertiaryContainer
+        DispatchQueue.main.async {
+            self.color = Theme.shared.colors.surfaceVariant
+            self.letterLabel.fontColor = Theme.shared.colors.onSurfaceVariant
+            if (self.data.friendIndex != -1)
+            {
+                self.color = Theme.shared.colors.primaryContainer
+            }
+            if (self.data.locked)
+            {
+                self.color = Theme.shared.colors.tertiaryContainer
+            }
+            if (self.data.level.progress == Level.Progress.completed.rawValue)
+            {
+                self.color = Theme.shared.colors.tertiaryContainer
+            }
         }
     }
     

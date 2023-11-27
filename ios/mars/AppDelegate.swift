@@ -56,7 +56,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         userDefaults.register(
             defaults: [
                 C.SOUND_ON: true,
-                C.VIBRATION_ON: true
+                C.VIBRATION_ON: true,
+                C.COLOR_THEME: ThemeName.purple.rawValue
             ]
         )
     }

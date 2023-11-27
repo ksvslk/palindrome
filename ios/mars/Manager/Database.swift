@@ -288,7 +288,7 @@ class Database {
                     levelNr: jsonLevel.nr,
                     palindrome: jsonLevel.solutionToCategory.first!.key,
                     solutionsToHints: jsonLevel.solutionToCategory,
-                    progress: jsonLevel.nr == firstLevel ? Level.Progress.in_progress : Level.Progress.locked
+                    progress: jsonLevel.nr == firstLevel ? Level.Progress.in_progress : Level.Progress.in_progress // TODO: Change back to locked
                 )
             }
         }
@@ -403,11 +403,11 @@ class Database {
     
     
     //MARK: Get level pack progress
-    func getLevelPackProgress(levelPack:LevelPack, completion: @escaping (Double) -> Void)
+    func getLevelPackProgress(levelPack:LevelPack, completion: @escaping (Decimal) -> Void)
     {
         DispatchQueue.global().async {
             let levelPackProgresses = self.getAllLevelsProgresses(currentLevel: -1, pack: levelPack)
-            let percentage = Double(levelPackProgresses.filter({progress in progress != Level.Progress.locked }).count) / Double(levelPackProgresses.count) * 100.0
+            let percentage = Decimal(levelPackProgresses.filter({progress in progress != Level.Progress.locked }).count) / Decimal(levelPackProgresses.count) * 100.0
             completion(percentage)
         }
     }
@@ -765,7 +765,7 @@ class Database {
                 levels.append(level.levelProgress)
             }
         } catch {
-            ////Swift.debugPrint("Error fetching results: \(error.localizedDescription)")
+            Swift.debugPrint("Error fetching results: \(error.localizedDescription)")
         }
         return levels
     }
