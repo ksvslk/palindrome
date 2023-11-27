@@ -365,6 +365,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         Theme.shared.changeTheme(name: nil)
         self.setToastStyle()
         menuColorsChange(doLayout: true)
+        dismissModal()
     }
     
     
