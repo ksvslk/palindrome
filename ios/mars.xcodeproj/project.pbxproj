@@ -1078,7 +1078,7 @@
 				B196BBCB2AC0A3DF00A68DEF /* Model 2.xcdatamodel */,
 				B144A88329FA66B40067A080 /* Model.xcdatamodel */,
 			);
-			currentVersion = B196BBCB2AC0A3DF00A68DEF /* Model 2.xcdatamodel */;
+			currentVersion = B144A88329FA66B40067A080 /* Model.xcdatamodel */;
 			path = Model.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
