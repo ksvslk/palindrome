@@ -400,7 +400,18 @@ class Database {
         }
         
     }
-
+    
+    
+    //MARK: Get level pack progress
+    func getLevelPackProgress(levelPack:LevelPack, completion: @escaping (Double) -> Void)
+    {
+        DispatchQueue.global().async {
+            let levelPackProgresses = self.getAllLevelsProgresses(currentLevel: -1, pack: levelPack)
+            let percentage = Double(levelPackProgresses.filter({progress in progress != Level.Progress.locked }).count) / Double(levelPackProgresses.count) * 100.0
+            completion(percentage)
+        }
+    }
+    
     
     // MARK: Increase interval -> result
     private func updateCurrentCount(forName name: String, by addition: Int64 = 1, reset: Bool = false) -> Bool {
@@ -761,7 +772,7 @@ class Database {
     
 
     
-    // MARK: Get all levels
+    // MARK: Get all levels (or level pack all levels)
     func getAllLevels(currentLevel:Int) -> [Level]
     {
         let predicate = currentLevel == -1 ? NSPredicate(format: "levelNumber <= %@", argumentArray: [250]) : NSPredicate(format: "levelNumber >= %@ AND levelNumber <= %@", argumentArray: [getRangeForLevelPack(pack: getLevelPack(for: currentLevel)).0, getRangeForLevelPack(pack: getLevelPack(for: currentLevel)).1])

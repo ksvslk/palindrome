@@ -35,10 +35,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     }
     
     
-    //MARK: View did appear
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        //Swift.debugPrint("viewDidAppear")
+    override func viewWillAppear(_ animated: Bool) {
         self.purchaseManager?.delegate = self
         self.purchaseManager?.processDelegate = self
         self.purchaseManager?.sendLatestInfo()
@@ -54,6 +51,17 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
         {
             view.makeToastActivity(.center)
             view.isUserInteractionEnabled = false
+        }
+        
+    }
+    
+    //MARK: View did appear
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        //Swift.debugPrint("viewDidAppear")
+        if (Database.shared.currentLevel?.categoryRewarded == true)
+        {
+            updateHintsToPremium()
         }
     }
     

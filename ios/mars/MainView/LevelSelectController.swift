@@ -21,6 +21,7 @@ class LevelSelectController: BaseMenuController,ProductsUpdateDelegate, Transact
         case level_pack_4_btn = 4
         case level_pack_5_btn = 5
         case level_pack_6_btn = 6
+        case level_pack_game_btn = 7
     }
     
     init(purchaseManager:PurchaseManager?) {
@@ -32,10 +33,9 @@ class LevelSelectController: BaseMenuController,ProductsUpdateDelegate, Transact
         fatalError("init(coder:) has not been implemented")
     }
     
-    //MARK: View did appear
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
+
+    // MARK: View will appear
+    override func viewWillAppear(_ animated: Bool) {
         self.purchaseManager?.delegate = self
         self.purchaseManager?.processDelegate = self
         self.purchaseManager?.sendLatestInfo()
@@ -51,6 +51,22 @@ class LevelSelectController: BaseMenuController,ProductsUpdateDelegate, Transact
     override func viewDidDisappear(_ animated: Bool) {
         self.purchaseManager?.delegate = nil
         self.purchaseManager?.processDelegate = nil
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        Database.shared.getLevelPackProgress(levelPack: LevelPack.game_pack) { percentageComplete in
+            DispatchQueue.main.async {
+
+                    self.updateCell(
+                        of: Button.level_pack_game_btn,
+                        withComment: "\(percentageComplete)%",
+                        withCommentColors: (Theme.shared.colors.tertiaryContainer, Theme.shared.colors.onTertiaryContainer),
+                        withTouchEnabled: true,
+                        onlyCommentUpdate: true
+                    )
+           
+            }
+        }
     }
     
     
@@ -85,19 +101,31 @@ class LevelSelectController: BaseMenuController,ProductsUpdateDelegate, Transact
         withTouchEnabled enabled:Bool = true,
         toOwned purchased:Bool = false,
         toThanks thankYou:Bool = false,
+        onlyCommentUpdate commentUpdate:Bool = false,
         withTouchAction closure:@escaping (UIView) -> Void = { _ in }
     ) {
         let indexPath = IndexPath(row: button.rawValue, section: 0)
-        
         if let cell = tableView.cellForRow(at: indexPath) as? MenuItemCell {
+            
+            if (commentUpdate)
+            {
+                cell.commentLabel.backgroundColor = commentLabelColors.0
+                cell.commentLabel.textColor = commentLabelColors.1
+                cell.commentLabel.text = "\(comment)"
+                return
+            }
+            
             if (purchased) {
                 let checkMark = UIImage(systemName: "play.circle.fill")!
                 cell.removeImageFromIconView()
                 cell.addImageToIconView(image: checkMark)
-                cell.iconView.backgroundColor = Theme.shared.colors.tertiaryContainer
+                cell.iconView.backgroundColor = Theme.shared.colors.primaryContainer
+                cell.iconView.tintColor = Theme.shared.colors.onPrimaryContainer
                 cell.nameLabel.text = "\(name)"
-                cell.commentLabel.text = ""
-                cell.commentLabel.backgroundColor = .clear
+                
+                cell.commentLabel.backgroundColor = commentLabelColors.0
+                cell.commentLabel.textColor = commentLabelColors.1
+                cell.commentLabel.text = "\(comment)"
                 //cell.isUserInteractionEnabled = false
                 return
             }
@@ -358,7 +386,6 @@ class LevelSelectController: BaseMenuController,ProductsUpdateDelegate, Transact
         }
   
         if let button = button {
-         
                 updateCell(
                     of: button,
                     withName: info.product.localizedTitle,
@@ -367,7 +394,6 @@ class LevelSelectController: BaseMenuController,ProductsUpdateDelegate, Transact
                     withTouchEnabled: !info.isPurchased,
                     toOwned: info.isPurchased
                 )
-        
         }
     }
     
@@ -375,47 +401,82 @@ class LevelSelectController: BaseMenuController,ProductsUpdateDelegate, Transact
     //MARK: Change level pack to premium
     private func updateLevelPackToPremium(info:ProductInfo)
     {
-        let button:Button? = if (info.product.productIdentifier == C.PURCHASE_LEVELS_PACK_1_ID)
+        var levelPack:LevelPack?
+        var button:Button?
+        
+        if (info.product.productIdentifier == C.PURCHASE_LEVELS_PACK_1_ID)
         {
-            Button.level_pack_1_btn
+            levelPack = LevelPack.level_pack_1
+            button = Button.level_pack_1_btn
         }
         else if (info.product.productIdentifier == C.PURCHASE_LEVELS_PACK_2_ID)
         {
-            Button.level_pack_2_btn
+            levelPack = LevelPack.level_pack_2
+            button = Button.level_pack_2_btn
         }
         else if (info.product.productIdentifier == C.PURCHASE_LEVELS_PACK_3_ID)
         {
-            Button.level_pack_3_btn
+            levelPack = LevelPack.level_pack_3
+            button = Button.level_pack_3_btn
         }
         else if (info.product.productIdentifier == C.PURCHASE_LEVELS_PACK_4_ID)
         {
-            Button.level_pack_4_btn
+            levelPack = LevelPack.level_pack_4
+            button = Button.level_pack_4_btn
         }
         else if (info.product.productIdentifier == C.PURCHASE_LEVELS_PACK_5_ID)
         {
-            Button.level_pack_5_btn
+            levelPack = LevelPack.level_pack_5
+            button = Button.level_pack_5_btn
         }
         else if (info.product.productIdentifier == C.PURCHASE_LEVELS_PACK_6_ID)
         {
-            Button.level_pack_6_btn
+            levelPack = LevelPack.level_pack_6
+            button = Button.level_pack_6_btn
         }
         else if (info.product.productIdentifier == C.PURCHASE_ALL_LEVELS_ID){
-            Button.all_level_packs_btn
+            levelPack = LevelPack.game_pack
+            button = Button.all_level_packs_btn
         }
         else {
-            nil
+            levelPack = nil
+            button = nil
         }
         
-        if let button = button {
-            let title = info.product.localizedTitle.getStringOutsideBrackets()
-            updateCell(
-                of: button,
-                withName: title,
-                withCommentColors: (Theme.shared.colors.tertiaryContainer, Theme.shared.colors.onTertiaryContainer),
-                withTouchEnabled: true,
-                toOwned: true
-            )
+        if let levelPack = levelPack {
+            Database.shared.getLevelPackProgress(levelPack: levelPack) { percentageComplete in
+                Swift.debugPrint("Progress for \(levelPack.rawValue) is \(percentageComplete)")
+                DispatchQueue.main.async {
+                    if let button = button {
+                        let title = info.product.localizedTitle.getStringOutsideBrackets()
+                        self.updateCell(
+                            of: button,
+                            withName: title,
+                            withComment: "\(percentageComplete)%",
+                            withCommentColors: (Theme.shared.colors.tertiaryContainer, Theme.shared.colors.onTertiaryContainer),
+                            withTouchEnabled: true,
+                            toOwned: true
+                        )
+                    }
+                }
+            }
         }
+        else {
+            DispatchQueue.main.async {
+                if let button = button {
+                    let title = info.product.localizedTitle.getStringOutsideBrackets()
+                    self.updateCell(
+                        of: button,
+                        withName: title,
+                        withCommentColors: (Theme.shared.colors.tertiaryContainer, Theme.shared.colors.onTertiaryContainer),
+                        withTouchEnabled: true,
+                        toOwned: true
+                    )
+                }
+            }
+       
+        }
+     
     }
     
     

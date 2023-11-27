@@ -61,8 +61,6 @@ class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
     
     private func changeSettingsMenuColors()
     {
-        Swift.debugPrint("NOW CHANGING THEME!")
-       
         if let selectedIndexPath = self.tableView.indexPathForSelectedRow {
             self.tableView.deselectRow(at: selectedIndexPath, animated: false)
         }
