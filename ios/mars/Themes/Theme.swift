@@ -13,7 +13,7 @@ class Theme {
     var listeners: [() -> Void] = []
     
     var colors:Palette = PurpleTheme(isLightMode: UIScreen.main.traitCollection.userInterfaceStyle == UIUserInterfaceStyle.light)
-    var currentTheme: ThemeName = .original
+    var currentTheme: ThemeName = .purple
     
     var yantraBold : String  = "Yantramanav-Bold"
     var robotoMedium : String  = "Roboto-Medium"
@@ -30,17 +30,21 @@ class Theme {
         currentTheme = name ?? currentTheme
         let isLightMode = UIScreen.main.traitCollection.userInterfaceStyle == UIUserInterfaceStyle.light
         switch currentTheme {
-        case .original:
+        case .purple:
             colors = PurpleTheme(isLightMode: isLightMode)
         case .yellow:
             colors = YellowTheme(isLightMode: isLightMode)
-        default:
-            colors = PurpleTheme(isLightMode: isLightMode)
+        case .green:
+            colors = GreenTheme(isLightMode: isLightMode)
+        case .blue:
+            colors = BlueTheme(isLightMode: isLightMode)
+        case .red:
+            colors = RedTheme(isLightMode: isLightMode)
         }
         notifyListeners()
     }
     
-    
+
     func addListener(_ listener: @escaping () -> Void) {
            listeners.append(listener)
     }

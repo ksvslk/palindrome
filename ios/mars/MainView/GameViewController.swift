@@ -424,6 +424,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             let appDelegate = UIApplication.shared.delegate as! AppDelegate
             let settingsSheetMenu = SettingsViewController(purchaseManager: appDelegate.purchaseManager)
             presentPanModal(settingsSheetMenu, sourceView: buttonView, sourceRect: buttonView.bounds)
+            
         }
     }
     

@@ -91,6 +91,9 @@
 		B16F9BF92AA906A60088E26B /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B16F9BF82AA906A60088E26B /* Theme.swift */; };
 		B177EF5F2AC1DEFF003FB4A6 /* game_levels.json in Resources */ = {isa = PBXBuildFile; fileRef = B177EF4C2AC1DEFF003FB4A6 /* game_levels.json */; };
 		B18EA83C2A1637CB00514E47 /* AdAvailabilityDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B18EA83B2A1637CB00514E47 /* AdAvailabilityDelegate.swift */; };
+		B19803542B149E05004803AC /* GreenTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B19803532B149E05004803AC /* GreenTheme.swift */; };
+		B19803562B149E0F004803AC /* BlueTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B19803552B149E0F004803AC /* BlueTheme.swift */; };
+		B19803582B149E1C004803AC /* RedTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B19803572B149E1C004803AC /* RedTheme.swift */; };
 		B1B33A8D29FDBC0300DFA59F /* Shuffler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B33A8C29FDBC0300DFA59F /* Shuffler.swift */; };
 		B1B33ABA29FE6F2D00DFA59F /* ShufflerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B33AB929FE6F2D00DFA59F /* ShufflerTests.swift */; };
 		B1B33AC629FFD91F00DFA59F /* GameFieldCreator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B33AC529FFD91F00DFA59F /* GameFieldCreator.swift */; };
@@ -204,6 +207,9 @@
 		B177EF4C2AC1DEFF003FB4A6 /* game_levels.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = game_levels.json; sourceTree = "<group>"; };
 		B18EA83B2A1637CB00514E47 /* AdAvailabilityDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdAvailabilityDelegate.swift; sourceTree = "<group>"; };
 		B196BBCB2AC0A3DF00A68DEF /* Model 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Model 2.xcdatamodel"; sourceTree = "<group>"; };
+		B19803532B149E05004803AC /* GreenTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GreenTheme.swift; sourceTree = "<group>"; };
+		B19803552B149E0F004803AC /* BlueTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlueTheme.swift; sourceTree = "<group>"; };
+		B19803572B149E1C004803AC /* RedTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedTheme.swift; sourceTree = "<group>"; };
 		B1B33A8C29FDBC0300DFA59F /* Shuffler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shuffler.swift; sourceTree = "<group>"; };
 		B1B33AAE29FE69BC00DFA59F /* marsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = marsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1B33AB929FE6F2D00DFA59F /* ShufflerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShufflerTests.swift; sourceTree = "<group>"; };
@@ -332,6 +338,9 @@
 				B16D29E72AA9CA6100215DF9 /* YellowTheme.swift */,
 				B1F2B45F2ABDB47A0051D617 /* PurpleTheme.swift */,
 				B16D29E92AA9D21E00215DF9 /* ThemeName.swift */,
+				B19803532B149E05004803AC /* GreenTheme.swift */,
+				B19803552B149E0F004803AC /* BlueTheme.swift */,
+				B19803572B149E1C004803AC /* RedTheme.swift */,
 			);
 			path = Themes;
 			sourceTree = "<group>";
@@ -633,6 +642,7 @@
 				B13149EB2A214555004B06E8 /* LevelSelectController.swift in Sources */,
 				B14CB4F42AC09EEE00C7E12F /* Solution+CoreDataProperties.swift in Sources */,
 				B13BBA6D2A27C50C00137679 /* ScoreItemCell.swift in Sources */,
+				B19803542B149E05004803AC /* GreenTheme.swift in Sources */,
 				B1FC27702A1B6E1800117C55 /* ConfettiView.swift in Sources */,
 				B14CB4F22AC09EEE00C7E12F /* Interval+CoreDataProperties.swift in Sources */,
 				B1F2B4602ABDB47A0051D617 /* PurpleTheme.swift in Sources */,
@@ -651,6 +661,7 @@
 				B1B33A8D29FDBC0300DFA59F /* Shuffler.swift in Sources */,
 				B1E8975629EC5001001B942F /* GameViewController.swift in Sources */,
 				B1299D7029F962F4007B2668 /* Database.swift in Sources */,
+				B19803562B149E0F004803AC /* BlueTheme.swift in Sources */,
 				B1313BC02A0F7E72005830AB /* SolutionCheckResult.swift in Sources */,
 				B14CB4F32AC09EEE00C7E12F /* Solution+CoreDataClass.swift in Sources */,
 				B13BBA692A2797D500137679 /* VaryingProbability.swift in Sources */,
@@ -681,6 +692,7 @@
 				B1313C542A1625CD005830AB /* Reward.swift in Sources */,
 				B13149E52A20A5B1004B06E8 /* MenuItemInfo.swift in Sources */,
 				B14CB4F52AC09EEE00C7E12F /* Level+CoreDataProperties.swift in Sources */,
+				B19803582B149E1C004803AC /* RedTheme.swift in Sources */,
 				B16F9BF92AA906A60088E26B /* Theme.swift in Sources */,
 				B18EA83C2A1637CB00514E47 /* AdAvailabilityDelegate.swift in Sources */,
 				B1FE7A4D29F80E82007D7954 /* CellDirector.swift in Sources */,

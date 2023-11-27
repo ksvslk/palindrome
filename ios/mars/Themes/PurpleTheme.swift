@@ -16,7 +16,6 @@ struct PurpleTheme : Palette {
         self.isLightMode = isLightMode
     }
     
-    // light mode
     var primary: UIColor { self.isLightMode ? UIColor(rgb: 0xFF6750A4) : UIColor(rgb: 0xFFD0BCFF)}
     var onPrimary: UIColor { self.isLightMode ? UIColor(rgb: 0xFFFFFFFF) : UIColor(rgb: 0xFF381E72)}
     var primaryContainer: UIColor { self.isLightMode ? UIColor(rgb: 0xFFEADDFF) : UIColor(rgb: 0xFF4F378B)}

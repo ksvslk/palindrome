@@ -10,7 +10,7 @@ import UIKit
 import Toast
 
 class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
- 
+    
     func didFinishProcessing(result: Bool) {
         DispatchQueue.main.async {
             self.view.hideToastActivity()
@@ -35,21 +35,24 @@ class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
     private let colorSelectionButton = UIButton(primaryAction: nil)
     
     weak var purchaseManager: PurchaseManager?
-
+    
     
     init(purchaseManager:PurchaseManager?) {
         self.purchaseManager = purchaseManager
         super.init(nibName: nil, bundle: nil)
-
+        
         Theme.shared.addListener {
             self.changeSettingsMenuColors()
         }
-
+        
         colorSelectionButton.layer.cornerRadius = 10
         colorSelectionButton.contentEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         colorSelectionButton.menu = UIMenu(children: [
-            UIAction(title: ThemeName.original.rawValue, handler: colorClosure),
-            UIAction(title: ThemeName.yellow.rawValue, handler: colorClosure)
+            UIAction(title: ThemeName.purple.rawValue, handler: colorClosure),
+            UIAction(title: ThemeName.yellow.rawValue, handler: colorClosure),
+            UIAction(title: ThemeName.green.rawValue, handler: colorClosure),
+            UIAction(title: ThemeName.blue.rawValue, handler: colorClosure),
+            UIAction(title: ThemeName.red.rawValue, handler: colorClosure),
         ])
         colorSelectionButton.showsMenuAsPrimaryAction = true
         changeColorSelectionButtonColor()
@@ -58,6 +61,8 @@ class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
     
     private func changeSettingsMenuColors()
     {
+        Swift.debugPrint("NOW CHANGING THEME!")
+       
         if let selectedIndexPath = self.tableView.indexPathForSelectedRow {
             self.tableView.deselectRow(at: selectedIndexPath, animated: false)
         }
@@ -67,26 +72,47 @@ class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
         self.changeColorSelectionButtonColor()
     }
     
-    
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        changeSettingsMenuColors()
-    }
-    
-    
+
     private func changeColorSelectionButtonColor()
     {
         colorSelectionButton.setTitle("OOO", for: .normal)
+        let color = Theme.shared.colors.primary
         switch Theme.shared.currentTheme {
-        case .original:
-            (colorSelectionButton.menu?.children[0] as? UIAction)?.state = .on
-            (colorSelectionButton.menu?.children[1] as? UIAction)?.state = .off
-            colorSelectionButton.tintColor = .purple
-            colorSelectionButton.backgroundColor = .purple
+        case .purple:
+            changeOtherColorsAsNotSelected(selectedNumber: 0)
+            colorSelectionButton.tintColor = color
+            colorSelectionButton.backgroundColor = color
         case .yellow:
-            (colorSelectionButton.menu?.children[1] as? UIAction)?.state = .on
-            (colorSelectionButton.menu?.children[0] as? UIAction)?.state = .off
-            colorSelectionButton.tintColor = .yellow
-            colorSelectionButton.backgroundColor = .yellow
+            changeOtherColorsAsNotSelected(selectedNumber: 1)
+            colorSelectionButton.tintColor = color
+            colorSelectionButton.backgroundColor = color
+        case .green:
+            changeOtherColorsAsNotSelected(selectedNumber: 2)
+            colorSelectionButton.tintColor = color
+            colorSelectionButton.backgroundColor = color
+        case .blue:
+            changeOtherColorsAsNotSelected(selectedNumber: 3)
+            colorSelectionButton.tintColor = color
+            colorSelectionButton.backgroundColor = color
+        case .red:
+            changeOtherColorsAsNotSelected(selectedNumber: 4)
+            colorSelectionButton.tintColor = color
+            colorSelectionButton.backgroundColor = color
+        }
+    }
+    
+    private func changeOtherColorsAsNotSelected(selectedNumber:Int)
+    {
+        if let colorItems = colorSelectionButton.menu?.children {
+            for (index, element) in colorItems.enumerated() {
+                if (index == selectedNumber)
+                {
+                    (element as? UIAction)?.state = .on
+                }
+                else {
+                    (element as? UIAction)?.state = .off
+                }
+            }
         }
     }
 

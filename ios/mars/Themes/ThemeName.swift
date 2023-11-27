@@ -8,6 +8,9 @@
 import Foundation
 
 enum ThemeName: String {
-    case original
+    case purple
     case yellow
+    case green
+    case blue
+    case red
 }
