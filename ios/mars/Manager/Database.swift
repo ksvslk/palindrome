@@ -920,6 +920,60 @@ class Database {
         {
             unlockAchievement(identifier: C.achievement_authority)
         }
+        // Level pack 1
+        else if (levelNr == 110)
+        {
+            unlockAchievement(identifier: C.symmetric_scout)
+        }
+        else if (levelNr == 125)
+        {
+            unlockAchievement(identifier: C.symmetric_sage)
+        }
+        // Level pack 2
+        else if (levelNr == 135)
+        {
+            unlockAchievement(identifier: C.inverted_innocence)
+        }
+        else if (levelNr == 150)
+        {
+            unlockAchievement(identifier: C.inverted_intellectual)
+        }
+        // Level pack 3
+        else if (levelNr == 160)
+        {
+            unlockAchievement(identifier: C.reversal_rookie)
+        }
+        else if (levelNr == 175)
+        {
+            unlockAchievement(identifier: C.reversal_renegade)
+        }
+        // Level pack 4
+        else if (levelNr == 185)
+        {
+            unlockAchievement(identifier: C.echoed_enthusiast)
+        }
+        else if (levelNr == 200)
+        {
+            unlockAchievement(identifier: C.echoed_expert)
+        }
+        // Level pack 5
+        else if (levelNr == 210)
+        {
+            unlockAchievement(identifier: C.twisted_trailblazer)
+        }
+        else if (levelNr == 225)
+        {
+            unlockAchievement(identifier: C.twisted_titan)
+        }
+        // Level pack 6
+        else if (levelNr == 235)
+        {
+            unlockAchievement(identifier: C.looped_learner)
+        }
+        else if (levelNr == 250)
+        {
+            unlockAchievement(identifier: C.looped_luminary)
+        }
     }
     
     

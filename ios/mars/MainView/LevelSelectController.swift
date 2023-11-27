@@ -327,7 +327,7 @@ class LevelSelectController: BaseMenuController,ProductsUpdateDelegate, Transact
                 productId == C.PURCHASE_LEVELS_PACK_5_ID ||
                 productId == C.PURCHASE_LEVELS_PACK_6_ID)
             {
-                if (info.isPurchased || allPacksPurchased) {
+                if (info.isPurchased || allPacksPurchased || info.product.productIdentifier == C.PURCHASE_LEVELS_PACK_3_ID) {
                     updateLevelPackToPremium(info: info)
                     setLevelPackTapClosure(info: info)
                 }

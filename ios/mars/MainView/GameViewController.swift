@@ -186,7 +186,6 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     //MARK: Execute level load actions
     private func executeLevelLoadActions(intervals:[Interval] = [])
     {
-        print("LOAD MAIN SCENE IN executeLevelLoadActions")
         loadMainScene()
         let levelNr = Int(Database.shared.currentLevel!.levelNumber)
         askForReview(levelNr: levelNr)

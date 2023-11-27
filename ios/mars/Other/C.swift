@@ -83,6 +83,27 @@ struct C {
     static let achievement_flawless_5 = "flawless_5"
     static let achievement_flawless_15 = "flawless_15"
     
+    // Level Pack Achievements
+    // Level Pack 1
+    static let symmetric_scout = "symmetric_scout"
+    static let symmetric_sage = "symmetric_sage"
+    // Level Pack 2
+    static let inverted_innocence = "inverted_innocence"
+    static let inverted_intellectual = "inverted_intellectual"
+    // Level Pack 3
+    static let reversal_rookie = "reversal_rookie"
+    static let reversal_renegade = "reversal_renegade"
+    // Level Pack 4
+    static let echoed_enthusiast = "echoed_enthusiast"
+    static let echoed_expert = "echoed_expert"
+    // Level Pack 5
+    static let twisted_trailblazer = "twisted_trailblazer"
+    static let twisted_titan = "twisted_titan"
+    // Level Pack 5
+    static let looped_learner = "looped_learner"
+    static let looped_luminary = "looped_luminary"
+
+    
     // URLs
     static let APP_FEEDBACK_URL = "https://apps.apple.com/app/id1673006365?action=write-review"
     static let APP_URL = "https://apps.apple.com/app/hah-palindrome-puzzles/id1673006365"
