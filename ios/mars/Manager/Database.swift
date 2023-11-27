@@ -108,6 +108,7 @@ class Database {
         }
     }
     
+    
     func getLevelPack(for level:Int) -> LevelPack
     {
         switch level {
@@ -130,9 +131,11 @@ class Database {
         }
     }
     
+    
     func getNormalizedLevelNumber(levelNr:Int? = nil) -> Int
     {
        let currentLevelNumber = levelNr != nil ? levelNr! : Int(currentLevel!.levelNumber)
+        Swift.debugPrint("getNormalizedLevelNumber for \(currentLevelNumber)")
        let levelPack = getLevelPack(for: currentLevelNumber)
        switch levelPack {
         case LevelPack.game_pack:
@@ -151,6 +154,7 @@ class Database {
            return currentLevelNumber - levelPackRanges.ranges[5].1
         }
     }
+    
     
     func getLevelNrAndPackName(levelNr:Int? = nil) -> String
     {
@@ -173,6 +177,7 @@ class Database {
            return String("\(currentLevelNumber - levelPackRanges.ranges[5].1) - LL Pack")
         }
     }
+    
     
     func getActualLevelNumber(normalizedLevelNr levelNr:Int, levelPack:LevelPack) -> Int
     {
@@ -378,14 +383,20 @@ class Database {
         let currentLevel = Int(currentLevel!.levelNumber)
         let nextLevel =  getNormalizedLevelNumber() + 1
         let levelPack = getLevelPack(for: currentLevel)
+        let range = getRangeForLevelPack(pack: getLevelPack(for: currentLevel))
         
-        if (nextLevel <= getAllLevelsProgresses(currentLevel: currentLevel).count)
+        Swift.debugPrint("Level pack: \(levelPack.rawValue)")
+        Swift.debugPrint("Level pack range: \(range.0) - \(range.1)")
+        Swift.debugPrint("Current level: \(currentLevel)")
+        Swift.debugPrint("Next level: \(nextLevel)")
+        
+        if (getActualLevelNumber(normalizedLevelNr: nextLevel, levelPack: levelPack) <= range.1)
         {
             changeLevel(to: Int(nextLevel), withProgressReset: true, levelPack: levelPack)
         }
         else {
-            let range = getRangeForLevelPack(pack: getLevelPack(for: currentLevel))
-            changeLevel(to: range.0, withProgressReset: true, levelPack: levelPack)
+            let normalizedFirstLevelNr = getNormalizedLevelNumber(levelNr: range.0)
+            changeLevel(to: normalizedFirstLevelNr, withProgressReset: true, levelPack: levelPack)
         }
         
     }
@@ -541,7 +552,6 @@ class Database {
             intervalsRequest.fetchLimit = 0
             
             do {
-                
                 // reset hint intervals, and add +1 for other intervals
                 intervals = try context.fetch(intervalsRequest)
                 for interval in intervals {
@@ -612,6 +622,9 @@ class Database {
                            currentLevel?.progress = Int64(Level.Progress.in_progress.rawValue)
                         }
                     } else {
+                        Swift.debugPrint("actualLevelNr: \(actualLevelNr)")
+                        Swift.debugPrint("levelPack: \(levelPack.rawValue)")
+                        Swift.debugPrint("currentLevel: \(currentLevel?.levelNumber)")
                         fatalError("Could not set next level nr \(nextLevel)")
                     }
                 }
