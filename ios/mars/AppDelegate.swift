@@ -8,6 +8,10 @@
 import UIKit
 import GameKit
 import Toast
+import FirebaseCore
+import FirebaseAuth
+import FirebaseAppCheck
+
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -18,6 +22,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         //Swift.debugPrint("Application directory: \(NSHomeDirectory())")
+        let providerFactory = AppCheckDebugProviderFactory()
+        AppCheck.setAppCheckProviderFactory(providerFactory)
+        
+        FirebaseApp.configure()
+        Auth.auth().signInAnonymously { authResult, error in
+            guard let user = authResult?.user else { return }
+        }
         purchaseManager = PurchaseManager()
         registerUserDefaults()
         setToastStyle()

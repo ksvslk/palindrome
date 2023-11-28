@@ -12,6 +12,10 @@ import GameKit
 import GoogleMobileAds
 import StoreKit
 import Toast
+import FirebaseAuth
+import FirebaseFirestore
+import FirebaseStorage
+
 
 class GameViewController: UIViewController, UIPopoverPresentationControllerDelegate, SKSceneDelegate, MessageDelegate, GKGameCenterControllerDelegate {
     
@@ -35,6 +39,9 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     private var adManager: AdManager?
     
     
+    private var promoDialogData:PromoDialogData?
+    private var promoMenuButtondata:PromoMenuButtonData?
+    private var handle: AuthStateDidChangeListenerHandle?
     
     // MARK: View did load
     override func viewDidLoad() {
@@ -65,6 +72,85 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             self.menuColorsChange(doLayout: true)
         }
         
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        Auth.auth().removeStateDidChangeListener(handle!)
+    }
+    
+    
+    override func viewWillAppear(_ animated: Bool) {
+        handle = Auth.auth().addStateDidChangeListener { auth, user in
+            guard let signedInUser = user?.isAnonymous else { return }
+            let isAnonymous = user?.isAnonymous
+            let uid = user?.uid
+            Swift.debugPrint("uid: \(uid)")
+            Swift.debugPrint("isAnonymous: \(isAnonymous)")
+            self.downloadPromos()
+        }
+    }
+
+    
+    func downloadPromos() {
+        let db = Firestore.firestore()
+        db.collection("promos").getDocuments(source: .server) { (querySnapshot, err) in
+            if let err = err {
+                Swift.debugPrint("Error getting documents: \(err)")
+            } else {
+                for document in querySnapshot!.documents {
+                    if document.documentID == "dialog" {
+                        document.reference.getDocument(as: PromoDialogData.self) { result in
+                            switch result {
+                            case .success(let dialogData):
+                                self.promoDialogData = dialogData
+                                self.downloadPromoPicture()
+                                Swift.debugPrint("Successfully deserialized dialog.", dialogData)
+                                DispatchQueue.main.async {
+                                    // Send event to download promo picture
+                                    // Replace with your implementation
+                                }
+                            case .failure(let error):
+                                Swift.debugPrint("Error decoding dialog: \(error)")
+                            }
+                        }
+                    } else if document.documentID == "menu_button" {
+                        document.reference.getDocument(as: PromoMenuButtonData.self) { result in
+                            switch result {
+                            case .success(let menuData):
+                                self.promoMenuButtondata = menuData
+                                Swift.debugPrint("Successfully deserialized menu:", menuData)
+                                
+                                DispatchQueue.main.async {
+                                    // Send event to download promo picture
+                                    // Replace with your implementation
+                                }
+                            case .failure(let error):
+                                Swift.debugPrint("Error decoding menu data: \(error)")
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    
+    private func downloadPromoPicture() {
+        guard let picturePath = promoDialogData?.picturePath else { return }
+        let storage = Storage.storage()
+        let gsReference = storage.reference(forURL: picturePath)
+
+        let localFile = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("promo.jpg")
+
+        gsReference.write(toFile: localFile) { url, error in
+            if let error = error {
+                Swift.debugPrint("Error: \(error.localizedDescription)")
+            } else {
+                Swift.debugPrint("Download successful. File available at \(url)")
+                // File downloaded successfully
+                // You can now use the localFile URL to access the downloaded image
+            }
+        }
     }
     
     

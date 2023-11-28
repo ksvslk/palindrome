@@ -10,6 +10,7 @@ import CoreData
 import CloudKit
 import GameKit
 
+
 struct JsonLevel: Codable {
     var nr:Int
     var solutionToCategory: Dictionary<String, String>
@@ -1122,7 +1123,6 @@ class Database {
     {
         return currentLevel!.categoryRewarded
     }
-    
     
     
 #if DEBUG
