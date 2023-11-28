@@ -74,11 +74,12 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         
     }
     
+    //MARK: viewWillDisappear
     override func viewWillDisappear(_ animated: Bool) {
         Auth.auth().removeStateDidChangeListener(handle!)
     }
     
-    
+    //MARK: viewWillAppear
     override func viewWillAppear(_ animated: Bool) {
         handle = Auth.auth().addStateDidChangeListener { auth, user in
             guard let signedInUser = user?.isAnonymous else { return }
@@ -90,10 +91,10 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         }
     }
 
-    
+    //MARK: Download promos
     func downloadPromos() {
         let db = Firestore.firestore()
-        db.collection("promos").getDocuments(source: .server) { (querySnapshot, err) in
+        db.collection("promos_ios").getDocuments(source: .server) { (querySnapshot, err) in
             if let err = err {
                 Swift.debugPrint("Error getting documents: \(err)")
             } else {
@@ -105,10 +106,6 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                                 self.promoDialogData = dialogData
                                 self.downloadPromoPicture()
                                 Swift.debugPrint("Successfully deserialized dialog.", dialogData)
-                                DispatchQueue.main.async {
-                                    // Send event to download promo picture
-                                    // Replace with your implementation
-                                }
                             case .failure(let error):
                                 Swift.debugPrint("Error decoding dialog: \(error)")
                             }
@@ -119,11 +116,6 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                             case .success(let menuData):
                                 self.promoMenuButtondata = menuData
                                 Swift.debugPrint("Successfully deserialized menu:", menuData)
-                                
-                                DispatchQueue.main.async {
-                                    // Send event to download promo picture
-                                    // Replace with your implementation
-                                }
                             case .failure(let error):
                                 Swift.debugPrint("Error decoding menu data: \(error)")
                             }
@@ -133,8 +125,9 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             }
         }
     }
+
     
-    
+    //MARK: Download promo picture
     private func downloadPromoPicture() {
         guard let picturePath = promoDialogData?.picturePath else { return }
         let storage = Storage.storage()
@@ -147,12 +140,19 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                 Swift.debugPrint("Error: \(error.localizedDescription)")
             } else {
                 Swift.debugPrint("Download successful. File available at \(url)")
-                // File downloaded successfully
-                // You can now use the localFile URL to access the downloaded image
+                //TODO: Save url in variable?
             }
         }
     }
     
+    //TODO: Show somewhere
+    //MARK: Show promo dialog
+    private func showPromoDialog(url:URL?)
+    {
+        let promoDialogController = PromoDialogController()
+        promoDialogController.updateContent(with: url!, title: self.promoDialogData?.title ?? "", subtitle: self.promoDialogData?.subtitle ?? "", link: self.promoDialogData?.link ?? "")
+        self.present(promoDialogController, animated: true, completion: nil)
+    }
     
     private func menuColorsChange(doLayout:Bool = false)
     {
@@ -508,7 +508,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     @IBAction func onSettingsButtonTap(_ sender: Any) {
         if let buttonView = (sender as! UIBarButtonItem).value(forKey: "view") as? UIView {
             let appDelegate = UIApplication.shared.delegate as! AppDelegate
-            let settingsSheetMenu = SettingsViewController(purchaseManager: appDelegate.purchaseManager)
+            let settingsSheetMenu = SettingsViewController(purchaseManager: appDelegate.purchaseManager, promoMenudata: promoMenuButtondata)
             presentPanModal(settingsSheetMenu, sourceView: buttonView, sourceRect: buttonView.bounds)
             
         }

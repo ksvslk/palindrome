@@ -102,6 +102,7 @@
 		B19803692B15FE88004803AC /* PromoDialogData.swift in Sources */ = {isa = PBXBuildFile; fileRef = B19803682B15FE88004803AC /* PromoDialogData.swift */; };
 		B198036B2B15FEAD004803AC /* PromoMenuButtonData.swift in Sources */ = {isa = PBXBuildFile; fileRef = B198036A2B15FEAD004803AC /* PromoMenuButtonData.swift */; };
 		B198036D2B1617A5004803AC /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = B198036C2B1617A5004803AC /* FirebaseAppCheck */; };
+		B198036F2B161C61004803AC /* PromoDialogController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B198036E2B161C61004803AC /* PromoDialogController.swift */; };
 		B1B33A8D29FDBC0300DFA59F /* Shuffler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B33A8C29FDBC0300DFA59F /* Shuffler.swift */; };
 		B1B33ABA29FE6F2D00DFA59F /* ShufflerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B33AB929FE6F2D00DFA59F /* ShufflerTests.swift */; };
 		B1B33AC629FFD91F00DFA59F /* GameFieldCreator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B33AC529FFD91F00DFA59F /* GameFieldCreator.swift */; };
@@ -221,6 +222,7 @@
 		B19803662B15EBF1004803AC /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		B19803682B15FE88004803AC /* PromoDialogData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromoDialogData.swift; sourceTree = "<group>"; };
 		B198036A2B15FEAD004803AC /* PromoMenuButtonData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromoMenuButtonData.swift; sourceTree = "<group>"; };
+		B198036E2B161C61004803AC /* PromoDialogController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromoDialogController.swift; sourceTree = "<group>"; };
 		B1B33A8C29FDBC0300DFA59F /* Shuffler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shuffler.swift; sourceTree = "<group>"; };
 		B1B33AAE29FE69BC00DFA59F /* marsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = marsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1B33AB929FE6F2D00DFA59F /* ShufflerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShufflerTests.swift; sourceTree = "<group>"; };
@@ -492,6 +494,7 @@
 				B1339BCA2A288090008E7102 /* TutorialViewController.swift */,
 				B128D99C2A260772002B13D1 /* EndingScreen.swift */,
 				B13149E02A20A5A7004B06E8 /* BaseMenuController.swift */,
+				B198036E2B161C61004803AC /* PromoDialogController.swift */,
 			);
 			path = MainView;
 			sourceTree = "<group>";
@@ -699,6 +702,7 @@
 				B144A88429FA66B40067A080 /* Model.xcdatamodeld in Sources */,
 				B12EE56D2A21E86C00056603 /* HintsViewController.swift in Sources */,
 				B1FC277F2A1DF3D700117C55 /* PurchaseManager.swift in Sources */,
+				B198036F2B161C61004803AC /* PromoDialogController.swift in Sources */,
 				B1F6B12D29F8208300EEEC17 /* CellType.swift in Sources */,
 				B155C2432B1258AC00F60878 /* LevelPack.swift in Sources */,
 				B16D29EA2AA9D21E00215DF9 /* ThemeName.swift in Sources */,

@@ -35,11 +35,13 @@ class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
     private let colorSelectionButton = UIButton(primaryAction: nil)
     
     weak var purchaseManager: PurchaseManager?
+    var menuPromoData: PromoMenuButtonData?
     
-    
-    init(purchaseManager:PurchaseManager?) {
+    init(purchaseManager:PurchaseManager?, promoMenudata:PromoMenuButtonData?) {
         self.purchaseManager = purchaseManager
         super.init(nibName: nil, bundle: nil)
+        
+        if let promo = promoMenudata { menuPromoData = promo}
         
         Theme.shared.addListener {
             self.changeSettingsMenuColors()
@@ -56,6 +58,30 @@ class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
         ])
         colorSelectionButton.showsMenuAsPrimaryAction = true
         changeColorSelectionButtonColor()
+    }
+    
+    
+    private func populatePromoButton(cell:MenuItemCell)
+    {
+        if let menuPromoData = menuPromoData {
+            if (menuPromoData.activated == true)
+            {
+                    Swift.debugPrint("cell is found")
+                    promoButtonClosure = { _ in
+                        guard let promoUrl = URL(string: menuPromoData.link ?? C.MORE_GAMES_URL)
+                        else { fatalError("Expected a valid URL") }
+                        UIApplication.shared.open(promoUrl, options: [:], completionHandler: nil)
+                    }
+              
+                    cell.nameLabel.text = menuPromoData.title
+                    cell.commentLabel.text = menuPromoData.subtitle
+                    cell.commentLabel.text = menuPromoData.subtitle
+                    cell.commentLabel.backgroundColor = Theme.shared.colors.tertiaryContainer
+                    cell.commentLabel.textColor = Theme.shared.colors.onTertiaryContainer
+                    Swift.debugPrint("Now promo button is set!")
+            }
+        }
+   
     }
     
     
@@ -134,9 +160,15 @@ class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
         fatalError("init(coder:) has not been implemented")
     }
     
+    var promoButtonClosure: ((MenuItemCell) -> Void) = { menuItem in
+        guard let promoUrl = URL(string: C.MORE_GAMES_URL)
+        else { fatalError("Expected a valid URL") }
+        UIApplication.shared.open(promoUrl, options: [:], completionHandler: nil)
+    }
     
     override var menuItem: [MenuItemInfo] {
         return [
+            MenuItemInfo(name: C.promoButton.0, comment: "", systemImage: C.promoButton.1, closure: promoButtonClosure),
             MenuItemInfo(name: C.colorButton.0, comment: "", systemImage: C.colorButton.1, closure: {menuItem in
               
             }),
@@ -171,16 +203,19 @@ class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
                 self.purchaseManager?.restorePurchases()
                 self.view.makeToastActivity(.center)
                 self.view.isUserInteractionEnabled = false
-            })]
+            })
+        ]
     }
     
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as? MenuItemCell
-        else { return UITableViewCell() }
+        else {Swift.debugPrint("Returning UITableViewCell");  return UITableViewCell() }
         
         let item = menuItem[indexPath.row]
         cell.configure(with: item)
+        
+        Swift.debugPrint("Cell: \(cell.nameLabel)")
         
         if (item.name == C.soundButton.0)
         {
@@ -211,7 +246,11 @@ class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
             cell.selectionStyle = UITableViewCell.SelectionStyle.none
             cell.stackView.addArrangedSubview(colorSelectionButton)
         }
-      
+        else if (item.name == C.promoButton.0)
+        {
+            populatePromoButton(cell: cell)
+        }
+        
         return cell
     }
     

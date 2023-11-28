@@ -22,6 +22,7 @@
 
 
 //MARK: Settings menu
+"promo" = "More games";
 "color" = "Color";
 "sound" = "Sound";
 "vibration" = "Vibration";
@@ -32,6 +33,7 @@
 "successfully_restored" = "Restored purchase: ";
 "restore_failed" = "Could not restore purchases.";
 "restore_completed" = "Restore completed.";
+
 
 
 //MARK: Game Center menu

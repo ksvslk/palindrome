@@ -420,7 +420,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
         withTouchAction closure:@escaping (UIView) -> Void = { _ in }
     ) {
         let indexPath = IndexPath(row: button.rawValue, section: 0)
-        
+        Swift.debugPrint("Cells: \(tableView.visibleCells)")
         if let cell = tableView.cellForRow(at: indexPath) as? MenuItemCell {
             if (purchased) {
                 let checkMark = UIImage(systemName: "checkmark.shield.fill")!

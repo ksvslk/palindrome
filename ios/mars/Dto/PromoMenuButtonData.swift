@@ -11,10 +11,12 @@ struct PromoMenuButtonData: Codable {
     var activated: Bool?
     var link: String?
     var title: String?
-
+    var subtitle: String?
+    
     private enum CodingKeys: String, CodingKey {
         case activated
         case link
         case title
+        case subtitle
     }
 }

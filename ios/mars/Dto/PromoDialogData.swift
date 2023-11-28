@@ -9,18 +9,20 @@ import Foundation
 
 struct PromoDialogData: Codable {
     var activated: Bool?
+    var adNumber:Int?
     var levelIds: [Int]?
     var link: String?
     var picturePath: String?
-    var text: String?
     var title: String?
+    var subtitle: String?
 
     private enum CodingKeys: String, CodingKey {
         case activated
+        case adNumber
         case levelIds
         case link
         case picturePath
-        case text
         case title
+        case subtitle
     }
 }

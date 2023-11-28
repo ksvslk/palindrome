@@ -108,6 +108,7 @@ struct C {
     // URLs
     static let APP_FEEDBACK_URL = "https://apps.apple.com/app/id1673006365?action=write-review"
     static let APP_URL = "https://apps.apple.com/app/hah-palindrome-puzzles/id1673006365"
+    static let MORE_GAMES_URL = "https://apps.apple.com/developer/indest/id1471549991"
     
     
     // Intervals
@@ -125,6 +126,7 @@ struct C {
     static let feedbackButton = ("feedback"~, UIImage(systemName: "square.and.pencil")!)
     static let shareButton = ("share"~, UIImage(systemName: "square.and.arrow.up")!)
     static let restoreButton = ("restore"~, UIImage(systemName: "repeat")!)
+    static let promoButton = ("promo"~, UIImage(systemName: "gamecontroller")!)
 
     // Game Center menu
     static let playerLeaderButton = ("player_leader"~, UIImage(systemName: "increase.indent")!)
