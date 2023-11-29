@@ -103,6 +103,8 @@
 		B198036B2B15FEAD004803AC /* PromoMenuButtonData.swift in Sources */ = {isa = PBXBuildFile; fileRef = B198036A2B15FEAD004803AC /* PromoMenuButtonData.swift */; };
 		B198036D2B1617A5004803AC /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = B198036C2B1617A5004803AC /* FirebaseAppCheck */; };
 		B198036F2B161C61004803AC /* PromoDialogController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B198036E2B161C61004803AC /* PromoDialogController.swift */; };
+		B1AA7CAC2B176D0F00842674 /* SnowParticle.sks in Resources */ = {isa = PBXBuildFile; fileRef = B1AA7CAA2B176D0F00842674 /* SnowParticle.sks */; };
+		B1AA7CAD2B176D0F00842674 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B1AA7CAB2B176D0F00842674 /* Assets.xcassets */; };
 		B1B33A8D29FDBC0300DFA59F /* Shuffler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B33A8C29FDBC0300DFA59F /* Shuffler.swift */; };
 		B1B33ABA29FE6F2D00DFA59F /* ShufflerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B33AB929FE6F2D00DFA59F /* ShufflerTests.swift */; };
 		B1B33AC629FFD91F00DFA59F /* GameFieldCreator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B33AC529FFD91F00DFA59F /* GameFieldCreator.swift */; };
@@ -223,6 +225,8 @@
 		B19803682B15FE88004803AC /* PromoDialogData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromoDialogData.swift; sourceTree = "<group>"; };
 		B198036A2B15FEAD004803AC /* PromoMenuButtonData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromoMenuButtonData.swift; sourceTree = "<group>"; };
 		B198036E2B161C61004803AC /* PromoDialogController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromoDialogController.swift; sourceTree = "<group>"; };
+		B1AA7CAA2B176D0F00842674 /* SnowParticle.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SnowParticle.sks; sourceTree = "<group>"; };
+		B1AA7CAB2B176D0F00842674 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B1B33A8C29FDBC0300DFA59F /* Shuffler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shuffler.swift; sourceTree = "<group>"; };
 		B1B33AAE29FE69BC00DFA59F /* marsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = marsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1B33AB929FE6F2D00DFA59F /* ShufflerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShufflerTests.swift; sourceTree = "<group>"; };
@@ -476,6 +480,8 @@
 				B1313BC12A0F8386005830AB /* SolutionChecker.swift */,
 				B13BBA682A2797D500137679 /* VaryingProbability.swift */,
 				B1B33AC529FFD91F00DFA59F /* GameFieldCreator.swift */,
+				B1AA7CAA2B176D0F00842674 /* SnowParticle.sks */,
+				B1AA7CAB2B176D0F00842674 /* Assets.xcassets */,
 			);
 			path = Other;
 			sourceTree = "<group>";
@@ -636,6 +642,7 @@
 				B16F207029FBBAFC00E8DFCE /* GameScene.sks in Resources */,
 				B13363722A2DF724008E2C74 /* g3_outer.wav in Resources */,
 				B128D9942A24D5CB002B13D1 /* roboto_medium.ttf in Resources */,
+				B1AA7CAC2B176D0F00842674 /* SnowParticle.sks in Resources */,
 				B155C24B2B127BBF00F60878 /* level_pack_4.json in Resources */,
 				B13363552A2DF527008E2C74 /* level_transition.wav in Resources */,
 				B155C2492B127BB300F60878 /* level_pack_3.json in Resources */,
@@ -648,6 +655,7 @@
 				B13330242A2A588B00E70982 /* Release.plist in Resources */,
 				B1E8975B29EC5002001B942F /* Assets.xcassets in Resources */,
 				B155C2472B127BA700F60878 /* level_pack_2.json in Resources */,
+				B1AA7CAD2B176D0F00842674 /* Assets.xcassets in Resources */,
 				B13363772A2DF724008E2C74 /* c4_outer.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

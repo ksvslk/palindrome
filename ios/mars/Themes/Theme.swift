@@ -65,6 +65,13 @@ class Theme {
         notifyListeners()
     }
     
+    func toggleSnow(newValue:Bool)
+    {
+        let userDefaults = UserDefaults.standard
+        userDefaults.set(newValue, forKey: C.SNOW)
+        notifyListeners()
+    }
+    
 
     func addListener(_ listener: @escaping () -> Void) {
            listeners.append(listener)

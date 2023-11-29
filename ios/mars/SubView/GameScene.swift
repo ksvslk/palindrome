@@ -18,18 +18,54 @@ class GameScene: SKScene {
         layoutScene(view: view)
         handleGameState()
         //Swift.debugPrint("didMove in GameScene")
+        
+        
     }
-   
+    
+    
+    func addSnow()
+    {
+        Swift.debugPrint("ADD SNOW!")
+        if let snowChild = childNode(withName: "SnowParticle")
+        {
+            snowChild.removeFromParent()
+        }
+        if let snowEmitter = SKEmitterNode(fileNamed: "SnowParticle") {
+            snowEmitter.position = CGPoint(x: 0, y: size.height)
+            snowEmitter.particlePositionRange.dx = size.width
+            snowEmitter.particlePositionRange.dy = size.height
+            snowEmitter.particleLifetimeRange = size.height
+            snowEmitter.particleColorSequence = nil
+            snowEmitter.particleColorBlendFactor = 1.0
+            snowEmitter.particleColor = Theme.shared.colors.secondary
+            snowEmitter.name = "SnowParticle"
+            snowEmitter.zPosition = -2
+            addChild(snowEmitter)
+        }
+    }
+    
+    
+    func removeSnow()
+    {
+        if let snowChild = childNode(withName: "SnowParticle")
+        {
+            snowChild.removeFromParent()
+        }
+    }
+    
     
     func changeTheme()
     {
         backgroundColor = Theme.shared.colors.background
-        print("TERE ", cellDirector.cells.count)
+        if let snowChild = childNode(withName: "SnowParticle") as? SKEmitterNode
+        {
+            snowChild.particleColor = Theme.shared.colors.secondary
+        }
         cellDirector.cells.forEach { cell in
             cell.switchColor()
         }
     }
-
+    
     
     // MARK: Handle ongoing game state
     private func handleGameState()
@@ -38,21 +74,21 @@ class GameScene: SKScene {
             /*
              switch state {
              case .play:
-                 //Swift.debugPrint("Now in .play (GameScene)")
+             //Swift.debugPrint("Now in .play (GameScene)")
              case .animating:
-                 //Swift.debugPrint("Now in .animating (GameScene)")
+             //Swift.debugPrint("Now in .animating (GameScene)")
              case .completed:
-                 //Swift.debugPrint("Now in .completed (GameScene)")
+             //Swift.debugPrint("Now in .completed (GameScene)")
              case .reset:
-                 //Swift.debugPrint("Now in .reset (GameScene)")
+             //Swift.debugPrint("Now in .reset (GameScene)")
              }
              */
-         
+            
         }
     }
     
-
- 
+    
+    
     private func debugRect(width:CGFloat, height:CGFloat, color:SKColor, topErr:CGFloat = 0.0, bottomErr:CGFloat = 0.0)
     {
         let rectangle = SKShapeNode(rectOf: CGSize(width: width, height: height))
@@ -91,15 +127,15 @@ class GameScene: SKScene {
         let repeatAction = SKAction.repeat(sequenceAction, count: numberOfShakes)
         
         gridNode.run(repeatAction)
-    
-       
+        
+        
     }
-
+    
     
     // MARK: Winning animation
     func winningAnimation(animationDoneClosure: @escaping () -> Void)
     {
-
+        
         let lastSoundAction = SKAction.playSound(soundFile: "correct.wav")
         let soundActions =
         [
@@ -132,11 +168,11 @@ class GameScene: SKScene {
         }
         
         let soundCount = soundActions.count
-      
+        
         let spriteNodes = cellDirector.cells.compactMap { $0 as? Letter }.sorted { l1, l2 in
             l1.data.friendIndex < l2.data.friendIndex
         }
-  
+        
         let numNodes = spriteNodes.count
         let middleIndex = (numNodes % 2 == 0) ? nil : (numNodes / 2)
         let delayMultiplier = 2.5
@@ -177,7 +213,7 @@ class GameScene: SKScene {
         
         // Get current level
         let currentLevel = Database.shared.currentLevel!
-
+        
         // Get and set view size
         let viewSize = CGSize(
             width: view.bounds.width - horizontalSafe,

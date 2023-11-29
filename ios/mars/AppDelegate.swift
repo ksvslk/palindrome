@@ -69,7 +69,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 C.SOUND_ON: true,
                 C.VIBRATION_ON: true,
                 C.COLOR_THEME: ThemeName.purple.rawValue,
-                C.ADS_SHOWN: [0]
+                C.ADS_SHOWN: [0],
+                C.SNOW: true
             ]
         )
     }

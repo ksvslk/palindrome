@@ -29,6 +29,27 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     @IBOutlet weak var progressBar: UIProgressView!
     @IBOutlet weak var levelNumberLabel: UILabel!
     @IBOutlet weak var infoLabelButton: UIButton!
+    @IBOutlet weak var snowToggle: UIImageView! {
+        didSet {
+            snowToggle.tintColor = Theme.shared.colors.onSurfaceVariant
+            snowToggle.alpha = UserDefaults.standard.bool(forKey: C.SNOW) ? 1.0 : 0.5
+            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(snowButtonToggled(_:)))
+            snowToggle.addGestureRecognizer(tapGestureRecognizer)
+        }
+    }
+    
+    // MARK: Snow toggle
+    @objc func snowButtonToggled(_ sender: UITapGestureRecognizer) {
+        UserDefaults.standard.set(snowToggle.alpha == 1.0 ? false : true, forKey: C.SNOW)
+        snowToggle.alpha = snowToggle.alpha == 1.0 ? 0.5 : 1.0
+        if (snowToggle.alpha == 1.0)
+        {
+            self.gameScene?.addSnow()
+        }
+        else {
+            self.gameScene?.removeSnow()
+        }
+    }
     
     
     let goodMessages = ["GM_correct"~,"GM_good"~,"GM_keep_going"~,"GM_yes"~,"GM_hurray"~]
@@ -76,8 +97,10 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             }
             
         }
-        
+   
     }
+
+    
     
     //MARK: viewWillDisappear
     override func viewWillDisappear(_ animated: Bool) {
@@ -87,7 +110,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     //MARK: viewWillAppear
     override func viewWillAppear(_ animated: Bool) {
         handle = Auth.auth().addStateDidChangeListener { auth, user in
-            guard let signedInUser = user?.isAnonymous else { return }
+            guard let _ = user?.isAnonymous else { return }
             self.downloadPromos()
         }
     }
@@ -188,6 +211,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     private func menuColorsChange(doLayout:Bool = false)
     {
         Swift.debugPrint("menuColorsChange")
+        snowToggle.tintColor = Theme.shared.colors.onSurfaceVariant
         backgroundUIView.tintColor = Theme.shared.colors.onSurfaceVariant
         progressBar.tintColor = Theme.shared.colors.primary
         levelNumberLabel.textColor = Theme.shared.colors.onSurfaceVariant
@@ -472,6 +496,15 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         
         
         self.gameScene = gameScene // Set the global variable to the gameScene instance
+        if (snowToggle.alpha == 1.0)
+        {
+            Swift.debugPrint("Add snow to: \(self.gameScene)")
+            self.gameScene?.addSnow()
+        }
+        else {
+            Swift.debugPrint("Remove snow from: \(self.gameScene)")
+            self.gameScene?.removeSnow()
+        }
         hintToolbarItem.removeBadge()
     }
     
@@ -516,7 +549,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             }
         })
     }
-    
+
     
     // MARK: Tap to continue touch
     @objc func tapToContinueTouched() {
@@ -641,6 +674,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             }
         }
     }
+    
     
     //MARK: Load scores
     private func loadScores()
