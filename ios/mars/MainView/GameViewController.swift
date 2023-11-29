@@ -33,22 +33,24 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         didSet {
             snowToggle.tintColor = Theme.shared.colors.onSurfaceVariant
             snowToggle.alpha = UserDefaults.standard.bool(forKey: C.SNOW) ? 1.0 : 0.5
-            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(snowButtonToggled(_:)))
-            snowToggle.addGestureRecognizer(tapGestureRecognizer)
         }
     }
-    
-    // MARK: Snow toggle
-    @objc func snowButtonToggled(_ sender: UITapGestureRecognizer) {
-        UserDefaults.standard.set(snowToggle.alpha == 1.0 ? false : true, forKey: C.SNOW)
-        snowToggle.alpha = snowToggle.alpha == 1.0 ? 0.5 : 1.0
-        if (snowToggle.alpha == 1.0)
-        {
-            self.gameScene?.addSnow()
-        }
-        else {
-            self.gameScene?.removeSnow()
-        }
+
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if let touch = touches.first {
+            let positionInScene = touch.location(in: self.view)
+            if (positionInScene.y < progressBar.layer.position.y) {
+                UserDefaults.standard.set(snowToggle.alpha == 1.0 ? false : true, forKey: C.SNOW)
+                snowToggle.alpha = snowToggle.alpha == 1.0 ? 0.5 : 1.0
+                if (snowToggle.alpha == 1.0)
+                {
+                    self.gameScene?.addSnow()
+                }
+                else {
+                    self.gameScene?.removeSnow()
+                }
+            }
+         }
     }
     
     
