@@ -40,8 +40,10 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     
     
     private var promoDialogData:PromoDialogData?
+    private var promoPictureUrl:URL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("promo.jpg")
     private var promoMenuButtondata:PromoMenuButtonData?
     private var handle: AuthStateDidChangeListenerHandle?
+    
     
     // MARK: View did load
     override func viewDidLoad() {
@@ -69,7 +71,10 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         menuColorsChange(doLayout: true)
         
         Theme.shared.addListener {
-            self.menuColorsChange(doLayout: true)
+            if self.isViewLoaded && self.view.window != nil {
+                self.menuColorsChange(doLayout: true)
+            }
+            
         }
         
     }
@@ -83,41 +88,40 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     override func viewWillAppear(_ animated: Bool) {
         handle = Auth.auth().addStateDidChangeListener { auth, user in
             guard let signedInUser = user?.isAnonymous else { return }
-            let isAnonymous = user?.isAnonymous
-            let uid = user?.uid
-            Swift.debugPrint("uid: \(uid)")
-            Swift.debugPrint("isAnonymous: \(isAnonymous)")
             self.downloadPromos()
         }
     }
-
+    
     //MARK: Download promos
     func downloadPromos() {
-        let db = Firestore.firestore()
-        db.collection("promos_ios").getDocuments(source: .server) { (querySnapshot, err) in
-            if let err = err {
-                Swift.debugPrint("Error getting documents: \(err)")
-            } else {
-                for document in querySnapshot!.documents {
-                    if document.documentID == "dialog" {
-                        document.reference.getDocument(as: PromoDialogData.self) { result in
-                            switch result {
-                            case .success(let dialogData):
-                                self.promoDialogData = dialogData
-                                self.downloadPromoPicture()
-                                Swift.debugPrint("Successfully deserialized dialog.", dialogData)
-                            case .failure(let error):
-                                Swift.debugPrint("Error decoding dialog: \(error)")
+        if (promoDialogData == nil || promoMenuButtondata == nil)
+        {
+            let db = Firestore.firestore()
+            db.collection("promos_ios").getDocuments(source: .server) { (querySnapshot, err) in
+                if let err = err {
+                    Swift.debugPrint("Error getting documents: \(err)")
+                } else {
+                    for document in querySnapshot!.documents {
+                        if document.documentID == "dialog" {
+                            document.reference.getDocument(as: PromoDialogData.self) { result in
+                                switch result {
+                                case .success(let dialogData):
+                                    self.promoDialogData = dialogData
+                                    self.downloadPromoPicture()
+                                    Swift.debugPrint("Successfully deserialized dialog.", dialogData)
+                                case .failure(let error):
+                                    Swift.debugPrint("Error decoding dialog: \(error)")
+                                }
                             }
-                        }
-                    } else if document.documentID == "menu_button" {
-                        document.reference.getDocument(as: PromoMenuButtonData.self) { result in
-                            switch result {
-                            case .success(let menuData):
-                                self.promoMenuButtondata = menuData
-                                Swift.debugPrint("Successfully deserialized menu:", menuData)
-                            case .failure(let error):
-                                Swift.debugPrint("Error decoding menu data: \(error)")
+                        } else if document.documentID == "menu_button" {
+                            document.reference.getDocument(as: PromoMenuButtonData.self) { result in
+                                switch result {
+                                case .success(let menuData):
+                                    self.promoMenuButtondata = menuData
+                                    Swift.debugPrint("Successfully deserialized menu:", menuData)
+                                case .failure(let error):
+                                    Swift.debugPrint("Error decoding menu data: \(error)")
+                                }
                             }
                         }
                     }
@@ -125,34 +129,61 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             }
         }
     }
-
+    
     
     //MARK: Download promo picture
     private func downloadPromoPicture() {
         guard let picturePath = promoDialogData?.picturePath else { return }
         let storage = Storage.storage()
         let gsReference = storage.reference(forURL: picturePath)
-
-        let localFile = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("promo.jpg")
-
-        gsReference.write(toFile: localFile) { url, error in
+        
+        gsReference.write(toFile: promoPictureUrl) { url, error in
             if let error = error {
                 Swift.debugPrint("Error: \(error.localizedDescription)")
             } else {
                 Swift.debugPrint("Download successful. File available at \(url)")
-                //TODO: Save url in variable?
+                if let url = url {
+                    self.promoPictureUrl = url
+                    Swift.debugPrint("Set the promo picture to URL \(self.promoPictureUrl)")
+                }
             }
         }
     }
     
-    //TODO: Show somewhere
+    
+    
     //MARK: Show promo dialog
-    private func showPromoDialog(url:URL?)
+    private func showPromoDialog(normalizedLevelNr:Int)
     {
-        let promoDialogController = PromoDialogController()
-        promoDialogController.updateContent(with: url!, title: self.promoDialogData?.title ?? "", subtitle: self.promoDialogData?.subtitle ?? "", link: self.promoDialogData?.link ?? "")
-        self.present(promoDialogController, animated: true, completion: nil)
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        if (appDelegate.purchaseManager?.isNoAdsPurchasedInAnyWay() == false)
+        {
+            if FileManager.default.fileExists(atPath: promoPictureUrl.path) {
+                if (promoDialogData?.levelIds?.contains(normalizedLevelNr) == true)
+                {
+                    let alreadySeenAds = UserDefaults.standard.array(forKey: C.ADS_SHOWN) as? [Int]
+                    if (alreadySeenAds?.contains(promoDialogData?.adNumber ?? -1) == false)
+                    {
+                        let promoDialogController = PromoDialogController()
+                        promoDialogController.updateContent(
+                            with: promoPictureUrl,
+                            title: self.promoDialogData?.title ?? "",
+                            subtitle: self.promoDialogData?.subtitle ?? "",
+                            link: self.promoDialogData?.link ?? "",
+                            adNumber: self.promoDialogData?.adNumber ?? -1
+                        )
+                        self.present(promoDialogController, animated: true, completion: nil)
+                    }
+                    
+                }
+            }
+            else {
+                Swift.debugPrint("Could not show promo dialog because to file at \(promoPictureUrl)")
+            }
+        }
+        
     }
+    
     
     private func menuColorsChange(doLayout:Bool = false)
     {
@@ -494,13 +525,16 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             //Swift.debugPrint("removing gesture recgonizer \(gr)")
             view.removeGestureRecognizer(gr)
         }
-        if (Database.shared.currentLevel?.levelNumber == 100)
+        let normalizedLevelNr = Database.shared.getNormalizedLevelNumber()
+        if (normalizedLevelNr == 100 || normalizedLevelNr == 25)
         {
             showEndingScreen()
         }
+        showPromoDialog(normalizedLevelNr:normalizedLevelNr)
         Database.shared.changeToNextLevel()
         let nextLevelSoundAction = SKAction.playSound(soundFile: "level_transition.wav")
         self.gameScene?.run(nextLevelSoundAction)
+        
     }
     
     

@@ -14,7 +14,9 @@ class PromoDialogController : UIViewController {
     let titleLabel = UILabel()
     let subtitleLabel = UILabel()
     let stackView = UIStackView()
+    let noThanksButton = UIButton()
     var linkURL:URL?
+    var adNumber:Int = -1
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,7 +38,15 @@ class PromoDialogController : UIViewController {
         subtitleLabel.textAlignment = .center
         subtitleLabel.font = UIFont(name: Theme.shared.yantraMedium, size: 18)
         subtitleLabel.textColor = Theme.shared.colors.onSurfaceVariant
+        
+        // Set up do not ask again
+        noThanksButton.setTitle("Yup, seen.", for: .normal)
+     
+        noThanksButton.titleLabel?.font =  UIFont(name: Theme.shared.yantraMedium, size: 14)
+        noThanksButton.setTitleColor(Theme.shared.colors.secondary, for: .normal)
 
+        noThanksButton.addTarget(self, action: #selector(noThanksTapped), for: .touchDown)
+        
         // Set up the stack view
         stackView.axis = .vertical
         stackView.alignment = .center
@@ -47,6 +57,7 @@ class PromoDialogController : UIViewController {
         stackView.addArrangedSubview(imageView)
         stackView.addArrangedSubview(titleLabel)
         stackView.addArrangedSubview(subtitleLabel)
+        stackView.addArrangedSubview(noThanksButton)
 
         // Add stack view to the view controller's view
         view.addSubview(stackView)
@@ -70,13 +81,29 @@ class PromoDialogController : UIViewController {
         // Example usage (Replace with actual image URL, title, and subtitle)
         //updateContent(with: URL(fileURLWithPath: "path/to/your/image.jpg"), title: "Your Title", subtitle: "Your Subtitle")
     }
+    
+    @objc func noThanksTapped(sender: UIButton) {
+        if (adNumber != -1)
+        {
+            Swift.debugPrint("Setting ad seen for ad number \(adNumber)")
+            var alreadySeenAds = UserDefaults.standard.array(forKey: C.ADS_SHOWN) as? [Int]
+            alreadySeenAds?.append(adNumber)
+            if let adNumbers = alreadySeenAds {
+                let uniqueAdNumbers = Array(Set(adNumbers))
+                Swift.debugPrint("Now ads that are shown are \(uniqueAdNumbers)")
+                UserDefaults.standard.set(uniqueAdNumbers, forKey: C.ADS_SHOWN)
+            }
+        }
+        dismiss(animated: true)
+    }
 
-    func updateContent(with imageURL: URL, title: String, subtitle: String, link:String) {
+    func updateContent(with imageURL: URL, title: String, subtitle: String, link:String, adNumber:Int) {
         let image = UIImage(contentsOfFile: imageURL.path)
-        linkURL = URL(string:link)
-        imageView.image = image
-        titleLabel.text = title
-        subtitleLabel.text = subtitle
+        self.linkURL = URL(string:link)
+        self.imageView.image = image
+        self.titleLabel.text = title
+        self.subtitleLabel.text = subtitle
+        self.adNumber = adNumber
     }
     
     @objc func imageTapped(tapGestureRecognizer: UITapGestureRecognizer) {

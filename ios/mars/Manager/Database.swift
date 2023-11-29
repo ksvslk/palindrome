@@ -406,11 +406,10 @@ class Database {
     //MARK: Get level pack progress
     func getLevelPackProgress(levelPack:LevelPack, completion: @escaping (Decimal) -> Void)
     {
-        DispatchQueue.global().async {
             let levelPackProgresses = self.getAllLevelsProgresses(currentLevel: -1, pack: levelPack)
             let percentage = Decimal(levelPackProgresses.filter({progress in progress != Level.Progress.locked }).count) / Decimal(levelPackProgresses.count) * 100.0
             completion(percentage)
-        }
+    
     }
     
     

@@ -103,58 +103,59 @@ class LevelSelectController: BaseMenuController,ProductsUpdateDelegate, Transact
         onlyCommentUpdate commentUpdate:Bool = false,
         withTouchAction closure:@escaping (UIView) -> Void = { _ in }
     ) {
-        let indexPath = IndexPath(row: button.rawValue, section: 0)
-        if let cell = tableView.cellForRow(at: indexPath) as? MenuItemCell {
-            
-            if (commentUpdate)
-            {
-                cell.commentLabel.backgroundColor = commentLabelColors.0
-                cell.commentLabel.textColor = commentLabelColors.1
-                cell.commentLabel.text = "\(comment)"
-                return
-            }
-            
-            if (purchased) {
-                let checkMark = UIImage(systemName: "play.circle.fill")!
-                cell.removeImageFromIconView()
-                cell.addImageToIconView(image: checkMark)
-                cell.iconView.backgroundColor = Theme.shared.colors.primaryContainer
-                cell.iconView.tintColor = Theme.shared.colors.onPrimaryContainer
-                cell.nameLabel.text = "\(name)"
+        DispatchQueue.main.async {
+            let indexPath = IndexPath(row: button.rawValue, section: 0)
+            if let cell = self.tableView.cellForRow(at: indexPath) as? MenuItemCell {
                 
+                if (commentUpdate)
+                {
+                    cell.commentLabel.backgroundColor = commentLabelColors.0
+                    cell.commentLabel.textColor = commentLabelColors.1
+                    cell.commentLabel.text = "\(comment)"
+                    return
+                }
+                
+                if (purchased) {
+                    let checkMark = UIImage(systemName: "play.circle.fill")!
+                    cell.removeImageFromIconView()
+                    cell.addImageToIconView(image: checkMark)
+                    cell.iconView.backgroundColor = Theme.shared.colors.primaryContainer
+                    cell.iconView.tintColor = Theme.shared.colors.onPrimaryContainer
+                    cell.nameLabel.text = "\(name)"
+                    
+                    cell.commentLabel.backgroundColor = commentLabelColors.0
+                    cell.commentLabel.textColor = commentLabelColors.1
+                    cell.commentLabel.text = "\(comment)"
+                    //cell.isUserInteractionEnabled = false
+                    return
+                }
+                if (thankYou)
+                {
+                    let checkMark = UIImage(systemName: "heart")!
+                    cell.removeImageFromIconView()
+                    cell.addImageToIconView(image: checkMark)
+                    cell.iconView.backgroundColor = UIColor.clear
+                    cell.iconView.tintColor = Theme.shared.colors.primary
+                    cell.nameLabel.text = "Thank you!"
+                    cell.commentLabel.text = ""
+                    cell.commentLabel.backgroundColor = .clear
+                    cell.isUserInteractionEnabled = false
+                    return
+                }
+                cell.presentable.closure = closure
+                cell.nameLabel.text = name
+                cell.commentLabel.text = comment
                 cell.commentLabel.backgroundColor = commentLabelColors.0
                 cell.commentLabel.textColor = commentLabelColors.1
-                cell.commentLabel.text = "\(comment)"
-                //cell.isUserInteractionEnabled = false
-                return
-            }
-            if (thankYou)
-            {
-                let checkMark = UIImage(systemName: "heart")!
-                cell.removeImageFromIconView()
-                cell.addImageToIconView(image: checkMark)
-                cell.iconView.backgroundColor = UIColor.clear
-                cell.iconView.tintColor = Theme.shared.colors.primary
-                cell.nameLabel.text = "Thank you!"
-                cell.commentLabel.text = ""
-                cell.commentLabel.backgroundColor = .clear
-                cell.isUserInteractionEnabled = false
-                return
-            }
-            cell.presentable.closure = closure
-            cell.nameLabel.text = name
-            cell.commentLabel.text = comment
-            cell.commentLabel.backgroundColor = commentLabelColors.0
-            cell.commentLabel.textColor = commentLabelColors.1
-            if (enabled){
-                cell.isUserInteractionEnabled = true
-                cell.backgroundView?.backgroundColor = #colorLiteral(red: 0.8196078431, green: 0.8235294118, blue: 0.8274509804, alpha: 1).withAlphaComponent(0.11)
-            } else {
-                cell.isUserInteractionEnabled = false
-                cell.backgroundView?.backgroundColor = UIColor.clear
+                if (enabled){
+                    cell.isUserInteractionEnabled = true
+                    cell.backgroundView?.backgroundColor = #colorLiteral(red: 0.8196078431, green: 0.8235294118, blue: 0.8274509804, alpha: 1).withAlphaComponent(0.11)
+                } else {
+                    cell.isUserInteractionEnabled = false
+                    cell.backgroundView?.backgroundColor = UIColor.clear
+                }
             }
         }
-        
     }
     
     var purchaseLevelPack1Closure: ((MenuItemCell) -> Void) = { menuItem in
@@ -445,7 +446,7 @@ class LevelSelectController: BaseMenuController,ProductsUpdateDelegate, Transact
         if let levelPack = levelPack {
             Database.shared.getLevelPackProgress(levelPack: levelPack) { percentageComplete in
                 Swift.debugPrint("Progress for \(levelPack.rawValue) is \(percentageComplete)")
-                DispatchQueue.main.async {
+                
                     if let button = button {
                         let title = info.product.localizedTitle.getStringOutsideBrackets()
                         self.updateCell(
@@ -457,11 +458,11 @@ class LevelSelectController: BaseMenuController,ProductsUpdateDelegate, Transact
                             toOwned: true
                         )
                     }
-                }
+                
             }
         }
         else {
-            DispatchQueue.main.async {
+   
                 if let button = button {
                     let title = info.product.localizedTitle.getStringOutsideBrackets()
                     self.updateCell(
@@ -471,7 +472,7 @@ class LevelSelectController: BaseMenuController,ProductsUpdateDelegate, Transact
                         withTouchEnabled: true,
                         toOwned: true
                     )
-                }
+         
             }
        
         }

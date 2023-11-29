@@ -66,19 +66,16 @@ class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
         if let menuPromoData = menuPromoData {
             if (menuPromoData.activated == true)
             {
-                    Swift.debugPrint("cell is found")
                     promoButtonClosure = { _ in
                         guard let promoUrl = URL(string: menuPromoData.link ?? C.MORE_GAMES_URL)
                         else { fatalError("Expected a valid URL") }
                         UIApplication.shared.open(promoUrl, options: [:], completionHandler: nil)
                     }
-              
                     cell.nameLabel.text = menuPromoData.title
                     cell.commentLabel.text = menuPromoData.subtitle
                     cell.commentLabel.text = menuPromoData.subtitle
                     cell.commentLabel.backgroundColor = Theme.shared.colors.tertiaryContainer
                     cell.commentLabel.textColor = Theme.shared.colors.onTertiaryContainer
-                    Swift.debugPrint("Now promo button is set!")
             }
         }
    
