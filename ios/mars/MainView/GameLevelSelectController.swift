@@ -25,7 +25,7 @@ class GameLevelSelectController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
  
-    var data:[Level.Progress] // TODO: get level pack levels, TEST!
+    var data:[Level.Progress]
     
     // a property to hold the collectionView
     var collectionView: UICollectionView!
@@ -41,13 +41,6 @@ class GameLevelSelectController: UIViewController {
         // Add blur effect
         self.collectionView.backgroundColor = Theme.shared.colors.background
 
-        /*
-        DispatchQueue.main.async {
-            let currentLevel = Database.shared.getNormalizedLevelNumber() // TODO: match with level pack. TEST!
-            let indexPath = IndexPath(item: Int(currentLevel-1), section: 0)
-            self.collectionView.scrollToItem(at: indexPath, at: .centeredVertically, animated: false)
-        }
-         */
     }
     
     @objc func dismissModal() {
@@ -81,10 +74,9 @@ extension GameLevelSelectController: UICollectionViewDelegate {
         //Swift.debugPrint("Collection view at row \(collectionView.tag) selected level nr \(indexPath.item + 1)")
         dismiss(animated: true, completion: {
             self.dismissLevelSelectMenu()
-            Database.shared.changeLevel(to: indexPath.item + 1, levelPack: self.levelPack) //TODO: Get level in level pack. TEST!
+            Database.shared.changeLevel(to: indexPath.item + 1, levelPack: self.levelPack)
         })
     }
-    
  
 }
 

@@ -207,13 +207,12 @@ class SettingsViewController: BaseMenuController, TransactionProcessDelegate {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as? MenuItemCell
-        else {Swift.debugPrint("Returning UITableViewCell");  return UITableViewCell() }
+        else { return UITableViewCell() }
         
         let item = menuItem[indexPath.row]
         cell.configure(with: item)
         
-        Swift.debugPrint("Cell: \(cell.nameLabel)")
-        
+    
         if (item.name == C.soundButton.0)
         {
             let userDefaults = UserDefaults.standard

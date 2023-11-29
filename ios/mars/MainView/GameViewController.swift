@@ -133,7 +133,6 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                                 case .success(let dialogData):
                                     self.promoDialogData = dialogData
                                     self.downloadPromoPicture()
-                                    Swift.debugPrint("Successfully deserialized dialog.", dialogData)
                                 case .failure(let error):
                                     Swift.debugPrint("Error decoding dialog: \(error)")
                                 }
@@ -143,7 +142,6 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                                 switch result {
                                 case .success(let menuData):
                                     self.promoMenuButtondata = menuData
-                                    Swift.debugPrint("Successfully deserialized menu:", menuData)
                                 case .failure(let error):
                                     Swift.debugPrint("Error decoding menu data: \(error)")
                                 }
@@ -166,10 +164,8 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             if let error = error {
                 Swift.debugPrint("Error: \(error.localizedDescription)")
             } else {
-                Swift.debugPrint("Download successful. File available at \(url)")
                 if let url = url {
                     self.promoPictureUrl = url
-                    Swift.debugPrint("Set the promo picture to URL \(self.promoPictureUrl)")
                 }
             }
         }
@@ -206,13 +202,12 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                 Swift.debugPrint("Could not show promo dialog because to file at \(promoPictureUrl)")
             }
         }
-        
     }
-    
+
+
     
     private func menuColorsChange(doLayout:Bool = false)
     {
-        Swift.debugPrint("menuColorsChange")
         snowToggle.tintColor = Theme.shared.colors.onSurfaceVariant
         backgroundUIView.tintColor = Theme.shared.colors.onSurfaceVariant
         progressBar.tintColor = Theme.shared.colors.primary
@@ -282,6 +277,15 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         self.showToastAboveToolbar(message: message)
     }
     
+    private func showToastWhenPalindromeTooLong(palindrome:String?)
+    {
+        if let palindrome = palindrome {
+            if (palindrome.isSingleWordAndOverCharacters(length: 7))
+            {
+                self.showToastAboveToolbar(message: "↻📱")
+            }}
+    }
+    
     
     private func subscribeToPurchaseMessage()
     {
@@ -313,6 +317,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             
             let appDelegate = UIApplication.shared.delegate as! AppDelegate
             let levelNr = Database.shared.currentLevel!.levelNumber
+            showToastWhenPalindromeTooLong(palindrome: Database.shared.currentLevel?.solutionsArr.first?.palindrome)
             
             if intervals.first(where: { i in
                 i.name == C.ADS_INTERVAL && i.currentCount == i.limitCount
@@ -364,7 +369,6 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     
     private func disableInfoButton()
     {
-        
         if let tapGesture = tapGesture { view.removeGestureRecognizer(tapGesture) }
         infoLabelButton.alpha = 0.0
         infoLabelButton.titleLabel?.text = String()
@@ -500,11 +504,9 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         self.gameScene = gameScene // Set the global variable to the gameScene instance
         if (snowToggle.alpha == 1.0)
         {
-            Swift.debugPrint("Add snow to: \(self.gameScene)")
-            self.gameScene?.addSnow()
+          self.gameScene?.addSnow()
         }
         else {
-            Swift.debugPrint("Remove snow from: \(self.gameScene)")
             self.gameScene?.removeSnow()
         }
         hintToolbarItem.removeBadge()
@@ -523,15 +525,14 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     // MARK: Split screen changes
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        print("viewWillTransition")
-        
+ 
         coordinator.animate(alongsideTransition: { _ in
             // Update your UI based on the new size
         }, completion: { _ in
             
             self.adManager?.reloadRewardedAd()
             self.adManager?.reloadInterstitialAd()
-            print("LOAD MAIN SCENE IN viewWillTransition")
+        
             guard let level = Database.shared.currentLevel else { return }
             self.loadMainScene()
             let levelNr = Int(level.levelNumber)
@@ -760,8 +761,10 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         //Swift.debugPrint("showEndingScreen")
         let triumphSound = SKAction.playSound(soundFile: "triumph.wav")
         self.gameScene?.run(triumphSound)
-        let hintViewController = EndingScreen()
-        present(hintViewController, animated: true)
+        let endingScreen = EndingScreen()
+        let levelPackName = Database.shared.getLevelNrAndPackName(longPackName: true)
+        endingScreen.label.text = "Awesome job on completing the '\(levelPackName)' pack 🫵"
+        present(endingScreen, animated: true)
     }
     
     

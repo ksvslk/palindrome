@@ -21,8 +21,7 @@ class EndingScreen: UIViewController {
         imageView.contentMode = .scaleAspectFit
         
         // Customize the label
-        label.text = "end_screen_text"~
-        label.textAlignment = .justified
+        label.textAlignment = .center
         
         label.font = UIFont(name: Theme.shared.yantraMedium, size: 18)
         label.textColor = Theme.shared.colors.onBackground
@@ -52,31 +51,18 @@ class EndingScreen: UIViewController {
         // Set aspect ratio constraint for the image view
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor, multiplier: 1.0).isActive = true
+        
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        dismiss(animated: true)
     }
    
     
     override func viewDidAppear(_ animated: Bool) {
         confettiBurst(duration: 7)
-        paintWords()
     }
     
-    
-    private func paintWords()
-    {
-        let originalString = label.text!
-        let wordsToPaint = ["GIG", "LEVEL", "KAYAK", "RACECAR", "RADAR"]
 
-        let attributedString = NSMutableAttributedString(string: originalString)
-
-        for word in wordsToPaint {
-            // Find the range of each word to underline
-            if let range = originalString.range(of: word) {
-                attributedString.addAttribute(.foregroundColor, value: Theme.shared.colors.onPrimary, range: NSRange(range, in: originalString))
-            }
-        }
-
-        // Set the attributed string to a label or text view
-        label.attributedText = attributedString
-    }
     
 }

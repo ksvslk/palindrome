@@ -58,7 +58,7 @@ class LevelSelectController: BaseMenuController,ProductsUpdateDelegate, Transact
             DispatchQueue.main.async {
                     self.updateCell(
                         of: Button.level_pack_game_btn,
-                        withComment: "\(percentageComplete)%",
+                        withComment: percentageComplete == -1 ? "" : "\(percentageComplete)%",
                         withCommentColors: (Theme.shared.colors.tertiaryContainer, Theme.shared.colors.onTertiaryContainer),
                         withTouchEnabled: true,
                         onlyCommentUpdate: true
@@ -72,7 +72,6 @@ class LevelSelectController: BaseMenuController,ProductsUpdateDelegate, Transact
     //MARK: Update products callback
     func didUpdateProducts(withProducts products: [String : ProductInfo]) {
         DispatchQueue.main.async {
-            Swift.debugPrint("products \(products)")
             self.updatePurchasesUiInfo(purchases: products)
         }
     }
@@ -327,7 +326,7 @@ class LevelSelectController: BaseMenuController,ProductsUpdateDelegate, Transact
                 productId == C.PURCHASE_LEVELS_PACK_5_ID ||
                 productId == C.PURCHASE_LEVELS_PACK_6_ID)
             {
-                if (info.isPurchased || allPacksPurchased || true) { //TODO: Change back, remove true 
+                if (info.isPurchased || allPacksPurchased) {
                     updateLevelPackToPremium(info: info)
                     setLevelPackTapClosure(info: info)
                 }
@@ -445,14 +444,13 @@ class LevelSelectController: BaseMenuController,ProductsUpdateDelegate, Transact
         
         if let levelPack = levelPack {
             Database.shared.getLevelPackProgress(levelPack: levelPack) { percentageComplete in
-                Swift.debugPrint("Progress for \(levelPack.rawValue) is \(percentageComplete)")
-                
+            
                     if let button = button {
                         let title = info.product.localizedTitle.getStringOutsideBrackets()
                         self.updateCell(
                             of: button,
                             withName: title,
-                            withComment: "\(percentageComplete)%",
+                            withComment: percentageComplete == -1 ? "" : "\(percentageComplete)%",
                             withCommentColors: (Theme.shared.colors.tertiaryContainer, Theme.shared.colors.onTertiaryContainer),
                             withTouchEnabled: true,
                             toOwned: true

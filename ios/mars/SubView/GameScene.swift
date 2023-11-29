@@ -18,14 +18,11 @@ class GameScene: SKScene {
         layoutScene(view: view)
         handleGameState()
         //Swift.debugPrint("didMove in GameScene")
-        
-        
     }
     
     
     func addSnow()
     {
-        Swift.debugPrint("ADD SNOW!")
         if let snowChild = childNode(withName: "SnowParticle")
         {
             snowChild.removeFromParent()

@@ -125,7 +125,6 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     //MARK: Hints ads -> premium
     private func updateHintsToPremium()
     {
-        Swift.debugPrint(self, "updateHintsToPremium")
         updateCell(
             of: .reveal_clue_btn,
             withName: C.revealClueButton.0,
@@ -140,7 +139,6 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     //MARK: Letters ads -> premium
     private func updateLettersToPremium()
     {
-        Swift.debugPrint(self, "updateLettersToPremium")
         updateCell(
             of: .place_letter_btn,
             withName: C.placeLetterButton.0,
@@ -420,7 +418,7 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
         withTouchAction closure:@escaping (UIView) -> Void = { _ in }
     ) {
         let indexPath = IndexPath(row: button.rawValue, section: 0)
-        Swift.debugPrint("Cells: \(tableView.visibleCells)")
+      
         if let cell = tableView.cellForRow(at: indexPath) as? MenuItemCell {
             if (purchased) {
                 let checkMark = UIImage(systemName: "checkmark.shield.fill")!

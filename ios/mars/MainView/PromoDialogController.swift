@@ -85,12 +85,10 @@ class PromoDialogController : UIViewController {
     @objc func noThanksTapped(sender: UIButton) {
         if (adNumber != -1)
         {
-            Swift.debugPrint("Setting ad seen for ad number \(adNumber)")
             var alreadySeenAds = UserDefaults.standard.array(forKey: C.ADS_SHOWN) as? [Int]
             alreadySeenAds?.append(adNumber)
             if let adNumbers = alreadySeenAds {
                 let uniqueAdNumbers = Array(Set(adNumbers))
-                Swift.debugPrint("Now ads that are shown are \(uniqueAdNumbers)")
                 UserDefaults.standard.set(uniqueAdNumbers, forKey: C.ADS_SHOWN)
             }
         }

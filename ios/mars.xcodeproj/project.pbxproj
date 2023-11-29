@@ -91,6 +91,7 @@
 		B16F9BF92AA906A60088E26B /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B16F9BF82AA906A60088E26B /* Theme.swift */; };
 		B177EF5F2AC1DEFF003FB4A6 /* game_levels.json in Resources */ = {isa = PBXBuildFile; fileRef = B177EF4C2AC1DEFF003FB4A6 /* game_levels.json */; };
 		B18EA83C2A1637CB00514E47 /* AdAvailabilityDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B18EA83B2A1637CB00514E47 /* AdAvailabilityDelegate.swift */; };
+		B195D7142B17E69D00C55579 /* MyAppCheckProviderFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B195D7132B17E69D00C55579 /* MyAppCheckProviderFactory.swift */; };
 		B19803542B149E05004803AC /* GreenTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B19803532B149E05004803AC /* GreenTheme.swift */; };
 		B19803562B149E0F004803AC /* BlueTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B19803552B149E0F004803AC /* BlueTheme.swift */; };
 		B19803582B149E1C004803AC /* RedTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B19803572B149E1C004803AC /* RedTheme.swift */; };
@@ -217,6 +218,7 @@
 		B16F9BF82AA906A60088E26B /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		B177EF4C2AC1DEFF003FB4A6 /* game_levels.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = game_levels.json; sourceTree = "<group>"; };
 		B18EA83B2A1637CB00514E47 /* AdAvailabilityDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdAvailabilityDelegate.swift; sourceTree = "<group>"; };
+		B195D7132B17E69D00C55579 /* MyAppCheckProviderFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyAppCheckProviderFactory.swift; sourceTree = "<group>"; };
 		B196BBCB2AC0A3DF00A68DEF /* Model 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Model 2.xcdatamodel"; sourceTree = "<group>"; };
 		B19803532B149E05004803AC /* GreenTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GreenTheme.swift; sourceTree = "<group>"; };
 		B19803552B149E0F004803AC /* BlueTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlueTheme.swift; sourceTree = "<group>"; };
@@ -482,6 +484,7 @@
 				B1B33AC529FFD91F00DFA59F /* GameFieldCreator.swift */,
 				B1AA7CAA2B176D0F00842674 /* SnowParticle.sks */,
 				B1AA7CAB2B176D0F00842674 /* Assets.xcassets */,
+				B195D7132B17E69D00C55579 /* MyAppCheckProviderFactory.swift */,
 			);
 			path = Other;
 			sourceTree = "<group>";
@@ -705,6 +708,7 @@
 				B13BBA692A2797D500137679 /* VaryingProbability.swift in Sources */,
 				B14CB4F92AC09EEE00C7E12F /* LetterData+CoreDataProperties.swift in Sources */,
 				B128D9972A24D7DA002B13D1 /* TransactionProcessDelegate.swift in Sources */,
+				B195D7142B17E69D00C55579 /* MyAppCheckProviderFactory.swift in Sources */,
 				B13149E12A20A5A7004B06E8 /* BaseMenuController.swift in Sources */,
 				B13BBA672A27737800137679 /* TrainNode.swift in Sources */,
 				B144A88429FA66B40067A080 /* Model.xcdatamodeld in Sources */,

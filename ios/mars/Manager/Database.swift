@@ -136,7 +136,6 @@ class Database {
     func getNormalizedLevelNumber(levelNr:Int? = nil) -> Int
     {
        let currentLevelNumber = levelNr != nil ? levelNr! : Int(currentLevel!.levelNumber)
-        Swift.debugPrint("getNormalizedLevelNumber for \(currentLevelNumber)")
        let levelPack = getLevelPack(for: currentLevelNumber)
        switch levelPack {
         case LevelPack.game_pack:
@@ -157,25 +156,25 @@ class Database {
     }
     
     
-    func getLevelNrAndPackName(levelNr:Int? = nil) -> String
+    func getLevelNrAndPackName(levelNr:Int? = nil, longPackName:Bool = false) -> String
     {
        let currentLevelNumber = levelNr == nil ? Int(currentLevel!.levelNumber) : levelNr!
        let levelPack = getLevelPack(for: currentLevelNumber)
        switch levelPack {
         case LevelPack.game_pack:
-            return String("\(currentLevelNumber)")
+           return longPackName ? "Main Levels" : String("\(currentLevelNumber)")
         case LevelPack.level_pack_1:
-           return String("\(currentLevelNumber - 100) - SS Pack")
+           return longPackName ? "Symmetric Secrets" : String("\(currentLevelNumber - 100) - SS Pack")
         case LevelPack.level_pack_2:
-           return String("\(currentLevelNumber - levelPackRanges.ranges[1].1) - II Pack")
+           return longPackName ? "Inverted Illusions" : String("\(currentLevelNumber - levelPackRanges.ranges[1].1) - II Pack")
         case LevelPack.level_pack_3:
-           return String("\(currentLevelNumber - levelPackRanges.ranges[2].1) - RR Pack")
+           return longPackName ? "Reversal Riddles" : String("\(currentLevelNumber - levelPackRanges.ranges[2].1) - RR Pack")
         case LevelPack.level_pack_4:
-           return String("\(currentLevelNumber - levelPackRanges.ranges[3].1) - EE Pack")
+           return longPackName ? "Echoed Elegance" : String("\(currentLevelNumber - levelPackRanges.ranges[3].1) - EE Pack")
         case LevelPack.level_pack_5:
-           return String("\(currentLevelNumber - levelPackRanges.ranges[4].1) - TT Pack")
+           return longPackName ? "Twisted Texts" : String("\(currentLevelNumber - levelPackRanges.ranges[4].1) - TT Pack")
         case LevelPack.level_pack_6:
-           return String("\(currentLevelNumber - levelPackRanges.ranges[5].1) - LL Pack")
+           return longPackName ? "Looped Lexicon" : String("\(currentLevelNumber - levelPackRanges.ranges[5].1) - LL Pack")
         }
     }
     
@@ -289,7 +288,7 @@ class Database {
                     levelNr: jsonLevel.nr,
                     palindrome: jsonLevel.solutionToCategory.first!.key,
                     solutionsToHints: jsonLevel.solutionToCategory,
-                    progress: jsonLevel.nr == firstLevel ? Level.Progress.in_progress : Level.Progress.in_progress // TODO: Change back to locked
+                    progress: jsonLevel.nr == firstLevel ? Level.Progress.in_progress : Level.Progress.locked
                 )
             }
         }
@@ -385,12 +384,7 @@ class Database {
         let nextLevel =  getNormalizedLevelNumber() + 1
         let levelPack = getLevelPack(for: currentLevel)
         let range = getRangeForLevelPack(pack: getLevelPack(for: currentLevel))
-        
-        Swift.debugPrint("Level pack: \(levelPack.rawValue)")
-        Swift.debugPrint("Level pack range: \(range.0) - \(range.1)")
-        Swift.debugPrint("Current level: \(currentLevel)")
-        Swift.debugPrint("Next level: \(nextLevel)")
-        
+
         if (getActualLevelNumber(normalizedLevelNr: nextLevel, levelPack: levelPack) <= range.1)
         {
             changeLevel(to: Int(nextLevel), withProgressReset: true, levelPack: levelPack)
@@ -407,7 +401,8 @@ class Database {
     func getLevelPackProgress(levelPack:LevelPack, completion: @escaping (Decimal) -> Void)
     {
             let levelPackProgresses = self.getAllLevelsProgresses(currentLevel: -1, pack: levelPack)
-            let percentage = Decimal(levelPackProgresses.filter({progress in progress != Level.Progress.locked }).count) / Decimal(levelPackProgresses.count) * 100.0
+            let unlockedLevelsCount = levelPackProgresses.filter({progress in progress != Level.Progress.locked }).count
+            let percentage = unlockedLevelsCount > 1 ? Decimal(unlockedLevelsCount) / Decimal(levelPackProgresses.count) * 100.0 : -1.0
             completion(percentage)
     
     }
@@ -633,9 +628,6 @@ class Database {
                            currentLevel?.progress = Int64(Level.Progress.in_progress.rawValue)
                         }
                     } else {
-                        Swift.debugPrint("actualLevelNr: \(actualLevelNr)")
-                        Swift.debugPrint("levelPack: \(levelPack.rawValue)")
-                        Swift.debugPrint("currentLevel: \(currentLevel?.levelNumber)")
                         fatalError("Could not set next level nr \(nextLevel)")
                     }
                 }

@@ -133,6 +133,7 @@ class Letter: Cell {
     }
     
     
+    
     // MARK: Move action
     func moveLetter(endColor:UIColor = Theme.shared.colors.primaryContainer, durationMultiplier:CGFloat = 1.0, zLayer:CGFloat? = nil)
     {
