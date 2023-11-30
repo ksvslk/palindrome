@@ -38,10 +38,20 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
     override func viewWillAppear(_ animated: Bool) {
         self.purchaseManager?.delegate = self
         self.purchaseManager?.processDelegate = self
-        self.purchaseManager?.sendLatestInfo()
-        self.adManager?.delegate = self
-        self.adManager?.sendLatestInfo()
         
+        self.adManager?.delegate = self
+        
+        
+    
+        
+    }
+    
+    //MARK: View did appear
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        //Swift.debugPrint("viewDidAppear")
+        self.adManager?.sendLatestInfo()
+        self.purchaseManager?.sendLatestInfo()
         if (Database.shared.currentLevel?.categoryRewarded == true)
         {
             updateHintsToPremium()
@@ -53,12 +63,6 @@ class HintsViewController: BaseMenuController, AdAvailabilityDelegate, ProductsU
             view.isUserInteractionEnabled = false
         }
         
-    }
-    
-    //MARK: View did appear
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        //Swift.debugPrint("viewDidAppear")
         if (Database.shared.currentLevel?.categoryRewarded == true)
         {
             updateHintsToPremium()
