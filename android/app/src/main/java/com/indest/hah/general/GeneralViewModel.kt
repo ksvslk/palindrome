@@ -245,7 +245,7 @@ class GeneralViewModel @Inject constructor(
         }
     }
 
-    private fun isSadModePurchased(): Boolean {
+    fun isSadModePurchased(): Boolean {
         val app = getApplication<Application>()
         val sadModeSku = app.getString(R.string.sad_mode)
         val allInclusiveSku = app.getString(R.string.all_inclusive_pack)

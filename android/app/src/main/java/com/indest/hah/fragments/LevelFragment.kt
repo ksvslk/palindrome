@@ -129,17 +129,22 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
     }
 
     private fun showPromoDialog() {
-        levelViewModel.promoDialogData?.let {
-            Log.d(TAG, "Promo dialog info: $it")
-            if (it.activated == true && it.levelIds?.contains(levelViewModel.currentRelativeLevelNumber) == true) {
-                val promoDialogFragment = PromoDialogFragment(promoData = it)
-                promoDialogFragment.setDrawable(
-                    requireContext()
-                )
-                promoDialogFragment.show(childFragmentManager, PromoDialogFragment.TAG)
-                levelViewModel.logDialogPromoShown()
-            }
-        }
+      if(!generalViewModel.isSadModePurchased()) {
+          levelViewModel.promoDialogData?.let {
+              Log.d(TAG, "Promo dialog info: $it")
+              if (it.activated == true && it.levelIds?.contains(levelViewModel.currentRelativeLevelNumber) == true) {
+                  val promoDialogFragment = PromoDialogFragment(promoData = it)
+                  promoDialogFragment.setDrawable(
+                      requireContext()
+                  )
+                  if (!isRemoving && !isDetached)
+                  {
+                      promoDialogFragment.show(childFragmentManager, PromoDialogFragment.TAG)
+                      levelViewModel.logDialogPromoShown()
+                  }
+              }
+          }
+      }
     }
 
 

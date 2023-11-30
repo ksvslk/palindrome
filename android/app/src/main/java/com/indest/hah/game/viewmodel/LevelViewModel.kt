@@ -585,7 +585,8 @@ class LevelViewModel @Inject constructor(
 
     private fun isSolutionCorrect(guess: String): Boolean {
         return _currentLevel.value.solutions.any {
-            it.palindrome.replace(Regex("[\\s-]+"), "").unaccent() == guess
+            val ignoreUnaccent = _currentLevel.value.levelInfo.countryCode == "ko" || _currentLevel.value.levelInfo.countryCode == "cn" ||_currentLevel.value.levelInfo.countryCode == "ja"
+            if (ignoreUnaccent) it.palindrome.replace(Regex("[\\s-]+"), "") == guess else it.palindrome.replace(Regex("[\\s-]+"), "").unaccent() == guess
         }
     }
 
@@ -595,7 +596,7 @@ class LevelViewModel @Inject constructor(
             val solution =
                 _currentLevel.value.solutions.first().palindrome.replace(Regex("[\\s-]+"), "")
             var solutionData = SolutionData()
-            var unaccentedGuess = guess.unaccent()
+            var unaccentedGuess = if (_currentLevel.value.levelInfo.countryCode == "ko" || _currentLevel.value.levelInfo.countryCode == "cn" ||_currentLevel.value.levelInfo.countryCode == "ja") guess else guess.unaccent()
             if (unaccentedGuess.length == solution.length) {
                 val playerGuess = unaccentedGuess.map { char ->
                     if ("^([?¿!.,’':-]–)".contains(char)) "" else char
@@ -1111,11 +1112,9 @@ class LevelViewModel @Inject constructor(
                         viewModelScope.launch {
                             variousEventChannel.send(VariousEvent.DownloadPromoPicture)
                         }
-                        Log.d(TAG, "${document.id} => $promoDialogData. Success?")
                     } else if (document.id == "menu_button") {
                         val menuData = document.toObject<PromoMenuButtonData>()
-                        promoMenuButtonData = menuData;
-                        Log.d(TAG, "${document.id} => $menuData. Success?")
+                        promoMenuButtonData = menuData
                     }
                 }
             }.addOnFailureListener {
