@@ -361,7 +361,13 @@ class LevelViewModel @Inject constructor(
     fun resetLevel()
     {
         viewModelScope.launch {
-            if (_currentLevel.value.levelInfo.levelId > -1 && _currentLevel.value.levelInfo.progress != LevelProgress.INTERMEDIATE){
+            if (
+                _currentLevel.value.levelInfo.levelId > -1 &&
+                _currentLevel.value.levelInfo.progress != LevelProgress.INTERMEDIATE &&
+                _accountStatus.value != AccountStatus.LOADING &&
+                _accountStatus.value != AccountStatus.NOT_SET &&
+                isCurrentLevelLegit()
+                ){
                 levelRepository.resetLevel(_currentLevel.value.levelInfo.levelId)
                 val progress = getProgressAndText()
                 gameEventChannel.send(GameEvent.DisplayLevel(_currentLevel.value, progress))
