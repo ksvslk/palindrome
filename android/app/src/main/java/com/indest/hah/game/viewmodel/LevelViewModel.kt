@@ -358,6 +358,17 @@ class LevelViewModel @Inject constructor(
         }
     }
 
+    fun resetLevel()
+    {
+        viewModelScope.launch {
+            if (_currentLevel.value.levelInfo.levelId > -1 && _currentLevel.value.levelInfo.progress != LevelProgress.INTERMEDIATE){
+                levelRepository.resetLevel(_currentLevel.value.levelInfo.levelId)
+                val progress = getProgressAndText()
+                gameEventChannel.send(GameEvent.DisplayLevel(_currentLevel.value, progress))
+            }
+        }
+    }
+
     fun allPalindromesFlow(): Flow<Map<String, List<String>>> {
         return flow {
             emit(levelRepository.getAllPalindromes())

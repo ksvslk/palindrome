@@ -145,6 +145,10 @@ class MainActivity : AppCompatActivity() {
             val exclusions = listOf(Rect(0, 0, it.width, it.height))
             ViewCompat.setSystemGestureExclusionRects(binding.root, exclusions)
         }
+        binding.levelFlag.setOnLongClickListener {
+            levelViewModel.resetLevel()
+            true
+        }
 
     }
 
