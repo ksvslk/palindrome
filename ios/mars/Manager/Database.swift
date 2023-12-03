@@ -675,10 +675,10 @@ class Database {
     private func getTotalScore(for currentLevel:Int) -> Int {
         var score = 0
         
-        let levelPack = getLevelPack(for:currentLevel)
-        let levelFirstAndLast = getRangeForLevelPack(pack: levelPack)
-        let predicate = NSPredicate(format: "levelNumber >= %@ AND levelNumber <= %@", argumentArray: [levelFirstAndLast.0, levelFirstAndLast.1])
-        
+        let predicate = currentLevel > 100 
+            ? NSPredicate(format: "levelNumber > %@", argumentArray: [100])
+            : NSPredicate(format: "levelNumber < %@", argumentArray: [101])
+            
         let request: NSFetchRequest<Level> = Level.fetchRequest()
         request.predicate = predicate
         
