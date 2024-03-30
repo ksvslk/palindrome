@@ -12,14 +12,13 @@
 
     <!-- fake id
     <string name="admob_rewarded_ad_unit" translatable="false">ca-app-pub-3940256099942544/5224354917</string>
-      -->
     <string name="admob_banner_ad_unit" translatable="false">ca-app-pub-3940256099942544/9214589741</string>
-
+ -->
 
 
     <string name="admob_app_id" translatable="false">ca-app-pub-5386053272091445~8107886899</string>
     <string name="admob_rewarded_ad_unit" translatable="false">ca-app-pub-5386053272091445/9690912366</string>
-    <!--  <string name="admob_banner_ad_unit" translatable="false">ca-app-pub-5386053272091445/1671914900</string>-->
+    <string name="admob_banner_ad_unit" translatable="false">ca-app-pub-5386053272091445/1671914900</string>
 
 
       <!-- Web client id for Firebase login Google play Games -->
