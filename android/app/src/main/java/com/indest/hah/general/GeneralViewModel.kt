@@ -51,6 +51,9 @@ class GeneralViewModel @Inject constructor(
 
     private val _sadMode = MutableStateFlow(false)
 
+    private val _sadModePurchasedState = MutableSharedFlow<Boolean>(1)
+    val sadModePurchasedState = _sadModePurchasedState.asSharedFlow()
+
     var refreshPurchases = false
 
     fun refreshPurchasesTriedRedeem()
@@ -241,6 +244,9 @@ class GeneralViewModel @Inject constructor(
 
     private fun updateSadMode() {
         if (isSadModePurchased()) {
+            viewModelScope.launch {
+                _sadModePurchasedState.emit(value = true)
+            }
             persistSadMode(false)
         }
     }

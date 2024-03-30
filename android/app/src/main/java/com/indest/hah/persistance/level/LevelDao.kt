@@ -609,6 +609,9 @@ interface LevelDao {
     @Query("insert or replace into interval (name,current_count,limit_count,timestamp) VALUES ('last_submission',-1,-1,:time)")
     suspend fun updateSubmissionTimestamp(time: Long)
 
+    @Query("insert or replace into interval (name,current_count,limit_count,timestamp) VALUES ('sad_mode',0,:newLimit,0)")
+    suspend fun updateSadModeLimit(newLimit: Int)
+
     @Query("select max(time_modified) from level_info_table")
     suspend fun getMaximumTimestamp(): Long?
 

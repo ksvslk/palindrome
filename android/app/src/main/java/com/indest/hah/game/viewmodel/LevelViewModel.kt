@@ -214,6 +214,12 @@ class LevelViewModel @Inject constructor(
          */
     }
 
+    init {
+        viewModelScope.launch {
+            levelRepository.updateSadModeLimit(2)
+        }
+    }
+
     suspend fun isShowScores(): Boolean {
         val showScoresString =
             getApplication<Application>().getString(R.string.player_centered_scores)
@@ -369,6 +375,20 @@ class LevelViewModel @Inject constructor(
                 isCurrentLevelLegit()
                 ){
                 levelRepository.resetLevel(_currentLevel.value.levelInfo.levelId)
+                val progress = getProgressAndText()
+                gameEventChannel.send(GameEvent.DisplayLevel(_currentLevel.value, progress))
+            }
+        }
+    }
+
+    fun reloadLevel()
+    {
+        viewModelScope.launch {
+            if (_currentLevel.value.levelInfo.levelId > -1 &&
+                _currentLevel.value.levelInfo.progress != LevelProgress.INTERMEDIATE &&
+                _accountStatus.value != AccountStatus.LOADING &&
+                _accountStatus.value != AccountStatus.NOT_SET &&
+                isCurrentLevelLegit()) {
                 val progress = getProgressAndText()
                 gameEventChannel.send(GameEvent.DisplayLevel(_currentLevel.value, progress))
             }

@@ -182,6 +182,8 @@ class LevelRepository @Inject constructor(
 
     suspend fun getLocalSaveGame(): SaveGame = levelDao.getLocalSaveGame()
 
+    suspend fun updateSadModeLimit(newLimit:Int) = levelDao.updateSadModeLimit(newLimit)
+
     suspend fun updateLocalGame(saveGame: SaveGame) {
         val dbIdentityHash = levelDao.getDatabaseIdentityViaQuery()
         if (dbIdentityHash == saveGame.dbIdentityHash)
