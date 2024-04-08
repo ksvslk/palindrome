@@ -216,7 +216,7 @@ class LevelViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            levelRepository.updateSadModeLimit(2)
+            levelRepository.updateSadModeLimit(10)
         }
     }
 

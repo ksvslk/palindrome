@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.indest.hah.views.HahConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:ads="http://schemas.android.com/apk/res-auto"
     android:saveEnabled="false"
     android:id="@+id/container"
     android:fitsSystemWindows="true"
@@ -122,6 +121,7 @@
         app:menu="@menu/bottom_appbar_menu"
         />
 
+    <!--
     <com.google.android.gms.ads.AdView
         android:id="@+id/adView"
         ads:adSize="BANNER"
@@ -133,7 +133,7 @@
         app:layout_constraintBottom_toTopOf="@id/bottomNavView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
-
+-->
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragments_container"
@@ -141,7 +141,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:saveEnabled="false"
-        app:layout_constraintBottom_toTopOf="@id/adView"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavView"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

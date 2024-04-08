@@ -1,45 +1,29 @@
 package com.indest.hah
 
 import android.content.Context
-import android.graphics.ColorMatrix
-import android.graphics.ColorMatrixColorFilter
-import android.graphics.Paint
 import android.graphics.Rect
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Gravity
 import android.view.View
-import android.view.View.LAYER_TYPE_NONE
-import android.view.View.LAYER_TYPE_SOFTWARE
-import android.view.View.VISIBLE
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
-import androidx.constraintlayout.widget.Constraints
 import androidx.core.graphics.Insets
 import androidx.core.os.LocaleListCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.doOnNextLayout
-import androidx.core.view.doOnPreDraw
 import androidx.core.view.forEach
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.gms.ads.AdListener
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdSize
-import com.google.android.gms.ads.AdView
-import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.games.AuthenticationResult
 import com.google.android.gms.games.GamesSignInClient
@@ -73,15 +57,12 @@ import com.indest.hah.persistance.dto.SaveGame
 import com.indest.hah.savegame.SnapshotHelper
 import com.indest.hah.views.ButtonState
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
-import kotlinx.coroutines.flow.lastOrNull
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
 import kotlin.math.min
-import kotlin.random.Random
 
 
 private const val RECONNECT_TIMER_START_MILLISECONDS = 1L * 1000L
@@ -133,7 +114,8 @@ class MainActivity : AppCompatActivity() {
                 putString(FIRST_TIME_MIGRATION, STATUS_DONE)
             }
         }
-        collectSadModePurchasedState()
+
+       //collectSadModePurchasedState()
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -149,7 +131,7 @@ class MainActivity : AppCompatActivity() {
         requestLatestConsentInformation()
         MobileAds.initialize(applicationContext)
 
-        loadBanner()
+        //loadBanner()
 
         generalViewModel.toString()
         applyCustomWindowInsets()
@@ -172,25 +154,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Determine the screen width (less decorations) to use for the ad width.
-// If the ad hasn't been laid out, default to the full screen width.
-    private val adSize: AdSize
-        get() {
-            val display = windowManager.defaultDisplay
-            val outMetrics = DisplayMetrics()
-            display.getMetrics(outMetrics)
 
-            val density = outMetrics.density
-
-            var adWidthPixels = binding.container.width.toFloat()
-            if (adWidthPixels == 0f) {
-                adWidthPixels = outMetrics.widthPixels.toFloat()
-            }
-
-            val adWidth = (adWidthPixels / density).toInt()
-            return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(this, adWidth)
-        }
-
+/*
     private fun loadBanner() {
         if (!generalViewModel.isSadModePurchased()) {
             // Create an ad request.
@@ -208,6 +173,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+*/
 
     override fun onStop() {
         super.onStop()
@@ -248,6 +214,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /*
     private fun collectSadModePurchasedState() {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
@@ -265,6 +232,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+     */
 
     private fun collectPlayerLevelsForNotification() {
         lifecycleScope.launch {/*
