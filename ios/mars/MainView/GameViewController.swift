@@ -73,6 +73,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
     override func viewDidLoad() {
         //Swift.debugPrint("viewDidLoad")
         super.viewDidLoad()
+        
         addBackgroundColorLayer()
         self.view.makeToastActivity(.center)
         self.view.isUserInteractionEnabled = false
@@ -213,6 +214,70 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         }
     }
 
+    
+    //MARK: Show app store event
+    private func startAppStoreEventDialog()
+    {
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        
+        // MUST SATISFY ALL TO SHOW APPSTORE EVENT DIALOG
+        // ----------------------------------------------
+        // * If event already NOT SHOWN (user prefs) +
+        // * Date IS IN RANGE (4.22 - 4.30) +
+        // * User has not completed level 100 yet
+        // * Purchase PURCHASE_LEVELS_PACK_3_ID is NOT PURCHASED +
+        
+        let isParticipatingAlready = UserDefaults.standard.bool(forKey: C.PARTICIPANT_OF_422_EVENT)
+        let isDateInPalindromeDaysRange =
+            Calendar.current.isCurrentDateInRangeFor2024(startMonth: 4, startDay: 22, endMonth: 4, endDay: 30)
+        let is100NotCompleted = Database.shared.isLevel100NotCompleted()
+        let isLevelPack3Purchased = appDelegate.purchaseManager.isLevelPack3Purchased()
+
+        if !isParticipatingAlready &&
+            isDateInPalindromeDaysRange &&
+            !isLevelPack3Purchased &&
+            is100NotCompleted  {
+            UserDefaults.standard.set(true, forKey: C.PARTICIPANT_OF_422_EVENT)
+            let appStoreEventController = AppStoreEventDialogController()
+            appStoreEventController.updateContent(with: "PalindromeEvent", title: "Complete main levels before 4/30/24 to earn 'Reversal Riddles' level pack!", buttonText: " Start ")
+            self.present(appStoreEventController, animated: true, completion:nil)
+        }
+        else {
+            self.showTutorial()
+        }
+     
+    }
+    
+    private func endAppStoreEventDialog(levelNr:Int64)
+    {
+        if levelNr == 100
+        {
+            let appDelegate = UIApplication.shared.delegate as! AppDelegate
+            
+            // MUST SATISFY ALL TO SHOW APPSTORE EVENT DIALOG
+            // ----------------------------------------------
+            // * Is participating in event
+            // * Date IS IN RANGE (4.22 - 4.30)
+            // * Purchase PURCHASE_LEVELS_PACK_3_ID is NOT PURCHASED
+            
+            let isParticipating = UserDefaults.standard.bool(forKey: C.PARTICIPANT_OF_422_EVENT)
+            let isDateInPalindromeDaysRange =
+                Calendar.current.isCurrentDateInRangeFor2024(startMonth: 4, startDay: 22, endMonth: 4, endDay: 30)
+            let isLevelPack3Purchased = appDelegate.purchaseManager.isLevelPack3Purchased()
+   
+            if isParticipating && isDateInPalindromeDaysRange && !isLevelPack3Purchased {
+                appDelegate.purchaseManager.updatePurchaseStatus(
+                    C.PURCHASE_LEVELS_PACK_3_ID,
+                    isPurchased: true,
+                    updateUi: true
+                )
+                let appStoreEventController = AppStoreEventDialogController()
+                appStoreEventController.updateContent(with: "PalindromeEventComplete", title: "Congratulations! Find Your prize from the 'Level Select' menu :)", buttonText: " Continue ")
+                self.present(appStoreEventController, animated: true, completion: nil)
+            }
+        }
+       
+    }
 
     
     private func menuColorsChange(doLayout:Bool = false)
@@ -277,7 +342,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         self.view.hideToastActivity()
         self.view.isUserInteractionEnabled = true
         Database.shared.changeLevel(toLatest: true, levelPack: LevelPack.game_pack)
-        self.showTutorial()
+        self.startAppStoreEventDialog()
     }
     
     
@@ -444,6 +509,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                         )
                     }
                     
+                    endAppStoreEventDialog(levelNr: currentLevel.levelNumber)
                     Database.shared.setLevelCompletedImmediately()
                     
                     if (isMaxScore)

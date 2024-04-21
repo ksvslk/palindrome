@@ -39,6 +39,7 @@ struct C {
     static let COLOR_THEME = "COLOR_THEME"
     static let ADS_SHOWN = "ADS_SHOWN"
     static let SNOW = "SNOW"
+    static let PARTICIPANT_OF_422_EVENT = "PARTICIPANT_OF_422_EVENT"
     
     static let CLOUD_PROGRESS_KEY = "CLOUD_PROGRESS"
     static let CLOUD_BEST_SCORES_KEY = "CLOUD_BEST_SCORES"

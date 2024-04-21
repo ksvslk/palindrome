@@ -224,4 +224,38 @@ extension Calendar {
         let dateInterval = DateInterval(start: startDate, end: endDate)
         return dateInterval.contains(Date())
     }
+    
+    /// Checks if the current date is between two specified days across the new year, ensuring it's the year 2024 and using EEST timezone.
+     /// - Parameters:
+     ///   - startMonth: The month of the start date.
+     ///   - startDay: The day of the start date.
+     ///   - endMonth: The month of the end date in the following year.
+     ///   - endDay: The day of the end date.
+     /// - Returns: A Boolean indicating if the current date is within the specified date range, but only if the year is 2024.
+     func isCurrentDateInRangeFor2024(startMonth: Int, startDay: Int, endMonth: Int, endDay: Int) -> Bool {
+         // Set the calendar's timezone to EEST or default to the current timezone if EEST isn't available.
+         var calendar = self
+         calendar.timeZone = TimeZone(identifier: "EEST") ?? TimeZone.current
+
+         // Check the current year and proceed only if it is 2024.
+         let currentYear = calendar.component(.year, from: Date())
+         if currentYear != 2024 {
+             return false
+         }
+
+         // Define the date components for the start and end dates, using the year 2024.
+         let startDateComponents = DateComponents(year: 2024, month: startMonth, day: startDay, hour: 0, minute: 0)
+         let endDateComponents = DateComponents(year: 2024, month: endMonth, day: endDay, hour: 0, minute: 0)
+
+         // Create dates from the components.
+         guard let startDate = calendar.date(from: startDateComponents),
+               let endDate = calendar.date(from: endDateComponents) else {
+             return false
+         }
+
+         // Create a date interval from the start and end dates and check if the current date is within this interval.
+         let dateInterval = DateInterval(start: startDate, end: endDate)
+         return dateInterval.contains(Date())
+     }
+  
 }

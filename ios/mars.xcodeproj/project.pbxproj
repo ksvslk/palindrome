@@ -75,6 +75,7 @@
 		B14CB4F72AC09EEE00C7E12F /* Level+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = B14CB4EC2AC09DD000C7E12F /* Level+CoreDataClass.swift */; };
 		B14CB4F82AC09EEE00C7E12F /* Interval+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = B14CB4EA2AC09DD000C7E12F /* Interval+CoreDataClass.swift */; };
 		B14CB4F92AC09EEE00C7E12F /* LetterData+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = B14CB4F12AC09DD000C7E12F /* LetterData+CoreDataProperties.swift */; };
+		B153A2F02BD522D2009D5C7F /* AppStoreEventDialogController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B153A2EF2BD522D2009D5C7F /* AppStoreEventDialogController.swift */; };
 		B155C2432B1258AC00F60878 /* LevelPack.swift in Sources */ = {isa = PBXBuildFile; fileRef = B155C2422B1258AC00F60878 /* LevelPack.swift */; };
 		B155C2452B127B9100F60878 /* level_pack_1.json in Resources */ = {isa = PBXBuildFile; fileRef = B155C2442B127B9100F60878 /* level_pack_1.json */; };
 		B155C2472B127BA700F60878 /* level_pack_2.json in Resources */ = {isa = PBXBuildFile; fileRef = B155C2462B127BA700F60878 /* level_pack_2.json */; };
@@ -202,6 +203,7 @@
 		B14CB4EF2AC09DD000C7E12F /* Solution+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Solution+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		B14CB4F02AC09DD000C7E12F /* LetterData+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LetterData+CoreDataClass.swift"; sourceTree = "<group>"; };
 		B14CB4F12AC09DD000C7E12F /* LetterData+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LetterData+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		B153A2EF2BD522D2009D5C7F /* AppStoreEventDialogController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStoreEventDialogController.swift; sourceTree = "<group>"; };
 		B155C2422B1258AC00F60878 /* LevelPack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelPack.swift; sourceTree = "<group>"; };
 		B155C2442B127B9100F60878 /* level_pack_1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = level_pack_1.json; sourceTree = "<group>"; };
 		B155C2462B127BA700F60878 /* level_pack_2.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = level_pack_2.json; sourceTree = "<group>"; };
@@ -504,6 +506,7 @@
 				B128D99C2A260772002B13D1 /* EndingScreen.swift */,
 				B13149E02A20A5A7004B06E8 /* BaseMenuController.swift */,
 				B198036E2B161C61004803AC /* PromoDialogController.swift */,
+				B153A2EF2BD522D2009D5C7F /* AppStoreEventDialogController.swift */,
 			);
 			path = MainView;
 			sourceTree = "<group>";
@@ -704,6 +707,7 @@
 				B1299D7029F962F4007B2668 /* Database.swift in Sources */,
 				B19803562B149E0F004803AC /* BlueTheme.swift in Sources */,
 				B1313BC02A0F7E72005830AB /* SolutionCheckResult.swift in Sources */,
+				B153A2F02BD522D2009D5C7F /* AppStoreEventDialogController.swift in Sources */,
 				B14CB4F32AC09EEE00C7E12F /* Solution+CoreDataClass.swift in Sources */,
 				B13BBA692A2797D500137679 /* VaryingProbability.swift in Sources */,
 				B14CB4F92AC09EEE00C7E12F /* LetterData+CoreDataProperties.swift in Sources */,
@@ -973,7 +977,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.1;
+				MARKETING_VERSION = 3.0.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.indest.hah;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1010,7 +1014,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.1;
+				MARKETING_VERSION = 3.0.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.indest.hah;
 				PRODUCT_NAME = "$(TARGET_NAME)";

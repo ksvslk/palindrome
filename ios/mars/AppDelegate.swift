@@ -69,7 +69,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 C.VIBRATION_ON: true,
                 C.COLOR_THEME: ThemeName.purple.rawValue,
                 C.ADS_SHOWN: [0],
-                C.SNOW: true
+                C.SNOW: true,
+                C.PARTICIPANT_OF_422_EVENT: false
             ]
         )
     }

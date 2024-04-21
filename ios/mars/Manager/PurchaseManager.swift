@@ -146,6 +146,13 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
         }
     }
     
+    func isLevelPack3Purchased() -> Bool
+    {
+        return purchasedProductIdentifiers.contains { productId in
+            productId == C.PURCHASE_LEVELS_PACK_3_ID || productId == C.PURCHASE_ALL_LEVELS_ID
+        }
+    }
+    
     
     func getProducts() -> [String:ProductInfo] {
         //Swift.debugPrint("getProductInfo")
@@ -347,7 +354,7 @@ class PurchaseManager: NSObject, SKProductsRequestDelegate, SKPaymentTransaction
     }
     
     
-    private func updatePurchaseStatus(_ productIdentifier: String, isPurchased: Bool, updateUi:Bool = true) {
+    func updatePurchaseStatus(_ productIdentifier: String, isPurchased: Bool, updateUi:Bool = true) {
         //Swift.debugPrint("updatePurchaseStatus")
         if isPurchased {
             purchasedProductIdentifiers.insert(productIdentifier)

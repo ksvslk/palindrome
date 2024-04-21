@@ -737,6 +737,23 @@ class Database {
     }
     
     
+    func isLevel100NotCompleted() -> Bool
+    {
+        let request: NSFetchRequest<Level> = Level.fetchRequest()
+        request.predicate = NSPredicate(format: "levelNumber = %@", "100")
+        var fetchedLevels: [Level] = []
+        
+        do {
+            fetchedLevels = try context.fetch(request)
+        } catch {
+            Swift.debugPrint("Error fetching level 100")
+        }
+        
+        return fetchedLevels.first?.levelProgress == Level.Progress.locked || fetchedLevels.isEmpty
+      
+    }
+    
+    
     // MARK: Get all levels with progress
     func getAllLevelsProgresses(currentLevel:Int, pack:LevelPack? = nil) -> [Level.Progress]
     {
