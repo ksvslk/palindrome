@@ -202,3 +202,26 @@ extension UIColor {
        )
    }
 }
+
+extension Calendar {
+    /// Checks if the current date is between two specified days across the new year.
+    /// - Parameters:
+    ///   - startMonth: The month of the start date.
+    ///   - startDay: The day of the start date.
+    ///   - endMonth: The month of the end date in the following year.
+    ///   - endDay: The day of the end date.
+    /// - Returns: A Boolean indicating if the current date is within the specified date range.
+    func isCurrentDateInRange(startMonth: Int, startDay: Int, endMonth: Int, endDay: Int) -> Bool {
+        let currentYear = self.component(.year, from: Date())
+        let startDateComponents = DateComponents(year: currentYear, month: startMonth, day: startDay)
+        let endDateComponents = DateComponents(year: currentYear + 1, month: endMonth, day: endDay)
+        
+        guard let startDate = self.date(from: startDateComponents),
+              let endDate = self.date(from: endDateComponents) else {
+            return false
+        }
+        
+        let dateInterval = DateInterval(start: startDate, end: endDate)
+        return dateInterval.contains(Date())
+    }
+}

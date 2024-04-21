@@ -49,6 +49,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
                 else {
                     self.gameScene?.removeSnow()
                 }
+                removeSnowIfNeeded()
             }
          }
     }
@@ -99,7 +100,15 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             }
             
         }
-   
+    }
+    
+    private func removeSnowIfNeeded() {
+        let calendar = Calendar.current
+        let isInDateRange = calendar.isCurrentDateInRange(startMonth: 12, startDay: 1, endMonth: 1, endDay: 6)
+        if !isInDateRange {
+            self.gameScene?.removeSnow()
+            snowToggle.isHidden = true
+        }
     }
 
     
@@ -509,6 +518,7 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         else {
             self.gameScene?.removeSnow()
         }
+        removeSnowIfNeeded()
         hintToolbarItem.removeBadge()
     }
     
