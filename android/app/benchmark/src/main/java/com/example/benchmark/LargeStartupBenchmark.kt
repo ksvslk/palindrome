@@ -1,5 +1,7 @@
 package com.example.benchmark
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.benchmark.macro.BaselineProfileMode
 import androidx.benchmark.macro.CompilationMode
 import androidx.benchmark.macro.StartupMode
@@ -18,6 +20,7 @@ class LargeStartupBenchmark {
     val benchmarkRule = MacrobenchmarkRule()
 
 
+    @RequiresApi(Build.VERSION_CODES.N)
     @Test
     fun startupBaselineProfile() {
         startup(CompilationMode.Partial(
@@ -25,6 +28,7 @@ class LargeStartupBenchmark {
         ))
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     @Test
     fun startupNoCompilation() {
         startup(CompilationMode.None())

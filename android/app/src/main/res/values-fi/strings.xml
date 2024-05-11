@@ -116,6 +116,7 @@
 
 
     <!-- TUTORIAL -->
+    <string name="synced_with_cloud">Päivitetty pilvestä!</string>
     <string name="tutorial_text">Luo sanoja ja lauseita, jotka luetaan samalla tavalla molemmilta puolilta. Vähemmän virheitä = parempi tulos.</string>
     <string name="play">Pelaa</string>
 

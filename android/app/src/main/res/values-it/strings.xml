@@ -185,6 +185,7 @@
 
     <!-- TUTORIAL -->
 
+    <string name="synced_with_cloud">Aggiornato dal cloud!</string>
     <string name="tutorial_text">Crea parole e frasi che leggono lo stesso da entrambi i lati. Meno errori = punteggio migliore.</string>
     <string name="play">Giocare</string>
 

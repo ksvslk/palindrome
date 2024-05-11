@@ -184,6 +184,7 @@
 
     <!-- TUTORIAL -->
 
+    <string name="synced_with_cloud">クラウドから更新されました！</string>
     <string name="tutorial_text">どちらの側からも同じように読める単語や文章を作成する。ミスが少ない = より良いスコア。</string>
     <string name="play">プレイ</string>
 

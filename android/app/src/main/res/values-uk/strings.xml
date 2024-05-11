@@ -113,6 +113,7 @@
     </string-array>
 
     <!-- TUTORIAL -->
+    <string name="synced_with_cloud">"Оновлено з хмари! "</string>
     <string name="tutorial_text">Створіть слова та речення, які читаються однаково з обох сторін. Менше помилок = кращий бал.</string>
     <string name="play">Грати</string>
 

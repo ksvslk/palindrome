@@ -2,6 +2,7 @@ package com.indest.hah
 
 import android.app.Application
 import com.google.android.gms.common.wrappers.InstantApps
+import com.google.android.gms.games.PlayGamesSdk
 import com.google.android.material.color.DynamicColors
 import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -15,6 +16,7 @@ class CoolApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         DynamicColors.applyToActivitiesIfAvailable(this)
+        PlayGamesSdk.initialize(this)
         FirebaseApp.initializeApp(this)
         val firebaseAppCheck = FirebaseAppCheck.getInstance()
         val appCheckFactory = if (BuildConfig.DEBUG) {

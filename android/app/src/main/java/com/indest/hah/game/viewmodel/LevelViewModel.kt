@@ -32,12 +32,12 @@ import com.indest.hah.persistance.level.LevelRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import java.text.Normalizer
 import java.util.Locale
 import javax.inject.Inject
 
@@ -85,13 +85,15 @@ class LevelViewModel @Inject constructor(
     var promoDialogData:PromoDialogData? = null
     var promoMenuButtonData:PromoMenuButtonData? = null
 
+    private var levelCollectionJob:Job? = null
+
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Log.e(
             TAG,
             "Error syncing cloud with local. Start collecting level from  local database without up to date information.",
             throwable
         )
-        startCollectingLevelUpdate()
+        //startCollectingLevelUpdate()
     }
 
     fun updateColumnCount(newCols: Int) {
@@ -101,7 +103,7 @@ class LevelViewModel @Inject constructor(
     }
 
     private fun startCollectingLevelUpdate() {
-        viewModelScope.launch {
+        levelCollectionJob = viewModelScope.launch {
             val tag = getCountryTagOrDefault()
             levelRepository.matchFirstLevelWithUserLocale(tag)
             levelRepository.latestLevelFlow().collect {
@@ -174,13 +176,7 @@ class LevelViewModel @Inject constructor(
                 AccountStatus.SIGNED_IN -> {
                     variousEventChannel.send(VariousEvent.LoadGame)
                 }
-
-                AccountStatus.SIGNED_OUT -> {
-                    if (!isCurrentLevelLegit()) {
-                        startCollectingLevelUpdate()
-                    }
-                }
-
+                AccountStatus.SIGNED_OUT -> { }
                 AccountStatus.LOADING -> {
                     if (!isCurrentLevelLegit()) {
                         gameEventChannel.send(GameEvent.ShowLoading)
@@ -189,13 +185,11 @@ class LevelViewModel @Inject constructor(
                         gameEventChannel.send(GameEvent.DisplayLevel(_currentLevel.value, progress))
                     }
                 }
-
                 AccountStatus.SIGNED_IN_WITH_FIREBASE -> {
                     if (_accountStatus.value != AccountStatus.SIGNED_IN) {
                         variousEventChannel.send(VariousEvent.LoadGame)
                     }
                 }
-
                 AccountStatus.NOT_SET -> {}
             }
         }
@@ -212,6 +206,7 @@ class LevelViewModel @Inject constructor(
             addIntervals()
         }
          */
+        startCollectingLevelUpdate()
     }
 
     init {
@@ -247,10 +242,16 @@ class LevelViewModel @Inject constructor(
     fun loadLatestLevelFromCloudOrLocal(saveGame: SaveGame?) {
         viewModelScope.launch(exceptionHandler) {
             if (saveGame != null) {
-                levelRepository.updateLocalGame(saveGame)
-                startCollectingLevelUpdate()
-            } else {
-                startCollectingLevelUpdate()
+                val cloudSaveResult = levelRepository.isCloudSaveGameNewer(saveGame)
+                if (cloudSaveResult)
+                {
+                    levelRepository.updateLocalGame(saveGame)
+                    viewModelScope.launch {
+                        variousEventChannel.send(VariousEvent.SyncedWithCloud)
+                    }
+                    levelCollectionJob?.cancel()
+                    startCollectingLevelUpdate()
+                }
             }
             launch {
                 subscribeToRealTimePlayerLevelUpdates()
@@ -532,6 +533,7 @@ class LevelViewModel @Inject constructor(
             VariousEvent()
 
         object LoadGame : VariousEvent()
+        object SyncedWithCloud : VariousEvent()
         object DownloadPromoPicture : VariousEvent()
     }
 

@@ -114,6 +114,7 @@
 
 
     <!-- TUTORIAL -->
+    <string name="synced_with_cloud">Actualizat din cloud!</string>
     <string name="tutorial_text">Creează cuvinte și propoziții care citesc la fel din ambele părți. Mai puține greșeli = scor mai bun.</string>
     <string name="play">Joacă</string>
 

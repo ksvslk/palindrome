@@ -114,6 +114,7 @@
 
 
     <!-- TUTORIAL -->
+    <string name="synced_with_cloud">Pilvest uuendatud!</string>
     <string name="tutorial_text">Looge sõnu ja lauseid, mis loevad mõlemalt poolt samamoodi. Vähem vigu = parem tulemus.</string>
     <string name="play">Mängi</string>
 

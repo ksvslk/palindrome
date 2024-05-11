@@ -34,7 +34,7 @@
                 android:orientation="horizontal"
                 android:saveEnabled="false">
 
-                <com.google.android.material.switchmaterial.SwitchMaterial
+                <com.google.android.material.materialswitch.MaterialSwitch
                     android:id="@+id/vibration_switch"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -65,7 +65,7 @@
                 android:orientation="horizontal"
                 android:saveEnabled="false">
 
-                <com.google.android.material.switchmaterial.SwitchMaterial
+                <com.google.android.material.materialswitch.MaterialSwitch
                     android:id="@+id/sound_switch"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

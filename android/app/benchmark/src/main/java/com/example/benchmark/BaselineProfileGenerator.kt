@@ -16,7 +16,8 @@ package com.example.benchmark
  * limitations under the License.
  */
 
-import androidx.benchmark.macro.ExperimentalBaselineProfilesApi
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.benchmark.macro.junit4.BaselineProfileRule
 import org.junit.Rule
 import org.junit.Test
@@ -24,13 +25,14 @@ import org.junit.Test
 /**
  * Generates a baseline profile which can be copied to `app/src/main/baseline-prof.txt`.
  */
-@ExperimentalBaselineProfilesApi
 class BaselineProfileGenerator {
+    @RequiresApi(Build.VERSION_CODES.P)
     @get:Rule val baselineProfileRule = BaselineProfileRule()
 
+    @RequiresApi(Build.VERSION_CODES.P)
     @Test
     fun startup() =
-        baselineProfileRule.collectBaselineProfile(
+        baselineProfileRule.collect(
             packageName = "com.indest.hah"
         ) {
             pressHome()

@@ -193,6 +193,20 @@ class LevelRepository @Inject constructor(
         Log.e(TAG, "DB id for save game is: ${saveGame.dbIdentityHash} and database id is $dbIdentityHash. Does it match? ${dbIdentityHash == saveGame.dbIdentityHash}")
     }
 
+    suspend fun isCloudSaveGameNewer(saveGame: SaveGame):Boolean
+    {
+        val dbIdentityHash = levelDao.getDatabaseIdentityViaQuery()
+        if (dbIdentityHash == saveGame.dbIdentityHash) {
+            val cloudMaxTimestamp = saveGame.game.maxOfOrNull { it.levelInfo.timeModified } ?: -1
+            val localMaxTimestamp = levelDao.getMaximumTimestamp() ?: 0
+            if (cloudMaxTimestamp > localMaxTimestamp) {
+                return true
+            }
+        }
+        return false
+    }
+
+
     suspend fun isFinalLevel(currentLevel:Int, minLimit:Int, maxLimit:Int) =
         levelDao.isFinalLevel(currentLevel, minLimit, maxLimit)
 

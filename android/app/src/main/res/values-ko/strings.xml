@@ -114,6 +114,7 @@
 
 
     <!-- TUTORIAL -->
+    <string name="synced_with_cloud">클라우드에서 업데이트됨!</string>
     <string name="tutorial_text">양쪽에서 읽어도 같은 단어와 문장 만들기. 실수가 적을수록 점수가 높아집니다.</string>
     <string name="play">재생</string>
 

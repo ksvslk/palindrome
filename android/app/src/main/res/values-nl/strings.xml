@@ -114,6 +114,7 @@
 
 
     <!-- TUTORIAL -->
+    <string name="synced_with_cloud">Bijgewerkt vanuit de cloud!</string>
     <string name="tutorial_text">Maak woorden en zinnen die van beide kanten hetzelfde lezen. Minder fouten = betere score.</string>
     <string name="play">Spelen</string>
 

@@ -113,6 +113,7 @@
     </string-array>
 
     <!-- TUTORIAL -->
+    <string name="synced_with_cloud">Zaktualizowano z chmury!</string>
     <string name="tutorial_text">Twórz słowa i zdania, które brzmią tak samo z obu stron. Mniej błędów = lepszy wynik.</string>
     <string name="play">Odtwórz</string>
 

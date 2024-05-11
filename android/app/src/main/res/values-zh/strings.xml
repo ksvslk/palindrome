@@ -185,6 +185,7 @@
 
     <!-- TUTORIAL -->
 
+    <string name="synced_with_cloud">从云端更新！</string>
     <string name="tutorial_text">创建从两侧读相同的单词和句子。 通过减少错误来赚取更多积分。更少的错误 = 更好的分数。</string>
     <string name="play">玩</string>
 

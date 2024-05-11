@@ -185,6 +185,7 @@
 
     <!-- TUTORIAL -->
 
+    <string name="synced_with_cloud">Diperbarui dari cloud!</string>
     <string name="tutorial_text">Buat kata dan kalimat yang dibaca sama dari kedua sisi. Lebih sedikit kesalahan = skor lebih baik.</string>
     <string name="play">Mainkan</string>
 

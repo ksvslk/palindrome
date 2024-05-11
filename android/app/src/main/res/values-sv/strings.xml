@@ -114,6 +114,7 @@
 
 
     <!-- TUTORIAL -->
+    <string name="synced_with_cloud">Uppdaterad från molnet!</string>
     <string name="tutorial_text">Skapa ord och meningar som läser samma från båda sidor. Färre misstag = bättre poäng.</string>
     <string name="play">Spela</string>
 

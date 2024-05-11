@@ -122,8 +122,6 @@ class MainActivity : AppCompatActivity() {
 
         auth = Firebase.auth
 
-        levelViewModel.setAccountStatus(AccountStatus.LOADING)
-
         val gamesSignInClient = PlayGames.getGamesSignInClient(this)
         gamesSignInClient.isAuthenticated.addOnCompleteListener { isAuthenticatedTask: Task<AuthenticationResult> ->
             handleAuthTask(gamesSignInClient, isAuthenticatedTask)
@@ -459,6 +457,10 @@ class MainActivity : AppCompatActivity() {
                             levelViewModel.loadLatestLevelFromCloudOrLocal(saveGame)
                         }
 
+                        is LevelViewModel.VariousEvent.SyncedWithCloud -> {
+                            showSyncedWithCloudToast()
+                        }
+
                         is LevelViewModel.VariousEvent.SaveGame -> {
                             snapshotHelper.save(
                                 this@MainActivity,
@@ -543,6 +545,13 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun showSyncedWithCloudToast() {
+        val text = getString(R.string.synced_with_cloud)
+        val duration = Toast.LENGTH_LONG
+        val toast = Toast.makeText(applicationContext, text, duration)
+        toast.show()
     }
 
     private fun showSadModeToast() {

@@ -184,6 +184,7 @@
 
     <!-- TUTORIAL -->
 
+    <string name="synced_with_cloud">Mis à jour depuis le cloud !</string>
     <string name="tutorial_text">Créez des mots et des phrases qui se lisent de la même manière des deux côtés. Moins d\'erreurs = meilleur score.</string>
     <string name="play">Jouer</string>
 

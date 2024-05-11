@@ -115,6 +115,7 @@
 
 
     <!-- TUTORIAL -->
+    <string name="synced_with_cloud">Buluttan güncellendi!</string>
     <string name="tutorial_text">Her iki taraftan da aynı okunan kelimeler ve cümleler oluşturun. Daha az hata = daha iyi puan.</string>
     <string name="play">Çal</string>
 

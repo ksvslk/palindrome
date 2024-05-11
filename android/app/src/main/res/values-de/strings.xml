@@ -185,6 +185,7 @@
 
     <!-- TUTORIAL -->
 
+    <string name="synced_with_cloud">Aus der Cloud aktualisiert!</string>
     <string name="tutorial_text">Erstelle Wörter und Sätze, die von beiden Seiten gleich gelesen werden. Weniger Fehler = bessere Punktzahl.</string>
     <string name="play">Spielen</string>
 

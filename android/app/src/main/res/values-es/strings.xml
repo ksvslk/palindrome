@@ -185,6 +185,7 @@
 
     <!-- TUTORIAL -->
 
+    <string name="synced_with_cloud">¡Actualizado desde la nube!</string>
     <string name="tutorial_text">Crea palabras y oraciones que se leen igual desde cualquier lado. Menos errores = mejor puntaje.</string>
     <string name="play">Jugar</string>
 
