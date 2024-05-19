@@ -1,7 +1,6 @@
 package com.indest.hah.views
 
 import android.animation.ObjectAnimator
-import android.content.Context
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -31,7 +30,12 @@ class MessageSnackBar(
         val params = getView().layoutParams as FrameLayout.LayoutParams
         params.gravity = Gravity.CENTER
         getView().layoutParams = params
+        getView().setOnTouchListener { _, event ->
+            // Always return false to indicate that the touch event should pass through
+            false
+        }
     }
+
 
     private var _callback: BaseCallback<MessageSnackBar>? = null
 
@@ -40,9 +44,23 @@ class MessageSnackBar(
         return super.addCallback(callback)
     }
 
+
     fun removeMessageCallback()
     {
         removeCallback(_callback)
+    }
+
+
+    fun destroy() {
+        // Stop and clear the animation
+        tapToContinueAnimation?.let {
+            it.cancel()
+            it.removeAllListeners()
+        }
+        tapToContinueAnimation = null
+
+        // Dismiss the Snackbar
+        dismiss()
     }
 
     companion object {
@@ -60,7 +78,6 @@ class MessageSnackBar(
             val parent = view.findSuitableParent() ?: throw IllegalArgumentException(
                 "No suitable parent found from the given view. Please provide a valid view."
             )
-
             val customView = LayoutInflater.from(view.context).inflate(
                 R.layout.message_snackbar_view,
                 parent,
@@ -69,7 +86,6 @@ class MessageSnackBar(
             val textView = customView.findViewById<TextView>(R.id.message)
             textView.text = message
             val snackBar = MessageSnackBar(parent, customView)
-            snackBar.view.isEnabled = isViewEnabled
             snackBar.duration = duration
             if (animateText) addBlinkingTextAnimation(snackBar.view)
             return snackBar

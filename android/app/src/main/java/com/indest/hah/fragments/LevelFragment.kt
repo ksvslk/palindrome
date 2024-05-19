@@ -21,7 +21,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.color.MaterialColors
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.indest.hah.MainActivity
@@ -42,11 +41,8 @@ import com.indest.hah.other.safeNavigate
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.level.LevelProgress
 import com.indest.hah.views.Cell
-import com.indest.hah.views.HahConstraintLayout
 import com.indest.hah.views.MessageSnackBar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -80,7 +76,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED)
             {
                 showTutorial()
-
                 generalViewModel.rewardState.collect { rewardType ->
                     if (rewardType == LETTER) {
                         generalViewModel.updateRewardState(RewardType.NONE)
@@ -154,12 +149,11 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
     private fun clearMessages() {
         messages.forEach {
+            it.destroy()
             it.removeMessageCallback()
             it.dismiss()
         }
         messages.clear()
-        val containerView = requireActivity().findViewById<HahConstraintLayout>(R.id.container)
-        containerView.setOnClickListener(null)
     }
 
 
@@ -173,8 +167,10 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                             disableLoading()
                             clearMessages()
                             if (event.level.levelInfo.progress == LevelProgress.INTERMEDIATE) {
+                                val isLast = levelViewModel.isLastLevel()
                                 displayLevel(event.level)
-                                showContinueMessage(levelViewModel.isLastLevel())
+                                showContinueMessage(isLast)
+                                addNextLevelClickListener(isLastLevel = isLast)
                             } else {
                                 displayLevel(event.level)
                                 (requireActivity() as MainActivity)?.let {
@@ -197,6 +193,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                             when (event.solutionData.solution) {
                                 CORRECT -> {
                                     showCorrectEffects(event.solutionData, event.isLastLevel)
+                                    addNextLevelClickListener(isLastLevel = event.isLastLevel)
                                     binding.gameFieldContainer.notClickable = true
                                     hideHintsBadge()
                                 }
@@ -299,20 +296,18 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         solutionData: SolutionData,
         isLastLevel: Triple<Boolean, Boolean, String> = Triple(false, false, "")
     ) {
-
+        val currentLevel = levelViewModel.currentLevel.value.levelInfo.levelId
         cellDirector?.getCells()?.let { cells ->
             val cellsAnimation = animations.getCorrectSolutionAnimation(cells)
-
             cellsAnimation.doOnEnd {
-                if (isAdded) {
-
+                if (isAdded && currentLevel == levelViewModel.currentLevel.value.levelInfo.levelId) {
                     playMaxScoreAnimation(solutionData.score, solutionData.maxScore)
                     val winningMessage = getWinningMessage(solutionData)
                     val scoreMessage = getScoreMessage()
                     val winningMessageCallBack = object :
                         BaseTransientBottomBar.BaseCallback<MessageSnackBar>() {
                         override fun onDismissed(transientBottomBar: MessageSnackBar?, event: Int) {
-                            if (isVisible) {
+                            if (isVisible && currentLevel == levelViewModel.currentLevel.value.levelInfo.levelId) {
                                 super.onDismissed(transientBottomBar, event)
                                 scoreMessage.show()
                                 val scoreView =
@@ -323,7 +318,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                                         solutionData.score,
                                         solutionData.maxScore
                                     )
-                                scoreAnimation.start()
+                               scoreAnimation.start()
                             }
                         }
                     }
@@ -331,18 +326,22 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                     val scoreMessageCallback = object :
                         BaseTransientBottomBar.BaseCallback<MessageSnackBar>() {
                         override fun onDismissed(transientBottomBar: MessageSnackBar?, event: Int) {
-                            if (isVisible) {
+                            if (isVisible && currentLevel == levelViewModel.currentLevel.value.levelInfo.levelId) {
                                 super.onDismissed(transientBottomBar, event)
                                 showContinueMessage(isLastLevel)
                             }
                         }
                     }
                     scoreMessage.addCallback(scoreMessageCallback)
-                    winningMessage.show()
+                    if (currentLevel == levelViewModel.currentLevel.value.levelInfo.levelId) {
+                        winningMessage.show()
+                    }
                     soundPlayer.play(soundPlayer.sounds.correctSound, 0.01f)
                 }
             }
-            cellsAnimation.start()
+            if (currentLevel == levelViewModel.currentLevel.value.levelInfo.levelId) {
+                cellsAnimation.start()
+            }
         }
     }
 
@@ -388,7 +387,8 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             message = if (!isLastLevel.first && !isLastLevel.second) getString(R.string.tap_to_continue) else getString(
                 R.string.tap_to_finish
             ),
-            duration = Int.MAX_VALUE
+            duration = Int.MAX_VALUE,
+            isViewEnabled = false
         )
         messages.add(continueMessage)
         return continueMessage
@@ -419,55 +419,47 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         isLastLevel: Triple<Boolean, Boolean, String> = Triple(false, false, "")
     ) {
         val continueMessage = getContinueMessage(isLastLevel)
-        continueMessage.view.isClickable = true
-        val containerView = requireActivity().findViewById<HahConstraintLayout>(R.id.container)
-
-        containerView.setOnClickListener {
-            containerView.setOnClickListener(null)
-            continueMessage.view.setOnClickListener(null)
-            continueMessageAction(continueMessage, isLastLevel)
-        }
-        continueMessage.view.setOnClickListener {
-            containerView.setOnClickListener(null)
-            continueMessage.view.setOnClickListener(null)
-            continueMessageAction(continueMessage, isLastLevel)
-        }
         continueMessage.show()
     }
 
-    private fun continueMessageAction(
-        continueMessage: MessageSnackBar,
-        isLastLevel: Triple<Boolean, Boolean, String>
-    ) {
-        if (isVisible) {
-            activateBottomNavBar()
-            continueMessage.dismiss()
-            soundPlayer.play(soundPlayer.sounds.levelTransition, volume = 0.08f)
-            playTrainAnimation()
 
-            // game level final, player level final, language level final
-            when (isLastLevel) {
-                Triple(false, false, "") -> {
-                    levelViewModel.executeLevelCompleteActions(justNext = true)
-                }
+    private fun addNextLevelClickListener(isLastLevel: Triple<Boolean, Boolean, String>)
+    {
+        Log.d(TAG, "addNextLevelClickListener")
 
-                Triple(true, false, "") -> {
-                    levelViewModel.executeLevelCompleteActions(1001)
-                    soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.1f)
-                    findNavController().safeNavigate(R.id.action_navigation_level_to_navigation_game_pack_ending)
-                }
+        activity?.findViewById<FragmentContainerView>(R.id.fragments_container)?.setOnClickListener {
+            clearMessages()
+            activity?.findViewById<FragmentContainerView>(R.id.fragments_container)?.setOnClickListener(null)
+            doNextLevelAction(isLastLevel = isLastLevel)
+        }
+    }
 
-                Triple(false, true, "") -> {
-                    levelViewModel.executeLevelCompleteActions(1)
-                    soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.1f)
-                    findNavController().safeNavigate(R.id.action_navigation_level_to_navigation_players_pack_ending)
-                }
+    private fun doNextLevelAction(isLastLevel: Triple<Boolean, Boolean, String>)
+    {
+        soundPlayer.play(soundPlayer.sounds.levelTransition, volume = 0.08f)
+        playTrainAnimation()
+
+        when (isLastLevel) {
+            Triple(false, false, "") -> {
+                levelViewModel.executeLevelCompleteActions(justNext = true)
             }
-            if (isLastLevel.third != "") {
+
+            Triple(true, false, "") -> {
+                levelViewModel.executeLevelCompleteActions(1001)
+                soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.1f)
+                findNavController().safeNavigate(R.id.action_navigation_level_to_navigation_game_pack_ending)
+            }
+
+            Triple(false, true, "") -> {
                 levelViewModel.executeLevelCompleteActions(1)
                 soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.1f)
-                findNavController().safeNavigate(R.id.action_navigation_level_to_navigation_language_pack_ending)
+                findNavController().safeNavigate(R.id.action_navigation_level_to_navigation_players_pack_ending)
             }
+        }
+        if (isLastLevel.third != "") {
+            levelViewModel.executeLevelCompleteActions(1)
+            soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.1f)
+            findNavController().safeNavigate(R.id.action_navigation_level_to_navigation_language_pack_ending)
         }
     }
 

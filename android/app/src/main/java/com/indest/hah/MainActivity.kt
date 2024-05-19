@@ -121,6 +121,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         auth = Firebase.auth
+        levelViewModel.setAccountStatus(AccountStatus.LOADING)
 
         val gamesSignInClient = PlayGames.getGamesSignInClient(this)
         gamesSignInClient.isAuthenticated.addOnCompleteListener { isAuthenticatedTask: Task<AuthenticationResult> ->
