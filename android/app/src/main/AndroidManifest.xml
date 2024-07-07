@@ -44,6 +44,7 @@
         <service
             android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
             android:enabled="false"
+            android:foregroundServiceType="specialUse"
             android:exported="false">
             <meta-data
                 android:name="autoStoreLocales"
