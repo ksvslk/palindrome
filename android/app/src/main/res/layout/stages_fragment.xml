@@ -6,7 +6,7 @@
 <androidx.appcompat.widget.LinearLayoutCompat
     xmlns:promobutton="http://schemas.android.com/apk/res-auto"
     xmlns:anybutton="http://schemas.android.com/apk/res-auto"
-    android:saveEnabled="false"
+    android:saveEnabled="true"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
@@ -16,7 +16,7 @@
     app:showDividers="middle">
 
     <com.indest.hah.views.PromoButton
-        android:saveEnabled="false"
+        android:saveEnabled="true"
         android:id="@+id/new_promo_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
@@ -27,7 +27,7 @@
         promobutton:promo_button_title="Pre-register for 'Subliminal Words'" />
 
     <com.indest.hah.views.AnyButton
-        android:saveEnabled="false"
+        android:saveEnabled="true"
         android:id="@+id/submit_your_level_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
@@ -39,7 +39,7 @@
         anybutton:any_button_title="@string/submit_level" />
 
     <com.indest.hah.views.AnyButton
-        android:saveEnabled="false"
+        android:saveEnabled="true"
         android:id="@+id/international_levels_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
@@ -51,7 +51,7 @@
         anybutton:any_button_title="@string/international_levels" />
 
     <com.indest.hah.views.AnyButton
-        android:saveEnabled="false"
+        android:saveEnabled="true"
         android:id="@+id/player_levels_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
@@ -63,7 +63,7 @@
         anybutton:any_button_title="@string/player_levels" />
 
     <com.indest.hah.views.AnyButton
-        android:saveEnabled="false"
+        android:saveEnabled="true"
         android:id="@+id/game_levels_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"

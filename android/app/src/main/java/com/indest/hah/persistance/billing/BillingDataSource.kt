@@ -249,7 +249,9 @@ class BillingDataSource private constructor(
         purchases.
      */
     suspend fun refreshPurchases() {
-        val purchasesResult = billingClient.queryPurchasesAsync(BillingClient.SkuType.INAPP)
+        val purchasesResult = billingClient.queryPurchasesAsync(
+            QueryPurchasesParams.newBuilder().setProductType(BillingClient.ProductType.INAPP).build()
+        )
         val billingResult = purchasesResult.billingResult
         if (billingResult.responseCode != BillingClient.BillingResponseCode.OK) {
             Log.e(TAG, "Problem getting purchases: " + billingResult.debugMessage)

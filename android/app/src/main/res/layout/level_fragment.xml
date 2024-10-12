@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:saveEnabled="false"
+    android:saveEnabled="true"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,7 +10,7 @@
 
     <ProgressBar
         android:id="@+id/progress_circular"
-        android:saveEnabled="false"
+        android:saveEnabled="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:indeterminate="true"
@@ -25,7 +25,7 @@
 
     <com.indest.hah.views.CellContainer
         android:id="@+id/game_field_container"
-        android:saveEnabled="false"
+        android:saveEnabled="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="@dimen/default_large_margin"

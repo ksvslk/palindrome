@@ -9,7 +9,7 @@
     android:animateLayoutChanges="true"
     >
 <androidx.appcompat.widget.LinearLayoutCompat
-    android:saveEnabled="false"
+    android:saveEnabled="true"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
@@ -20,7 +20,7 @@
 
     <com.indest.hah.views.RewardButton
         android:id="@+id/reward_picture_button"
-        android:saveEnabled="false"
+        android:saveEnabled="true"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
         android:background="?attr/selectableItemBackground"
@@ -36,7 +36,7 @@
 
     <com.indest.hah.views.RewardButton
         android:id="@+id/reward_category_button"
-        android:saveEnabled="false"
+        android:saveEnabled="true"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
         android:background="?attr/selectableItemBackground"
@@ -51,7 +51,7 @@
         rewardbutton:subtitle_reward_unlocked="@string/instantly" />
 
     <com.indest.hah.views.RewardButton
-        android:saveEnabled="false"
+        android:saveEnabled="true"
         android:id="@+id/reward_place_letter"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
@@ -67,7 +67,7 @@
         rewardbutton:subtitle_reward_unlocked="@string/instantly" />
 
     <com.indest.hah.views.PurchaseButton
-        android:saveEnabled="false"
+        android:saveEnabled="true"
         android:id="@+id/purchase_button_pictures"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
@@ -80,7 +80,7 @@
         purchasebutton:visibility_case_1="@array/pictures_case_1" />
 
     <com.indest.hah.views.PurchaseButton
-        android:saveEnabled="false"
+        android:saveEnabled="true"
         android:id="@+id/purchase_button_clues"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
@@ -92,7 +92,7 @@
         purchasebutton:visibility_case_1="@array/clues_case_1" />
 
     <com.indest.hah.views.PurchaseButton
-        android:saveEnabled="false"
+        android:saveEnabled="true"
         android:id="@+id/purchase_button_letters"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
@@ -104,7 +104,7 @@
         purchasebutton:visibility_case_1="@array/letters_case_1" />
 
     <com.indest.hah.views.PurchaseButton
-        android:saveEnabled="false"
+        android:saveEnabled="true"
         android:id="@+id/purchase_no_sad_mode"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
@@ -116,7 +116,7 @@
         purchasebutton:visibility_case_1="@array/sad_mode_case_1" />
 
     <com.indest.hah.views.PurchaseButton
-        android:saveEnabled="false"
+        android:saveEnabled="true"
         android:id="@+id/purchase_all_inclusive_pack_2"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.indest.hah.views.HahConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:saveEnabled="false"
+    android:saveEnabled="true"
     android:id="@+id/container"
     android:fitsSystemWindows="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <nl.dionsegijn.konfetti.xml.KonfettiView
-        android:saveEnabled="false"
+        android:saveEnabled="true"
         android:id="@+id/konfettiView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.progressindicator.LinearProgressIndicator
-        android:saveEnabled="false"
+        android:saveEnabled="true"
         android:id="@+id/gameProgress"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
@@ -30,7 +30,7 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/watch_ad_top_view"
-        android:saveEnabled="false"
+        android:saveEnabled="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/level_number"
@@ -43,7 +43,7 @@
         android:translationZ="2dp"/>
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:saveEnabled="false"
+        android:saveEnabled="true"
         android:id="@+id/watch_ad_top"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -75,7 +75,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/yantramanav_bold"
-            android:saveEnabled="false"
+            android:saveEnabled="true"
             android:layout_gravity="start"
             android:gravity="start|center_vertical"
             android:text="-"/>
@@ -89,14 +89,14 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:gravity="end"
-            android:saveEnabled="false"
+            android:saveEnabled="true"
             app:strokeColor="?colorOutline"
             app:strokeWidth="1dp"
             app:srcCompat="@drawable/gb"/>
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:saveEnabled="false"
+        android:saveEnabled="true"
         android:id="@+id/trainLinearLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -108,7 +108,7 @@
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:saveEnabled="false"
+        android:saveEnabled="true"
         android:id="@+id/bottomNavView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -140,7 +140,7 @@
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:saveEnabled="false"
+        android:saveEnabled="true"
         app:layout_constraintBottom_toTopOf="@id/bottomNavView"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"

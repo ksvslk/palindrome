@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/simple_dialog_item_height"
     android:gravity="center"
-    android:saveEnabled="false"
+    android:saveEnabled="true"
     android:layout_marginHorizontal="@dimen/default_large_margin"
     tools:viewBindingIgnore="true">
 
@@ -14,7 +14,7 @@
         android:layout_gravity="center_vertical"
         android:background="?attr/selectableItemBackground"
         android:orientation="horizontal"
-        android:saveEnabled="false">
+        android:saveEnabled="true">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/purchase_button_icon"
@@ -23,7 +23,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="@dimen/default_large_margin"
             android:contentDescription="@string/rewarded_place_letter"
-            android:saveEnabled="false"
+            android:saveEnabled="true"
             android:tint="?colorOnPrimaryContainer"
             app:srcCompat="@drawable/letter_icon"
             tools:ignore="RtlSymmetry" />
@@ -34,14 +34,14 @@
             android:layout_weight="8"
             android:gravity="center_vertical"
             android:orientation="vertical"
-            android:saveEnabled="false">
+            android:saveEnabled="true">
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:orientation="vertical"
-                android:saveEnabled="false">
+                android:saveEnabled="true">
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/purchase_button_title"
@@ -50,7 +50,7 @@
                     android:layout_gravity="center_vertical"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:saveEnabled="false"
+                    android:saveEnabled="true"
                     android:text="@string/placeholder" />
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -62,7 +62,7 @@
                     android:gravity="center_vertical"
                     android:maxLines="1"
                     android:paddingHorizontal="@dimen/gap_between_letters"
-                    android:saveEnabled="false"
+                    android:saveEnabled="true"
                     android:text="@string/placeholder"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
                     android:textColor="?colorOnTertiary" />

@@ -1,7 +1,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:saveEnabled="false"
+    android:saveEnabled="true"
     tools:viewBindingIgnore="true"
     android:layout_width="match_parent"
     android:layout_height="@dimen/simple_dialog_item_height"
@@ -9,14 +9,14 @@
     android:orientation="horizontal">
 
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:saveEnabled="false"
+        android:saveEnabled="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:saveEnabled="false"
+            android:saveEnabled="true"
             android:id="@+id/any_button_icon"
             android:tint="?colorOnPrimaryContainer"
             android:layout_width="24dp"
@@ -27,14 +27,14 @@
             tools:ignore="RtlSymmetry" />
 
         <androidx.appcompat.widget.LinearLayoutCompat
-            android:saveEnabled="false"
+            android:saveEnabled="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clickable="false"
             android:orientation="vertical">
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:saveEnabled="false"
+                android:saveEnabled="true"
                 android:id="@+id/any_button_title"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/simple_dialog_item_height"

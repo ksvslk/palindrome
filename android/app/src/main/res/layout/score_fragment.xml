@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:saveEnabled="false"
+    android:saveEnabled="true"
     android:id="@+id/score_fragment"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -12,7 +12,7 @@
     app:showDividers="middle">
 
     <ViewFlipper
-        android:saveEnabled="false"
+        android:saveEnabled="true"
         android:id="@+id/score_flipper"
         android:paddingHorizontal="@dimen/default_large_margin"
         android:layout_width="match_parent"
@@ -21,14 +21,14 @@
         android:outAnimation="@android:anim/slide_out_right">
 
         <androidx.appcompat.widget.LinearLayoutCompat
-            android:saveEnabled="false"
+            android:saveEnabled="true"
             android:id="@+id/scores_dialog_title_1"
             android:layout_width="match_parent"
             android:layout_height="@dimen/simple_dialog_item_height"
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:saveEnabled="false"
+                android:saveEnabled="true"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_gravity="center_vertical"
@@ -36,7 +36,7 @@
                 app:srcCompat="@drawable/ic_baseline_stars_24" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:saveEnabled="false"
+                android:saveEnabled="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -51,14 +51,14 @@
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <androidx.appcompat.widget.LinearLayoutCompat
-            android:saveEnabled="false"
+            android:saveEnabled="true"
             android:id="@+id/scores_dialog_title_2"
             android:layout_width="match_parent"
             android:layout_height="@dimen/simple_dialog_item_height"
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:saveEnabled="false"
+                android:saveEnabled="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -66,7 +66,7 @@
                 app:srcCompat="@drawable/ic_baseline_stars_24"/>
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:saveEnabled="false"
+                android:saveEnabled="true"
                 android:id="@+id/player_score_improve_message"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

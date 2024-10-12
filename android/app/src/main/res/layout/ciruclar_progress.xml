@@ -1,6 +1,6 @@
 <com.google.android.material.progressindicator.CircularProgressIndicator xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:saveEnabled="false"
+    android:saveEnabled="true"
     tools:viewBindingIgnore="true"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"

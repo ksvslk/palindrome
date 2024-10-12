@@ -2,7 +2,7 @@
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:saveEnabled="false"
+    android:saveEnabled="true"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="@dimen/default_large_margin"
@@ -11,7 +11,7 @@
     tools:context=".fragments.TutorialFragment">
 
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:saveEnabled="false"
+        android:saveEnabled="true"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="3"
@@ -19,7 +19,7 @@
         android:orientation="vertical">
 
         <Button
-            android:saveEnabled="false"
+            android:saveEnabled="true"
             style="@style/Widget.Material3.Button"
             android:id="@+id/continueButton"
             android:layout_width="match_parent"
@@ -29,7 +29,7 @@
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:saveEnabled="false"
+        android:saveEnabled="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingVertical="@dimen/default_large_margin"
@@ -39,7 +39,7 @@
         android:textSize="@dimen/body_large_text_size" />
 
     <FrameLayout
-        android:saveEnabled="false"
+        android:saveEnabled="true"
         android:id="@+id/tutorialGameplay"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -52,7 +52,7 @@
         android:orientation="vertical">
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:saveEnabled="false"
+            android:saveEnabled="true"
             android:id="@+id/hand"
             android:layout_width="@dimen/box_text_size"
             android:layout_height="@dimen/box_text_size"
@@ -60,7 +60,7 @@
             android:elevation="2dp" />
 
         <androidx.gridlayout.widget.GridLayout
-            android:saveEnabled="false"
+            android:saveEnabled="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -72,7 +72,7 @@
             app:useDefaultMargins="true">
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:saveEnabled="false"
+                android:saveEnabled="true"
                 android:id="@+id/letter1"
                 android:layout_width="@dimen/box_size"
                 android:layout_height="@dimen/box_size"
@@ -85,7 +85,7 @@
                 android:textSize="@dimen/box_text_size" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:saveEnabled="false"
+                android:saveEnabled="true"
                 android:id="@+id/letter2"
                 android:layout_width="@dimen/box_size"
                 android:layout_height="@dimen/box_size"
@@ -98,7 +98,7 @@
                 android:textSize="@dimen/box_text_size" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:saveEnabled="false"
+                android:saveEnabled="true"
                 
                 android:id="@+id/letter3"
                 android:layout_width="@dimen/box_size"
@@ -112,7 +112,7 @@
                 android:textSize="@dimen/box_text_size" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:saveEnabled="false"
+                android:saveEnabled="true"
                 
                 android:id="@+id/r1"
                 android:layout_width="@dimen/arrow_size"
@@ -122,7 +122,7 @@
                 app:layout_gravity="center" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:saveEnabled="false"
+                android:saveEnabled="true"
                 
                 android:id="@+id/r2"
                 android:layout_width="@dimen/arrow_size"
@@ -132,7 +132,7 @@
                 app:layout_gravity="center" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:saveEnabled="false"
+                android:saveEnabled="true"
                 
                 android:id="@+id/r3"
                 android:layout_width="@dimen/arrow_size"
@@ -142,7 +142,7 @@
                 app:layout_gravity="center" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:saveEnabled="false"
+                android:saveEnabled="true"
                 
                 android:id="@+id/space1"
                 android:layout_width="@dimen/box_size"
@@ -154,7 +154,7 @@
                 android:textSize="@dimen/box_text_size" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:saveEnabled="false"
+                android:saveEnabled="true"
                 
                 android:id="@+id/space2"
                 android:layout_width="@dimen/box_size"
@@ -166,7 +166,7 @@
                 android:textSize="@dimen/box_text_size" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:saveEnabled="false"
+                android:saveEnabled="true"
                 
                 android:id="@+id/space3"
                 android:layout_width="@dimen/box_size"
@@ -178,7 +178,7 @@
                 android:textSize="@dimen/box_text_size" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:saveEnabled="false"
+                android:saveEnabled="true"
                 
                 android:id="@+id/l3"
                 android:layout_width="@dimen/arrow_size"
@@ -189,7 +189,7 @@
                 app:layout_gravity="center" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:saveEnabled="false"
+                android:saveEnabled="true"
                 
                 android:id="@+id/l2"
                 android:layout_width="@dimen/arrow_size"
@@ -200,7 +200,7 @@
                 app:layout_gravity="center" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:saveEnabled="false"
+                android:saveEnabled="true"
                 
                 android:id="@+id/l1"
                 android:layout_width="@dimen/arrow_size"

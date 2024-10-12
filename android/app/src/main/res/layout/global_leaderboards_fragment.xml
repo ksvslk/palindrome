@@ -2,7 +2,7 @@
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:anybutton="http://schemas.android.com/tools"
-    android:saveEnabled="false"
+    android:saveEnabled="true"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
@@ -13,7 +13,7 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/global_leaderboards_recyclerview"
-        android:saveEnabled="false"
+        android:saveEnabled="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clickable="true"

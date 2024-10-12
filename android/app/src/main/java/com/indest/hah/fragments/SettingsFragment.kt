@@ -163,10 +163,14 @@ class SettingsFragment : FullBottomSheetDialogFragment() {
             if (this.resolveActivity(context.packageManager) != null) {
                 startActivity(this)
             } else {
-                val browserIntent = Intent(Intent.ACTION_VIEW).apply {
-                    data = Uri.parse(url)
+                try {
+                    val browserIntent = Intent(Intent.ACTION_VIEW).apply {
+                        data = Uri.parse(url)
+                    }
+                    startActivity(browserIntent)
+                } catch (e:Exception) {
+                    Toast.makeText(context, "Could not open website", Toast.LENGTH_SHORT).show()
                 }
-                startActivity(browserIntent)
             }
         }
     }

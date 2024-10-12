@@ -158,7 +158,7 @@ apply plugin: 'com.google.gms.google-services'
 
 dependencies {
     def firebase_version = '32.1.1'
-    def play_games_services_version = "20.1.1"
+    def play_games_services_version = "20.1.2"
     def sqlite_version = "2.3.1"
     def hilt_version = "2.51.1"
     def coroutine_version = '1.7.3'
@@ -175,20 +175,20 @@ dependencies {
     def junit_version = '4.13.2'
     def coroutines_test_version = '1.5.2'
     def hilt_work_version = '1.0.0'
-    def fragment_version = '1.8.1'
-    def nav_version = '2.7.7'
-    def lifecycle_version = '2.7.0'
+    def fragment_version = '1.8.4'
+    def nav_version = '2.8.2'
+    def lifecycle_version = '2.8.6'
     def lifecycle_runtime_ktx = '2.8.3'
     def window_manager_version = '1.3.0'
-    def ads_version = '23.2.0'
-    def billing_version = '6.2.1'
+    def ads_version = '23.4.0'
+    def billing_version = '7.1.1'
     def konfetti_version = '2.0.2'
     def kotlinx_serialization = '1.3.3'
-    def androidx_collection = "1.4.0"
-    def profile_installer = "1.3.1"
+    def androidx_collection = "1.4.4"
+    def profile_installer = "1.4.1"
 
 
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.2")
     implementation "androidx.collection:collection-ktx:$androidx_collection"
     implementation platform("com.google.firebase:firebase-bom:$firebase_version")
 
@@ -240,7 +240,7 @@ dependencies {
     implementation "androidx.sqlite:sqlite-ktx:$sqlite_version"
     implementation "androidx.sqlite:sqlite-framework:$sqlite_version"
     kapt "androidx.hilt:hilt-compiler:$hilt_work_version"
-    implementation 'com.google.android.ump:user-messaging-platform:2.2.0'
+    implementation 'com.google.android.ump:user-messaging-platform:3.0.0'
 
     //debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
     testImplementation 'uk.co.jemos.podam:podam:7.2.5.RELEASE'
@@ -248,7 +248,7 @@ dependencies {
     testImplementation "junit:junit:$junit_version"
     testImplementation 'org.slf4j:slf4j-nop:1.7.25'
     testImplementation "com.google.truth:truth:1.1.3"
-    androidTestImplementation "androidx.test.espresso:espresso-core:3.5.1"
+    androidTestImplementation "androidx.test.espresso:espresso-core:3.6.1"
     androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_test_version"
 }
 

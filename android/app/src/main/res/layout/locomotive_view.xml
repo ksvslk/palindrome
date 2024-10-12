@@ -1,6 +1,6 @@
 <androidx.appcompat.widget.AppCompatImageView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:saveEnabled="false"
+    android:saveEnabled="true"
     tools:viewBindingIgnore="true"
     android:layout_width="@dimen/first_carriage_width"
     android:layout_height="@dimen/carriage_height"

@@ -1,6 +1,6 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:saveEnabled="false"
+    android:saveEnabled="true"
     tools:viewBindingIgnore="true"
     android:layout_width="match_parent"
     android:layout_height="@dimen/simple_dialog_item_height"
@@ -8,7 +8,7 @@
     android:layout_marginRight="@dimen/default_margin"
     android:gravity="center">
     <TextView
-        android:saveEnabled="false"
+        android:saveEnabled="true"
         android:id="@+id/levelSelectView"
         android:gravity="center"
         android:layout_width="match_parent"

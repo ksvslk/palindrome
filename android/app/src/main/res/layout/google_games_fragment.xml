@@ -6,7 +6,7 @@
     android:layout_width="match_parent">
 <androidx.appcompat.widget.LinearLayoutCompat
     xmlns:anybutton="http://schemas.android.com/apk/res-auto"
-    android:saveEnabled="false"
+    android:saveEnabled="true"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
@@ -16,7 +16,7 @@
     android:orientation="vertical">
 
     <com.indest.hah.views.AnyButton
-        android:saveEnabled="false"
+        android:saveEnabled="true"
         android:id="@+id/global_leaderboards_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
@@ -28,7 +28,7 @@
         anybutton:any_button_title="@string/global_leaderboards" />
 
     <com.indest.hah.views.AnyButton
-        android:saveEnabled="false"
+        android:saveEnabled="true"
         android:id="@+id/leaderboards_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
@@ -40,7 +40,7 @@
         anybutton:any_button_title="@string/leaderboard" />
 
     <com.indest.hah.views.AnyButton
-        android:saveEnabled="false"
+        android:saveEnabled="true"
         android:id="@+id/player_levels_leaderboard_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
@@ -52,7 +52,7 @@
         anybutton:any_button_title="@string/player_leaderboard_text" />
 
     <com.indest.hah.views.AnyButton
-        android:saveEnabled="false"
+        android:saveEnabled="true"
         android:id="@+id/achievements_button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/simple_dialog_item_height"
@@ -64,7 +64,7 @@
         anybutton:any_button_title="@string/achievements" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:saveEnabled="false"
+        android:saveEnabled="true"
         android:id="@+id/alternative_screen"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -72,7 +72,7 @@
         android:orientation="horizontal">
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:saveEnabled="false"
+            android:saveEnabled="true"
             android:id="@+id/alternative_text"
             android:gravity="center"
             android:layout_width="match_parent"

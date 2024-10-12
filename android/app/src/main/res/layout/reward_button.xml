@@ -1,7 +1,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:saveEnabled="false"
+    android:saveEnabled="true"
     tools:viewBindingIgnore="true"
     android:layout_width="match_parent"
     android:layout_height="@dimen/simple_dialog_item_height"
@@ -9,14 +9,14 @@
     android:orientation="horizontal">
 
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:saveEnabled="false"
+        android:saveEnabled="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:saveEnabled="false"
+            android:saveEnabled="true"
             tools:viewBindingIgnore="true"
             android:id="@+id/reward_button_icon"
             android:layout_width="24dp"
@@ -28,7 +28,7 @@
             tools:ignore="RtlSymmetry" />
 
         <ViewFlipper
-            android:saveEnabled="false"
+            android:saveEnabled="true"
             android:id="@+id/reward_button_flipper"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -38,14 +38,14 @@
             android:outAnimation="@android:anim/slide_out_right">
 
             <androidx.appcompat.widget.LinearLayoutCompat
-                android:saveEnabled="false"
+                android:saveEnabled="true"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:orientation="vertical">
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:saveEnabled="false"
+                    android:saveEnabled="true"
                     android:id="@+id/reward_button_flipper_revealed_title"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/simple_dialog_item_height_almost_half"
@@ -55,7 +55,7 @@
                     android:text="@string/placeholder"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:saveEnabled="false"
+                    android:saveEnabled="true"
                     android:id="@+id/reward_button_flipper_revealed_subtitle"
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/simple_dialog_item_height_almost_half"
@@ -70,14 +70,14 @@
             </androidx.appcompat.widget.LinearLayoutCompat>
 
             <androidx.appcompat.widget.LinearLayoutCompat
-                android:saveEnabled="false"
+                android:saveEnabled="true"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:orientation="vertical">
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:saveEnabled="false"
+                    android:saveEnabled="true"
                     android:id="@+id/reward_button_flipper_hidden_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

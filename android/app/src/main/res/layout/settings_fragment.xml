@@ -11,7 +11,7 @@
         android:gravity="center"
         android:orientation="vertical"
         android:paddingVertical="@dimen/default_large_margin"
-        android:saveEnabled="false"
+        android:saveEnabled="true"
         app:divider="@drawable/divider"
         app:showDividers="middle">
 
@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
-            android:saveEnabled="false"
+            android:saveEnabled="true"
             android:layout_marginHorizontal="@dimen/default_large_margin"
             android:weightSum="7">
 
@@ -32,7 +32,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:orientation="horizontal"
-                android:saveEnabled="false">
+                android:saveEnabled="true">
 
                 <com.google.android.material.materialswitch.MaterialSwitch
                     android:id="@+id/vibration_switch"
@@ -41,7 +41,7 @@
                     android:layout_gravity="center_vertical"
                     android:clickable="false"
                     android:layoutDirection="rtl"
-                    android:saveEnabled="false"
+                    android:saveEnabled="true"
                     android:text="@string/vibration_text"
                     android:gravity="center|start"
                     android:maxLines="1"
@@ -63,7 +63,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:orientation="horizontal"
-                android:saveEnabled="false">
+                android:saveEnabled="true">
 
                 <com.google.android.material.materialswitch.MaterialSwitch
                     android:id="@+id/sound_switch"
@@ -72,7 +72,7 @@
                     android:layout_gravity="center_vertical"
                     android:clickable="false"
                     android:layoutDirection="rtl"
-                    android:saveEnabled="false"
+                    android:saveEnabled="true"
                     android:gravity="center|start"
                     android:maxLines="1"
                     app:autoSizeMaxTextSize="@dimen/body_large_text_size"
@@ -90,7 +90,7 @@
             android:clickable="true"
             android:focusable="true"
             android:orientation="horizontal"
-            android:saveEnabled="false"
+            android:saveEnabled="true"
             anybutton:any_button_icon="@drawable/baseline_help_center_black_36"
             anybutton:any_button_title="@string/tutorial" />
 
@@ -103,7 +103,7 @@
             android:clickable="true"
             android:focusable="true"
             android:orientation="horizontal"
-            android:saveEnabled="false"
+            android:saveEnabled="true"
             anybutton:any_button_icon="@drawable/baseline_rate_review_black_36"
             anybutton:any_button_title="@string/rate_game" />
 
@@ -115,7 +115,7 @@
             android:clickable="true"
             android:focusable="true"
             android:orientation="horizontal"
-            android:saveEnabled="false"
+            android:saveEnabled="true"
             anybutton:any_button_icon="@drawable/x_logo"
             anybutton:any_button_title="@string/follow" />
 
@@ -127,7 +127,7 @@
             android:clickable="true"
             android:focusable="true"
             android:orientation="horizontal"
-            android:saveEnabled="false"
+            android:saveEnabled="true"
             anybutton:any_button_icon="@drawable/baseline_share_black_36"
             anybutton:any_button_title="@string/share" />
 
@@ -139,7 +139,7 @@
             android:clickable="true"
             android:focusable="true"
             android:orientation="horizontal"
-            android:saveEnabled="false"
+            android:saveEnabled="true"
             anybutton:any_button_icon="@drawable/es"
             anybutton:any_button_title="@string/menu_language" />
 
@@ -151,7 +151,7 @@
             android:clickable="true"
             android:focusable="true"
             android:orientation="horizontal"
-            android:saveEnabled="false"
+            android:saveEnabled="true"
             android:gravity="center|start"
             android:layout_marginVertical="@dimen/default_padding_text"
             android:maxLines="1"

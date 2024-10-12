@@ -263,7 +263,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                 menuItem.isEnabled = true
                 when (menuItem.itemId) {
                     R.id.navigation_google_games -> {
-                        menuItem.setIcon(R.drawable.games_controller_grey)
+                        menuItem.setIcon(R.drawable.games_controller_vector)
                     }
 
                     R.id.navigation_goods -> {
@@ -271,7 +271,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                     }
 
                     R.id.navigation_stages -> {
-                        menuItem.setIcon(R.drawable.baseline_list_alt_black_36)
+                        menuItem.setIcon(R.drawable.baseline_format_list_bulleted_24)
                     }
 
                     R.id.navigation_settings -> {
