@@ -1,9 +1,10 @@
 package com.indest.hah.persistance.dto
 
 import androidx.annotation.Keep
+import kotlinx.serialization.Serializable
 
 @Keep
-@kotlinx.serialization.Serializable
+@Serializable
 data class SaveGame(
     val game:List<Level>,
     val interval:List<Interval>,
