@@ -26,6 +26,7 @@ class ScoresFragment : FullBottomSheetDialogFragment() {
     private val generalViewModel: GeneralViewModel by activityViewModels()
     private val levelViewModel: LevelViewModel by activityViewModels()
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
