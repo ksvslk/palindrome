@@ -39,6 +39,12 @@ interface LevelDao {
     @Query("select * from level_info_table where country_code = :cc")
     suspend fun getLevelsForCountry(cc: String): List<Level>
 
+    @Query("select count(*) from level_info_table where level_id <= 100 and progress in (1, 2)")
+    suspend fun getUnlockedGameLevelsCount(): Int
+
+    @Query("select count(*) from level_info_table where country_code = :cc and progress in (1, 2)")
+    suspend fun getUnlockedCountryLevelsCount(cc: String): Int
+
     @Query("delete from letter_info_table where owner_id = :levelNr")
     suspend fun deleteLetterInfo(levelNr: Int)
 

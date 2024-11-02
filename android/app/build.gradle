@@ -59,7 +59,7 @@ android {
         debug {
             // Enables code shrinking, obfuscation, and optimization for only
             // your project's release build type.
-            minifyEnabled true
+            minifyEnabled false
 
             // Includes the default ProGuard rules files that are packaged with
             // the Android Gradle plugin. To learn more, go to the section about
@@ -201,7 +201,6 @@ dependencies {
     implementation "androidx.sqlite:sqlite-ktx:2.4.0"
     implementation "androidx.sqlite:sqlite-framework:2.4.0"
     kapt "androidx.hilt:hilt-compiler:1.2.0"
-    implementation 'com.google.android.ump:user-messaging-platform:3.0.0'
 
     //debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
     testImplementation 'uk.co.jemos.podam:podam:7.2.5.RELEASE'

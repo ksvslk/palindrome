@@ -22,7 +22,7 @@ class CompetitionFragment : FullBottomSheetDialogFragment() {
         _binding = b
         activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         val competition = levelViewModel.getCompetitionStatus()
-        if (competition.show && !competition.accessedFromMenu || true) {
+        if (competition.show && !competition.accessedFromMenu) {
            // binding.limitedAmountText.text = "Limited amount - ${competition.prizesLeft} left!"
             binding.competitionAnnouncement.visibility = View.VISIBLE
         }

@@ -14,11 +14,43 @@
       },
       "oauth_client": [
         {
+          "client_id": "1023077026447-5hakc3k918nv6jhhvmfg7lclt0eoq2di.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.indest.hah",
+            "certificate_hash": "8a452072e615cf3aeb26a6669f66d0bef246902a"
+          }
+        },
+        {
+          "client_id": "1023077026447-crcb9117p1vndks75v0g7nptsqh0oa3u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.indest.hah",
+            "certificate_hash": "5d1be1fc2a7941988251bc4d671fea70bbe97c61"
+          }
+        },
+        {
+          "client_id": "1023077026447-fpt9bimgoh62gr9103bisg02n03eupd5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.indest.hah",
+            "certificate_hash": "cb583d29c2ec5d1e165a8548b82e7466cf6d0680"
+          }
+        },
+        {
           "client_id": "1023077026447-j5o3ba97jtjdacd9bd0jfagk7ansfhbk.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.indest.hah",
             "certificate_hash": "3ef7b8f3f4f5cb25c11abe5c8ea666dbf56f7ac5"
+          }
+        },
+        {
+          "client_id": "1023077026447-m8bm5immi3l159daqcdjvefqbabimdpv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.indest.hah",
+            "certificate_hash": "603f1a405b81549a9e6a0d029ec8f7d42f4e473b"
           }
         },
         {

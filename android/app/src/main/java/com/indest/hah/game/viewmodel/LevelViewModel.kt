@@ -181,9 +181,7 @@ class LevelViewModel @Inject constructor(
 
     suspend fun isEnrollingToCompetition(): Boolean {
         val language = _currentLevel.value.levelInfo.countryCode
-        val levels = levelRepository.getLevelsForCountry(language)
-        val count = levels.count { it.progress == LevelProgress.IN_PROGRESS }
-        return count == 1
+        return levelRepository.isNewPlayer(language)
     }
 
     fun setPictureDownloaded(isPresent: Boolean) {

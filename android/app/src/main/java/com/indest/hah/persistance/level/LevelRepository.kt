@@ -106,6 +106,14 @@ class LevelRepository @Inject constructor(
     suspend fun getLevelsForCountry(cc:String):List<LevelData>
         = levelDao.getLevelsForCountry(cc).map { it.levelInfo }
 
+    suspend fun isNewPlayer(cc:String): Boolean {
+        return if (cc == "gb") {
+            levelDao.getUnlockedGameLevelsCount() <= 2
+        } else {
+            levelDao.getUnlockedCountryLevelsCount(cc) <= 2
+        }
+    }
+
     suspend fun getAllPalindromes():Map<String,List<String>> {
         return levelDao.getAllPalindromes()
     }

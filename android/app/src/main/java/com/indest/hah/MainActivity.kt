@@ -50,6 +50,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.indest.hah.ads.RewardType
 import com.indest.hah.databinding.ActivityMainBinding
+import com.indest.hah.fragments.CompetitionFragment
 import com.indest.hah.fragments.PrizeFragment
 import com.indest.hah.fx.SoundPlayer
 import com.indest.hah.game.viewmodel.CompetitionAnnouncement
@@ -291,36 +292,18 @@ class MainActivity : AppCompatActivity() {
                             lifecycleScope.launch {
                                 lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED)
                                 {
-                                    levelViewModel.gameEventFlow.collect { event ->
-                                        when (event) {
-                                            is LevelViewModel.GameEvent.DisplayLevel -> {
-                                                val isReadyForCompetition = levelViewModel.isEnrollingToCompetition()
-                                                val currentInfo =
-                                                    levelViewModel.getCompetitionStatus()
-                                                if (!currentInfo.show && !currentInfo.triedToParticipate) {
-                                                    if (isReadyForCompetition) {
-                                                        levelViewModel.setCompetitionStatus(
-                                                            currentInfo.copy(
-                                                                triedToParticipate = true
-                                                            )
-                                                        )
-                                                        tryToParticipateInCompetition()
-                                                    }
-                                                }
-                                                if (!currentInfo.competitionEnded) {
-                                                    if (levelViewModel.currentRelativeLevelNumber == 20 && !currentInfo.triedToOfferPrize) {
-                                                        levelViewModel.setCompetitionStatus(
-                                                            currentInfo.copy(
-                                                                triedToOfferPrize = true
-                                                            )
-                                                        )
-                                                        tryToObtainPromoCode()
-                                                    }
-                                                }
-                                            }
-
-                                            LevelViewModel.GameEvent.ShowLoading -> {}
-                                            is LevelViewModel.GameEvent.SolutionResult -> {}
+                                    val isReadyForCompetition =
+                                        levelViewModel.isEnrollingToCompetition()
+                                    val currentInfo =
+                                        levelViewModel.getCompetitionStatus()
+                                    if (!currentInfo.show && !currentInfo.triedToParticipate) {
+                                        if (isReadyForCompetition) {
+                                            levelViewModel.setCompetitionStatus(
+                                                currentInfo.copy(
+                                                    triedToParticipate = true
+                                                )
+                                            )
+                                            tryToParticipateInCompetition()
                                         }
                                     }
                                 }
@@ -340,13 +323,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun tryToParticipateInCompetition() {
-        Log.d(TAG, "tryToParticipateInCompetition")
         auth.currentUser?.let { user ->
-            Log.d(TAG, "user:exists")
             val playerName = user.displayName
             val uid = user.uid
-            Log.d(TAG, "Current user: $playerName and uid: $uid")
-
             val db = Firebase.firestore
             val docRef = db.collection("competitions/reach_level/participants/").document(uid)
             val competitionRef = db.collection("competitions/").document("reach_level")
@@ -360,7 +339,6 @@ class MainActivity : AppCompatActivity() {
                 if (prizesLeft <= 0) {
                     CompetitionAnnouncement()
                 } else if (snapshot.exists() && finished == false) {
-                    showCompetitionToast(prizesLeft)
                     CompetitionAnnouncement(show = true, prizesLeft)
                 } else if (snapshot.exists() && promoLink?.isNotEmpty() == true) {
                     CompetitionAnnouncement()
@@ -374,7 +352,12 @@ class MainActivity : AppCompatActivity() {
                     CompetitionAnnouncement(show = true, prizesLeft)
                 }
             }.addOnSuccessListener { result ->
-                Log.d(TAG, "Transaction completed successfully. State is $result.")
+                if (result.show && result.prizesLeft > 0) {
+                    supportFragmentManager.commit {
+                        addToBackStack(CompetitionFragment().tag)
+                        add(CompetitionFragment(), CompetitionFragment().tag)
+                    }
+                }
                 levelViewModel.setCompetitionStatus(result)
             }.addOnFailureListener { e ->
                 levelViewModel.setCompetitionStatus(CompetitionAnnouncement())
@@ -383,34 +366,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun showCompetitionToast(prizesLeft: Long) {
-        val toast = Toast.makeText(
-            applicationContext,
-            "Reach level 20 to win prize! Only $prizesLeft prizes left!",
-            Toast.LENGTH_LONG
-        )
-        toast.show()
-        levelViewModel.logCompetitionRelatedEvent(FirebaseCustom.Events.COMPETITION_20_ANNOUNCED)
-    }
-
     private fun tryToObtainPromoCode() {
-        Log.d(TAG, "tryToObtainPromoCode")
         val user = auth.currentUser
         val db = Firebase.firestore
         user?.let {
-            Log.d(TAG, "got firebase user")
             val uid = user.uid
             val playerRef = db.collection("competitions/reach_level/participants/").document(uid)
             playerRef.get().addOnSuccessListener { playerDocSnap ->
                 if (playerDocSnap.getBoolean("finished") == false) {
-                    Log.d(TAG, "Not finished yet")
                     db.collection("competitions/reach_level/promo_codes/").limit(1)
                         .get()
                         .addOnSuccessListener {
                             if (it.size() == 1) {
                                 val promoLink = it.documents[0]["promo_link"]
-                                Log.d(TAG, "Found promo code: $promoLink")
-
                                 val promoCodeRef =
                                     db.collection("competitions/reach_level/promo_codes/")
                                         .document(it.documents[0].id)
@@ -430,7 +398,6 @@ class MainActivity : AppCompatActivity() {
                                         FieldValue.increment(-1)
                                     )
                                 }.addOnSuccessListener {
-                                    Log.d(TAG, "Successfully transferred promo code to player!")
                                     announceEndWithReward(promoCode = promoLink as String)
                                 }.addOnFailureListener { ex ->
                                     Log.d(
@@ -620,6 +587,18 @@ class MainActivity : AppCompatActivity() {
                         }
 
                         is LevelViewModel.VariousEvent.SubmitScore -> {
+                            val currentInfo =
+                                levelViewModel.getCompetitionStatus()
+                            if (!currentInfo.competitionEnded) {
+                                if (levelViewModel.currentRelativeLevelNumber == 19 && !currentInfo.triedToOfferPrize) {
+                                    levelViewModel.setCompetitionStatus(
+                                        currentInfo.copy(
+                                            triedToOfferPrize = true
+                                        )
+                                    )
+                                    tryToObtainPromoCode()
+                                }
+                            }
                             submitScore(
                                 event.score,
                                 event.playerLevels,
