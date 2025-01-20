@@ -323,46 +323,50 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun tryToParticipateInCompetition() {
-        auth.currentUser?.let { user ->
-            val playerName = user.displayName
-            val uid = user.uid
-            val db = Firebase.firestore
-            val docRef = db.collection("competitions/reach_level/participants/").document(uid)
-            val competitionRef = db.collection("competitions/").document("reach_level")
-            db.runTransaction { transaction ->
-                val snapshot = transaction.get(docRef)
-                val snapshotComp = transaction.get(competitionRef)
-                val prizesLeft = snapshotComp.getLong("prizes_left")!!
-                val finished = snapshot.getBoolean("finished")
-                val promoLink = snapshot.getString("promo_link")
+        try {
+            auth.currentUser?.let { user ->
+                val playerName = user.displayName
+                val uid = user.uid
+                val db = Firebase.firestore
+                val docRef = db.collection("competitions/reach_level/participants/").document(uid)
+                val competitionRef = db.collection("competitions/").document("reach_level")
+                db.runTransaction { transaction ->
+                    val snapshot = transaction.get(docRef)
+                    val snapshotComp = transaction.get(competitionRef)
+                    val prizesLeft = snapshotComp.getLong("prizes_left")!!
+                    val finished = snapshot.getBoolean("finished")
+                    val promoLink = snapshot.getString("promo_link")
 
-                if (prizesLeft <= 0) {
-                    CompetitionAnnouncement()
-                } else if (snapshot.exists() && finished == false) {
-                    CompetitionAnnouncement(show = true, prizesLeft)
-                } else if (snapshot.exists() && promoLink?.isNotEmpty() == true) {
-                    CompetitionAnnouncement()
-                } else {
-                    val data = hashMapOf(
-                        "finished" to false,
-                        "player_name" to playerName,
-                        "promo_link" to ""
-                    )
-                    transaction.set(docRef, data)
-                    CompetitionAnnouncement(show = true, prizesLeft)
-                }
-            }.addOnSuccessListener { result ->
-                if (result.show && result.prizesLeft > 0) {
-                    supportFragmentManager.commit {
-                        addToBackStack(CompetitionFragment().tag)
-                        add(CompetitionFragment(), CompetitionFragment().tag)
+                    if (prizesLeft <= 0) {
+                        CompetitionAnnouncement()
+                    } else if (snapshot.exists() && finished == false) {
+                        CompetitionAnnouncement(show = true, prizesLeft)
+                    } else if (snapshot.exists() && promoLink?.isNotEmpty() == true) {
+                        CompetitionAnnouncement()
+                    } else {
+                        val data = hashMapOf(
+                            "finished" to false,
+                            "player_name" to playerName,
+                            "promo_link" to ""
+                        )
+                        transaction.set(docRef, data)
+                        CompetitionAnnouncement(show = true, prizesLeft)
                     }
+                }.addOnSuccessListener { result ->
+                    if (result.show && result.prizesLeft > 0) {
+                        supportFragmentManager.commit {
+                            addToBackStack(CompetitionFragment().tag)
+                            add(CompetitionFragment(), CompetitionFragment().tag)
+                        }
+                    }
+                    levelViewModel.setCompetitionStatus(result)
+                }.addOnFailureListener { e ->
+                    levelViewModel.setCompetitionStatus(CompetitionAnnouncement())
+                    Log.w(TAG, "Transaction failure - not added to competition", e)
                 }
-                levelViewModel.setCompetitionStatus(result)
-            }.addOnFailureListener { e ->
-                levelViewModel.setCompetitionStatus(CompetitionAnnouncement())
-                Log.w(TAG, "Transaction failure - not added to competition", e)
             }
+        } catch (_: Exception) {
+
         }
     }
 
