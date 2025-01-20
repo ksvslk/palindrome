@@ -127,7 +127,6 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         auth = Firebase.auth
         levelViewModel.setAccountStatus(AccountStatus.LOADING)
 
