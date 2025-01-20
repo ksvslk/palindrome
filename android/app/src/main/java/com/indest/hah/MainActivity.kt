@@ -142,7 +142,6 @@ class MainActivity : AppCompatActivity() {
 
         generalViewModel.toString()
         applyCustomWindowInsets()
-
         setUpNavController()
         collectRewardInfo()
         collectVariousEvents()
