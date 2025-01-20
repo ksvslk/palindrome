@@ -184,7 +184,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
     private fun setPlayerNameAndSignedInStatus(accountStatus: AccountStatus) {
         if (levelViewModel.accountStatus.value !in setOf(
                 AccountStatus.SIGNED_IN,
