@@ -137,7 +137,6 @@ class MainActivity : AppCompatActivity() {
         }
         requestLatestConsentInformation()
         MobileAds.initialize(applicationContext)
-
         generalViewModel.toString()
         applyCustomWindowInsets()
         setUpNavController()
