@@ -365,8 +365,7 @@ class MainActivity : AppCompatActivity() {
                     Log.w(TAG, "Transaction failure - not added to competition", e)
                 }
             }
-        } catch (_: Exception) {
-        }
+        } catch (_: Exception) { }
     }
 
     private fun tryToObtainPromoCode() {
