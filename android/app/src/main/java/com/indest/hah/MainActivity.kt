@@ -336,7 +336,6 @@ class MainActivity : AppCompatActivity() {
                     val prizesLeft = snapshotComp.getLong("prizes_left")!!
                     val finished = snapshot.getBoolean("finished")
                     val promoLink = snapshot.getString("promo_link")
-
                     if (prizesLeft <= 0) {
                         CompetitionAnnouncement()
                     } else if (snapshot.exists() && finished == false) {
