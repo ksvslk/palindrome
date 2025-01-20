@@ -144,7 +144,6 @@ class MainActivity : AppCompatActivity() {
         collectVariousEvents()
         collectPlayerLevelsForNotification()
         collectNewLevelCount()
-
         levelViewModel.downloadPromos()
 
         binding.root.doOnNextLayout {
