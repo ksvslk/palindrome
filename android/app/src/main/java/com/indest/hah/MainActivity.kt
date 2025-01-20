@@ -226,7 +226,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
     private fun showNewLevelMessage(
         player: String,
         lastAddedLevel: Int,
