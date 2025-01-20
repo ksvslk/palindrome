@@ -103,7 +103,6 @@ class MainActivity : AppCompatActivity() {
     companion object {
         const val PREFERENCE_NAME = "shared_preference"
         const val PREFERENCE_MODE = Context.MODE_PRIVATE
-
         const val FIRST_TIME_MIGRATION = "first_time_migration"
         const val SELECTED_LANGUAGE = "selected_language"
         const val STATUS_DONE = "status_done"
@@ -262,7 +261,6 @@ class MainActivity : AppCompatActivity() {
                 }
                 .setAnimationMode(ANIMATION_MODE_FADE)
         }
-
         val params = snack.view.layoutParams as FrameLayout.LayoutParams
         params.gravity = Gravity.TOP
         snack.view.layoutParams = params
