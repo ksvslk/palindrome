@@ -30,18 +30,22 @@ jobs:
       - name: Extract version from tag
         uses: damienaicheh/extract-version-from-tag-action@v1.0.0
 
+       # Generate version code for instant version
+      - name: Generate version code for instant version
+        run:  echo "INSTANT_VERSION_CODE=$((NUMBER_OF_COMMITS+1000))" >> $GITHUB_ENV
+        
       # Update AndroidManifest.xml (instant version)
       - name: Update AndroidManifest.xml (instant version)
         uses: damienaicheh/update-android-version-manifest-action@v1.0.0
         with:
           android-manifest-path: './app/src/instant/AndroidManifest.xml'
-          version-code: ${{ env.NUMBER_OF_COMMITS }}
+          version-code: ${{ env.INSTANT_VERSION_CODE }}
           version-name: '${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}'
           print-file: true
 
       # Generate version code for regular version
       - name: Generate version code for regular version
-        run:  echo "REGULAR_VERSION_CODE=$((NUMBER_OF_COMMITS+1000))" >> $GITHUB_ENV
+        run:  echo "REGULAR_VERSION_CODE=$((NUMBER_OF_COMMITS+2000))" >> $GITHUB_ENV
 
       # Update AndroidManifest.xml (regular version)
       - name: Update AndroidManifest.xml (regular version)
@@ -57,7 +61,7 @@ jobs:
         uses: damienaicheh/update-android-version-gradle-action@v1.0.0
         with:
           build-gradle-path: './app/build.gradle'
-          version-code: ${{ env.NUMBER_OF_COMMITS }}
+          version-code: ${{ env.REGULAR_VERSION_CODE }}
           version-name: '${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}'
           print-file: true
 
