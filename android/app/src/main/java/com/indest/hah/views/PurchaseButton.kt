@@ -131,6 +131,7 @@ class PurchaseButton : LinearLayoutCompat {
                 }
             }
         }
+
         when {
             purchasedInSomeWay -> {
                 this.setOnClickListener(null)

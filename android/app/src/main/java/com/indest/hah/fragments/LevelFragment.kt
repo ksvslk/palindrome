@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.animation.doOnEnd
 import androidx.core.view.*
@@ -40,9 +41,11 @@ import com.indest.hah.other.VaryingProbability
 import com.indest.hah.other.safeNavigate
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.level.LevelProgress
+import com.indest.hah.views.ButtonState
 import com.indest.hah.views.Cell
 import com.indest.hah.views.MessageSnackBar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.lastOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -186,6 +189,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                                     showPlayerCenteredScores()
                                 }
                                 showPromoDialog()
+                                    showAd()
                             }
                         }
 
@@ -217,6 +221,13 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
         }
     }
 
+    private fun showAd() {
+            if (!generalViewModel.isSadModePurchased()) {
+                if (levelViewModel.currentRelativeLevelNumber > 8) {
+                    generalViewModel.showRewardedVideo(requireActivity() as AppCompatActivity, RewardType.SAD_MODE)
+                }
+            }
+    }
 
     private fun enableLoading() {
         deactivateBottomNavBar()

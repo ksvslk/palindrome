@@ -24,41 +24,4 @@ class HahConstraintLayout : ConstraintLayout {
         defStyleRes: Int
     ) : super(context!!, attrs, defStyleAttr, defStyleRes)
 
-    var isSadMode: Boolean = true
-    private var paint: Paint
-
-    init {
-        val cm = ColorMatrix()
-        cm.setSaturation(0f)
-        paint = Paint()
-        paint.colorFilter = ColorMatrixColorFilter(cm)
-    }
-
-    override fun dispatchDraw(canvas: Canvas) {
-        if (isSadMode) {
-            val count = childCount
-            for (i in 0 until count) {
-                val child = getChildAt(i)
-                if (child.tag == "AdViewTag") {
-                    // Draw this child with different saturation
-                    canvas.save()
-                    canvas.concat(child.matrix)
-                    canvas.translate(child.left.toFloat(), child.top.toFloat())
-                    child.draw(canvas)
-                    canvas.restore()
-                } else {
-                    // Apply general saturation adjustment
-                    canvas.saveLayer(null, paint)
-                    canvas.concat(child.matrix)
-                    canvas.translate(child.left.toFloat(), child.top.toFloat())
-                    child.draw(canvas)
-                    canvas.restore()
-                }
-            }
-        }
-        else {
-            super.dispatchDraw(canvas)
-        }
-    }
-
 }

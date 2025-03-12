@@ -612,41 +612,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun collectRewardInfo() {
-        binding.watchAdTop.setOnClickListener {
-            generalViewModel.showRewardedVideo(this, RewardType.SAD_MODE)
-            binding.watchAdTop.visibility = View.GONE
-        }
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED)
             {
                 launch {
-                    generalViewModel.rewardState.distinctUntilChangedBy { it }.collect {
-                        if (it == RewardType.SAD_MODE) {
-                            levelViewModel.resetIntervalCount(getString(R.string.sad_mode_interval))
-                            executeSadModeEffects(false)
-                            generalViewModel.updateRewardState(RewardType.NONE)
-                            levelViewModel.logRewardGiven(RewardType.SAD_MODE)
-                        } else if (it == RewardType.SAD_AD_FAILED) {
-                            executeSadModeEffects(true)
-                            generalViewModel.updateRewardState(RewardType.NONE)
-                        }
-                    }
-                }
-
-                launch {
                     generalViewModel.buttonState.collect { buttonInfo ->
                         if (buttonInfo.sadMode && buttonInfo.state == ButtonState.AD) {
-                            if (!binding.container.isSadMode) {
-                                executeSadModeEffects(true)
+                            if (levelViewModel.currentRelativeLevelNumber > 9) {
+                                generalViewModel.showRewardedVideo(this@MainActivity, RewardType.SAD_MODE)
                             }
-                            binding.container.isSadMode = true
-                            binding.watchAdTop.visibility = View.VISIBLE
-                            binding.container.invalidate()
-                        } else {
-                            binding.watchAdTop.visibility = View.GONE
-                            binding.container.isSadMode = false
-                            binding.container.invalidate()
-
                         }
                     }
                 }
@@ -674,21 +648,6 @@ class MainActivity : AppCompatActivity() {
         val toast = Toast.makeText(applicationContext, text, duration)
         toast.show()
     }
-
-    private fun showSadModeToast() {
-        val text = getString(R.string.entering_sad_mode)
-        val duration = Toast.LENGTH_LONG
-        val toast = Toast.makeText(applicationContext, text, duration)
-        toast.show()
-    }
-
-    private fun showNormalModeToast() {
-        val text = getString(R.string.entering_normal_mode)
-        val duration = Toast.LENGTH_LONG
-        val toast = Toast.makeText(applicationContext, text, duration)
-        toast.show()
-    }
-
 
     private fun applyCustomWindowInsets() {
 
@@ -723,22 +682,6 @@ class MainActivity : AppCompatActivity() {
         bottomNavigationView.menu.setGroupCheckable(0, true, false)
         bottomNavigationView.menu.forEach { it.isChecked = true }
     }
-
-
-    private fun executeSadModeEffects(isSadMode: Boolean) {
-        when (isSadMode) {
-            true -> {
-                showSadModeToast()
-                soundPlayer.play(soundPlayer.sounds.sadMode, volume = 0.18f)
-            }
-
-            false -> {
-                showNormalModeToast()
-                soundPlayer.play(soundPlayer.sounds.normalMode, volume = 0.18f)
-            }
-        }
-    }
-
 
     fun updateProgressBar(progress: Pair<Int, String>, countryCode: String) {
         binding.levelNumber.text = progress.second
