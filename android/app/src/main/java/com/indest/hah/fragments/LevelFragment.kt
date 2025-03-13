@@ -45,6 +45,7 @@ import com.indest.hah.views.ButtonState
 import com.indest.hah.views.Cell
 import com.indest.hah.views.MessageSnackBar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.lastOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -189,7 +190,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
                                     showPlayerCenteredScores()
                                 }
                                 showPromoDialog()
-                                    showAd()
                             }
                         }
 
@@ -223,7 +223,9 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
     private fun showAd() {
             if (!generalViewModel.isSadModePurchased()) {
+                Log.d(TAG, "sad mode not purchased!")
                 if (levelViewModel.currentRelativeLevelNumber > 8) {
+                    Log.d(TAG, "try to show ad")
                     generalViewModel.showRewardedVideo(requireActivity() as AppCompatActivity, RewardType.SAD_MODE)
                 }
             }
@@ -436,8 +438,6 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
     private fun addNextLevelClickListener(isLastLevel: Triple<Boolean, Boolean, String>)
     {
-        Log.d(TAG, "addNextLevelClickListener")
-
         activity?.findViewById<FragmentContainerView>(R.id.fragments_container)?.setOnClickListener {
             clearMessages()
             activity?.findViewById<FragmentContainerView>(R.id.fragments_container)?.setOnClickListener(null)
@@ -447,6 +447,7 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
 
     private fun doNextLevelAction(isLastLevel: Triple<Boolean, Boolean, String>)
     {
+        Log.d(TAG, "doNextLevelAction")
         soundPlayer.play(soundPlayer.sounds.levelTransition, volume = 0.08f)
         playTrainAnimation()
 
@@ -472,6 +473,9 @@ class LevelFragment : Fragment(R.layout.level_fragment) {
             soundPlayer.play(soundPlayer.sounds.triumph, volume = 0.1f)
             findNavController().safeNavigate(R.id.action_navigation_level_to_navigation_language_pack_ending)
         }
+
+        showAd()
+
     }
 
 

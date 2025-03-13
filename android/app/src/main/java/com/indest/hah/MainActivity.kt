@@ -136,7 +136,6 @@ class MainActivity : AppCompatActivity() {
         generalViewModel.toString()
         applyCustomWindowInsets()
         setUpNavController()
-        collectRewardInfo()
         collectVariousEvents()
         collectPlayerLevelsForNotification()
         collectNewLevelCount()
@@ -605,23 +604,6 @@ class MainActivity : AppCompatActivity() {
                         }
 
                         else -> {}
-                    }
-                }
-            }
-        }
-    }
-
-    private fun collectRewardInfo() {
-        lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED)
-            {
-                launch {
-                    generalViewModel.buttonState.collect { buttonInfo ->
-                        if (buttonInfo.sadMode && buttonInfo.state == ButtonState.AD) {
-                            if (levelViewModel.currentRelativeLevelNumber > 9) {
-                                generalViewModel.showRewardedVideo(this@MainActivity, RewardType.SAD_MODE)
-                            }
-                        }
                     }
                 }
             }
