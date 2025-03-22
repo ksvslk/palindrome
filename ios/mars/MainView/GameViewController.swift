@@ -393,12 +393,13 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             let levelNr = Database.shared.currentLevel!.levelNumber
             showToastWhenPalindromeTooLong(palindrome: Database.shared.currentLevel?.solutionsArr.first?.palindrome)
             
-            if intervals.first(where: { i in
-                i.name == C.ADS_INTERVAL && i.currentCount == i.limitCount
-            }) != nil && levelNr >= 15 && !appDelegate.purchaseManager.isNoAdsPurchasedInAnyWay() && adManager?.isInterstitialAdAvailable() == true {
+            if levelNr >= 9 && !appDelegate.purchaseManager.isNoAdsPurchasedInAnyWay() && adManager?.isInterstitialAdAvailable() == true {
                 adManager?.showInterstitialAd(viewController: self)
             }
             else {
+                if adManager?.isInterstitialAdAvailable() == false {
+                    adManager?.loadInterstitialAd()
+                }
                 executeLevelLoadActions(intervals: intervals)
             }
         }

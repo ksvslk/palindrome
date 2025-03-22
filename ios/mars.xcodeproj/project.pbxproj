@@ -58,6 +58,10 @@
 		B1339BCB2A288090008E7102 /* TutorialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1339BCA2A288090008E7102 /* TutorialViewController.swift */; };
 		B1339BCE2A29F83D008E7102 /* TPInAppReceipt in Frameworks */ = {isa = PBXBuildFile; productRef = B1339BCD2A29F83D008E7102 /* TPInAppReceipt */; };
 		B1339BD02A29F83D008E7102 /* TPInAppReceipt-Objc in Frameworks */ = {isa = PBXBuildFile; productRef = B1339BCF2A29F83D008E7102 /* TPInAppReceipt-Objc */; };
+		B13854AF2C44131D0020E8B5 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = B13854AE2C44131D0020E8B5 /* FirebaseAnalytics */; };
+		B13854B12C44131D0020E8B5 /* FirebaseAnalyticsOnDeviceConversion in Frameworks */ = {isa = PBXBuildFile; productRef = B13854B02C44131D0020E8B5 /* FirebaseAnalyticsOnDeviceConversion */; };
+		B13854B32C44131D0020E8B5 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B13854B22C44131D0020E8B5 /* FirebaseAnalyticsWithoutAdIdSupport */; };
+		B13854B52C44131D0020E8B5 /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = B13854B42C44131D0020E8B5 /* FirebaseAppCheck */; };
 		B13966BA2A08300800EF75A0 /* CollisionResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13966B92A08300800EF75A0 /* CollisionResult.swift */; };
 		B13BBA672A27737800137679 /* TrainNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13BBA662A27737800137679 /* TrainNode.swift */; };
 		B13BBA692A2797D500137679 /* VaryingProbability.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13BBA682A2797D500137679 /* VaryingProbability.swift */; };
@@ -266,12 +270,16 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B13854B32C44131D0020E8B5 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
 				B198035F2B15E87D004803AC /* FirebaseAnalyticsSwift in Frameworks */,
 				B128D9932A24D225002B13D1 /* Toast in Frameworks */,
 				B19803652B15E87D004803AC /* FirebaseStorage in Frameworks */,
+				B13854B52C44131D0020E8B5 /* FirebaseAppCheck in Frameworks */,
 				B13149D72A209FA3004B06E8 /* PanModal in Frameworks */,
 				B133637C2A2E7684008E2C74 /* GoogleMobileAds in Frameworks */,
 				B1339BCE2A29F83D008E7102 /* TPInAppReceipt in Frameworks */,
+				B13854AF2C44131D0020E8B5 /* FirebaseAnalytics in Frameworks */,
+				B13854B12C44131D0020E8B5 /* FirebaseAnalyticsOnDeviceConversion in Frameworks */,
 				B19803612B15E87D004803AC /* FirebaseAuth in Frameworks */,
 				B1339BD02A29F83D008E7102 /* TPInAppReceipt-Objc in Frameworks */,
 				B198036D2B1617A5004803AC /* FirebaseAppCheck in Frameworks */,
@@ -565,6 +573,10 @@
 				B19803622B15E87D004803AC /* FirebaseFirestoreSwift */,
 				B19803642B15E87D004803AC /* FirebaseStorage */,
 				B198036C2B1617A5004803AC /* FirebaseAppCheck */,
+				B13854AE2C44131D0020E8B5 /* FirebaseAnalytics */,
+				B13854B02C44131D0020E8B5 /* FirebaseAnalyticsOnDeviceConversion */,
+				B13854B22C44131D0020E8B5 /* FirebaseAnalyticsWithoutAdIdSupport */,
+				B13854B42C44131D0020E8B5 /* FirebaseAppCheck */,
 			);
 			productName = test;
 			productReference = B1B33ABE29FFA88000DFA59F /* mars.app */;
@@ -958,7 +970,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = mars/mars.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 37;
 				DEVELOPMENT_TEAM = PGTN5QKRGG;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = mars/Debug.plist;
@@ -977,7 +989,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.0.0;
+				MARKETING_VERSION = 3.0.1;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.indest.hah;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -995,7 +1007,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = mars/mars.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 37;
 				DEVELOPMENT_TEAM = PGTN5QKRGG;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = mars/Release.plist;
@@ -1014,7 +1026,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.0.0;
+				MARKETING_VERSION = 3.0.1;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.indest.hah;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1124,6 +1136,22 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B1339BCC2A29F83D008E7102 /* XCRemoteSwiftPackageReference "TPInAppReceipt" */;
 			productName = "TPInAppReceipt-Objc";
+		};
+		B13854AE2C44131D0020E8B5 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FirebaseAnalytics;
+		};
+		B13854B02C44131D0020E8B5 /* FirebaseAnalyticsOnDeviceConversion */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FirebaseAnalyticsOnDeviceConversion;
+		};
+		B13854B22C44131D0020E8B5 /* FirebaseAnalyticsWithoutAdIdSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FirebaseAnalyticsWithoutAdIdSupport;
+		};
+		B13854B42C44131D0020E8B5 /* FirebaseAppCheck */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FirebaseAppCheck;
 		};
 		B198035E2B15E87D004803AC /* FirebaseAnalyticsSwift */ = {
 			isa = XCSwiftPackageProductDependency;
