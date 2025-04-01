@@ -84,7 +84,7 @@ class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity_"
     lateinit var binding: ActivityMainBinding
     private val levelViewModel: LevelViewModel by viewModels()
-    private val generalViewModel: GeneralViewModel by viewModels()
+    val generalViewModel: GeneralViewModel by viewModels()
     private var consentInformation: ConsentInformation? = null
     private var consentForm: ConsentForm? = null
     // lateinit var adView:AdView
@@ -132,7 +132,6 @@ class MainActivity : AppCompatActivity() {
             handleAuthTask(gamesSignInClient, isAuthenticatedTask)
         }
         requestLatestConsentInformation()
-        MobileAds.initialize(applicationContext)
         generalViewModel.toString()
         applyCustomWindowInsets()
         setUpNavController()
@@ -457,6 +456,13 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
+
+    override fun onStart() {
+        super.onStart()
+        val prefs = getSharedPreferences("app_open_prefs", Context.MODE_PRIVATE)
+        val count = prefs.getInt("open_count", 0) + 1
+        prefs.edit().putInt("open_count", count).apply()
+    }
 
     override fun onResume() {
         super.onResume()

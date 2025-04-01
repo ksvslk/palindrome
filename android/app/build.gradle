@@ -158,6 +158,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore-ktx'
     implementation 'com.google.firebase:firebase-storage-ktx'
 
+    implementation("androidx.lifecycle:lifecycle-process:2.8.3")
+
     implementation "com.google.firebase:firebase-auth-ktx"
     implementation("com.google.firebase:firebase-appcheck-debug")
     implementation("com.google.firebase:firebase-appcheck-ktx")
