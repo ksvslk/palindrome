@@ -9,7 +9,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.firestore.*
-import com.google.firebase.firestore.ktx.toObject
 import com.indest.hah.R
 import com.indest.hah.ads.RewardType
 import com.indest.hah.general.AccountStatus

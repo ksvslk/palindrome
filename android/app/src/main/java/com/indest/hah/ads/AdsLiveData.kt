@@ -2,20 +2,19 @@
 
 package com.indest.hah.ads
 
-import androidx.appcompat.app.AppCompatActivity
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
-import com.google.android.gms.ads.AdError
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.FullScreenContentCallback
-import com.google.android.gms.ads.LoadAdError
-import com.google.android.gms.ads.rewarded.RewardedAd
-import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.indest.hah.R
+import com.google.android.libraries.ads.mobile.sdk.common.AdLoadCallback
+import com.google.android.libraries.ads.mobile.sdk.common.AdRequest
+import com.google.android.libraries.ads.mobile.sdk.common.FullScreenContentError
+import com.google.android.libraries.ads.mobile.sdk.common.LoadAdError
+import com.google.android.libraries.ads.mobile.sdk.rewarded.RewardedAd
+import com.google.android.libraries.ads.mobile.sdk.rewarded.RewardedAdEventCallback
 import kotlin.math.min
 
 private const val AD_RELOAD_TIMER_START_MILLISECONDS = 1L * 1000L
@@ -45,10 +44,14 @@ class AdsLiveData (private val context: Context) : LiveData<Pair<Boolean, Reward
 
     private fun loadRewardedAd() {
         if (_rewardedAd == null) {
-            val adRequest = AdRequest.Builder().build()
+            // Migration: Ad Unit ID is now passed to the AdRequest Builder
+            val adUnitId = context.getString(R.string.admob_rewarded_ad_unit)
+            val adRequest = AdRequest.Builder(adUnitId).build()
+
+            // Migration: RewardedAd.load takes the request and an AdLoadCallback
             RewardedAd.load(
-                context, context.getString(R.string.admob_rewarded_ad_unit), adRequest,
-                object : RewardedAdLoadCallback() {
+                adRequest,
+                object : AdLoadCallback<RewardedAd> {
                     override fun onAdFailedToLoad(adError: LoadAdError) {
                         Log.d(TAG, adError.message)
                         retryReloadingAdsWithExponentialBackoff()
@@ -80,8 +83,8 @@ class AdsLiveData (private val context: Context) : LiveData<Pair<Boolean, Reward
     }
 
     fun showRewardedVideo(activity: FragmentActivity, rewardedType: RewardType) {
-        _rewardedAd?.fullScreenContentCallback =
-            object : FullScreenContentCallback() {
+        _rewardedAd?.adEventCallback =
+            object : RewardedAdEventCallback {
                 override fun onAdDismissedFullScreenContent() {
                     // Don't forget to set the ad reference to null so you
                     // don't show the ad a second time.
@@ -97,7 +100,7 @@ class AdsLiveData (private val context: Context) : LiveData<Pair<Boolean, Reward
                     }
                 }
 
-                override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+                override fun onAdFailedToShowFullScreenContent(fullScreenContentError: FullScreenContentError) {
                     // Don't forget to set the ad reference to null so you
                     // don't show the ad a second time.
                     _rewardedAd = null
@@ -109,6 +112,8 @@ class AdsLiveData (private val context: Context) : LiveData<Pair<Boolean, Reward
 
                 }
             }
+
+        // Migration: Show method structure remains similar
         _rewardedAd?.show(
             activity
         ) {

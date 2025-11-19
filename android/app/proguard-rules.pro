@@ -1,6 +1,6 @@
 # Add project specific ProGuard rules here.
 # You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
+# proguardFiles setting in build.gradle.kts
 #
 # For more details, see
 #   http://developer.android.com/guide/developing/tools/proguard.html
@@ -52,15 +52,6 @@
 
 -keepnames class * extends android.os.Parcelable
 -keepnames class * extends java.io.Serializable
-
--keep class com.google.android.gms.** { *; }
-
--keep public class com.google.android.gms.ads.**{
-   public *;
-}
--keep public class com.google.ads.**{
-   public *;
-}
 
 -keepattributes SourceFile,LineNumberTable        # Keep file names and line numbers.
 -keep public class * extends java.lang.Exception  # Optional: Keep custom exceptions.

@@ -99,8 +99,8 @@ class RewardButton : LinearLayoutCompat {
                 buttonState = AD
                 findViewById<AppCompatTextView>(R.id.reward_button_flipper_revealed_subtitle).apply {
                     this.text = subtitleAdAvailable
-                    setBackgroundColor(MaterialColors.getColor(context, com.google.android.material.R.attr.colorPrimary, Color.RED))
-                    setTextColor(MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnPrimary, Color.RED))
+                    setBackgroundColor(MaterialColors.getColor(context, com.google.android.material.R.attr.colorPrimaryContainer, Color.RED))
+                    setTextColor(MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnPrimaryContainer, Color.RED))
                 }
             }
             NO_AD -> {

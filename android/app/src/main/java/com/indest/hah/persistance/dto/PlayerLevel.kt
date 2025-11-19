@@ -1,6 +1,5 @@
 package com.indest.hah.persistance.dto
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable

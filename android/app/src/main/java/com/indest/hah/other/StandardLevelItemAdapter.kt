@@ -60,7 +60,7 @@ class StandardLevelItemAdapter(
         if (newLevel) {
             val highlightedColor = MaterialColors.getColor(
                 levelItemViewHolder.textView.context,
-                com.google.android.material.R.attr.colorPrimary, Color.RED
+                com.google.android.material.R.attr.colorPrimaryContainer, Color.RED
             )
             val underlinedText = SpannableString(levelItemViewHolder.textView.text)
             underlinedText.setSpan(

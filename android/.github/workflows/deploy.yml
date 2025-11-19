@@ -60,7 +60,7 @@ jobs:
       - name: Update gradle version for Android
         uses: damienaicheh/update-android-version-gradle-action@v1.0.0
         with:
-          build-gradle-path: './app/build.gradle'
+          build-gradle-path: './app/build.gradle.kts'
           version-code: ${{ env.REGULAR_VERSION_CODE }}
           version-name: '${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}'
           print-file: true
@@ -74,7 +74,7 @@ jobs:
 
       # Grant rights
       - name: Grant rights
-        run: chmod +x build.gradle
+        run: chmod +x build.gradle.kts
 
       # Build Release AAB
       - name: Build Release AAB

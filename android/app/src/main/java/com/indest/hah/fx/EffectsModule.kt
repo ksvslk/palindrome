@@ -67,7 +67,7 @@ object EffectsModule {
         val successTextColor = MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnTertiaryContainer, Color.RED)
         val currentBoxColor = MaterialColors.getColor(context, com.google.android.material.R.attr.colorSurfaceVariant, Color.RED)
         val boxSuccessColor = MaterialColors.getColor(context, com.google.android.material.R.attr.colorTertiaryContainer, Color.RED)
-        val lockedColor = MaterialColors.getColor(context, com.google.android.material.R.attr.colorPrimary, Color.RED)
+        val lockedColor = MaterialColors.getColor(context, com.google.android.material.R.attr.colorPrimaryContainer, Color.RED)
         return Colors(
             successTextColor = successTextColor,
             currentBoxColor = currentBoxColor,

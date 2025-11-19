@@ -135,13 +135,13 @@ enum class LetterState : ILetterState {
             val endColor = if (durationModifier == 1) {
                 color.viewEnd
             } else {
-                MaterialColors.getColor(letter.context, com.google.android.material.R.attr.colorPrimary, Color.RED)
+                MaterialColors.getColor(letter.context, com.google.android.material.R.attr.colorPrimaryContainer, Color.RED)
             }
 
             val endTextColor = if (durationModifier == 1) {
                 color.textEnd
             } else {
-                MaterialColors.getColor(letter.context, com.google.android.material.R.attr.colorOnPrimary, Color.RED)
+                MaterialColors.getColor(letter.context, com.google.android.material.R.attr.colorOnPrimaryContainer, Color.RED)
             }
 
             val onReleaseDuration = if (durationModifier == 1) {

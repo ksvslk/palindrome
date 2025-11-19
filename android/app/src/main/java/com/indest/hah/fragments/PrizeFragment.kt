@@ -59,7 +59,6 @@ class PrizeFragment(private val promoLink: String = "") : FullBottomSheetDialogF
     }
 
     private fun redeemCode() {
-        generalViewModel.refreshPurchases = true
         activity?.let {
             val playStoreIntent = Intent(Intent.ACTION_VIEW).apply {
                 data = Uri.parse(promoLink)

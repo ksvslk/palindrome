@@ -10,6 +10,7 @@
     <dimen name="promo_dialog_item_height">60dp</dimen>
     <dimen name="simple_dialog_item_height_almost_half">20dp</dimen>
     <dimen name="simple_dialog_item_height_half">28dp</dimen>
+    <dimen name="default_gap">8dp</dimen>
 
     <!-- Train size -->
     <dimen name="carriage_width">26dp</dimen>

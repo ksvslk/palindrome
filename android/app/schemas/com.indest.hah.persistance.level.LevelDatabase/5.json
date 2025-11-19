@@ -82,9 +82,7 @@
           "columnNames": [
             "level_id"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       },
       {
         "tableName": "letter_info_table",
@@ -192,9 +190,7 @@
           "columnNames": [
             "name"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       },
       {
         "tableName": "solution_table",
@@ -382,7 +378,6 @@
         ]
       }
     ],
-    "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
       "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2b2c833b58c33e1c14e010e2e37b8602')"

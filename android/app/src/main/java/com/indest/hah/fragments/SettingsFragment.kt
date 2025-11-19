@@ -103,7 +103,7 @@ class SettingsFragment : FullBottomSheetDialogFragment() {
             findNavController().safeNavigate(R.id.action_navigation_settings_to_navigation_tutorial)
         }
         binding.tutorialButton.findViewById<AppCompatImageView>(R.id.any_button_icon).setOnLongClickListener {
-            val info = "${BuildConfig.VERSION_CODE}; ${BuildConfig.VERSION_NAME}; ${BuildConfig.GIT_HASH}"
+            val info = "${BuildConfig.VERSION_CODE}; ${BuildConfig.VERSION_NAME}; ${BuildConfig.GIT_COMMIT_ID}"
             Toast.makeText(
                 context,
                 info,

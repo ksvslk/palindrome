@@ -105,11 +105,11 @@ class Effects @Inject constructor(
     }
 
     fun getLockedColor(): Int {
-        return MaterialColors.getColor(context, com.google.android.material.R.attr.colorPrimary, Color.RED)
+        return MaterialColors.getColor(context, com.google.android.material.R.attr.colorPrimaryContainer, Color.RED)
     }
 
     fun getLockedTextColor(): Int {
-        return MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnPrimary, Color.RED)
+        return MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnPrimaryContainer, Color.RED)
     }
 
 }
