@@ -15,6 +15,9 @@ plugins {
 android {
     namespace = "com.indest.hah"
     compileSdk = 36
+    // --- GIT COMMIT ID CONFIG ---
+    // Safely retrieves the commit ID without breaking the Configuration Cache
+    val gitCommitId = providers.of(GitCommitValueSource::class) {}.get()
 
     defaultConfig {
         applicationId = "com.indest.hah"
@@ -28,10 +31,8 @@ android {
             useSupportLibrary = true
         }
 
-        // --- GIT COMMIT ID CONFIG ---
-        // Safely retrieves the commit ID without breaking the Configuration Cache
-        val gitCommitId = providers.of(GitCommitValueSource::class) {}.get()
         buildConfigField("String", "GIT_COMMIT_ID", "\"$gitCommitId\"")
+
     }
 
     kapt {
