@@ -184,3 +184,25 @@ abstract class GitCommitValueSource : ValueSource<String, ValueSourceParameters.
         }
     }
 }
+
+tasks.register<Copy>("copyReleaseFilesToOneDirectory") {
+    // 1. Define Source and Destination using parentheses
+    from(
+        layout.buildDirectory.file("outputs/bundle/instantRelease/app-instant-release.aab"),
+        layout.buildDirectory.file("outputs/bundle/regularRelease/app-regular-release.aab")
+    )
+    into(layout.buildDirectory.dir("outputs/bundle/"))
+
+    // 2. Define Dependencies inside the block
+    // We use a list here to keep it clean, applying dependsOn and mustRunAfter to each
+    val dependentTasks = listOf(
+        ":app:produceRegularReleaseBundleIdeListingFile",
+        ":app:produceInstantReleaseBundleIdeListingFile",
+        ":app:bundleRelease"
+    )
+
+    dependentTasks.forEach { taskPath ->
+        dependsOn(taskPath)
+        mustRunAfter(taskPath)
+    }
+}
