@@ -83,6 +83,9 @@ class Database {
             return levelPackRanges.ranges[5]
         case LevelPack.level_pack_6:
             return levelPackRanges.ranges[6]
+        case LevelPack.player_pack:
+            // Player-created levels: sparse ids synced from Firestore.
+            return (1081, 9999)
         }
     }
     
@@ -105,7 +108,7 @@ class Database {
         case levelPackRanges.ranges[6].0...levelPackRanges.ranges[6].1:
             return 6
         default:
-            fatalError("No such level: \(level), that matches any level pack.")
+            return LevelPack.player_pack.rawValue
         }
     }
     
@@ -128,7 +131,7 @@ class Database {
         case levelPackRanges.ranges[6].0...levelPackRanges.ranges[6].1:
             return LevelPack.level_pack_6
         default:
-            fatalError("No such level: \(level), that matches any level pack.")
+            return LevelPack.player_pack
         }
     }
     
@@ -152,6 +155,9 @@ class Database {
            return currentLevelNumber - levelPackRanges.ranges[4].1
         case LevelPack.level_pack_6:
            return currentLevelNumber - levelPackRanges.ranges[5].1
+        case LevelPack.player_pack:
+            let numbers = playerLevelNumbers()
+            return (numbers.firstIndex(of: currentLevelNumber) ?? 0) + 1
         }
     }
     
@@ -175,6 +181,9 @@ class Database {
            return longPackName ? "Twisted Texts" : String("\(currentLevelNumber - levelPackRanges.ranges[4].1) - TT Pack")
         case LevelPack.level_pack_6:
            return longPackName ? "Looped Lexicon" : String("\(currentLevelNumber - levelPackRanges.ranges[5].1) - LL Pack")
+        case LevelPack.player_pack:
+           let author = currentLevel?.author ?? ""
+           return longPackName ? "Player Levels" : (author.isEmpty ? "Player Level" : "by \(author)")
         }
     }
     
@@ -196,10 +205,36 @@ class Database {
            return levelNr + levelPackRanges.ranges[4].1
         case LevelPack.level_pack_6:
            return levelNr + levelPackRanges.ranges[5].1
+        case LevelPack.player_pack:
+            let numbers = playerLevelNumbers()
+            let index = levelNr - 1
+            return index >= 0 && index < numbers.count ? numbers[index] : (numbers.first ?? levelNr)
         }
     }
     
     
+    // MARK: Player levels (Stagenator)
+    /// Sorted actual level numbers of synced player-created levels.
+    func playerLevelNumbers() -> [Int] {
+        let request: NSFetchRequest<Level> = Level.fetchRequest()
+        request.predicate = NSPredicate(format: "levelNumber > %@ AND levelNumber < %@", argumentArray: [1080, 10000])
+        request.sortDescriptors = [NSSortDescriptor(key: "levelNumber", ascending: true)]
+        var numbers: [Int] = []
+        context.performAndWait {
+            if let results = try? context.fetch(request) {
+                numbers = results.map { Int($0.levelNumber) }
+            }
+        }
+        return numbers
+    }
+
+    /// Navigate to a level by its ABSOLUTE number (e.g. from a notification tap).
+    func openLevel(absolute levelNumber: Int) {
+        let pack = getLevelPack(for: levelNumber)
+        let normalized = getNormalizedLevelNumber(levelNr: levelNumber)
+        changeLevel(to: normalized, levelPack: pack)
+    }
+
     // MARK: Add game levels (1 time)
     func initializeDatabaseWithGameLevels()
     {

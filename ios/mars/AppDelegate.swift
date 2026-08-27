@@ -29,6 +29,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     /// the agent can deliver personal rewards; subscribe to the broadcast topic.
     func registerStagenatorPush(uid: String) {
         Messaging.messaging().subscribe(toTopic: "new_levels")
+        Messaging.messaging().subscribe(toTopic: "player_levels")
+        PlayerLevelsSync.sync()
         Messaging.messaging().token { token, _ in
             guard let token = token else { return }
             let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
@@ -146,7 +148,50 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
            url.hasPrefix("https://"),
            let link = URL(string: url) {
             UIApplication.shared.open(link)
+        } else if let levelString = data["levelNumber"] as? String,
+                  let levelNumber = Int(levelString) {
+            // Level announcement: sync player levels first (the announced level
+            // may be brand new), then navigate to it.
+            PlayerLevelsSync.sync {
+                DispatchQueue.main.async {
+                    Database.shared.openLevel(absolute: levelNumber)
+                }
+            }
         }
         completionHandler()
+    }
+}
+
+
+// MARK: - Player levels sync (Stagenator)
+
+/// Pulls approved player-created levels from Firestore into the local Core
+/// Data store, mirroring the Android app's player-level collection.
+enum PlayerLevelsSync {
+    static func sync(completion: (() -> Void)? = nil) {
+        Firestore.firestore().collection("user_submitted_levels")
+            .whereField("isFeatured_v3", isEqualTo: true)
+            .whereField("levelId", isGreaterThan: 1080)
+            .whereField("levelId", isLessThan: 10000)
+            .getDocuments { snapshot, _ in
+                defer { completion?() }
+                guard let docs = snapshot?.documents else { return }
+                for doc in docs {
+                    let data = doc.data()
+                    guard let levelId = data["levelId"] as? Int,
+                          let solutionToCategory = data["solutionToCategory"] as? [String: Any],
+                          let palindrome = solutionToCategory.keys.first else { continue }
+                    let hints = solutionToCategory[palindrome] as? [String: Any]
+                    let hint = (hints?["hint"] as? String) ?? ""
+                    let author = (data["player"] as? String) ?? ""
+                    Database.shared.addNewLevel(
+                        levelNr: levelId,
+                        palindrome: palindrome,
+                        solutionsToHints: [palindrome: hint],
+                        author: author,
+                        progress: Level.Progress.in_progress
+                    )
+                }
+            }
     }
 }

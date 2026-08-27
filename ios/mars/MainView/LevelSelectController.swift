@@ -487,6 +487,11 @@ class LevelSelectController: BaseMenuController,ProductsUpdateDelegate, Transact
             MenuItemInfo(name: C.purchaseLevelPack4Button.0, comment: "", systemImage: C.purchaseLevelPack4Button.1, closure: purchaseLevelPack4Closure),
             MenuItemInfo(name: C.purchaseLevelPack5Button.0, comment: "", systemImage: C.purchaseLevelPack5Button.1, closure: purchaseLevelPack5Closure),
             MenuItemInfo(name: C.purchaseLevelPack6Button.0, comment: "", systemImage: C.purchaseLevelPack6Button.1, closure: purchaseLevelPack6Closure),
+            MenuItemInfo(name: "Player levels", comment: "", systemImage: UIImage(systemName: "person.2.fill")!, closure: {menuItem in
+                self.present(GameLevelSelectController(levelPack: LevelPack.player_pack, dismissLevelSelectMenu: {
+                    self.dismiss(animated: true)
+                }), animated: true, completion: nil)
+            }),
             MenuItemInfo(name: C.gameLevelsButton.0, comment: "", systemImage: C.gameLevelsButton.1, closure: {menuItem in
                 self.present(GameLevelSelectController(levelPack: LevelPack.game_pack, dismissLevelSelectMenu: {
                     self.dismiss(animated: true)

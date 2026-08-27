@@ -15,4 +15,5 @@ enum LevelPack: Int, CaseIterable {
     case level_pack_4 = 4
     case level_pack_5 = 5
     case level_pack_6 = 6
+    case player_pack = 7
 }
