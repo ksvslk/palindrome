@@ -187,8 +187,11 @@ enum PlayerLevelsSync {
             .whereField("isFeatured_v3", isEqualTo: true)
             .whereField("levelId", isGreaterThan: 1080)
             .whereField("levelId", isLessThan: 10000)
-            .getDocuments { snapshot, _ in
+            .getDocuments { snapshot, error in
                 defer { completion?() }
+                #if DEBUG
+                Swift.debugPrint("sgsync: fetched \(snapshot?.documents.count ?? -1) player levels, error: \(String(describing: error))")
+                #endif
                 guard let docs = snapshot?.documents else { return }
                 for doc in docs {
                     let data = doc.data()

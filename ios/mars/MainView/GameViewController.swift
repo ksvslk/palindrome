@@ -404,7 +404,16 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             showToastWhenPalindromeTooLong(palindrome: Database.shared.currentLevel?.solutionsArr.first?.palindrome)
             
             if levelNr >= 9 && !appDelegate.purchaseManager.isNoAdsPurchasedInAnyWay() && adManager?.isInterstitialAdAvailable() == true {
-                adManager?.showInterstitialAd(viewController: self)
+                // Load the level first so the scene never depends on the ad's
+                // dismiss callback: presenting during a sheet dismissal (e.g.
+                // the level-select flow) can fail silently, which used to
+                // leave the old level on screen. Slight delay lets any
+                // in-flight dismissal animation finish before the ad presents.
+                executeLevelLoadActions(intervals: intervals)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { [weak self] in
+                    guard let self = self else { return }
+                    self.adManager?.showInterstitialAd(viewController: self)
+                }
             }
             else {
                 if adManager?.isInterstitialAdAvailable() == false {

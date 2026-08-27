@@ -74,6 +74,9 @@ extension GameLevelSelectController: UICollectionViewDelegate {
         //Swift.debugPrint("Collection view at row \(collectionView.tag) selected level nr \(indexPath.item + 1)")
         dismiss(animated: true, completion: {
             self.dismissLevelSelectMenu()
+            #if DEBUG
+            Swift.debugPrint("sgselect: pack \(self.levelPack) cell \(indexPath.item + 1) -> actual \(Database.shared.getActualLevelNumber(normalizedLevelNr: indexPath.item + 1, levelPack: self.levelPack))")
+            #endif
             Database.shared.changeLevel(to: indexPath.item + 1, levelPack: self.levelPack)
         })
     }

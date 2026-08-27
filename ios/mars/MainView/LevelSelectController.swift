@@ -43,7 +43,9 @@ class LevelSelectController: BaseMenuController,ProductsUpdateDelegate, Transact
         if (self.purchaseManager?.loading == true)
         {
             view.makeToastActivity(.center)
-            view.isUserInteractionEnabled = false
+            // Keep the menu usable while store products load (or fail to):
+            // free entries (game levels, player levels, tutorial) don't need
+            // StoreKit; purchase cells activate when product info arrives.
         }
     }
     
