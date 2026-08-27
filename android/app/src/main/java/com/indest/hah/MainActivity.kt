@@ -117,7 +117,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         StagenatorPush.handleClaimIntent(this, intent)
-        if (auth.currentUser != null) StagenatorPush.register(this)
+        if (Firebase.auth.currentUser != null) StagenatorPush.register(this)
         if (android.os.Build.VERSION.SDK_INT >= 33 &&
             checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) !=
             android.content.pm.PackageManager.PERMISSION_GRANTED
