@@ -947,7 +947,14 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         default:
             Database.shared.getNormalizedLevelNumber(levelNr: levelNr)
         }
-        let progressValue = Float(progressPercentage) / (levelPack == LevelPack.game_pack ? 100.0 : 25.0)
+        // Pack sizes: main 100, purchase packs 25, player pack = however many
+        // levels are synced (was hardcoded 25, pinning the bar at full).
+        let packSize: Float = switch levelPack {
+        case LevelPack.game_pack: 100.0
+        case LevelPack.player_pack: Float(max(Database.shared.playerLevelNumbers().count, 1))
+        default: 25.0
+        }
+        let progressValue = Float(progressPercentage) / packSize
         progressBar.setProgress(progressValue, animated: true)
     }
     
