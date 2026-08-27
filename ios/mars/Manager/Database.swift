@@ -887,7 +887,11 @@ class Database {
     {
         var letters: [LetterData] = []
         let request: NSFetchRequest<LetterData> = LetterData.fetchRequest()
-        request.predicate = NSPredicate(format: "level.levelNumber = %@", currentLevel!.objectID)
+        // Fetch the current level's letters. (Previously compared levelNumber to
+        // the managed objectID, which only matched curated levels by rowid
+        // coincidence and returned nothing for player levels -> an empty guess
+        // was vacuously "all placed" and reported wrong on level open.)
+        request.predicate = NSPredicate(format: "level = %@", currentLevel!)
         let sortDescriptor = NSSortDescriptor(key: "friendIndex", ascending: true)
         request.sortDescriptors = [sortDescriptor]
         

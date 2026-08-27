@@ -292,6 +292,11 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             lessThanOrEqualTo: view.widthAnchor, multiplier: 0.30
         ).isActive = true
         infoLabelButton.tintColor = Theme.shared.colors.onSurfaceVariant
+        // Readable over the puzzle: give the feedback message a pill background.
+        infoLabelButton.backgroundColor = Theme.shared.colors.surfaceVariant.withAlphaComponent(0.95)
+        infoLabelButton.layer.cornerRadius = 14
+        infoLabelButton.layer.masksToBounds = true
+        infoLabelButton.contentEdgeInsets = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
         infoLabelButton.setTitleColor(Theme.shared.colors.onSurfaceVariant, for: UIControl.State.normal)
         if (doLayout) {
             backgroundUIView.setNeedsLayout()
