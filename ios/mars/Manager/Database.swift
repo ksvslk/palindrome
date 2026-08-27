@@ -231,7 +231,17 @@ class Database {
     }
 
     /// Navigate to a level by its ABSOLUTE number (e.g. from a notification tap).
+    /// No-op when the level isn't in the local store (offline before a sync
+    /// completed) — changeLevel would otherwise hit a fatalError.
     func openLevel(absolute levelNumber: Int) {
+        let request: NSFetchRequest<Level> = Level.fetchRequest()
+        request.predicate = NSPredicate(format: "levelNumber = %@", String(levelNumber))
+        request.fetchLimit = 1
+        var exists = false
+        context.performAndWait {
+            exists = ((try? context.count(for: request)) ?? 0) > 0
+        }
+        guard exists else { return }
         let pack = getLevelPack(for: levelNumber)
         let normalized = getNormalizedLevelNumber(levelNr: levelNumber)
         changeLevel(to: normalized, levelPack: pack)

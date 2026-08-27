@@ -658,7 +658,9 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
             view.removeGestureRecognizer(gr)
         }
         let normalizedLevelNr = Database.shared.getNormalizedLevelNumber()
-        if (normalizedLevelNr == 100 || normalizedLevelNr == 25)
+        let currentPack = Database.shared.getLevelPack(for: Int(Database.shared.currentLevel!.levelNumber))
+        // pack-ending celebration is for fixed-size packs, not the growing player pack
+        if (normalizedLevelNr == 100 || normalizedLevelNr == 25) && currentPack != LevelPack.player_pack
         {
             showEndingScreen()
         }
