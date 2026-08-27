@@ -152,6 +152,20 @@ extension AppDelegate: MessagingDelegate {
     }
 }
 
+extension AppDelegate {
+    /// Navigate when the game UI is listening; retries briefly during cold
+    /// start (levelChangedClosure is set in GameViewController.viewDidLoad).
+    func openLevelWhenReady(_ levelNumber: Int, attempts: Int = 24) {
+        if Database.shared.levelChangedClosure != nil {
+            Database.shared.openLevel(absolute: levelNumber)
+        } else if attempts > 0 {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                self?.openLevelWhenReady(levelNumber, attempts: attempts - 1)
+            }
+        }
+    }
+}
+
 extension AppDelegate: UNUserNotificationCenterDelegate {
     /// Show notifications as banners even while the app is in the foreground
     /// (default iOS behavior delivers them silently).
@@ -173,10 +187,13 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         } else if let levelString = data["levelNumber"] as? String,
                   let levelNumber = Int(levelString) {
             // Level announcement: sync player levels first (the announced level
-            // may be brand new), then navigate to it.
+            // may be brand new), then navigate once the game UI is wired up —
+            // on a cold start this callback fires before GameViewController
+            // subscribes to level changes, and navigating into the void left
+            // the app on its previous level.
             PlayerLevelsSync.sync {
                 DispatchQueue.main.async {
-                    Database.shared.openLevel(absolute: levelNumber)
+                    self.openLevelWhenReady(levelNumber)
                 }
             }
         }
