@@ -675,7 +675,11 @@ class Database {
                            currentLevel?.progress = Int64(Level.Progress.in_progress.rawValue)
                         }
                     } else {
-                        fatalError("Could not set next level nr \(nextLevel)")
+                        // Target level absent (e.g. "next" after the final level
+                        // of the last pack, historically a fatalError crash):
+                        // stay on the current level instead of dying.
+                        Swift.debugPrint("changeLevel: level for normalized nr \(nextLevel) not found; staying put")
+                        return
                     }
                 }
                 
