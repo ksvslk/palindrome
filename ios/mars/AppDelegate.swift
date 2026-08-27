@@ -11,10 +11,35 @@ import Toast
 import FirebaseCore
 import FirebaseAuth
 import FirebaseAppCheck
+import FirebaseMessaging
+import FirebaseAnalytics
+import FirebaseFirestore
+import UserNotifications
 
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
+
+    func application(_ application: UIApplication,
+                     didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        Messaging.messaging().apnsToken = deviceToken
+    }
+
+    /// Stagenator: register this install's push token keyed by the auth uid so
+    /// the agent can deliver personal rewards; subscribe to the broadcast topic.
+    func registerStagenatorPush(uid: String) {
+        Messaging.messaging().subscribe(toTopic: "new_levels")
+        Messaging.messaging().token { token, _ in
+            guard let token = token else { return }
+            let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+            Firestore.firestore().collection("fcmTokensIos").document(uid).setData([
+                "token": token,
+                "updatedAt": FieldValue.serverTimestamp(),
+                "platform": "ios",
+                "appVersion": version ?? "",
+            ], merge: true)
+        }
+    }
     
     var window: UIWindow?
     var purchaseManager: PurchaseManager!
@@ -26,9 +51,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         AppCheck.setAppCheckProviderFactory(providerFactory)
         
         FirebaseApp.configure()
-        Auth.auth().signInAnonymously { authResult, error in
+        Auth.auth().signInAnonymously { [weak self] authResult, error in
             guard let user = authResult?.user else { return }
+            // Stagenator tier-1 identity: pseudonymous analytics id + push
+            // registration keyed by uid (same pattern as the other games).
+            Analytics.setUserID(user.uid)
+            self?.registerStagenatorPush(uid: user.uid)
         }
+        UNUserNotificationCenter.current().delegate = self
+        Messaging.messaging().delegate = self
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { _, _ in }
+        application.registerForRemoteNotifications()
         purchaseManager = PurchaseManager()
         registerUserDefaults()
         setToastStyle()
@@ -90,3 +123,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   
 }
 
+
+
+// MARK: - Stagenator push handling
+
+extension AppDelegate: MessagingDelegate {
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        // Token rotated: re-register under the current uid.
+        if let uid = Auth.auth().currentUser?.uid {
+            registerStagenatorPush(uid: uid)
+        }
+    }
+}
+
+extension AppDelegate: UNUserNotificationCenterDelegate {
+    /// Notification tapped: open a Stagenator claim link if one is attached.
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                didReceive response: UNNotificationResponse,
+                                withCompletionHandler completionHandler: @escaping () -> Void) {
+        let data = response.notification.request.content.userInfo
+        if let url = data["claimUrl"] as? String,
+           url.hasPrefix("https://"),
+           let link = URL(string: url) {
+            UIApplication.shared.open(link)
+        }
+        completionHandler()
+    }
+}
