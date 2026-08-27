@@ -22,7 +22,11 @@ import com.google.firebase.messaging.messaging
  */
 object StagenatorPush {
     private const val TAG = "StagenatorPush"
+    // Android shows the player-created level collection; iOS does not (and
+    // loads no remote level content at all), so level announcements must be
+    // Android-scoped. "new_levels" stays the platform-neutral channel.
     private const val TOPIC = "new_levels"
+    private const val TOPIC_PLAYER_LEVELS = "player_levels"
     private const val PREFS = "stagenator_claim"
 
     /** Call whenever a Firebase user is available (sign-in or app start). */
@@ -30,6 +34,7 @@ object StagenatorPush {
         val user = Firebase.auth.currentUser ?: return
         Firebase.analytics.setUserId(user.uid)
         Firebase.messaging.subscribeToTopic(TOPIC)
+        Firebase.messaging.subscribeToTopic(TOPIC_PLAYER_LEVELS)
         Firebase.messaging.token.addOnSuccessListener { token ->
             saveToken(context, token)
         }
