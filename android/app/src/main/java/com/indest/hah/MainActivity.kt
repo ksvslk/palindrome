@@ -3,6 +3,7 @@ package com.indest.hah
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.os.Handler
@@ -47,6 +48,7 @@ import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.storage
+import com.indest.hah.push.StagenatorPush
 import com.indest.hah.ads.RewardType
 import com.indest.hah.databinding.ActivityMainBinding
 import com.indest.hah.fragments.CompetitionFragment
@@ -107,8 +109,21 @@ class MainActivity : AppCompatActivity() {
         const val STATUS_DONE = "status_done"
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        StagenatorPush.handleClaimIntent(this, intent)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        StagenatorPush.handleClaimIntent(this, intent)
+        if (auth.currentUser != null) StagenatorPush.register(this)
+        if (android.os.Build.VERSION.SDK_INT >= 33 &&
+            checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) !=
+            android.content.pm.PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 7101)
+        }
         // Check if the migration has already been done or not
         if (getString(FIRST_TIME_MIGRATION) != STATUS_DONE) {
             // Fetch the selected language from wherever it was stored. In this case its SharedPref
@@ -274,6 +289,7 @@ class MainActivity : AppCompatActivity() {
                         auth.signInWithCredential(credential).addOnSuccessListener { _ ->
                             reconnectMilliseconds = RECONNECT_TIMER_START_MILLISECONDS
                             setPlayerNameAndSignedInStatus(AccountStatus.SIGNED_IN_WITH_FIREBASE)
+                            StagenatorPush.register(this)
                             lifecycleScope.launch {
                                 lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED)
                                 {
