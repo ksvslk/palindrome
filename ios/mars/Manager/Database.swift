@@ -183,7 +183,9 @@ class Database {
            return longPackName ? "Looped Lexicon" : String("\(currentLevelNumber - levelPackRanges.ranges[5].1) - LL Pack")
         case LevelPack.player_pack:
            let author = currentLevel?.author ?? ""
-           return longPackName ? "Player Levels" : (author.isEmpty ? "Player Level" : "by \(author)")
+           // keep the header clear of the Dynamic Island
+           let shortAuthor = author.count > 12 ? String(author.prefix(11)) + "…" : author
+           return longPackName ? "Player Levels" : (shortAuthor.isEmpty ? "Player Level" : "by \(shortAuthor)")
         }
     }
     

@@ -286,6 +286,11 @@ class GameViewController: UIViewController, UIPopoverPresentationControllerDeleg
         backgroundUIView.tintColor = Theme.shared.colors.onSurfaceVariant
         progressBar.tintColor = Theme.shared.colors.primary
         levelNumberLabel.textColor = Theme.shared.colors.onSurfaceVariant
+        // Never run under the Dynamic Island: cap width, truncate with an ellipsis.
+        levelNumberLabel.lineBreakMode = .byTruncatingTail
+        levelNumberLabel.widthAnchor.constraint(
+            lessThanOrEqualTo: view.widthAnchor, multiplier: 0.30
+        ).isActive = true
         infoLabelButton.tintColor = Theme.shared.colors.onSurfaceVariant
         infoLabelButton.setTitleColor(Theme.shared.colors.onSurfaceVariant, for: UIControl.State.normal)
         if (doLayout) {
