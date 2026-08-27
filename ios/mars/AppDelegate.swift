@@ -22,7 +22,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication,
                      didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        #if DEBUG
+        Swift.debugPrint("sgpush: APNs token received (\(deviceToken.count) bytes)")
+        #endif
         Messaging.messaging().apnsToken = deviceToken
+    }
+
+    func application(_ application: UIApplication,
+                     didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        #if DEBUG
+        Swift.debugPrint("sgpush: APNs registration FAILED: \(error)")
+        #endif
     }
 
     /// Stagenator: register this install's push token keyed by the auth uid so
@@ -31,7 +41,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Messaging.messaging().subscribe(toTopic: "new_levels")
         Messaging.messaging().subscribe(toTopic: "player_levels")
         PlayerLevelsSync.sync()
-        Messaging.messaging().token { token, _ in
+        Messaging.messaging().token { token, error in
+            #if DEBUG
+            if let error = error { Swift.debugPrint("sgpush: FCM token error: \(error)") }
+            if let token = token { Swift.debugPrint("sgpush: FCM token: \(token)") }
+            #endif
             guard let token = token else { return }
             let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
             Firestore.firestore().collection("fcmTokensIos").document(uid).setData([
