@@ -220,13 +220,17 @@ class MainActivity : AppCompatActivity() {
      * snackbar still offers it.
      */
     private fun tryOpenPendingPushLevel() {
-        val target = pendingPushLevel ?: return
+        lifecycleScope.launch { openPendingPushLevel() }
+    }
+
+    /** Returns true when the announced level was opened, so the caller can stay
+     * quiet about a level the player is already looking at. */
+    private suspend fun openPendingPushLevel(): Boolean {
+        val target = pendingPushLevel ?: return false
         pendingPushLevel = null
-        lifecycleScope.launch {
-            if (!levelViewModel.openLevelIfPresent(target)) {
-                pendingPushLevel = target
-            }
-        }
+        if (levelViewModel.openLevelIfPresent(target)) return true
+        pendingPushLevel = target
+        return false
     }
 
     /** Retry the pending open once the game has actually loaded a level. */
@@ -246,6 +250,13 @@ class MainActivity : AppCompatActivity() {
             lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
                 levelViewModel.newPlayerLevels.collectLatest { newLevel ->
                     if (newLevel.lastAddedLevel == -1 && newLevel.multipleLevels == -1 && newLevel.playerName == "") return@collectLatest
+                    // The player tapped a notification about this very level and
+                    // is being taken there — a snackbar offering to play it would
+                    // just be the same message twice.
+                    if (openPendingPushLevel()) {
+                        levelViewModel.resetNewPlayersLevels()
+                        return@collectLatest
+                    }
                     if (newLevel.multipleLevels == 1) {
                         showNewLevelMessage(
                             newLevel.playerName,
@@ -261,7 +272,6 @@ class MainActivity : AppCompatActivity() {
                         )
                     }
                     levelViewModel.resetNewPlayersLevels()
-                    tryOpenPendingPushLevel()
                 }
             }
         }
