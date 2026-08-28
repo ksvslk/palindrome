@@ -21,6 +21,7 @@ import com.indest.hah.persistance.dto.LanguageLevel
 import com.indest.hah.persistance.dto.Level
 import com.indest.hah.persistance.dto.LevelData
 import com.indest.hah.persistance.dto.NewLevelNotification
+import com.indest.hah.persistance.dto.HintTranslations
 import com.indest.hah.persistance.dto.PlayerLevel
 import com.indest.hah.persistance.dto.PromoDialogData
 import com.indest.hah.persistance.dto.PromoMenuButtonData
@@ -35,7 +36,11 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.decodeFromJsonElement
 import java.util.Locale
 import javax.inject.Inject
 
@@ -77,6 +82,7 @@ class LevelViewModel @Inject constructor(
     private val firebaseAnalytics = FirebaseAnalytics.getInstance(application.applicationContext)
     private val fsDb = FirebaseFirestore.getInstance()
     private var liveStoreRegistration: ListenerRegistration? = null
+    private val hintJson = Json { ignoreUnknownKeys = true }
 
     private val _newPlayerLevels =
         MutableStateFlow(NewLevelNotification(-1, -1, "", ""))
@@ -890,8 +896,15 @@ class LevelViewModel @Inject constructor(
 
 
     private suspend fun subscribeToRealTimePlayerLevelUpdates() {
-        /*
-             if (_accountStatus.value == AccountStatus.SIGNED_IN_WITH_FIREBASE) {
+        // Live player-level sync: picks up levels published after this build
+        // This used to read _accountStatus once, at call time — but the sync is
+        // started on SIGNED_IN, before signInWithCredential has finished, so the
+        // check was practically always false and no levels were ever fetched.
+        // Wait for the Firebase sign-in to actually land instead, and register
+        // the listener only once.
+        if (liveStoreRegistration != null) return
+        _accountStatus.first { it == AccountStatus.SIGNED_IN_WITH_FIREBASE }
+        run {
             val maxPlayerLevelId = levelRepository.getMaxPlayerLevelId() ?: 1080
             val maxLevelId = levelRepository.getMaxLevelId()
             val query = fsDb.collection("user_submitted_levels").where(
@@ -926,19 +939,27 @@ class LevelViewModel @Inject constructor(
                                     dc.document.data.let { levelValues ->
                                         val levelId = levelValues["levelId"] as Long
                                         if (levelId > 1080) {
-                                            val solutionsToCategories =
+                                            val rawSolutions =
                                                 levelValues["solutionToCategory"] as Map<String, Map<String, String>>
-                                            if (solutionsToCategories.isEmpty()) {
+                                            if (rawSolutions.isEmpty()) {
                                                 throw Exception("Solutions were empty")
                                             }
                                             val supportedHints =
                                                 C.languages.keys.map { "hint_$it" }.plus("hint")
-                                            if (!solutionsToCategories.keys.all {
-                                                    solutionsToCategories[it]?.keys?.containsAll(
+                                            if (!rawSolutions.keys.all {
+                                                    rawSolutions[it]?.keys?.containsAll(
                                                         supportedHints
                                                     ) == true
                                                 }) {
                                                 throw Exception("Solutions did not include hints for all languages.")
+                                            }
+                                            // Firestore hands back plain maps; the model wants the
+                                            // typed translations (every field @Required, so an
+                                            // incomplete level is rejected rather than half-shown).
+                                            val solutionsToCategories = rawSolutions.mapValues { (_, hints) ->
+                                                hintJson.decodeFromJsonElement<HintTranslations>(
+                                                    JsonObject(hints.mapValues { JsonPrimitive(it.value) })
+                                                )
                                             }
                                             val countryCode =
                                                 levelValues.getOrElse("countryCode") { "gb" }
@@ -1004,7 +1025,7 @@ class LevelViewModel @Inject constructor(
                 }
             })
         }
-         */
+        // (agent levels included) — only ids above what is already local.
 
     }
 
