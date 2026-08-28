@@ -926,7 +926,11 @@ class LevelViewModel @Inject constructor(
                     )
                 )
             )
-            liveStoreRegistration = query.addSnapshotListener(EventListener { snapshots, e ->
+            // MetadataChanges.INCLUDE: the first snapshot is served from cache,
+            // and without this Firestore never re-delivers it when only the
+            // metadata changes (unchanged document set) — so the
+            // server-confirmed snapshot the reconcile needs would never arrive.
+            liveStoreRegistration = query.addSnapshotListener(MetadataChanges.INCLUDE, EventListener { snapshots, e ->
                 if (e != null) {
                     Log.w(TAG, "listen:error", e)
                     return@EventListener
@@ -1003,6 +1007,29 @@ class LevelViewModel @Inject constructor(
                                     }
                                 }
                             }
+                        }
+                    }
+                }
+                // Reconcile: a level deleted while the app was closed raises no
+                // REMOVED event, so compare against the server's own list. Only
+                // a SERVER snapshot that actually contains levels may delete —
+                // an offline read, a denied read, or an empty result is never
+                // treated as "everything was removed" — and the level being
+                // played is always kept.
+                snapshots?.let { snap ->
+                    // Server-confirmed only: an offline read is flagged isFromCache
+                    // and a denied read arrives as an error above, so a confirmed
+                    // empty result really does mean "no cloud levels published".
+                    if (!snap.metadata.isFromCache) {
+                        val live = snap.documents.mapNotNull { it.getLong("levelId")?.toInt() }.toSet()
+                        viewModelScope.launch {
+                            levelRepository.getAllLevels()
+                                .map { it.second.levelId }
+                                .filter {
+                                    it > C.PLAYER_LEVELS_COVERED_LOCALLY && it < 10000 &&
+                                        it !in live && it != _currentLevel.value.levelInfo.levelId
+                                }
+                                .forEach { levelRepository.deleteLevel(it) }
                         }
                     }
                 }
