@@ -1,5 +1,6 @@
 package com.indest.hah.fragments
 
+import androidx.core.view.isVisible
 import android.animation.Animator
 import android.animation.LayoutTransition
 import android.animation.ObjectAnimator
@@ -78,9 +79,19 @@ class HintsFragment : FullBottomSheetDialogFragment() {
                     }
                 }
                 launch {
-                    levelViewModel.pictureHintDownloaded.collectLatest {
-                        if (it) binding.rewardPictureButton.removeDownloadingState()
-                        else binding.rewardPictureButton.addDownloadingState()
+                    levelViewModel.pictureHintState.collectLatest { state ->
+                        when (state) {
+                            LevelViewModel.PictureHintState.AVAILABLE -> {
+                                binding.rewardPictureButton.isVisible = true
+                                binding.rewardPictureButton.removeDownloadingState()
+                            }
+                            LevelViewModel.PictureHintState.LOADING -> {
+                                binding.rewardPictureButton.isVisible = true
+                                binding.rewardPictureButton.addDownloadingState()
+                            }
+                            LevelViewModel.PictureHintState.UNAVAILABLE ->
+                                binding.rewardPictureButton.isVisible = false
+                        }
                     }
                 }
 

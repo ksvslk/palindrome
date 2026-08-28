@@ -52,8 +52,13 @@ class LevelViewModel @Inject constructor(
     private val _accountStatus = MutableStateFlow(AccountStatus.NOT_SET)
     val accountStatus = _accountStatus.asStateFlow()
 
-    private val _pictureHintDownloaded = MutableStateFlow(false)
-    val pictureHintDownloaded = _pictureHintDownloaded.asStateFlow()
+    /** A picture hint is either still being fetched, ready, or has no source at
+     * all (levels above the bundled range whose image was never uploaded). The
+     * third case must hide the button rather than leave it looking stuck. */
+    enum class PictureHintState { LOADING, AVAILABLE, UNAVAILABLE }
+
+    private val _pictureHintState = MutableStateFlow(PictureHintState.LOADING)
+    val pictureHintState = _pictureHintState.asStateFlow()
 
     private val _currentLevel = MutableStateFlow(Level())
     val currentLevel = _currentLevel.asStateFlow()
@@ -183,8 +188,8 @@ class LevelViewModel @Inject constructor(
         return levelRepository.isNewPlayer(language)
     }
 
-    fun setPictureDownloaded(isPresent: Boolean) {
-        _pictureHintDownloaded.value = isPresent
+    fun setPictureHintState(state: PictureHintState) {
+        _pictureHintState.value = state
     }
 
     fun setAccountStatus(accountStatus: AccountStatus) {
@@ -358,6 +363,18 @@ class LevelViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+
+    /**
+     * Opens a level announced by a notification, but only if it is already in
+     * the local database. Returns false when it has not synced yet so the
+     * caller can retry after the next sync instead of navigating nowhere.
+     */
+    suspend fun openLevelIfPresent(levelId: Int): Boolean {
+        if (!levelRepository.levelExists(levelId)) return false
+        changeLevel(levelId)
+        return true
     }
 
 

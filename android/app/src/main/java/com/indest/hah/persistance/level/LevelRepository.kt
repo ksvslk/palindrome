@@ -23,6 +23,8 @@ class LevelRepository @Inject constructor(
     suspend fun getMaxPlayerLevelId():Int?
         = levelDao.getMaxPlayerLevelId()
 
+    suspend fun levelExists(level: Int): Boolean = levelDao.levelExists(level) != null
+
     suspend fun getMaxLevelDefault():Int = levelDao.getMaxLevelDefault()
 
     suspend fun insertPlayerLevels(playerLevels:List<PlayerLevel>):Pair<LevelData,Int> {

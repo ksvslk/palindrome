@@ -64,22 +64,44 @@ object StagenatorPush {
      * task-root intent on later plain opens, so each message id is consumed
      * exactly once (persisted).
      */
+    /** True the first time a given key is seen. Android re-delivers the launch
+     * intent on later plain opens, so every notification payload is acted on
+     * at most once, persisted across process death. */
+    private fun consumeOnce(context: Context, key: String): Boolean {
+        val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+        val seen = prefs.getStringSet("consumed_ids", emptySet())!!.toMutableSet()
+        if (!seen.add(key)) return false
+        while (seen.size > 40) seen.remove(seen.first())
+        prefs.edit().putStringSet("consumed_ids", seen).apply()
+        return true
+    }
+
+    private fun messageIdOf(intent: Intent?): String? =
+        intent?.extras?.getString("google.message_id")
+            ?: intent?.extras?.getString("google_message_id")
+
     fun handleClaimIntent(activity: Activity, intent: Intent?) {
         val extras = intent?.extras ?: return
         val url = extras.getString("claimUrl") ?: return
         if (!url.startsWith("https://")) return
-        val messageId = extras.getString("google.message_id")
-            ?: extras.getString("google_message_id") ?: return
-        val prefs = activity.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-        val seen = prefs.getStringSet("consumed_ids", emptySet())!!.toMutableSet()
-        if (!seen.add(messageId)) return
-        while (seen.size > 40) seen.remove(seen.first())
-        prefs.edit().putStringSet("consumed_ids", seen).apply()
+        val messageId = messageIdOf(intent) ?: return
+        if (!consumeOnce(activity, "$messageId:claim")) return
         try {
             activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
         } catch (e: Exception) {
             Log.w(TAG, "claim link launch failed", e)
         }
+    }
+
+    /**
+     * The level a Stagenator announcement points at, or null. The caller opens
+     * it only once the level is present locally (it arrives with the Firestore
+     * sync), so a tap can never navigate into a level that does not exist yet.
+     */
+    fun pendingLevelFromIntent(context: Context, intent: Intent?): Int? {
+        val level = intent?.extras?.getString("levelNumber")?.toIntOrNull() ?: return null
+        val messageId = messageIdOf(intent) ?: return null
+        return if (consumeOnce(context, "$messageId:level")) level else null
     }
 }
 

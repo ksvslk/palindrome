@@ -112,11 +112,16 @@ class MainActivity : AppCompatActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         StagenatorPush.handleClaimIntent(this, intent)
+        StagenatorPush.pendingLevelFromIntent(this, intent)?.let {
+            pendingPushLevel = it
+            tryOpenPendingPushLevel()
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         StagenatorPush.handleClaimIntent(this, intent)
+        pendingPushLevel = StagenatorPush.pendingLevelFromIntent(this, intent)
         if (Firebase.auth.currentUser != null) StagenatorPush.register(this)
         if (android.os.Build.VERSION.SDK_INT >= 33 &&
             checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) !=
@@ -151,6 +156,7 @@ class MainActivity : AppCompatActivity() {
         setUpNavController()
         collectVariousEvents()
         collectPlayerLevelsForNotification()
+        collectGameReadyForPendingLevel()
         collectNewLevelCount()
         levelViewModel.downloadPromos()
 
@@ -202,6 +208,38 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /** Level announced by a Stagenator push, waiting for the game to be ready
+     * and for the level itself to arrive with the Firestore sync. */
+    private var pendingPushLevel: Int? = null
+
+    /**
+     * Opens the announced level if it is already synced locally. Claims the
+     * request before suspending so overlapping triggers cannot open it twice,
+     * and puts it back when the level has not arrived yet — the next sync
+     * retries. If it never arrives, nothing happens and the normal "new level"
+     * snackbar still offers it.
+     */
+    private fun tryOpenPendingPushLevel() {
+        val target = pendingPushLevel ?: return
+        pendingPushLevel = null
+        lifecycleScope.launch {
+            if (!levelViewModel.openLevelIfPresent(target)) {
+                pendingPushLevel = target
+            }
+        }
+    }
+
+    /** Retry the pending open once the game has actually loaded a level. */
+    private fun collectGameReadyForPendingLevel() {
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                levelViewModel.currentLevel.collectLatest {
+                    if (it.levelInfo.levelId > 0) tryOpenPendingPushLevel()
+                }
+            }
+        }
+    }
+
     private fun collectPlayerLevelsForNotification() {
         lifecycleScope.launch {/*
             lifecycleScope.launchWhenCreated { */
@@ -223,6 +261,7 @@ class MainActivity : AppCompatActivity() {
                         )
                     }
                     levelViewModel.resetNewPlayersLevels()
+                    tryOpenPendingPushLevel()
                 }
             }
         }
@@ -696,11 +735,11 @@ class MainActivity : AppCompatActivity() {
 
 
     fun downloadHintPictureIfNeeded(levelNr: Int) {
-        // let's assume each time we don't have the picture
-        levelViewModel.setPictureDownloaded(isPresent = false)
+        // assume nothing until we know: the button shows its loading state
+        levelViewModel.setPictureHintState(LevelViewModel.PictureHintState.LOADING)
 
         if (checkIfHintExistsForLevel(levelNr)) {
-            levelViewModel.setPictureDownloaded(isPresent = true)
+            levelViewModel.setPictureHintState(LevelViewModel.PictureHintState.AVAILABLE)
         } else {
             val storage = Firebase.storage
             val gsReference =
@@ -708,9 +747,11 @@ class MainActivity : AppCompatActivity() {
             this.filesDir?.let {
                 val localFile = File(it, "level${levelNr}.jpg")
                 gsReference.getFile(localFile).addOnSuccessListener {
-                    levelViewModel.setPictureDownloaded(isPresent = true)
+                    levelViewModel.setPictureHintState(LevelViewModel.PictureHintState.AVAILABLE)
                 }.addOnFailureListener { ex ->
-                    levelViewModel.setPictureDownloaded(isPresent = false)
+                    // No image for this level (or storage unreachable): hide the
+                    // reward instead of leaving it greyed out forever.
+                    levelViewModel.setPictureHintState(LevelViewModel.PictureHintState.UNAVAILABLE)
                     Log.e(TAG, "Failed to create local file from storage.", ex)
                 }
             }
