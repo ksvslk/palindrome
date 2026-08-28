@@ -7,6 +7,7 @@ import androidx.sqlite.db.SupportSQLiteQuery
 import com.indest.hah.game.creation.Shuffler
 import com.indest.hah.other.getLevelScore
 import com.indest.hah.persistance.dto.*
+import com.indest.hah.other.C
 import kotlinx.coroutines.flow.Flow
 import kotlin.Exception
 
@@ -332,9 +333,10 @@ interface LevelDao {
 
     @Transaction
     suspend fun updateLevels(levels: List<Level>) {
-        deleteSolutions()
-        deleteLettersInfo()
-        deleteLevels()
+        // Everything except the cloud-synced band is replaced by the snapshot.
+        deleteSolutionsOutsideCloudBand(C.CLOUD_LEVELS_FROM, C.CLOUD_LEVELS_TO)
+        deleteLettersInfoOutsideCloudBand(C.CLOUD_LEVELS_FROM, C.CLOUD_LEVELS_TO)
+        deleteLevelsOutsideCloudBand(C.CLOUD_LEVELS_FROM, C.CLOUD_LEVELS_TO)
         levels.forEach { level ->
             insertLevelInfo(level.levelInfo)
             insertSolutions(level.solutions)
@@ -379,6 +381,22 @@ interface LevelDao {
 
     @Query("DELETE FROM solution_table")
     suspend fun deleteSolutions()
+
+    // Cloud-save scoped variants. Levels synced from Firestore after this build
+    // (ids above the bundled ceiling, below the language band) are deliberately
+    // NOT part of Play Games saves: a restore must not delete them, and an older
+    // save must not be able to resurrect a catalog without them.
+    @Query("DELETE FROM solution_table WHERE parent_id NOT BETWEEN :from AND :to")
+    suspend fun deleteSolutionsOutsideCloudBand(from: Int, to: Int)
+
+    @Query("DELETE FROM letter_info_table WHERE owner_id NOT BETWEEN :from AND :to")
+    suspend fun deleteLettersInfoOutsideCloudBand(from: Int, to: Int)
+
+    @Query("DELETE FROM level_info_table WHERE level_id NOT BETWEEN :from AND :to")
+    suspend fun deleteLevelsOutsideCloudBand(from: Int, to: Int)
+
+    @Query("select * from level_info_table WHERE level_id NOT BETWEEN :from AND :to")
+    suspend fun getLevelsForCloudSave(from: Int, to: Int): List<Level>
 
     @Query("DELETE FROM letter_info_table")
     suspend fun deleteLettersInfo()
@@ -504,8 +522,14 @@ interface LevelDao {
 
     @Transaction
     suspend fun levelCompletedActions(currentLevel: Int, hintInterval: String, chosenLevel: Int) {
-        // if level exists, otherwise 1
-        val chosen = if (levelExists(chosenLevel) != null) chosenLevel else 1
+        val chosen = when {
+            levelExists(chosenLevel) != null -> chosenLevel
+            // Finished the last player level (the next one may simply not be
+            // published yet): keep them here — the UI already says it is the
+            // final one — rather than dropping them into the tutorial.
+            currentLevel in 1001..9999 -> currentLevel
+            else -> 1
+        }
         // reset hint interval
         resetCount(hintInterval)
         // delete current level letters info
@@ -591,7 +615,8 @@ interface LevelDao {
 
     @Transaction
     suspend fun getLocalSaveGame(): SaveGame {
-        val levels = getAllLevels()
+        // Synced levels stay out of the save (see deleteLevelsOutsideCloudBand).
+        val levels = getLevelsForCloudSave(C.CLOUD_LEVELS_FROM, C.CLOUD_LEVELS_TO)
         val intervals = getAllIntervals()
         val dbIdentityHash = getDatabaseIdentityViaQuery()
         return SaveGame(levels, intervals, dbIdentityHash)

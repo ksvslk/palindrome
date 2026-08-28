@@ -11,6 +11,13 @@ object C {
 
     const val FIREBASE_PICS_STORAGE_PATH = "gs://hah-35889753.appspot.com/level_hint/"
     const val PLAYER_LEVELS_COVERED_LOCALLY = 1155
+
+    // Player levels synced from Firestore live above the bundled ceiling and
+    // below the language band. They are always unlocked and intentionally
+    // excluded from Play Games saves, so cloud restores and the live catalog
+    // can never fight over them.
+    const val CLOUD_LEVELS_FROM = PLAYER_LEVELS_COVERED_LOCALLY + 1
+    const val CLOUD_LEVELS_TO = 9999
     const val PLAYER_LEVELS_TAG = "isFeatured_v3"
     val LANGUAGE_LEVELS_RANGE = 10001..10540
 

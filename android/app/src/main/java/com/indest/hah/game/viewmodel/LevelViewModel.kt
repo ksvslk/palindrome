@@ -905,16 +905,17 @@ class LevelViewModel @Inject constructor(
         if (liveStoreRegistration != null) return
         _accountStatus.first { it == AccountStatus.SIGNED_IN_WITH_FIREBASE }
         run {
-            val maxPlayerLevelId = levelRepository.getMaxPlayerLevelId() ?: 1080
             val maxLevelId = levelRepository.getMaxLevelId()
             val query = fsDb.collection("user_submitted_levels").where(
                 Filter.and(
                     Filter.equalTo(C.PLAYER_LEVELS_TAG, true),
                     Filter.or(
-                        // player levels 1000+
+                        // Cloud player levels: the WHOLE band, not just ids above
+                        // what is local — otherwise a level's removal is outside
+                        // the query and could never reach the device. Inserts are
+                        // deduplicated, so re-seeing known levels is free.
                         Filter.and(
-                            Filter.greaterThan("levelId", 1080),
-                            Filter.greaterThan("levelId", maxPlayerLevelId),
+                            Filter.greaterThan("levelId", C.PLAYER_LEVELS_COVERED_LOCALLY),
                             Filter.lessThan("levelId", 10000)
                         ),
                         // language levels 10000+
@@ -986,6 +987,21 @@ class LevelViewModel @Inject constructor(
                             }
 
                             DocumentChange.Type.REMOVED -> {
+                                // A level pulled or unfeatured in Firestore is
+                                // removed here too — the catalog is authoritative.
+                                // Only an explicit REMOVED acts; a level merely
+                                // absent from a snapshot is never touched, so an
+                                // offline or denied read cannot empty the game.
+                                (dc.document.data["levelId"] as? Long)?.let { removed ->
+                                    if (removed > C.PLAYER_LEVELS_COVERED_LOCALLY &&
+                                        removed < 10000 &&
+                                        removed.toInt() != _currentLevel.value.levelInfo.levelId
+                                    ) {
+                                        viewModelScope.launch {
+                                            levelRepository.deleteLevel(removed.toInt())
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
