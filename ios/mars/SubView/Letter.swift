@@ -1,0 +1,212 @@
+//
+//  Letter.swift
+//  test
+//
+//  Created by ksvslk on 17.04.2023.
+//
+
+import SpriteKit
+
+class Letter: Cell {
+    
+    static let scaleAmount: CGFloat = 0.1
+    override var cellType : CellType {
+        get { return CellType.letter }
+        set {}
+    }
+
+    private var cellDirector: CellDirector
+    var data: LetterData
+    
+    // Sounds
+    let PLACE_LETTER_SOUND_ACTION = SKAction.playSoundFileNamed("place_letter.wav", waitForCompletion: false)
+    let SWITCH_LETTER_SOUND_ACTION = SKAction.playSoundFileNamed("switch_letters.wav", waitForCompletion: false)
+    
+    private var feedbackGenerator : UIImpactFeedbackGenerator? = nil
+    let letterLabel = SKLabelNode()
+    
+    // MARK: Initialize
+    init(data: LetterData, size: CGSize, homePosition: CGPoint, cellDirector: CellDirector) {
+        self.cellDirector = cellDirector
+        self.data = data
+        super.init(homeIndex: data.homeIndex, texture: nil, color: Theme.shared.colors.surfaceVariant, size: size, homePosition: homePosition)
+        letterLabel.text = data.letter
+        if (data.letter == "." || data.letter == ",") {
+            letterLabel.numberOfLines = 2
+        }
+       
+        letterLabel.fontName = Theme.shared.yantraBold
+        letterLabel.fontSize = size.width / 1.5
+        letterLabel.verticalAlignmentMode = .center
+        letterLabel.horizontalAlignmentMode = .center
+        isUserInteractionEnabled = true
+        addChild(letterLabel)
+        switchColor()
+    }
+    
+    
+    override func switchColor()
+    {
+        DispatchQueue.main.async {
+            self.color = Theme.shared.colors.surfaceVariant
+            self.letterLabel.fontColor = Theme.shared.colors.onSurfaceVariant
+            if (self.data.friendIndex != -1)
+            {
+                self.color = Theme.shared.colors.primaryContainer
+            }
+            if (self.data.locked)
+            {
+                self.color = Theme.shared.colors.tertiaryContainer
+            }
+            if (self.data.level.progress == Level.Progress.completed.rawValue)
+            {
+                self.color = Theme.shared.colors.tertiaryContainer
+            }
+        }
+    }
+    
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    
+    // MARK: Touches began
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard StateManager.shared.currentState == .play && state == CellState.home && data.locked == false else { return }
+        guard let touch = touches.first else { return }
+        
+        let location = touch.location(in: self.parent!)
+        
+        if self.frame.contains(location) {
+            self.zPosition = C.TOP_LAYER
+            currentPosition = self.position
+            state = CellState.dragging
+            self.animateColor(to: Theme.shared.colors.secondaryContainer, duration: C.ON_CLICK_COLOR_CHANGE_ANIMATION, timingMode: SKActionTimingMode.easeInEaseOut)
+            self.run(SKAction.scale(by: 1 + Letter.scaleAmount, duration: C.ON_CLICK_COLOR_CHANGE_ANIMATION))
+        }
+        // Instantiate a new generator.
+        feedbackGenerator = UIImpactFeedbackGenerator()
+        // Prepare the generator when the gesture begins.
+        feedbackGenerator?.impactOccuredCustom(intensity: 0.3)
+        feedbackGenerator?.prepare()
+    }
+    
+    
+    /*
+     When dragging the Letter should move to the same place where the mouse it with some delay/ease animation.
+     */
+    // MARK: Touches moved
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard state == CellState.dragging else { return }
+        
+        guard let touch = touches.first else { return }
+        let location = touch.location(in: self.parent!)
+        let previousLocation = touch.previousLocation(in: self.parent!)
+        let newPosition = CGPoint(x: self.position.x + location.x - previousLocation.x,
+                                  y: self.position.y + location.y - previousLocation.y)
+        self.position = newPosition
+    }
+    
+    
+    // touch event is completed successfully
+    // MARK: Touches ended
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard state == CellState.dragging else { return }
+        let collisionResult = cellDirector.handleCollisions(letter: self)
+        playSound(collisionResult: collisionResult)
+        playHapticFeedback(collisionResult: collisionResult)
+        //Swift.debugPrint("Collision result: \(collisionResult)")
+        moveLetter()
+    }
+ 
+    
+    // touch event is interrupted or canceled (system events like phone call)
+    // maybe abrupt end would be better here?
+    // MARK: Touches cancelled
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard state == CellState.dragging else { return }
+        self.zPosition = C.NEUTRAL_LAYER
+        self.state = CellState.home
+        self.scale(to: CGSize(width: 1.0, height: 1.0))
+        self.position = currentPosition
+    }
+    
+    
+    
+    // MARK: Move action
+    func moveLetter(endColor:UIColor = Theme.shared.colors.primaryContainer, durationMultiplier:CGFloat = 1.0, zLayer:CGFloat? = nil)
+    {
+
+        if let zLayer = zLayer {
+            if (!data.locked) {
+                self.color = Theme.shared.colors.secondary
+            }
+          
+            self.zPosition = zLayer
+        }
+     
+        // Get some value that represents how much was moved ignoring the actual physical
+        // distance. Log applied to Euclidean distance to make it very small.
+        let distance = log2((abs(position.distance(point: currentPosition))))
+        let duration = distance.isFinite ? abs(distance * C.HOME_ANIMATION_MULTIPLIER * C.ANIMATION_MODIFIER)*durationMultiplier : C.ON_RELEASE_COLOR_CHANGE_ANIMATION * durationMultiplier
+        
+        let endColor = friend != nil ? endColor : Theme.shared.colors.surfaceVariant
+    
+     
+        state = CellState.resolving
+        let moveAction = SKAction.move(to: currentPosition, duration: duration)
+        moveAction.timingMode = .easeInEaseOut
+        self.run(moveAction) {
+            self.zPosition = C.NEUTRAL_LAYER
+            self.animateColor(to: endColor, duration: duration, timingMode: SKActionTimingMode.easeOut)
+            let newScale = max(self.xScale - 0.2, 1.0)
+            let scaleAction = SKAction.scale(to: newScale, duration: duration)
+            self.run(scaleAction) {
+                self.state = CellState.home
+            }
+        }
+    }
+    
+    
+    // MARK: Animate color
+    func animateColor(to color: UIColor, duration: CGFloat, timingMode: SKActionTimingMode) {
+        guard StateManager.shared.currentState != .completed else { return }
+        let colorAction = SKAction.colorize(with: color, colorBlendFactor: 1, duration: duration)
+        colorAction.timingMode = timingMode
+        self.run(colorAction)
+    }
+    
+
+    // MARK: Play sound effect
+    private func playSound(collisionResult: CollisionResult)
+    {
+        if (UserDefaults.standard.bool(forKey: C.SOUND_ON))
+        {
+            switch collisionResult {
+            case .landing:
+                self.run(PLACE_LETTER_SOUND_ACTION)
+            case .switching:
+                self.run(SWITCH_LETTER_SOUND_ACTION)
+            case .nothing:
+                return
+            }
+        }
+    }
+   
+    
+    // MARK: Trigger haptic fb.
+    private func playHapticFeedback(collisionResult: CollisionResult)
+    {
+        switch collisionResult {
+        case .landing:
+            feedbackGenerator?.impactOccuredCustom(intensity: 0.9)
+        case .switching:
+            feedbackGenerator?.impactOccuredCustom(intensity: 0.6)
+        case .nothing:
+            feedbackGenerator?.impactOccuredCustom(intensity: 0.3)
+        }
+    }
+
+    
+}

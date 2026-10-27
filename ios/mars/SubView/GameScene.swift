@@ -1,0 +1,447 @@
+import Foundation
+import SpriteKit
+import AVFAudio
+
+
+class GameScene: SKScene {
+    
+    private var gridNode:SKNode = SKNode()
+    private var startingPosition:CGPoint = CGPoint.zero
+    var cellDirector: CellDirector = CellDirector(cells: [Cell]())
+    let horizontalSafe = 2.0
+    let bottomSafe = 34.0 + 44.0 + 8.0
+    let topSafe = 59.0 + 4.0 + 8.0
+    
+    
+    // MARK: Initialize level
+    override func didMove(to view: SKView) {
+        layoutScene(view: view)
+        handleGameState()
+        //Swift.debugPrint("didMove in GameScene")
+    }
+    
+    
+    func addSnow()
+    {
+        if let snowChild = childNode(withName: "SnowParticle")
+        {
+            snowChild.removeFromParent()
+        }
+        if let snowEmitter = SKEmitterNode(fileNamed: "SnowParticle") {
+            snowEmitter.position = CGPoint(x: 0, y: size.height)
+            snowEmitter.particlePositionRange.dx = size.width
+            snowEmitter.particlePositionRange.dy = size.height
+            snowEmitter.particleLifetimeRange = size.height
+            snowEmitter.particleColorSequence = nil
+            snowEmitter.particleColorBlendFactor = 1.0
+            snowEmitter.particleColor = Theme.shared.colors.secondary
+            snowEmitter.name = "SnowParticle"
+            snowEmitter.zPosition = -2
+            addChild(snowEmitter)
+        }
+    }
+    
+    
+    func removeSnow()
+    {
+        if let snowChild = childNode(withName: "SnowParticle")
+        {
+            snowChild.removeFromParent()
+        }
+    }
+    
+    
+    func changeTheme()
+    {
+        backgroundColor = Theme.shared.colors.background
+        if let snowChild = childNode(withName: "SnowParticle") as? SKEmitterNode
+        {
+            snowChild.particleColor = Theme.shared.colors.secondary
+        }
+        cellDirector.cells.forEach { cell in
+            cell.switchColor()
+        }
+    }
+    
+    
+    // MARK: Handle ongoing game state
+    private func handleGameState()
+    {
+        StateManager.shared.stateDidChange = { [self] state in
+            /*
+             switch state {
+             case .play:
+             //Swift.debugPrint("Now in .play (GameScene)")
+             case .animating:
+             //Swift.debugPrint("Now in .animating (GameScene)")
+             case .completed:
+             //Swift.debugPrint("Now in .completed (GameScene)")
+             case .reset:
+             //Swift.debugPrint("Now in .reset (GameScene)")
+             }
+             */
+            
+        }
+    }
+    
+    
+    
+    private func debugRect(width:CGFloat, height:CGFloat, color:SKColor, topErr:CGFloat = 0.0, bottomErr:CGFloat = 0.0)
+    {
+        let rectangle = SKShapeNode(rectOf: CGSize(width: width, height: height))
+        rectangle.strokeColor = color
+        rectangle.lineWidth = 2.0
+        rectangle.position.y -= topErr
+        rectangle.position.y += bottomErr
+        self.addChild(rectangle)
+    }
+    
+    
+    // MARK: Shake animation
+    func shakeAnimation()
+    {
+        StateManager.shared.currentState = .animating
+        let amplitudeX: CGFloat = 12
+        let frequency: CGFloat = 5
+        let duration: TimeInterval = 1.0
+        let numberOfShakes = 1
+        let attenuationFactor: CGFloat = 0.2
+        
+        let amplitudeAction = SKAction.customAction(withDuration: duration) { node, elapsedTime in
+            let progress = elapsedTime / CGFloat(duration)
+            let amplitudeFactor = pow(2.0, -elapsedTime / duration) * sin(elapsedTime * frequency * CGFloat.pi * 2.0)
+            let attenuatedFactor = amplitudeFactor * pow(attenuationFactor, progress)
+            node.position.x = self.startingPosition.x + attenuatedFactor * amplitudeX
+        }
+        
+        let resetAction = SKAction.run {
+            self.gridNode.position = self.startingPosition
+            StateManager.shared.currentState = .play
+            assert(self.gridNode.position == self.startingPosition, "Node position is \(self.gridNode.position), but should be \(self.startingPosition)")
+        }
+        
+        let sequenceAction = SKAction.sequence([amplitudeAction, resetAction])
+        let repeatAction = SKAction.repeat(sequenceAction, count: numberOfShakes)
+        
+        gridNode.run(repeatAction)
+        
+        
+    }
+    
+    
+    // MARK: Winning animation
+    func winningAnimation(animationDoneClosure: @escaping () -> Void)
+    {
+        
+        let lastSoundAction = SKAction.playSound(soundFile: "correct.wav")
+        let soundActions =
+        [
+            SKAction.playSound(soundFile: "c3_outer.wav"),
+            SKAction.playSound(soundFile: "c4_outer.wav"),
+            SKAction.playSound(soundFile: "g3_outer.wav"),
+            SKAction.playSound(soundFile: "c4_outer.wav"),
+            SKAction.playSound(soundFile: "c5_outer.wav"),
+            SKAction.playSound(soundFile: "g4_outer.wav"),
+            SKAction.playSound(soundFile: "c5_outer.wav"),
+            SKAction.playSound(soundFile: "g5_outer.wav"),
+            SKAction.playSound(soundFile: "c5_outer.wav"),
+            SKAction.playSound(soundFile: "c3_outer.wav"),
+            SKAction.playSound(soundFile: "c5_outer.wav"),
+            SKAction.playSound(soundFile: "c6_outer.wav")
+        ]
+        
+        func playCorrectSolutionBoxEffect(node:SKSpriteNode, delay:CGFloat, soundAction:SKAction, isLast:Bool) {
+            let colorAction = SKAction.colorize(with: Theme.shared.colors.tertiaryContainer, colorBlendFactor: 1, duration: 0.5)
+            let soundAndColorAction = SKAction.group([soundAction, colorAction])
+            let waitAction = SKAction.wait(forDuration: delay)
+            let sequence = !isLast ? SKAction.sequence([waitAction, soundAndColorAction])
+            : SKAction.sequence([waitAction, soundAndColorAction, lastSoundAction])
+            node.run(sequence) {
+                if (isLast)
+                {
+                    animationDoneClosure()
+                }
+            }
+        }
+        
+        let soundCount = soundActions.count
+        
+        let spriteNodes = cellDirector.cells.compactMap { $0 as? Letter }.sorted { l1, l2 in
+            l1.data.friendIndex < l2.data.friendIndex
+        }
+        
+        let numNodes = spriteNodes.count
+        let middleIndex = (numNodes % 2 == 0) ? nil : (numNodes / 2)
+        let delayMultiplier = 2.5
+        for i in stride(from: 0, to: numNodes/2, by: 1) {
+            let isLastAnimation = i == (numNodes / 2) - 1 && middleIndex == nil
+            
+            var noteSoundId = i <= (soundCount - 1) ? i : 11
+            var soundAction = soundActions[noteSoundId]
+            
+            let leftIndex = i
+            let rightIndex = numNodes - i - 1
+            let leftNode = spriteNodes[leftIndex]
+            let rightNode = spriteNodes[rightIndex]
+            
+            playCorrectSolutionBoxEffect(node: leftNode, delay: CGFloat(i+1)/delayMultiplier, soundAction:soundAction, isLast: false)
+            playCorrectSolutionBoxEffect(node: rightNode, delay: CGFloat(i+1)/delayMultiplier, soundAction:soundAction, isLast: isLastAnimation)
+            
+            if let middleIndex = middleIndex, (i + 1) == middleIndex {
+                let j = i + 1
+                noteSoundId = j <= (soundCount - 1) ? j : 11
+                soundAction = soundActions[noteSoundId]
+                playCorrectSolutionBoxEffect(
+                    node: spriteNodes[middleIndex],
+                    delay: CGFloat(i+2)/delayMultiplier,
+                    soundAction:soundAction,
+                    isLast: true
+                )
+            }
+        }
+        
+    }
+    
+    
+    // MARK: Main scene layout
+    private func layoutScene(view: SKView)
+    {
+        cellDirector.cells.removeAll()
+        
+        // Get current level
+        let currentLevel = Database.shared.currentLevel!
+        
+        // Get and set view size
+        let viewSize = CGSize(
+            width: view.bounds.width - horizontalSafe,
+            height: view.bounds.height - bottomSafe - topSafe)
+        
+        /*
+         debugRect(
+         width: viewSize.width,
+         height: viewSize.height,
+         color:SKColor.systemOrange,
+         topErr: topSafe,
+         bottomErr: bottomSafe
+         )
+         */
+        
+        // Create game field representation which will be used to creat the UI grid
+        let gameField = GameFieldCreator.getGameField(
+            palindrome: currentLevel.solutionsArr.first!.palindrome,
+            viewSize:viewSize,
+            level:currentLevel
+        )
+        
+        
+        if (currentLevel.columnCount == -1)
+        {
+            Database.shared.updateColumnCount(
+                newColumntCount: Int64(gameField.columns),
+                oldFriendToNewFriendIndex: [:]
+            )
+        }
+        
+        let allCells = gameField.letterRows + gameField.solutionRows
+        
+        // Create the grid node
+        gridNode = SKNode()
+        addChild(gridNode)
+        
+        // Add `Letter`-s, `Slot`-s and `SKSpriteNode`-s to the grid
+        do {
+            try addGameNodes(letters: currentLevel.lettersArr, allCells: allCells, gameField: gameField, gridNode: &gridNode)
+        } catch {
+            //Swift.debugPrint("GameScene: Could not add nodes to grid.")
+        }
+        
+        // Change the position of the grid
+        let height = ((gameField.boxSize.height + GameFieldCreator.spacing) * CGFloat(allCells.count - 1))
+        let width = ((gameField.boxSize.width + GameFieldCreator.spacing) * CGFloat(gameField.columns - 1))
+        gridNode.position = CGPoint(x:-width/2.0,y:height/2.0)
+        gridNode.position.y -= topSafe
+        gridNode.position.y += bottomSafe
+        startingPosition = gridNode.position
+#if DEBUG
+        assertThatEachLetterHasSlot(grid: gridNode, level: currentLevel)
+        assertDatabaseAndActualLettersCount(grid: gridNode, level: currentLevel)
+        assertTotalGridNodesCount(grid: gridNode, level: currentLevel, cells: allCells)
+#endif
+    }
+    
+    
+    func moveTrainFromLeftToRight()
+    {
+        guard let rootView = scene?.view else { return }
+        let randomCarriageCount = Int(arc4random_uniform(6)) + 1
+        let duration = 12 - (7 - randomCarriageCount)
+        let viewSize = CGSize(
+            width: rootView.bounds.width - horizontalSafe,
+            height: rootView.bounds.height - bottomSafe - topSafe)
+        let trainNode = TrainNode(numberOfCarriages: randomCarriageCount)
+        trainNode.setScale(0.5)
+        addChild(trainNode)
+        let trainYPosition = -viewSize.height/2 - trainNode.size.height + bottomSafe - 8.0
+        let trainStartPositionX = -viewSize.width/2 - trainNode.size.width
+        trainNode.position = CGPoint(x: trainStartPositionX, y: trainYPosition)
+        let trainEndPositionX = viewSize.width / 2 + trainNode.calculatedWidth + 16.0
+        let moveRightAction = SKAction.move(to: CGPoint(x: trainEndPositionX, y: trainYPosition), duration: TimeInterval(duration))
+        trainNode.run(moveRightAction) {
+            //Swift.debugPrint("DONE")
+        }
+    }
+    
+    
+    // MARK: Add nodes to the grid
+    private func addGameNodes(
+        letters: [LetterData],
+        allCells: [String],
+        gameField: GameField,
+        gridNode: inout SKNode
+    ) throws {
+        
+        var homeIndexesToPositions = [Int64:CGPoint]()
+        
+        for (rowIndex, rowOfChars) in allCells.enumerated() {
+            for (colIndex, char) in rowOfChars.enumerated() {
+                
+                let index = Int64(rowIndex * gameField.columns + colIndex + 1)
+                
+                switch (rowIndex < gameField.letterRows.count, char) {
+                case (true, " "), (false, " "):
+                    let space = getBlankNode(gameField: gameField, rowIndex: rowIndex, colIndex: colIndex)
+                    gridNode.addChild(space)
+                    
+                case (true, _):
+                    let letterWithFriend = letters.first { data in
+                        data.homeIndex == index
+                    }!
+                    
+                    if letterWithFriend.friendIndex != -1 {
+                        let space = getBlankNode(gameField: gameField, rowIndex: rowIndex, colIndex: colIndex)
+                        homeIndexesToPositions[Int64(index)] = space.position
+                        gridNode.addChild(space)
+                    } else {
+                        assert(index == letterWithFriend.homeIndex)
+                        let letter = getLetterNode(
+                            data: letterWithFriend,
+                            gameField: gameField,
+                            rowIndex: rowIndex,
+                            colIndex: colIndex
+                        )
+                        gridNode.addChild(letter)
+                        cellDirector.cells.append(letter)
+                    }
+                    
+                case (false, _):
+                    let slot = getSlotNode(
+                        currentIndex: index,
+                        gameField: gameField,
+                        rowIndex: rowIndex,
+                        colIndex: colIndex,
+                        actualChar: String(char)
+                    )
+                    
+                    gridNode.addChild(slot)
+                    cellDirector.cells.append(slot)
+                    
+                    if let letterWithFriend = letters.first(where: { data in
+                        data.friendIndex == index
+                    }) {
+                        
+                        let letter = getLetterNode(
+                            data: letterWithFriend,
+                            gameField: gameField,
+                            rowIndex: rowIndex,
+                            colIndex: colIndex
+                        )
+                        slot.setFriendWithoutDidSet(letter: letter, ignoreScoreChange: true)
+                        letter.friend = slot
+                        letter.color = Theme.shared.colors.secondary
+                        
+                        if let position = homeIndexesToPositions[letterWithFriend.homeIndex] {
+                            letter.homePosition = position
+                        } else {
+                            throw LevelCreationError.positionForHomeIndexNotFoundInMap
+                        }
+                        
+                        gridNode.addChild(letter)
+                        cellDirector.cells.append(letter)
+                    }
+                }
+            }
+        }
+    }
+    
+    
+    // MARK: Assert grid correctness
+#if DEBUG
+    private func assertThatEachLetterHasSlot(grid:SKNode, level: Level)
+    {
+        let actualLettersCount = grid.children.filter { sknode in
+            sknode as? Letter != nil
+        }.count
+        let actualSlotsCount = grid.children.filter { sknode in
+            sknode as? Slot != nil
+        }.count
+        assert(actualLettersCount == actualSlotsCount)
+    }
+    
+    
+    private func assertDatabaseAndActualLettersCount(grid:SKNode, level: Level)
+    {
+        let actualLettersCount = grid.children.filter { sknode in
+            sknode as? Letter != nil
+        }.count
+        let expectedLettersCount = level.lettersArr.count
+        assert(expectedLettersCount == actualLettersCount)
+    }
+    
+    
+    private func assertTotalGridNodesCount(grid: SKNode, level: Level, cells:[String])
+    {
+        let actualGridChildrenCount = grid.children.count
+        let expectedGridChildrenCount = cells.joined().count + level.lettersArr.filter { letterData in letterData.friendIndex != -1 }.count
+        assert(expectedGridChildrenCount == actualGridChildrenCount)
+    }
+#endif
+    
+    
+    // MARK: Get SKSpriteNode node
+    private func getBlankNode(gameField: GameField, rowIndex: Int, colIndex: Int) -> SKSpriteNode
+    {
+        let space = SKSpriteNode(color: .clear, size: CGSize(width: gameField.boxSize.width, height: gameField.boxSize.height))
+        space.position = CGPoint(x: CGFloat(colIndex) * (gameField.boxSize.width + GameFieldCreator.spacing), y: -CGFloat(rowIndex) * (gameField.boxSize.height + GameFieldCreator.spacing))
+        space.zPosition = 0
+        return space
+    }
+    
+    
+    // MARK: Get Letter node
+    private func getLetterNode(data: LetterData, gameField: GameField, rowIndex: Int, colIndex: Int) -> Letter
+    {
+        return Letter(
+            data: data, size: CGSize(width: gameField.boxSize.width, height:  gameField.boxSize.height),
+            homePosition: CGPoint(x: CGFloat(colIndex) * (gameField.boxSize.width + GameFieldCreator.spacing), y: -CGFloat(rowIndex) * (gameField.boxSize.height + GameFieldCreator.spacing)),
+            cellDirector: cellDirector
+        )
+    }
+    
+    
+    // MARK: Get Slot node
+    private func getSlotNode(currentIndex: Int64, gameField: GameField, rowIndex: Int, colIndex: Int, actualChar:String) -> Slot
+    {
+        return Slot(
+            homeIndex: currentIndex,
+            size: CGSize(width: gameField.boxSize.width, height: gameField.boxSize.height),
+            homePosition: CGPoint(x: CGFloat(colIndex) * (gameField.boxSize.width + GameFieldCreator.spacing), y: -CGFloat(rowIndex) * (gameField.boxSize.height + GameFieldCreator.spacing)), actualChar: actualChar
+        )
+    }
+    
+    
+    enum LevelCreationError: Error {
+        case positionForHomeIndexNotFoundInMap
+    }
+    
+    
+}

@@ -1,0 +1,99 @@
+/* 
+  Localizable.strings
+  mars
+
+  Created by Mina on 17.05.2023.
+  
+*/
+
+//MARK: Global
+"cancel" = "Cancel";
+"tap_to_continue" = "Tap to continue";
+"loading" = "Loading..";
+"end_screen_text" = "Awesome job 😎";
+"find_hints_below" = "⬇︎ You can find hints below";
+"purchase_deferred" = "Your purchase was deferred - it can take a while.";
+"purchase_failed_not_cancelled" = "It just didn't work for some reason.";
+"log_in_to_gamecenter" = "Log in to GameCenter";
+
+
+//MARK: Share button
+"share_description" = "Can you guess the solution for: EELLV? It is a palindrome!";
+
+
+//MARK: Settings menu
+"promo" = "More games";
+"color" = "Color";
+"sound" = "Sound";
+"vibration" = "Vibration";
+"tutorial" = "Tutorial";
+"feedback" = "Give Feedback";
+"share" = "Share";
+"restore" = "Restore Purchases";
+"successfully_restored" = "Restored purchase: ";
+"restore_failed" = "Could not restore purchases.";
+"restore_completed" = "Restore completed.";
+
+
+
+//MARK: Game Center menu
+"game_leader" = "Game Leaderboard";
+"antimatter_leader" = "Antimatter League";
+"achievements" = "Achievements";
+
+
+//MARK: Hints menu
+"watch_ad_comment" = "Watch Rewarded Video";
+"no_ad_comment" = "Ad is loading";
+"instantly_comment" = "Instantly";
+"place_letter" = "Place Letter";
+"reveal_clue" = "Reveal Clue";
+"unlocked_comment" = "Unlocked.";
+
+
+//MARK: Level select menu
+"submit_level" = "Submit Your Level";
+"player_levels" = "Player Levels";
+"game_levels" = "Main Levels";
+
+//MARK: Good texts
+"GM_correct" = "Correct!";
+"GM_good" = "Good!";
+"GM_keep_going" = "Keep going!";
+"GM_yes" = "Yes!";
+"GM_hurray" = "Hurray!";
+
+//MARK: Very good texts
+"VGM_awesome" = "Awesome!";
+"VGM_superb" = "Superb!";
+"VGM_excellent" = "Excellent!";
+"VGM_perfect" = "Perfect!";
+"VGM_outstanding" = "Outstanding!";
+
+//MARK: Solution wrong texts
+"WM_try_again" = "Try again.";
+"WM_not_a_palindrome" = "Not a palindrome.";
+"WM_keep_trying" = "Keep trying.";
+"WM_take_another_stab" = "Take another stab.";
+"WM_palindrome_required" = "Palindrome required.";
+"WM_look_it_over" = "Look it over.";
+
+//MARK: Palindrome wrong texts
+"BM_wrong_palindrome" = "Wrong palindrome.";
+"BM_forbidden_palindrome" = "Forbidden palindrome.";
+"BM_bogus_palindrome" = "Bogus palindrome.";
+
+
+//MARK: Purchases
+"unlimited_clues" = "Unlimited Clues";
+"unlimited_letters" = "Unlimited Letters";
+"no_level_ads" = "No Level Ads";
+"all_in_pack" = "All-In Pack";
+"all_level_packs" = "All Level Packs (150 levels)";
+"level_pack_1" = "Symmetric Secrets (25 levels)";
+"level_pack_2" = "Inverted Illusions (25 lsevels)";
+"level_pack_3" = "Reversal Riddles (25 levels)";
+"level_pack_4" = "Echoed Elegance (25 levels)";
+"level_pack_5" = "Twisted Texts (25 levels)";
+"level_pack_6" = "Linguistic Labyrinths (25 levels)";
+
